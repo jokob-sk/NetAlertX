@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../lib/fullcalendar.min.css' rel='stylesheet' />
+<link href='../lib/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<link href='../scheduler.min.css' rel='stylesheet' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../lib/fullcalendar.min.js'></script>
+<script src='../scheduler.min.js'></script>
+<script>
+
+  $(function() { // document ready
+
+    $('#calendar').fullCalendar({
+      defaultView: 'agendaDay',
+      defaultDate: '2018-04-07',
+      editable: true,
+      selectable: true,
+      eventLimit: true, // allow "more" link when too many events
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'agendaDay,agendaTwoDay,agendaWeek,month'
+      },
+      views: {
+        agendaTwoDay: {
+          type: 'agenda',
+          duration: { days: 2 },
+
+          // views that are more than a day will NOT do this behavior by default
+          // so, we need to explicitly enable it
+          groupByResource: true
+
+          //// uncomment this line to group by day FIRST with resources underneath
+          //groupByDateAndResource: true
+        }
+      },
+
+      //// uncomment this line to hide the all-day slot
+      //allDaySlot: false,
+
+      resources: [
+        { id: 'a', title: 'Room A' },
+        { id: 'b', title: 'Room B', eventColor: 'green' },
+        { id: 'c', title: 'Room C', eventColor: 'orange' },
+        { id: 'd', title: 'Room D', eventColor: 'red' }
+      ],
+      events: [
+        { id: '1', resourceId: 'a', start: '2018-04-06', end: '2018-04-08', title: 'event 1' },
+        { id: '2', resourceId: 'a', start: '2018-04-07T09:00:00', end: '2018-04-07T14:00:00', title: 'event 2' },
+        { id: '3', resourceId: 'b', start: '2018-04-07T12:00:00', end: '2018-04-08T06:00:00', title: 'event 3' },
+        { id: '4', resourceId: 'c', start: '2018-04-07T07:30:00', end: '2018-04-07T09:30:00', title: 'event 4' },
+        { id: '5', resourceId: 'd', start: '2018-04-07T10:00:00', end: '2018-04-07T15:00:00', title: 'event 5' }
+      ],
+
+      select: function(start, end, jsEvent, view, resource) {
+        console.log(
+          'select',
+          start.format(),
+          end.format(),
+          resource ? resource.id : '(no resource)'
+        );
+      },
+      dayClick: function(date, jsEvent, view, resource) {
+        console.log(
+          'dayClick',
+          date.format(),
+          resource ? resource.id : '(no resource)'
+        );
+      }
+    });
+  
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 50px auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>
