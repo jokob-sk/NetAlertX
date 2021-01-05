@@ -6,7 +6,7 @@ Check the devices connected to your WIFI / LAN and alert you the unknown devices
 It also warns of the disconnection of "always connected" devices.
 
 *(Apologies for my english and my limited knowledge of Python, php and JavaScript)*
-<>
+
 
 ### Componets
 The system consists of two parts:
@@ -25,12 +25,21 @@ Initially designed to run on a Raspberry PI, it can run on many Linux distributi
 - dnsmasq (optional)
 
 # Contributions
-- Pi.hole
-- Admin.LTE
-- FullCalendar
+### Powered by:
+- Python
+- PHP
+- JavaScript
+- Bootstrap
+- Sqlite
+- Lighttpd
+
+### Acknowledgment
+- Pi.hole (web design inspiration)
+- Admin.LTE (Bootstrap template)
+- FullCalendar (calendar component)
 
 # License
 GPL 3.0
 
 # Contact
-<pending>
+_pending..._
