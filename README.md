@@ -39,13 +39,13 @@ The system continuously scan the network for:
 The system consists of two parts:
 
 - **Back**, in charge of:
-  - scanning the network searching connected devices using the scanning methods
+  - Scan the network searching connected devices using the scanning methods
         described
-  - store the information in the DB
-  - report the changes detected by e-mail
+  - Store the information in the DB
+  - Report the changes detected by e-mail
 
 - **Front**, a web frontal that allows:
-  - display in a visual way all the information collected by the back
+  - Display in a visual way all the information collected by the back
   - Manage de devices inventory and the characteristics
 
 <Image>
@@ -80,7 +80,7 @@ Pending explain the installation process
   - JavaScript (Programming language for the Front-end)
   - Bootstrap (Front-end framework)
   - Admin.LTE (Bootstrap template)
-  - FullCalendar (calendar component)
+  - FullCalendar (Calendar component)
   - Sqlite (DB engine)
   - Lighttpd (Webserver)
   - arp-scan (Scan network using arp commands)
