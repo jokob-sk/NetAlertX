@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../lib/fullcalendar.min.css' rel='stylesheet' />
+<link href='../lib/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<link href='../scheduler.min.css' rel='stylesheet' />
+<script src='../lib/moment.min.js'></script>
+<script src='../lib/jquery.min.js'></script>
+<script src='../lib/fullcalendar.min.js'></script>
+<script src='../lib/gcal.min.js'></script>
+<script src='../scheduler.min.js'></script>
+<script>
+
+  $(function() { // document ready
+
+    $('#calendar').fullCalendar({
+      now: '2018-04-07',
+      editable: true, // enable draggable events
+      aspectRatio: 1.8,
+      scrollTime: '00:00', // undo default 6am scrollTime
+      header: {
+        left: 'today prev,next',
+        center: 'title',
+        right: 'timelineMonth,timelineYear'
+      },
+      defaultView: 'timelineMonth',
+
+      /*
+      NOTE: unfortunately, Scheduler doesn't know how to associated events from
+      Google Calendar with resources, so if you specify a resource list,
+      nothing will show up :(  Working on some solutions.
+      */
+
+      // THIS KEY WON'T WORK IN PRODUCTION!!!
+      // To make your own Google API key, follow the directions here:
+      // http://fullcalendar.io/docs/google_calendar/
+      googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
+    
+      // US Holidays
+      events: 'usa__en@holiday.calendar.google.com',
+
+      eventClick: function(event) {
+        // opens events in a popup window
+        window.open(event.url, 'gcalevent', 'width=700,height=600');
+        return false;
+      }
+    });
+  
+  });
+
+</script>
+<style>
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 900px;
+    margin: 50px auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>
