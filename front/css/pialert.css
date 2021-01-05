@@ -1,0 +1,373 @@
+/*******************************************************************************
+*  Pi.alert CSS
+*******************************************************************************/
+
+/* -----------------------------------------------------------------------------
+   Global Variables
+----------------------------------------------------------------------------- */
+:root {
+    --color-aqua:   #00c0ef;
+    --color-green:  #00a65a;
+    --color-yellow: #f39c12;
+    --color-red:    #dd4b39;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Text Classes
+----------------------------------------------------------------------------- */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-gray50 {
+  color: #808080;
+}
+
+.text-aqua-20 {
+  color: rgba(0,192,239,20%);
+}
+
+.text-green-20 {
+  color: rgba(0,166,90,20%);
+}
+
+.text-yellow-20 {
+  color: rgba(243,156,18,20%);
+}
+
+.text-red-20 {
+  color: rgba(221,75,57,20%);
+}
+
+.no-border {
+    border: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Main Sections
+----------------------------------------------------------------------------- */
+.content-header {
+  padding-top: 5px;
+}
+
+.content-header > .breadcrumb {
+  background: transparent;
+}
+
+.content {
+  padding-bottom: 0px;
+}
+
+.box-body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.main-footer {
+  padding: 5px;
+  color: gray;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Customized Main Menu
+----------------------------------------------------------------------------- */
+.main-header .logo {
+  width: 150px;
+}
+
+.main-header > .navbar {
+  margin-left: 150px;
+}
+
+.main-sidebar, .left-side {
+  width: 150px;
+}
+
+.content-wrapper, .right-side, .main-footer {
+  margin-left: 150px;
+}
+
+@media (max-width: 767px) {
+  .main-header .logo {
+    width: 100%;
+  }
+
+  .main-header .navbar {
+    margin: 0;
+  }
+
+  .content-wrapper, .main-footer {
+    margin-left: 0px;
+  }
+
+}
+
+.sidebar-open .content-wrapper, .sidebar-open .main-footer {
+    -webkit-transform: translate(150px, 0);
+    -ms-transform: translate(150px, 0);
+    -o-transform: translate(150px, 0);
+    transform: translate(150px, 0)
+}
+
+
+.skin-yellow-light .sidebar-menu > li > a:hover {
+    background: #f0f0f0;
+    border-left-color: rgb(243, 156, 18);
+}
+
+.skin-yellow-light .sidebar-menu > li.active > a {
+    background: #e0e0e0;
+    border-left-color: rgb(243, 156, 18);
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   Customized Boxes
+----------------------------------------------------------------------------- */
+.box-transparent {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.pa-small-box-2 .inner h3 {
+  margin-left: 0em;
+  margin-bottom: 1.3em;
+}
+
+.pa-small-box-aqua {
+  border-top: 3px solid #00c0ef;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pa-small-box-aqua .inner {
+  color: #00c0ef;
+  background-color:#FFFFFF;
+}
+
+.pa-small-box-aqua .inner h3 {
+  margin-left: 0.5em;
+}
+
+.pa-small-box-aqua .icon {
+  color: #00c0ef;
+}
+
+
+
+/* -------------------------------------------------------------------------- */
+.pa-small-box-green {
+  border-top: 3px solid #00a65a;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pa-small-box-green .inner {
+  color: #00a65a;
+  background-color:#FFFFFF;
+}
+
+.pa-small-box-green .inner h3 {
+  margin-left: 0.5em;
+}
+
+.pa-small-box-green .icon {
+  color: #00a65a;
+}
+
+/* -------------------------------------------------------------------------- */
+.pa-small-box-yellow {                                                          
+  border-top: 3px solid #f39c12;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pa-small-box-yellow .inner {
+  color: #f39c12;
+  background-color:#FFFFFF;
+}
+
+.pa-small-box-yellow .inner h3 {
+  margin-left: 0.5em;
+}
+
+.pa-small-box-yellow .icon {
+  color: #f39c12;
+}
+
+/* -------------------------------------------------------------------------- */
+.pa-small-box-red {
+  border-top: 3px solid #dd4b39;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pa-small-box-red .inner {
+  color: #dd4b39;
+  background-color:#FFFFFF;
+}
+
+.pa-small-box-red .inner h3 {
+  margin-left: 0.5em;
+}
+
+.pa-small-box-red .icon {
+  color: #dd4b39;
+}
+
+ 
+/* -----------------------------------------------------------------------------
+   Customized Box Borders
+----------------------------------------------------------------------------- */
+.box.box-aqua {
+  border-top-color: #00c0ef;
+}
+
+.box.box-green {
+  border-top-color: #00a65a;
+}
+
+.box.box-yellow {
+  border-top-color: #f39c12;
+}
+
+.box.box-red {
+  border-top-color: #dd4b39;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Custom Border
+----------------------------------------------------------------------------- */
+.bottom-border-aqua {
+  border-bottom-color: #00c0ef;
+  border-bottom-style: solid;
+  border-bottom-width: 3px
+}
+
+.bottom-border-primary {
+  border-bottom-color: #3c8dbc;
+  border-bottom-style: solid;
+  border-bottom-width: 3px
+}
+
+
+/* -----------------------------------------------------------------------------
+   Customized Tabs
+----------------------------------------------------------------------------- */
+.nav-tabs-custom {
+  background: transparent;
+}
+
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 10px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Customized Menu dropdown
+----------------------------------------------------------------------------- */
+.dropdown-menu {
+    max-height: 250px;
+    overflow-x: hidden;
+    box-shadow: 0px 3px 20px rgba(0,0,0,0.2);
+}
+
+
+/* -----------------------------------------------------------------------------
+   Default Table config
+----------------------------------------------------------------------------- */
+.table > tbody > tr > td {
+  padding:4px;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #FFFFD0;
+}
+
+.dataTables_info, .dataTables_paginate, .dataTables_length, .dataTables_filter {
+  color: #B0B0B0;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   Customized Full Calendar
+----------------------------------------------------------------------------- */
+.fc h2 {
+   font-size: 20px;
+}
+
+.fc-weekend {
+    background-color: #FFF0E0;
+}
+
+.fc-normaldays {
+    background-color: #FF0000;
+}
+
+.fc-sat {
+    background-color: #FFF0E0;
+}
+
+.fc-sun {
+    background-color: #FFF0E0;
+}
+
+.fc-resized-row { height: 26px !important; }
+
+.fc-transparent-border {
+    border-Color: transparent !important;
+}
+
+.tooltip-inner {
+    background-color: #606060;
+    color: White;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right: 5px solid #606060;
+}
+
+
+
+/* -----------------------------------------------------------------------------
+   Spin
+----------------------------------------------------------------------------- */
+.pa_semitransparent-panel {
+    position: absolute;
+    width:    100%; //calc (100% -40px);
+    height:   100%;
+    left: 0;
+    top: 0;
+    display:  block;
+
+    opacity:          0.8;
+    background-color: #fff;
+    z-index:          99;
+}
+
+.pa_spinner {
+    position:     absolute;
+    left:         0;
+    right:        0;
+    top:          20px;
+    margin-left:  auto;
+    margin-right: auto;
+    padding:      15px;
+    width:        200px;
+
+    background-color: #fff;
+    z-index:          100;
+}
+
