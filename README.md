@@ -1,5 +1,6 @@
 # Pi.Alert
-================================================================================
+--------------------------------------------------------------------------------
+
 WIFI / LAN intruder detector.
 
 Check the devices connected to your WIFI / LAN and alert you the unknown
@@ -9,7 +10,7 @@ devices. It also warns of the disconnection of "always connected" devices.
 JavaScript)*
 
 ## How it works
---------------------------------------------------------------------------------
+
 The system continuously searches the network for:
   - New devices
   - New connections (re-connections)
@@ -19,8 +20,8 @@ The system continuously searches the network for:
   - Changes in Internet IP address
 
 ## Scan Methods
---------------------------------------------------------------------------------
-Up to three scanning methods are used:
+  Up to three scanning methods are used:
+
   - **Method 1: arp-scan**. The arp-scan system utility is used to search
         for devices on the network using arp frames.
   - **Method 2: Pi-hole**. This method is optional and complementary to
@@ -33,7 +34,7 @@ Up to three scanning methods are used:
         that were not discovered by the previous methods.
 
 ## Componets
---------------------------------------------------------------------------------
+
 The system consists of two parts:
 
 - **Back**, in charge of:
@@ -50,12 +51,11 @@ The system consists of two parts:
 
 
 # Installation
-================================================================================
+--------------------------------------------------------------------------------
 Initially designed to run on a Raspberry PI, it can run on many other Linux
 distributions.
 
 ## Dependencies
---------------------------------------------------------------------------------
   - Lighttpd (probably works on other webservers / not tested)
   - arp-scan (Required for Scan Method 1)
   - Pi.hole (optional. Scan Method 2. Check devices doing DNS queries)
@@ -63,7 +63,6 @@ distributions.
   - IEEE HW Vendors Database (Necessary to identified HW vendor)
 
 ## Installation process
---------------------------------------------------------------------------------
 ```
 Pending explain the installation process
 - step 1
@@ -71,9 +70,8 @@ Pending explain the installation process
 ```
 
 ## Other useful info
-================================================================================
-### Powered by:
 --------------------------------------------------------------------------------
+### Powered by:
   - Python (Programming language for the Back)
   - PHP (Programming language for the Front-end)
   - JavaScript (Programming language for the Front-end)
@@ -87,10 +85,8 @@ Pending explain the installation process
   - dnsmasq (DHCP Server)
 
 ### License
---------------------------------------------------------------------------------
   GPL 3.0
   [Read more here](doc/LICENSE.txt)
 
 ### Contact
---------------------------------------------------------------------------------
   _pending..._
