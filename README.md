@@ -11,7 +11,7 @@ JavaScript)*
 
 ## How it works
 
-The system continuously searches the network for:
+The system continuously scan the network for:
   - New devices
   - New connections (re-connections)
   - Disconnections
@@ -33,7 +33,7 @@ The system continuously searches the network for:
         examines the DHCP leases (addresses asigned) to find active devices
         that were not discovered by the previous methods.
 
-## Componets
+## Components
 
 The system consists of two parts:
 
