@@ -23,7 +23,7 @@ Up to three scanning methods are used:
 ## Componets
 The system consists of two parts:
 
-- **Back**, In charge of:
+- **Back**, in charge of:
   - scanning the network searching connected devices using the scanning methods described
   - store the information in the DB
   - report the changes detected by e-mail
