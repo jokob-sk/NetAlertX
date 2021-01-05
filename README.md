@@ -1,5 +1,5 @@
 # Pi.Alert
---------------------------------------------------------------------------------
+<!--- ---------------------------------------------------------------------- -->
 
 WIFI / LAN intruder detector.
 
@@ -51,7 +51,7 @@ The system consists of two parts:
 
 
 # Installation
---------------------------------------------------------------------------------
+<!--- ---------------------------------------------------------------------- -->
 Initially designed to run on a Raspberry PI, it can run on many other Linux
 distributions.
 
@@ -69,8 +69,10 @@ Pending explain the installation process
 - step 2
 ```
 
+
 ## Other useful info
---------------------------------------------------------------------------------
+<!--- ---------------------------------------------------------------------- -->
+
 ### Powered by:
   - Python (Programming language for the Back)
   - PHP (Programming language for the Front-end)
@@ -89,4 +91,4 @@ Pending explain the installation process
   [Read more here](doc/LICENSE.txt)
 
 ### Contact
-  _pending..._
+  pi.alert.application@gmail.com
