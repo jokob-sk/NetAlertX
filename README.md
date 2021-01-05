@@ -1,10 +1,11 @@
 # Pi.Alert
-<!--- ---------------------------------------------------------------------- -->
+<!--- --------------------------------------------------------------------- --->
 
 WIFI / LAN intruder detector.
 
-Check the devices connected to your WIFI / LAN and alert you the unknown
-devices. It also warns of the disconnection of "always connected" devices.
+Scan the devices connected to your WIFI / LAN and alert you the connection of
+unknown devices. It also warns of the disconnection of "always connected"
+devices.
 
 *(Apologies for my english and my limited knowledge of Python, php and
 JavaScript)*
@@ -51,16 +52,16 @@ The system consists of two parts:
 
 
 # Installation
-<!--- ---------------------------------------------------------------------- -->
+<!--- --------------------------------------------------------------------- --->
 Initially designed to run on a Raspberry PI, it can run on many other Linux
 distributions.
 
 ## Dependencies
   - Lighttpd (probably works on other webservers / not tested)
-  - arp-scan (Required for Scan Method 1)
+  - arp-scan (required for Scan Method 1)
   - Pi.hole (optional. Scan Method 2. Check devices doing DNS queries)
   - dnsmasq (optional. Scan Method 3. Check devices using DHCP server)
-  - IEEE HW Vendors Database (Necessary to identified HW vendor)
+  - IEEE HW Vendors Database (necessary to identified Device vendor)
 
 ## Installation process
 ```
@@ -71,7 +72,7 @@ Pending explain the installation process
 
 
 ## Other useful info
-<!--- ---------------------------------------------------------------------- -->
+<!--- --------------------------------------------------------------------- --->
 
 ### Powered by:
   - Python (Programming language for the Back)
@@ -83,7 +84,7 @@ Pending explain the installation process
   - Sqlite (DB engine)
   - Lighttpd (Webserver)
   - arp-scan (Scan network using arp commands)
-  - Pi.hole (DNS Server)
+  - Pi.hole (DNS Server with Ad-block)
   - dnsmasq (DHCP Server)
 
 ### License
