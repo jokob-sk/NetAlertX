@@ -51,8 +51,10 @@ The system consists of two parts:
   - Manage de devices inventory and the characteristics
 
 <p float="left">
-  <img src="./doc/img/2_1_device_details.jpg" width="45%">
-  <img src="./doc/img/2_2_device_sessions.jpg" width="45%">
+  <img align="top" src="./doc/img/2_1_device_details.jpg" width="47%">
+  <img align="top" src="./doc/img/2_2_device_sessions.jpg" width="47%">
+  <img align="top" src="./doc/img/2_3_device_presence.jpg" width="47%">
+  <img align="top" src="./doc/img/3_presence.jpg" width="47%">
 </p>
 
 # Installation
