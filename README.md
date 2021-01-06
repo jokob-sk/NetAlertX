@@ -48,6 +48,9 @@ The system consists of two parts:
   - Display in a visual way all the information collected by the back
   - Manage de devices inventory and the characteristics
 
+![devices](./doc/img/1_devices.jpeg)
+
+
 <Image>
 
 
