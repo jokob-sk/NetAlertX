@@ -50,12 +50,10 @@ The system consists of two parts:
   - Display in a visual way all the information collected by the back
   - Manage de devices inventory and the characteristics
 
-<img src="./doc/img/2_1_device_details.jpg" width="40%">
-<img src="./doc/img/2_2_device_sessions.jpg" width="40%">
-
-
-<Image>
-
+<p float="left">
+  <img src="./doc/img/2_1_device_details.jpg" width="45%">
+  <img src="./doc/img/2_2_device_sessions.jpg" width="45%">
+</p>
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
