@@ -9,12 +9,12 @@ devices.
 
 ![Main screen][main]
 
-*(Apologies for my english and my limited knowledge of Python, php and
+*(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
 ## How it works
 
-The system continuously scan the network for:
+The system continuously scans the network for:
   - New devices
   - New connections (re-connections)
   - Disconnections
@@ -33,7 +33,7 @@ The system continuously scan the network for:
         detected by method 1.
   - **Method 3. dnsmasq**. This method is optional and complementary to the
         previous methods. If the DHCP server dnsmasq is active, Pi.Alert
-        examines the DHCP leases (addresses asigned) to find active devices
+        examines the DHCP leases (addresses assigned) to find active devices
         that were not discovered by the previous methods.
 
 ## Components
@@ -50,7 +50,7 @@ The system consists of two parts:
   - Manage the devices inventory and the characteristics
   - Display in a visual way all the information collected by the back
     - Sessions
-    - Conected devices
+    - Connected devices
     - Favourites
     - Events
     - Presence
@@ -59,9 +59,8 @@ The system consists of two parts:
     - IP
     - ...
 
-|       Sample        |       Screens       |
-| ------------------- | ------------------- |
 | ![Screen 1][screen1] | ![Screen 2][screen2] |
+| ------------------- | ------------------- |
 | ![Screen 3][screen3] | ![Screen 4][screen4] |
 
 
@@ -77,6 +76,15 @@ distributions.
   - dnsmasq (optional. Scan Method 3. Check devices using DHCP server)
   - IEEE HW Vendors Database (necessary to identified Device vendor)
 
+| Dependency               | Comments                                                 |
+| ------------------------ | -------------------------------------------------------- |
+| Lighttpd                 | Probably works on other webservers / not tested          |
+| arp-scan                 | Required for Scan Method 1                               |
+| Pi.hole                  | Optional. Scan Method 2. Check devices doing DNS queries |
+| dnsmasq                  | Optional. Scan Method 3. Check devices using DHCP server |
+| IEEE HW Vendors Database | Necessary to identified Device vendor                    |
+
+
 ## Installation process
 ```
 Pending explain the installation process
@@ -89,6 +97,20 @@ Pending explain the installation process
 <!--- --------------------------------------------------------------------- --->
 
 ### Powered by:
+| Product      | Objetive                                                 |
+| ------------ | -------------------------------------- |
+| Python       | Programming language for the Back      |
+| PHP          | Programming language for the Front-end |
+| JavaScript   | Programming language for the Front-end |
+| Bootstrap    | Front-end framework                    |
+| Admin.LTE    | Bootstrap template                     |
+| FullCalendar | Calendar component                     |
+| Sqlite       | DB engine                              |
+| Lighttpd     | Webserver                              |
+| arp-scan     | Scan network using arp commands        |
+| Pi.hole      | DNS Server with Ad-block               |
+| dnsmasq      | DHCP Server                            |
+
   - Python (Programming language for the Back)
   - PHP (Programming language for the Front-end)
   - JavaScript (Programming language for the Front-end)
