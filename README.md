@@ -47,6 +47,7 @@ The system consists of two parts:
   - Report the changes detected by e-mail
 
 - **Front**, a web frontal that allows:
+  - Manage the devices inventory and the characteristics
   - Display in a visual way all the information collected by the back
     - Sessions
     - Conected devices
@@ -57,7 +58,6 @@ The system consists of two parts:
     - Down alerts
     - IP
     - ...
-  - Manage the devices inventory and the characteristics
 
 |       Sample        |       Screens       |
 | ------------------- | ------------------- |
