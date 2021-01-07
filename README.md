@@ -13,7 +13,6 @@ devices.
 JavaScript)*
 
 ## How it works
-
 The system continuously scans the network for:
   - New devices
   - New connections (re-connections)
@@ -23,8 +22,7 @@ The system continuously scans the network for:
   - Changes in Internet IP address
 
 ## Scan Methods
-  Up to three scanning methods are used:
-
+Up to three scanning methods are used:
   - **Method 1: arp-scan**. The arp-scan system utility is used to search
         for devices on the network using arp frames.
   - **Method 2: Pi-hole**. This method is optional and complementary to
@@ -37,7 +35,6 @@ The system continuously scans the network for:
         that were not discovered by the previous methods.
 
 ## Components
-
 The system consists of two parts:
 
 - **Back**, in charge of:
@@ -59,9 +56,9 @@ The system consists of two parts:
     - IP
     - ...
 
-| ![Screen 1][screen1] | ![Screen 2][screen2] |
-| ------------------- | ------------------- |
-| ![Screen 3][screen3] | ![Screen 4][screen4] |
+  | ![Screen 1][screen1] | ![Screen 2][screen2] |
+  | ------------------- | ------------------- |
+  | ![Screen 3][screen3] | ![Screen 4][screen4] |
 
 
 # Installation
@@ -70,20 +67,13 @@ Initially designed to run on a Raspberry PI, it can run on many other Linux
 distributions.
 
 ## Dependencies
-  - Lighttpd (probably works on other webservers / not tested)
-  - arp-scan (required for Scan Method 1)
-  - Pi.hole (optional. Scan Method 2. Check devices doing DNS queries)
-  - dnsmasq (optional. Scan Method 3. Check devices using DHCP server)
-  - IEEE HW Vendors Database (necessary to identified Device vendor)
-
-| Dependency               | Comments                                                 |
-| ------------------------ | -------------------------------------------------------- |
-| Lighttpd                 | Probably works on other webservers / not tested          |
-| arp-scan                 | Required for Scan Method 1                               |
-| Pi.hole                  | Optional. Scan Method 2. Check devices doing DNS queries |
-| dnsmasq                  | Optional. Scan Method 3. Check devices using DHCP server |
-| IEEE HW Vendors Database | Necessary to identified Device vendor                    |
-
+  | Dependency               | Comments                                                 |
+  | ------------------------ | -------------------------------------------------------- |
+  | Lighttpd                 | Probably works on other webservers / not tested          |
+  | arp-scan                 | Required for Scan Method 1                               |
+  | Pi.hole                  | Optional. Scan Method 2. Check devices doing DNS queries |
+  | dnsmasq                  | Optional. Scan Method 3. Check devices using DHCP server |
+  | IEEE HW Vendors Database | Necessary to identified Device vendor                    |
 
 ## Installation process
 ```
@@ -97,31 +87,19 @@ Pending explain the installation process
 <!--- --------------------------------------------------------------------- --->
 
 ### Powered by:
-| Product      | Objetive                                                 |
-| ------------ | -------------------------------------- |
-| Python       | Programming language for the Back      |
-| PHP          | Programming language for the Front-end |
-| JavaScript   | Programming language for the Front-end |
-| Bootstrap    | Front-end framework                    |
-| Admin.LTE    | Bootstrap template                     |
-| FullCalendar | Calendar component                     |
-| Sqlite       | DB engine                              |
-| Lighttpd     | Webserver                              |
-| arp-scan     | Scan network using arp commands        |
-| Pi.hole      | DNS Server with Ad-block               |
-| dnsmasq      | DHCP Server                            |
-
-  - Python (Programming language for the Back)
-  - PHP (Programming language for the Front-end)
-  - JavaScript (Programming language for the Front-end)
-  - Bootstrap (Front-end framework)
-  - Admin.LTE (Bootstrap template)
-  - FullCalendar (Calendar component)
-  - Sqlite (DB engine)
-  - Lighttpd (Webserver)
-  - arp-scan (Scan network using arp commands)
-  - Pi.hole (DNS Server with Ad-block)
-  - dnsmasq (DHCP Server)
+  | Product      | Objetive                               |
+  | ------------ | -------------------------------------- |
+  | Python       | Programming language for the Back      |
+  | PHP          | Programming language for the Front-end |
+  | JavaScript   | Programming language for the Front-end |
+  | Bootstrap    | Front-end framework                    |
+  | Admin.LTE    | Bootstrap template                     |
+  | FullCalendar | Calendar component                     |
+  | Sqlite       | DB engine                              |
+  | Lighttpd     | Webserver                              |
+  | arp-scan     | Scan network using arp commands        |
+  | Pi.hole      | DNS Server with Ad-block               |
+  | dnsmasq      | DHCP Server                            |
 
 ### License
   GPL 3.0
@@ -131,6 +109,7 @@ Pending explain the installation process
   pi.alert.application@gmail.com
 
 
+<!--- --------------------------------------------------------------------- --->
 [main]:    ./doc/img/1_devices.jpg           "Main screen"
 [screen1]: ./doc/img/2_1_device_details.jpg  "Screen 1"
 [screen2]: ./doc/img/2_2_device_sessions.jpg "Screen 2"
