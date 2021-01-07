@@ -59,6 +59,7 @@ The system consists of two parts:
     - ...
   - Manage the devices inventory and the characteristics
 
+| Sample | Screens |
 | ------------- | ------------- |
 | ![screen21](./doc/img/2_1_device_details.jpg)       | ![screen22](./doc/img/2_2_device_sessions.jpg) |
 | ![screen23](./doc/img/2_3_device_presence.jpg.jpg)  | ![screen3](./doc/img/3_presence.jpg)           |
