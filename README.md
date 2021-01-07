@@ -48,7 +48,21 @@ The system consists of two parts:
 
 - **Front**, a web frontal that allows:
   - Display in a visual way all the information collected by the back
-  - Manage de devices inventory and the characteristics
+    - Sessions
+    - Conected devices
+    - Favourites
+    - Events
+    - Presence
+    - Concurrent devices
+    - Down alerts
+    - IP
+    - ...
+  - Manage the devices inventory and the characteristics
+Colons can be used to align columns.
+
+| ------------- | ------------- |
+| ![screen21](./doc/img/2_1_device_details.jpg)       | ![screen22](./doc/img/2_2_device_sessions.jpg) |
+| ![screen23](./doc/img/2_3_device_presence.jpg.jpg)  | ![screen3](./doc/img/3_presence.jpg)           |
 
 <p float="left">
   <img align="top" src="./doc/img/2_1_device_details.jpg" width="47%">
