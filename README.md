@@ -4,8 +4,7 @@
 WIFI / LAN intruder detector.
 
 Scan the devices connected to your WIFI / LAN and alert you the connection of
-unknown devices. It also warns of the disconnection of "always connected"
-devices.
+unknown devices. It also warns the disconnection of "always connected" devices.
 
 ![Main screen][main]
 
@@ -17,9 +16,9 @@ The system continuously scans the network for:
   - New devices
   - New connections (re-connections)
   - Disconnections
-  - IP changes
   - "Always Connected" devices down
-  - Changes in Internet IP address
+  - Devices IP changes
+  - Internet IP address changes
 
 ## Scan Methods
 Up to three scanning methods are used:
@@ -32,7 +31,7 @@ Up to three scanning methods are used:
   - **Method 3. dnsmasq**. This method is optional and complementary to the
         previous methods. If the DHCP server dnsmasq is active, Pi.Alert
         examines the DHCP leases (addresses assigned) to find active devices
-        that were not discovered by the previous methods.
+        that were not discovered by the other methods.
 
 ## Components
 The system consists of two parts:
@@ -48,12 +47,12 @@ The system consists of two parts:
   - Display in a visual way all the information collected by the back
     - Sessions
     - Connected devices
-    - Favourites
+    - Favorites
     - Events
     - Presence
     - Concurrent devices
     - Down alerts
-    - IP
+    - IP's
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -63,8 +62,8 @@ The system consists of two parts:
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
-Initially designed to run on a Raspberry PI, it can run on many other Linux
-distributions.
+Initially designed to run on a Raspberry PI, probably it can run on many other
+Linux distributions.
 
 ## Dependencies
   | Dependency               | Comments                                                 |
