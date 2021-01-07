@@ -58,7 +58,6 @@ The system consists of two parts:
     - IP
     - ...
   - Manage the devices inventory and the characteristics
-Colons can be used to align columns.
 
 | ------------- | ------------- |
 | ![screen21](./doc/img/2_1_device_details.jpg)       | ![screen22](./doc/img/2_2_device_sessions.jpg) |
