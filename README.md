@@ -7,7 +7,7 @@ Scan the devices connected to your WIFI / LAN and alert you the connection of
 unknown devices. It also warns of the disconnection of "always connected"
 devices.
 
-![devices](./doc/img/1_devices.jpg)
+![main screen][main]
 
 *(Apologies for my english and my limited knowledge of Python, php and
 JavaScript)*
@@ -59,17 +59,11 @@ The system consists of two parts:
     - ...
   - Manage the devices inventory and the characteristics
 
-| Sample | Screens |
-| ------------- | ------------- |
-| ![screen21](./doc/img/2_1_device_details.jpg)       | ![screen22](./doc/img/2_2_device_sessions.jpg) |
-| ![screen23](./doc/img/2_3_device_presence.jpg.jpg)  | ![screen3](./doc/img/3_presence.jpg)           |
+|       Sample        |       Screens       |
+| ------------------- | ------------------- |
+| ![screen1][screen1] | ![screen2][screen4] |
+| ![screen3][screen3] | ![screen4][screen4] |
 
-<p float="left">
-  <img align="top" src="./doc/img/2_1_device_details.jpg" width="47%">
-  <img align="top" src="./doc/img/2_2_device_sessions.jpg" width="47%">
-  <img align="top" src="./doc/img/2_3_device_presence.jpg" width="47%">
-  <img align="top" src="./doc/img/3_presence.jpg" width="47%">
-</p>
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
@@ -113,3 +107,10 @@ Pending explain the installation process
 
 ### Contact
   pi.alert.application@gmail.com
+
+
+![main](./doc/img/1_devices.jpg)
+![screen1](./doc/img/2_1_device_details.jpg)
+![screen2](./doc/img/2_2_device_sessions.jpg)
+![screen3](./doc/img/2_3_device_presence.jpg)
+![screen4](./doc/img/3_presence.jpg)
