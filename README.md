@@ -42,6 +42,9 @@ The system consists of two parts:
   - Store the information in the DB
   - Report the changes detected by e-mail
 
+![Report][report]
+
+
 - **Front**, a web frontal that allows:
   - Manage the devices inventory and the characteristics
   - Display in a visual way all the information collected by the back
@@ -114,3 +117,4 @@ Pending explain the installation process
 [screen2]: ./doc/img/2_2_device_sessions.jpg "Screen 2"
 [screen3]: ./doc/img/2_3_device_presence.jpg "Screen 3"
 [screen4]: ./doc/img/3_presence.jpg          "Screen 4"
+[report]:  ./doc/img/4_report.jpg            "Report sample"
