@@ -3,6 +3,8 @@
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
+Stimated time: 20'
+
 ### Dependencies
   | Dependency               | Comments                                                 |
   | ------------------------ | -------------------------------------------------------- |
