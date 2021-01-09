@@ -3,7 +3,7 @@
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-## Dependencies
+### Dependencies
   | Dependency               | Comments                                                 |
   | ------------------------ | -------------------------------------------------------- |
   | Lighttpd                 | Probably works on other webservers / not tested          |
@@ -33,7 +33,7 @@ Linux distributions.
 5 - Change de default password
   - passwd
 
-6 - Set the casic configuration
+6 - Setup the basic configuration
 ```
   sudo raspi-config
 ```
@@ -88,7 +88,7 @@ Linux distributions.
   - Linux: shell -> sudo dhclient -r; sudo dhclient
   - Mac: Apple menu -> System Preferences -> Network -> select the network -> Advanced -> TCP/IP -> Renew DHCP Lease
 
-## arp-scan & Pythom
+## arp-scan & Python
 <!--- --------------------------------------------------------------------- --->
 1 - Install arp-scan utility and test
 ```
@@ -109,90 +109,76 @@ Linux distributions.
 
 ## Pi.Alert
 <!--- --------------------------------------------------------------------- --->
-Download Pi.Alert and uncmompress
+1- Download Pi.Alert and uncmompress
+```
     curl -LO https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_latest.tar
     tar xvf pialert_latest.tar
     rm pialert_latest.tar
+```
 
-Front
+2 - Public the front portal
+```
     sudo ln -s /home/pi/pialert/front /var/www/html/pialert
+```
 
-Update lighttp config
+3 - Update lighttp config
+```
     sudo sh -c "printf '\n\n\$HTTP[\"host\"] == \"pi.alert\" {\n  server.document-root = \"/var/www/html/pialert/\"\n}\n' >> /etc/lighttpd/external.conf"
-
-Restart web server
     sudo /etc/init.d/lighttpd restart
+```
 
-Config gmail security if you want to use email reporting with gmail
-    Go to your Google Account https://myaccount.google.com/
-    On the left navigation panel, click Security
-    On the bottom of the page, in the Less secure app access panel, click Turn on access
-    Click Save button
+4 - If you want to use email reporting with gmail
+  - Go to your Google Account https://myaccount.google.com/
+  - On the left navigation panel, click Security
+  - On the bottom of the page, in the Less secure app access panel, click Turn on access
+  - Click Save button
 
-Config Pialert parameters
+5 - Config Pialert parameters
+```
     nano  ~/pialert/back/pialert.conf
-
-    if you want to use email reporting, configure this parameters
+```
+  - if you want to use email reporting, configure this parameters
+```
         REPORT_MAIL     = True
         SMTP_USER       = 'user@gmail.com'
         SMTP_PASS       = 'password'
         REPORT_TO       = 'user@gmail.com'
+```
 
-    if you want to update yout Dynamic DNS, configure this parameters
+  - if you want to update yout Dynamic DNS, configure this parameters
+```
         DDNS_ACTIVE     = True
         DDNS_DOMAIN     = 'your_domain.freeddns.org'
         DDNS_USER       = 'dynu_user'
         DDNS_PASSWORD   = 'A0000000B0000000C0000000D0000000'
         DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'
+```
 
-    if you have installed Pi.hole and DHCP, activate this parameters
+  - if you have installed Pi.hole and DHCP, activate this parameters
+```
         PIHOLE_ACTIVE   = True
         DHCP_ACTIVE     = True
+```
 
-Update vendors DB
+6 - Update vendors DB
+```
     python ~/pialert/back/pialert.py update_vendors
+```
 
-Test Pi.Alert Scan
+7 - Test Pi.Alert Scan
+```
     python ~/pialert/back/pialert.py internet_IP
     python ~/pialert/back/pialert.py 1
+```
 
-Add crontab jobs
+8 - Add crontab jobs
+```
     (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
-
-
-PIHOLE UNKNOWN
-DYNU ACTIVE
-APPLE
-TAR nuevo
-    conf
-    py
-    cron
-
-
-
-
-
-
-
-
-
-
-
-
 ```
-Pending explain the installation process
-- step 1
-- step 2
-```
-
-
 
 ### License
   GPL 3.0
-  [Read more here](doc/LICENSE.txt)
+  [Read more here](LICENSE.txt)
 
 ### Contact
   pi.alert.application@gmail.com
-
-
-
