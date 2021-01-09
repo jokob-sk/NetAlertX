@@ -19,19 +19,23 @@ Linux distributions.
 <!--- --------------------------------------------------------------------- --->
 1 - Install 'Raspberry Pi OS'
   - Instructions https://www.raspberrypi.org/documentation/installation/installing-images/
-  - Lite version (without Descktop) is enough for Pi.Alert
+  - *Lite version (without Descktop) is enough for Pi.Alert*
 
-2 -Activate ssh
-  - Create a empty 'ssh' file in the boot partition of the SD
+2 - Activate ssh
+  - Create a empty file with name 'ssh' in the boot partition of the SD
 
 3 - Start the raspberry
 
 4 - Login to the system with pi user
-  - user: pi
-  - password: raspberry
+```
+  user: pi
+  password: raspberry
+```
 
-5 - Change de default password
-  - passwd
+5 - Change de default password of pi user
+```
+  passwd
+```
 
 6 - Setup the basic configuration
 ```
@@ -60,8 +64,8 @@ Linux distributions.
 ```
     curl -sSL https://install.pi-hole.net | bash
 ```
-  - Select "Install web admin interface"
-  - Select "Install web server lighttpd"
+  - Mark "Install web admin interface"
+  - Mark "Install web server lighttpd"
 
 4 - Configure Pi-hole admin password
 ```
@@ -70,7 +74,7 @@ Linux distributions.
 
 5 - Connect to web admin panel
   - http://192.168.1.x/admin/
-  - (replace the 192.168.1.x with your Raspberry IP)
+  - (*replace the 192.168.1.x with your Raspberry IP*)
 
 6 - Activate DHCP server
   - Pi-hole -> Settings -> DHCP -> Mark "DHCP server enabled"
@@ -78,12 +82,11 @@ Linux distributions.
 7 - Add pi.alert DNS Record
   - Pi-hole -> Local DNS -> DNS Records -> Add new domain /IP
     - pi.alert    192.168.1.x
-    - (replace the 192.168.1.x with your Raspberry IP)
+    - (*replace the 192.168.1.x with your Raspberry IP*)
 
-8 - Deactivate your current DHCP Server
-  - Normaly at your router or AP
+8 - Deactivate your current DHCP Server (*Normaly at your router or AP*)
 
-9 - Renew your computer IP to unsure you are using new DHCP Server and DNS
+9 - Renew your computer IP to unsure you are using the new DHCP and DNS server
   - Windows: cmd -> ipconfig /renew
   - Linux: shell -> sudo dhclient -r; sudo dhclient
   - Mac: Apple menu -> System Preferences -> Network -> select the network -> Advanced -> TCP/IP -> Renew DHCP Lease
@@ -111,20 +114,20 @@ Linux distributions.
 <!--- --------------------------------------------------------------------- --->
 1- Download Pi.Alert and uncmompress
 ```
-    curl -LO https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_latest.tar
-    tar xvf pialert_latest.tar
-    rm pialert_latest.tar
+  curl -LO https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_latest.tar
+  tar xvf pialert_latest.tar
+  rm pialert_latest.tar
 ```
 
 2 - Public the front portal
 ```
-    sudo ln -s /home/pi/pialert/front /var/www/html/pialert
+  sudo ln -s /home/pi/pialert/front /var/www/html/pialert
 ```
 
 3 - Update lighttp config
 ```
-    sudo sh -c "printf '\n\n\$HTTP[\"host\"] == \"pi.alert\" {\n  server.document-root = \"/var/www/html/pialert/\"\n}\n' >> /etc/lighttpd/external.conf"
-    sudo /etc/init.d/lighttpd restart
+  sudo sh -c "printf '\n\n\$HTTP[\"host\"] == \"pi.alert\" {\n  server.document-root = \"/var/www/html/pialert/\"\n}\n' >> /etc/lighttpd/external.conf"
+  sudo /etc/init.d/lighttpd restart
 ```
 
 4 - If you want to use email reporting with gmail
@@ -135,29 +138,29 @@ Linux distributions.
 
 5 - Config Pialert parameters
 ```
-    nano  ~/pialert/back/pialert.conf
+  nano  ~/pialert/back/pialert.conf
 ```
   - if you want to use email reporting, configure this parameters
 ```
-        REPORT_MAIL     = True
-        SMTP_USER       = 'user@gmail.com'
-        SMTP_PASS       = 'password'
-        REPORT_TO       = 'user@gmail.com'
+  REPORT_MAIL     = True
+  SMTP_USER       = 'user@gmail.com'
+  SMTP_PASS       = 'password'
+  REPORT_TO       = 'user@gmail.com'
 ```
 
   - if you want to update yout Dynamic DNS, configure this parameters
 ```
-        DDNS_ACTIVE     = True
-        DDNS_DOMAIN     = 'your_domain.freeddns.org'
-        DDNS_USER       = 'dynu_user'
-        DDNS_PASSWORD   = 'A0000000B0000000C0000000D0000000'
-        DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'
+  DDNS_ACTIVE     = True
+  DDNS_DOMAIN     = 'your_domain.freeddns.org'
+  DDNS_USER       = 'dynu_user'
+  DDNS_PASSWORD   = 'A0000000B0000000C0000000D0000000'
+  DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'
 ```
 
   - if you have installed Pi.hole and DHCP, activate this parameters
 ```
-        PIHOLE_ACTIVE   = True
-        DHCP_ACTIVE     = True
+  PIHOLE_ACTIVE   = True
+  DHCP_ACTIVE     = True
 ```
 
 6 - Update vendors DB
@@ -175,6 +178,9 @@ Linux distributions.
 ```
     (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
+
+9 - Use admin panel to configure the devices
+  - http://pi.akert/
 
 ### License
   GPL 3.0
