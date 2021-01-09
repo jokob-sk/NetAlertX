@@ -68,21 +68,7 @@ The system consists of two parts:
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-## Dependencies
-  | Dependency               | Comments                                                 |
-  | ------------------------ | -------------------------------------------------------- |
-  | Lighttpd                 | Probably works on other webservers / not tested          |
-  | arp-scan                 | Required for Scan Method 1                               |
-  | Pi.hole                  | Optional. Scan Method 2. Check devices doing DNS queries |
-  | dnsmasq                  | Optional. Scan Method 3. Check devices using DHCP server |
-  | IEEE HW Vendors Database | Necessary to identified Device vendor                    |
-
-## Installation process
-```
-Pending explain the installation process
-- step 1
-- step 2
-```
+  [Instructions](doc/INSTALL.md)
 
 
 ## Other useful info
