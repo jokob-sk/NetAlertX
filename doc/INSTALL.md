@@ -165,18 +165,18 @@ Linux distributions.
 
 6 - Update vendors DB
 ```
-    python ~/pialert/back/pialert.py update_vendors
+  python ~/pialert/back/pialert.py update_vendors
 ```
 
 7 - Test Pi.Alert Scan
 ```
-    python ~/pialert/back/pialert.py internet_IP
-    python ~/pialert/back/pialert.py 1
+  python ~/pialert/back/pialert.py internet_IP
+  python ~/pialert/back/pialert.py 1
 ```
 
 8 - Add crontab jobs
 ```
-    (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
+  (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
 
 9 - Use admin panel to configure the devices
