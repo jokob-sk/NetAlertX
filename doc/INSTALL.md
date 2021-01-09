@@ -180,7 +180,7 @@ Linux distributions.
 ```
 
 9 - Use admin panel to configure the devices
-  - http://pi.akert/
+  - http://pi.alert/
 
 ### License
   GPL 3.0
