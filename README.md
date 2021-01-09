@@ -76,9 +76,9 @@ Linux distributions.
 To edit device information:
   - Select "Devices" in the menu on the left of the screen
   - Find the device you want to edit in the central table
-  - Access the device by clicking on the name or status
-  - Activate the "Details" tab of the device
-  - edit device data
+  - Go to the device page by clicking on the device name or status
+  - Press "Details" tab of the device
+  - Edit the device data
   - Press the "Save" button
 
 ### Main Info
@@ -103,18 +103,19 @@ To edit device information:
       same IP
 
 ### Events & Alerts config
-  - **Scan Cycle**: Select the scan cycle: 0, 1', 15'. Some devices do not
-      respond to all ARP packets, for this cases is better to use a 15' cycle.
-      ***For apple devices I recommend using 15' cycle***
+  - **Scan Cycle**: Select the scan cycle: 0, 1', 15'
+    - Some devices do not respond to all ARP packets, for this cases is better
+      to use a 15' cycle.
+    - **For Apple devices I recommend using 15' cycle**
   - **Alert All Events**: Send a notification in each event (connection,
       disconnection, IP Changed, ...)
   - **Alert Down**: Send a notification when the device is down
-      *(userful with "always connected" devices: Router, AP, Camera, Alexa,
+    - *(Userful with "always connected" devices: Router, AP, Camera, Alexa,
       ...)*
   - **Skip repeated notifications during**: Do not send more than one
       notification to this device for X hours
-      *(useful to avoid notification saturation on devices that frequently
-      connects and disconnects)
+    - *(Useful to avoid notification saturation on devices that frequently
+      connects and disconnects)*
 
 
 ## Other useful info
