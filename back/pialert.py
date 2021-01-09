@@ -126,23 +126,26 @@ def check_internet_IP ():
     closeDB()
 
     # Get Dynamic DNS IP
-    print ('\nRetrieving Dynamic DNS IP...')
-    dns_IP = get_dynamic_DNS_IP()
+    if DDNS_ACTIVE :
+        print ('\nRetrieving Dynamic DNS IP...')
+        dns_IP = get_dynamic_DNS_IP()
 
-    # Check Dynamic DNS IP
-    if dns_IP == "" :
-        print ('    Error retrieving Dynamic DNS IP')
-        print ('    Exiting...\n')
-        return 1
-    print ('   ', dns_IP)
+        # Check Dynamic DNS IP
+        if dns_IP == "" :
+            print ('    Error retrieving Dynamic DNS IP')
+            print ('    Exiting...\n')
+            return 1
+        print ('   ', dns_IP)
 
-    # Check DNS Change
-    if dns_IP != internet_IP :
-        print ('    Updating Dynamic DNS IP...')
-        message = set_dynamic_DNS_IP ()
-        print ('       ', message)
+        # Check DNS Change
+        if dns_IP != internet_IP :
+            print ('    Updating Dynamic DNS IP...')
+            message = set_dynamic_DNS_IP ()
+            print ('       ', message)
+        else :
+            print ('    No changes to perform')
     else :
-        print ('    No changes to perform')
+        print ('\nSkipping Dynamic DNS update...')
 
     # OK
     return 0
@@ -468,6 +471,8 @@ def copy_pihole_network ():
                     FROM PH.network
                     WHERE hwaddr NOT LIKE 'ip-%'
                       AND hwaddr <> '00:00:00:00:00:00' """)
+    sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
+                    WHERE PH_Name IS NULL OR PH_Name = '' """)
     # DEBUG
         # print (sql.rowcount)
 
