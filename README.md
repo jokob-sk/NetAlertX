@@ -68,13 +68,13 @@ The system consists of two parts:
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-  [Installation instructions](doc/INSTALL.md)
+  - [Installation instructions](doc/INSTALL.md)
 
 
 ## Device Management
 <!--- --------------------------------------------------------------------- --->
 
-  [Device Management instructions](doc/DEVICE_MANAGEMENT.md)
+  - [Device Management instructions](doc/DEVICE_MANAGEMENT.md)
 
 
 ## Other useful info
