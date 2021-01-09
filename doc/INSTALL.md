@@ -6,13 +6,13 @@ Linux distributions.
 Stimated time: 20'
 
 ### Dependencies
-  | Dependency               | Comments                                                 |
-  | ------------------------ | -------------------------------------------------------- |
-  | Lighttpd                 | Probably works on other webservers / not tested          |
-  | arp-scan                 | Required for Scan Method 1                               |
-  | Pi.hole                  | Optional. Scan Method 2. Check devices doing DNS queries |
-  | dnsmasq                  | Optional. Scan Method 3. Check devices using DHCP server |
-  | IEEE HW Vendors Database | Necessary to identified Device vendor                    |
+  | Dependency | Comments                                                 |
+  | ---------- | -------------------------------------------------------- |
+  | Lighttpd   | Probably works on other webservers / not tested          |
+  | arp-scan   | Required for Scan Method 1                               |
+  | Pi.hole    | Optional. Scan Method 2. Check devices doing DNS queries |
+  | dnsmasq    | Optional. Scan Method 3. Check devices using DHCP server |
+  | IEEE HW DB | Necessary to identified Device vendor                    |
 
 # Installation process
 <!--- --------------------------------------------------------------------- --->
@@ -91,7 +91,7 @@ Stimated time: 20'
 9 - Renew your computer IP to unsure you are using the new DHCP and DNS server
   - Windows: cmd -> ipconfig /renew
   - Linux: shell -> sudo dhclient -r; sudo dhclient
-  - Mac: Apple menu -> System Preferences -> Network -> select the network -> Advanced -> TCP/IP -> Renew DHCP Lease
+  - Mac: Apple menu -> System Preferences -> Network -> Select the network -> Advanced -> TCP/IP -> Renew DHCP Lease
 
 ## arp-scan & Python
 <!--- --------------------------------------------------------------------- --->
