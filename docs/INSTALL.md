@@ -91,7 +91,8 @@ Stimated time: 20'
 9 - Renew your computer IP to unsure you are using the new DHCP and DNS server
   - Windows: cmd -> ipconfig /renew
   - Linux: shell -> sudo dhclient -r; sudo dhclient
-  - Mac: Apple menu -> System Preferences -> Network -> Select the network -> Advanced -> TCP/IP -> Renew DHCP Lease
+  - Mac: Apple menu -> System Preferences -> Network -> Select the network ->
+    Advanced -> TCP/IP -> Renew DHCP Lease
 
 ## arp-scan & Python
 <!--- --------------------------------------------------------------------- --->
@@ -135,7 +136,8 @@ Stimated time: 20'
 4 - If you want to use email reporting with gmail
   - Go to your Google Account https://myaccount.google.com/
   - On the left navigation panel, click Security
-  - On the bottom of the page, in the Less secure app access panel, click Turn on access
+  - On the bottom of the page, in the Less secure app access panel,
+    click Turn on access
   - Click Save button
 
 5 - Config Pialert parameters
@@ -188,7 +190,7 @@ Stimated time: 20'
 ## Device Management
 <!--- --------------------------------------------------------------------- --->
 
-  - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
+  - [Device Management instructions](./DEVICE_MANAGEMENT.md)
 
 
 ### License
