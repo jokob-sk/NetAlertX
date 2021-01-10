@@ -184,6 +184,13 @@ Stimated time: 20'
 9 - Use admin panel to configure the devices
   - http://pi.alert/
 
+
+## Device Management
+<!--- --------------------------------------------------------------------- --->
+
+  - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
+
+
 ### License
   GPL 3.0
   [Read more here](LICENSE.txt)

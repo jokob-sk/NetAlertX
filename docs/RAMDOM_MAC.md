@@ -29,5 +29,5 @@ decides to change the MAC).
   
 <!--- --------------------------------------------------------------------- --->
 [ios]: https://9to5mac.com/wp-content/uploads/sites/6/2020/08/how-to-use-private-wifi-mac-address-iphone-ipad.png?resize=2048,1009 "ios"
-[Android]: img/android_random_mac.png "Android"
+[Android]: ./img/android_random_mac.jpg "Android"
 
