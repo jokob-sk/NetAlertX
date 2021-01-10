@@ -27,6 +27,17 @@ decides to change the MAC).
   - [How to Disable MAC Randomization in Android 10](https://support.boingo.com/s/article/How-to-Disable-MAC-Randomization-in-Android-10-Android-Q)
   - [How do I disable random Wi-Fi MAC address on Android 10](https://support.plume.com/hc/en-gb/articles/360052070714-How-do-I-disable-random-Wi-Fi-MAC-address-on-Android-10-)
   
+
+### License
+  GPL 3.0
+  [Read more here](LICENSE.txt)
+
+### Contact
+  pi.alert.application@gmail.com
+  
+  ***Suggestions and comments are welcome***
+
+
 <!--- --------------------------------------------------------------------- --->
 [ios]: https://9to5mac.com/wp-content/uploads/sites/6/2020/08/how-to-use-private-wifi-mac-address-iphone-ipad.png?resize=2048,1009 "ios"
 [Android]: ./img/android_random_mac.jpg "Android"
