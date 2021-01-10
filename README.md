@@ -68,13 +68,13 @@ The system consists of two parts:
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-  - [Installation instructions](doc/INSTALL.md)
+  - [Installation instructions](docs/INSTALL.md)
 
 
 ## Device Management
 <!--- --------------------------------------------------------------------- --->
 
-  - [Device Management instructions](doc/DEVICE_MANAGEMENT.md)
+  - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
 
 
 ## Other useful info
@@ -97,7 +97,7 @@ Linux distributions.
 
 ### License
   GPL 3.0
-  [Read more here](doc/LICENSE.txt)
+  [Read more here](docs/LICENSE.txt)
 
 ### Contact
   pi.alert.application@gmail.com
@@ -106,11 +106,11 @@ Linux distributions.
 
 
 <!--- --------------------------------------------------------------------- --->
-[main]:    ./doc/img/1_devices.jpg           "Main screen"
-[screen1]: ./doc/img/2_1_device_details.jpg  "Screen 1"
-[screen2]: ./doc/img/2_2_device_sessions.jpg "Screen 2"
-[screen3]: ./doc/img/2_3_device_presence.jpg "Screen 3"
-[screen4]: ./doc/img/3_presence.jpg          "Screen 4"
-[report1]: ./doc/img/4_report_1.jpg          "Report sample 1"
-[report2]: ./doc/img/4_report_2.jpg          "Report sample 2"
+[main]:    ./docs/img/1_devices.jpg           "Main screen"
+[screen1]: ./docs/img/2_1_device_details.jpg  "Screen 1"
+[screen2]: ./docs/img/2_2_device_sessions.jpg "Screen 2"
+[screen3]: ./docs/img/2_3_device_presence.jpg "Screen 3"
+[screen4]: ./docs/img/3_presence.jpg          "Screen 4"
+[report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
+[report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
 
