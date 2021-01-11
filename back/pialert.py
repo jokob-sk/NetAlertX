@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.51  /  2021-01-11
+# Pi.Alert v2.52  /  2021-01-11
 # Puche 2020
 # GNU GPLv3
 
@@ -645,11 +645,12 @@ def create_new_devices ():
 
     # Pi-hole - Insert events for new devices
     # NOT STRICYLY NECESARY (Devices can be created through Current_Scan)
+    # Bugfix #2 - Pi-hole devices w/o IP
     print_log ('New devices - 3 Pi-hole Events')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT PH_MAC, PH_IP, ?, 'New Device',
+                    SELECT PH_MAC, IFNULL (PH_IP,'-'), ?, 'New Device',
                         '(Pi-Hole) ' || PH_Vendor, 1
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
@@ -657,13 +658,14 @@ def create_new_devices ():
                     (startTime, ) ) 
 
     # Pi-hole - Create New Devices
+    # Bugfix #2 - Pi-hole devices w/o IP
     print_log ('New devices - 4 Pi-hole Create devices')
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
                         dev_PresentLastScan)
-                    SELECT PH_MAC, PH_Name, PH_Vendor, PH_IP, ?, ?,
-                        1, 1, 0, 1
+                    SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
+                        ?, ?, 1, 1, 0, 1
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """,
