@@ -183,7 +183,7 @@ Stimated time: 20'
   (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
 
-9 - Add permissions to the DB to the web-server user
+9 - Add DB permissions to the web-server user
 ```
   sudo chgrp -R www-data ~/pialert/db
   chmod -R 770 ~/pialert/db
