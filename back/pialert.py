@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.50  /  2020-12-30
+# Pi.Alert v2.51  /  2021-01-11
 # Puche 2020
 # GNU GPLv3
 
@@ -486,10 +486,17 @@ def read_DHCP_leases ():
         return    
             
     # Read DHCP Leases
-    with open(DHCP_LEASES) as f:
-        reader = csv.reader(f, delimiter=' ')
-        data = [(col1, col2, col3, col4, col5)
-                for col1, col2, col3, col4, col5 in reader]
+    # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
+    data = []
+    with open(DHCP_LEASES, 'r') as f:
+        for line in f:
+            row = line.rstrip().split()
+            if len(row) == 5 :
+                data.append (row)
+    # with open(DHCP_LEASES) as f:
+    #    reader = csv.reader(f, delimiter=' ')
+    #    data = [(col1, col2, col3, col4, col5)
+    #            for col1, col2, col3, col4, col5 in reader]
 
     # Insert into PiAlert table
     sql.execute ("DELETE FROM DHCP_Leases")

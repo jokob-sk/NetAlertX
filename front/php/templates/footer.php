@@ -1,10 +1,10 @@
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- Default to the left -->
-    &copy; 2020 Puche
+    &copy; 2021 Puche
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-      Pi.alert&nbsp&nbsp2.50&nbsp&nbsp<small>(2019-12-30)</small>
+      Pi.alert&nbsp&nbsp2.51&nbsp&nbsp<small>(2021-01-11)</small>
     </div>
   </footer>
 
