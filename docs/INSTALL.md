@@ -183,7 +183,13 @@ Stimated time: 20'
   (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
 
-9 - Use admin panel to configure the devices
+9 - Add permissions to the DB to the web-server user
+```
+  sudo chgrp -R www-data ~/pialert/db
+  chmod -R 770 ~/pialert/db
+```
+
+10 - Use admin panel to configure the devices
   - http://pi.alert/
 
 
