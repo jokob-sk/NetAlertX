@@ -28,7 +28,10 @@ import csv
 # CONFIG CONSTANTS
 #===============================================================================
 PIALERT_PATH = os.path.dirname(os.path.abspath(__file__))
-execfile (PIALERT_PATH + "/pialert.conf")
+if (sys.version_info > (3,0)):
+    exec(open(PIALERT_PATH + "/pialert.conf").read())
+else:
+    execfile (PIALERT_PATH + "/pialert.conf")
 
 
 #===============================================================================
@@ -1210,7 +1213,7 @@ def write_file (pPath, pText):
         file.close() 
     else:
         file = open (pPath, 'w', encoding='utf-8') 
-        file.write (ptext) 
+        file.write (pText) 
         file.close() 
 
 #-------------------------------------------------------------------------------
