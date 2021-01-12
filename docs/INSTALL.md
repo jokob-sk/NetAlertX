@@ -152,7 +152,7 @@ Estimated time: 20'
   REPORT_TO       = 'user@gmail.com'
 ```
 
-  - If you want to update yout Dynamic DNS, configure this parameters
+  - If you want to update your Dynamic DNS, configure this parameters
 ```
   DDNS_ACTIVE     = True
   DDNS_DOMAIN     = 'your_domain.freeddns.org'
