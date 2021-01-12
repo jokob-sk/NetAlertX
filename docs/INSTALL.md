@@ -3,7 +3,7 @@
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-Stimated time: 20'
+Estimated time: 20'
 
 ### Dependencies
   | Dependency | Comments                                                 |
@@ -34,7 +34,7 @@ Stimated time: 20'
   password: raspberry
 ```
 
-5 - Change de default password of pi user
+5 - Change the default password of pi user
 ```
   passwd
 ```
@@ -115,7 +115,7 @@ Stimated time: 20'
 
 ## Pi.Alert
 <!--- --------------------------------------------------------------------- --->
-1- Download Pi.Alert and uncmompress
+1- Download Pi.Alert and uncompress
 ```
   curl -LO https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_latest.tar
   tar xvf pialert_latest.tar
@@ -127,7 +127,7 @@ Stimated time: 20'
   sudo ln -s /home/pi/pialert/front /var/www/html/pialert
 ```
 
-3 - Update lighttp config
+3 - Update lighttpd config
 ```
   sudo sh -c "printf '\n\n\$HTTP[\"host\"] == \"pi.alert\" {\n  server.document-root = \"/var/www/html/pialert/\"\n}\n' >> /etc/lighttpd/external.conf"
   sudo /etc/init.d/lighttpd restart
@@ -144,7 +144,7 @@ Stimated time: 20'
 ```
   nano  ~/pialert/back/pialert.conf
 ```
-  - if you want to use email reporting, configure this parameters
+  - If you want to use email reporting, configure this parameters
 ```
   REPORT_MAIL     = True
   SMTP_USER       = 'user@gmail.com'
@@ -152,7 +152,7 @@ Stimated time: 20'
   REPORT_TO       = 'user@gmail.com'
 ```
 
-  - if you want to update yout Dynamic DNS, configure this parameters
+  - If you want to update yout Dynamic DNS, configure this parameters
 ```
   DDNS_ACTIVE     = True
   DDNS_DOMAIN     = 'your_domain.freeddns.org'
@@ -161,7 +161,7 @@ Stimated time: 20'
   DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'
 ```
 
-  - if you have installed Pi.hole and DHCP, activate this parameters
+  - If you have installed Pi.hole and DHCP, activate this parameters
 ```
   PIHOLE_ACTIVE   = True
   DHCP_ACTIVE     = True
