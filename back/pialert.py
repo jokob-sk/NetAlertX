@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.53  /  2021-01-13
+# Pi.Alert v2.54  /  2021-01-13
 # Puche 2020
 # GNU GPLv3
 
@@ -295,9 +295,12 @@ def update_devices_MAC_vendors ():
 #-------------------------------------------------------------------------------
 def query_MAC_vendor (pMAC):
     try :
+        # BUGFIX #6 - Fix pMAC parameter as numbers
+        pMACstr = str(pMAC)
+        
         # Check MAC parameter
-        mac = pMAC.replace (':','')
-        if len(pMAC) != 17 or len(mac) != 12 :
+        mac = pMACstr.replace (':','')
+        if len(pMACstr) != 17 or len(mac) != 12 :
             return -2
 
         # Search vendor in HW Vendors DB
