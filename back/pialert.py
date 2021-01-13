@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.52  /  2021-01-11
+# Pi.Alert v2.53  /  2021-01-13
 # Puche 2020
 # GNU GPLv3
 
@@ -450,8 +450,28 @@ def execute_arpscan (pRetries):
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
 
+    # Bugfix #5 - Delete duplicated MAC's with different IP's
+    # TEST - Force duplicated device
+        # devices_list.append(devices_list[0])
+    # Delete duplicate MAC
+    unique_mac = [] 
+    unique_devices = [] 
+
+    for device in devices_list :
+        if device['mac'] not in unique_mac: 
+            unique_mac.append(device['mac'])
+            unique_devices.append(device)
+
+    # DEBUG
+        # print (devices_list)
+        # print (unique_mac)
+        # print (unique_devices)
+        # print (len(devices_list))
+        # print (len(unique_mac))
+        # print (len(unique_devices))
+
     # return list
-    return devices_list
+    return unique_devices
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network ():
