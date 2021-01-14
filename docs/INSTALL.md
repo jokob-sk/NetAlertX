@@ -183,10 +183,10 @@ Estimated time: 20'
   (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
 
-9 - Add DB permissions to the web-server user
+9 - Add permissions to the web-server user
 ```
-  sudo chgrp -R www-data ~/pialert/db
-  chmod -R 770 ~/pialert/db
+  sudo chgrp -R www-data ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
+  chmod -R 770 ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
 ```
 
 10 - Check DNS record por pi.alert (explained in point 7 of Pi.hole installing)
