@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.54  /  2021-01-13
+# Pi.Alert v2.55  /  2021-01-13
 # Puche 2020
 # GNU GPLv3
 
@@ -159,8 +159,10 @@ def get_internet_IP ():
         # dig_args = ['dig', '+short', 'myip.opendns.com',
         #   '@resolver1.opendns.com']
 
+    # BUGFIX #12 - Query IPv4 address (not IPv6)
     # Using 'curl' instead of 'dig'
-    curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
+    # curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
+    curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
     curl_output = subprocess.check_output (curl_args, universal_newlines=True)
 
     # Check result is an IP
