@@ -76,7 +76,7 @@ Estimated time: 20'
 
 5 - Connect to web admin panel
   - http://192.168.1.x/admin/
-  - (*replace the 192.168.1.x with your Raspberry IP*)
+  - (*replace 192.168.1.x with your Raspberry IP*)
 
 6 - Activate DHCP server
   - Pi-hole -> Settings -> DHCP -> Mark "DHCP server enabled"
@@ -84,7 +84,7 @@ Estimated time: 20'
 7 - Add pi.alert DNS Record
   - Pi-hole -> Local DNS -> DNS Records -> Add new domain /IP
     - pi.alert    192.168.1.x
-    - (*replace the 192.168.1.x with your Raspberry IP*)
+    - (*replace 192.168.1.x with your Raspberry IP*)
 
 8 - Deactivate your current DHCP Server (*Normaly at your router or AP*)
 
@@ -183,14 +183,22 @@ Estimated time: 20'
   (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
 ```
 
-9 - Add DB permissions to the web-server user
+9 - Add permissions to the web-server user
 ```
-  sudo chgrp -R www-data ~/pialert/db
-  chmod -R 770 ~/pialert/db
+  sudo chgrp -R www-data ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
+  chmod -R 770 ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
 ```
 
-10 - Use admin panel to configure the devices
-  - http://pi.alert/
+10 - Check DNS record por pi.alert (explained in point 7 of Pi.hole installing)
+   - Add pi.alert DNS Record
+     - Pi-hole -> Local DNS -> DNS Records -> Add new domain /IP
+       - pi.alert    192.168.1.x
+       - (*replace 192.168.1.x with your Raspberry IP*)
+
+11 - Use admin panel to configure the devices
+   - http://pi.alert/
+   - http://192.168.1.x/pialert/
+     - (*replace 192.168.1.x with your Raspberry IP*)
 
 
 ## Device Management
