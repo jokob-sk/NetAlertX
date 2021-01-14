@@ -91,15 +91,20 @@
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
-                    <a href="https://github.com/pucherot/Pi.Alert">GitHub</a>
                   </div>
                   <div class="col-xs-4 text-center">
-                    <a href="https://github.com/pucherot/Pi.Alert">Pi.Alert</a>
-                    <!-- <a href="#">Website</a> -->
+                    <a href="https://github.com/pucherot/Pi.Alert">GitHub</a>
                   </div>
+                  <!--
+                  <div class="col-xs-4 text-center">
+                    <a href="https://github.com/pucherot/Pi.Alert">Pi.Alert</a>
+                  </div>
+                  -->
+                  <!--
                   <div class="col-xs-4 text-center">
                     <a href="#">Updates</a>
                   </div>
+                  -->
                 </div>
                 <!-- /.row -->
               </li>
