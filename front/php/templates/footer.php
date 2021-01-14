@@ -4,7 +4,7 @@
     &copy; 2021 Puche
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-      Pi.alert&nbsp&nbsp2.54&nbsp&nbsp<small>(2021-01-13)</small>
+      Pi.alert&nbsp&nbsp2.55&nbsp&nbsp<small>(2021-01-13)</small>
     </div>
   </footer>
 
