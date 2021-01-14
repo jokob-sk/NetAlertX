@@ -1,10 +1,28 @@
+
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- Default to the left -->
-    &copy; 2021 Puche
+
+    <!-- 
+    &copy; 2020 Puche
+    -->
+    <?php
+      $conf_file = '../back/pialert.conf';
+      $conf_data = parse_ini_file($conf_file);
+      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> '. $conf_data['VERSION_YEAR'] .' Puche';
+    ?>
+
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-      Pi.alert&nbsp&nbsp2.55&nbsp&nbsp<small>(2021-01-13)</small>
+
+    <!-- 
+      Pi.alert&nbsp&nbsp2.50&nbsp&nbsp<small>(2019-12-30)</small>
+    -->
+    <?php
+      $conf_file = '../back/pialert.conf';
+      $conf_data = parse_ini_file($conf_file);
+      echo 'Pi.alert&nbsp&nbsp'. $conf_data['VERSION'] .'&nbsp&nbsp<small>('. $conf_data['VERSION_DATE'] .')</small>';
+    ?>
     </div>
   </footer>
 
