@@ -16,12 +16,12 @@ WIFI's**, in this way, Pi.Alert will be able to identify the device, and it
 will not identify it as a new device every so often (every time IOS or Android
 decides to change the MAC).
 
-### IOS
+## IOS
 ![ios][ios]
 
   - [Use private Wi-Fi addresses in iOS 14](https://support.apple.com/en-us/HT211227)
 
-### Android
+## Android
 ![Android][Android]
 
   - [How to Disable MAC Randomization in Android 10](https://support.boingo.com/s/article/How-to-Disable-MAC-Randomization-in-Android-10-Android-Q)
