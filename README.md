@@ -36,31 +36,33 @@ Up to three scanning methods are used:
 ## Components
 The system consists of two parts:
 
-- **Back**, in charge of:
-  - Scan the network searching connected devices using the scanning methods
-        described
-  - Store the information in the DB
-  - Report the changes detected by e-mail
+### Back
+In charge of:
+- Scan the network searching connected devices using the scanning methods
+  described
+- Store the information in the DB
+- Report the changes detected by e-mail
 
-  | ![Report 1][report1] | ![Report 2][report2] |
-  | -------------------- | -------------------- |
+| ![Report 1][report1] | ![Report 2][report2] |
+| -------------------- | -------------------- |
 
-- **Front**, a web frontal that allows:
-  - Manage the devices inventory and the characteristics
-  - Display in a visual way all the information collected by the back
-    - Sessions
-    - Connected devices
-    - Favorites
-    - Events
-    - Presence
-    - Concurrent devices
-    - Down alerts
-    - IP's
-    - ...
+### Front
+A web frontal that allows:
+- Manage the devices inventory and the characteristics
+- Display in a visual way all the information collected by the back
+  - Sessions
+  - Connected devices
+  - Favorites
+  - Events
+  - Presence
+  - Concurrent devices
+  - Down alerts
+  - IP's
+  - ...
 
-  | ![Screen 1][screen1] | ![Screen 2][screen2] |
-  | -------------------- | -------------------- |
-  | ![Screen 3][screen3] | ![Screen 4][screen4] |
+| ![Screen 1][screen1] | ![Screen 2][screen2] |
+| -------------------- | -------------------- |
+| ![Screen 3][screen3] | ![Screen 4][screen4] |
 
 
 # Installation
