@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Pi.Alert v2.55  /  2021-01-13
-# Puche 2020
+# Pi.Alert v2.56  /  2021-01-15
+# Puche 2021
 # GNU GPLv3
 
 
@@ -712,16 +712,39 @@ def create_new_devices ():
 
     # DHCP Leases - Create New Devices
     print_log ('New devices - 6 DHCP Leases Create devices')
-    sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
-                        dev_LastIP, dev_FirstConnection, dev_LastConnection,
+    # BUGFIX #23 - Duplicated MAC in DHCP.Leases
+    # TEST - Force Duplicated MAC
+        # sql.execute ("""INSERT INTO DHCP_Leases VALUES
+        #                 (1610700000, 'TEST1', '10.10.10.1', 'Test 1', '*')""")
+        # sql.execute ("""INSERT INTO DHCP_Leases VALUES
+        #                 (1610700000, 'TEST2', '10.10.10.2', 'Test 2', '*')""")
+    sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
+                        dev_Vendor, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
                         dev_PresentLastScan)
-                    SELECT DHCP_MAC, DHCP_Name, '(unknown)', DHCP_IP, ?, ?,
-                        1, 1, 0, 1
-                    FROM DHCP_Leases
+                    SELECT DISTINCT DHCP_MAC,
+                        (SELECT DHCP_Name FROM DHCP_Leases AS D2
+                         WHERE D2.DHCP_MAC = D1.DHCP_MAC
+                         ORDER BY DHCP_DateTime DESC LIMIT 1),
+                        (SELECT DHCP_IP FROM DHCP_Leases AS D2
+                         WHERE D2.DHCP_MAC = D1.DHCP_MAC
+                         ORDER BY DHCP_DateTime DESC LIMIT 1),
+                        '(unknown)', ?, ?, 1, 1, 0, 1
+                    FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """,
                     (startTime, startTime) ) 
+
+    # sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
+    #                     dev_LastIP, dev_FirstConnection, dev_LastConnection,
+    #                     dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
+    #                     dev_PresentLastScan)
+    #                 SELECT DHCP_MAC, DHCP_Name, '(unknown)', DHCP_IP, ?, ?,
+    #                     1, 1, 0, 1
+    #                 FROM DHCP_Leases
+    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
+    #                                   WHERE dev_MAC = DHCP_MAC) """,
+    #                 (startTime, startTime) ) 
     print_log ('New Devices end')
 
 #-------------------------------------------------------------------------------
