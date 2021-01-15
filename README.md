@@ -97,7 +97,7 @@ Linux distributions.
 
 ### License
   GPL 3.0
-  [Read more here](docs/LICENSE.txt)
+  [Read more here](LICENSE.txt)
 
 ### Contact
   pi.alert.application@gmail.com
