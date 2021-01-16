@@ -24,4 +24,4 @@ Events
 <TABLE_EVENTS>
 </SECTION_EVENTS>
 ----------------------------------------------------------------------
-Puche <PIALERT_YEAR>            Pi.Alert <PIALERT_VERSION> / <PIALERT_VERSION_DATE>             GNU GPLv3
+(?) <PIALERT_YEAR> Puche          Pi.Alert <PIALERT_VERSION> (<PIALERT_VERSION_DATE>)           GNU GPLv3

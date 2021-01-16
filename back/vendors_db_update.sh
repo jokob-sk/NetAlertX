@@ -1,10 +1,18 @@
 #!/bin/sh
+# ------------------------------------------------------------------------------
+#  Pi.Alert
+#  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
-# Update MAC Vendor DB
-#
-# /usr/share/arp-scan
-# /usr/share/ieee-data
-# /var/lib/ieee-data
+#  vendors_db_update.sh - Back module. IEEE Vendors db update
+# ------------------------------------------------------------------------------
+#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+# ------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+#  Main directories to update:
+#    /usr/share/arp-scan
+#    /usr/share/ieee-data
+#    /var/lib/ieee-data
 # ----------------------------------------------------------------------
 
 

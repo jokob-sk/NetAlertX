@@ -1,3 +1,11 @@
+<!-- ---------------------------------------------------------------------------
+#  Pi.Alert
+#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#
+#  footer.php - Front module. Common footer to all the front pages 
+#-------------------------------------------------------------------------------
+#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#--------------------------------------------------------------------------- -->
 
   <!-- Main Footer -->
   <footer class="main-footer">
@@ -16,12 +24,12 @@
     <div class="pull-right no-hidden-xs">
 
     <!-- 
-      Pi.alert&nbsp&nbsp2.50&nbsp&nbsp<small>(2019-12-30)</small>
+      Pi.Alert&nbsp&nbsp2.50&nbsp&nbsp<small>(2019-12-30)</small>
     -->
     <?php
       $conf_file = '../back/pialert.conf';
       $conf_data = parse_ini_file($conf_file);
-      echo 'Pi.alert&nbsp&nbsp'. $conf_data['VERSION'] .'&nbsp&nbsp<small>('. $conf_data['VERSION_DATE'] .')</small>';
+      echo 'Pi.Alert&nbsp&nbsp'. $conf_data['VERSION'] .'&nbsp&nbsp<small>('. $conf_data['VERSION_DATE'] .')</small>';
     ?>
     </div>
   </footer>
