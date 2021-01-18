@@ -21,8 +21,8 @@ Estimated time: 20'
 ## Raspberry Setup
 <!--- --------------------------------------------------------------------- --->
 1.1 - Install 'Raspberry Pi OS'
-      - Instructions https://www.raspberrypi.org/documentation/installation/installing-images/
-      - *Lite version (without Descktop) is enough for Pi.Alert*
+  - Instructions https://www.raspberrypi.org/documentation/installation/installing-images/
+  - *Lite version (without Descktop) is enough for Pi.Alert*
 
 1.2 - Activate ssh
   - Create a empty file with name 'ssh' in the boot partition of the SD
@@ -55,7 +55,7 @@ Estimated time: 20'
   ```
 
 
-## Pi-hole Setup
+## Pi-hole Setup (optional)
 <!--- --------------------------------------------------------------------- --->
 2.1 - Links & Doc
   - https://pi-hole.net/
@@ -102,7 +102,8 @@ Estimated time: 20'
 
 ## Lighttpd & PHP
 <!--- --------------------------------------------------------------------- --->
-If you have already installed pi.hole, this step is not necessary
+If you have installed Pi.hole, lighttpd and PHP are already installed and this
+block is not necessary
 
 3.1 - Install lighttpd
   ```
