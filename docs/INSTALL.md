@@ -125,7 +125,7 @@ block is not necessary
 3.4 - Activate PHP
   ```
   sudo lighttpd-enable-mod fastcgi-php
-  /etc/init.d/lighttpd restart
+  sudo /etc/init.d/lighttpd restart
   ```
 
 
@@ -171,7 +171,7 @@ block is not necessary
   ```
   sudo cp pialert/install/pialert_front.conf /etc/lighttpd/conf-available
   sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
-  /etc/init.d/lighttpd restart
+  sudo /etc/init.d/lighttpd restart
   ```
 
 5.4 - If you want to use email reporting with gmail
