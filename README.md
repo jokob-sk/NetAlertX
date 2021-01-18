@@ -70,7 +70,7 @@ A web frontal that allows:
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
 
-  - [Installation instructions](docs/INSTALL.md)
+  - [Installation Guide](docs/INSTALL.md)
 
 
 ## Device Management

@@ -1,4 +1,4 @@
-# Pi.Alert Installation
+# Pi.Alert Installation Guide
 <!--- --------------------------------------------------------------------- --->
 Initially designed to run on a Raspberry PI, probably it can run on many other
 Linux distributions.
