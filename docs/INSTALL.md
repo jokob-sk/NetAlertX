@@ -126,7 +126,7 @@ block is not necessary
 <!--- --------------------------------------------------------------------- --->
 4.1 - Install arp-scan utility and test
   ```
-  sudo apt-get install arp-scan
+  sudo apt-get install arp-scan -y
   sudo arp-scan -l
   ```
 
