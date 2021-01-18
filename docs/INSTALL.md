@@ -169,7 +169,7 @@ block is not necessary
   the pi.alert to your raspberry, youy must configure lighttpd to redirect
   these requests to the correct pialert web folder
   ```
-  sudo cp pialert/front/pialert_front.conf /etc/lighttpd/conf-available
+  sudo cp pialert/install/pialert_front.conf /etc/lighttpd/conf-available
   sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
   /etc/init.d/lighttpd restart
   ```
