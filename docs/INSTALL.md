@@ -110,12 +110,19 @@ block is not necessary
   sudo apt-get install lighttpd -y
   ```
 
-3.2 - Install PHP
+3.2 - If Pi.Alert is the only site available in this webserver, you can redirect
+  the default server page to pialert subfolder
+  ```
+  sudo mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old
+  sudo ln -s /home/pi/pialert/install/index.html /var/www/html/index.html
+  ```
+
+3.3 - Install PHP
   ```
   sudo apt-get install php php-cgi php-fpm php-sqlite3 -y     
   ```
 
-3.3 - Activate PHP
+3.4 - Activate PHP
   ```
   sudo lighttpd-enable-mod fastcgi-php
   sudo service lighttpd force-reload
@@ -148,7 +155,7 @@ block is not necessary
 <!--- --------------------------------------------------------------------- --->
 5.1 - Download Pi.Alert and uncompress
   ```
-  curl -LO https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_latest.tar
+  curl -LO https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
   tar xvf pialert_latest.tar
   rm pialert_latest.tar
   ```
@@ -158,10 +165,13 @@ block is not necessary
   sudo ln -s /home/pi/pialert/front /var/www/html/pialert
   ```
 
-5.3 - Update lighttpd config
+5.3 - If you have configured your DNS server (Pi.hole or other) to resolve
+  the pi.alert to your raspberry, youy must configure lighttpd to redirect
+  these requests to the correct pialert web folder
   ```
-  sudo sh -c "printf '\n\n\$HTTP[\"host\"] == \"pi.alert\" {\n  server.document-root = \"/var/www/html/pialert/\"\n}\n' >> /etc/lighttpd/external.conf"
-  sudo /etc/init.d/lighttpd restart
+  sudo cp pialert/front/pialert_front.conf /etc/lighttpd/conf-available
+  sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
+  sudo service lighttpd force-reload
   ```
 
 5.4 - If you want to use email reporting with gmail
