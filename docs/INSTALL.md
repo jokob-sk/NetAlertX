@@ -50,7 +50,7 @@ Estimated time: 20'
   ```
   sudo apt-get update
   sudo apt-get upgrade
-  sudo reboot
+  sudo shutdown -r now
   ```
 
 ## Pi-hole Setup
