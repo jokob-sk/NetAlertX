@@ -87,7 +87,7 @@ Estimated time: 20'
   ```
   hostname -I
   ```
-  - Pi-hole -> Local DNS -> DNS Records -> Add new domain /IP
+  - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
     - pi.alert    192.168.1.x
     - (*replace 192.168.1.x with your Raspberry IP*)
 
@@ -226,7 +226,7 @@ block is not necessary
     ```
     hostname -I
     ```
-    - Pi-hole -> Local DNS -> DNS Records -> Add new domain /IP
+    - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
       - pi.alert    192.168.1.x
       - (*replace 192.168.1.x with your Raspberry IP*)
 
