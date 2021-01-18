@@ -216,8 +216,8 @@ block is not necessary
 
 5.9 - Add permissions to the web-server user
   ```
-  sudo chgrp -R www-data ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
-  chmod -R 770 ~/pialert/back ~/pialert/back/pialert.conf ~/pialert/front ~/pialert/db
+  sudo chgrp -R www-data ~/pialert/db
+  chmod -R 770 ~/pialert/db
   ```
 
 5.10 - Check DNS record for pi.alert (explained in point 2.7 of Pi.hole
