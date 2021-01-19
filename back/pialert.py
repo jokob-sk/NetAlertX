@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 #-------------------------------------------------------------------------------
-#  Pi.Alert  v2.56  /  2021-01-15
+#  Pi.Alert  v2.60  /  2021-01-20
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  pialert.py - Back module. Network scanner
@@ -32,11 +32,15 @@ import csv
 #===============================================================================
 # CONFIG CONSTANTS
 #===============================================================================
-PIALERT_PATH = os.path.dirname(os.path.abspath(__file__))
+PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
+PIALERT_PATH = PIALERT_BACK_PATH + "/.."
+
 if (sys.version_info > (3,0)):
-    exec(open(PIALERT_PATH + "/pialert.conf").read())
+    exec(open(PIALERT_PATH + "/config/version.conf").read())
+    exec(open(PIALERT_PATH + "/config/pialert.conf").read())
 else:
-    execfile (PIALERT_PATH + "/pialert.conf")
+    execfile (PIALERT_PATH + "/config/version.conf")
+    execfile (PIALERT_PATH + "/config/pialert.conf")
 
 
 #===============================================================================
@@ -54,7 +58,6 @@ def main ():
     print ('---------------------------------------------------------')
 
     # Initialize global variables
-    # PIALERT_PATH   = os.path.dirname(os.path.abspath(__file__))
     log_timestamp  = datetime.datetime.now()
 
     # DB
@@ -254,7 +257,7 @@ def update_devices_MAC_vendors ():
 
     # Update vendors DB (iab oui)
     print ('\nUpdating vendors DB (iab & oui)...')
-    update_args = ['sh', PIALERT_PATH + '/vendors_db_update.sh']
+    update_args = ['sh', PIALERT_BACK_PATH + '/vendors_db_update.sh']
     update_output = subprocess.check_output (update_args)
     # DEBUG
         # update_args = ['./vendors_db_update.sh']
@@ -1049,12 +1052,12 @@ def email_reporting ():
     openDB()
 
     # Open text Template
-    template_file = open(PIALERT_PATH + '/report_template.txt', 'r') 
+    template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
     mail_text = template_file.read() 
     template_file.close() 
 
     # Open html Template
-    template_file = open(PIALERT_PATH + '/report_template.html', 'r') 
+    template_file = open(PIALERT_BACK_PATH + '/report_template.html', 'r') 
     mail_html = template_file.read() 
     template_file.close() 
 
@@ -1099,7 +1102,7 @@ def email_reporting ():
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
         mail_html_Internet += html_line_template.format (
-            PA_FRONT_URL, eventAlert['eve_MAC'],
+            REPORT_DEVICE_URL, eventAlert['eve_MAC'],
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
 
@@ -1127,7 +1130,7 @@ def email_reporting ():
             eventAlert['eve_IP'], eventAlert['dev_Name'],
             eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
-            PA_FRONT_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
 
@@ -1154,7 +1157,7 @@ def email_reporting ():
             eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['dev_Name'])
         mail_html_devices_down += html_line_template.format (
-            PA_FRONT_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'])
 
@@ -1184,7 +1187,7 @@ def email_reporting ():
             eventAlert['eve_IP'], eventAlert['eve_EventType'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
-            PA_FRONT_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['eve_EventType'], eventAlert['dev_Name'],
             eventAlert['eve_AdditionalInfo'])

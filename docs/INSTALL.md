@@ -77,11 +77,14 @@ Estimated time: 20'
   ```
 
 2.5 - Connect to web admin panel
+  ```
+  hostname -I
+  ```
   - http://192.168.1.x/admin/
   - (*replace 192.168.1.x with your Raspberry IP*)
 
 2.6 - Activate DHCP server
-  - Pi-hole -> Settings -> DHCP -> Mark "DHCP server enabled"
+  - Pi-hole admin portal -> Settings -> DHCP -> Mark "DHCP server enabled"
 
 2.7 - Add pi.alert DNS Record
   ```
@@ -114,7 +117,7 @@ block is not necessary
   the default server page to pialert subfolder
   ```
   sudo mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old
-  sudo ln -s /home/pi/pialert/install/index.html /var/www/html/index.html
+  sudo ln -s ~/pialert/install/index.html /var/www/html/index.html
   ```
 
 3.3 - Install PHP
@@ -144,17 +147,29 @@ block is not necessary
   python -V
   ```
 
-4.3 - If python is not installed in your system, you can install it with this
+  New versions of Ubuntu includes Python 3. You can choose between use `python3`
+  command or to install Python 2 (that includes `python` command).
+  If you prefer to use Python 3, in the next installation block, you must update
+  `pialert.cron` file with the correct command: `python3` instead of `python`.
+  ```
+  python3 -V
+  ```
+
+4.3 - If Python is not installed in your system, you can install it with this
   command:
   ```
   sudo apt-get install python
   ```
-
+  Or this one if you prefer Python 3:
+  ```
+  sudo apt-get install python3
+  ```
 
 ## Pi.Alert
 <!--- --------------------------------------------------------------------- --->
 5.1 - Download Pi.Alert and uncompress
   ```
+  cd
   curl -LO https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
   tar xvf pialert_latest.tar
   rm pialert_latest.tar
@@ -162,14 +177,15 @@ block is not necessary
 
 5.2 - Public the front portal
   ```
-  sudo ln -s /home/pi/pialert/front /var/www/html/pialert
+  sudo ln -s ~/pialert/front /var/www/html/pialert
   ```
 
-5.3 - If you have configured your DNS server (Pi.hole or other) to resolve
-  the pi.alert to your raspberry, youy must configure lighttpd to redirect
-  these requests to the correct pialert web folder
+5.3 - Configure web server redirection
+  If you have configured your DNS server (Pi.hole or other) to resolve pi.alert
+  to your raspberry, youy must configure lighttpd to redirect these requests to
+  the correct pialert web folder
   ```
-  sudo cp pialert/install/pialert_front.conf /etc/lighttpd/conf-available
+  sudo cp ~/pialert/install/pialert_front.conf /etc/lighttpd/conf-available
   sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
   sudo /etc/init.d/lighttpd restart
   ```
@@ -183,13 +199,14 @@ block is not necessary
 
 5.5 - Config Pialert parameters
   ```
-  nano  ~/pialert/back/pialert.conf
+  sed -i "s,'/home/pi/pialert','$HOME/pialert'," ~/pialert/config/pialert.conf          
+  nano  ~/pialert/config/pialert.conf
   ```
   - If you want to use email reporting, configure this parameters
     ```ini
     REPORT_MAIL     = True
     SMTP_USER       = 'user@gmail.com'
-    SMTP_PASS       = 'password'
+    SMTP_PASS       = 'password'                                                          vi 
     REPORT_TO       = 'user@gmail.com'
     ```
 
@@ -212,26 +229,43 @@ block is not necessary
   ```
   python ~/pialert/back/pialert.py update_vendors
   ```
+  or
+  ```
+  python3 ~/pialert/back/pialert.py update_vendors
+  ```
 
 5.7 - Test Pi.Alert Scan
   ```
   python ~/pialert/back/pialert.py internet_IP
   python ~/pialert/back/pialert.py 1
   ```
-
-5.8 - Add crontab jobs
+  or
   ```
-  (crontab -l 2>/dev/null; cat ~/pialert/back/pialert.cron) | crontab -
+  python3 ~/pialert/back/pialert.py internet_IP
+  python3 ~/pialert/back/pialert.py 1
   ```
 
-5.9 - Add permissions to the web-server user
+5.8 - Update crontab template with python3
+  If you prefer to use Python 3 (installed in the previous block), you must
+  update `pialert.cron` file with the correct command: `python3` instead of
+  `python`
+  ```
+  sed -i 's/python/python3/g' ~/pialert/install/pialert.cron
+  ```
+
+5.9 - Add crontab jobs
+  ```
+  (crontab -l 2>/dev/null; cat ~/pialert/install/pialert.cron) | crontab -
+  ```
+
+5.10 - Add permissions to the web-server user
   ```
   sudo chgrp -R www-data ~/pialert/db
   chmod -R 770 ~/pialert/db
   ```
 
-5.10 - Check DNS record for pi.alert (explained in point 2.7 of Pi.hole
-       installation)
+5.11 - Check DNS record for pi.alert (explained in point 2.7 of Pi.hole
+  installation)
   - Add pi.alert DNS Record
     ```
     hostname -I
@@ -240,7 +274,7 @@ block is not necessary
       - pi.alert    192.168.1.x
       - (*replace 192.168.1.x with your Raspberry IP*)
 
-5.11 - Use admin panel to configure the devices
+5.12 - Use admin panel to configure the devices
   - http://pi.alert/
   - http://192.168.1.x/pialert/
     - (*replace 192.168.1.x with your Raspberry IP*)

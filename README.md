@@ -79,8 +79,12 @@ Linux distributions.
   - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
 
 
+
 ## Other useful info
 <!--- --------------------------------------------------------------------- --->
+
+### Versions History
+  - [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### Powered by:
   | Product      | Objetive                               |
