@@ -15,7 +15,7 @@
     &copy; 2020 Puche
     -->
     <?php
-      $conf_file = '../back/pialert.conf';
+      $conf_file = '../config/version.conf';
       $conf_data = parse_ini_file($conf_file);
       echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> '. $conf_data['VERSION_YEAR'] .' Puche';
     ?>
@@ -27,7 +27,7 @@
       Pi.Alert&nbsp&nbsp2.50&nbsp&nbsp<small>(2019-12-30)</small>
     -->
     <?php
-      $conf_file = '../back/pialert.conf';
+      $conf_file = '../config/version.conf';
       $conf_data = parse_ini_file($conf_file);
       echo 'Pi.Alert&nbsp&nbsp'. $conf_data['VERSION'] .'&nbsp&nbsp<small>('. $conf_data['VERSION_DATE'] .')</small>';
     ?>
