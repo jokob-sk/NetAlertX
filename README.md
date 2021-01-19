@@ -83,8 +83,7 @@ Linux distributions.
 ## Other useful info
 <!--- --------------------------------------------------------------------- --->
 
-### Versions History
-  - [Versions History](docs/VERSIONS_HISTORY.md)
+### [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### Powered by:
   | Product      | Objetive                               |
