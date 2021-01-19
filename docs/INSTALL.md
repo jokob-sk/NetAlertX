@@ -113,8 +113,8 @@ block is not necessary
   sudo apt-get install lighttpd -y
   ```
 
-3.2 - If Pi.Alert is the only site available in this webserver, you can redirect
-  the default server page to pialert subfolder
+3.2 - If Pi.Alert will be the only site available in this webserver, you can
+  redirect the default server page to pialert subfolder
   ```
   sudo mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old
   sudo ln -s ~/pialert/install/index.html /var/www/html/index.html
@@ -141,7 +141,8 @@ block is not necessary
   ```
 
 4.2 - Test Python
-  New versions of 'Raspberry Pi OS' includes python. You can check that 
+
+  New versions of 'Raspberry Pi OS' includes Python. You can check that 
   Python is installed with the command:
   ```
   python -V
@@ -149,6 +150,8 @@ block is not necessary
 
   New versions of Ubuntu includes Python 3. You can choose between use `python3`
   command or to install Python 2 (that includes `python` command).
+  
+  
   If you prefer to use Python 3, in the next installation block, you must update
   `pialert.cron` file with the correct command: `python3` instead of `python`.
   ```
@@ -181,9 +184,10 @@ block is not necessary
   ```
 
 5.3 - Configure web server redirection
+
   If you have configured your DNS server (Pi.hole or other) to resolve pi.alert
-  to your raspberry, youy must configure lighttpd to redirect these requests to
-  the correct pialert web folder
+  with the IP of your raspberry, youy must configure lighttpd to redirect these 
+  requests to the correct pialert web folder
   ```
   sudo cp ~/pialert/install/pialert_front.conf /etc/lighttpd/conf-available
   sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
@@ -206,7 +210,7 @@ block is not necessary
     ```ini
     REPORT_MAIL     = True
     SMTP_USER       = 'user@gmail.com'
-    SMTP_PASS       = 'password'                                                          vi 
+    SMTP_PASS       = 'password'
     REPORT_TO       = 'user@gmail.com'
     ```
 
@@ -246,6 +250,7 @@ block is not necessary
   ```
 
 5.8 - Update crontab template with python3
+
   If you prefer to use Python 3 (installed in the previous block), you must
   update `pialert.cron` file with the correct command: `python3` instead of
   `python`
