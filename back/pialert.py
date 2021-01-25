@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 #-------------------------------------------------------------------------------
-#  Pi.Alert  v2.60  /  2021-01-20
+#  Pi.Alert  v2.61  /  2021-01-25
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  pialert.py - Back module. Network scanner
@@ -79,6 +79,8 @@ def main ():
         res = check_internet_IP()
     elif cycle == 'update_vendors':
         res = update_devices_MAC_vendors()
+    elif cycle == 'update_vendors_silent':
+        res = update_devices_MAC_vendors('-s')
     else :
         res = scan_network()
     
@@ -163,18 +165,20 @@ def check_internet_IP ():
 
 #-------------------------------------------------------------------------------
 def get_internet_IP ():
+    # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
     # Using 'dig'
-        # dig_args = ['dig', '+short', 'myip.opendns.com',
-        #   '@resolver1.opendns.com']
+    dig_args = ['dig', '+short', '-4', 'myip.opendns.com',
+                '@resolver1.opendns.com']
+    cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
 
-    # BUGFIX #12 - Query IPv4 address (not IPv6)
-    # Using 'curl' instead of 'dig'
-    # curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
-    curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
-    curl_output = subprocess.check_output (curl_args, universal_newlines=True)
+    ## BUGFIX #12 - Query IPv4 address (not IPv6)
+    ## Using 'curl' instead of 'dig'
+    ## curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
+    #curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
+    #cmd_output = subprocess.check_output (curl_args, universal_newlines=True)
 
     # Check result is an IP
-    IP = check_IP_format (curl_output)
+    IP = check_IP_format (cmd_output)
     return IP
 
 #-------------------------------------------------------------------------------
@@ -250,14 +254,14 @@ def check_IP_format (pIP):
 #===============================================================================
 # UPDATE DEVICE MAC VENDORS
 #===============================================================================
-def update_devices_MAC_vendors ():
+def update_devices_MAC_vendors (pArg = ''):
     # Header
     print ('Update HW Vendors')
     print ('    Timestamp:', startTime )
 
     # Update vendors DB (iab oui)
     print ('\nUpdating vendors DB (iab & oui)...')
-    update_args = ['sh', PIALERT_BACK_PATH + '/vendors_db_update.sh']
+    update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
     update_output = subprocess.check_output (update_args)
     # DEBUG
         # update_args = ['./vendors_db_update.sh']
