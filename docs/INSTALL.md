@@ -14,9 +14,12 @@ Estimated time: 20'
   | dnsmasq    | Optional. Scan Method 3. Check devices using DHCP server |
   | IEEE HW DB | Necessary to identified Device vendor                    |
 
-# Installation process
+# One-step Automated Install:
 <!--- --------------------------------------------------------------------- --->
+### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
+# Installation process (step by step)
+<!--- --------------------------------------------------------------------- --->
 
 ## Raspberry Setup
 <!--- --------------------------------------------------------------------- --->
