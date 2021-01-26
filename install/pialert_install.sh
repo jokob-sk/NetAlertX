@@ -8,8 +8,6 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
 
-# stop on errors
-set -e
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -63,20 +61,9 @@ main() {
   log "Logfile: $LOG"
 
   check_pialert_home
- 
-  print_msg "Use: - http://pi.alert/"
-  ask_yesno "This script will install Pi.Alert in this system using this path:\n$PIALERT_HOME" \
-           "Do you want to continue ?"
-  if ! $ANSWER ; then
-   exit 1
-  fi
- 
   ask_config
 
-  msgbox "Configuration finished. To updete the configuration, edit file:" \
-    "$PIALERT_HOME/config/pialert.conf"
-
-  msgbox "" "The installation will start now"
+  set -e
 
   install_pihole
   activate_DHCP
@@ -99,7 +86,13 @@ main() {
 # Ask config questions
 # ------------------------------------------------------------------------------
 ask_config() {
-  set +e
+  # Ask installation
+  ask_yesno "This script will install Pi.Alert in this system using this path:\n$PIALERT_HOME" \
+           "Do you want to continue ?"
+  if ! $ANSWER ; then
+    exit 1
+  fi
+
   # Ask Pi-hole Installation
   PIHOLE_ACTIVE=false
   if [ -e /usr/local/bin/pihole ] || [ -e /etc/pihole ]; then
@@ -220,7 +213,11 @@ ask_config() {
     DDNS_UPDATE_URL=$ANSWER
   fi
   
-  set -e
+  # Final config message
+  msgbox "Configuration finished. To updete the configuration, edit file:" \
+    "$PIALERT_HOME/config/pialert.conf"
+
+  msgbox "" "The installation will start now"
 }
 
 # ------------------------------------------------------------------------------
@@ -324,7 +321,7 @@ install_lighttpd() {
 }
 
 # ------------------------------------------------------------------------------
-# Install arp-scan
+# Install arp-scan & dnsutils
 # ------------------------------------------------------------------------------
 install_arpscan() {
   print_header "arp-scan & dnsutils"
@@ -703,13 +700,13 @@ ask_input() {
 }
 
 ask_cancel() {
-  LINE1="Do you want to cancel the installation process"
-  LINE1=$(printf "\n\n%*s" $(((${#LINE1}+$COLS-5)/2)) "$LINE1")
+  LINE0="Do you want to cancel the installation process"
+  LINE0=$(printf "\n\n%*s" $(((${#LINE0}+$COLS-5)/2)) "$LINE0")
 
   if [ "$BUTTON" = "1" ] && [ "$1" = "CANCEL" ] ; then BUTTON="255"; fi
 
   if [ "$BUTTON" = "255" ] ; then
-    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE1" \
+    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE0" \
       $ROWS $COLS
 
     if [ "$?" = "0" ] ; then
@@ -767,7 +764,7 @@ process_error() {
   log "Use 'cat $LOG' to view installation log"
   log ""
 
-  msgbox "****** ERROR INSTALLING Pi.ALERT ******" "$1"
+  # msgbox "****** ERROR INSTALLING Pi.ALERT ******" "$1"
   exit 1
 }
 
