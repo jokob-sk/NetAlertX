@@ -143,7 +143,12 @@ block is not necessary
   sudo arp-scan -l
   ```
 
-4.2 - Test Python
+4.2 - Install arp-scan utility and test
+  ```
+  sudo apt-get install dnsutils -y
+  ```
+
+4.3 - Test Python
 
   New versions of 'Raspberry Pi OS' includes Python. You can check that 
   Python is installed with the command:
@@ -161,7 +166,7 @@ block is not necessary
   python3 -V
   ```
 
-4.3 - If Python is not installed in your system, you can install it with this
+4.4 - If Python is not installed in your system, you can install it with this
   command:
   ```
   sudo apt-get install python
