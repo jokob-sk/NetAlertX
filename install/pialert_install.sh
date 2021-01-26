@@ -633,8 +633,14 @@ msgbox() {
   LINE1=$(printf "%*s" $(((${#1}+$COLS-5)/2)) "$1")
   LINE2=$(printf "%*s" $(((${#2}+$COLS-5)/2)) "$2")
 
-  whiptail --title "Pi.Alert Installation" --msgbox "$LINE1\\n\\n$LINE2" \
-    $ROWS $COLS
+  END_DIALOG=false
+  while ! $END_DIALOG ; do
+    whiptail --title "Pi.Alert Installation" --msgbox "$LINE1\\n\\n$LINE2" \
+      $ROWS $COLS
+    BUTTON=$?
+    ask_cancel
+    ANSWER=true
+  done
 }
 
 ask_yesno() {
@@ -647,8 +653,15 @@ ask_yesno() {
     DEF_BUTTON="--defaultno"
   fi
 
-  if whiptail --title "Pi.Alert Installation" --yesno $DEF_BUTTON \
-              "$LINE1\\n\\n$LINE2" $ROWS $COLS; then
+  END_DIALOG=false
+  while ! $END_DIALOG ; do
+    whiptail --title "Pi.Alert Installation" --yesno $DEF_BUTTON \
+      "$LINE1\\n\\n$LINE2" $ROWS $COLS
+    BUTTON=$?
+    ask_cancel
+  done
+
+  if [ "$BUTTON" = "0" ] ; then
     ANSWER=true
   else
     ANSWER=false
@@ -659,22 +672,52 @@ ask_option() {
   MENU_ARGS=("$@")
   MENU_ARGS=("${MENU_ARGS[@]:1}")
 
-  ANSWER=$(whiptail --title "Pi.Alert Installation" --menu "$1" $ROWS $COLS \
-    "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3  || : )
+  END_DIALOG=false
+  while ! $END_DIALOG ; do
+    ANSWER=$(whiptail --title "Pi.Alert Installation" --menu "$1" $ROWS $COLS \
+      "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3 )
+    BUTTON=$?
+    ask_cancel CANCEL
+  done
 }
 
 ask_input() {
   LINE1=$(printf "%*s" $(((${#1}+$COLS-5)/2)) "$1")
   LINE2=$(printf "%*s" $(((${#2}+$COLS-5)/2)) "$2")
 
-  ANSWER=$(whiptail --title "Pi.Alert Installation" --inputbox \
-    "$LINE1\\n\\n$LINE2" $ROWS $COLS $3  3>&2 2>&1 1>&3  || : )
+  END_DIALOG=false
+  while ! $END_DIALOG ; do
+    ANSWER=$(whiptail --title "Pi.Alert Installation" --inputbox \
+      "$LINE1\\n\\n$LINE2" $ROWS $COLS "$3" 3>&2 2>&1 1>&3 )
+    BUTTON=$?
+    ask_cancel CANCEL
 
-  if [ "$ANSWER" = "" ] ; then
-    ANSWER=$3
+    if $END_DIALOG && [ "$ANSWER" = "" ] ; then
+      msgbox "" "You must enter a value"
+      END_DIALOG=false
+    fi
+  done
+  
   fi
 }
 
+ask_cancel() {
+  LINE1="Do you want to cancel the installation process"
+  LINE1=$(printf "\n\n%*s" $(((${#LINE1}+$COLS-5)/2)) "$LINE1")
+
+  if [ "$BUTTON" = "1" ] && [ "$1" = "CANCEL" ] ; then BUTTON="255"; fi
+
+  if [ "$BUTTON" = "255" ] ; then
+    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE1" \
+      $ROWS $COLS
+
+    if [ "$?" = "0" ] ; then
+      process_error "Installation Aborted by User"
+    fi
+  else
+    END_DIALOG=true
+  fi
+}
 
 # ------------------------------------------------------------------------------
 # Log
