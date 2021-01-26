@@ -309,9 +309,10 @@ install_lighttpd() {
   sudo apt-get install php php-cgi php-fpm php-sqlite3 -y         2>&1 >> "$LOG"
 
   print_msg "- Activating PHP..."
+  ERRNO=0
   sudo lighttpd-enable-mod fastcgi-php 2>&1                 >>"$LOG" || ERRNO=$? 
   log_no_screen "-- Command error code: $ERRNO"
-  if [ $ERRNO -eq 1 ] ; then
+  if [ "$ERRNO" = "1" ] ; then
     process_error "Error activating PHP"
   fi
   
@@ -323,13 +324,16 @@ install_lighttpd() {
 # Install arp-scan
 # ------------------------------------------------------------------------------
 install_arpscan() {
-  print_header "arp-scan"
+  print_header "arp-scan & dnsutils"
 
   print_msg "- Installing arp-scan..."
   sudo apt-get install arp-scan -y                                2>&1 >> "$LOG"
 
   print_msg "- Testing arp-scan..."
   sudo arp-scan -l | head -n -3 | tail +3                        | tee -a "$LOG"
+
+  print_msg "- Installing dnsutils..."
+  sudo apt-get install dnsutils -y                                2>&1 >> "$LOG"
 }
   
 
