@@ -697,8 +697,6 @@ ask_input() {
       END_DIALOG=false
     fi
   done
-  
-  fi
 }
 
 ask_cancel() {
