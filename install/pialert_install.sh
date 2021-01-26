@@ -119,7 +119,8 @@ ask_config() {
   if $PIHOLE_ACTIVE ; then
     DHCP_ACTIVE=`sudo grep DHCP_ACTIVE /etc/pihole/setupVars.conf |
       awk -F= '/./{print $2}'`
-
+    if [ "$DHCP_ACTIVE" = "" ] ; then DHCP_ACTIVE=false; fi
+ 
     if ! $DHCP_ACTIVE ; then
       ask_yesno "Pi-hole DHCP server is not active." \
         "Do you want to activate Pi-hole DHCP server ?"
@@ -752,7 +753,7 @@ print_header() {
 }
 
 process_error() {
-  log "\n"
+  log ""
   log "************************************************************"
   log "************************************************************"
   log "**            ERROR INSTALLING PI.ALERT                   **"
