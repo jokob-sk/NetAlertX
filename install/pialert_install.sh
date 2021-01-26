@@ -99,6 +99,7 @@ main() {
 # Ask config questions
 # ------------------------------------------------------------------------------
 ask_config() {
+  set +e
   # Ask Pi-hole Installation
   PIHOLE_ACTIVE=false
   if [ -e /usr/local/bin/pihole ] || [ -e /etc/pihole ]; then
@@ -218,6 +219,8 @@ ask_config() {
     ask_input "" "URL to update DDNS IP:" "https://api.dynu.com/nic/update?"
     DDNS_UPDATE_URL=$ANSWER
   fi
+  
+  set -e
 }
 
 # ------------------------------------------------------------------------------
