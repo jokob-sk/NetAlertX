@@ -14,19 +14,19 @@ Estimated time: 20'
   | dnsmasq    | Optional. Scan Method 3. Check devices using DHCP server |
   | IEEE HW DB | Necessary to identified Device vendor                    |
 
-# One-step Automated Install:
+## One-step Automated Install:
 <!--- --------------------------------------------------------------------- --->
-### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+`curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
-# One-step Automated Update:
+## One-step Automated Update:
 <!--- --------------------------------------------------------------------- --->
-### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+`curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 
-# Installation process (step by step)
+## Installation process (step by step)
 <!--- --------------------------------------------------------------------- --->
 
-## Raspberry Setup
+### Raspberry Setup
 <!--- --------------------------------------------------------------------- --->
 1.1 - Install 'Raspberry Pi OS'
   - Instructions https://www.raspberrypi.org/documentation/installation/installing-images/
@@ -63,7 +63,7 @@ Estimated time: 20'
   ```
 
 
-## Pi-hole Setup (optional)
+### Pi-hole Setup (optional)
 <!--- --------------------------------------------------------------------- --->
 2.1 - Links & Doc
   - https://pi-hole.net/
@@ -111,7 +111,7 @@ Estimated time: 20'
     -> Advanced -> TCP/IP -> Renew DHCP Lease
 
 
-## Lighttpd & PHP
+### Lighttpd & PHP
 <!--- --------------------------------------------------------------------- --->
 If you have installed Pi.hole, lighttpd and PHP are already installed and this
 block is not necessary
@@ -140,7 +140,7 @@ block is not necessary
   ```
 
 
-## arp-scan & Python
+### arp-scan & Python
 <!--- --------------------------------------------------------------------- --->
 4.1 - Install arp-scan utility and test
   ```
@@ -181,7 +181,7 @@ block is not necessary
   sudo apt-get install python3
   ```
 
-## Pi.Alert
+### Pi.Alert
 <!--- --------------------------------------------------------------------- --->
 5.1 - Download Pi.Alert and uncompress
   ```
@@ -298,7 +298,7 @@ block is not necessary
     - (*replace 192.168.1.x with your Raspberry IP*)
 
 
-## Device Management
+### Device Management
 <!--- --------------------------------------------------------------------- --->
 
   - [Device Management instructions](./DEVICE_MANAGEMENT.md)
