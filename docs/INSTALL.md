@@ -18,6 +18,11 @@ Estimated time: 20'
 <!--- --------------------------------------------------------------------- --->
 ### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
+# One-step Automated Update:
+<!--- --------------------------------------------------------------------- --->
+### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+
+
 # Installation process (step by step)
 <!--- --------------------------------------------------------------------- --->
 
