@@ -143,8 +143,6 @@ update_db() {
   print_msg "- Updating DB permissions..."
   sudo chgrp -R www-data $PIALERT_HOME/db                         2>&1 >> "$LOG"
   chmod -R 770 $PIALERT_HOME/db                                   2>&1 >> "$LOG"
-
-  return
 }
 
 # ------------------------------------------------------------------------------
