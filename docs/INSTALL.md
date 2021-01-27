@@ -30,7 +30,7 @@ Estimated time: 20'
 <!--- --------------------------------------------------------------------- --->
 1.1 - Install 'Raspberry Pi OS'
   - Instructions https://www.raspberrypi.org/documentation/installation/installing-images/
-  - *Lite version (without Descktop) is enough for Pi.Alert*
+  - *Lite version (without Desktop) is enough for Pi.Alert*
 
 1.2 - Activate ssh
   - Create a empty file with name 'ssh' in the boot partition of the SD
@@ -102,7 +102,7 @@ Estimated time: 20'
     - pi.alert    192.168.1.x
     - (*replace 192.168.1.x with your Raspberry IP*)
 
-2.8 - Deactivate your current DHCP Server (*Normaly at your router or AP*)
+2.8 - Deactivate your current DHCP Server (*usually at your router or AP*)
 
 2.9 - Renew your computer IP to unsure you are using the new DHCP and DNS server
   - Windows: cmd -> ipconfig /renew
@@ -148,7 +148,7 @@ block is not necessary
   sudo arp-scan -l
   ```
 
-4.2 - Install arp-scan utility and test
+4.2 - Install dnsutils utility
   ```
   sudo apt-get install dnsutils -y
   ```
