@@ -542,7 +542,8 @@ publish_pialert() {
 
   print_msg "- Setting permissions..."
   sudo chgrp -R www-data $PIALERT_HOME/db                         2>&1 >> "$LOG"
-  chmod -R 770 $PIALERT_HOME/db                                   2>&1 >> "$LOG"
+  chmod -R g+rwx $PIALERT_HOME/db                                 2>&1 >> "$LOG"
+  chmod go+x $INSTALL_DIR                                         2>&1 >> "$LOG"
 
   print_msg "- Publishing Pi.Alert web..."
   sudo ln -s "$PIALERT_HOME/front" "$WEBROOT/pialert"             2>&1 >> "$LOG"
