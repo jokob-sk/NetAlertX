@@ -88,6 +88,11 @@ Estimated time: 20'
   ```
   hostname -I
   ```
+  or this one if have severals interfaces
+  ```
+  ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+  ```
+  
   - http://192.168.1.x/admin/
   - (*replace 192.168.1.x with your Raspberry IP*)
 
@@ -98,6 +103,11 @@ Estimated time: 20'
   ```
   hostname -I
   ```
+  or this one if have severals interfaces
+  ```
+  ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+  ```
+
   - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
     - pi.alert    192.168.1.x
     - (*replace 192.168.1.x with your Raspberry IP*)
@@ -287,6 +297,10 @@ block is not necessary
   - Add pi.alert DNS Record
     ```
     hostname -I
+    ```
+    or this one if have severals interfaces
+    ```
+    ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
     ```
     - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
       - pi.alert    192.168.1.x
