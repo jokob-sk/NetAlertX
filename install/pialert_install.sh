@@ -24,6 +24,8 @@ PIALERT_DEFAULT_PAGE=false
 
 LOG="pialert_install_`date +"%Y-%m-%d_%H-%M"`.log"
 
+MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
+
 PIHOLE_INSTALL=false
 PIHOLE_ACTIVE=false
 DHCP_ACTIVATE=false
@@ -75,7 +77,7 @@ main() {
 
   print_header "Installation process finished"
   print_msg "Use: - http://pi.alert/"
-  print_msg "     - http://`hostname -I | tr -d ' '`/pialert/"
+  print_msg "     - http://$MAIN_IP/pialert/"
   print_msg "To access Pi.Alert web"
   print_msg ""
 
@@ -291,8 +293,7 @@ add_pialert_DNS() {
   fi
 
   print_msg "- Adding 'pi.alert' to Local DNS..."
-  sudo sh -c "echo `hostname -I` pi.alert >> /etc/pihole/custom.list" \
-                                                                  2>&1 >> "$LOG"
+  sudo sh -c "echo $MAIN_IP pi.alert >> /etc/pihole/custom.list"  2>&1 >> "$LOG"
   sudo pihole restartdns                                          2>&1 >> "$LOG"
 }
 
