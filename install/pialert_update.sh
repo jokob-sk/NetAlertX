@@ -8,7 +8,6 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
@@ -57,8 +56,7 @@ create_backup() {
   
   print_msg "- Creating new Pi.Alert backup..."
   cd "$INSTALL_DIR"
-  tar cvf "$INSTALL_DIR"/pialert_update_backup_`date +"%Y-%m-%d_%H-%M"`.tar  \
-    pialert --checkpoint=100 --checkpoint-action="ttyout=."     2>&1 >> "$LOG"
+  tar cvf "$INSTALL_DIR"/pialert_update_backup_`date +"%Y-%m-%d_%H-%M"`.tar pialert --checkpoint=100 --checkpoint-action="ttyout=."     2>&1 >> "$LOG"
   echo ""
 }
 
@@ -97,13 +95,13 @@ download_pialert() {
   fi
   
   print_msg "- Downloading update file..."
-  curl -Lo "$INSTALL_DIR/pialert_latest.tar" \
-    https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
+  curl -Lo "$INSTALL_DIR/pialert_latest.tar" https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
   echo ""
 
   print_msg "- Uncompressing tar file"
   tar xf "$INSTALL_DIR/pialert_latest.tar" -C "$INSTALL_DIR" \
-    --exclude='pialert/config/pialert.conf' --exclude='pialert/db/pialert.db' \
+    --exclude='pialert/config/pialert.conf' \
+    --exclude='pialert/db/pialert.db' \
     --exclude='pialert/log/*'  \
     --checkpoint=100 --checkpoint-action="ttyout=."               2>&1 >> "$LOG"
   echo ""
@@ -117,32 +115,47 @@ download_pialert() {
 # ------------------------------------------------------------------------------
 update_config() {
   print_msg "- Config backup..."
-  cp "$PIALERT_HOME/config/pialert.conf" \
-     "$PIALERT_HOME/config/pialert.conf.back"                     2>&1 >> "$LOG"
+  cp "$PIALERT_HOME/config/pialert.conf" "$PIALERT_HOME/config/pialert.conf.back"  2>&1 >> "$LOG"
 
   print_msg "- Updating config file..."
-  sed -i '/VERSION/d' "$PIALERT_HOME/config/pialert.conf"         2>&1 >> "$LOG"
-  sed -i 's/PA_FRONT_URL/REPORT_DEVICE_URL/g' \
-    "$PIALERT_HOME/config/pialert.conf"                           2>&1 >> "$LOG"
+  sed -i '/VERSION/d' "$PIALERT_HOME/config/pialert.conf"                          2>&1 >> "$LOG"
+  sed -i 's/PA_FRONT_URL/REPORT_DEVICE_URL/g' "$PIALERT_HOME/config/pialert.conf"  2>&1 >> "$LOG"
   
   if ! grep -Fq PIALERT_PATH "$PIALERT_HOME/config/pialert.conf" ; then
-    echo "PIALERT_PATH    = '$PIALERT_HOME'" >> \
-         "$PIALERT_HOME/config/pialert.conf"
+    echo "PIALERT_PATH    = '$PIALERT_HOME'" >> "$PIALERT_HOME/config/pialert.conf"
   fi      
 
   if ! grep -Fq QUERY_MYIP_SERVER "$PIALERT_HOME/config/pialert.conf" ; then
-    echo "QUERY_MYIP_SERVER = 'http://ipv4.icanhazip.com'" >> \
-         "$PIALERT_HOME/config/pialert.conf"
+    echo "QUERY_MYIP_SERVER = 'http://ipv4.icanhazip.com'" >> "$PIALERT_HOME/config/pialert.conf"
   fi      
 }
 
 # ------------------------------------------------------------------------------
-# 
+#  DB DDL
 # ------------------------------------------------------------------------------
 update_db() {
   print_msg "- Updating DB permissions..."
   sudo chgrp -R www-data $PIALERT_HOME/db                         2>&1 >> "$LOG"
   chmod -R 770 $PIALERT_HOME/db                                   2>&1 >> "$LOG"
+
+  print_msg "- Checking Parameters table..."
+  TAB=`sqlite3 $PIALERT_HOME/db/pialert.db "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Parameters' COLLATE NOCASE;"`              2>&1 >> "$LOG"
+  if [ "TAB" == "0" ] ; then
+    print_msg "  - Checking Parameters table..."
+    sqlite3 $PIALERT_HOME/db/pialert.db "CREATE TABLE Parameters (par_ID STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE, par_Value STRING (250));"    2>&1 >> "$LOG"
+    sqlite3 $PIALERT_HOME/db/pialert.db "CREATE INDEX IDX_par_ID ON Parameters (par_ID COLLATE NOCASE);"                                               2>&1 >> "$LOG"
+  fi
+  
+  print_msg "- Checking Devices new columns..."
+  COL=`sqlite3 pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_NewDevice' COLLATE NOCASE";`                             2>&1 >> "$LOG"
+  if [ "TAB" == "0" ] ; then
+    sqlite3 $PIALERT_HOME/db/pialert.db "ALTER TABLE Devices ADD COLUMN dev_NewDevice BOOLEAN NOT NULL DEFAULT (1) CHECK (dev_NewDevice IN (0, 1) );"  2>&1 >> "$LOG"
+    sqlite3 $PIALERT_HOME/db/pialert.db "CREATE INDEX IDX_dev_NewDevice ON Devices (dev_NewDevice);"
+
+  COL=`sqlite3 pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_Location' COLLATE NOCASE";`                              2>&1 >> "$LOG"
+  if [ "TAB" == "0" ] ; then
+    sqlite3 $PIALERT_HOME/db/pialert.db "ALTER TABLE Devices ADD COLUMN dev_Location STRING(250) COLLATE NOCASE);"                                     2>&1 >> "$LOG"
+  fi
 }
 
 # ------------------------------------------------------------------------------
@@ -151,20 +164,16 @@ update_db() {
 test_pialert() {
   print_msg "- Testing Pi.Alert HW vendors database update process..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent  2>&1 \
-                                                                | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0 $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent  2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Internet IP Lookup..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP  2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0 $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP            2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Network scan..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1            2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0 $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1                      2>&1 | tee -ai "$LOG"
 }
 
 # ------------------------------------------------------------------------------

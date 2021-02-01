@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 #-------------------------------------------------------------------------------
-#  Pi.Alert  v2.61  /  2021-01-25
+#  Pi.Alert  v2.70  /  2021-02-01
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  pialert.py - Back module. Network scanner
@@ -397,6 +397,10 @@ def scan_network ():
     # Update devices info
     print ('    Updating Devices Info...')
     update_devices_data_from_scan ()
+
+    # Resolve devices names
+    print_log ('   Resolve devices names...')
+    update_devices_names()
 
     # Void false connection - disconnections
     print ('    Voiding false (ghost) disconnections...')
@@ -904,6 +908,78 @@ def update_devices_data_from_scan ():
                 (startTime,) )
 
     print_log ('Update devices end')
+
+#-------------------------------------------------------------------------------
+# Feature #43 - Resoltion name for unknown devices
+def update_devices_names ():
+    # Initialize variables
+    recordsToUpdate = []
+    ignored = 0
+    notFound = 0
+
+    # Devices without name
+    print ('        Trying to resolve devices without name...', end='')
+    for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') ") :
+        # Resolve device name
+        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP'])
+       
+        if newName == -1 :
+            notFound += 1
+        elif newName == -2 :
+            ignored += 1
+        else :
+            recordsToUpdate.append ([newName, device['dev_MAC']])
+        # progress bar
+        print ('.', end='')
+        sys.stdout.flush()
+            
+    # Print log
+    print ('')
+    print ("        Names updated:  ", len(recordsToUpdate) )
+    # DEBUG - print list of record to update
+        # print (recordsToUpdate)
+
+    # update devices
+    sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
+
+    # DEBUG - print number of rows updated
+        # print (sql.rowcount)
+
+#-------------------------------------------------------------------------------
+def resolve_device_name (pMAC, pIP):
+    try :
+        pMACstr = str(pMAC)
+        
+        # Check MAC parameter
+        mac = pMACstr.replace (':','')
+        if len(pMACstr) != 17 or len(mac) != 12 :
+            return -2
+
+        # Resolve name with DIG
+        dig_args = ['dig', '+short', '-x', pIP]
+        newName = subprocess.check_output (dig_args, universal_newlines=True)
+
+        # Check if Eliminate local domain
+        newName = newName.strip()
+        if len(newName) == 0 :
+            return -2
+            
+        # Eliminate local domain
+        if newName.endswith('.') :
+            newName = newName[:-1]
+        if newName.endswith('.lan') :
+            newName = newName[:-4]
+        if newName.endswith('.local') :
+            newName = newName[:-6]
+        if newName.endswith('.home') :
+            newName = newName[:-5]
+
+        # Return newName
+        return newName
+
+    # not Found
+    except subprocess.CalledProcessError :
+        return -1            
 
 #-------------------------------------------------------------------------------
 def void_ghost_disconnections ():

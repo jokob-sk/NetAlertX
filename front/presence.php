@@ -1,4 +1,12 @@
-<!-- ----------------------------------------------------------------------- -->
+<!-- ---------------------------------------------------------------------------
+#  Pi.Alert
+#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#
+#  presence.php - Front module. Device Presence calendar page
+#-------------------------------------------------------------------------------
+#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#--------------------------------------------------------------------------- -->
+
 <?php
   require 'php/templates/header.php';
 ?>
@@ -11,102 +19,74 @@
       <h1 id="pageTitle">
          Presence by Devices
       </h1>
-
-      <!-- period selector -->
-      <span class="breadcrumb text-gray50">
-        New Devices period:  
-        <select id="period" onchange="javascript: periodChanged();">
-          <option value="1 day">Today</option>
-          <option value="7 days">Last Week</option>
-          <option value="1 month" selected>Last Month</option>
-          <option value="1 year">Last Year</option>
-          <option value="100 years">All info</option>
-        </select>
-      </span>
-
     </section>
 
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
+
+<!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
 
-<!-- top small box --------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: queryPresence('all');">
+          <a href="#" onclick="javascript: getDevicesPresence('all');">
             <div class="small-box bg-aqua pa-small-box-aqua">
+
               <div class="inner">
-  
                 <h4>All Devices</h4>
                 <h3 id="devicesAll"> -- </h3>
-  
               </div>
-              <div class="icon">
-                <i class="fa fa-laptop"></i>
-              </div>
-              <div class="small-box-footer">
-                Details <i class="fa fa-arrow-circle-right"></i>
-              </div>
+
+              <div class="icon"> <i class="fa fa-laptop"></i> </div>
+              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
 
-<!-- top small box --------------------------------------------------------- -->
+<!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: queryPresence('connected');">
+          <a href="#" onclick="javascript: getDevicesPresence('connected');">
             <div class="small-box bg-green pa-small-box-green">
+
               <div class="inner">
-  
                 <h4>Connected</h4>
                 <h3 id="devicesConnected"> -- </h3>
-  
               </div>
-              <div class="icon">
-                <i class="fa fa-plug"></i>
-              </div>
-              <div class="small-box-footer">
-                Details <i class="fa fa-arrow-circle-right"></i>
-              </div>
+
+              <div class="icon"> <i class="fa fa-plug"></i> </div>
+              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
 
-<!-- top small box --------------------------------------------------------- -->
+<!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: queryPresence('new');">
+          <a href="#" onclick="javascript: getDevicesPresence('new');">
             <div  class="small-box bg-yellow pa-small-box-yellow">
+
               <div class="inner">
-  
                 <h4>New Devices</h4>
                 <h3 id="devicesNew"> -- </h3>
-  
               </div>
-              <div class="icon">
-                <i class="ion ion-plus-round"></i>
-              </div>
-              <div class="small-box-footer">
-                Details <i class="fa fa-arrow-circle-right"></i>
-              </div>
+
+              <div class="icon"> <i class="ion ion-plus-round"></i> </div>
+              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
 
         </div>
 
-<!-- top small box --------------------------------------------------------- -->
+<!-- top small box 4 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: queryPresence('down');">
+          <a href="#" onclick="javascript: getDevicesPresence('down');">
             <div  class="small-box bg-red pa-small-box-red">
+
               <div class="inner">
-  
                 <h4>Down Alerts</h4>
                 <h3 id="devicesDown"> -- </h3>
-  
               </div>
-              <div class="icon">
-                <i class="fa fa-warning"></i>
-              </div>
-              <div class="small-box-footer">
-                Details <i class="fa fa-arrow-circle-right"></i>
-              </div>
+
+              <div class="icon"> <i class="fa fa-warning"></i> </div>
+              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -118,20 +98,27 @@
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
           <div id="tableDevicesBox" class="box" style="min-height: 500px">
+
+            <!-- box-header -->
             <div class="box-header">
               <h3 id="tableDevicesTitle" class="box-title text-gray">Devices</h3>
             </div>
 
-
+            <!-- box-body -->
             <div class="box-body table-responsive">
+
               <!-- spinner -->
               <div id="loading" style="display: none">
                 <div class="pa_semitransparent-panel"></div>
                 <div class="panel panel-default pa_spinner">
-                  <table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
+                  <table>
+                    <td width="130px" align="middle">Loading...</td>
+                    <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
+                  </table>
                 </div>
               </div>
 
+              <!-- Calendar -->
               <div id="calendar"></div>
             </div>
 
@@ -156,15 +143,6 @@
 
 
 <!-- ----------------------------------------------------------------------- -->
-<!-- iCkeck -->
-  <link rel="stylesheet" href="lib/AdminLTE/plugins/iCheck/all.css">
-  <script src="lib/AdminLTE/plugins/iCheck/icheck.min.js"></script>
-
-<!-- Datatable -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-
 <!-- fullCalendar -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.css">
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
@@ -178,23 +156,19 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
 
+  var deviceStatus = 'all';
+
+  // Read parameters & Initialize components
+  main();
+
+
 // -----------------------------------------------------------------------------
-  var deviceStatus = '';
-  var period = '';
-
-  // Initialize MAC
-  var urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has ('status') == true) {
-    deviceStatus = urlParams.get ('status');
-  } else {
-    deviceStatus = 'all';
-  }
-
+function main () {
   // Initialize components
   $(function () {
-    initializeiCheck();
     initializeCalendar();
-    periodChanged();
+    getDevicesTotals();
+    getDevicesPresence(deviceStatus);
   });
 
   // Force re-render calendar on tab change (bugfix for render error at left panel)
@@ -203,38 +177,12 @@
       $('#calendar').fullCalendar('rerenderEvents');
     }
   });
-
-
-// -----------------------------------------------------------------------------
-function periodChanged () {
-  // Requery totals and list
-  queryTotals();
-  queryPresence(deviceStatus);
-}
-
-
-// -----------------------------------------------------------------------------
-function initializeiCheck () {
-  // Default
-  $('input').iCheck({
-    checkboxClass: 'icheckbox_flat-blue',
-    radioClass:    'iradio_flat-blue',
-    increaseArea:  '20%'
-  });
-
-  // readonly
-  $('#readonlyblock input').iCheck({
-    checkboxClass: 'icheckbox_flat-blue',
-    radioClass:    'iradio_flat-blue',
-    increaseArea:  '-100%'
-  });
 }
 
 
 // -----------------------------------------------------------------------------
 function initializeCalendar () {
   $('#calendar').fullCalendar({
-
     header: {
       left            : 'prev,next today',
       center          : 'title',
@@ -253,8 +201,8 @@ function initializeCalendar () {
 
     resourceOrder     : '-favorite,title',
 
-    schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-    // schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+    //schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 
     views: {
       timelineYear: {
@@ -299,7 +247,7 @@ function initializeCalendar () {
         cell.removeClass('fc-sat'); 
         cell.removeClass('fc-sun'); 
         return;
-         } 
+      }; 
 
       if (date.day() == 0) {
         cell.addClass('fc-sun'); };
@@ -312,7 +260,8 @@ function initializeCalendar () {
     },
     
     resourceRender: function (resourceObj, labelTds, bodyTds) {
-      labelTds.find('span.fc-cell-text').html ('<b><a href="deviceDetails.php?mac='+ resourceObj.id+ '&period='+ period +'" class="">'+ resourceObj.title +'</a></b>');
+      labelTds.find('span.fc-cell-text').html (
+      '<b><a href="deviceDetails.php?mac='+ resourceObj.id+ '" class="">'+ resourceObj.title +'</a></b>');
 
       // Resize heihgt
       // $(".fc-content table tbody tr .fc-widget-content div").addClass('fc-resized-row');
@@ -336,78 +285,51 @@ function initializeCalendar () {
 
 
 // -----------------------------------------------------------------------------
-function queryTotals () {
-  // debugTimer();
-
+function getDevicesTotals () {
   // stop timer
   stopTimerRefreshData();
 
-  // period
-  period = document.getElementById('period').value;
-
   // get totals and put in boxes
-  $.get('php/server/devices.php?action=totals&period='+ period, function(data) {
+  $.get('php/server/devices.php?action=getDevicesTotals', function(data) {
     var totalsDevices = JSON.parse(data);
 
-    $('#devicesAll').html       (totalsDevices[0].toLocaleString());
-    $('#devicesConnected').html (totalsDevices[1].toLocaleString());
-    $('#devicesNew').html       (totalsDevices[2].toLocaleString());
-    $('#devicesDown').html      (totalsDevices[3].toLocaleString());
-    });
+    $('#devicesAll').html        (totalsDevices[0].toLocaleString());
+    $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
+    $('#devicesNew').html        (totalsDevices[2].toLocaleString());
+    $('#devicesDown').html       (totalsDevices[3].toLocaleString());
 
-  // Timer for refresh data
-  newTimerRefreshData (queryTotals);
+    // Timer for refresh data
+    newTimerRefreshData (getDevicesTotals);
+  } );
 }
 
 
 // -----------------------------------------------------------------------------
-function queryPresence (status) {
-  // Save status and period selected
+function getDevicesPresence (status) {
+  // Save status selected
   deviceStatus = status;
-  period = document.getElementById('period').value;
-
 
   // Defini color & title for the status selected
   switch (deviceStatus) {
-    case 'all':
-      tableTitle = 'Total Devices';
-      color = 'aqua';
-      break;
-    case 'connected':
-      tableTitle = 'Connected Devices';
-      color = 'green';
-      break;
-    case 'new':
-      tableTitle = 'New Devices';
-      color = 'yellow';
-      break;
-    case 'down':
-      tableTitle = 'Down Alerts';
-      color = 'red';
-      break;
-    case 'favorites':
-      tableTitle = 'Favorites';
-      color = 'yellow';
-      break;
-    default:
-      tableTitle = 'Devices';
-      boxClass = '';
-      break;
+    case 'all':        tableTitle = 'Total Devices';      color = 'aqua';    break;
+    case 'connected':  tableTitle = 'Connected Devices';  color = 'green';   break;
+    case 'new':        tableTitle = 'New Devices';        color = 'yellow';  break;
+    case 'down':       tableTitle = 'Down Alerts';        color = 'red';     break;
+    case 'favorites':  tableTitle = 'Favorites';          color = 'yellow';  break;
+    default:           tableTitle = 'Devices';            boxClass = '';     break;
   } 
 
   // Set title and color
-  document.getElementById('tableDevicesTitle').className = 'box-title text-' + color;
-  document.getElementById('tableDevicesBox').className = 'box box-' + color;
+  $('#tableDevicesTitle')[0].className = 'box-title text-'+ color;
+  $('#tableDevicesBox')[0].className = 'box box-'+ color;
   $('#tableDevicesTitle').html (tableTitle);
 
-  $('#calendar').fullCalendar ('option', 'resources', 'php/server/devices.php?action=calendar&status='+ deviceStatus +'&period='+ period);
+  // Define new datasource URL and reload
+  $('#calendar').fullCalendar ('option', 'resources', 'php/server/devices.php?action=getDevicesListCalendar&status='+ deviceStatus);
   $('#calendar').fullCalendar ('refetchResources');
-  // Query calendar
-//    resources         : 'https://fullcalendar.io/demo-resources.json',
-//    events            : 'https://fullcalendar.io/demo-events.json?with-resources',
 
   $('#calendar').fullCalendar('removeEventSources');
-  $('#calendar').fullCalendar('addEventSource', { url: 'php/server/events.php?action=calendarPresence&period='+ period });
+  $('#calendar').fullCalendar('addEventSource', { url: 'php/server/events.php?action=getEventsCalendar' });
 };
 
 </script>

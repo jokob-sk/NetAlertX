@@ -25,4 +25,3 @@ tar cvf pialert/tar/pialert_$PIALERT_VERSION.tar --exclude="pialert/tar" --exclu
 
 ln -s pialert_$PIALERT_VERSION.tar pialert/tar/pialert_latest.tar
 ls -l pialert/tar/pialert*.tar
-

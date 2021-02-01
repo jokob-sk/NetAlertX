@@ -8,50 +8,49 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-COLS=70
-ROWS=12
-
-INSTALL_DIR=~
-PIALERT_HOME="$INSTALL_DIR/pialert"
-
-LIGHTTPD_CONF_DIR="/etc/lighttpd"
-WEBROOT="/var/www/html"
-PIALERT_DEFAULT_PAGE=false
-
-LOG="pialert_install_`date +"%Y-%m-%d_%H-%M"`.log"
-
-MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
-
-PIHOLE_INSTALL=false
-PIHOLE_ACTIVE=false
-DHCP_ACTIVATE=false
-DHCP_ACTIVE=false
-
-DHCP_RANGE_START="192.168.1.200"
-DHCP_RANGE_END="192.168.1.251"
-DHCP_ROUTER="192.168.1.1"
-DHCP_LEASE="1"
-DHCP_DOMAIN="local"
-
-USE_PYTHON_VERSION=0
-PYTHON_BIN=python
-
-REPORT_MAIL=False
-REPORT_TO=user@gmail.com
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=user@gmail.com
-SMTP_PASS=password
-
-DDNS_ACTIVE=False
-DDNS_DOMAIN='your_domain.freeddns.org'
-DDNS_USER='dynu_user'
-DDNS_PASSWORD='A0000000B0000000C0000000D0000000'
-DDNS_UPDATE_URL='https://api.dynu.com/nic/update?'
+  COLS=70
+  ROWS=12
+  
+  INSTALL_DIR=~
+  PIALERT_HOME="$INSTALL_DIR/pialert"
+  
+  LIGHTTPD_CONF_DIR="/etc/lighttpd"
+  WEBROOT="/var/www/html"
+  PIALERT_DEFAULT_PAGE=false
+  
+  LOG="pialert_install_`date +"%Y-%m-%d_%H-%M"`.log"
+  
+  MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
+  
+  PIHOLE_INSTALL=false
+  PIHOLE_ACTIVE=false
+  DHCP_ACTIVATE=false
+  DHCP_ACTIVE=false
+  
+  DHCP_RANGE_START="192.168.1.200"
+  DHCP_RANGE_END="192.168.1.251"
+  DHCP_ROUTER="192.168.1.1"
+  DHCP_LEASE="1"
+  DHCP_DOMAIN="local"
+  
+  USE_PYTHON_VERSION=0
+  PYTHON_BIN=python
+  
+  REPORT_MAIL=False
+  REPORT_TO=user@gmail.com
+  SMTP_SERVER=smtp.gmail.com
+  SMTP_PORT=587
+  SMTP_USER=user@gmail.com
+  SMTP_PASS=password
+  
+  DDNS_ACTIVE=False
+  DDNS_DOMAIN='your_domain.freeddns.org'
+  DDNS_USER='dynu_user'
+  DDNS_PASSWORD='A0000000B0000000C0000000D0000000'
+  DDNS_UPDATE_URL='https://api.dynu.com/nic/update?'
 
 
 # ------------------------------------------------------------------------------
@@ -84,13 +83,14 @@ main() {
   move_logfile
 }
 
+
 # ------------------------------------------------------------------------------
 # Ask config questions
 # ------------------------------------------------------------------------------
 ask_config() {
   # Ask installation
   ask_yesno "This script will install Pi.Alert in this system using this path:\n$PIALERT_HOME" \
-           "Do you want to continue ?"
+            "Do you want to continue ?"
   if ! $ANSWER ; then
     exit 1
   fi
@@ -107,11 +107,11 @@ ask_config() {
            "Perfect: Pi-hole Installation not necessary"
   else
     ask_yesno "Pi-hole is not installed." \
-      "Do you want to install Pi-hole before installing Pi.Alert ?" "YES"
+              "Do you want to install Pi-hole before installing Pi.Alert ?" "YES"
     if $ANSWER ; then
       PIHOLE_INSTALL=true
       msgbox "In the installation wizard of Pi-hole, select this options" \
-        "'Install web admin interface' & 'Install web server lighttpd'"
+             "'Install web admin interface' & 'Install web server lighttpd'"
     fi
   fi
 
@@ -119,21 +119,20 @@ ask_config() {
   DHCP_ACTIVE=false
   DHCP_ACTIVATE=false
   if $PIHOLE_ACTIVE ; then
-    DHCP_ACTIVE=`sudo grep DHCP_ACTIVE /etc/pihole/setupVars.conf |
-      awk -F= '/./{print $2}'`
+    DHCP_ACTIVE=`sudo grep DHCP_ACTIVE /etc/pihole/setupVars.conf | awk -F= '/./{print $2}'`
     if [ "$DHCP_ACTIVE" = "" ] ; then DHCP_ACTIVE=false; fi
  
     if ! $DHCP_ACTIVE ; then
       ask_yesno "Pi-hole DHCP server is not active." \
-        "Do you want to activate Pi-hole DHCP server ?"
-       if $ANSWER ; then
-         DHCP_ACTIVATE=true
-       fi
+                "Do you want to activate Pi-hole DHCP server ?"
+      if $ANSWER ; then
+        DHCP_ACTIVATE=true
+      fi
     fi
 
   elif $PIHOLE_INSTALL ; then
     ask_yesno "Pi-hole installation." \
-      "Do you want to activate Pi-hole DHCP server ?"
+              "Do you want to activate Pi-hole DHCP server ?"
     if $ANSWER ; then
       DHCP_ACTIVATE=true
     fi
@@ -150,7 +149,7 @@ ask_config() {
   PIALERT_DEFAULT_PAGE=false
   if ! $PIHOLE_ACTIVE && ! $PIHOLE_INSTALL; then
     ask_yesno "As Pi-hole is not going to be available in this system," \
-      "Do you want to use Pi.Alert as default web server page ?" "YES"
+              "Do you want to use Pi.Alert as default web server page ?" "YES"
     if $ANSWER ; then
       PIALERT_DEFAULT_PAGE=true
     fi
@@ -158,10 +157,10 @@ ask_config() {
   
   # Ask Python version
   ask_option "What Python version do you want to use ?" \
-    3 \
-    0 " - Use Python already installed in the system (DEFAULT)" \
-    2 " - Use Python 2" \
-    3 " - Use Python 3"
+              3 \
+              0 " - Use Python already installed in the system (DEFAULT)" \
+              2 " - Use Python 2" \
+              3 " - Use Python 3"
   if [ "$ANSWER" = "" ] ; then
     USE_PYTHON_VERSION=0
   else
@@ -171,10 +170,10 @@ ask_config() {
   # Ask e-mail notification config
   MAIL_REPORT=false
   ask_yesno "Pi.Alert can notify you by e-mail when a network event occurs" \
-    "Do you want to activate this feature ?"
+            "Do you want to activate this feature ?"
   if $ANSWER ; then
     ask_yesno "e-mail notification needs a SMTP server (i.e. smtp.gmail.com)" \
-      "Do you want to continue activating this feature ?"
+              "Do you want to continue activating this feature ?"
     MAIL_REPORT=$ANSWER
   fi
 
@@ -195,10 +194,10 @@ ask_config() {
   # Ask Dynamic DNS config
   DDNS_ACTIVE=false
   ask_yesno "Pi.Alert can update your Dynamic DNS IP (i.e with www.dynu.net)" \
-    "Do you want to activate this feature ?"
+            "Do you want to activate this feature ?"
   if $ANSWER ; then
     ask_yesno "Dynamics DNS updater needs a DNS with IP Update Protocol" \
-      "(i.e with www.dynu.net). Do you want to continue ?"
+              "(i.e with www.dynu.net). Do you want to continue ?"
     DDNS_ACTIVE=$ANSWER
   fi
 
@@ -218,10 +217,11 @@ ask_config() {
   
   # Final config message
   msgbox "Configuration finished. To updete the configuration, edit file:" \
-    "$PIALERT_HOME/config/pialert.conf"
+         "$PIALERT_HOME/config/pialert.conf"
 
   msgbox "" "The installation will start now"
 }
+
 
 # ------------------------------------------------------------------------------
 # Install Pi-hole
@@ -250,6 +250,7 @@ install_pihole() {
   PIHOLE_ACTIVE=true
 }
 
+
 # ------------------------------------------------------------------------------
 # Activate DHCP
 # ------------------------------------------------------------------------------
@@ -264,8 +265,7 @@ activate_DHCP() {
 
   print_msg "- Checking if DHCP is active..."
   if [ -e /etc/pihole ]; then
-    DHCP_ACTIVE= \
-      `grep DHCP_ACTIVE /etc/pihole/setupVars.conf | awk -F= '/./{print $2}'`
+    DHCP_ACTIVE= `grep DHCP_ACTIVE /etc/pihole/setupVars.conf | awk -F= '/./{print $2}'`
   fi
 
   if $DHCP_ACTIVE ; then
@@ -273,10 +273,10 @@ activate_DHCP() {
   fi
 
   print_msg "- Activating DHCP..."
-  sudo pihole -a enabledhcp "$DHCP_RANGE_START" "$DHCP_RANGE_END" \
-    "$DHCP_ROUTER" "$DHCP_LEASE" "$DHCP_DOMAIN"                   2>&1 >> "$LOG"
+  sudo pihole -a enabledhcp "$DHCP_RANGE_START" "$DHCP_RANGE_END" "$DHCP_ROUTER" "$DHCP_LEASE" "$DHCP_DOMAIN"   2>&1 >> "$LOG"
   DHCP_ACTIVE=true
 }
+
 
 # ------------------------------------------------------------------------------
 # Add Pi.Alert DNS
@@ -321,6 +321,7 @@ install_lighttpd() {
   print_msg "- Restarting lighttpd..."
   sudo /etc/init.d/lighttpd restart                               2>&1 >> "$LOG"
 }
+
 
 # ------------------------------------------------------------------------------
 # Install arp-scan & dnsutils
@@ -384,6 +385,7 @@ install_python() {
   fi
 }
 
+
 # ------------------------------------------------------------------------------
 # Check Python versions available
 # ------------------------------------------------------------------------------
@@ -426,6 +428,7 @@ install_pialert() {
   set_pialert_default_page
 }
 
+
 # ------------------------------------------------------------------------------
 # Download and uncompress Pi.Alert
 # ------------------------------------------------------------------------------
@@ -436,18 +439,17 @@ download_pialert() {
   fi
   
   print_msg "- Downloading installation tar file..."
-  curl -Lo "$INSTALL_DIR/pialert_latest.tar" \
-    https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
+  curl -Lo "$INSTALL_DIR/pialert_latest.tar" https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
   echo ""
 
   print_msg "- Uncompressing tar file"
-  tar xf "$INSTALL_DIR/pialert_latest.tar" -C "$INSTALL_DIR" \
-    --checkpoint=100 --checkpoint-action="ttyout=."               2>&1 >> "$LOG"
+  tar xf "$INSTALL_DIR/pialert_latest.tar" -C "$INSTALL_DIR" --checkpoint=100 --checkpoint-action="ttyout=."  2>&1 >> "$LOG"
   echo ""
 
   print_msg "- Deleting downloaded tar file..."
   rm -r "$INSTALL_DIR/pialert_latest.tar"
 }
+
 
 # ------------------------------------------------------------------------------
 # Configure Pi.Alert parameters
@@ -474,6 +476,7 @@ configure_pialert() {
   set_pialert_parameter DHCP_ACTIVE     "$DHCP_ACTIVE"
 }
 
+
 # ------------------------------------------------------------------------------
 # Set Pi.Alert parameter
 # ------------------------------------------------------------------------------
@@ -486,8 +489,7 @@ set_pialert_parameter() {
     VALUE="$2"
   fi
   
-  sed -i "/^$1.*=/s|=.*|= $VALUE|" $PIALERT_HOME/config/pialert.conf \
-    2>&1 >> "$LOG"
+  sed -i "/^$1.*=/s|=.*|= $VALUE|" $PIALERT_HOME/config/pialert.conf  2>&1 >> "$LOG"
 }
 
 
@@ -497,20 +499,16 @@ set_pialert_parameter() {
 test_pialert() {
   print_msg "- Testing Pi.Alert HW vendors database update process..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent  2>&1 \
-                                                                | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent  2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Internet IP Lookup..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP  2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP            2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Network scan..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0 \
-    $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1            2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1                      2>&1 | tee -ai "$LOG"
 }
 
 # ------------------------------------------------------------------------------
@@ -528,8 +526,7 @@ add_jobs_to_crontab() {
     sed -i "s/\<python\>/$PYTHON_BIN/g" $PIALERT_HOME/install/pialert.cron
   fi
 
-  (crontab -l 2>/dev/null || : ; cat $PIALERT_HOME/install/pialert.cron) | \
-  crontab -
+  (crontab -l 2>/dev/null || : ; cat $PIALERT_HOME/install/pialert.cron) | crontab -
 }
 
 # ------------------------------------------------------------------------------
@@ -551,20 +548,16 @@ publish_pialert() {
 
   print_msg "- Configuring http://pi.alert/ redirection..."
   if [ -e "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf" ] ; then
-    sudo rm -r "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf" \
-                                                                  2>&1 >> "$LOG"
+    sudo rm -r "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf"  2>&1 >> "$LOG"
   fi
-  sudo cp "$PIALERT_HOME/install/pialert_front.conf" \
-          "$LIGHTTPD_CONF_DIR/conf-available"                     2>&1 >> "$LOG"
+  sudo cp "$PIALERT_HOME/install/pialert_front.conf" "$LIGHTTPD_CONF_DIR/conf-available"  2>&1 >> "$LOG"
 
   if [ -e "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf" ] || \
      [ -L "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf" ] ; then
-    sudo rm -r "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf" \
-                                                                  2>&1 >> "$LOG"
+    sudo rm -r "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf" 2>&1 >> "$LOG"
   fi
 
-  sudo ln -s ../conf-available/pialert_front.conf \
-    "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"          2>&1 >> "$LOG"
+  sudo ln -s ../conf-available/pialert_front.conf  "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"  2>&1 >> "$LOG"
 
   print_msg "- Restarting lighttpd..."
   sudo /etc/init.d/lighttpd restart                               2>&1 >> "$LOG"
@@ -584,8 +577,7 @@ set_pialert_default_page() {
     if [ -e "$WEBROOT/index.lighttpd.html.orig" ] ; then
       sudo rm "$WEBROOT/index.lighttpd.html"                      2>&1 >> "$LOG"
     else
-      sudo mv "$WEBROOT/index.lighttpd.html" \
-              "$WEBROOT/index.lighttpd.html.orig"                 2>&1 >> "$LOG"
+      sudo mv "$WEBROOT/index.lighttpd.html"  "$WEBROOT/index.lighttpd.html.orig"  2>&1 >> "$LOG"
     fi
   fi
 
@@ -638,8 +630,7 @@ msgbox() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    whiptail --title "Pi.Alert Installation" --msgbox "$LINE1\\n\\n$LINE2" \
-      $ROWS $COLS
+    whiptail --title "Pi.Alert Installation" --msgbox "$LINE1\\n\\n$LINE2" $ROWS $COLS
     BUTTON=$?
     ask_cancel
     ANSWER=true
@@ -658,8 +649,7 @@ ask_yesno() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    whiptail --title "Pi.Alert Installation" --yesno $DEF_BUTTON \
-      "$LINE1\\n\\n$LINE2" $ROWS $COLS
+    whiptail --title "Pi.Alert Installation" --yesno $DEF_BUTTON "$LINE1\\n\\n$LINE2" $ROWS $COLS
     BUTTON=$?
     ask_cancel
   done
@@ -677,8 +667,7 @@ ask_option() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    ANSWER=$(whiptail --title "Pi.Alert Installation" --menu "$1" $ROWS $COLS \
-      "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3 )
+    ANSWER=$(whiptail --title "Pi.Alert Installation" --menu "$1" $ROWS $COLS "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3 )
     BUTTON=$?
     ask_cancel CANCEL
   done
@@ -690,8 +679,7 @@ ask_input() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    ANSWER=$(whiptail --title "Pi.Alert Installation" --inputbox \
-      "$LINE1\\n\\n$LINE2" $ROWS $COLS "$3" 3>&2 2>&1 1>&3 )
+    ANSWER=$(whiptail --title "Pi.Alert Installation" --inputbox "$LINE1\\n\\n$LINE2" $ROWS $COLS "$3" 3>&2 2>&1 1>&3 )
     BUTTON=$?
     ask_cancel CANCEL
 
@@ -709,8 +697,7 @@ ask_cancel() {
   if [ "$BUTTON" = "1" ] && [ "$1" = "CANCEL" ] ; then BUTTON="255"; fi
 
   if [ "$BUTTON" = "255" ] ; then
-    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE0" \
-      $ROWS $COLS
+    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE0" $ROWS $COLS
 
     if [ "$?" = "0" ] ; then
       process_error "Installation Aborted by User"

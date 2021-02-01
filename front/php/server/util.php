@@ -1,4 +1,13 @@
 <?php
+//------------------------------------------------------------------------------
+//  Pi.Alert
+//  Open Source Network Guard / WIFI & LAN intrusion detector 
+//
+//  util.php - Front module. Server side. Common generic functions
+//------------------------------------------------------------------------------
+//  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+//------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------
 // Formatting data functions
@@ -37,12 +46,16 @@ function formatIPlong ($IP) {
 //------------------------------------------------------------------------------
 function getDateFromPeriod () {
   $period = $_REQUEST['period'];    
-  return '"'. date ('Y-m-d', strtotime ('+1 day -'.$period) ) .'"';
+  return '"'. date ('Y-m-d', strtotime ('+1 day -'. $period) ) .'"';
 }
 
+function quotes ($text) {
+  return str_replace ('"','""',$text);
+}
+    
 function logServerConsole ($text) {
   $x = array();
   $y = $x['__________'. $text .'__________'];
 }
-    
+
 ?>
