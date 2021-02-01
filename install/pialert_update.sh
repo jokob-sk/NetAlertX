@@ -140,7 +140,7 @@ update_db() {
 
   print_msg "- Checking Parameters table..."
   TAB=`sqlite3 $PIALERT_HOME/db/pialert.db "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Parameters' COLLATE NOCASE;"`              2>&1 >> "$LOG"
-  if [ "TAB" == "0" ] ; then
+  if [ "$TAB" == "0" ] ; then
     print_msg "  - Checking Parameters table..."
     sqlite3 $PIALERT_HOME/db/pialert.db "CREATE TABLE Parameters (par_ID STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE, par_Value STRING (250) );"   2>&1 >> "$LOG"
     sqlite3 $PIALERT_HOME/db/pialert.db "CREATE INDEX IDX_par_ID ON Parameters (par_ID COLLATE NOCASE);"                                               2>&1 >> "$LOG"
