@@ -147,14 +147,14 @@ update_db() {
   fi
   
   print_msg "- Checking Devices new columns..."
-  COL=`sqlite3 pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_NewDevice' COLLATE NOCASE";`                             2>&1 >> "$LOG"
-  if [ "TAB" == "0" ] ; then
+  COL=`sqlite3 $PIALERT_HOME/db/pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_NewDevice' COLLATE NOCASE";`            2>&1 >> "$LOG"
+  if [ "$COL" == "0" ] ; then
     sqlite3 $PIALERT_HOME/db/pialert.db "ALTER TABLE Devices ADD COLUMN dev_NewDevice BOOLEAN NOT NULL DEFAULT (1) CHECK (dev_NewDevice IN (0, 1) );"  2>&1 >> "$LOG"
     sqlite3 $PIALERT_HOME/db/pialert.db "CREATE INDEX IDX_dev_NewDevice ON Devices (dev_NewDevice);"
   fi
 
-  COL=`sqlite3 pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_Location' COLLATE NOCASE";`                              2>&1 >> "$LOG"
-  if [ "TAB" == "0" ] ; then
+  COL=`sqlite3 $PIALERT_HOME/db/pialert.db "SELECT COUNT(*) FROM PRAGMA_TABLE_INFO ('Devices') WHERE name='dev_Location' COLLATE NOCASE";`             2>&1 >> "$LOG"
+  if [ "$COL" == "0" ] ; then
     sqlite3 $PIALERT_HOME/db/pialert.db "ALTER TABLE Devices ADD COLUMN dev_Location STRING(250) COLLATE NOCASE;"                                      2>&1 >> "$LOG"
   fi
 }
