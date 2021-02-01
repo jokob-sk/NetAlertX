@@ -3,7 +3,7 @@
 #  Pi.Alert
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
-#  create_tar.sh - Create the installation file
+#  create_tar.sh - Create the tar file for installation
 # ------------------------------------------------------------------------------
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
