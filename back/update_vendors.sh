@@ -3,7 +3,7 @@
 #  Pi.Alert
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
-#  vendors_db_update.sh - Back module. IEEE Vendors db update
+#  update_vendors.sh - Back module. IEEE Vendors db update
 # ------------------------------------------------------------------------------
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------

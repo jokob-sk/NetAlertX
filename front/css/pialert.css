@@ -1,6 +1,11 @@
-/*******************************************************************************
-*  Pi.alert CSS
-*******************************************************************************/
+/* -----------------------------------------------------------------------------
+#  Pi.Alert
+#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#
+#  pialert.css - Front module. CSS styles
+#-------------------------------------------------------------------------------
+#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+----------------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------------
    Global Variables
@@ -369,5 +374,30 @@
 
     background-color: #fff;
     z-index:          100;
+}
+
+/* -----------------------------------------------------------------------------
+   Notification float banner
+----------------------------------------------------------------------------- */
+.pa_alert_notification {
+    text-align:       center;
+    font-size:        large;
+    font-weight:      bold;
+    color:            #258744;
+
+    background-color: #d4edda;
+    border-color:     #c3e6cb;
+    border-radius:    5px;
+
+    max-width:        1000px; /* 80% wrapper 1250px */
+    width:            80%;
+    z-index:          9999;
+
+    position:         fixed;
+    top:              30px;
+    margin:           auto;
+    transform:        translate(0,0);
+
+    display:          none;
 }
 

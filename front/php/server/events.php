@@ -1,8 +1,19 @@
 <?php
+//------------------------------------------------------------------------------
+//  Pi.Alert
+//  Open Source Network Guard / WIFI & LAN intrusion detector 
+//
+//  events.php - Front module. Server side. Manage Events
+//------------------------------------------------------------------------------
+//  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+//------------------------------------------------------------------------------
 
+
+//------------------------------------------------------------------------------
   // External files
   require 'db.php';
   require 'util.php';
+
 
 //------------------------------------------------------------------------------
 //  Action selector
@@ -17,13 +28,13 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'totals':           queryTotals();           break;
-      case 'list':             queryList();             break;                      
-      case 'deviceSessions':   queryDeviceSessions();   break;
-      case 'devicePresence':   queryDevicePresence();   break;
-      case 'deviceEvents':     queryDeviceEvents();     break;
-      case 'calendarPresence': queryCalendarPresence(); break;
-      default:                 logServerConsole ('Action: '. $action); break;
+      case 'getEventsTotals':    getEventsTotals();                       break;
+      case 'getEvents':          getEvents();                             break;                      
+      case 'getDeviceSessions':  getDeviceSessions();                     break;
+      case 'getDevicePresence':  getDevicePresence();                     break;
+      case 'getDeviceEvents':    getDeviceEvents();                       break;
+      case 'getEventsCalendar':  getEventsCalendar();                     break;
+      default:                   logServerConsole ('Action: '. $action);  break;
     }
   }
 
@@ -31,7 +42,7 @@
 //------------------------------------------------------------------------------
 //  Query total numbers of Events
 //------------------------------------------------------------------------------
-function queryTotals() {
+function getEventsTotals() {
   global $db;
 
   // Request Parameters
@@ -86,7 +97,7 @@ function queryTotals() {
 //------------------------------------------------------------------------------
 //  Query the List of events
 //------------------------------------------------------------------------------
-function queryList() {
+function getEvents() {
   global $db;
 
   // Request Parameters
@@ -104,30 +115,18 @@ function queryList() {
 
   // SQL Variations for status
   switch ($type) {
-    case 'all':
-      $SQL = $SQL1;
-      break;
+    case 'all':     $SQL = $SQL1;                                         break;
     case 'sessions':
-      $SQL = $SQL2 . ' WHERE (  ses_DateTimeConnection >= '. $periodDate .'
-                             OR ses_DateTimeDisconnection >= '. $periodDate .'
-                             OR ses_StillConnected = 1 ) ';
+      $SQL = $SQL2 . ' WHERE (  ses_DateTimeConnection >= '. $periodDate .' OR ses_DateTimeDisconnection >= '. $periodDate .' OR ses_StillConnected = 1 ) ';
       break;
     case 'missing':
       $SQL = $SQL2 . ' WHERE    (ses_DateTimeConnection    IS NULL AND ses_DateTimeDisconnection >= '. $periodDate .' )
                              OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= '. $periodDate .' )';
       break;
-    case 'voided':
-      $SQL = $SQL1 .' AND eve_EventType LIKE "VOIDED%" ';
-      break;
-    case 'new':
-      $SQL = $SQL1 .' AND eve_EventType = "New Device" ';
-      break;
-    case 'down':
-      $SQL = $SQL1 .' AND eve_EventType = "Device Down" ';
-      break;
-    default:
-      $SQL = $SQL1 .' AND 1==0 ';
-      break;
+    case 'voided':  $SQL = $SQL1 .' AND eve_EventType LIKE "VOIDED%" ';   break;
+    case 'new':     $SQL = $SQL1 .' AND eve_EventType = "New Device" ';   break;
+    case 'down':    $SQL = $SQL1 .' AND eve_EventType = "Device Down" ';  break;
+    default:        $SQL = $SQL1 .' AND 1==0 ';                           break;
   }
 
   // Query
@@ -187,7 +186,7 @@ function queryList() {
 //------------------------------------------------------------------------------
 //  Query Device Sessions
 //------------------------------------------------------------------------------
-function queryDeviceSessions() {
+function getDeviceSessions() {
   global $db;
 
   // Request Parameters
@@ -195,16 +194,17 @@ function queryDeviceSessions() {
   $periodDate = getDateFromPeriod();
 
   // SQL 
-  $result = $db->query('SELECT IFNULL (ses_DateTimeConnection, ses_DateTimeDisconnection) ses_DateTimeOrder,
-                               ses_EventTypeConnection, ses_DateTimeConnection,
-                               ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected,
-                               ses_IP, ses_AdditionalInfo 
-                        FROM Sessions
-                        WHERE ses_MAC="' . $mac .'"
-                          AND (  ses_DateTimeConnection >= '. $periodDate .'
-                              OR ses_DateTimeDisconnection >= '. $periodDate .'
-                              OR ses_StillConnected = 1 ) ');
-
+  $SQL = 'SELECT IFNULL (ses_DateTimeConnection, ses_DateTimeDisconnection) ses_DateTimeOrder,
+                         ses_EventTypeConnection, ses_DateTimeConnection,
+                         ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected,
+                         ses_IP, ses_AdditionalInfo 
+          FROM Sessions
+          WHERE ses_MAC="' . $mac .'"
+            AND (  ses_DateTimeConnection >= '. $periodDate .'
+                OR ses_DateTimeDisconnection >= '. $periodDate .'
+                OR ses_StillConnected = 1 ) ';
+  $result = $db->query($SQL);
+  
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
@@ -228,7 +228,7 @@ function queryDeviceSessions() {
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
       $dur = '...';
     } elseif ($row['ses_StillConnected'] == true) {
-      $dur = formatDateDiff ($row['ses_DateTimeConnection'], '');  //*******************************************************************************************
+      $dur = formatDateDiff ($row['ses_DateTimeConnection'], '');  //***********
     } else {
       $dur = formatDateDiff ($row['ses_DateTimeConnection'], $row['ses_DateTimeDisconnection']);
     }
@@ -256,7 +256,7 @@ function queryDeviceSessions() {
 //------------------------------------------------------------------------------
 //  Query Device Presence Calendar
 //------------------------------------------------------------------------------
-function queryDevicePresence() {         
+function getDevicePresence() {         
   global $db;
 
   // Request Parameters
@@ -266,24 +266,26 @@ function queryDevicePresence() {
   $endDate    = '"'. formatDateISO ($_REQUEST ['end'])   .'"';
 
   // SQL
-  $result = $db->query('SELECT ses_EventTypeConnection, ses_DateTimeConnection,
-                               ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
-                          
-                          CASE WHEN ses_EventTypeConnection = "<missing event>" THEN
-                                 IFNULL ((SELECT MAX(ses_DateTimeDisconnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection),  DATETIME(ses_DateTimeDisconnection, "-1 hour"))
-                               ELSE ses_DateTimeConnection
-                          END AS ses_DateTimeConnectionCorrected,
+  $SQL = 'SELECT ses_EventTypeConnection, ses_DateTimeConnection,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+            
+                 CASE
+                   WHEN ses_EventTypeConnection = "<missing event>" THEN
+                        IFNULL ((SELECT MAX(ses_DateTimeDisconnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection),  DATETIME(ses_DateTimeDisconnection, "-1 hour"))
+                   ELSE ses_DateTimeConnection
+                 END AS ses_DateTimeConnectionCorrected,
 
-                          CASE WHEN ses_EventTypeDisconnection = "<missing event>" THEN
-                                    (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
-                               ELSE ses_DateTimeDisconnection
-                          END AS ses_DateTimeDisconnectionCorrected
+                 CASE
+                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                        (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
+                   ELSE ses_DateTimeDisconnection
+                 END AS ses_DateTimeDisconnectionCorrected
 
-                        FROM Sessions AS SES1 
-                        WHERE ses_MAC="' . $mac .'"
-                         AND (ses_DateTimeConnectionCorrected    <= date('. $endDate .')
-                         AND (ses_DateTimeDisconnectionCorrected >= date('. $startDate .') OR ses_StillConnected = 1 ))
-                       ');
+          FROM Sessions AS SES1 
+          WHERE ses_MAC="' . $mac .'"
+            AND (ses_DateTimeConnectionCorrected    <= date('. $endDate .')
+            AND (ses_DateTimeDisconnectionCorrected >= date('. $startDate .') OR ses_StillConnected = 1 )) ';
+  $result = $db->query($SQL);
 
   // arrays of rows
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
@@ -300,10 +302,6 @@ function queryDevicePresence() {
                'IP: '            . $row['ses_IP'];
 
     // Save row data
-//      'start'   => formatDateISO ($row['ses_DateTimeConnectionCorrected']),
-//      'end'     => formatDateISO ($row['ses_DateTimeDisconnectionCorrected']),
-//      'start'   => $row['ses_DateTimeConnectionCorrected'],
-//      'end'     => $row['ses_DateTimeDisconnectionCorrected'],
     $tableData[] = array(
       'title'   => '',
       'start'   => formatDateISO ($row['ses_DateTimeConnectionCorrected']),
@@ -326,32 +324,33 @@ function queryDevicePresence() {
 //------------------------------------------------------------------------------
 //  Query Presence Calendar for all Devices
 //------------------------------------------------------------------------------
-function queryCalendarPresence() {         
+function getEventsCalendar() {         
   global $db;
 
   // Request Parameters
-  $periodDate = getDateFromPeriod();
   $startDate  = '"'. $_REQUEST ['start'] .'"';
   $endDate    = '"'. $_REQUEST ['end'] .'"';
 
   // SQL
-  $result = $db->query('SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
-                               ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
-                          
-                          CASE WHEN ses_EventTypeConnection = "<missing event>" THEN
-                                 IFNULL ((SELECT MAX(ses_DateTimeDisconnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection),  DATETIME(ses_DateTimeDisconnection, "-1 hour"))
-                               ELSE ses_DateTimeConnection
-                          END AS ses_DateTimeConnectionCorrected,
+  $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+            
+                 CASE
+                   WHEN ses_EventTypeConnection = "<missing event>" THEN
+                        IFNULL ((SELECT MAX(ses_DateTimeDisconnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection),  DATETIME(ses_DateTimeDisconnection, "-1 hour"))
+                   ELSE ses_DateTimeConnection
+                 END AS ses_DateTimeConnectionCorrected,
 
-                          CASE WHEN ses_EventTypeDisconnection = "<missing event>" THEN
-                                    (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
-                               ELSE ses_DateTimeDisconnection
-                          END AS ses_DateTimeDisconnectionCorrected
+                 CASE
+                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                        (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
+                   ELSE ses_DateTimeDisconnection
+                 END AS ses_DateTimeDisconnectionCorrected
 
-                        FROM Sessions AS SES1 
-                        WHERE (     ses_DateTimeConnectionCorrected <= Date('. $endDate .')
-                               AND (ses_DateTimeDisconnectionCorrected >= Date('. $startDate .') OR ses_StillConnected = 1 ))
-                       ');
+          FROM Sessions AS SES1 
+          WHERE (     ses_DateTimeConnectionCorrected <= Date('. $endDate .')
+                 AND (ses_DateTimeDisconnectionCorrected >= Date('. $startDate .') OR ses_StillConnected = 1 )) ';
+  $result = $db->query($SQL);
 
   // arrays of rows
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
@@ -392,7 +391,7 @@ function queryCalendarPresence() {
 //------------------------------------------------------------------------------
 //  Query Device events
 //------------------------------------------------------------------------------
-function queryDeviceEvents() {
+function getDeviceEvents() {
   global $db;
 
   // Request Parameters
@@ -401,13 +400,13 @@ function queryDeviceEvents() {
   $hideConnections = $_REQUEST ['hideConnections'];
 
   // SQL 
-  $result = $db->query('SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
-                        FROM Events 
-                        WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate .'
-                          AND ( (eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" AND
-                                 eve_EventType <> "VOIDED - Connected" AND eve_EventType <> "VOIDED - Disconnected")
-                               OR "'. $hideConnections .'" = "false" )
-                       ');
+  $SQL = 'SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
+          FROM Events 
+          WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate .'
+            AND ( (eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" AND
+                   eve_EventType <> "VOIDED - Connected" AND eve_EventType <> "VOIDED - Disconnected")
+                 OR "'. $hideConnections .'" = "false" ) ';
+  $result = $db->query($SQL);
 
   // arrays of rows
   $tableData = array();
@@ -424,6 +423,5 @@ function queryDeviceEvents() {
   // Return json
   echo (json_encode ($tableData));
 }
-
 
 ?>
