@@ -139,6 +139,9 @@ update_db() {
   sudo chgrp -R www-data $PIALERT_HOME/db                         2>&1 >> "$LOG"
   chmod -R 770 $PIALERT_HOME/db                                   2>&1 >> "$LOG"
 
+  print_msg "- Installing sqlite3..."
+  sudo apt-get install sqlite3 -y                                 2>&1 >> "$LOG"
+
   print_msg "- Checking 'Parameters' table..."
   TAB=`sqlite3 $PIALERT_HOME/db/pialert.db "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Parameters' COLLATE NOCASE;"`              2>&1 >> "$LOG"
   if [ "$TAB" == "0" ] ; then
