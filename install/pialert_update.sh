@@ -51,8 +51,9 @@ main() {
 # Create backup
 # ------------------------------------------------------------------------------
 create_backup() {
-  print_msg "- Deleting previous Pi.Alert backups..."
-  rm "$INSTALL_DIR/"pialert_update_backup_*.tar  2>/dev/null || :
+  # Previous backups are not deleted
+  # print_msg "- Deleting previous Pi.Alert backups..."
+  # rm "$INSTALL_DIR/"pialert_update_backup_*.tar  2>/dev/null || :
   
   print_msg "- Creating new Pi.Alert backup..."
   cd "$INSTALL_DIR"
