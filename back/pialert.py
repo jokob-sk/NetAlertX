@@ -167,8 +167,7 @@ def check_internet_IP ():
 def get_internet_IP ():
     # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
     # Using 'dig'
-    dig_args = ['dig', '+short', '-4', 'myip.opendns.com',
-                '@resolver1.opendns.com']
+    dig_args = ['dig', '+short', '-4', 'myip.opendns.com', '@resolver1.opendns.com']
     cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
 
     ## BUGFIX #12 - Query IPv4 address (not IPv6)
@@ -217,8 +216,7 @@ def get_previous_internet_IP ():
 #-------------------------------------------------------------------------------
 def save_new_internet_IP (pNewIP):
     # Log new IP into logfile
-    append_line_to_file (LOG_PATH + '/IP_changes.log',
-        str(startTime) +'\t'+ pNewIP +'\n')
+    append_line_to_file (LOG_PATH + '/IP_changes.log', str(startTime) +'\t'+ pNewIP +'\n')
 
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
@@ -297,8 +295,7 @@ def update_devices_MAC_vendors (pArg = ''):
         # print (recordsToUpdate)
 
     # update devices
-    sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
-        recordsToUpdate )
+    sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ", recordsToUpdate )
 
     # DEBUG - print number of rows updated
         # print (sql.rowcount)
@@ -447,19 +444,16 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
 #-------------------------------------------------------------------------------
 def execute_arpscan (pRetries):
     # Prepara command arguments
-    arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups',
-        '--retry=' + str(pRetries)]
+    arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=' + str(pRetries)]
 
     # TESTING - Fast Scan
-        # arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups',
-        #    '--retry=1']
+        # arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=1']
 
     # DEBUG - arp-scan command
         # print (" ".join (arpscan_args))
 
     # Execute command
-    arpscan_output = subprocess.check_output (arpscan_args,
-        universal_newlines=True)
+    arpscan_output = subprocess.check_output (arpscan_args, universal_newlines=True)
 
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -678,9 +672,9 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+                        dev_PresentLastScan, dev_NewDevice)
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        1, 1, 0, 1
+                        1, 1, 0, 1, 1
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
@@ -707,9 +701,9 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+                        dev_PresentLastScan, dev_NewDevice)
                     SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
-                        ?, ?, 1, 1, 0, 1
+                        ?, ?, 1, 1, 0, 1, 1
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """,
@@ -737,7 +731,7 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
                         dev_Vendor, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+                        dev_PresentLastScan, dev_NewDevice)
                     SELECT DISTINCT DHCP_MAC,
                         (SELECT DHCP_Name FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
@@ -745,7 +739,7 @@ def create_new_devices ():
                         (SELECT DHCP_IP FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
                          ORDER BY DHCP_DateTime DESC LIMIT 1),
-                        '(unknown)', ?, ?, 1, 1, 0, 1
+                        '(unknown)', ?, ?, 1, 1, 0, 1, 1
                     FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """,
@@ -1186,8 +1180,7 @@ def email_reporting ():
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_Internet, 'SECTION_INTERNET',
-        'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
+    format_report_section (mail_section_Internet, 'SECTION_INTERNET', 'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
 
     # Compose New Devices Section
     mail_section_new_devices = False
@@ -1214,8 +1207,7 @@ def email_reporting ():
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
-        'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
+    format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES', 'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
     # Compose Devices Down Section
     mail_section_devices_down = False
@@ -1241,8 +1233,7 @@ def email_reporting ():
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'])
 
-    format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
-        'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
+    format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN', 'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
 
     # Compose Events Section
     mail_section_events = False
@@ -1272,8 +1263,7 @@ def email_reporting ():
             eventAlert['eve_EventType'], eventAlert['dev_Name'],
             eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_events, 'SECTION_EVENTS',
-        'TABLE_EVENTS', mail_text_events, mail_html_events)
+    format_report_section (mail_section_events, 'SECTION_EVENTS', 'TABLE_EVENTS', mail_text_events, mail_html_events)
 
     # DEBUG - Write output emails for testing
     if True :
@@ -1329,8 +1319,7 @@ def remove_section (pText, pSection):
     if pText.find ('<'+ pSection +'>') >=0 \
     and pText.find ('</'+ pSection +'>') >=0 : 
         # return text without the section
-        return pText[:pText.find ('<'+ pSection+'>')] + \
-               pText[pText.find ('</'+ pSection +'>') + len (pSection) +3:]
+        return pText[:pText.find ('<'+ pSection+'>')] + pText[pText.find ('</'+ pSection +'>') + len (pSection) +3:]
     else :
         # return all text
         return pText
