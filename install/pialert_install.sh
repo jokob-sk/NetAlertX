@@ -216,7 +216,7 @@ ask_config() {
   fi
   
   # Final config message
-  msgbox "Configuration finished. To updete the configuration, edit file:" \
+  msgbox "Configuration finished. To update the configuration, edit file:" \
          "$PIALERT_HOME/config/pialert.conf"
 
   msgbox "" "The installation will start now"
