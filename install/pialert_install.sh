@@ -377,7 +377,7 @@ install_python() {
       print_msg "- Using Python 3"
     else
       print_msg "- Installing Python 3..."
-      sudo apt-get install python -y                              2>&1 >> "$LOG"
+      sudo apt-get install python3 -y                             2>&1 >> "$LOG"
     fi
     PYTHON_BIN="python3"
   else
