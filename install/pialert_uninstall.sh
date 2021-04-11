@@ -49,9 +49,11 @@ main() {
 
   # Removing 
   print_header "Removing Pi.Alert DNS name"
+  if [ -f /etc/pihole/custom.list ] ; then
 #  sudo sed -i '/pi.alert/d' /etc/pihole/custom.list               2>&1 >> "$LOG"
 #  sudo pihole restartdns                                          2>&1 >> "$LOG"
-
+  fi
+  
   # Uninstall crontab jobs
   print_header "Removing crontab jobs"
 #  crontab -l 2>/dev/null | sed '/pialert.py/d' | sed ':a;N;$!ba;s/#-------------------------------------------------------------------------------\n#  Pi.Alert\n#  Open Source Network Guard \/ WIFI & LAN intrusion detector \n#\n#  pialert.cron - Back module. Crontab jobs\n#-------------------------------------------------------------------------------\n#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3\n#-------------------------------------------------------------------------------//g' | crontab -
