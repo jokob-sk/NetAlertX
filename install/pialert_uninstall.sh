@@ -20,7 +20,7 @@
   LIGHTTPD_CONF_DIR="/etc/lighttpd"
   WEBROOT="/var/www/html"
   
-  LOG=/dev/null
+  LOG="pialert_uninstall_`date +"%Y-%m-%d_%H-%M"`.log"
 
 # ------------------------------------------------------------------------------
 # Main
@@ -31,7 +31,7 @@ main() {
   log "Logfile: $LOG"
 
   # Ask uninstallation
-  ask_yesno "This script will uninstall Pi.Alert from this system. Installation path:\n$PIALERT_HOME" \
+  ask_yesno "This script will uninstall Pi.Alert from this system.\nInstallation path:  $PIALERT_HOME" \
             "Do you want to continue ?"
   if ! $ANSWER ; then
     exit 1
@@ -51,9 +51,12 @@ main() {
 
   # final message
   print_header "Uninstallation process finished"
-  print_msg "Note that if you installed Pi-hole during the Pi.Alert installation process, Pi-hole will still be available after uninstalling Pi.Alert"
-  print_msg "lighttpd, PHP, arp-scan & Python have not been uninstalled. They may be required by other software"
-  print_msg "You can uninstall them manually with apt-get"
+  print_msg "Note1: If you installed Pi-hole during the Pi.Alert installation process"
+  print_msg "       Pi-hole will still be available after uninstalling Pi.Alert"
+  print_msg ""
+  print_msg "Note2: lighttpd, PHP, arp-scan & Python have not been uninstalled.
+  print_msg "       They may be required by other software"
+  print_msg "       You can uninstall them manually with command 'apt-get remove XX'"
 }
 
 
