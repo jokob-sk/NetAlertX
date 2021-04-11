@@ -81,10 +81,13 @@ Linux distributions.
 - One-step Automated Update:
   #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
+# Uninstall process
+<!--- --------------------------------------------------------------------- --->
+  - [Unistall process](./UNINSTALL.md)
+
 
 ## Device Management
 <!--- --------------------------------------------------------------------- --->
-
   - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
 
 
