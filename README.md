@@ -86,10 +86,9 @@ Linux distributions.
   - [Unistall process](docs/UNINSTALL.md)
 
 
-## Device Management
+# Device Management
 <!--- --------------------------------------------------------------------- --->
   - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
-
 
 
 ## Other useful info
