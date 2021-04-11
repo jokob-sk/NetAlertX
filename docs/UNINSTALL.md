@@ -12,7 +12,7 @@ Estimated time: 5'
 
 1.1 - Remove Pi.Alert files
   ```
-  sudo rm -r "~/pialert"
+  rm -r "~/pialert"
   ```
 
 1.2 - Remove Pi.Alert web front
@@ -41,15 +41,19 @@ Estimated time: 5'
   ```
   crontab -l 2>/dev/null | sed ':a;N;$!ba;s/#-------------------------------------------------------------------------------\n#  Pi.Alert\n#  Open Source Network Guard \/ WIFI & LAN intrusion detector \n#\n#  pialert.cron - Back module. Crontab jobs\n#-------------------------------------------------------------------------------\n#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3\n#-------------------------------------------------------------------------------//g' | crontab -
   crontab -l 2>/dev/null | sed '/pialert.py/d' | crontab -
+  ```
 
-
-### Notes
+### Uninstallation Notes
 <!--- --------------------------------------------------------------------- --->
-  - If you installed Pi-hole during the Pi.Alert installation process
+  - If you installed Pi-hole during the Pi.Alert installation process,
+ 
     Pi-hole will still be available after uninstalling Pi.Alert
 
+
   - lighttpd, PHP, arp-scan & Python have not been uninstalled
+ 
     They may be required by other software
+    
     You can uninstall them manually with command 'apt-get remove XX'
 
 ### License
