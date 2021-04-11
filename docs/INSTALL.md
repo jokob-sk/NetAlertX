@@ -22,6 +22,9 @@ Estimated time: 20'
 <!--- --------------------------------------------------------------------- --->
 `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
+## Uninstall process
+<!--- --------------------------------------------------------------------- --->
+  - [Unistall process](./UNINSTALL.md)
 
 ## Installation process (step by step)
 <!--- --------------------------------------------------------------------- --->
@@ -316,7 +319,6 @@ block is not necessary
 <!--- --------------------------------------------------------------------- --->
 
   - [Device Management instructions](./DEVICE_MANAGEMENT.md)
-
 
 ### License
   GPL 3.0
