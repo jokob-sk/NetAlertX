@@ -41,17 +41,17 @@ main() {
 
   # Uninstall prrocess
   print_header "Removing files"
-  sudo rm -r "$PIALERT_HOME"
-  sudo rm "$LIGHTTPD_CONF_DIR/pialert"
-  sudo rm "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf"
-  sudo rm "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"
-  sudo rm -r /var/cache/lighttpd/compress/pialert
+  sudo rm -r "$PIALERT_HOME"                                      2>&1 >> "$LOG"
+  sudo rm "$WEBROOT/pialert"                                      2>&1 >> "$LOG"
+  sudo rm "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf"  2>&1 >> "$LOG"
+  sudo rm "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"    2>&1 >> "$LOG"
+  sudo rm -r /var/cache/lighttpd/compress/pialert                 2>&1 >> "$LOG"
 
   # Removing 
   print_header "Removing Pi.Alert DNS name"
   if [ -f /etc/pihole/custom.list ] ; then
-    sudo sed -i '/pi.alert/d' /etc/pihole/custom.list               2>&1 >> "$LOG"
-    sudo pihole restartdns                                          2>&1 >> "$LOG"
+    sudo sed -i '/pi.alert/d' /etc/pihole/custom.list             2>&1 >> "$LOG"
+    sudo pihole restartdns                                        2>&1 >> "$LOG"
   fi
   
   # Uninstall crontab jobs
