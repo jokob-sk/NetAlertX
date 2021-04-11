@@ -51,7 +51,7 @@ main() {
   print_header "Removing Pi.Alert DNS name"
   if [ -f /etc/pihole/custom.list ] ; then
 #  sudo sed -i '/pi.alert/d' /etc/pihole/custom.list               2>&1 >> "$LOG"
-#  sudo pihole restartdns                                          2>&1 >> "$LOG"
+    sudo pihole restartdns                                          2>&1 >> "$LOG"
   fi
   
   # Uninstall crontab jobs
