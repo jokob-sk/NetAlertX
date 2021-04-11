@@ -38,6 +38,8 @@
   
   USE_PYTHON_VERSION=0
   PYTHON_BIN=python
+
+  FIRST_SCAN_KNOWN=true
   
   REPORT_MAIL=False
   REPORT_TO=user@gmail.com
@@ -104,7 +106,7 @@ ask_config() {
   PIHOLE_INSTALL=false
   if $PIHOLE_ACTIVE ; then
     msgbox "Pi-hole is already installed in this system." \
-           "Perfect: Pi-hole Installation not necessary"
+           "Perfect: Pi-hole Installation is not necessary"
   else
     ask_yesno "Pi-hole is not installed." \
               "Do you want to install Pi-hole before installing Pi.Alert ?" "YES"
@@ -166,6 +168,11 @@ ask_config() {
   else
     USE_PYTHON_VERSION=$ANSWER
   fi
+
+  # Ask first scan options
+  ask_yesno "First Scan options" \
+            "Do you want to mark the new devices as known devices during the first scan?" "YES"
+  FIRST_SCAN_KNOWN=$ANSWER
 
   # Ask e-mail notification config
   MAIL_REPORT=false
@@ -499,16 +506,22 @@ set_pialert_parameter() {
 test_pialert() {
   print_msg "- Testing Pi.Alert HW vendors database update process..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent  2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py update_vendors_silent            2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Internet IP Lookup..."
-  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP            2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py internet_IP                      2>&1 | tee -ai "$LOG"
 
   echo ""
   print_msg "- Testing Pi.Alert Network scan..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
-  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1                      2>&1 | tee -ai "$LOG"
+  stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1                                2>&1 | tee -ai "$LOG"
+
+  if $FIRST_SCAN_KNOWN ; then
+    echo ""
+    print_msg "- Set devices as Known devices..."
+    sqlite3 $PIALERT_HOME/db/pialert.db "UPDATE Devices SET dev_NewDevice=0, dev_AlertEvents=0"  2>&1 >> "$LOG"
+  fi
 }
 
 # ------------------------------------------------------------------------------
