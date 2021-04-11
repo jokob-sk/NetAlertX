@@ -31,32 +31,32 @@ main() {
   log "Logfile: $LOG"
 
   # Ask uninstallation
-  ask_yesno "This script will uninstall Pi.Alert from this system.\nInstallation path:  $PIALERT_HOME" \
+  ask_yesno "This script will uninstall Pi.Alert from this system.\nUninstall path:  $PIALERT_HOME" \
             "Do you want to continue ?"
   if ! $ANSWER ; then
     exit 1
   fi
 
-  msgbox "" "The uninstallation will start now"
+  msgbox "" "The uninstallation process will start now"
 
   # Uninstall prrocess
   print_header "Removing files"
-#  sudo rm -r "$PIALERT_HOME"
-#  sudo rm "$LIGHTTPD_CONF_DIR/pialert"
-#  sudo rm "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf"
-#  sudo rm "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"
-#  sudo rm -r /var/cache/lighttpd/compress/pialert
+  sudo rm -r "$PIALERT_HOME"
+  sudo rm "$LIGHTTPD_CONF_DIR/pialert"
+  sudo rm "$LIGHTTPD_CONF_DIR/conf-available/pialert_front.conf"
+  sudo rm "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"
+  sudo rm -r /var/cache/lighttpd/compress/pialert
 
   # Removing 
   print_header "Removing Pi.Alert DNS name"
   if [ -f /etc/pihole/custom.list ] ; then
-#  sudo sed -i '/pi.alert/d' /etc/pihole/custom.list               2>&1 >> "$LOG"
+    sudo sed -i '/pi.alert/d' /etc/pihole/custom.list               2>&1 >> "$LOG"
     sudo pihole restartdns                                          2>&1 >> "$LOG"
   fi
   
   # Uninstall crontab jobs
   print_header "Removing crontab jobs"
-#  crontab -l 2>/dev/null | sed '/pialert.py/d' | sed ':a;N;$!ba;s/#-------------------------------------------------------------------------------\n#  Pi.Alert\n#  Open Source Network Guard \/ WIFI & LAN intrusion detector \n#\n#  pialert.cron - Back module. Crontab jobs\n#-------------------------------------------------------------------------------\n#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3\n#-------------------------------------------------------------------------------//g' | crontab -
+  crontab -l 2>/dev/null | sed '/pialert.py/d' | sed ':a;N;$!ba;s/#-------------------------------------------------------------------------------\n#  Pi.Alert\n#  Open Source Network Guard \/ WIFI & LAN intrusion detector \n#\n#  pialert.cron - Back module. Crontab jobs\n#-------------------------------------------------------------------------------\n#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3\n#-------------------------------------------------------------------------------//g' | crontab -
 
   # final message
   print_header "Uninstallation process finished"
