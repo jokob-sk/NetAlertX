@@ -4,7 +4,7 @@
 The latest versions of some operating systems (IOS and Android) incorporate a
 new & interesting functionality to improve privacy: **Random MACs**.
 
-This functionality allows you to **hide the true MAC** of the device and
+This functionality allows you to **hide the real MAC** of the device and
 **assign a random MAC** when we connect to WIFI networks.
 
 This behavior is especially useful when connecting to WIFI's that we do not
