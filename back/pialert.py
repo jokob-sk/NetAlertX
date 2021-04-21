@@ -586,12 +586,13 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
                         VALUES (?, 'Internet', ?, Null, 'queryDNS') """, (cycle, internet_IP) )
 
     # #76 Add Local MAC of default local interface
-    local_mac_cmd = ["ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+    #local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+    local_mac_cmd = ["/sbin/ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
     local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
-
+    
     local_ip_cmd = ["ip route list default | awk {'print $7'}"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
-
+    
     sql.execute ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) "+
                  "VALUES ( ?, ?, ?, Null, 'local_MAC') ", (cycle, local_mac, local_ip) )
 
