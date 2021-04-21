@@ -37,6 +37,10 @@
   color: #808080;
 }
 
+.text-gray-20 {
+  color: rgba(192,192,192,20%);
+}
+
 .text-aqua-20 {
   color: rgba(0,192,239,20%);
 }
@@ -151,6 +155,13 @@
   margin-bottom: 1.3em;
 }
 
+.pa-small-box-footer {
+  color: white  !important;
+  font-size: 18px;
+}
+
+
+/* -------------------------------------------------------------------------- */
 .pa-small-box-aqua {
   border-top: 3px solid #00c0ef;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
@@ -168,8 +179,6 @@
 .pa-small-box-aqua .icon {
   color: #00c0ef;
 }
-
-
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-green {
@@ -228,7 +237,26 @@
   color: #dd4b39;
 }
 
- 
+ /* -------------------------------------------------------------------------- */
+.pa-small-box-gray {
+  border-top: 3px solid #a0a0a0;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pa-small-box-gray .inner {
+  color: #a0a0a0;
+  background-color:#FFFFFF;
+}
+
+.pa-small-box-gray .inner h3 {
+  margin-left: 0.5em;
+}
+
+.pa-small-box-gray .icon {
+  color: #a0a0a0;
+}
+
+
 /* -----------------------------------------------------------------------------
    Customized Box Borders
 ----------------------------------------------------------------------------- */
@@ -304,6 +332,29 @@
   color: #B0B0B0;
 }
 
+/* -----------------------------------------------------------------------------
+   Customized buttons
+----------------------------------------------------------------------------- */
+.pa-btn {
+    padding: 10px;
+    min-width: 90px;
+}
+
+.pa-btn-delete {
+    border-color:#ffb060;
+    background-color:#ffd080;
+}
+
+.pa-btn-delete:hover {
+    border-color:#ffb060;
+    background-color:#ffb060;
+}
+
+.pa-btn-records, .pa-btn-records:hover, .pa-btn-records:focus, .pa-btn-records:active {
+    border-color:#ddd;
+    background-color:#f4f4f4;
+    cursor: default;
+}
 
 
 /* -----------------------------------------------------------------------------

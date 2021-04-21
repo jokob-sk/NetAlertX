@@ -57,18 +57,21 @@ function getDeviceData() {
   $mac = $_REQUEST['mac'];
 
   // Device Data
-  $sql = 'SELECT *,
+  $sql = 'SELECT rowid, *,
             CASE WHEN dev_AlertDeviceDown=1 AND dev_PresentLastScan=0 THEN "Down"
                  WHEN dev_PresentLastScan=1 THEN "On-line"
                  ELSE "Off-line" END as dev_Status
           FROM Devices
-          WHERE dev_MAC="'. $mac .'"';
+          WHERE dev_MAC="'. $mac .'" or cast(rowid as text)="'. $mac. '"';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_ASSOC);
   $deviceData = $row;
+  $mac = $deviceData['dev_MAC'];
 
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
+
+  $deviceData['dev_RandomMAC'] = ( in_array($mac[1], array("2","6","A","E","a","e")) ? 1 : 0);
 
   // Count Totals
   $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
@@ -89,16 +92,16 @@ function getDeviceData() {
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_Events'] = $row[0];
 
-  // Donw Alerts
+  // Down Alerts
   $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType = "Device Down"';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_DownAlerts'] = $row[0];
 
   // Presence hours
-  $sql = 'SELECT SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now")))
-                      - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
-                                        ELSE ses_DateTimeConnection END)) *24
+  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now","localtime")))
+                                     - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
+                                                       ELSE ses_DateTimeConnection END)) *24 )) AS INT)
           FROM Sessions
           WHERE ses_MAC="'. $mac .'"
             AND ses_DateTimeConnection IS NOT NULL
@@ -136,7 +139,8 @@ function setDeviceData() {
                  dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
                  dev_AlertDeviceDown = "'. quotes($_REQUEST['alertdown'])    .'",
                  dev_SkipRepeated    = "'. quotes($_REQUEST['skiprepeated']) .'",
-                 dev_NewDevice       = "'. quotes($_REQUEST['newdevice'])    .'"
+                 dev_NewDevice       = "'. quotes($_REQUEST['newdevice'])    .'",
+                 dev_Archived        = "'. quotes($_REQUEST['archived'])     .'"
           WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
   // update Data
   $result = $db->query($sql);
@@ -177,14 +181,19 @@ function getDevicesTotals() {
   global $db;
 
   // All
-  $result = $db->query('SELECT COUNT(*) FROM Devices ');
+  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all'));
   $row = $result -> fetchArray (SQLITE3_NUM);
   $devices = $row[0];
   
-  // Connected
+  // On-Line
   $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected') );
   $row = $result -> fetchArray (SQLITE3_NUM);
   $connected = $row[0];
+  
+  // Favorites
+  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites') );
+  $row = $result -> fetchArray (SQLITE3_NUM);
+  $favorites = $row[0];
   
   // New
   $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new') );
@@ -194,10 +203,14 @@ function getDevicesTotals() {
   // Down Alerts
   $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down'));
   $row = $result -> fetchArray (SQLITE3_NUM);
-  $devicesDownAlert = $row[0];
+  $downAlert = $row[0];
 
-  echo (json_encode (array ($devices, $connected, $newDevices,
-                            $devicesDownAlert)));
+  // Archived
+  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived'));
+  $row = $result -> fetchArray (SQLITE3_NUM);
+  $archived = $row[0];
+
+  echo (json_encode (array ($devices, $connected, $favorites, $newDevices, $downAlert, $archived)));
 }
 
 
@@ -210,7 +223,7 @@ function getDevicesList() {
   // SQL
   $condition = getDeviceCondition ($_REQUEST['status']);
 
-  $sql = 'SELECT *, CASE
+  $sql = 'SELECT rowid, *, CASE
             WHEN dev_AlertDeviceDown=1 AND dev_PresentLastScan=0 THEN "Down"
             WHEN dev_NewDevice=1 THEN "New"
             WHEN dev_PresentLastScan=1 THEN "On-line"
@@ -230,9 +243,11 @@ function getDevicesList() {
                                   formatDate ($row['dev_FirstConnection']),
                                   formatDate ($row['dev_LastConnection']),
                                   $row['dev_LastIP'],
+                                  ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
                                   $row['dev_Status'],
                                   $row['dev_MAC'], // MAC (hidden)
-                                  formatIPlong ($row['dev_LastIP']) // IP orderable
+                                  formatIPlong ($row['dev_LastIP']), // IP orderable
+                                  $row['rowid'] // Rowid (hidden)
                                  );
   }
 
@@ -332,6 +347,7 @@ function getDeviceTypes() {
           UNION SELECT 2 as dev_Order, "Server"
           UNION SELECT 2 as dev_Order, "Singleboard Computer (SBC)"
 
+          UNION SELECT 3 as dev_Order, "Domotic"
           UNION SELECT 3 as dev_Order, "Game Console"
           UNION SELECT 3 as dev_Order, "SmartTV"
           UNION SELECT 3 as dev_Order, "TV Decoder"
@@ -346,6 +362,8 @@ function getDeviceTypes() {
           UNION SELECT 5 as dev_Order, "NAS"
           UNION SELECT 5 as dev_Order, "PLC"
           UNION SELECT 5 as dev_Order, "Router"
+          UNION SELECT 5 as dev_Order, "USB LAN Adapter"
+          UNION SELECT 5 as dev_Order, "USB WIFI Adapter"
 
           UNION SELECT 10 as dev_Order, "Other"
 
@@ -451,12 +469,13 @@ function getLocations() {
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {
   switch ($deviceStatus) {
-    case 'all':        return '';                                                       break;
-    case 'connected':  return 'WHERE dev_PresentLastScan=1';                            break;
-    case 'new':        return 'WHERE dev_NewDevice=1';                                  break;
-    case 'down':       return 'WHERE dev_AlertDeviceDown=1 AND dev_PresentLastScan=0';  break;
-    case 'favorites':  return 'WHERE dev_Favorite=1';                                   break;
-    default:           return 'WHERE 1=0';                                              break;
+    case 'all':        return 'WHERE dev_Archived=0';                                                      break;
+    case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                            break;
+    case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                   break;
+    case 'new':        return 'WHERE dev_Archived=0 AND dev_NewDevice=1';                                  break;
+    case 'down':       return 'WHERE dev_Archived=0 AND dev_AlertDeviceDown=1 AND dev_PresentLastScan=0';  break;
+    case 'archived':   return 'WHERE dev_Archived=1';                                                      break;
+    default:           return 'WHERE 1=0';                                                                 break;
   }
 }
 
