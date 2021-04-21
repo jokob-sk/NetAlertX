@@ -17,7 +17,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         Presence by Devices
+         Presence by Device
       </h1>
     </section>
 
@@ -27,66 +27,67 @@
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
 
-        <div class="col-lg-3 col-sm-6 col-xs-6">
+        <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesPresence('all');">
-            <div class="small-box bg-aqua pa-small-box-aqua">
-
-              <div class="inner">
-                <h4>All Devices</h4>
-                <h3 id="devicesAll"> -- </h3>
-              </div>
-
-              <div class="icon"> <i class="fa fa-laptop"></i> </div>
-              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
+            <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
+              <div class="inner"> <h3 id="devicesAll"> -- </h3> </div>
+              <div class="icon"> <i class="fa fa-laptop text-aqua-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> All Devices <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
 
 <!-- top small box 2 ------------------------------------------------------- -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
+        <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesPresence('connected');">
-            <div class="small-box bg-green pa-small-box-green">
-
-              <div class="inner">
-                <h4>Connected</h4>
-                <h3 id="devicesConnected"> -- </h3>
-              </div>
-
-              <div class="icon"> <i class="fa fa-plug"></i> </div>
-              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
+            <div class="small-box bg-green pa-small-box-green pa-small-box-2">
+              <div class="inner"> <h3 id="devicesConnected"> -- </h3> </div>
+              <div class="icon"> <i class="fa fa-plug text-green-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Connected <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
 
 <!-- top small box 3 ------------------------------------------------------- -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: getDevicesPresence('new');">
-            <div  class="small-box bg-yellow pa-small-box-yellow">
-
-              <div class="inner">
-                <h4>New Devices</h4>
-                <h3 id="devicesNew"> -- </h3>
-              </div>
-
-              <div class="icon"> <i class="ion ion-plus-round"></i> </div>
-              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
+        <div class="col-lg-2 col-sm-4 col-xs-6">
+          <a href="#" onclick="javascript: getDevicesPresence('favorites');">
+            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
+              <div class="inner"> <h3 id="devicesFavorites"> -- </h3> </div>
+              <div class="icon"> <i class="fa fa-star text-yellow-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Favorites <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
-
         </div>
 
 <!-- top small box 4 ------------------------------------------------------- -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
+        <div class="col-lg-2 col-sm-4 col-xs-6">
+          <a href="#" onclick="javascript: getDevicesPresence('new');">
+            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
+              <div class="inner"> <h3 id="devicesNew"> -- </h3> </div>
+              <div class="icon"> <i class="ion ion-plus-round text-yellow-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> New Devices <i class="fa fa-arrow-circle-right"></i> </div>
+            </div>
+          </a>
+        </div>
+
+<!-- top small box 5 ------------------------------------------------------- -->
+        <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesPresence('down');">
-            <div  class="small-box bg-red pa-small-box-red">
+            <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
+              <div class="inner"> <h3 id="devicesDown"> -- </h3> </div>
+              <div class="icon"> <i class="fa fa-warning text-red-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
+            </div>
+          </a>
+        </div>
 
-              <div class="inner">
-                <h4>Down Alerts</h4>
-                <h3 id="devicesDown"> -- </h3>
-              </div>
-
-              <div class="icon"> <i class="fa fa-warning"></i> </div>
-              <div class="small-box-footer"> Details <i class="fa fa-arrow-circle-right"></i> </div>
+<!-- top small box 6 ------------------------------------------------------- -->
+        <div class="col-lg-2 col-sm-4 col-xs-6">
+          <a href="#" onclick="javascript: getDevicesPresence('hidden');">
+            <div  class="small-box bg-gray pa-small-box-gray pa-small-box-2">
+              <div class="inner"> <h3 id="devicesHidden"> -- </h3> </div>
+              <div class="icon"> <i class="fa fa-eye-slash text-gray-20"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Hidden <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -295,8 +296,10 @@ function getDevicesTotals () {
 
     $('#devicesAll').html        (totalsDevices[0].toLocaleString());
     $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
-    $('#devicesNew').html        (totalsDevices[2].toLocaleString());
-    $('#devicesDown').html       (totalsDevices[3].toLocaleString());
+    $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
+    $('#devicesNew').html        (totalsDevices[3].toLocaleString());
+    $('#devicesDown').html       (totalsDevices[4].toLocaleString());
+    $('#devicesHidden').html     (totalsDevices[5].toLocaleString());
 
     // Timer for refresh data
     newTimerRefreshData (getDevicesTotals);
@@ -313,10 +316,11 @@ function getDevicesPresence (status) {
   switch (deviceStatus) {
     case 'all':        tableTitle = 'Total Devices';      color = 'aqua';    break;
     case 'connected':  tableTitle = 'Connected Devices';  color = 'green';   break;
+    case 'favorites':  tableTitle = 'Favorites';          color = 'yellow';  break;
     case 'new':        tableTitle = 'New Devices';        color = 'yellow';  break;
     case 'down':       tableTitle = 'Down Alerts';        color = 'red';     break;
-    case 'favorites':  tableTitle = 'Favorites';          color = 'yellow';  break;
-    default:           tableTitle = 'Devices';            boxClass = '';     break;
+    case 'hidden':     tableTitle = 'Hidden Devices';     color = 'gray';    break;
+    default:           tableTitle = 'Devices';            color = 'gray';    break;
   } 
 
   // Set title and color

@@ -216,7 +216,8 @@ def get_previous_internet_IP ():
 #-------------------------------------------------------------------------------
 def save_new_internet_IP (pNewIP):
     # Log new IP into logfile
-    append_line_to_file (LOG_PATH + '/IP_changes.log', str(startTime) +'\t'+ pNewIP +'\n')
+    append_line_to_file (LOG_PATH + '/IP_changes.log',
+        str(startTime) +'\t'+ pNewIP +'\n')
 
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
@@ -295,7 +296,8 @@ def update_devices_MAC_vendors (pArg = ''):
         # print (recordsToUpdate)
 
     # update devices
-    sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ", recordsToUpdate )
+    sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
+        recordsToUpdate )
 
     # DEBUG - print number of rows updated
         # print (sql.rowcount)
@@ -443,8 +445,13 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
 
 #-------------------------------------------------------------------------------
 def execute_arpscan (pRetries):
-    # Prepara command arguments
-    arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=' + str(pRetries)]
+ 
+    # #101 - arp-scan subnet configuration
+    # Prepare command arguments
+    subnets = SCAN_SUBNETS.strip().split()
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=' + str(pRetries)] + subnets
+    # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
+    # print (arpscan_args)
 
     # TESTING - Fast Scan
         # arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=1']
@@ -570,6 +577,25 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
                      (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
                      cycle) )
 
+    # Check Internet connectivity
+    internet_IP = get_internet_IP()
+        # TESTING - Force IP
+        # internet_IP = ""
+    if internet_IP != "" :
+        sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
+                        VALUES (?, 'Internet', ?, Null, 'queryDNS') """, (cycle, internet_IP) )
+
+    # #76 Add Local MAC of default local interface
+    local_mac_cmd = ["ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+    local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
+
+    local_ip_cmd = ["ip route list default | awk {'print $7'}"]
+    local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
+
+    sql.execute ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) "+
+                 "VALUES ( ?, ?, ?, Null, 'local_MAC') ", (cycle, local_mac, local_ip) )
+
+
 #-------------------------------------------------------------------------------
 def print_scan_stats ():
     # Devices Detected
@@ -672,9 +698,9 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan, dev_NewDevice)
+                        dev_PresentLastScan)
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        1, 1, 0, 1, 1
+                        1, 1, 0, 1
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
@@ -701,9 +727,9 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan, dev_NewDevice)
+                        dev_PresentLastScan)
                     SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
-                        ?, ?, 1, 1, 0, 1, 1
+                        ?, ?, 1, 1, 0, 1
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """,
@@ -731,7 +757,7 @@ def create_new_devices ():
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
                         dev_Vendor, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan, dev_NewDevice)
+                        dev_PresentLastScan)
                     SELECT DISTINCT DHCP_MAC,
                         (SELECT DHCP_Name FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
@@ -739,7 +765,7 @@ def create_new_devices ():
                         (SELECT DHCP_IP FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
                          ORDER BY DHCP_DateTime DESC LIMIT 1),
-                        '(unknown)', ?, ?, 1, 1, 0, 1, 1
+                        '(unknown)', ?, ?, 1, 1, 0, 1
                     FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """,
@@ -913,7 +939,8 @@ def update_devices_names ():
 
     # Devices without name
     print ('        Trying to resolve devices without name...', end='')
-    for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') ") :
+    # BUGFIX #97 - Updating name of Devices w/o IP
+    for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'") :
         # Resolve device name
         newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP'])
        
@@ -949,11 +976,14 @@ def resolve_device_name (pMAC, pIP):
         if len(pMACstr) != 17 or len(mac) != 12 :
             return -2
 
+        # DEBUG
+        # print (pMAC, pIP)
+
         # Resolve name with DIG
         dig_args = ['dig', '+short', '-x', pIP]
         newName = subprocess.check_output (dig_args, universal_newlines=True)
 
-        # Check if Eliminate local domain
+        # Check returns
         newName = newName.strip()
         if len(newName) == 0 :
             return -2
@@ -981,7 +1011,8 @@ def void_ghost_disconnections ():
     print_log ('Void - 1 Connect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
                         eve_EventType ='VOIDED - ' || eve_EventType
-                    WHERE eve_EventType = 'Connected'
+                    WHERE eve_MAC != 'Internet'
+                      AND eve_EventType = 'Connected'
                       AND eve_DateTime = ?
                       AND eve_MAC IN (
                           SELECT Events.eve_MAC
@@ -1000,7 +1031,8 @@ def void_ghost_disconnections ():
     # Void connect paired events
     print_log ('Void - 2 Paired events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null 
-                    WHERE eve_PairEventRowid IN (
+                    WHERE eve_MAC != 'Internet'
+                      AND eve_PairEventRowid IN (
                           SELECT Events.RowID
                           FROM CurrentScan, Devices, ScanCycles, Events 
                           WHERE cur_ScanCycle = ?
@@ -1018,7 +1050,8 @@ def void_ghost_disconnections ():
     print_log ('Void - 3 Disconnect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null, 
                         eve_EventType = 'VOIDED - '|| eve_EventType
-                    WHERE ROWID IN (
+                    WHERE eve_MAC != 'Internet'
+                      AND ROWID IN (
                           SELECT Events.RowID
                           FROM CurrentScan, Devices, ScanCycles, Events 
                           WHERE cur_ScanCycle = ?
@@ -1180,7 +1213,8 @@ def email_reporting ():
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_Internet, 'SECTION_INTERNET', 'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
+    format_report_section (mail_section_Internet, 'SECTION_INTERNET',
+        'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
 
     # Compose New Devices Section
     mail_section_new_devices = False
@@ -1207,7 +1241,8 @@ def email_reporting ():
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES', 'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
+    format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
+        'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
     # Compose Devices Down Section
     mail_section_devices_down = False
@@ -1233,7 +1268,8 @@ def email_reporting ():
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'])
 
-    format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN', 'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
+    format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
+        'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
 
     # Compose Events Section
     mail_section_events = False
@@ -1263,7 +1299,8 @@ def email_reporting ():
             eventAlert['eve_EventType'], eventAlert['dev_Name'],
             eventAlert['eve_AdditionalInfo'])
 
-    format_report_section (mail_section_events, 'SECTION_EVENTS', 'TABLE_EVENTS', mail_text_events, mail_html_events)
+    format_report_section (mail_section_events, 'SECTION_EVENTS',
+        'TABLE_EVENTS', mail_text_events, mail_html_events)
 
     # DEBUG - Write output emails for testing
     if True :
@@ -1319,7 +1356,8 @@ def remove_section (pText, pSection):
     if pText.find ('<'+ pSection +'>') >=0 \
     and pText.find ('</'+ pSection +'>') >=0 : 
         # return text without the section
-        return pText[:pText.find ('<'+ pSection+'>')] + pText[pText.find ('</'+ pSection +'>') + len (pSection) +3:]
+        return pText[:pText.find ('<'+ pSection+'>')] + \
+               pText[pText.find ('</'+ pSection +'>') + len (pSection) +3:]
     else :
         # return all text
         return pText

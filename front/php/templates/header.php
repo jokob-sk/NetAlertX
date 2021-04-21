@@ -64,7 +64,7 @@
 
 <!-- ----------------------------------------------------------------------- -->
     <!-- Logo -->
-    <a href="/" class="logo">
+    <a href="." class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">P<b>a</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -140,7 +140,7 @@
 
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel">
-        <a href="/" class="logo">
+        <a href="." class="logo">
           <img src="img/pialertLogoGray80.png" class="img-responsive" alt="Pi.Alert Logo"/>
         </a>
       </div>
@@ -154,7 +154,6 @@
         <li class="header">MAIN MENU</li>
 -->
 
-        <!-- Optionally, you can add icons to the links -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
           <a href="devices.php"><i class="fa fa-laptop"></i> <span>Devices</span></a>
         </li>
@@ -177,14 +176,18 @@
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
+
           <ul class="treeview-menu">
-            <li><a href="#">Scan Cycles</a></li>
+            <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('scancycles.php', 'scancyclesDetails.php') ) ){ echo 'active'; } ?>">
+              <a href="scancycles.php"><i class="fa fa-link"></i> <span>Scan Cycles</span></a>
+            </li>
             <li><a href="#">Cron Status</a></li>
             <li><a href="#">Current IP</a></li>
           </ul>
         </li>
 -->
       </ul>
+
       <!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

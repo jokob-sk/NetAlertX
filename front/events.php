@@ -43,8 +43,7 @@
             <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
               <div class="inner"> <h3 id="eventsAll"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-bolt text-aqua-20"></i> </div>
-
-              <div class="small-box-footer"> All events <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> All events <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -55,8 +54,7 @@
             <div class="small-box bg-green pa-small-box-green pa-small-box-2">
               <div class="inner"> <h3 id="eventsSessions"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-plug text-green-20"></i> </div>
-
-              <div class="small-box-footer"> Sessions <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Sessions <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -67,8 +65,7 @@
             <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
               <div class="inner"> <h3 id="eventsMissing"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-exchange text-yellow-20"></i> </div>
-
-              <div class="small-box-footer"> Missing Sessions <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Missing Sessions <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -79,8 +76,7 @@
             <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
               <div class="inner"> <h3 id="eventsVoided"> -- </h3> </div>
               <div class="icon text-aqua-20"> <i class="fa fa-exclamation-circle text-yellow-20"></i> </div>
-
-              <div class="small-box-footer"> Voided Sessions <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Voided Sessions <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -91,8 +87,7 @@
             <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
               <div class="inner"> <h3 id="eventsNewDevices"> -- </h3> </div>
               <div class="icon"> <i class="ion ion-plus-round text-yellow-20"></i> </div>
-
-              <div class="small-box-footer"> New Devices <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> New Devices <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -103,8 +98,7 @@
             <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
               <div class="inner"> <h3 id="eventsDown"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-warning text-red-20"></i> </div>
-
-              <div class="small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
