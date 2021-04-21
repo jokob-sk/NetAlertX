@@ -674,8 +674,8 @@ function initializeiCheck () {
       activateSaveRestoreData();
 
       // Ask skip notifications
-      if (event.currentTarget.id == 'chkArchived' ) {
-        askSkipNotifications();
+      //if (event.currentTarget.id == 'chkArchived' ) {
+      //  askSkipNotifications();
       }
     }
   });
