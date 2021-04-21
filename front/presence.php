@@ -83,7 +83,7 @@
 
 <!-- top small box 6 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: getDevicesPresence('hidden');">
+          <a href="#" onclick="javascript: getDevicesPresence('archived');">
             <div  class="small-box bg-gray pa-small-box-gray pa-small-box-2">
               <div class="inner"> <h3 id="devicesHidden"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-eye-slash text-gray-20"></i> </div>
@@ -314,12 +314,12 @@ function getDevicesPresence (status) {
 
   // Defini color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = 'Total Devices';      color = 'aqua';    break;
+    case 'all':        tableTitle = 'All Devices';        color = 'aqua';    break;
     case 'connected':  tableTitle = 'Connected Devices';  color = 'green';   break;
     case 'favorites':  tableTitle = 'Favorites';          color = 'yellow';  break;
     case 'new':        tableTitle = 'New Devices';        color = 'yellow';  break;
     case 'down':       tableTitle = 'Down Alerts';        color = 'red';     break;
-    case 'hidden':     tableTitle = 'Hidden Devices';     color = 'gray';    break;
+    case 'archived':   tableTitle = 'Archived Devices';   color = 'gray';    break;
     default:           tableTitle = 'Devices';            color = 'gray';    break;
   } 
 
