@@ -3,6 +3,7 @@
 
   | Version | Description                                                     |
   | ------- | --------------------------------------------------------------- |
+  |  v3.00  | Major set of New features & Enhancements                        |
   |  v2.70  | New features & Usability improvements in the web prontal        |
   |  v2.61  | Bug fixing                                                      |
   |  v2.60  | Improved the compability of installation process (Ubuntu)       |
@@ -11,6 +12,24 @@
   |  v2.52  | Bug fixing                                                      |
   |  v2.51  | Bug fixing                                                      |
   |  v2.50  | First public release                                            |
+
+
+## Pi.Alert v3.00
+<!--- --------------------------------------------------------------------- --->
+  -  `arp-scan` config options: interface, several subnets. #101 #15
+  - Next/previos button while editing devices #66 #37
+  - Internet presence/sessions monitoring #63
+  - Logical delete / archive / hide Device #93
+  - Flag to mark device with random MAC's #87
+  - New Device Types predefined in combobox #92
+  - Ask before leave the page with unsaved changes #104
+  - Option to don't mark devices as new during installation #94
+  - Uninstall script #62
+  - Fixed: Error updating name of devices w/o IP #97
+  - Fixed: Deleted devices reappear #84
+  - Fixed: Device running Pi.Alert must be marked as "on-line" #76
+  - Fixed: Incorrect calculation of presence hours #102
+  - Fixed: Problem redirect to homepage clicking in logo #103
 
 
 ## Pi.Alert v2.70
