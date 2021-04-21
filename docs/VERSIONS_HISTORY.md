@@ -16,8 +16,7 @@
 
 ## Pi.Alert v3.00
 <!--- --------------------------------------------------------------------- --->
-  - **PENDING UPDATE DOC**
-
+ **PENDING UPDATE DOC**
   -  `arp-scan` config options: interface, several subnets. #101 #15
   - Next/previos button while editing devices #66 #37
   - Internet presence/sessions monitoring #63
