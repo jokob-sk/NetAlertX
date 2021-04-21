@@ -32,6 +32,9 @@
   - Fixed: Problem redirect to homepage clicking in logo #103
 
 
+  - **PENDING UPDATE DOC**
+
+
 ## Pi.Alert v2.70
 <!--- --------------------------------------------------------------------- --->
   - Added Client names resolution #43
