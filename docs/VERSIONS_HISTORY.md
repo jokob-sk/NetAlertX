@@ -16,6 +16,8 @@
 
 ## Pi.Alert v3.00
 <!--- --------------------------------------------------------------------- --->
+  - **PENDING UPDATE DOC**
+
   -  `arp-scan` config options: interface, several subnets. #101 #15
   - Next/previos button while editing devices #66 #37
   - Internet presence/sessions monitoring #63
@@ -30,9 +32,6 @@
   - Fixed: Device running Pi.Alert must be marked as "on-line" #76
   - Fixed: Incorrect calculation of presence hours #102
   - Fixed: Problem redirect to homepage clicking in logo #103
-
-
-  - **PENDING UPDATE DOC**
 
 
 ## Pi.Alert v2.70
