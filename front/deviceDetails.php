@@ -1064,7 +1064,7 @@ function getDeviceData (readAllData=false) {
         $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
         $('#txtVendor').val                          (deviceData['dev_Vendor']);
   
-        if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');} 
+        if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
@@ -1073,14 +1073,14 @@ function getDeviceData (readAllData=false) {
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
         $('#txtLastIP').val                          (deviceData['dev_LastIP']);
         $('#txtStatus').val                          (deviceData['dev_Status']);
-        if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');} 
+        if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
     
         $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] +' min');
-        if (deviceData['dev_AlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} 
-        if (deviceData['dev_AlertDeviceDown'] == 1)  {$('#chkAlertDown').iCheck('check');} 
+        if (deviceData['dev_AlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} else {$('#chkAlertEvents').iCheck('uncheck');}
+        if (deviceData['dev_AlertDeviceDown'] == 1)  {$('#chkAlertDown').iCheck('check');}   else {$('#chkAlertDown').iCheck('uncheck');}
         $('#txtSkipRepeated').val                    (findSkipRepeated (deviceData['dev_SkipRepeated']));
-        if (deviceData['dev_NewDevice'] == 1)        {$('#chkNewDevice').iCheck('check');} 
-        if (deviceData['dev_Archived'] == 1)         {$('#chkArchived').iCheck('check');} 
+        if (deviceData['dev_NewDevice'] == 1)        {$('#chkNewDevice').iCheck('check');}   else {$('#chkNewDevice').iCheck('uncheck');}
+        if (deviceData['dev_Archived'] == 1)         {$('#chkArchived').iCheck('check');}    else {$('#chkArchived').iCheck('uncheck');}
 
         if (deviceData['dev_RandomMAC'] == 1)        {$('#iconRandomMACactive').removeClass   ('hidden');
                                                       $('#iconRandomMACinactive').addClass    ('hidden'); }
