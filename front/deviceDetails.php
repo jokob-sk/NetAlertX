@@ -519,7 +519,7 @@
   var parEventsRows       = 'Front_Details_Events_Rows';
   var parEventsHide       = 'Front_Details_Events_Hide';
   var period              = '1 month';
-  var tab                 = '#panDetails'
+  var tab                 = 'tabDetails'
   var sessionsRows        = 10;
   var eventsRows          = 10;
   var eventsHide          = true;
