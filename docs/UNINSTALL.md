@@ -5,7 +5,7 @@ Estimated time: 5'
 
 ## One-step Automated Uninstall:
 <!--- --------------------------------------------------------------------- --->
-`curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_uninstall.sh | bash`
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_uninstall.sh | bash`
 
 ## Uninstallation process (step by step)
 <!--- --------------------------------------------------------------------- --->
