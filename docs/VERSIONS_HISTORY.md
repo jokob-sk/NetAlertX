@@ -17,7 +17,7 @@
 ## Pi.Alert v3.01
 <!--- --------------------------------------------------------------------- --->
  **PENDING UPDATE DOC**
-  - Fixed: Problem with local IP (raspberry IP) #106
+  - Fixed: Problem with local MAC & IP (raspberry) #106
  
 
 ## Pi.Alert v3.00
