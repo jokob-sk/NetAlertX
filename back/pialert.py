@@ -586,11 +586,17 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
                         VALUES (?, 'Internet', ?, Null, 'queryDNS') """, (cycle, internet_IP) )
 
     # #76 Add Local MAC of default local interface
-    #local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
-    local_mac_cmd = ["/sbin/ifconfig `ip route list default | sort -nk11 | head -1 | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+      # BUGFIX #106 - Device that pialert is running
+        # local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+          # local_mac_cmd = ["/sbin/ifconfig `ip route list default | sort -nk11 | head -1 | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+    local_mac_cmd = ["/sbin/ifconfig `ip -o route get 1 | sed 's/^.*dev \([^ ]*\).*$/\1/;q'` | grep ether | awk '{print $2}'"]
     local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
+
+    # local_dev_cmd = ["ip -o route get 1 | sed 's/^.*dev \([^ ]*\).*$/\1/;q'"]
+    # local_dev = subprocess.Popen (local_dev_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
     
-    local_ip_cmd = ["ip route list default | awk {'print $7'}"]
+    # local_ip_cmd = ["ip route list default | awk {'print $7'}"]
+    local_ip_cmd = ["ip -o route get 1 | sed 's/^.*src \([^ ]*\).*$/\1/;q'"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
     
     sql.execute ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) "+
