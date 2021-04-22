@@ -587,7 +587,7 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
 
     # #76 Add Local MAC of default local interface
     #local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
-    local_mac_cmd = ["/sbin/ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
+    local_mac_cmd = ["/sbin/ifconfig `ip route list default | sort -nk11 | head -1 | awk {'print $5'}` | grep ether | awk '{print $2}'"]
     local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].strip()
     
     local_ip_cmd = ["ip route list default | awk {'print $7'}"]
