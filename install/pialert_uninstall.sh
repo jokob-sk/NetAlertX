@@ -78,7 +78,7 @@ msgbox() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    whiptail --title "Pi.Alert Installation" --msgbox "$LINE1\\n\\n$LINE2" $ROWS $COLS
+    whiptail --title "Pi.Alert Uninstallation" --msgbox "$LINE1\\n\\n$LINE2" $ROWS $COLS
     BUTTON=$?
     ask_cancel
     ANSWER=true
@@ -97,7 +97,7 @@ ask_yesno() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    whiptail --title "Pi.Alert Installation" --yesno $DEF_BUTTON "$LINE1\\n\\n$LINE2" $ROWS $COLS
+    whiptail --title "Pi.Alert Uninstallation" --yesno $DEF_BUTTON "$LINE1\\n\\n$LINE2" $ROWS $COLS
     BUTTON=$?
     ask_cancel
   done
@@ -115,7 +115,7 @@ ask_option() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    ANSWER=$(whiptail --title "Pi.Alert Installation" --menu "$1" $ROWS $COLS "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3 )
+    ANSWER=$(whiptail --title "Pi.Alert Uninstallation" --menu "$1" $ROWS $COLS "${MENU_ARGS[@]}"  3>&2 2>&1 1>&3 )
     BUTTON=$?
     ask_cancel CANCEL
   done
@@ -127,7 +127,7 @@ ask_input() {
 
   END_DIALOG=false
   while ! $END_DIALOG ; do
-    ANSWER=$(whiptail --title "Pi.Alert Installation" --inputbox "$LINE1\\n\\n$LINE2" $ROWS $COLS "$3" 3>&2 2>&1 1>&3 )
+    ANSWER=$(whiptail --title "Pi.Alert Uninstallation" --inputbox "$LINE1\\n\\n$LINE2" $ROWS $COLS "$3" 3>&2 2>&1 1>&3 )
     BUTTON=$?
     ask_cancel CANCEL
 
@@ -139,16 +139,16 @@ ask_input() {
 }
 
 ask_cancel() {
-  LINE0="Do you want to cancel the installation process"
+  LINE0="Do you want to cancel the uninstallation process"
   LINE0=$(printf "\n\n%*s" $(((${#LINE0}+$COLS-5)/2)) "$LINE0")
 
   if [ "$BUTTON" = "1" ] && [ "$1" = "CANCEL" ] ; then BUTTON="255"; fi
 
   if [ "$BUTTON" = "255" ] ; then
-    whiptail --title "Pi.Alert Installation" --yesno --defaultno "$LINE0" $ROWS $COLS
+    whiptail --title "Pi.Alert Uninstallation" --yesno --defaultno "$LINE0" $ROWS $COLS
 
     if [ "$?" = "0" ] ; then
-      process_error "Installation Aborted by User"
+      process_error "Uninstallation Aborted by User"
     fi
   else
     END_DIALOG=true
