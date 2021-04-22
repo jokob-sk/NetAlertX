@@ -14,10 +14,16 @@
   |  v2.50  | First public release                                            |
 
 
+## Pi.Alert v3.01
+<!--- --------------------------------------------------------------------- --->
+ **PENDING UPDATE DOC**
+  - Fixed: Problem with local IP (raspberry IP) #106
+ 
+
 ## Pi.Alert v3.00
 <!--- --------------------------------------------------------------------- --->
  **PENDING UPDATE DOC**
-  -  `arp-scan` config options: interface, several subnets. #101 #15
+  - `arp-scan` config options: interface, several subnets. #101 #15
   - Next/previos button while editing devices #66 #37
   - Internet presence/sessions monitoring #63
   - Logical delete / archive / hide Device #93
