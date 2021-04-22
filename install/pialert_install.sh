@@ -23,7 +23,8 @@
   
   LOG="pialert_install_`date +"%Y-%m-%d_%H-%M"`.log"
   
-  MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
+  # MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
+  MAIN_IP=`ip -o route get 1 | sed -n 's/^.*src \([^ ]*\).*$/\1/;q'`
   
   PIHOLE_INSTALL=false
   PIHOLE_ACTIVE=false
