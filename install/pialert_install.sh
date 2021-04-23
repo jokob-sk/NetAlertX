@@ -24,7 +24,7 @@
   LOG="pialert_install_`date +"%Y-%m-%d_%H-%M"`.log"
   
   # MAIN_IP=`ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'`
-  MAIN_IP=`ip -o route get 1 | sed -n 's/^.*src \([^ ]*\).*$/\1/;q'`
+  MAIN_IP=`ip -o route get 1 | sed 's/^.*src \([^ ]*\).*$/\1/;q'`
   
   PIHOLE_INSTALL=false
   PIHOLE_ACTIVE=false
@@ -521,7 +521,7 @@ test_pialert() {
   if $FIRST_SCAN_KNOWN ; then
     echo ""
     print_msg "- Set devices as Known devices..."
-    sqlite3 $PIALERT_HOME/db/pialert.db "UPDATE Devices SET dev_NewDevice=0, dev_AlertEvents=0"  2>&1 >> "$LOG"
+    sqlite3 $PIALERT_HOME/db/pialert.db "UPDATE Devices SET dev_NewDevice=0, dev_AlertEvents=0 WHERE dev_NewDevice=1" 2>&1 >> "$LOG"
   fi
 }
 
