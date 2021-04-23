@@ -35,6 +35,7 @@ main() {
   move_files
   clean_files
 
+  check_packages
   download_pialert
   update_config
   update_db
@@ -85,6 +86,21 @@ clean_files() {
   rm -r "$PIALERT_HOME/"*.txt   2>/dev/null || :
   rm -r "$PIALERT_HOME/"*.md    2>/dev/null || :
 }
+
+# ------------------------------------------------------------------------------
+# Check packages
+# ------------------------------------------------------------------------------
+check_packages() {
+  print_msg "- Checking package apt-utils..."
+  sudo apt-get install apt-utils -y                               2>&1 >> "$LOG"
+
+  print_msg "- Checking package sqlite3..."
+  sudo apt-get install sqlite3 -y                                 2>&1 >> "$LOG"
+
+  print_msg "- Checking packages dnsutils & net-tools..."
+  sudo apt-get install dnsutils net-tools -y                      2>&1 >> "$LOG"
+}
+
 
 # ------------------------------------------------------------------------------
 # Download and uncompress Pi.Alert
