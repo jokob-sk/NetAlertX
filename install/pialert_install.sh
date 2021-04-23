@@ -312,7 +312,7 @@ add_pialert_DNS() {
 install_lighttpd() {
   print_header "Lighttpd & PHP"
 
-  print_msg "apt-utils"
+  print_msg "- Installing apt-utils..."
   sudo apt-get install apt-utils -y                               2>&1 >> "$LOG"
 
   print_msg "- Installing lighttpd..."
