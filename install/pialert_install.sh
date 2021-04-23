@@ -312,6 +312,9 @@ add_pialert_DNS() {
 install_lighttpd() {
   print_header "Lighttpd & PHP"
 
+  print_msg "apt-utils"
+  sudo apt-get install apt-utils -y                               2>&1 >> "$LOG"
+
   print_msg "- Installing lighttpd..."
   sudo apt-get install lighttpd -y                                2>&1 >> "$LOG"
   
@@ -327,7 +330,11 @@ install_lighttpd() {
   fi
   
   print_msg "- Restarting lighttpd..."
-  sudo /etc/init.d/lighttpd restart                               2>&1 >> "$LOG"
+  sudo sudo service lighttpd restart                              2>&1 >> "$LOG"
+  # sudo /etc/init.d/lighttpd restart                             2>&1 >> "$LOG"
+
+  print_msg "- Installing sqlite3..."
+  sudo apt-get install sqlite3 -y                                 2>&1 >> "$LOG"
 }
 
 
@@ -343,8 +350,8 @@ install_arpscan() {
   print_msg "- Testing arp-scan..."
   sudo arp-scan -l | head -n -3 | tail +3                        | tee -a "$LOG"
 
-  print_msg "- Installing dnsutils..."
-  sudo apt-get install dnsutils -y                                2>&1 >> "$LOG"
+  print_msg "- Installing dnsutils & net-tools..."
+  sudo apt-get install dnsutils net-tools -y                      2>&1 >> "$LOG"
 }
   
 
@@ -574,7 +581,8 @@ publish_pialert() {
   sudo ln -s ../conf-available/pialert_front.conf  "$LIGHTTPD_CONF_DIR/conf-enabled/pialert_front.conf"  2>&1 >> "$LOG"
 
   print_msg "- Restarting lighttpd..."
-  sudo /etc/init.d/lighttpd restart                               2>&1 >> "$LOG"
+  sudo sudo service lighttpd restart                              2>&1 >> "$LOG"
+  # sudo /etc/init.d/lighttpd restart                             2>&1 >> "$LOG"
 }
 
 # ------------------------------------------------------------------------------
