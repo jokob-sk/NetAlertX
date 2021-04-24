@@ -14,6 +14,12 @@
   |  v2.50  | First public release                                            |
 
 
+## Pi.Alert v3.02
+<!--- --------------------------------------------------------------------- --->
+ **PENDING UPDATE DOC**
+  - Fixed: UNIQUE constraint failed with Local MAC #114
+
+
 ## Pi.Alert v3.01
 <!--- --------------------------------------------------------------------- --->
  **PENDING UPDATE DOC**

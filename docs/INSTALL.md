@@ -93,7 +93,7 @@ Estimated time: 20'
   ```
   or this one if have severals interfaces
   ```
-  ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+  ip -o route get 1 | sed 's/^.*src \([^ ]*\).*$/\1/;q'
   ```
   
   - http://192.168.1.x/admin/
@@ -108,7 +108,7 @@ Estimated time: 20'
   ```
   or this one if have severals interfaces
   ```
-  ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+  ip -o route get 1 | sed 's/^.*src \([^ ]*\).*$/\1/;q'
   ```
 
   - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
@@ -129,27 +129,37 @@ Estimated time: 20'
 If you have installed Pi.hole, lighttpd and PHP are already installed and this
 block is not necessary
 
-3.1 - Install lighttpd
+3.1 - Install apt-utils
+  ```
+  sudo apt-get install apt-utils -y
+  ```
+
+3.2 - Install lighttpd
   ```
   sudo apt-get install lighttpd -y
   ```
 
-3.2 - If Pi.Alert will be the only site available in this webserver, you can
+3.3 - If Pi.Alert will be the only site available in this webserver, you can
   redirect the default server page to pialert subfolder
   ```
   sudo mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old
   sudo ln -s ~/pialert/install/index.html /var/www/html/index.html
   ```
 
-3.3 - Install PHP
+3.4 - Install PHP
   ```
   sudo apt-get install php php-cgi php-fpm php-sqlite3 -y     
   ```
 
-3.4 - Activate PHP
+3.5 - Activate PHP
   ```
   sudo lighttpd-enable-mod fastcgi-php
-  sudo /etc/init.d/lighttpd restart
+  sudo service lighttpd restart
+  ```
+
+3.6 - Install sqlite3
+  ```
+  sudo apt-get install sqlite3 -y
   ```
 
 
@@ -161,9 +171,9 @@ block is not necessary
   sudo arp-scan -l
   ```
 
-4.2 - Install dnsutils utility
+4.2 - Install dnsutils & net-tools utilities
   ```
-  sudo apt-get install dnsutils -y
+  sudo apt-get install dnsutils net-tools -y
   ```
 
 4.3 - Test Python
@@ -235,9 +245,11 @@ block is not necessary
   - If you want to use email reporting, configure this parameters
     ```ini
     REPORT_MAIL     = True
+    REPORT_TO       = 'user@gmail.com'
+    SMTP_SERVER     = 'smtp.gmail.com'
+    SMTP_PORT       = 587
     SMTP_USER       = 'user@gmail.com'
     SMTP_PASS       = 'password'
-    REPORT_TO       = 'user@gmail.com'
     ```
 
   - If you want to update your Dynamic DNS, configure this parameters
@@ -303,7 +315,7 @@ block is not necessary
     ```
     or this one if have severals interfaces
     ```
-    ip -o route get 1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'
+    ip -o route get 1 | sed 's/^.*src \([^ ]*\).*$/\1/;q'
     ```
     - Pi-hole admin portal -> Local DNS -> DNS Records -> Add new domain /IP
       - pi.alert    192.168.1.x

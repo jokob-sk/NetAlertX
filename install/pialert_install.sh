@@ -330,7 +330,7 @@ install_lighttpd() {
   fi
   
   print_msg "- Restarting lighttpd..."
-  sudo sudo service lighttpd restart                              2>&1 >> "$LOG"
+  sudo service lighttpd restart                                   2>&1 >> "$LOG"
   # sudo /etc/init.d/lighttpd restart                             2>&1 >> "$LOG"
 
   print_msg "- Installing sqlite3..."
