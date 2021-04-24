@@ -8,12 +8,10 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
 
-PIALERT_VERSION=`awk '$1=="VERSION" { print $3 }' ../config/version.conf | tr -d \'`
 PIALERT_DEV_PATH=/media/WD_4TB/dev
-
-# ------------------------------------------------------------------------------
 cd $PIALERT_DEV_PATH
 pwd
+PIALERT_VERSION=`awk '$1=="VERSION" { print $3 }' pialert/config/version.conf | tr -d \'`
 
 # ------------------------------------------------------------------------------
 ls -l pialert/tar/pialert*.tar
