@@ -335,7 +335,7 @@ function getDeviceTypes() {
                  "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)",
                  "Domotic", "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
                  "Clock", "House Appliance", "Phone", "Radio",
-                 "AP", "NAS", "PLC", "Router", "USB LAN Adapter", "USB WIFI Adapter")
+                 "AP", "NAS", "PLC", "Router", "USB LAN Adapter", "USB WIFI Adapter", "Other")
 
           UNION SELECT 1 as dev_Order, "Smartphone"
           UNION SELECT 1 as dev_Order, "Tablet"
