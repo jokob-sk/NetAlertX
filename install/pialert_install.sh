@@ -143,7 +143,7 @@ ask_config() {
 
   if $DHCP_ACTIVATE ; then
     msgbox "Default DHCP options will be used. Range=$DHCP_RANGE_START - $DHCP_RANGE_END / Router=$DHCP_ROUTER / Domain=$DHCP_DOMAIN / Leases=$DHCP_LEASE h." \
-           "Yo can change this values in your Pi-hole Admin Portal"
+           "You can change this values in your Pi-hole Admin Portal"
     msgbox "Make sure your router's DHCP server is disabled" \
            "when using the Pi-hole DHCP server!"
   fi
