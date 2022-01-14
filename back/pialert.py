@@ -27,6 +27,7 @@ import socket
 import io
 import smtplib
 import csv
+import xml.etree.ElementTree as ET
 
 
 #===============================================================================
@@ -363,6 +364,15 @@ def scan_network ():
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
 
+    # nmap command
+    print ('\nScanning...')
+    print ('    nmap Method...')
+    print_log ('nmap starts...')
+    arpscan_devices = execute_nmap (arpscan_devices)
+    print_log ('nmap ends')
+    # DEBUG - print number of rows updated
+        # print (arpscan_devices)
+
     # Pi-hole method
     print ('    Pi-hole Method...')
     openDB()
@@ -485,12 +495,53 @@ def execute_arpscan (pRetries):
             unique_devices.append(device)
 
     # DEBUG
-        # print (devices_list)
-        # print (unique_mac)
-        # print (unique_devices)
-        # print (len(devices_list))
-        # print (len(unique_mac))
-        # print (len(unique_devices))
+    #    print (devices_list)
+    #    print (unique_mac)
+    #    print (unique_devices)
+    #    print (len(devices_list))
+    #    print (len(unique_mac))
+    #    print (len(unique_devices))
+
+    # return list
+    return unique_devices
+
+#-------------------------------------------------------------------------------
+def execute_nmap (arpscan_results):
+ 
+    # #101 - nmap subnet configuration
+    # Prepare command arguments
+    subnets = SCAN_SUBNETS.strip().split()
+    nmap_args = ['nmap', '-sn', '-oX', '-', '192.168.0.0/24']
+    print (nmap_args)
+
+    # Execute command
+    nmap_output = subprocess.check_output (nmap_args, universal_newlines=True)
+    #print (nmap_output)
+    root = ET.fromstring(nmap_output);
+
+    unique_mac = [] 
+    unique_devices = [] 
+    for result in arpscan_results:
+      unique_mac.append(result['mac'])
+
+    for child in root.iter('host'):
+      device = {}
+      for addr in child.iter('address'):
+        if addr.get('addrtype') == 'mac':
+            device['mac'] = addr.get('addr')
+            device['hw'] = addr.get('vendor')
+        if addr.get('addrtype') == 'ipv4':
+            device['ip'] = addr.get('addr')
+      if 'mac' in device:
+        if device['mac'] not in unique_mac: 
+          unique_mac.append(device['mac'])
+          unique_devices.append(device)
+
+    # DEBUG
+    #print (unique_mac)
+    #print (unique_devices)
+    #print (len(unique_mac))
+    #print (len(unique_devices))
 
     # return list
     return unique_devices
