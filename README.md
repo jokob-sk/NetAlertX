@@ -119,6 +119,16 @@ Linux distributions.
   pi.alert.application@gmail.com
   
   ***Suggestions and comments are welcome***
+  
+  
+# Docker image :whale:
+All credit for Pi.Alert goes to:
+[pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
+
+The Docker image is available at [jokobsk/Pi.Alert - Docker
+Hub](https://registry.hub.docker.com/r/jokobsk/pi.alert).
+
+The source Docker file is available [here on GitHub](https://github.com/jokob-sk/Docker-Image-for-Pi.Alert).
 
 
 <!--- --------------------------------------------------------------------- --->
