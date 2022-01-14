@@ -41,7 +41,7 @@
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnDeleteMAC"   onclick="askDeleteAllDevices()">   Delete All Devices </button>     
       </div>
-      <div class="pull-right">
+      <!-- <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-create"  style="margin-left:0px;"
             id="btnDelete"   onclick="askRunScan1min()">   Run 1 min scan now</button>     
       </div>
@@ -58,7 +58,7 @@
       <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnRestore"   onclick="askRestoreBackupDB()"> Restore DB </button>     
-      </div>
+      </div> -->
    
     </div>
 
