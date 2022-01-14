@@ -36,28 +36,28 @@
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnDeleteMAC"   onclick="askDeleteDevicesWithEmptyMACs()">   Delete Devices with empty MACs </button>     
       </div>
-    </div>
-
-    <div class="col-xs-12">
+   
       <div class="pull-right">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-            id="btnDelete"   onclick="askDeleteAllDevices()">   Delete All Devices</button>     
+          <button type="button" class="btn btn-default pa-btn pa-btn-create"  style="margin-left:0px;"
+            id="btnDelete"   onclick="askRunScan1min()">   Run 1 min scan now</button>     
       </div>
-    </div>
 
-    <!-- <div class="col-xs-12">
+      <div class="pull-right">
+          <button type="button" class="btn btn-default pa-btn pa-btn-create"  style="margin-left:0px;"
+            id="btnDelete"   onclick="askRunScan15min()">   Run 15 min scan now</button>     
+      </div>
+
       <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-create"  style="margin-left:0px;"
             id="btnBackup"   onclick="askCreateBackupDB()"> Backup DB </button>     
       </div>
-    </div>
-
-    <div class="col-xs-12">
       <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnRestore"   onclick="askRestoreBackupDB()"> Restore DB </button>     
       </div>
-    </div> -->
+   
+    </div>
+
 
     <!-- ----------------------------------------------------------------------- -->
     </section>
@@ -73,6 +73,9 @@
 
 
 <script>
+
+// delete devices with emty macs
+
   function askDeleteDevicesWithEmptyMACs () {
   // Ask delete device 
 
@@ -89,7 +92,7 @@ function deleteDevicesWithEmptyMACs()
   });
 }
 
-
+// delete all devices 
 function askDeleteAllDevices () {
   // Ask delete device 
 
@@ -107,6 +110,39 @@ function deleteAllDevices()
 }
 
 
+// Run ad-hoc scans
+
+function askRunScan1min () {
+  // Ask delete device
+
+  showModalWarning('Scan 1 min now', 'This runs the 1 min scan sequence',
+    'Cancel', 'Scan', 'runScan1min');
+}
+
+
+function runScan1min()
+{ 
+  // Scan
+  $.get('php/server/devices.php?action=runScan1min', function(msg) {
+    showMessage (msg);
+  });
+}
+
+function askRunScan15min () {
+  // Ask delete device
+
+  showModalWarning('Scan 15 min now', 'This runs the 15 min scan sequence',
+    'Cancel', 'Scan', 'runScan15min');
+}
+
+
+function runScan15min()
+{ 
+  // Scan
+  $.get('php/server/devices.php?action=runScan15min', function(msg) {
+    showMessage (msg);
+  });
+}
 
 
 // DB backup
