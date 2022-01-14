@@ -259,11 +259,13 @@ function createBackupDB() {
   //   echo "Error copying DB. SSH into instance and copy manually.";
   // }
 
-  $command = escapeshellcmd('/home/pi/pialert/back/maintenance.py backup_DB');
-  $output = shell_exec($command);
+  $mystring = system('python /home/pi/pialert/back/maintenance.py backup_DB', $retval);
+  // $command = escapeshellcmd('/home/pi/pialert/back/maintenance.py backup_DB');
+  // $output = shell_exec($command);
 
 
-  echo $output;
+  //echo $output;
+  echo $retval;
 }
 
 //------------------------------------------------------------------------------
