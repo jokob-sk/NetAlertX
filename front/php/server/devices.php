@@ -34,6 +34,7 @@
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
+      case 'deleteAllDevices':        deleteAllDevices();                      break;
       
       
  
@@ -186,6 +187,25 @@ function deleteAllWithEmptyMACs() {
 
   // sql
   $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all devices 
+//------------------------------------------------------------------------------
+function deleteAllDevices() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices';
   // execute sql
   $result = $db->query($sql);
 
