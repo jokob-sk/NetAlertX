@@ -32,6 +32,9 @@
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
+      case 'createBackupDB':          createBackupDB();                        break;
+      case 'restoreBackupDB':         restoreBackupDB();                       break;
+      
       
  
       case 'getDevicesTotals':        getDevicesTotals();                      break;
@@ -191,6 +194,37 @@ function deleteAllWithEmptyMACs() {
     echo "Devices deleted successfully";
   } else {
     echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+
+//------------------------------------------------------------------------------
+//  Create a DB backup
+//------------------------------------------------------------------------------
+function createBackupDB() {
+ 
+  //
+  $result = copy("/home/pi/pialert/db/pialert.db","/home/pi/pialert/config/pialert.db_bak");
+  // check result
+  if ($result == TRUE) {
+    echo "Copied successfully";
+  } else {
+    echo "Error copying DB. SSH into instance and copy manually.";
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Restore latest DB backup
+//------------------------------------------------------------------------------
+function restoreBackupDB() {
+ 
+  //
+  $result = copy("/home/pi/pialert/config/pialert.db_bak", "/home/pi/pialert/db/pialert.db");
+  // check result
+  if ($result == TRUE) {
+    echo "Copied successfully";
+  } else {
+    echo "Error copying DB. SSH into instance and copy manually.";
   }
 }
 

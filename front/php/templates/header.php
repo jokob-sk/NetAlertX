@@ -170,7 +170,7 @@
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <a href="maintenance.php"><i class="fa fa-bolt"></i> <span>Maintenance</span></a>
+          <a href="maintenance.php"><i class="fa fa-cog fa-spin fa-3x fa-fw"></i> <span>Maintenance</span></a>
         </li>
 
 <!--
