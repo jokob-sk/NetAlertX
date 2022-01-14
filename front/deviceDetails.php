@@ -401,7 +401,7 @@
                         <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
                           id="btnRestore"  onclick="getDeviceData(true)"> Reset Changes </button>
                         <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; " 
-                          id="btnSave"     onclick="setDeviceData()" >     Save </button>
+                          id="btnSave"     onclick="setDeviceData()" >     Save </button>                          
                     </div>
                   </div>
 

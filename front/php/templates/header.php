@@ -169,6 +169,10 @@
           <a href="events.php"><i class="fa fa-bolt"></i> <span>Events</span></a>
         </li>
 
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
+          <a href="maintenance.php"><i class="fa fa-bolt"></i> <span>Maintenance</span></a>
+        </li>
+
 <!--
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Config</span>
