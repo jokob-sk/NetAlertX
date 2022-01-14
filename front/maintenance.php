@@ -34,11 +34,18 @@
     <div class="col-xs-12">
       <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-            id="btnDelete"   onclick="askDeleteDevicesWithEmptyMACs()">   Delete Devices with empty MACs </button>     
+            id="btnDeleteMAC"   onclick="askDeleteDevicesWithEmptyMACs()">   Delete Devices with empty MACs </button>     
       </div>
     </div>
 
     <div class="col-xs-12">
+      <div class="pull-right">
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+            id="btnDelete"   onclick="askDeleteAllDevices()">   Delete All Devices</button>     
+      </div>
+    </div>
+
+    <!-- <div class="col-xs-12">
       <div class="pull-right">
           <button type="button" class="btn btn-default pa-btn pa-btn-create"  style="margin-left:0px;"
             id="btnBackup"   onclick="askCreateBackupDB()"> Backup DB </button>     
@@ -50,7 +57,7 @@
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnRestore"   onclick="askRestoreBackupDB()"> Restore DB </button>     
       </div>
-    </div>
+    </div> -->
 
     <!-- ----------------------------------------------------------------------- -->
     </section>
@@ -67,7 +74,7 @@
 
 <script>
   function askDeleteDevicesWithEmptyMACs () {
-  // Ask delete device
+  // Ask delete device 
 
   showModalWarning('Delete Devices', 'Are you sure you want to delete all devices with empty MAC addresses?<br>(maybe you prefer to archive it)',
     'Cancel', 'Delete', 'deleteDevicesWithEmptyMACs');
@@ -78,6 +85,23 @@ function deleteDevicesWithEmptyMACs()
 { 
   // Delete device
   $.get('php/server/devices.php?action=deleteAllWithEmptyMACs', function(msg) {
+    showMessage (msg);
+  });
+}
+
+
+function askDeleteAllDevices () {
+  // Ask delete device 
+
+  showModalWarning('Delete Devices', 'Are you sure you want to delete all devices?',
+    'Cancel', 'Delete', 'deleteAllDevices');
+}
+
+
+function deleteAllDevices()
+{ 
+  // Delete device
+  $.get('php/server/devices.php?action=deleteAllDevices', function(msg) {
     showMessage (msg);
   });
 }
