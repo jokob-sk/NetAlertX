@@ -31,6 +31,8 @@
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
+      
  
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -172,6 +174,26 @@ function deleteDevice() {
     echo "Error deleting device\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteAllWithEmptyMACs() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
 
 
 //------------------------------------------------------------------------------
