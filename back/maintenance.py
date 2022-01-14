@@ -16,9 +16,8 @@ def main ():
         res = restore_db()
 
 def backup_db ():
-    # Header
-    result = subprocess.run(["cp", "/home/pi/pialert/db/pialert.db", "/home/pi/pialert/config/pialert.db_bak"], stderr=subprocess.PIPE, text=True)
-    #shutil.copyfile("/home/pi/pialert/db/pialert.db", "/home/pi/pialert/config/pialert.db_bak")
+    # Header    
+    shutil.copyfile("/home/pi/pialert/db/pialert.db", "/home/pi/pialert/config/pialert.db_bak")
 
 
 def restore_db ():
