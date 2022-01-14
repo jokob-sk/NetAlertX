@@ -35,6 +35,8 @@
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
       case 'deleteAllDevices':        deleteAllDevices();                      break;
+      case 'runScan15min':            runScan15min();                          break;
+      case 'runScan1min':             runScan1min();                           break;
       
       
  
@@ -217,20 +219,51 @@ function deleteAllDevices() {
   }
 }
 
+//------------------------------------------------------------------------------
+//  Run scan 1 min now
+//------------------------------------------------------------------------------
+function runScan1min() {
+
+  $command = escapeshellcmd('/home/pi/pialert/back/pialert.py 1');
+  $output = shell_exec($command);
+
+
+  echo $output;
+}
+
+
+//------------------------------------------------------------------------------
+//  Run scan 15 min now
+//------------------------------------------------------------------------------
+function runScan15min() {
+
+  $command = escapeshellcmd('/home/pi/pialert/back/pialert.py 15');
+  $output = shell_exec($command);
+
+
+  echo $output;
+}
+
 
 //------------------------------------------------------------------------------
 //  Create a DB backup
 //------------------------------------------------------------------------------
 function createBackupDB() {
  
-  //
-  $result = copy("/home/pi/pialert/db/pialert.db","/home/pi/pialert/config/pialert.db_bak");
-  // check result
-  if ($result == TRUE) {
-    echo "Copied successfully";
-  } else {
-    echo "Error copying DB. SSH into instance and copy manually.";
-  }
+  // //
+  // $result = copy("/home/pi/pialert/db/pialert.db","/home/pi/pialert/config/pialert.db_bak");
+  // // check result
+  // if ($result == TRUE) {
+  //   echo "Copied successfully";
+  // } else {
+  //   echo "Error copying DB. SSH into instance and copy manually.";
+  // }
+
+  $command = escapeshellcmd('/home/pi/pialert/back/maintenance.py backup_DB');
+  $output = shell_exec($command);
+
+
+  echo $output;
 }
 
 //------------------------------------------------------------------------------
@@ -238,14 +271,20 @@ function createBackupDB() {
 //------------------------------------------------------------------------------
 function restoreBackupDB() {
  
-  //
-  $result = copy("/home/pi/pialert/config/pialert.db_bak", "/home/pi/pialert/db/pialert.db");
-  // check result
-  if ($result == TRUE) {
-    echo "Copied successfully";
-  } else {
-    echo "Error copying DB. SSH into instance and copy manually.";
-  }
+  // //
+  // $result = copy("/home/pi/pialert/config/pialert.db_bak", "/home/pi/pialert/db/pialert.db");
+  // // check result
+  // if ($result == TRUE) {
+  //   echo "Copied successfully";
+  // } else {
+  //   echo "Error copying DB. SSH into instance and copy manually.";
+  // }
+
+  $command = escapeshellcmd('/home/pi/pialert/back/maintenance.py restore_DB');
+  $output = shell_exec($command);
+
+
+  echo $output;
 }
 
 
