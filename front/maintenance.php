@@ -45,6 +45,10 @@
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnDeleteUnknown"   onclick="askDeleteUnknown()">   Delete (unknown) Devices </button>     
       </div>
+      <div class="center">
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+            id="btnDeleteEvents"   onclick="askDeleteEvents()">   Delete all Events </button>     
+      </div>
     </div>
 
 
@@ -97,7 +101,7 @@ function deleteAllDevices()
 }
 
 // delete all (unknown) devices 
-function askDeleteAllDevices () {
+function askDeleteUnknown () {
   // Ask 
   showModalWarning('Delete (unknown) Devices', 'Are you sure you want to delete all (unknown) devices?',
     'Cancel', 'Delete', 'deleteUnknownDevices');
@@ -108,6 +112,22 @@ function deleteUnknownDevices()
 { 
   // Execute
   $.get('php/server/devices.php?action=deleteUnknownDevices', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// delete all Events 
+function askDeleteEvents () {
+  // Ask 
+  showModalWarning('Delete Events', 'Are you sure you want to delete all Events?',
+    'Cancel', 'Delete', 'deleteEvents');
+}
+
+
+function deleteEvents()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=deleteEvents', function(msg) {
     showMessage (msg);
   });
 }
