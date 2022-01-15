@@ -37,6 +37,7 @@
       case 'deleteAllDevices':        deleteAllDevices();                      break;
       case 'runScan15min':            runScan15min();                          break;
       case 'runScan1min':             runScan1min();                           break;
+      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       
       
  
@@ -199,6 +200,27 @@ function deleteAllWithEmptyMACs() {
     echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteUnknownDevices() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+
 
 //------------------------------------------------------------------------------
 //  Delete all devices 

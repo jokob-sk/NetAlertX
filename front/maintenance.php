@@ -41,6 +41,10 @@
           <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
             id="btnDeleteMAC"   onclick="askDeleteAllDevices()">   Delete All Devices </button>     
       </div>
+      <div class="center">
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+            id="btnDeleteUnknown"   onclick="askDeleteUnknown()">   Delete (unknown) Devices </button>     
+      </div>
     </div>
 
 
@@ -62,8 +66,7 @@
 // delete devices with emty macs
 
   function askDeleteDevicesWithEmptyMACs () {
-  // Ask delete device 
-
+  // Ask 
   showModalWarning('Delete Devices', 'Are you sure you want to delete all devices with empty MAC addresses?<br>(maybe you prefer to archive it)',
     'Cancel', 'Delete', 'deleteDevicesWithEmptyMACs');
 }
@@ -79,8 +82,7 @@ function deleteDevicesWithEmptyMACs()
 
 // delete all devices 
 function askDeleteAllDevices () {
-  // Ask delete device 
-
+  // Ask 
   showModalWarning('Delete Devices', 'Are you sure you want to delete all devices?',
     'Cancel', 'Delete', 'deleteAllDevices');
 }
@@ -94,7 +96,21 @@ function deleteAllDevices()
   });
 }
 
+// delete all (unknown) devices 
+function askDeleteAllDevices () {
+  // Ask 
+  showModalWarning('Delete (unknown) Devices', 'Are you sure you want to delete all (unknown) devices?',
+    'Cancel', 'Delete', 'deleteUnknownDevices');
+}
 
+
+function deleteUnknownDevices()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=deleteUnknownDevices', function(msg) {
+    showMessage (msg);
+  });
+}
 
 
 
