@@ -38,6 +38,7 @@
       case 'runScan15min':            runScan15min();                          break;
       case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
+      case 'deleteEvents':            deleteEvents();                          break;
       
       
  
@@ -238,6 +239,25 @@ function deleteAllDevices() {
     echo "Devices deleted successfully";
   } else {
     echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all Events 
+//------------------------------------------------------------------------------
+function deleteEvents() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Events';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Events deleted successfully";
+  } else {
+    echo "Error deleting Events\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
