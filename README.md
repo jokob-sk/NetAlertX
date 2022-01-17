@@ -21,14 +21,16 @@ The system continuously scans the network for:
   - Internet IP address changes
 
 ## Scan Methods
-Up to three scanning methods are used:
+Up to four scanning methods are used:
   - **Method 1: arp-scan**. The arp-scan system utility is used to search
         for devices on the network using arp frames.
-  - **Method 2: Pi-hole**. This method is optional and complementary to
+  - **Method 2: nmap**. The nmap system utility is used to search for
+        devices on the network using ping frames.
+  - **Method 3: Pi-hole**. This method is optional and complementary to
         method 1. If the Pi-hole DNS server is active, Pi.Alert examines its
         activity looking for active devices using DNS that have not been
         detected by method 1.
-  - **Method 3. dnsmasq**. This method is optional and complementary to the
+  - **Method 4. dnsmasq**. This method is optional and complementary to the
         previous methods. If the DHCP server dnsmasq is active, Pi.Alert
         examines the DHCP leases (addresses assigned) to find active devices
         that were not discovered by the other methods.
@@ -110,6 +112,7 @@ Linux distributions.
   | arp-scan     | Scan network using arp commands        |
   | Pi.hole      | DNS Server with Ad-block               |
   | dnsmasq      | DHCP Server                            |
+  | nmap         | Network Mapper                         |
 
 ### License
   GPL 3.0
