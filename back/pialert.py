@@ -355,6 +355,7 @@ def scan_network ():
     # TESTING - Fast scan
         # arpscan_retries = 1
     
+    # ScanCycle data        
     # arp-scan command
     print ('\nScanning...')
     print ('    arp-scan Method...')
@@ -368,7 +369,7 @@ def scan_network ():
     print ('\nScanning...')
     print ('    nmap Method...')
     print_log ('nmap starts...')
-    arpscan_devices = execute_nmap (arpscan_devices)
+    arpscan_devices = execute_nmap (NMAP_OPTIONS, arpscan_devices)
     print_log ('nmap ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
@@ -506,12 +507,17 @@ def execute_arpscan (pRetries):
     return unique_devices
 
 #-------------------------------------------------------------------------------
-def execute_nmap (arpscan_results):
+def execute_nmap (NMAP_OPTIONS, arpscan_results):
  
-    # #101 - nmap subnet configuration
-    # Prepare command arguments
-    subnets = SCAN_SUBNETS.strip().split()
-    nmap_args = ['nmap', '-sn', '-oX', '-', '192.168.0.0/24']
+    # nmap subnet configuration
+    # Prepare command arguments - find local networks if no options passed
+    if not NMAP_OPTIONS:
+      local_net_cmd = ["ip addr|grep 'inet ' |grep -v 'lo$' | awk {'print $2'}"]
+      local_net = subprocess.Popen (local_net_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip().splitlines()
+      nmap_args=local_net
+    else:
+      nmap_args = NMAP_OPTIONS.split()
+    nmap_args = ['nmap', '-sn', '--send-ip', '-oX', '-' ] + nmap_args
     print (nmap_args)
 
     # Execute command
@@ -563,10 +569,11 @@ def copy_pihole_network ():
                         (SELECT name FROM PH.network_addresses
                          WHERE network_id = id ORDER BY lastseen DESC, ip),
                         (SELECT ip FROM PH.network_addresses
-                         WHERE network_id = id ORDER BY lastseen DESC, ip)
+                         WHERE network_id = id ORDER BY lastseen DESC, ip) as ip
                     FROM PH.network
                     WHERE hwaddr NOT LIKE 'ip-%'
-                      AND hwaddr <> '00:00:00:00:00:00' """)
+                      AND hwaddr <> '00:00:00:00:00:00'
+                      AND IP NOT LIKE 'fe%' """)
     sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
                     WHERE PH_Name IS NULL OR PH_Name = '' """)
     # DEBUG
