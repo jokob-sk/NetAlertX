@@ -2,15 +2,15 @@ FROM alpine
 
 RUN apk add --no-cache cronie lighttpd php php-cgi php-fpm php-sqlite3 php-json sqlite python3 sudo curl perl perl-lwp-useragent-determined bind-tools git nmap \
     && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing arp-scan \
-    && git clone --depth=1 https://github.com/cjd/Pi.Alert /pialert \
-    && sed -i 's/var\/www\/localhost/pialert\/front/g' /etc/lighttpd/lighttpd.conf \
+    && sed -i 's/\/root/\/home\/pi/g' /etc/passwd \
+    && mkdir -p /home/pi \
+    && git clone --depth=1 https://github.com/cjd/Pi.Alert /home/pi/pialert \
+    && sed -i 's/var\/www\/localhost/home\/pi\/pialert\/front/g' /etc/lighttpd/lighttpd.conf \
     && sed -i 's/^.*server.port.*$/server.port = 20211/g' /etc/lighttpd/lighttpd.conf \
     && sed -i -r 's#\#.*server.event-handler = "linux-sysepoll".*#server.event-handler = "linux-sysepoll"#g' /etc/lighttpd/lighttpd.conf \
-    && sed -i 's/~\/pialert/\/pialert/g' /pialert/install/pialert.cron \
-    && sed -i 's/python/python3/g' /pialert/install/pialert.cron \
-    && sed -i 's/env python$/env python3/g' /pialert/back/pialert.py \
-    && sed -i 's/\/home\/pi//g' /pialert/config/pialert.conf \
-    && (crontab -l 2>/dev/null; cat /pialert/install/pialert.cron) | crontab - \
+    && sed -i 's/python/python3/g' /home/pi/pialert/install/pialert.cron \
+    && sed -i 's/env python$/env python3/g' /home/pi/pialert/back/pialert.py \
+    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab - \
     && (crontab -l 2>/dev/null; echo "@reboot /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf") | crontab - \
     && (crontab -l 2>/dev/null; echo "@reboot /usr/sbin/php-fpm7") | crontab - \
     && sed -i -r 's#\#.*mod_alias.*,.*#    "mod_alias",#g' /etc/lighttpd/lighttpd.conf \
@@ -24,7 +24,7 @@ RUN apk add --no-cache cronie lighttpd php php-cgi php-fpm php-sqlite3 php-json 
     && sed -i -r 's|^server.document-root.*$|server.document-root = var.basedir|g' /etc/lighttpd/lighttpd.conf \
     && mkdir -p mkdir /var/run/php-fpm7 \
     && mkdir /usr/share/ieee-data \
-    && python3 /pialert/back/pialert.py update_vendors
+    && python3 /home/pi/pialert/back/pialert.py update_vendors
 
 RUN { \
 echo 'server.modules += ( "mod_fastcgi" )'; \
