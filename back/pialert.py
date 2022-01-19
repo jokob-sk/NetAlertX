@@ -366,7 +366,6 @@ def scan_network ():
         # print (arpscan_devices)
 
     # nmap command
-    print ('\nScanning...')
     print ('    nmap Method...')
     print_log ('nmap starts...')
     arpscan_devices = execute_nmap (NMAP_OPTIONS, arpscan_devices)
@@ -491,6 +490,7 @@ def execute_arpscan (pRetries):
     unique_devices = [] 
 
     for device in devices_list :
+        device['mac'] = device['mac'].upper()
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
             unique_devices.append(device)
@@ -518,17 +518,17 @@ def execute_nmap (NMAP_OPTIONS, arpscan_results):
     else:
       nmap_args = NMAP_OPTIONS.split()
     nmap_args = ['nmap', '-sn', '--send-ip', '-oX', '-' ] + nmap_args
-    print (nmap_args)
 
     # Execute command
     nmap_output = subprocess.check_output (nmap_args, universal_newlines=True)
-    #print (nmap_output)
     root = ET.fromstring(nmap_output);
 
+    # Track macs from arpscan to remove duplicates
     unique_mac = [] 
     unique_devices = [] 
     for result in arpscan_results:
       unique_mac.append(result['mac'])
+      unique_devices.append(result)
 
     for child in root.iter('host'):
       device = {}
@@ -539,9 +539,11 @@ def execute_nmap (NMAP_OPTIONS, arpscan_results):
         if addr.get('addrtype') == 'ipv4':
             device['ip'] = addr.get('addr')
       if 'mac' in device:
-        if device['mac'] not in unique_mac: 
-          unique_mac.append(device['mac'])
-          unique_devices.append(device)
+        device['mac'] = device['mac'].upper()
+        if re.match("[0-9A-F]{2}([-:]?)[0-9A-F]{2}(\\1[0-9A-F]{2}){4}$", device['mac']):
+          if device['mac'] not in unique_mac:
+            unique_mac.append(device['mac'])
+            unique_devices.append(device)
 
     # DEBUG
     #print (unique_mac)
@@ -647,14 +649,14 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
       # BUGFIX #106 - Device that pialert is running
         # local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
           # local_mac_cmd = ["/sbin/ifconfig `ip route list default | sort -nk11 | head -1 | awk {'print $5'}` | grep ether | awk '{print $2}'"]
-    local_mac_cmd = ["/sbin/ifconfig `ip -o route get 1 | sed 's/^.*dev \\([^ ]*\\).*$/\\1/;q'` | grep ether | awk '{print $2}'"]
+    local_mac_cmd = ["/sbin/ip addr show dev `/sbin/ip -o route get 1 | sed -e 's/^.*dev //' -e 's/ .*$//'` | grep ether | awk '{print $2}'"]
     local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
     # local_dev_cmd = ["ip -o route get 1 | sed 's/^.*dev \\([^ ]*\\).*$/\\1/;q'"]
     # local_dev = subprocess.Popen (local_dev_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
     
     # local_ip_cmd = ["ip route list default | awk {'print $7'}"]
-    local_ip_cmd = ["ip -o route get 1 | sed 's/^.*src \\([^ ]*\\).*$/\\1/;q'"]
+    local_ip_cmd = ["/sbin/ip -o route get 1 | sed -e 's/^.*src //'  -e 's/ .*$//'"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
     # Check if local mac has been detected with other methods
@@ -675,7 +677,7 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    print ('        arp-scan Method....:', str (sql.fetchone()[0]) )
+    print ('        arp-scan/nmap Method....:', str (sql.fetchone()[0]) )
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
