@@ -31,6 +31,16 @@
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
+      case 'createBackupDB':          createBackupDB();                        break;
+      case 'restoreBackupDB':         restoreBackupDB();                       break;
+      case 'deleteAllDevices':        deleteAllDevices();                      break;
+      case 'runScan15min':            runScan15min();                          break;
+      case 'runScan1min':             runScan1min();                           break;
+      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
+      case 'deleteEvents':            deleteEvents();                          break;
+      
+      
  
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -172,6 +182,85 @@ function deleteDevice() {
     echo "Error deleting device\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteAllWithEmptyMACs() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteUnknownDevices() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+
+
+//------------------------------------------------------------------------------
+//  Delete all devices 
+//------------------------------------------------------------------------------
+function deleteAllDevices() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Devices';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Devices deleted successfully";
+  } else {
+    echo "Error deleting devices\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all Events 
+//------------------------------------------------------------------------------
+function deleteEvents() {
+  global $db;
+
+  // sql
+  $sql = 'DELETE FROM Events';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo "Events deleted successfully";
+  } else {
+    echo "Error deleting Events\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
 
 
 //------------------------------------------------------------------------------
