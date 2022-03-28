@@ -1419,7 +1419,26 @@ def send_email (pText, pHTML):
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
+#-------------------------------------------------------------------------------
+def send_webhook (pText):
+    # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
+    if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') && NOT(WEBHOOK_URL.endswith("/slack")){
+        WEBHOOK_URL = WEBHOOK_URL + "/slack"
+    }
+    requests.post(WEBHOOK_URL",
+    json.dumps(f"\{'text': '{pText}'\}")
+    )
 
+#-------------------------------------------------------------------------------
+def send_ntfy (pText):
+    requests.post(f"https://ntfy.sh/{NTFY_TOPIC}",
+    data=pText,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
+    
 #===============================================================================
 # DB
 #===============================================================================
