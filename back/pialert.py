@@ -1425,7 +1425,7 @@ def send_webhook (pText):
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') && NOT(WEBHOOK_URL.endswith("/slack")){
         WEBHOOK_URL = WEBHOOK_URL + "/slack"
     }
-    requests.post(WEBHOOK_URL",
+    requests.post(WEBHOOK_URL,
     json.dumps(f"\{'text': '{pText}'\}")
     )
 
