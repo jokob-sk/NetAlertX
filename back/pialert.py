@@ -27,7 +27,9 @@ import socket
 import io
 import smtplib
 import csv
+import json
 import requests
+
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -272,7 +274,7 @@ def cleanup_database ():
     try:
         strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
     except NameError: # variable not defined, use a default
-        strdaystokeepEV = str(3650) # 10 years
+        strdaystokeepEV = str(365) # 1 year
    
     # Cleanup Online History
     print ('\nCleanup Online_History...')
@@ -1384,6 +1386,11 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_WEBHOOK :
+            print ('    Sending report by webhook...')
+            send_webhook (mail_text)
+        else :
+            print ('    Skip webhook...')
         if REPORT_NTFY :
             print ('    Sending report by NTFY...')
             send_ntfy (mail_text)
@@ -1527,6 +1534,27 @@ def SafeParseGlobalBool(boolVariable):
         return eval(boolVariable)
     return False
 
+#-------------------------------------------------------------------------------
+def send_webhook (_Text):
+    #Define slack-compatible payload
+    _json_payload={
+    "username": "Pi.Alert",
+    "text": "There are new notifications",
+    "attachments": [{
+      "title": "Pi.Alert Notifications",
+      "title_link": REPORT_DASHBOARD_URL,
+      "text": _Text
+    }]
+    }
+
+    # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
+    if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
+        _WEBHOOK_URL = f"{WEBHOOK_URL}/slack"
+    else:
+        _WEBHOOK_URL = WEBHOOK_URL
+
+    requests.post(_WEBHOOK_URL, json.dumps(_json_payload))
+    
 #===============================================================================
 # DB
 #===============================================================================
