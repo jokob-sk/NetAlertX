@@ -226,7 +226,7 @@ block is not necessary
   requests to the correct pialert web folder
   ```
   sudo cp ~/pialert/install/pialert_front.conf /etc/lighttpd/conf-available
-  sudo ln -s ../conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
+  sudo ln -s /etc/lighttpd/conf-available/pialert_front.conf /etc/lighttpd/conf-enabled/pialert_front.conf
   sudo /etc/init.d/lighttpd restart
   ```
 
