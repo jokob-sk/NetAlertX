@@ -1,5 +1,6 @@
-# Pi.Alert
+# Pi.Alert - Currently maintaining for my own personal use
 <!--- --------------------------------------------------------------------- --->
+
 
 WIFI / LAN intruder detector.
 
