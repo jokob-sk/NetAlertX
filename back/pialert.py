@@ -1453,14 +1453,14 @@ def send_webhook (_Text):
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
-        _WEBHOOK_URL = f"{WEBHOOK_URL}/slack"
+        _WEBHOOK_URL = '{}/slack'.format(WEBHOOK_URL)
     else:
         _WEBHOOK_URL = WEBHOOK_URL
 
     requests.post(_WEBHOOK_URL, json.dumps(_json_payload))
 #-------------------------------------------------------------------------------
 def send_ntfy (_Text):
-    requests.post(f"https://ntfy.sh/{NTFY_TOPIC}",
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
     data=_Text,
     headers={
         "Title": "Pi.Alert Notification",
