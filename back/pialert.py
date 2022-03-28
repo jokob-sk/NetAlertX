@@ -1445,7 +1445,7 @@ def send_webhook (_Text):
     "username": "Pi.Alert",
     "text": "There are new notifications",
     "attachments": [{
-      "title": "Pi.Alert Notifications",
+      "title": "Pi.Alert Notification",
       "title_link": REPORT_DASHBOARD_URL,
       "text": _Text
     }]

@@ -8,18 +8,18 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 # ------------------------------------------------------------------------------
 
-PIALERT_DEV_PATH=/media/WD_4TB/dev
+PIALERT_DEV_PATH=/home/btdk/Git/Pi.Alert
 cd $PIALERT_DEV_PATH
 pwd
-PIALERT_VERSION=`awk '$1=="VERSION" { print $3 }' pialert/config/version.conf | tr -d \'`
+PIALERT_VERSION=`awk '$1=="VERSION" { print $3 }' config/version.conf | tr -d \'`
 
 # ------------------------------------------------------------------------------
-ls -l pialert/tar/pialert*.tar
-tar tvf pialert/tar/pialert_latest.tar | wc -l
-rm pialert/tar/pialert_*.tar
+ls -l tar/pialert*.tar
+tar tvf tar/pialert_latest.tar | wc -l
+rm tar/pialert_*.tar
 
 # ------------------------------------------------------------------------------
-tar cvf pialert/tar/pialert_$PIALERT_VERSION.tar --exclude="pialert/tar" --exclude="pialert/.git" pialert | wc -l
+tar cvf tar/pialert_$PIALERT_VERSION.tar --exclude="tar" --exclude=".git" --exclude=".gitignore" ./ | wc -l
 
-ln -s pialert_$PIALERT_VERSION.tar pialert/tar/pialert_latest.tar
-ls -l pialert/tar/pialert*.tar
+ln -s pialert_$PIALERT_VERSION.tar tar/pialert_latest.tar
+ls -l tar/pialert*.tar
