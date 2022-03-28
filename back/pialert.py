@@ -27,6 +27,8 @@ import socket
 import io
 import smtplib
 import csv
+import json
+import requests
 
 
 #===============================================================================
@@ -1324,6 +1326,16 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_WEBHOOK :
+            print ('    Sending report by webhook...')
+            send_webhook (mail_text)
+        else :
+            print ('    Skip webhook...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
     else :
         print ('    No changes to report...')
     
@@ -1420,21 +1432,32 @@ def send_email (pText, pHTML):
     smtp_connection.quit()
 
 #-------------------------------------------------------------------------------
-def send_webhook (pText):
-    # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
-    if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') && NOT(WEBHOOK_URL.endswith("/slack")){
-        WEBHOOK_URL = WEBHOOK_URL + "/slack"
+def send_webhook (_Text):
+    #Define slack-compatible payload
+    _json_payload={
+    "username": "Pi.Alert",
+    "text": "There are new notifications",
+    "attachments": [{
+      "title": "Pi.Alert Notifications",
+      "title_link": REPORT_DASHBOARD_URL,
+      "text": _Text
+    }]
     }
-    requests.post(WEBHOOK_URL",
-    json.dumps(f"\{'text': '{pText}'\}")
-    )
 
+    # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
+    if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
+        _WEBHOOK_URL = f"{WEBHOOK_URL}/slack"
+    else:
+        _WEBHOOK_URL = WEBHOOK_URL
+
+    requests.post(_WEBHOOK_URL, json.dumps(_json_payload))
 #-------------------------------------------------------------------------------
-def send_ntfy (pText):
+def send_ntfy (_Text):
     requests.post(f"https://ntfy.sh/{NTFY_TOPIC}",
-    data=pText,
+    data=_Text,
     headers={
         "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
         "Priority": "urgent",
         "Tags": "warning"
     })
