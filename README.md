@@ -1,4 +1,4 @@
-# Pi.Alert - Currently maintaining for my own personal use
+# Pi.Alert
 <!--- --------------------------------------------------------------------- --->
 
 
