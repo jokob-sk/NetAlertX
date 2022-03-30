@@ -29,6 +29,8 @@ import smtplib
 import csv
 import json
 import requests
+import xml.etree.ElementTree as ET
+
 
 
 #===============================================================================
@@ -356,12 +358,21 @@ def scan_network ():
     # TESTING - Fast scan
         # arpscan_retries = 1
     
+    # ScanCycle data        
     # arp-scan command
     print ('\nScanning...')
     print ('    arp-scan Method...')
     print_log ('arp-scan starts...')
     arpscan_devices = execute_arpscan (arpscan_retries)
     print_log ('arp-scan ends')
+    # DEBUG - print number of rows updated
+        # print (arpscan_devices)
+
+    # nmap command
+    print ('    nmap Method...')
+    print_log ('nmap starts...')
+    arpscan_devices = execute_nmap (NMAP_OPTIONS, arpscan_devices)
+    print_log ('nmap ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
 
@@ -482,17 +493,66 @@ def execute_arpscan (pRetries):
     unique_devices = [] 
 
     for device in devices_list :
+        device['mac'] = device['mac'].upper()
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
             unique_devices.append(device)
 
     # DEBUG
-        # print (devices_list)
-        # print (unique_mac)
-        # print (unique_devices)
-        # print (len(devices_list))
-        # print (len(unique_mac))
-        # print (len(unique_devices))
+    #    print (devices_list)
+    #    print (unique_mac)
+    #    print (unique_devices)
+    #    print (len(devices_list))
+    #    print (len(unique_mac))
+    #    print (len(unique_devices))
+
+    # return list
+    return unique_devices
+
+#-------------------------------------------------------------------------------
+def execute_nmap (NMAP_OPTIONS, arpscan_results):
+ 
+    # nmap subnet configuration
+    # Prepare command arguments - find local networks if no options passed
+    if not NMAP_OPTIONS:
+      local_net_cmd = ["ip addr|grep 'inet ' |grep -v 'lo$' | awk {'print $2'}"]
+      local_net = subprocess.Popen (local_net_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip().splitlines()
+      nmap_args=local_net
+    else:
+      nmap_args = NMAP_OPTIONS.split()
+    nmap_args = ['nmap', '-sn', '--send-ip', '-oX', '-' ] + nmap_args
+
+    # Execute command
+    nmap_output = subprocess.check_output (nmap_args, universal_newlines=True)
+    root = ET.fromstring(nmap_output);
+
+    # Track macs from arpscan to remove duplicates
+    unique_mac = [] 
+    unique_devices = [] 
+    for result in arpscan_results:
+      unique_mac.append(result['mac'])
+      unique_devices.append(result)
+
+    for child in root.iter('host'):
+      device = {}
+      for addr in child.iter('address'):
+        if addr.get('addrtype') == 'mac':
+            device['mac'] = addr.get('addr')
+            device['hw'] = addr.get('vendor')
+        if addr.get('addrtype') == 'ipv4':
+            device['ip'] = addr.get('addr')
+      if 'mac' in device:
+        device['mac'] = device['mac'].upper()
+        if re.match("[0-9A-F]{2}([-:]?)[0-9A-F]{2}(\\1[0-9A-F]{2}){4}$", device['mac']):
+          if device['mac'] not in unique_mac:
+            unique_mac.append(device['mac'])
+            unique_devices.append(device)
+
+    # DEBUG
+    #print (unique_mac)
+    #print (unique_devices)
+    #print (len(unique_mac))
+    #print (len(unique_devices))
 
     # return list
     return unique_devices
@@ -514,10 +574,11 @@ def copy_pihole_network ():
                         (SELECT name FROM PH.network_addresses
                          WHERE network_id = id ORDER BY lastseen DESC, ip),
                         (SELECT ip FROM PH.network_addresses
-                         WHERE network_id = id ORDER BY lastseen DESC, ip)
+                         WHERE network_id = id ORDER BY lastseen DESC, ip) as ip
                     FROM PH.network
                     WHERE hwaddr NOT LIKE 'ip-%'
-                      AND hwaddr <> '00:00:00:00:00:00' """)
+                      AND hwaddr <> '00:00:00:00:00:00'
+                      AND IP NOT LIKE 'fe%' """)
     sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
                     WHERE PH_Name IS NULL OR PH_Name = '' """)
     # DEBUG
@@ -591,14 +652,14 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
       # BUGFIX #106 - Device that pialert is running
         # local_mac_cmd = ["bash -lc ifconfig `ip route list default | awk {'print $5'}` | grep ether | awk '{print $2}'"]
           # local_mac_cmd = ["/sbin/ifconfig `ip route list default | sort -nk11 | head -1 | awk {'print $5'}` | grep ether | awk '{print $2}'"]
-    local_mac_cmd = ["/sbin/ifconfig `ip -o route get 1 | sed 's/^.*dev \\([^ ]*\\).*$/\\1/;q'` | grep ether | awk '{print $2}'"]
+    local_mac_cmd = ["/sbin/ip addr show dev `/sbin/ip -o route get 1 | sed -e 's/^.*dev //' -e 's/ .*$//'` | grep ether | awk '{print $2}'"]
     local_mac = subprocess.Popen (local_mac_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
     # local_dev_cmd = ["ip -o route get 1 | sed 's/^.*dev \\([^ ]*\\).*$/\\1/;q'"]
     # local_dev = subprocess.Popen (local_dev_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
     
     # local_ip_cmd = ["ip route list default | awk {'print $7'}"]
-    local_ip_cmd = ["ip -o route get 1 | sed 's/^.*src \\([^ ]*\\).*$/\\1/;q'"]
+    local_ip_cmd = ["/sbin/ip -o route get 1 | sed -e 's/^.*src //'  -e 's/ .*$//'"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
     # Check if local mac has been detected with other methods
@@ -619,7 +680,7 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    print ('        arp-scan Method....:', str (sql.fetchone()[0]) )
+    print ('        arp-scan/nmap Method....:', str (sql.fetchone()[0]) )
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
