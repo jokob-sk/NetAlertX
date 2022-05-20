@@ -505,6 +505,9 @@
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
   <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+
+<!-- Enable or Disable the CSS Patch for Dark-Mode -->
+<!-- Uncomment or Comment below-->
   <link rel="stylesheet" href="css/dark-patch-cal.css">
 
 
