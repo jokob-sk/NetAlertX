@@ -1,0 +1,7 @@
+{
+    "name": "Pi-Alert Console",
+    "short_name": "Pi-Alert",
+    "display": "standalone",
+    "theme_color": "#282b30",
+    "background_color": "#282b30"
+}

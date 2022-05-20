@@ -1,0 +1,653 @@
+/* Pi-hole: A black hole for Internet advertisements
+*  (c) 2020 Pi-hole, LLC (https://pi-hole.net)
+*  Network-wide ad blocking via your own hardware.
+*
+*  This file is copyright under the latest version of the EUPL.
+*  Please see LICENSE file for your rights under this license.
+*
+*  The colors used in this theme has been inspired by
+*  https://github.com/anvyst/adminlte-skin-midnight
+*
+* Additional fixes For Pi.Alert UI by leiweibau */
+
+:root {
+  --datatable-bgcolor: rgba(64, 76, 88, 0.8);
+}
+html {
+  background-color: #353c42;
+}
+
+body {
+  background-color: #353c42;
+  color: #bec5cb;
+}
+h4 {
+  color: #44def1;
+}
+.content-header > .breadcrumb > li > a {
+  color: #bec5cb;
+}
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-top: 0;
+}
+.table > thead > tr.odd,
+.table > tbody > tr.odd,
+.table > tfoot > tr.odd {
+  background-color: #2a2f34;
+}
+.table > thead > tr.odd:hover,
+.table > tbody > tr.odd:hover,
+.table > tfoot > tr.odd:hover,
+.table > thead > tr.even:hover,
+.table > tbody > tr.even:hover,
+.table > tfoot > tr.even:hover {
+  background-color: #1e2226;
+}
+.table-bordered,
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+  border: 1px solid #353c42;
+}
+.dataTables_wrapper input[type="search"] {
+  border-radius: 4px;
+  background-color: #353c42;
+  border: 0;
+  color: #bec5cb;
+}
+.dataTables_paginate .pagination li > a {
+  background-color: #353c42;
+  border-color: #353c42;
+}
+.pagination > .disabled > a,
+.pagination > .disabled > a:focus,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > span,
+.pagination > .disabled > span:focus,
+.pagination > .disabled > span:hover {
+  cursor: not-allowed;
+  color: #bec5cb;
+  background-color: #353c42;
+  border-color: #353c42;
+}
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover {
+  z-index: 2;
+  color: #bec5cb;
+  background-color: #54606b;
+  border-color: #54606b;
+}
+.wrapper,
+.main-sidebar,
+.left-side {
+  background-color: #272c30;
+}
+.user-panel > .info,
+.user-panel > .info > a {
+  color: #fff;
+}
+.sidebar-menu > li.header {
+  color: #556068;
+  background-color: #1e2225;
+}
+.sidebar-menu > li > a {
+  border-left: 3px solid transparent;
+}
+.sidebar-menu > li:hover > a,
+.sidebar-menu > li > a:focus,
+.sidebar-menu > li.active > a {
+  color: #fff;
+  background-color: #22272a;
+  border-color: #3c8dbc;
+}
+.sidebar-menu > li > .treeview-menu {
+  margin: 0 1px;
+  background-color: #32393e;
+}
+.sidebar a {
+  color: #bec5cb;
+}
+.sidebar a:hover {
+  text-decoration: none;
+}
+.treeview-menu > li > a {
+  color: #949fa8;
+}
+.treeview-menu > li.active > a,
+.treeview-menu > li > a:hover,
+.treeview-menu > li > a:focus {
+  color: #fff;
+}
+.sidebar-form {
+  border-radius: 3px;
+  border: 1px solid #3e464c;
+  margin: 10px;
+}
+.sidebar-form input[type="text"],
+.sidebar-form .btn {
+  box-shadow: none;
+  background-color: #3e464c;
+  border: 1px solid transparent;
+  height: 35px;
+}
+.sidebar-form input[type="text"] {
+  color: #666;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+}
+.sidebar-form input[type="text"]:focus,
+.sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  background-color: #fff;
+  color: #666;
+}
+.sidebar-form input[type="text"]:focus + .input-group-btn .btn {
+  border-left-color: #fff;
+}
+.sidebar-form .btn {
+  color: #999;
+  border-top-left-radius: 0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 0;
+}
+.box,
+.box-footer,
+.info-box,
+.box-comment,
+.comment-text,
+.comment-text .username {
+  color: #bec5cb;
+  background-color: #272c30;
+}
+.box-comments .box-comment {
+  border-bottom-color: #353c42;
+}
+.box-footer {
+  border-top: 1px solid #353c42;
+}
+.box-header.with-border {
+  border-bottom: 1px solid #353c42;
+}
+.box-solid,
+.box {
+  border: 1px solid #272c30;
+}
+.box-solid > .box-header,
+.box > .box-header {
+  color: #bec5cb;
+}
+.box-solid > .box-header .btn,
+.box > .box-header .btn {
+  color: #bec5cb;
+}
+.box.box-info,
+.box.box-primary,
+.box.box-success,
+.box.box-warning,
+.box.box-danger {
+  border-top-width: 3px;
+}
+.box.box-info {
+  border-top-color: #00c0ef;
+}
+.box.box-primary {
+  border-top-color: #075383;
+}
+.box.box-success {
+  border-top-color: #00a65a;
+}
+.box.box-warning {
+  border-top-color: #ff851b;
+}
+.box.box-danger {
+  border-top-color: #dd4b39;
+}
+.main-header .navbar {
+  background-color: #272c30;
+}
+.main-header .navbar .nav > li > a,
+.main-header .navbar .nav > li > .navbar-text {
+  color: #bec5cb;
+  max-height: 50px;
+}
+.main-header .navbar .nav > li > a:hover,
+.main-header .navbar .nav > li > a:active,
+.main-header .navbar .nav > li > a:focus,
+.main-header .navbar .nav .open > a,
+.main-header .navbar .nav .open > a:hover,
+.main-header .navbar .nav .open > a:focus,
+.main-header .navbar .nav > .active > a {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #f6f6f6;
+}
+.main-header .navbar .sidebar-toggle {
+  color: #bec5cb;
+}
+.main-header .navbar .sidebar-toggle:hover {
+  color: #f6f6f6;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.timeline li .timeline-item {
+  color: #bec5cb;
+  background-color: #272c30;
+  border-color: #353c42;
+}
+.timeline li .timeline-header {
+  border-bottom-color: #353c42;
+}
+.nav-stacked > li > a {
+  color: #bec5cb;
+}
+.nav-stacked > li > a:hover {
+  color: white;
+  background-color: #1e2226;
+}
+.content-wrapper,
+.right-side {
+  background-color: #353c42;
+}
+.main-footer,
+.nav-tabs-custom {
+  background-color: #272c30;
+  border-top-color: #353c42;
+  color: #bec5cb;
+}
+.main-footer .nav-tabs,
+.nav-tabs-custom .nav-tabs {
+  background-color: #30383f;
+  border-bottom-color: #2f363b;
+}
+.main-footer .tab-content,
+.nav-tabs-custom .tab-content {
+  background-color: #30383f;
+}
+.nav-tabs-custom > .nav-tabs {
+  background: rgba(64, 72, 80, 0.666);
+}
+.nav-tabs-custom > .nav-tabs > li {
+  margin-right: 1px;
+  color: #bec5cb;
+}
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  border-left-color: #30383f;
+  border-right-color: #30383f;
+  background-color: #30383f;
+  color: #bec5cb;
+}
+.nav-tabs-custom > .nav-tabs > li:not(.active):hover {
+  border-top-color: #d2d6de;
+  background-color: transparent;
+}
+.nav-tabs-custom > .nav-tabs > li > a {
+  color: #8e959b;
+}
+.nav-tabs-custom > .nav-tabs > li > a:focus {
+  color: #3c8dbc;
+}
+.nav-tabs-custom > .nav-tabs > li:hover > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: #353c42;
+  color: #bec5cb;
+}
+
+.list-group {
+  color: #bec5cb;
+  background-color: #272c30;
+}
+.list-group .list-group-item {
+  border-color: #353c42;
+  background-color: #272c30;
+}
+.input-group .input-group-addon {
+  border-right: 1px solid #272c30;
+}
+.select2 .select2-selection {
+  background-color: #353c42;
+  color: #bec5cb;
+  border: 1px solid #353c42;
+}
+.select2 .select2-selection .select2-container--default,
+.select2 .select2-selection .select2-selection--single,
+.select2 .select2-selection .select2-selection--multiple,
+.select2 .select2-selection .select2-selection__rendered {
+  color: #bec5cb;
+}
+.select2-dropdown {
+  background-color: #353c42;
+  color: #bec5cb;
+  border: 1px solid #353c42;
+}
+.select2-dropdown .select2-search__field {
+  background-color: #272c30;
+  color: #bec5cb;
+  border: 1px solid #353c42;
+}
+.select2-container--default.select2-container--open {
+  background-color: #272c30;
+}
+
+.layout-boxed {
+  background: url("../../img/boxed-bg-dark.png") repeat fixed;
+}
+.not-used {
+  background-color: #eee;
+}
+.not-used:hover {
+  background-color: #c5c5c5;
+}
+.used {
+  background-color: #fff;
+}
+.used:hover {
+  background-color: #ddd;
+}
+
+.graphs-grid {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.graphs-ticks {
+  color: #b8c7ce;
+}
+.queries-permitted {
+  background-color: #00a65a;
+}
+.queries-blocked {
+  background-color: #999;
+}
+.progress {
+  background-color: #333;
+}
+
+.bg-green {
+  background-color: #005c32 !important;
+}
+.bg-aqua {
+  background-color: #007997 !important;
+}
+.bg-yellow {
+  background-color: #b1720c !important;
+}
+.bg-red {
+  background-color: #913225 !important;
+}
+
+code,
+pre {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #bec5cb;
+  background-color: #353c42;
+  border-radius: 4px;
+}
+
+/* Used in the Query Log table */
+.text-green-light {
+  color: #5ca314 !important;
+}
+.text-green {
+  color: #00aa60 !important;
+}
+.text-orange {
+  color: #b1720c !important;
+}
+.text-red {
+  color: #bd2c19 !important;
+}
+.text-vivid-blue {
+  color: #007997 !important;
+}
+td.highlight {
+  background-color: rgba(255, 204, 0, 0.333);
+}
+.btn-default {
+  box-shadow: none;
+  background-color: #3e464c;
+  color: #bec5cb;
+  border: 1px solid #353c42;
+}
+
+/* Used in debug log page */
+.log-red {
+  color: #ff4038;
+}
+.log-green {
+  color: #4c4;
+}
+.log-yellow {
+  color: #fb0;
+}
+.log-blue {
+  color: #48f;
+}
+.log-purple {
+  color: #b8e;
+}
+.log-cyan {
+  color: #0df;
+}
+.log-gray {
+  color: #999;
+}
+
+#output {
+  border-color: #505458;
+  background: #272c30;
+}
+
+/* Used by the long-term pages */
+.daterangepicker {
+  background-color: #3e464c;
+  border-radius: 4px;
+  border: 1px solid #353c42;
+}
+.daterangepicker .ranges li:hover {
+  background-color: #353c42;
+}
+.daterangepicker .ranges li.active {
+  background-color: #1e2226; /* Color also used in table pagination */
+}
+.daterangepicker .calendar-table {
+  background-color: #3e464c;
+  border-radius: 4px;
+  border: 1px solid #353c42;
+}
+.daterangepicker td.off,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.daterangepicker td.off.end-date {
+  background-color: #485158;
+}
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
+  background-color: #1e2226;
+}
+.daterangepicker td.active,
+.daterangepicker td.active:hover,
+.daterangepicker td.in-range:hover {
+  background-color: #225e92;
+}
+.daterangepicker td.in-range {
+  background-color: #1e2226;
+  color: #bec5cb;
+}
+input,
+select,
+select.form-control,
+.form-group .input-group-addon,
+.input-group .input-group-addon,
+.form-group input,
+.input-group input,
+.form-group textarea,
+.input-group textarea,
+.daterangepicker select.hourselect,
+.daterangepicker select.minuteselect,
+.daterangepicker select.secondselect,
+.daterangepicker select.ampmselect,
+.form-control,
+div.dataTables_wrapper div.dataTables_length select {
+  background-color: #353c42;
+  color: #bec5cb;
+  border: 1px solid #3d444b;
+}
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  background-color: #353c42;
+  opacity: 1;
+}
+.navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
+  background-color: #4c5761;
+  color: #bec5cb;
+  border: 1px solid #171c20;
+}
+.table-striped > tbody > tr:nth-of-type(2n + 1) {
+  background-color: #2d343a;
+}
+.panel,
+.panel-body,
+.panel-default > .panel-heading {
+  background-color: #3e464c;
+  border-radius: 4px;
+  border: 1px solid #353c42;
+  color: #bec5cb;
+}
+.box.box-solid.box-info,
+.box.box-solid.box-info > .box-header {
+  color: #bec5cb;
+  background-color: #367fa9 !important;
+  border: 1px solid #367fa9;
+}
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  background: #bfc5ca;
+}
+input[type="password"]::-webkit-caps-lock-indicator {
+  filter: invert(100%);
+}
+
+.network-never {
+  background-color: #661b02;
+}
+.network-recent {
+  background-color: #114100;
+}
+.network-old {
+  background-color: #525200;
+}
+.network-older {
+  background-color: #502b00;
+}
+.network-gradient {
+  background-image: linear-gradient(to right, #114100 0%, #525200 100%);
+}
+
+.icheckbox_polaris,
+.icheckbox_futurico,
+.icheckbox_minimal-blue {
+  margin-right: 10px;
+}
+.iradio_polaris,
+.iradio_futurico,
+.iradio_minimal-blue {
+  margin-right: 8px;
+}
+
+/* Overlay box with spinners as shown during data collection for graphs */
+.box .overlay,
+.overlay-wrapper .overlay {
+  z-index: 50;
+  background-color: rgba(53, 60, 66, 0.733);
+  border-radius: 3px;
+}
+.box .overlay > .fa,
+.overlay-wrapper .overlay > .fa,
+.navbar-nav > .user-menu > .dropdown-menu > .user-body a {
+  color: #bec5cb !important;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > .user-footer {
+  background-color: #353c42bb;
+  padding: 10px;
+}
+
+.modal-content {
+  background: #272c30;
+}
+.modal-header {
+  border-bottom-color: #353c42;
+}
+.modal-footer {
+  border-top-color: #353c42;
+}
+.close {
+  color: #383838;
+}
+
+/*** Fix login input visual misalignment ***/
+#loginform,
+#loginform input {
+  color: rgb(120, 127, 133);
+}
+
+.login-options input,
+.login-options [class*="icheck-"] > input:first-child + input[type="hidden"] + label::before,
+.login-options [class*="icheck-"] > input:first-child + label::before {
+  background: none;
+  border-color: rgb(120, 127, 133);
+}
+
+/*** Additional fixes For Pi.Alert UI ***/
+.small-box {
+    border-radius: 10px;
+}
+.pa-small-box-aqua .inner {
+  background-color: rgb(45,108,133);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-green .inner {
+  background-color: rgb(31,76,46);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-yellow .inner {
+  background-color: rgb(151,104,37);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-red .inner {
+  background-color: rgb(120,50,38);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-gray .inner {
+  background-color: rgb(189,192,198);
+  color: rgba(20,20,20,30%);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.text-gray-20 {
+  color: rgba(20,20,20,30%);
+}
+.bg-gray {
+  background-color: #888888 !important;
+}
+.badge.bg-green {
+    background-color: #00A000 !important;
+}
+#txtRecord {
+  background-color: #353c42;
+  border-color: #888888;
+}
