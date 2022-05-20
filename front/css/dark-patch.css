@@ -651,3 +651,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
   background-color: #353c42;
   border-color: #888888;
 }
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: rgb(189,192,198);
+  color: #444;
+}
