@@ -153,6 +153,9 @@
 <!-- fullCalendar Scheduler -->
   <link href="lib/fullcalendar-scheduler/scheduler.min.css" rel="stylesheet">
   <script src="lib/fullcalendar-scheduler/scheduler.min.js"></script>  
+
+<!-- Enable or Disable the CSS Patch for Dark-Mode -->
+<!-- Uncomment or Comment below-->
   <link rel="stylesheet" href="css/dark-patch-cal.css">
 
 <!-- page script ----------------------------------------------------------- -->
