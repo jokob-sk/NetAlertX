@@ -1033,7 +1033,7 @@ function getDeviceData (readAllData=false) {
       }
 
       // Status
-      $('#deviceStatus').html (deviceData['dev_Status']);
+      $('#deviceStatus').html (deviceData['dev_Status'].replace('-', ''));
       switch (deviceData['dev_Status']) {
         case 'On-line':   icon='fa fa-check';    color='text-green';   break;
         case 'Off-line':  icon='fa fa-close';    color='text-gray';    break;
@@ -1078,7 +1078,7 @@ function getDeviceData (readAllData=false) {
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
         $('#txtLastIP').val                          (deviceData['dev_LastIP']);
-        $('#txtStatus').val                          (deviceData['dev_Status']);
+        $('#txtStatus').val                          (deviceData['dev_Status'].replace('-', ''));
         if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
     
         $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] +' min');
