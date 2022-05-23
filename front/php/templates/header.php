@@ -56,6 +56,7 @@ if (file_exists("darkmode")) {
 
   <!-- Google Font -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"> -->
+  <link rel="stylesheet" href="css/offline-font.css">
 
   <!-- Page Icon -->
   <link rel="icon" type="image/png" sizes="160x160" href="img/pialertLogoGray80.png" />
@@ -125,7 +126,9 @@ if ($ENABLED_DARKMODE === True) {
               </li>
 
               <!-- Menu Body -->
-              <li class="user-body">
+
+
+<!--               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
                     <a target="_blank" href="https://github.com/pucherot/Pi.Alert">GitHub Pi.Alert</a>
@@ -135,15 +138,23 @@ if ($ENABLED_DARKMODE === True) {
                   </div>
                   <div class="col-xs-4 text-center">
                     <a target="_blank" href="https://github.com/pucherot/Pi.Alert/blob/main/LICENSE.txt">GNU GPLv3</a>
-                  </div>
+                  </div> -->
+
+
                   <!--
                   <div class="col-xs-4 text-center">
                     <a href="#">Updates</a>
                   </div>
                   -->
-                </div>
+
+
+                <!-- </div> -->
+
+
                 <!-- /.row -->
-              </li>
+             
+              <!-- </li> -->
+              
             </ul>
           </li>
         </ul>
