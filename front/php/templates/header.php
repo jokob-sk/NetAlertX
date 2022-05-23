@@ -67,14 +67,15 @@ if (file_exists("darkmode")) {
 <?php
 if ($ENABLED_DARKMODE === True) {
    echo '<link rel="stylesheet" href="css/dark-patch.css">';
-}
+   $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
+} else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
 
 </head>
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition skin-blue layout-boxed sidebar-mini" style="background-image: url('img/boxed-bg-dark.png');">
+<body class="hold-transition skin-blue layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?>>
 <!-- Site wrapper -->
 <div class="wrapper">
 
