@@ -7,6 +7,12 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
+<?php
+if (file_exists("darkmode")) {
+    $ENABLED_DARKMODE = True;
+}
+?>
+
 <!DOCTYPE html> 
 <html>
 
@@ -57,10 +63,12 @@
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
 
-<!-- In addition to the "dark-patch.css" I recommend the use of the theme "skin-blue", 
-    on the basis of which I have created the patch. The "dark-patch.css" is mainly 
-    the darkmode of the pi-hole AdminLTE Dashboard witch some fixes -->
-  <link rel="stylesheet" href="css/dark-patch.css">
+  <!-- Dark-Mode Patch -->
+<?php
+if ($ENABLED_DARKMODE === True) {
+   echo '<link rel="stylesheet" href="css/dark-patch.css">';
+}
+?>
 
 </head>
 
