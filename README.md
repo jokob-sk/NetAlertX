@@ -74,7 +74,7 @@ Linux distributions.
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
 - One-step Automated Install without Webserver:
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver | bash`
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
 
 - [Installation Guide (step by step)](docs/INSTALL.md)
 
