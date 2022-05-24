@@ -11,6 +11,8 @@ unknown devices. It also warns the disconnection of "always connected" devices.
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
+![Main screen dark][main_dark]
+
 ## How it works
 The system continuously scans the network for:
   - New devices
@@ -132,4 +134,5 @@ Linux distributions.
 [screen4]: ./docs/img/3_presence.jpg          "Screen 4"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
+[main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
 
