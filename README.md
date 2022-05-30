@@ -7,11 +7,11 @@ Scan the devices connected to your WIFI / LAN and alert you the connection of
 unknown devices. It also warns the disconnection of "always connected" devices.
 
 ![Main screen][main]
-
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
 ![Main screen dark][main_dark]
+modified within this fork
 
 ## How it works
 The system continuously scans the network for:
@@ -72,10 +72,13 @@ A web frontal that allows:
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-- One-step Automated Install:
+- One-step Automated Install (original):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+
+- One-step Automated Install (forked):
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
-- One-step Automated Install without Webserver:
+- One-step Automated Install (forked) without Webserver:
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
 
 - [Installation Guide (step by step)](docs/INSTALL.md)
