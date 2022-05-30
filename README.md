@@ -86,7 +86,10 @@ Linux distributions.
 
 # Update
 <!--- --------------------------------------------------------------------- --->
-- One-step Automated Update:
+- One-step Automated Update (original):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+
+- One-step Automated Update (forked):
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
