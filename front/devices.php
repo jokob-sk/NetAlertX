@@ -120,9 +120,9 @@
                   <th>Last IP</th>
                   <th>MAC</th>
                   <th>Status</th>
-                  <th>MAC</th>
-                  <th>Last IP Order</th>
-                  <th>Rowid</th>
+                  <!-- <th>MAC</th> -->
+                  <!-- <th>Last IP Order</th> -->
+                  <!-- <th>Rowid</th> -->
                 </tr>
                 </thead>
               </table>
