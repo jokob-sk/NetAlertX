@@ -633,19 +633,25 @@ input[type="password"]::-webkit-caps-lock-indicator {
   border-top-right-radius: 10px;
 }
 .pa-small-box-gray .inner {
-  background-color: rgb(189,192,198);
+  background-color: #777;
   color: rgba(20,20,20,30%);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+.pa-small-box-gray .inner h3 {
+  color:  #bbb;
+}
 .text-gray-20 {
-  color: rgba(20,20,20,30%);
+  color: rgba(220,220,220,30%);
 }
 .bg-gray {
   background-color: #888888 !important;
 }
 .badge.bg-green {
     background-color: #00A000 !important;
+}
+.badge.bg-gray {
+    background-color: #888 !important;
 }
 #txtRecord {
   background-color: #353c42;
@@ -655,3 +661,4 @@ input[type="password"]::-webkit-caps-lock-indicator {
   background-color: rgb(189,192,198);
   color: #444;
 }
+

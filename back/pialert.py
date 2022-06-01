@@ -1167,6 +1167,16 @@ def email_reporting ():
     print ('\nReporting...')
     openDB()
 
+    # Disable reporting on events for devices where reporting is disabled based on the MAC address
+    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                    WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
+                        (
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
+						)""")
+
+    # Open text Template
+
+
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
     mail_text = template_file.read() 

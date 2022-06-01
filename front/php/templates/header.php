@@ -192,12 +192,17 @@ if ($ENABLED_DARKMODE === True) {
 <!--
          <li><a href="devices.php?status=favorites"><i class="fa fa-star"></i> <span>Favorites Devices</span></a></li>
 -->
+
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
           <a href="presence.php"><i class="fa fa-calendar"></i> <span>Presence</span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
           <a href="events.php"><i class="fa fa-bolt"></i> <span>Events</span></a>
+        </li>
+
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
+          <a href="maintenance.php"><i class="fa fa-cog"></i> <span>Maintenance</span></a>
         </li>
 
 <!--
