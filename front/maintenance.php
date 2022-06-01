@@ -31,22 +31,22 @@
     <section class="content">
 
 
-    <div class="col-xs-12">
+    <div class="col-xs-12" style="text-align:center;">
       <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
             id="btnDeleteMAC"   onclick="askDeleteDevicesWithEmptyMACs()">   Delete Devices with empty MACs </button>     
       </div>
       
       <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
             id="btnDeleteMAC"   onclick="askDeleteAllDevices()">   Delete All Devices </button>     
       </div>
       <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
             id="btnDeleteUnknown"   onclick="askDeleteUnknown()">   Delete (unknown) Devices </button>     
       </div>
       <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
             id="btnDeleteEvents"   onclick="askDeleteEvents()">   Delete all Events </button>     
       </div>
     </div>
