@@ -188,7 +188,7 @@ if ($ENABLED_DARKMODE === True) {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
           <a href="devices.php"><i class="fa fa-laptop"></i> <span>Devices</span></a>
         </li>
-        
+
 <!--
          <li><a href="devices.php?status=favorites"><i class="fa fa-star"></i> <span>Favorites Devices</span></a></li>
 -->
