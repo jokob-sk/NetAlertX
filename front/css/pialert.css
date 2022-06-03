@@ -452,3 +452,6 @@
     display:          none;
 }
 
+.dbtools-button {
+  margin: 5px; display: inline-block; width: 140px; height: 140px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px;
+}

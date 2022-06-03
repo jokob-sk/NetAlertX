@@ -28,27 +28,19 @@
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content">
+    <section class="content" style="min-height: 500px;">
 
 
-    <div class="col-xs-12" style="text-align:center;">
-      <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
-            id="btnDeleteMAC"   onclick="askDeleteDevicesWithEmptyMACs()">   Delete Devices with empty MACs </button>     
-      </div>
-      
-      <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
-            id="btnDeleteMAC"   onclick="askDeleteAllDevices()">   Delete All Devices </button>     
-      </div>
-      <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
-            id="btnDeleteUnknown"   onclick="askDeleteUnknown()">   Delete (unknown) Devices </button>     
-      </div>
-      <div class="center">
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px; margin-bottom: 5px; margin-top: 5px;"
-            id="btnDeleteEvents"   onclick="askDeleteEvents()">   Delete all Events </button>     
-      </div>
+    <div class="col-xs-12" style="text-align:center; padding-top: 10px;">
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteDevicesWithEmptyMACs()">Delete Devices with empty MACs</button>     
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteAllDevices()">Delete All Devices</button>     
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" style="border-top: solid 3px #dd4b39;" onclick="askDeleteUnknown()">Delete (unknown) Devices</button>     
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" style="border-top: solid 3px #dd4b39;" onclick="askDeleteEvents()">Delete all Events (Reset Presence)</button>     
+
     </div>
 
 
