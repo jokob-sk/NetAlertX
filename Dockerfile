@@ -4,9 +4,9 @@ ARG dir="/home/pi/pialert"
 
 #Update and reduce image size
 RUN apt update \
-    && apt install --no-install-recommends apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
+    && apt-get install --no-install-recommends apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
     #Install without the --no-install-recommends flag
-    && apt install curl arp-scan -y \
+    && apt-get install curl arp-scan -y \
     #clean-up
     && apt clean autoclean \
     && apt autoremove 
