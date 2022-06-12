@@ -2,10 +2,14 @@ FROM debian:buster-slim
 
 ARG dir="/home/pi/pialert"
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 curl arp-scan -y \
-    && apt-get clean autoclean \
-    && rm -rf /var/lib/apt/lists/*
+#Update and reduce image size
+RUN apt update \
+    && apt install --no-install-recommends apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
+    #Install without the --no-install-recommends flag
+    && apt install curl arp-scan -y \
+    #clean-up
+    && apt clean autoclean \
+    && apt autoremove 
 
 #add the pi user
 RUN useradd -ms /bin/bash pi 
@@ -36,6 +40,6 @@ RUN ln -s $dir/front /var/www/html/pialert  \
 EXPOSE 20211
 
 # Set up startup script to run two commands, cron and the lighttpd server
-# RUN chmod +x $dir/dockerfiles/start.sh
+RUN chmod +x $dir/dockerfiles/start.sh
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
