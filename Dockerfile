@@ -1,5 +1,8 @@
 FROM debian:buster-slim
 
+# Todo, figure out why using a workdir instead of full paths don't work
+# Todo, do we still need all these packages? I can already see sudo which isn't needed
+
 RUN apt-get update \
     && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
     && apt-get clean autoclean \
@@ -13,9 +16,13 @@ RUN mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old \
 
 COPY . /home/pi/pialert
 
+# Todo, is this tar part still needed?
+
 # delete .git/ files and the tar/ realese directory to make the image smaller
 #RUN rm -r /home/pi/pialert/.git \
 RUN rm -r /home/pi/pialert/tar 
+
+# Todo, do we need to restart lighthttpd?
 
 # Pi.Alert   
 RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
@@ -28,5 +35,7 @@ RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
     && service lighttpd restart 
 
 EXPOSE 20211
+
+# Todo, can we just use CMD and ENTRYPOINT instead of a script?
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
