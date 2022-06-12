@@ -11,6 +11,12 @@ unknown devices. It also warns the disconnection of "always connected" devices.
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
+# Docker image :whale:
+
+All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
+A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).
+The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
+
 ## How it works
 The system continuously scans the network for:
   - New devices
@@ -120,16 +126,6 @@ Linux distributions.
   
   ***Suggestions and comments are welcome***
   
-  
-# Docker image :whale:
-All credit for Pi.Alert goes to:
-[pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
-
-The Docker image is available at [jokobsk/Pi.Alert - Docker
-Hub](https://registry.hub.docker.com/r/jokobsk/pi.alert).
-
-The source Docker file is available [here on GitHub](https://github.com/jokob-sk/Docker-Image-for-Pi.Alert).
-
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
