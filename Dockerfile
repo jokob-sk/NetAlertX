@@ -27,10 +27,6 @@ RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
     && sed -ie 's/= 80/= 20211/g' /etc/lighttpd/lighttpd.conf \
     && service lighttpd restart 
 
-# Expose the below port
 EXPOSE 20211
-
-# Set up startup script to run two commands, cron and the lighttpd server
-# RUN chmod +x /home/pi/pialert/dockerfiles/start.sh
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
