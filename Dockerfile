@@ -9,7 +9,8 @@ RUN apt-get update \
     && apt-get install curl arp-scan -y \
     #clean-up
     && apt-get clean autoclean \
-    && apt-get autoremove 
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 #add the pi user
 RUN useradd -ms /bin/bash pi 
