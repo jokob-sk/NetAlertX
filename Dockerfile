@@ -23,8 +23,8 @@ RUN mv /var/www/html/index.lighttpd.html /var/www/html/index.lighttpd.html.old \
 COPY . $dir
 
 # delete .git/ files and the tar/ realese directory to make the image smaller
-RUN rm -r $dir/.git \
-    && rm -r $dir/tar 
+#RUN rm -r $dir/.git \
+RUN rm -r $dir/tar 
 
 # Pi.Alert   
 RUN ln -s $dir/front /var/www/html/pialert  \

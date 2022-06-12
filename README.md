@@ -12,6 +12,11 @@ unknown devices. It also warns the disconnection of "always connected" devices.
 JavaScript)*
 
 # Docker image :whale:
+[![Docker](https://github.com/jokob-skPi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
+  <a href="https://hub.docker.com/r/jokobsk/pi.alert">
+    <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
+  </a>
 
 All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
 A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).

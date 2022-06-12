@@ -1,4 +1,4 @@
-[![Docker](https://github.com/jokob-sk/Docker-Image-for-Pi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Docker-Image-for-Pi.Alert/actions/workflows/docker.yml) [![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
+[![Docker](https://github.com/jokob-skPi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml) [![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
 
 # :whale: A docker image for Pi.Alert 
 
