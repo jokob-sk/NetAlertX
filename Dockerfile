@@ -31,6 +31,6 @@ RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
 EXPOSE 20211
 
 # Set up startup script to run two commands, cron and the lighttpd server
-RUN chmod +x /home/pi/pialert/dockerfiles/start.sh
+# RUN chmod +x /home/pi/pialert/dockerfiles/start.sh
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
