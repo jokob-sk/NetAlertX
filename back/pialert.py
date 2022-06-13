@@ -449,8 +449,15 @@ def execute_arpscan (pRetries):
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=1'] + subnets
+
+    # arp-scan for larger Networks like /16
+    # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
+    # the scan is about 4min on a /16 network
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+
+    # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
+
     # print (arpscan_args)
 
     # TESTING - Fast Scan
