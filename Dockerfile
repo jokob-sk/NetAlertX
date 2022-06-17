@@ -28,5 +28,4 @@ EXPOSE 80
 
 # 
 
-ENTRYPOINT ["/usr/sbin/lighttpd"]
-CMD ["-D", "-f", "/etc/lighttpd/lighttpd.conf"]
+CMD ["/home/pi/pialert/dockerfiles/start.sh"]
