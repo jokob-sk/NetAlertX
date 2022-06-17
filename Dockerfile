@@ -8,14 +8,14 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html 
+    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html
     # Redirect for lighthttpd to work properly
 
 COPY . /home/pi/pialert
 
 # delete .git/ files and the tar/ realese directory to make the image smaller
 #RUN rm -r /home/pi/pialert/.git \
-RUN rm -r /home/pi/pialert/tar 
+RUN rm -r /home/pi/pialert/tar && lighttpd-enable-mod fastcgi-php
 
 # Pi.Alert   
 RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
