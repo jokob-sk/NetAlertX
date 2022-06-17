@@ -8,7 +8,7 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
-    ln -s /home/pi/pialert/install/index.html /var/www/html/index.html 
+    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html 
     # Redirect for lighthttpd to work properly
 
 COPY . /home/pi/pialert
