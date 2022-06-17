@@ -29,4 +29,4 @@ EXPOSE 80
 # 
 
 ENTRYPOINT ["/usr/sbin/lighttpd"]
-CMD ["-D", "-f", "/etc/lighttpd/lighttpd.conf", "&","cron"]
+CMD ["-D", "-f", "/etc/lighttpd/lighttpd.conf"]
