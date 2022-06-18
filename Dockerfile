@@ -16,7 +16,7 @@ COPY . /home/pi/pialert
 
 # Pi.Alert | also we probably should/can delete the tar from the repo and remove this line
 RUN rm -r /home/pi/pialert/tar \
-    ln -s /home/pi/pialert/front /var/www/html/pialert  \
+    && ln -s /home/pi/pialert/front /var/www/html/pialert  \
     && python /home/pi/pialert/back/pialert.py update_vendors \    
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab - \
     && chown -R www-data /home/pi/pialert/db
