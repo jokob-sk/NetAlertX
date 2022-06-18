@@ -9,7 +9,7 @@ RUN apt-get update \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
-    lighttpd-enable-mod fastcgi-php
+    && lighttpd-enable-mod fastcgi-php
     # Redirect for lighthttpd to work properly
 
 COPY . /home/pi/pialert
