@@ -18,7 +18,8 @@ COPY . /home/pi/pialert
 RUN rm -r /home/pi/pialert/tar \
     && ln -s /home/pi/pialert/front /var/www/html/pialert  \
     && python /home/pi/pialert/back/pialert.py update_vendors \    
-    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
+    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab - \
+    && chmod -R +w /home/pi/pialert/db
 
 EXPOSE 80/tcp
 
