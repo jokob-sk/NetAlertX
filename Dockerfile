@@ -8,24 +8,25 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html
+    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
+    lighttpd-enable-mod fastcgi-php
     # Redirect for lighthttpd to work properly
 
 COPY . /home/pi/pialert
 
-# delete .git/ files and the tar/ realese directory to make the image smaller
-#RUN rm -r /home/pi/pialert/.git \
-RUN rm -r /home/pi/pialert/tar && lighttpd-enable-mod fastcgi-php
-
-# Pi.Alert   
-RUN ln -s /home/pi/pialert/front /var/www/html/pialert  \
+# Pi.Alert | also we probably should/can delete the tar from the repo and remove this line
+RUN rm -r /home/pi/pialert/tar \
+    ln -s /home/pi/pialert/front /var/www/html/pialert  \
     && python /home/pi/pialert/back/pialert.py update_vendors \    
-    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
-    #&& chgrp -R www-data /home/pi/pialert/db \
-    #&& chmod -R 755 /home/pi/pialert/db
+    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab - \
+    && chown -R www-data /home/pi/pialert/db
 
-EXPOSE 80
+EXPOSE 80/tcp
+
+USER www-data
 
 # https://github.com/rtsp/docker-lighttpd/blob/main/Dockerfile
+# Todo, refacto CMD so that we can run lighttpd and make it respond instant
+# The above Dockerfile is doing this well, but i don't see why it isn't working for us
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
