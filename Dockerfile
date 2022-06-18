@@ -23,8 +23,6 @@ RUN rm -r /home/pi/pialert/tar \
 
 EXPOSE 80/tcp
 
-USER www-data
-
 # https://github.com/rtsp/docker-lighttpd/blob/main/Dockerfile
 # Todo, refacto CMD so that we can run lighttpd and make it respond instant
 # The above Dockerfile is doing this well, but i don't see why it isn't working for us
