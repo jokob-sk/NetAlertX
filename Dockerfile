@@ -24,4 +24,5 @@ RUN rm -r /home/pi/pialert/tar \
 # Todo, refacto CMD so that we can run lighttpd and make it respond instant
 # The above Dockerfile is doing this well, but i don't see why it isn't working for us
 
-CMD ["/home/pi/pialert/dockerfiles/start.sh"]
+#CMD ["/home/pi/pialert/dockerfiles/start.sh"]
+CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
