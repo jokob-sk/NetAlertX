@@ -21,6 +21,7 @@ RUN rm -r /home/pi/pialert/tar \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 
 # https://github.com/rtsp/docker-lighttpd/blob/main/Dockerfile
+# > this one maybe better? https://hub.docker.com/r/jitesoft/lighttpd
 # Todo, refacto CMD so that we can run lighttpd and make it respond instant
 # The above Dockerfile is doing this well, but i don't see why it isn't working for us
 
