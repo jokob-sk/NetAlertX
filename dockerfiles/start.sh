@@ -1,4 +1,5 @@
 #!/bin/sh
 
 chmod -R o+w /home/pi/pialert/db
-service cron start && lighttpd -D -f /etc/lighttpd/lighttpd.conf
+/etc/init.d/lighttpd start
+service cron start && tail -f /dev/null
