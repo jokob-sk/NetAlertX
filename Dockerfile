@@ -3,7 +3,8 @@ FROM sebp/lighttpd:latest
 # Todo, figure out why using a workdir instead of full paths don't work
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
 
-RUN apk install ca-certificates curl libwww-perl arp-scan perl acron php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
+RUN apk update \
+    && apk install --no-cache ca-certificates curl libwww-perl arp-scan perl acron php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 \
     # && apt-get clean autoclean \
     # && apt-get autoremove \
     # && rm -rf /var/lib/apt/lists/* \
