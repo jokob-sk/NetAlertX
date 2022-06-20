@@ -87,7 +87,7 @@ function show_pia_servertime() {
     if (pia_hour <= 9) { pia_hour = "0" + pia_hour; }
     if (pia_minute <= 9) { pia_minute = "0" + pia_minute; }
     if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
-    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } else if (document.all) { PIA_Servertime_place.innerHTML = realtime_pia_servertime; } setTimeout("show_ia_servertime()", 1000);
+    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } else if (document.all) { PIA_Servertime_place.innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
 }
 </script>
 
