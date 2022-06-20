@@ -72,11 +72,30 @@ if ($ENABLED_DARKMODE === True) {
 } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
 
+<!-- Servertime to the right of the hostname -->
+<script>
+var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
+
+function show_pia_servertime() {
+    if (!document.all && !document.getElementById) {
+        return;
+    }
+    var pia_hour = pia_servertime.getHours();
+    var pia_minute = pia_servertime.getMinutes();
+    var pia_second = pia_servertime.getSeconds();
+    pia_servertime.setSeconds(pia_second + 1);
+    if (pia_hour <= 9) { pia_hour = "0" + pia_hour; }
+    if (pia_minute <= 9) { pia_minute = "0" + pia_minute; }
+    if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
+    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } else if (document.all) { PIA_Servertime_place.innerHTML = realtime_pia_servertime; } setTimeout("show_ia_servertime()", 1000);
+}
+</script>
+
 </head>
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition skin-blue layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?>>
+<body class="hold-transition skin-blue layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 
@@ -104,7 +123,7 @@ if ($ENABLED_DARKMODE === True) {
         <ul class="nav navbar-nav">
 
           <!-- Server Name -->
-          <li><a style="pointer-events:none;"><?php echo gethostname(); ?></a></li>
+          <li><a style="pointer-events:none;"><?php echo gethostname();?> <span id="PIA_Servertime_place"></a></li>
 
           <!-- Header right info -->
           <li class="dropdown user user-menu">
