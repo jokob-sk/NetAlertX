@@ -18,7 +18,10 @@ COPY . /home/pi/pialert
 # Pi.Alert | also we probably should/can delete the tar from the repo and remove this line
 RUN rm -r /home/pi/pialert/tar \
     && python /home/pi/pialert/back/pialert.py update_vendors \    
+    && sed -ie 's/= 80/= 20211/g' /etc/lighttpd/lighttpd.conf \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
+
+EXPOSE 20211
 
 # https://github.com/rtsp/docker-lighttpd/blob/main/Dockerfile
 # > this one maybe better? https://hub.docker.com/r/jitesoft/lighttpd
