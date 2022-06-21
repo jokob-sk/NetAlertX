@@ -35,7 +35,7 @@
 
 $pia_db = str_replace('front', 'db', getcwd()).'/pialert.db';
 //echo $pia_db;
-$pia_db_size = number_format(filesize($pia_db),2,",",".") . ' Byte';
+$pia_db_size = number_format(filesize($pia_db),0,",",".") . ' Byte';
 //echo $pia_db_size;
 $pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
 
