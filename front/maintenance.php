@@ -28,10 +28,52 @@
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content" style="min-height: 500px;">
+    <section class="content" style="min-height: 400px;">
 
 
-    <div class="col-xs-12" style="text-align:center; padding-top: 10px;">
+  <?php
+
+$pia_db = str_replace('front', 'db', getcwd()).'/pialert.db';
+//echo $pia_db;
+$pia_db_size = number_format(filesize($pia_db),2,",",".") . ' Byte';
+//echo $pia_db_size;
+$pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
+
+$execstring = 'ps -f -u root | grep "sudo arp-scan" 2>&1';
+$pia_arpscans = "";
+exec($execstring, $pia_arpscans);
+
+$execstring = 'ps -f -u pi | grep "nmap" 2>&1';
+$pia_nmapscans = "";
+exec($execstring, $pia_nmapscans);
+
+  ?>
+
+<div class="table">
+<div class="table-row">
+   <div class="table-cell">Database-Path</div>
+   <div class="table-cell"><?php echo $pia_db;?></div>
+</div>
+<div class="table-row">
+   <div class="table-cell">Database-Size</div>
+   <div class="table-cell"><?php echo $pia_db_size;?></div>
+</div>
+<div class="table-row">
+   <div class="table-cell">last Modification</div>
+   <div class="table-cell"><?php echo $pia_db_mod;?></div>
+</div>
+<div class="table-row">
+   <div class="table-cell">Scan Status (arp)</div>
+   <div class="table-cell"><?php echo sizeof($pia_arpscans);?> Scans currently running</div>
+</div>
+<div class="table-row">
+   <div class="table-cell">Scan Status (nmap)</div>
+   <div class="table-cell"><?php echo sizeof($pia_nmapscans);?> Scans currently running</div>
+</div>
+</div>
+
+
+    <div class="col-xs-12" style="text-align:center; padding-top: 10px; margin-bottom: 50px;">
 
           <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteDevicesWithEmptyMACs()">Delete Devices with empty MACs</button>     
 
@@ -43,9 +85,10 @@
 
     </div>
 
-
     <!-- ----------------------------------------------------------------------- -->
-    </section>
+
+</section>
+
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->

@@ -455,3 +455,21 @@
 .dbtools-button {
   margin: 5px; display: inline-block; width: 140px; height: 140px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px;
 }
+
+.table-cell:nth-child(1) {background: #272c30}
+.table-cell:nth-child(2) {background: #272c30}
+
+
+.table { 
+   display: table;
+   border-spacing: 0em;
+   font-weight: 400;
+   font-size: 16px;
+   width: 95%;
+   margin: auto;
+   margin-top: 40px;
+   margin-bottom: 40px;
+}
+.table-row {display: table-row; padding: 3px; }
+.table-cell {display: table-cell; padding: 3px; padding-left: 10px;}
+}
