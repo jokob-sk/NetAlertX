@@ -40,8 +40,8 @@
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
- 
- 
+      case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
+
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
@@ -265,27 +265,54 @@ function deleteEvents() {
 //  Backup DB to Archiv
 //------------------------------------------------------------------------------
 function PiaBackupDBtoArchive() {
-
-  // $DBFILE = '../../../db/pialert.db';
+  // prepare fast Backup
   $file = '../../../db/pialert.db';
-  $newfile = '../../../db/pialert.db.backup';
+  $newfile = '../../../db/pialert.db.latestbackup';
 
+  // copy files as a fast Backup
   if (!copy($file, $newfile)) {
-      echo "Test Function executed not successfully";
+      echo "The Backup executed not successfully";
   } else {
-    $Pia_Archive_Name = 'pialertdb_'.date("Ymd_his").'.zip';
+    // Create archive with actual date
+    $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
     $Pia_Archive_Path = '../../../db/';
     exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/pialert.db', $output);
-    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name)) {
-      echo 'Test Function executed successfully ('.$Pia_Archive_Name.')';
+    // chheck if archive exists
+    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
+      echo 'The backup executed successfully with the new archive: ('.$Pia_Archive_Name.')';
+      unlink($newfile);
     } else {
-      echo 'Test Function executed successfully';
+      echo 'Test backup executed partially successfully. The archive could not be created or is empty. (pialert.db.latestbackup)';
     }
-    // echo "Test Function executed successfully";
   }
 
 }
 
+//------------------------------------------------------------------------------
+//  Restore DB from Archiv
+//------------------------------------------------------------------------------
+function PiaRestoreDBfromArchive() {
+  // prepare fast Backup
+  $file = '../../../db/pialert.db';
+  $oldfile = '../../../db/pialert.db.prerestore';
+
+  // copy files as a fast Backup
+  if (!copy($file, $oldfile)) {
+      echo "Test Function executed not successfully";
+  } else {
+    // extract latest archive and overwrite the actual pialert.db
+    $Pia_Archive_Path = '../../../db/';
+    exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
+    // check if the pialert.db exists
+    if (file_exists($file)) {
+       echo 'Restore executed successfully';
+       unlink($oldfile);
+     } else {
+       echo 'Restore Failed. Please restore the backup manually.';
+     }
+  }
+
+}
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status
