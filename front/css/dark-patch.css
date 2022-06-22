@@ -662,3 +662,5 @@ input[type="password"]::-webkit-caps-lock-indicator {
   color: #444;
 }
 
+.db_info_table_cell:nth-child(1) {background: #272c30}
+.db_info_table_cell:nth-child(2) {background: #272c30}

@@ -28,7 +28,7 @@
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content" style="min-height: 400px;">
+    <section class="content" style="min-height: 750px;">
 
 
   <?php
@@ -49,38 +49,42 @@ exec($execstring, $pia_nmapscans);
 
 $Pia_Archive_Path = str_replace('front', 'db', getcwd()).'/';
 $Pia_Archive_count = 0;
-$files = glob($Pia_Archive_Path . "*.zip");
+$files = glob($Pia_Archive_Path."*.zip");
 if ($files){
  $Pia_Archive_count = count($files);
 }
 
-
+$latestfiles = glob($Pia_Archive_Path."*.zip");
+natsort($latestfiles);
+$latestfiles = array_reverse($latestfiles,False);
+$latestbackup = $latestfiles[0];
+$latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
   ?>
 
-<div class="table">
-<div class="table-row">
-   <div class="table-cell">Database-Path</div>
-   <div class="table-cell"><?php echo $pia_db;?></div>
+<div class="db_info_table">
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">Database-Path</div>
+   <div class="db_info_table_cell"><?php echo $pia_db;?></div>
 </div>
-<div class="table-row">
-   <div class="table-cell">Database-Size</div>
-   <div class="table-cell"><?php echo $pia_db_size;?></div>
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">Database-Size</div>
+   <div class="db_info_table_cell"><?php echo $pia_db_size;?></div>
 </div>
-<div class="table-row">
-   <div class="table-cell">last Modification</div>
-   <div class="table-cell"><?php echo $pia_db_mod;?></div>
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">last Modification</div>
+   <div class="db_info_table_cell"><?php echo $pia_db_mod;?></div>
 </div>
-<div class="table-row">
-   <div class="table-cell">DB Backup</div>
-   <div class="table-cell"><?php echo $Pia_Archive_count.' Backups where found';?></div>
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">DB Backup</div>
+   <div class="db_info_table_cell"><?php echo $Pia_Archive_count.' Backups where found';?></div>
 </div>
-<div class="table-row">
-   <div class="table-cell">Scan Status (arp)</div>
-   <div class="table-cell"><?php echo sizeof($pia_arpscans);?> scan(s) currently running</div>
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">Scan Status (arp)</div>
+   <div class="db_info_table_cell"><?php echo sizeof($pia_arpscans);?> scan(s) currently running</div>
 </div>
-<div class="table-row">
-   <div class="table-cell">Scan Status (nmap)</div>
-   <div class="table-cell"><?php echo sizeof($pia_nmapscans);?> scan(s) currently running</div>
+<div class="db_info_table_row">
+   <div class="db_info_table_cell">Scan Status (nmap)</div>
+   <div class="db_info_table_cell"><?php echo sizeof($pia_nmapscans);?> scan(s) currently running</div>
 </div>
 </div>
 
@@ -95,7 +99,9 @@ if ($files){
 
           <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" style="border-top: solid 3px #dd4b39;" onclick="askDeleteEvents()">Delete all Events (Reset Presence)</button>
 
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" style="border-top: solid 3px #dd4b39;" onclick="askPiaBackupDBtoArchive()">Execute DB Backup</button>
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" style="border-top: solid 3px #dd4b39;" onclick="askPiaBackupDBtoArchive()">DB Backup</button>
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" style="border-top: solid 3px #dd4b39;" onclick="askPiaRestoreDBfromArchive()">DB Restore<br><?php echo $latestbackup_date;?></button>
 
     </div>
 
@@ -198,6 +204,22 @@ function PiaBackupDBtoArchive()
   });
 }
 
+
+// Restore DB from Archive 
+function askPiaRestoreDBfromArchive () {
+  // Ask 
+  showModalWarning('DB Restore', 'Are you sure you want to exectute the the DB Restore? Be sure that no scan is currently running.',
+    'Cancel', 'Run Restore', 'PiaRestoreDBfromArchive');
+}
+
+
+function PiaRestoreDBfromArchive()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=PiaRestoreDBfromArchive', function(msg) {
+    showMessage (msg);
+  });
+}
 
 </script>
 
