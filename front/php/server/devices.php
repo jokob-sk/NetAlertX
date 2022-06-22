@@ -41,6 +41,7 @@
       case 'deleteEvents':            deleteEvents();                          break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
+      case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
 
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -313,6 +314,25 @@ function PiaRestoreDBfromArchive() {
   }
 
 }
+
+//------------------------------------------------------------------------------
+//  Switch Themes
+//------------------------------------------------------------------------------
+function PiaEnableDarkmode() {
+  $file = '../../../db/darkmode';
+
+  if (file_exists($file)) {
+      echo 'Darkmode Disabled';
+      unlink($file);
+      echo("<meta http-equiv='refresh' content='1'>");
+     } else {
+      echo 'Darkmode Enabled';
+      $darkmode = fopen($file, 'w');
+      echo("<meta http-equiv='refresh' content='1'>");
+     }
+  }
+
+
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status
