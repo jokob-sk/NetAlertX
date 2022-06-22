@@ -8,7 +8,7 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
-if (file_exists("darkmode")) {
+if (file_exists('../db/darkmode')) {
     $ENABLED_DARKMODE = True;
 }
 ?>
@@ -57,9 +57,7 @@ if (file_exists("darkmode")) {
   <!-- Google Font -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"> -->
   <link rel="stylesheet" href="css/offline-font.css">
-
-  <!-- Page Icon -->
-  <link rel="icon" type="image/png" sizes="160x160" href="img/pialertLogoGray80.png" />
+  <link rel="icon" type="image/x-icon" href="img/pialertLogoOrange.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
@@ -77,7 +75,7 @@ if ($ENABLED_DARKMODE === True) {
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
 
 function show_pia_servertime() {
-    if (!document.all && !document.getElementById) {
+    if (!document.getElementById) {
         return;
     }
     var pia_hour = pia_servertime.getHours();
@@ -87,7 +85,7 @@ function show_pia_servertime() {
     if (pia_hour <= 9) { pia_hour = "0" + pia_hour; }
     if (pia_minute <= 9) { pia_minute = "0" + pia_minute; }
     if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
-    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } else if (document.all) { PIA_Servertime_place.innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
+    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
 }
 </script>
 
@@ -147,7 +145,7 @@ function show_pia_servertime() {
               <!-- Menu Body -->
 
 
-<!--               <li class="user-body">
+              <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
                     <a target="_blank" href="https://github.com/pucherot/Pi.Alert">GitHub Pi.Alert</a>
@@ -157,22 +155,15 @@ function show_pia_servertime() {
                   </div>
                   <div class="col-xs-4 text-center">
                     <a target="_blank" href="https://github.com/pucherot/Pi.Alert/blob/main/LICENSE.txt">GNU GPLv3</a>
-                  </div> -->
-
-
+                  </div>
                   <!--
                   <div class="col-xs-4 text-center">
                     <a href="#">Updates</a>
                   </div>
                   -->
-
-
-                <!-- </div> -->
-
-
+                </div>
                 <!-- /.row -->
-             
-              <!-- </li> -->
+              </li>
               
             </ul>
           </li>

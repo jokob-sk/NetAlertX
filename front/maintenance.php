@@ -28,7 +28,7 @@
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content" style="min-height: 750px;">
+    <section class="content" style="min-height: 600px;">
 
 
   <?php
@@ -90,6 +90,8 @@ $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
 
 
     <div class="col-xs-12" style="text-align:center; padding-top: 10px; margin-bottom: 50px;">
+
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-green dbtools-button" id="btnPiaEnableDarkmode" style="border-top: solid 3px #00a65a;" onclick="askPiaEnableDarkmode()">Switch Themes (Dark/Light)</button>
 
           <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteDevicesWithEmptyMACs()">Delete Devices with empty MACs</button>
 
@@ -217,6 +219,22 @@ function PiaRestoreDBfromArchive()
 { 
   // Execute
   $.get('php/server/devices.php?action=PiaRestoreDBfromArchive', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// Restore DB from Archive 
+function askPiaEnableDarkmode () {
+  // Ask 
+  showModalWarning('Switch Theme', 'After the theme switch, the page tries to reload itself to activate the change. If necessary, the cache must be cleared.',
+    'Cancel', 'Switch', 'PiaEnableDarkmode');
+}
+
+
+function PiaEnableDarkmode()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=PiaEnableDarkmode', function(msg) {
     showMessage (msg);
   });
 }

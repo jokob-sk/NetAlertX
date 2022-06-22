@@ -453,7 +453,7 @@
 }
 
 .dbtools-button {
-  margin: 5px; display: inline-block; width: 140px; height: 140px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px;
+  margin: 5px; display: inline-block; width: 140px; height: 100px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px;
 }
 
 .db_info_table_cell:nth-child(1) {background: white}
@@ -472,4 +472,4 @@
 }
 .db_info_table_row {display: table-row; padding: 3px; }
 .db_info_table_cell {display: table-cell; padding: 3px; padding-left: 10px;}
-}
+
