@@ -47,7 +47,7 @@ $execstring = 'ps -f -u pi | grep "nmap" 2>&1';
 $pia_nmapscans = "";
 exec($execstring, $pia_nmapscans);
 
-$Pia_Archive_Path = "/home/pi/pialert/db/";
+$Pia_Archive_Path = str_replace('front', 'db', getcwd()).'/';
 $Pia_Archive_count = 0;
 $files = glob($Pia_Archive_Path . "*.zip");
 if ($files){
