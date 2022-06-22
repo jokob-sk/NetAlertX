@@ -121,6 +121,8 @@ Linux distributions.
   | arp-scan     | Scan network using arp commands        |
   | Pi.hole      | DNS Server with Ad-block               |
   | dnsmasq      | DHCP Server                            |
+  | nmap         | Network Scanner                        |
+  | zip          | Filecompression Tool                   |
 
 ### License
   GPL 3.0
