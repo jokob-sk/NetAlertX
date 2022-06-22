@@ -39,6 +39,7 @@
       case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
+      case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
  
  
       case 'getDevicesTotals':        getDevicesTotals();                      break;
@@ -260,7 +261,29 @@ function deleteEvents() {
   }
 }
 
+//------------------------------------------------------------------------------
+//  Backup DB to Archiv
+//------------------------------------------------------------------------------
+function PiaBackupDBtoArchive() {
 
+  $file = '/home/pi/pialert/db/pialert.db';
+  $newfile = '/home/pi/pialert/db/pialert.db.backup';
+
+  if (!copy($file, $newfile)) {
+      echo "Test Function executed not successfully";
+  } else {
+    $Pia_Archive_Name = 'pialertdb_'.date("Ymd_his").'.zip';
+    $Pia_Archive_Path = '/home/pi/pialert/db/';
+    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' /home/pi/pialert/db/pialert.db', $output);
+    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name)) {
+      echo 'Test Function executed successfully ('.$Pia_Archive_Name.')';
+    } else {
+      echo 'Test Function executed successfully';
+    }
+    // echo "Test Function executed successfully";
+  }
+
+}
 
 
 //------------------------------------------------------------------------------
