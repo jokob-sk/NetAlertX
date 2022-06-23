@@ -119,6 +119,18 @@
     margin-left: 0px;
   }
 
+  .fix_maintain_section {
+    min-height: 650px;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+  .fix_maintain_section {
+    min-height: 900px;
+  }
+
 }
 
 .sidebar-open .content-wrapper, .sidebar-open .main-footer {
@@ -453,7 +465,7 @@
 }
 
 .dbtools-button {
-  margin: 5px; display: inline-block; width: 140px; height: 100px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px;
+  margin: 5px; display: inline-block; width: 140px; height: 100px; white-space: normal; word-wrap: break-word; font-size: 16px; border-radius: 10px; margin-bottom: 25px;
 }
 
 .db_info_table_cell:nth-child(1) {background: white}
@@ -469,6 +481,7 @@
    margin: auto;
    margin-top: 40px;
    margin-bottom: 40px;
+   border: solid 1px #ddd;
 }
 .db_info_table_row {display: table-row; padding: 3px; }
 .db_info_table_cell {display: table-cell; padding: 3px; padding-left: 10px;}

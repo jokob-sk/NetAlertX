@@ -272,7 +272,7 @@ function PiaBackupDBtoArchive() {
 
   // copy files as a fast Backup
   if (!copy($file, $newfile)) {
-      echo "The Backup executed not successfully";
+      echo "The original database could not be saved.";
   } else {
     // Create archive with actual date
     $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
@@ -282,8 +282,9 @@ function PiaBackupDBtoArchive() {
     if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
       echo 'The backup executed successfully with the new archive: ('.$Pia_Archive_Name.')';
       unlink($newfile);
+      echo("<meta http-equiv='refresh' content='1'>");
     } else {
-      echo 'Test backup executed partially successfully. The archive could not be created or is empty. (pialert.db.latestbackup)';
+      echo 'The backup executed partially successfully. The archive could not be created or is empty. (pialert.db.latestbackup)';
     }
   }
 
@@ -299,7 +300,7 @@ function PiaRestoreDBfromArchive() {
 
   // copy files as a fast Backup
   if (!copy($file, $oldfile)) {
-      echo "Test Function executed not successfully";
+      echo 'The original database could not be saved.';
   } else {
     // extract latest archive and overwrite the actual pialert.db
     $Pia_Archive_Path = '../../../db/';
@@ -308,6 +309,7 @@ function PiaRestoreDBfromArchive() {
     if (file_exists($file)) {
        echo 'Restore executed successfully';
        unlink($oldfile);
+       echo("<meta http-equiv='refresh' content='1'>");
      } else {
        echo 'Restore Failed. Please restore the backup manually.';
      }

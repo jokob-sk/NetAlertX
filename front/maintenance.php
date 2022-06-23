@@ -28,7 +28,7 @@
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content" style="min-height: 600px;">
+    <section class="content fix_maintain_section" style="height: 100%;">
 
 
   <?php
@@ -59,6 +59,35 @@ natsort($latestfiles);
 $latestfiles = array_reverse($latestfiles,False);
 $latestbackup = $latestfiles[0];
 $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
+
+if (submit) {
+  $pia_skin_set_dir = '../db/';
+  $pia_skin_selector = htmlspecialchars($_POST['skinselector']);
+  $pia_installed_skins = array('skin-black-light', 'skin-black', 'skin-blue-light', 'skin-blue', 'skin-green-light', 'skin-green', 'skin-purple-light', 'skin-purple', 'skin-red-light', 'skin-red', 'skin-yellow-light', 'skin-yellow',);
+  if (in_array($pia_skin_selector, $pia_installed_skins)) {
+    foreach ($pia_installed_skins as $file) {
+      unlink ($pia_skin_set_dir.'/'.$file);
+    }
+
+    foreach ($pia_installed_skins as $file) {
+      if (file_exists($pia_skin_set_dir.'/'.$file)) {
+          $pia_skin_error = True;
+          break;
+      } else {
+          $pia_skin_error = False;
+      }
+    }
+
+    if ($pia_skin_error == False) {
+      $testskin = fopen($pia_skin_set_dir.$pia_skin_selector, 'w');
+      $pia_skin_test = '';
+      echo("<meta http-equiv='refresh' content='1'>"); 
+    } else {
+      $pia_skin_test = '';
+      echo("<meta http-equiv='refresh' content='1'>");
+    }    
+  }
+}
   ?>
 
 <div class="db_info_table">
@@ -88,10 +117,36 @@ $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
 </div>
 </div>
 
+<form method="post" action="maintenance.php">
+<div class="db_info_table">
+  <div class="db_info_table_row">
+      <div class="db_info_table_cell" style="height:50px; text-align:center; vertical-align: middle;">
+        <div style="display: inline-block; margin-right: 10px;">Theme Selection:</div> 
+        <div style="display: inline-block;">
+            <select name="skinselector">
+                <option value="">--Choose a theme--</option>
+                <option value="skin-black-light">black light</option>
+                <option value="skin-black">black</option>
+                <option value="skin-blue-light">blue light</option>
+                <option value="skin-blue">blue</option>
+                <option value="skin-green-light">green light</option>
+                <option value="skin-green">green</option>
+                <option value="skin-purple-light">purple light</option>
+                <option value="skin-purple">purple</option>
+                <option value="skin-red-light">red light</option>
+                <option value="skin-red">red</option>
+                <option value="skin-yellow-light">yellow light</option>
+                <option value="skin-yellow">yellow</option>
+            </select></div> 
+        <div style="display: inline-block;"><input type="submit" value="Set"><?php echo $pia_skin_test; ?></div>
+      </div>
+  </div>
+</div>
+</form>
 
-    <div class="col-xs-12" style="text-align:center; padding-top: 10px; margin-bottom: 50px;">
+    <div class="col-xs-12" style="text-align:center; padding-top: 10px;">
 
-          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-green dbtools-button" id="btnPiaEnableDarkmode" style="border-top: solid 3px #00a65a;" onclick="askPiaEnableDarkmode()">Switch Themes (Dark/Light)</button>
+          <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-green dbtools-button" id="btnPiaEnableDarkmode" style="border-top: solid 3px #00a65a;" onclick="askPiaEnableDarkmode()">Switch Modes (Dark/Light)</button>
 
           <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteDevicesWithEmptyMACs()">Delete Devices with empty MACs</button>
 

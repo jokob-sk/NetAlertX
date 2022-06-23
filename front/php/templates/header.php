@@ -8,9 +8,14 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+
 if (file_exists('../db/darkmode')) {
     $ENABLED_DARKMODE = True;
 }
+foreach (glob("../db/skin*") as $filename) {
+    $pia_skin_selected = basename($filename);
+}
+if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
 ?>
 
 <!DOCTYPE html> 
@@ -42,7 +47,7 @@ if (file_exists('../db/darkmode')) {
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
-  <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/skin-blue.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?php echo $pia_skin_selected;?>.min.css">
 
   <!-- Pi.Alert CSS -->
   <link rel="stylesheet" href="css/pialert.css">
@@ -61,7 +66,7 @@ if (file_exists('../db/darkmode')) {
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
-
+  <link rel="apple-touch-icon" href="https://net-dev.de/pialert_homescreen.png">
   <!-- Dark-Mode Patch -->
 <?php
 if ($ENABLED_DARKMODE === True) {
@@ -93,7 +98,7 @@ function show_pia_servertime() {
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition skin-blue layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition <?php echo $pia_skin_selected;?> layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

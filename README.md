@@ -66,6 +66,17 @@ A web frontal that allows:
   | -------------------- | -------------------- |
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
 
+### Maintenance
+With the work of [jokobsk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, various possibilities for 
+maintenance and settings are available on this page:
+  - DB Backup and Restore
+  - Theme Selection (blue, red, green, yellow, black, purple)
+  - Light/Dark-Mode Switch
+  - DB maintenance tools
+
+In addition, some information is available (active scans, database size, backup counter).
+
+![Maintain screen dark][maintain_dark]
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
@@ -137,4 +148,5 @@ Linux distributions.
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
 [main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
+[maintain_dark]: /docs/img/5_maintain.jpg     "Maintain screen dark"
 

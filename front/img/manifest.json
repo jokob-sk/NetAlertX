@@ -2,6 +2,13 @@
     "name": "Pi-Alert Console",
     "short_name": "Pi-Alert",
     "display": "standalone",
-    "theme_color": "#367fa9",
-    "background_color": "#367fa9"
+    "icons": [
+    {
+      "src": "",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+    ],
+    "theme_color": "#000",
+    "background_color": "#000"
 }
