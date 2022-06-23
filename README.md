@@ -72,11 +72,8 @@ A web frontal that allows:
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-- One-step Automated Install (original):
+- One-step Automated Install:
   #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
-
-- One-step Automated Install (forked):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
 - One-step Automated Install (forked) without Webserver:
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
@@ -86,11 +83,8 @@ Linux distributions.
 
 # Update
 <!--- --------------------------------------------------------------------- --->
-- One-step Automated Update (original):
+- One-step Automated Update:
   #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
-
-- One-step Automated Update (forked):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
 <!--- --------------------------------------------------------------------- --->
