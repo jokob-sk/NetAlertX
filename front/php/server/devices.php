@@ -42,6 +42,7 @@
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
+      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;
 
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -318,10 +319,10 @@ function PiaRestoreDBfromArchive() {
 }
 
 //------------------------------------------------------------------------------
-//  Switch Themes
+//  Toggle Dark/Light Themes
 //------------------------------------------------------------------------------
 function PiaEnableDarkmode() {
-  $file = '../../../db/darkmode';
+  $file = '../../../db/setting_darkmode';
 
   if (file_exists($file)) {
       echo 'Darkmode Disabled';
@@ -335,6 +336,22 @@ function PiaEnableDarkmode() {
   }
 
 
+//------------------------------------------------------------------------------
+//  Toggle on/off Arp-Scans
+//------------------------------------------------------------------------------
+function PiaToggleArpScan() {
+  $file = '../../../db/setting_stoparpscan';
+
+  if (file_exists($file)) {
+      echo 'Arp-Scan Enabled';
+      unlink($file);
+      echo("<meta http-equiv='refresh' content='1'>");
+     } else {
+      echo 'Arp-Scan Disabled';
+      $startarpscan = fopen($file, 'w');
+      echo("<meta http-equiv='refresh' content='1'>");
+     }
+  }
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status

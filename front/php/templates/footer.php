@@ -17,7 +17,6 @@
       $conf_data = parse_ini_file($conf_file);
       echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> '. $conf_data['VERSION_YEAR'] .' Puche';
     ?>
-
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
 

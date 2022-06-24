@@ -664,3 +664,19 @@ input[type="password"]::-webkit-caps-lock-indicator {
 
 .db_info_table_cell:nth-child(1) {background: #272c30}
 .db_info_table_cell:nth-child(2) {background: #272c30}
+.db_tools_table_cell_a:nth-child(1) {background: #272c30}
+.db_tools_table_cell_a:nth-child(2) {background: #272c30}
+.db_tools_table_cell_b:nth-child(1) {background: #272c30}
+.db_tools_table_cell_b:nth-child(2) {background: #272c30}
+
+.db_info_table { 
+   display: table;
+   border-spacing: 0em;
+   font-weight: 400;
+   font-size: 15px;
+   width: 95%;
+   margin: auto;
+   margin-top: 40px;
+   margin-bottom: 40px;
+   border: solid 1px #606060;
+}

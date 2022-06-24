@@ -9,7 +9,7 @@
 
 <?php
 
-if (file_exists('../db/darkmode')) {
+if (file_exists('../db/setting_darkmode')) {
     $ENABLED_DARKMODE = True;
 }
 foreach (glob("../db/skin*") as $filename) {
@@ -66,7 +66,7 @@ if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
-  <link rel="apple-touch-icon" href="https://net-dev.de/pialert_homescreen.png">
+
   <!-- Dark-Mode Patch -->
 <?php
 if ($ENABLED_DARKMODE === True) {
