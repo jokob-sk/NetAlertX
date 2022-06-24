@@ -34,6 +34,7 @@ import csv
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 PIALERT_PATH = PIALERT_BACK_PATH + "/.."
+STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
 
 if (sys.version_info > (3,0)):
     exec(open(PIALERT_PATH + "/config/version.conf").read())
@@ -81,8 +82,10 @@ def main ():
         res = update_devices_MAC_vendors()
     elif cycle == 'update_vendors_silent':
         res = update_devices_MAC_vendors('-s')
-    else :
+    elif os.path.exists(STOPARPSCAN) == False :
         res = scan_network()
+    elif os.path.exists(STOPARPSCAN) == True :
+        res = 0
     
     # Check error
     if res != 0 :
@@ -457,7 +460,6 @@ def execute_arpscan (pRetries):
 
     # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
-
     # print (arpscan_args)
 
     # TESTING - Fast Scan
