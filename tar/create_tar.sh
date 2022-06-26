@@ -23,5 +23,6 @@ rm tar/pialert_*.tar
 # ------------------------------------------------------------------------------
 tar cvf tar/pialert_$PIALERT_VERSION.tar --exclude="tar" --exclude=".git" --exclude=".gitignore" ./ | wc -l
 
-ln -s pialert_$PIALERT_VERSION.tar tar/pialert_latest.tar
-ls -l tar/pialert*.tar
+#ln -s pialert_$PIALERT_VERSION.tar tar/pialert_latest.tar
+cp tar/pialert_$PIALERT_VERSION.tar tar/pialert_latest.tar
+#ls -l tar/pialert*.tar
