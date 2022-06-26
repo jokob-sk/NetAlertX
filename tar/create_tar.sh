@@ -10,11 +10,10 @@
 
 PIALERT_DEV_PATH=$(pwd)
 cd $PIALERT_DEV_PATH'/../'
-echo "----------------"
 
 PIALERT_VERSION=`awk '$1=="VERSION" { print $3 }' config/version.conf | tr -d \'`
 echo $PIALERT_VERSION
-echo "----------------"
+
 # ------------------------------------------------------------------------------
 ls -l tar/pialert*.tar
 tar tvf tar/pialert_latest.tar | wc -l
