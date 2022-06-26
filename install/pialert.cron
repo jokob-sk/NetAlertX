@@ -10,4 +10,4 @@
 0 3 * * 1      python ~/pialert/back/pialert.py update_vendors >~/pialert/log/pialert.vendors.log  2>&1
 */1 * * * *    python ~/pialert/back/pialert.py internet_IP    >~/pialert/log/pialert.IP.log       2>&1
 */5 * * * *    python ~/pialert/back/pialert.py 1              >~/pialert/log/pialert.1.log        2>&1
-*/15 * * * *   python ~/pialert/back/pialert.py 15             >~/pialert/log/pialert.15.log       2>&1
+#*/15 * * * *   python ~/pialert/back/pialert.py 15             >~/pialert/log/pialert.15.log       2>&1
