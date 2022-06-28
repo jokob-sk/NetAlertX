@@ -95,6 +95,7 @@
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> Details  </a></li>
+              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> nmap   </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> Sessions </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> Presence </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> Events   </a></li>
@@ -426,6 +427,42 @@
                 </table>
               </div>
 
+
+<!-- tab page 5 ------------------------------------------------------------ -->
+
+
+              <div class="tab-pane fade" id="panNmap">
+
+                <!-- Datatable Session -->
+                <div style="width:100%; text-align: center;">
+
+                  <button type="button" class="btn btn-default pa-btn" style="margin: auto;" onclick="loadDoc()">execute quick scan on <?php echo $_REQUEST['lastip'];?></button>
+                  </div>
+
+                  <div id="scanoutput" style="margin-top: 30px;"></div>
+                   
+                  <script>
+                  function loadDoc() {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                      if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("scanoutput").innerHTML = this.responseText;
+                      }
+                    };
+                    xhttp.open("POST", "./php/server/nmap_scan.php", true);
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send("scan=<?php echo $_REQUEST['lastip'];?>");
+                  }
+                  </script>
+              
+              </div>
+
+
+
+
+<!-- ----------------------------------------------------------------------- -->
+
+
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
 
@@ -477,7 +514,6 @@
       </div>
       <!-- /.row -->
 
-<!-- ----------------------------------------------------------------------- -->
     </section>
     <!-- /.content -->
   </div>
