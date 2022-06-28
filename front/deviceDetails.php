@@ -436,13 +436,19 @@
                 <!-- Datatable Session -->
                 <div style="width:100%; text-align: center;">
 
-                  <button type="button" class="btn btn-default pa-btn" style="margin: auto;" onclick="loadDoc()">execute quick scan on <?php echo $_REQUEST['lastip'];?></button>
+                  <script>
+                      setTimeout(function(){
+                        document.getElementById('piamanualnmap').innerHTML='execute quick scan on ' + document.getElementById('txtLastIP').value;
+                      }, 2000);
+                  </script>
+
+                  <button type="button" id="piamanualnmap" class="btn btn-default pa-btn" style="margin: auto;" onclick="loadDoc(document.getElementById('txtLastIP').value)">... loading</button>
                   </div>
 
                   <div id="scanoutput" style="margin-top: 30px;"></div>
                    
                   <script>
-                  function loadDoc() {
+                  function loadDoc(targetip) {
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                       if (this.readyState == 4 && this.status == 200) {
@@ -451,7 +457,7 @@
                     };
                     xhttp.open("POST", "./php/server/nmap_scan.php", true);
                     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    xhttp.send("scan=<?php echo $_REQUEST['lastip'];?>");
+                    xhttp.send("scan=" + targetip);
                   }
                   </script>
               
