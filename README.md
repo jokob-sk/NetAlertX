@@ -11,7 +11,7 @@ unknown devices. It also warns the disconnection of "always connected" devices.
 JavaScript)*
 
 ![Main screen dark][main_dark]
-modified within this fork
+optional Darkmode within this fork
 
 ## How it works
 The system continuously scans the network for:
@@ -60,18 +60,17 @@ A web frontal that allows:
     - Concurrent devices
     - Down alerts
     - IP's
+    - manuel nmap scans
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
   | -------------------- | -------------------- |
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
-  | -------------------- | -------------------- |
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
 
-### Maintenance
-With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, various possibilities for 
-maintenance and settings are available on this page:
+With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, the new maintenance page was added with various possibilities for maintenance and settings are available on this page:
   - DB Backup and Restore
+  - Pause arp-scan
   - Theme Selection (blue, red, green, yellow, black, purple)
   - Light/Dark-Mode Switch
   - DB maintenance tools
