@@ -432,23 +432,34 @@
 
 
               <div class="tab-pane fade" id="panNmap">
-
-                <!-- Datatable Session -->
+                <h4 class="">nmap Scans</h4>
                 <div style="width:100%; text-align: center;">
-
                   <script>
                       setTimeout(function(){
-                        document.getElementById('piamanualnmap').innerHTML='execute quick scan on ' + document.getElementById('txtLastIP').value;
+                        document.getElementById('piamanualnmap_fast').innerHTML='Fast Scan (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_normal').innerHTML='Default Scan (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_detail').innerHTML='Detailed Scan (' + document.getElementById('txtLastIP').value +')';
                       }, 2000);
                   </script>
 
-                  <button type="button" id="piamanualnmap" class="btn btn-default pa-btn" style="margin: auto;" onclick="loadDoc(document.getElementById('txtLastIP').value)">... loading</button>
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
+                
+                  <div style="margin-top: 20px; text-align: left;">
+                    <ul style="padding:20px;">
+                    <li>Fast Scan: Scan fewer ports than the default scan (a few seconds)</li>
+                    <li>Default Scan: By default, Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 sconds)</li>
+                    <li>Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds and more)</li>
+                  </ul>
                   </div>
+                </div>
 
-                  <div id="scanoutput" style="margin-top: 30px;"></div>
+
+                <div id="scanoutput" style="margin-top: 30px;"></div>
                    
                   <script>
-                  function loadDoc(targetip) {
+                  function manualnmapscan(targetip, mode) {
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                       if (this.readyState == 4 && this.status == 200) {
@@ -457,7 +468,7 @@
                     };
                     xhttp.open("POST", "./php/server/nmap_scan.php", true);
                     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    xhttp.send("scan=" + targetip);
+                    xhttp.send("scan=" + targetip + '&mode=' + mode);
                   }
                   </script>
               
