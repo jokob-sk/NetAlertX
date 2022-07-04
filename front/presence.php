@@ -17,7 +17,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         Presence by Device
+         <?php echo $pia_lang['Presence_Title'];?>
       </h1>
     </section>
 
@@ -32,7 +32,7 @@
             <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
               <div class="inner"> <h3 id="devicesAll"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-laptop text-aqua-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> All Devices <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_AllDevices'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -43,7 +43,7 @@
             <div class="small-box bg-green pa-small-box-green pa-small-box-2">
               <div class="inner"> <h3 id="devicesConnected"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-plug text-green-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Connected <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_Connected'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -54,7 +54,7 @@
             <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
               <div class="inner"> <h3 id="devicesFavorites"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-star text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Favorites <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_Favorites'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -65,7 +65,7 @@
             <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
               <div class="inner"> <h3 id="devicesNew"> -- </h3> </div>
               <div class="icon"> <i class="ion ion-plus-round text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> New Devices <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_NewDevices'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -76,7 +76,7 @@
             <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
               <div class="inner"> <h3 id="devicesDown"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-warning text-red-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_DownAlerts'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -87,7 +87,7 @@
             <div  class="small-box bg-gray pa-small-box-gray pa-small-box-2">
               <div class="inner"> <h3 id="devicesHidden"> -- </h3> </div>
               <div class="icon"> <i class="fa fa-eye-slash text-gray-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Hidden <i class="fa fa-arrow-circle-right"></i> </div>
+              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Presence_Shortcut_Archived'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -149,10 +149,14 @@
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
   <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
 
 <!-- fullCalendar Scheduler -->
   <link href="lib/fullcalendar-scheduler/scheduler.min.css" rel="stylesheet">
-  <script src="lib/fullcalendar-scheduler/scheduler.min.js"></script>  
+  <script src="lib/fullcalendar-scheduler/scheduler.min.js"></script>
+
+
+
 
 <!-- Dark-Mode Patch -->
 <?php
@@ -196,7 +200,6 @@ function initializeCalendar () {
       center          : 'title',
       right           : 'timelineYear,timelineMonth,timelineWeek'
     },
-    
     defaultView       : 'timelineMonth',
     height            : 'auto',
     firstDay          : 1,
@@ -208,6 +211,7 @@ function initializeCalendar () {
     slotWidth         : '1px',
 
     resourceOrder     : '-favorite,title',
+    locale            : '<?php echo $pia_lang['Presence_CalHead_lang'];?>',
 
     //schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -216,7 +220,7 @@ function initializeCalendar () {
       timelineYear: {
         type              : 'timeline',
         duration          : { year: 1 },
-        buttonText        : 'year',
+        buttonText        : '<?php echo $pia_lang['Presence_CalHead_year'];?>',
         slotLabelFormat   : 'MMM',
         // Hack to show partial day events not as fullday events
         slotDuration      : {minutes: 44641}
@@ -225,7 +229,7 @@ function initializeCalendar () {
       timelineQuarter: {
         type              : 'timeline',
         duration          : { month: 3 },
-        buttonText        : 'quarter',
+        buttonText        : '<?php echo $pia_lang['Presence_CalHead_quarter'];?>',
         slotLabelFormat   : 'MMM',
         // Hack to show partial day events not as fullday events
         slotDuration      : {minutes: 44641}
@@ -234,7 +238,7 @@ function initializeCalendar () {
       timelineMonth: {
         type              : 'timeline',
         duration          : { month: 1 },
-        buttonText        : 'month',
+        buttonText        : '<?php echo $pia_lang['Presence_CalHead_month'];?>',
         slotLabelFormat   : 'D',
         // Hack to show partial day events not as fullday events
         slotDuration      : '24:00:01'
@@ -243,7 +247,7 @@ function initializeCalendar () {
       timelineWeek: {
         type              : 'timeline',
         duration          : { week: 1 },
-        buttonText        : 'week',
+        buttonText        : '<?php echo $pia_lang['Presence_CalHead_week'];?>',
         slotLabelFormat   : 'D',
         slotDuration      : '24:00:01'
       }
@@ -321,13 +325,13 @@ function getDevicesPresence (status) {
 
   // Defini color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = 'All Devices';        color = 'aqua';    break;
-    case 'connected':  tableTitle = 'Connected Devices';  color = 'green';   break;
-    case 'favorites':  tableTitle = 'Favorites';          color = 'yellow';  break;
-    case 'new':        tableTitle = 'New Devices';        color = 'yellow';  break;
-    case 'down':       tableTitle = 'Down Alerts';        color = 'red';     break;
-    case 'archived':   tableTitle = 'Archived Devices';   color = 'gray';    break;
-    default:           tableTitle = 'Devices';            color = 'gray';    break;
+    case 'all':        tableTitle = '<?php echo $pia_lang['Presence_Shortcut_AllDevices'];?>';    color = 'aqua';    break;
+    case 'connected':  tableTitle = '<?php echo $pia_lang['Presence_Shortcut_Connected'];?>';     color = 'green';   break;
+    case 'favorites':  tableTitle = '<?php echo $pia_lang['Presence_Shortcut_Favorites'];?>';     color = 'yellow';  break;
+    case 'new':        tableTitle = '<?php echo $pia_lang['Presence_Shortcut_NewDevices'];?>';    color = 'yellow';  break;
+    case 'down':       tableTitle = '<?php echo $pia_lang['Presence_Shortcut_DownAlerts'];?>';    color = 'red';     break;
+    case 'archived':   tableTitle = '<?php echo $pia_lang['Presence_Shortcut_Archived'];?>';      color = 'gray';    break;
+    default:           tableTitle = '<?php echo $pia_lang['Presence_Shortcut_Devices'];?>';       color = 'gray';    break;
   } 
 
   // Set title and color

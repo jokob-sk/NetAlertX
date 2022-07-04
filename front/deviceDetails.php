@@ -95,7 +95,7 @@
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> Details  </a></li>
-              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> nmap   </a></li>
+              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> Nmap   </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> Sessions </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> Presence </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> Events   </a></li>
@@ -432,7 +432,7 @@
 
 
               <div class="tab-pane fade" id="panNmap">
-                <h4 class="">nmap Scans</h4>
+                <h4 class="">Nmap Scans</h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
@@ -448,9 +448,9 @@
                 
                   <div style="margin-top: 20px; text-align: left;">
                     <ul style="padding:20px;">
-                    <li>Fast Scan: Scan fewer ports than the default scan (a few seconds)</li>
-                    <li>Default Scan: By default, Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 sconds)</li>
-                    <li>Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds and more)</li>
+                    <li>Fast Scan: Scan fewer ports (100) than the default scan (a few seconds)</li>
+                    <li>Default Scan: Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 seconds)</li>
+                    <li>Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds or more)</li>
                   </ul>
                   </div>
                 </div>
