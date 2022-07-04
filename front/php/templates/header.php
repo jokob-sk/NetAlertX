@@ -12,10 +12,19 @@
 if (file_exists('../db/setting_darkmode')) {
     $ENABLED_DARKMODE = True;
 }
-foreach (glob("../db/skin*") as $filename) {
-    $pia_skin_selected = basename($filename);
+foreach (glob("../db/setting_skin*") as $filename) {
+    $pia_skin_selected = str_replace('setting_','',basename($filename));
 }
 if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
+
+foreach (glob("../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+}
+
+if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+
+require 'php/templates/language/'.$pia_lang_selected.'.php';
+
 ?>
 
 <!DOCTYPE html> 
@@ -201,7 +210,7 @@ function show_pia_servertime() {
 -->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
-          <a href="devices.php"><i class="fa fa-laptop"></i> <span>Devices</span></a>
+          <a href="devices.php"><i class="fa fa-laptop"></i> <span><?php echo $pia_lang['Navigation_Devices'];?></span></a>
         </li>
 
 <!--
@@ -209,15 +218,15 @@ function show_pia_servertime() {
 -->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
-          <a href="presence.php"><i class="fa fa-calendar"></i> <span>Presence</span></a>
+          <a href="presence.php"><i class="fa fa-calendar"></i> <span><?php echo $pia_lang['Navigation_Presence'];?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
-          <a href="events.php"><i class="fa fa-bolt"></i> <span>Events</span></a>
+          <a href="events.php"><i class="fa fa-bolt"></i> <span><?php echo $pia_lang['Navigation_Events'];?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <a href="maintenance.php"><i class="fa fa-cog"></i> <span>Maintenance</span></a>
+          <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
         </li>
 
 <!--
