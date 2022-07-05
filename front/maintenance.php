@@ -9,6 +9,34 @@
 //  jokob-sk 2022        jokob.sk@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
 
+// Language selector config ----------------------------------------------------
+//
+// For security reasons, new language files must be entered into this array.
+// The files in the language directory are compared with this array and only 
+// then accepted.
+//
+$pia_installed_langs = array('en_us', 
+                             'de_de');
+
+// Skin selector config ----------------------------------------------------
+//
+// For security reasons, new language files must be entered into this array.
+// The files in the language directory are compared with this array and only 
+// then accepted.
+//
+$pia_installed_skins = array('skin-black-light', 
+                             'skin-black', 
+                             'skin-blue-light', 
+                             'skin-blue', 
+                             'skin-green-light', 
+                             'skin-green', 
+                             'skin-purple-light', 
+                             'skin-purple', 
+                             'skin-red-light', 
+                             'skin-red', 
+                             'skin-yellow-light', 
+                             'skin-yellow');
+  
 
 //------------------------------------------------------------------------------
 ?>
@@ -77,12 +105,10 @@ $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
 if (submit && isset($_POST['skinselector_set'])) {
   $pia_skin_set_dir = '../db/';
   $pia_skin_selector = htmlspecialchars($_POST['skinselector']);
-  $pia_installed_skins = array('skin-black-light', 'skin-black', 'skin-blue-light', 'skin-blue', 'skin-green-light', 'skin-green', 'skin-purple-light', 'skin-purple', 'skin-red-light', 'skin-red', 'skin-yellow-light', 'skin-yellow',);
   if (in_array($pia_skin_selector, $pia_installed_skins)) {
     foreach ($pia_installed_skins as $file) {
       unlink ($pia_skin_set_dir.'/setting_'.$file);
     }
-
     foreach ($pia_installed_skins as $file) {
       if (file_exists($pia_skin_set_dir.'/setting_'.$file)) {
           $pia_skin_error = True;
@@ -91,7 +117,6 @@ if (submit && isset($_POST['skinselector_set'])) {
           $pia_skin_error = False;
       }
     }
-
     if ($pia_skin_error == False) {
       $testskin = fopen($pia_skin_set_dir.'setting_'.$pia_skin_selector, 'w');
       $pia_skin_test = '';
@@ -103,17 +128,15 @@ if (submit && isset($_POST['skinselector_set'])) {
   }
 }
 
-
+// Language selector -----------------------------------------------------------------
 
 if (submit && isset($_POST['langselector_set'])) {
   $pia_lang_set_dir = '../db/';
   $pia_lang_selector = htmlspecialchars($_POST['langselector']);
-  $pia_installed_langs = array('en_us', 'de_de');
   if (in_array($pia_lang_selector, $pia_installed_langs)) {
     foreach ($pia_installed_langs as $file) {
       unlink ($pia_lang_set_dir.'/setting_language_'.$file);
     }
-
     foreach ($pia_installed_langs as $file) {
       if (file_exists($pia_lang_set_dir.'/setting_language_'.$file)) {
           $pia_lang_error = True;
@@ -122,7 +145,6 @@ if (submit && isset($_POST['langselector_set'])) {
           $pia_lang_error = False;
       }
     }
-
     if ($pia_lang_error == False) {
       $testlang = fopen($pia_lang_set_dir.'setting_language_'.$pia_lang_selector, 'w');
       $pia_lang_test = '';
@@ -133,9 +155,7 @@ if (submit && isset($_POST['langselector_set'])) {
     }    
   }
 }
-
-
-  ?>
+?>
 
 <div class="db_info_table">
     <div class="db_info_table_row">

@@ -121,18 +121,18 @@
               <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                 <thead>
                 <tr>
-                  <th>Order</th>
-                  <th>Device</th>
-                  <th>Owner</th>
-                  <th>Date</th>
-                  <th>Event Type</th>
-                  <th>Connection</th>
-                  <th>Disconnection</th>
-                  <th>Duration</th>
-                  <th>Duration Order</th>
-                  <th>IP</th>
-                  <th>IP Order</th>
-                  <th>Additional Info</th>
+                  <th><?php echo $pia_lang['Events_TableHead_Order'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Device'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Owner'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Date'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_EventType'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Connection'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Disconnection'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_Duration'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_DurationOrder'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_IP'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_IPOrder'];?></th>
+                  <th><?php echo $pia_lang['Events_TableHead_AdditionalInfo'];?></th>
                 </tr>
                 </thead>
               </table>
