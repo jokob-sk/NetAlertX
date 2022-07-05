@@ -17,6 +17,9 @@
 //
 $pia_installed_langs = array('en_us', 
                              'de_de');
+//
+// In addition to this, the language must also be added to the select tag in 
+// line 235. Later, the whole thing may become dynamic.
 
 // Skin selector config ----------------------------------------------------
 //
