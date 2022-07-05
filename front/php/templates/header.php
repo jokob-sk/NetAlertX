@@ -20,9 +20,7 @@ if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
 foreach (glob("../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));
 }
-
 if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
-
 require 'php/templates/language/'.$pia_lang_selected.'.php';
 
 ?>
@@ -75,7 +73,6 @@ require 'php/templates/language/'.$pia_lang_selected.'.php';
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
-
   <!-- Dark-Mode Patch -->
 <?php
 if ($ENABLED_DARKMODE === True) {

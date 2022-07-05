@@ -69,13 +69,13 @@ A web frontal that allows:
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
 
 With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, the new maintenance page was added with various possibilities for maintenance and settings:
-  - DB Backup and Restore
-  - Pause arp-scan
+  - Status Infos (active scans, database size, backup counter)
   - Theme Selection (blue, red, green, yellow, black, purple)
+  - Language Selection (english, german)
   - Light/Dark-Mode Switch
+  - Pause arp-scan
   - DB maintenance tools
-
-In addition, some information is available (active scans, database size, backup counter).
+  - DB Backup and Restore
 
 ![Maintain screen dark][maintain_dark]
 

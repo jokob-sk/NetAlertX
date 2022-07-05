@@ -48,6 +48,7 @@ $pia_lang['Presence_Shortcut_Archived'] = 'Archived';
 $pia_lang['Presence_Shortcut_Devices'] = 'Devices';
 
 // Localizationfiles under pialert/front/lib/AdminLTE/bower_components/fullcalendar/dist/locale
+$pia_lang['Presence_CallHead_Devices'] = 'Devices';
 $pia_lang['Presence_CalHead_lang'] = 'en-us';
 $pia_lang['Presence_CalHead_year'] = 'year';
 $pia_lang['Presence_CalHead_quarter'] = 'quarter';
@@ -64,7 +65,6 @@ $pia_lang['Events_Periodselect_LastWeek'] = 'Last Week';
 $pia_lang['Events_Periodselect_LastMonth'] = 'Last Month';
 $pia_lang['Events_Periodselect_LastYear'] = 'Last Year';
 $pia_lang['Events_Periodselect_All'] = 'All Info';
-
 $pia_lang['Events_Shortcut_AllEvents'] = 'All Events';
 $pia_lang['Events_Shortcut_Sessions'] = 'Sessions';
 $pia_lang['Events_Shortcut_MissSessions'] = 'Missing Sessions';
@@ -72,26 +72,83 @@ $pia_lang['Events_Shortcut_VoidSessions'] = 'Voided Sessions';
 $pia_lang['Events_Shortcut_NewDevices'] = 'New Devices';
 $pia_lang['Events_Shortcut_DownAlerts'] = 'Down Alerts';
 $pia_lang['Events_Shortcut_Events'] = 'Events';
-
-$pia_lang['Events_TableHead_Name'] = 'Name';
-$pia_lang['Events_TableHead_Owner'] = 'Eigentümer';
-$pia_lang['Events_TableHead_Type'] = 'Type';
-$pia_lang['Events_TableHead_Favorite'] = 'Favorit';
-$pia_lang['Events_TableHead_Group'] = 'Gruppe';
-$pia_lang['Events_TableHead_FirstSession'] = 'Erste Sitzg.';
-$pia_lang['Events_TableHead_LastSession'] = 'Letzte Sitzg.';
-$pia_lang['Events_TableHead_LastIP'] = 'Letzte IP';
-$pia_lang['Events_TableHead_MAC'] = 'MAC';
-$pia_lang['Events_TableHead_LastIPOrder'] = 'Last IP Order';
-$pia_lang['Events_TableHead_Rowid'] = 'Zeilennummer';
-$pia_lang['Events_TableHead_Status'] = 'Status';
-
+$pia_lang['Events_TableHead_Order'] = 'Order';
+$pia_lang['Events_TableHead_Device'] = 'Device';
+$pia_lang['Events_TableHead_Owner'] = 'Owner';
+$pia_lang['Events_TableHead_Date'] = 'Date';
+$pia_lang['Events_TableHead_EventType'] = 'Event Type';
+$pia_lang['Events_TableHead_Connection'] = 'Connection';
+$pia_lang['Events_TableHead_Disconnection'] = 'Disconnection';
+$pia_lang['Events_TableHead_Duration'] = 'Duration';
+$pia_lang['Events_TableHead_DurationOrder'] = 'Duration Order';
+$pia_lang['Events_TableHead_IP'] = 'IP';
+$pia_lang['Events_TableHead_IPOrder'] = 'IP Order';
+$pia_lang['Events_TableHead_AdditionalInfo'] = 'Additional Info';
 $pia_lang['Events_Searchbox'] = 'Search';
 $pia_lang['Events_Tablelenght'] = 'Show _MENU_ entries';
 $pia_lang['Events_Tablelenght_all'] = 'All';
 $pia_lang['Events_Table_info'] = 'Showing _START_ to _END_ of _TOTAL_ entries';
 $pia_lang['Events_Table_nav_next'] = 'Next';
 $pia_lang['Events_Table_nav_prev'] = 'Previous';
+
+//////////////////////////////////////////////////////////////////
+// Device Details Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['DevDetail_Periodselect_today'] = 'Today';
+$pia_lang['DevDetail_Periodselect_LastWeek'] = 'Last Week';
+$pia_lang['DevDetail_Periodselect_LastMonth'] = 'Last Month';
+$pia_lang['DevDetail_Periodselect_LastYear'] = 'Last Year';
+$pia_lang['DevDetail_Periodselect_All'] = 'All Info';
+$pia_lang['DevDetail_Shortcut_CurrentStatus'] = 'Current Status';
+$pia_lang['DevDetail_Shortcut_Sessions'] = 'Sessions';
+$pia_lang['DevDetail_Shortcut_Presence'] = 'Presence';
+$pia_lang['DevDetail_Shortcut_DownAlerts'] = 'Down Alerts';
+$pia_lang['DevDetail_Tab_Details'] = 'Details';
+$pia_lang['DevDetail_Tab_Nmap'] = 'Nmap';
+$pia_lang['DevDetail_Tab_Sessions'] = 'Sessions';
+$pia_lang['DevDetail_Tab_Presence'] = 'Presence';
+$pia_lang['DevDetail_Tab_Events'] = 'Events';
+$pia_lang['DevDetail_MainInfo_Title'] = 'Main Info';
+$pia_lang['DevDetail_MainInfo_mac'] = 'MAC';
+$pia_lang['DevDetail_MainInfo_Name'] = 'Name';
+$pia_lang['DevDetail_MainInfo_Owner'] = 'Owner';
+$pia_lang['DevDetail_MainInfo_Type'] = 'Type';
+$pia_lang['DevDetail_MainInfo_Vendor'] = 'Vendor';
+$pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorite';
+$pia_lang['DevDetail_MainInfo_Group'] = 'Group';
+$pia_lang['DevDetail_MainInfo_Location'] = 'Location';
+$pia_lang['DevDetail_MainInfo_Comments'] = 'Comments';
+$pia_lang['DevDetail_SessionInfo_Title'] = 'Session Info';
+$pia_lang['DevDetail_SessionInfo_Status'] = 'Status';
+$pia_lang['DevDetail_SessionInfo_FirstSession'] = 'First Session';
+$pia_lang['DevDetail_SessionInfo_LastSession'] = 'Last Session';
+$pia_lang['DevDetail_SessionInfo_LastIP'] = 'Last IP';
+$pia_lang['DevDetail_SessionInfo_StaticIP'] = 'Static IP';
+$pia_lang['DevDetail_EveandAl_Title'] = 'Events & Alerts config';
+$pia_lang['DevDetail_EveandAl_ScanCycle'] = 'Scan Cycle';
+$pia_lang['DevDetail_EveandAl_AlertAllEvents'] = 'Alert All Events';
+$pia_lang['DevDetail_EveandAl_AlertDown'] = 'Alert Down';
+$pia_lang['DevDetail_EveandAl_Skip'] = 'Skip repeated notifications during';
+$pia_lang['DevDetail_EveandAl_NewDevice'] = 'New Device';
+$pia_lang['DevDetail_EveandAl_Archived'] = 'Archived';
+$pia_lang['DevDetail_EveandAl_RandomMAC'] = 'Random MAC';
+$pia_lang['DevDetail_button_Delete'] = 'Delete Device';
+$pia_lang['DevDetail_button_Reset'] = 'Reset Changes';
+$pia_lang['DevDetail_button_Save'] = 'Save';
+$pia_lang['DevDetail_SessionTable_Order'] = 'Order';
+$pia_lang['DevDetail_SessionTable_Connection'] = 'Connection';
+$pia_lang['DevDetail_SessionTable_Disconnection'] = 'Disconnection';
+$pia_lang['DevDetail_SessionTable_Duration'] = 'Duration';
+$pia_lang['DevDetail_SessionTable_IP'] = 'IP';
+$pia_lang['DevDetail_SessionTable_Additionalinfo'] = 'Additional info';
+$pia_lang['DevDetail_Events_CheckBox'] = 'Hide Connection Events';
+$pia_lang['DevDetail_Nmap_buttonFast'] = 'Fast Scan';
+$pia_lang['DevDetail_Nmap_buttonDefault'] = 'Default Scan';
+$pia_lang['DevDetail_Nmap_buttonDetail'] = 'Detailed Scan';
+$pia_lang['DevDetail_Nmap_buttonFast_text'] = 'Fast Scan: Scan fewer ports (100) than the default scan (a few seconds)';
+$pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Default Scan: Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 seconds)';
+$pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds or more)';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page

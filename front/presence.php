@@ -206,7 +206,7 @@ function initializeCalendar () {
     allDaySlot        : false,
     timeFormat        : 'H:mm', 
 
-    resourceLabelText : 'Devices',
+    resourceLabelText : '<?php echo $pia_lang['Presence_CallHead_Devices'];?>',
     resourceAreaWidth : '160px',
     slotWidth         : '1px',
 
