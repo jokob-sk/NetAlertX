@@ -205,5 +205,27 @@ $pia_lang['Maintenance_Tool_restore_text'] = 'Das neuste Backup kann über diese
 $pia_lang['Maintenance_Tool_restore_noti'] = 'DB Wiederherstellung';
 $pia_lang['Maintenance_Tool_restore_noti_text'] = 'Sind Sie sicher, dass Sie die Datenbank aus der neusten Sicherung wiederherstellen möchten? Prüfen Sie, dass gerade keine Scans stattfinden.';
 
+//////////////////////////////////////////////////////////////////
+// Maintenance Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['BackDevices_Arpscan_disabled'] = 'Automatischer Arp-Scan deaktiviert';
+$pia_lang['BackDevices_Arpscan_enabled'] = 'Automatischer Arp-Scan aktiviert';
+$pia_lang['BackDevices_darkmode_disabled'] = 'Heller Modus aktiviert';
+$pia_lang['BackDevices_darkmode_enabled'] = 'Dunkler Modus aktiviert';
+$pia_lang['BackDevices_Restore_CopError'] = 'Die originale Datenbank konnte nicht kopiert werden.';
+$pia_lang['BackDevices_Restore_okay'] = 'Die Wiederherstellung wurde erfolgreich ausgeführt';
+$pia_lang['BackDevices_Restore_Failed'] = 'Die Wiederherstellung ist fehlgeschlagen. Stellen Sie das Backup manuell her.';
+$pia_lang['BackDevices_Backup_CopError'] = 'Die originale Datenbank konnte nicht gesichert werden.';
+$pia_lang['BackDevices_Backup_okay'] = 'Das Backup wurde erfolgreich beendet';
+$pia_lang['BackDevices_Backup_Failed'] = 'Das Backup wurde teilweise ausgeführt. Das Archiv ist entweder leer oder nicht vorhanden.';
+$pia_lang['BackDevices_DBTools_DelDev_a'] = 'Gerät erfolgreich gelöscht';
+$pia_lang['BackDevices_DBTools_DelDev_b'] = 'Geräte erfolgreich gelöscht';
+$pia_lang['BackDevices_DBTools_DelEvents'] = 'Events deleted successfully';
+$pia_lang['BackDevices_DBTools_DelEventsError'] = 'Fehler beim Löschen der Ereignisse';
+$pia_lang['BackDevices_DBTools_DelDevError_a'] = 'Fehler beim Löschen des Gerätes';
+$pia_lang['BackDevices_DBTools_DelDevError_b'] = 'Fehler beim Löschen der Geräte';
+$pia_lang['BackDevices_DBTools_UpdDev'] = 'Gerät erfolgreich aktualisiert';
+$pia_lang['BackDevices_DBTools_UpdDevError'] = 'EFehler beim Aktualisieren des Gerätes';
 ?>
 

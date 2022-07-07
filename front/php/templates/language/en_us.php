@@ -204,5 +204,28 @@ $pia_lang['Maintenance_Tool_restore'] = 'DB Restore';
 $pia_lang['Maintenance_Tool_restore_text'] = 'The latest backup can be restored via the button, but older backups can only be restored manually. After the restore, make an integrity check on the database for safety, in case the db was currently in write access when the backup was created.';
 $pia_lang['Maintenance_Tool_restore_noti'] = 'DB Restore';
 $pia_lang['Maintenance_Tool_restore_noti_text'] = 'Are you sure you want to exectute the the DB Restore? Be sure that no scan is currently running.';
+
+//////////////////////////////////////////////////////////////////
+// Maintenance Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['BackDevices_Arpscan_disabled'] = 'Arp-Scan Disabled';
+$pia_lang['BackDevices_Arpscan_enabled'] = 'Arp-Scan Enabled';
+$pia_lang['BackDevices_darkmode_disabled'] = 'Darkmode Disabled';
+$pia_lang['BackDevices_darkmode_enabled'] = 'Darkmode Enabled';
+$pia_lang['BackDevices_Restore_CopError'] = 'The original database could not be saved.';
+$pia_lang['BackDevices_Restore_okay'] = 'Restore executed successfully.';
+$pia_lang['BackDevices_Restore_Failed'] = 'Restore Failed. Please restore the backup manually.';
+$pia_lang['BackDevices_Backup_CopError'] = 'The original database could not be saved.';
+$pia_lang['BackDevices_Backup_okay'] = 'The backup executed successfully with the new archive';
+$pia_lang['BackDevices_Backup_Failed'] = 'The backup executed partially successfully. The archive could not be created or is empty.';
+$pia_lang['BackDevices_DBTools_DelDev_a'] = 'Device deleted successfully';
+$pia_lang['BackDevices_DBTools_DelDev_b'] = 'Devices deleted successfully';
+$pia_lang['BackDevices_DBTools_DelEvents'] = 'Events deleted successfully';
+$pia_lang['BackDevices_DBTools_DelEventsError'] = 'Error deleting Events';
+$pia_lang['BackDevices_DBTools_DelDevError_a'] = 'Error deleting Device';
+$pia_lang['BackDevices_DBTools_DelDevError_b'] = 'Error deleting Devices';
+$pia_lang['BackDevices_DBTools_UpdDev'] = 'Device updated successfully';
+$pia_lang['BackDevices_DBTools_UpdDevError'] = 'Error updating device';
 ?>
 

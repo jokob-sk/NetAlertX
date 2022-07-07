@@ -432,6 +432,32 @@
 
 
               <div class="tab-pane fade" id="panNmap">
+
+<?php
+if ($_REQUEST['mac'] == 'Internet') {
+?>
+                <h4 class="">Online Speedtest</h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="speedtestcli" class="btn btn-default pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
+                </div>
+                   
+                  <script>
+                  function speedtestcli() {
+                    $( "#scanoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/speedtestcli.php",
+                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#scanoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+<?php  
+}
+?>
                 <h4 class="">Nmap Scans</h4>
                 <div style="width:100%; text-align: center;">
                   <script>
@@ -455,20 +481,21 @@
                   </div>
                 </div>
 
-
                 <div id="scanoutput" style="margin-top: 30px;"></div>
                    
                   <script>
                   function manualnmapscan(targetip, mode) {
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function() {
-                      if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("scanoutput").innerHTML = this.responseText;
+                    $( "#scanoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/nmap_scan.php",
+                      data: { scan: targetip, mode: mode },
+                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#scanoutput").html(data);    
                       }
-                    };
-                    xhttp.open("POST", "./php/server/nmap_scan.php", true);
-                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    xhttp.send("scan=" + targetip + '&mode=' + mode);
+                    })
                   }
                   </script>
               
