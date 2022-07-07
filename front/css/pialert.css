@@ -524,3 +524,10 @@
     padding: 10px;
     padding-right: 15px;
 }
+
+.ajax_scripts_loading {
+background-image: url('../img/Loading_Animation.gif');
+background-repeat: no-repeat;
+background-position: center;
+height: 50px;
+}

@@ -44,6 +44,7 @@ In charge of:
     described
   - Store the information in the DB
   - Report the changes detected by e-mail
+  - Optional speedtest for Device "Internet"
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
@@ -61,6 +62,7 @@ A web frontal that allows:
     - Down alerts
     - IP's
     - manuel nmap scans
+    - Optional speedtest for Device "Internet"
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -114,25 +116,32 @@ Linux distributions.
 ### [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### Powered by:
-  | Product      | Objetive                               |
-  | ------------ | -------------------------------------- |
-  | Python       | Programming language for the Back      |
-  | PHP          | Programming language for the Front-end |
-  | JavaScript   | Programming language for the Front-end |
-  | Bootstrap    | Front-end framework                    |
-  | Admin.LTE    | Bootstrap template                     |
-  | FullCalendar | Calendar component                     |
-  | Sqlite       | DB engine                              |
-  | Lighttpd     | Webserver                              |
-  | arp-scan     | Scan network using arp commands        |
-  | Pi.hole      | DNS Server with Ad-block               |
-  | dnsmasq      | DHCP Server                            |
-  | nmap         | Network Scanner                        |
-  | zip          | Filecompression Tool                   |
+  | Product       | Objetive                                                |
+  | ------------- | ------------------------------------------------------- |
+  | Python        | Programming language for the Back                       |
+  | PHP           | Programming language for the Front-end                  |
+  | JavaScript    | Programming language for the Front-end                  |
+  | Bootstrap     | Front-end framework                                     |
+  | Admin.LTE     | Bootstrap template                                      |
+  | FullCalendar  | Calendar component                                      |
+  | Sqlite        | DB engine                                               |
+  | Lighttpd      | Webserver                                               |
+  | arp-scan      | Scan network using arp commands                         |
+  | Pi.hole       | DNS Server with Ad-block                                |
+  | dnsmasq       | DHCP Server                                             |
+  | nmap          | Network Scanner                                         |
+  | zip           | Filecompression Tool                                    |
+  | speedtest-cli | Python SpeedTest https://github.com/sivel/speedtest-cli |
 
 ### License
   GPL 3.0
   [Read more here](LICENSE.txt)
+
+  Source of the animated GIF (Loading Animation)
+  https://commons.wikimedia.org/wiki/File:Loading_Animation.gif
+  
+  Source of the selfhosted Fonts
+  https://github.com/adobe-fonts/source-sans
 
 ### Contact
   pi.alert.application@gmail.com
