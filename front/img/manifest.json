@@ -4,7 +4,7 @@
     "display": "standalone",
     "icons": [
     {
-      "src": "",
+      "src": "https://net-dev.de/pialert_homescreen.png",
       "sizes": "180x180",
       "type": "image/png"
     }

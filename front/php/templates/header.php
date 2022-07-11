@@ -41,6 +41,7 @@ require 'php/templates/language/'.$pia_lang_selected.'.php';
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/font-awesome.min.css">
