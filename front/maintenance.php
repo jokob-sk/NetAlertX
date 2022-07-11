@@ -86,7 +86,7 @@ if (!file_exists('../db/setting_stoparpscan')) {
 $Pia_Archive_Path = str_replace('front', 'db', getcwd()).'/';
 $Pia_Archive_count = 0;
 $Pia_Archive_diskusage = 0;
-$files = glob($Pia_Archive_Path."*.zip");
+$files = glob($Pia_Archive_Path."pialertdb_*.zip");
 if ($files){
  $Pia_Archive_count = count($files);
 }
@@ -97,7 +97,7 @@ $Pia_Archive_diskusage = number_format(($Pia_Archive_diskusage / 1000000),2,",",
 
 // Find latest Backup for restore -----------------------------------------------
 
-$latestfiles = glob($Pia_Archive_Path."*.zip");
+$latestfiles = glob($Pia_Archive_Path."pialertdb_*.zip");
 natsort($latestfiles);
 $latestfiles = array_reverse($latestfiles,False);
 $latestbackup = $latestfiles[0];

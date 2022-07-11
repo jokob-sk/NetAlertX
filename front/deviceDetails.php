@@ -474,10 +474,10 @@ if ($_REQUEST['mac'] == 'Internet') {
                 
                   <div style="margin-top: 20px; text-align: left;">
                     <ul style="padding:20px;">
-                    <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
-                    <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
-                    <li><?php echo $pia_lang['DevDetail_Nmap_buttonDetail_text'];?></li>
-                  </ul>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonDetail_text'];?></li>
+                    </ul>
                   </div>
                 </div>
 
