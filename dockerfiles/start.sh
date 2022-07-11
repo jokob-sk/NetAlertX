@@ -2,5 +2,4 @@
 
 chmod -R o+w /home/pi/pialert/db
 /etc/init.d/lighttpd start
-service cron start
-exec "$@"
+cron -f
