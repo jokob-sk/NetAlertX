@@ -9,6 +9,7 @@
 
 <?php
   require 'php/templates/header.php';
+  require 'php/templates/graph.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -23,6 +24,60 @@
 
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
+
+    <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
+    <canvas id="myChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
+
+    <script>
+    var xValues = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          label: 'All Devices',
+          data: [<?php pia_graph_devices_data($Pia_Graph_Device_All); ?>],
+          borderColor: "#00c0ef",
+          fill: false,
+          pointStyle: 'circle',
+          pointRadius: 2,
+          pointHoverRadius: 2
+        },{
+          label: 'Online Devices',
+          data: [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>],
+          borderColor: "#00a65a",
+          fill: false,
+          pointStyle: 'circle',
+          pointRadius: 2,
+          pointHoverRadius: 2
+        }, {
+          label: 'Offline/Down Devices',
+          data: [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>],
+          borderColor: "#dd4b39",
+          fill: false,
+          pointStyle: 'circle',
+          pointRadius: 2,
+          pointHoverRadius: 2
+        }]
+      },
+      options: {
+        legend: {display: false},
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false,
+                    fontColor: '#B0B0B0'
+                },
+            }],
+          xAxes: [{
+                ticks: {
+                    fontColor: '#B0B0B0'
+                },
+            }]
+        }
+      }
+    });
+    </script>
 
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
