@@ -25,60 +25,6 @@
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 
-    <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
-    <canvas id="myChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
-
-    <script>
-    var xValues = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
-    new Chart("myChart", {
-      type: "line",
-      data: {
-        labels: xValues,
-        datasets: [{
-          label: 'All Devices',
-          data: [<?php pia_graph_devices_data($Pia_Graph_Device_All); ?>],
-          borderColor: "#00c0ef",
-          fill: false,
-          pointStyle: 'circle',
-          pointRadius: 2,
-          pointHoverRadius: 2
-        },{
-          label: 'Online Devices',
-          data: [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>],
-          borderColor: "#00a65a",
-          fill: false,
-          pointStyle: 'circle',
-          pointRadius: 2,
-          pointHoverRadius: 2
-        }, {
-          label: 'Offline/Down Devices',
-          data: [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>],
-          borderColor: "#dd4b39",
-          fill: false,
-          pointStyle: 'circle',
-          pointRadius: 2,
-          pointHoverRadius: 2
-        }]
-      },
-      options: {
-        legend: {display: false},
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:false,
-                    fontColor: '#B0B0B0'
-                },
-            }],
-          xAxes: [{
-                ticks: {
-                    fontColor: '#B0B0B0'
-                },
-            }]
-        }
-      }
-    });
-    </script>
-
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
 
@@ -148,6 +94,82 @@
         </div>
 
       </div>
+
+<!-- Activity Chart ------------------------------------------------------- -->
+      <div class="row">
+          <div class="col-md-12">
+          <div class="box" id="clients">
+              <div class="box-header with-border">
+                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart_a'];?>  <span class="maxlogage-interval">40</span> <?php echo $pia_lang['Device_Shortcut_OnlineChart_b'];?></h3>
+              </div>
+              <div class="box-body">
+                <div class="chart">
+                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
+                  <!-- <canvas id="clientsChart" width="800" height="140" class="extratooltipcanvas no-user-select"></canvas> -->
+                  <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
+                </div>
+              </div>
+              <!-- /.box-body -->
+            </div>
+          </div>
+      </div>
+
+        <script>
+        var xValues = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
+        new Chart("OnlineChart", {
+          type: "line",
+          data: {
+            labels: xValues,
+            datasets: [{
+              label: 'Online Devices',
+              data: [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>],
+              borderColor: "#00a65a",
+              fill: true,
+              backgroundColor: "rgba(0, 166, 89, .3)",
+              pointStyle: 'circle',
+              pointRadius: 3,
+              pointHoverRadius: 3
+            }, {
+              label: 'Offline/Down Devices',
+              data: [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>],
+              borderColor: "#dd4b39",
+              fill: true,
+              backgroundColor: "rgba(222, 74, 56, .3)",
+              pointStyle: 'circle',
+              pointRadius: 3,
+              pointHoverRadius: 3
+            }]
+          },
+          options: {
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: "#A0A0A0",
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        fontColor: '#A0A0A0'
+                    },
+                    gridLines: {
+                        color: "#999999"
+                    },
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: '#A0A0A0',
+                    },
+                    gridLines: {
+                        color: "#999999"
+                    },
+                }],
+            }
+          }
+        });
+        </script>
+
       <!-- /.row -->
 
 <!-- datatable ------------------------------------------------------------- -->
