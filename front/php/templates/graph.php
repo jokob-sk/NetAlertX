@@ -1,11 +1,10 @@
 <?php
-
 $Pia_Graph_Device_Time = array();
 $Pia_Graph_Device_All = array();
 $Pia_Graph_Device_Online = array();
 $Pia_Graph_Device_Down = array();
 $db = new SQLite3('../db/pialert.db');
-$results = $db->query('SELECT * FROM Online_History ORDER BY Scan_Date DESC LIMIT 40');
+$results = $db->query('SELECT * FROM Online_History ORDER BY Scan_Date DESC LIMIT 144');
 while ($row = $results->fetchArray()) {
    $time_raw = explode(' ', $row['Scan_Date']);
    $time = explode(':', $time_raw[1]);
@@ -21,5 +20,5 @@ function pia_graph_devices_data($Pia_Graph_Array) {
       echo ",";
   }
 }
-
+$db->close();
 ?>

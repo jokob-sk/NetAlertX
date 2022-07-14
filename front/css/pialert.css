@@ -490,11 +490,8 @@
     border-spacing: 0em;
     font-weight: 400;
     font-size: 15px;
-    width: 95%;
+    width: 100%;
     margin: auto;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    border: solid 1px #ddd;
 }
 
 .db_info_table_row {
@@ -522,7 +519,6 @@
     font-size: 16px; 
     vertical-align: middle;
     padding: 10px;
-    padding-right: 15px;
 }
 
 .ajax_scripts_loading {

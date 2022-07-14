@@ -96,16 +96,16 @@
       </div>
 
 <!-- Activity Chart ------------------------------------------------------- -->
+
       <div class="row">
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart_a'];?>  <span class="maxlogage-interval">40</span> <?php echo $pia_lang['Device_Shortcut_OnlineChart_b'];?></h3>
+                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart_a'];?>  <span class="maxlogage-interval">12</span> <?php echo $pia_lang['Device_Shortcut_OnlineChart_b'];?></h3>
               </div>
               <div class="box-body">
                 <div class="chart">
                   <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
-                  <!-- <canvas id="clientsChart" width="800" height="140" class="extratooltipcanvas no-user-select"></canvas> -->
                   <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
                 </div>
               </div>
@@ -113,64 +113,13 @@
             </div>
           </div>
       </div>
-
-        <script>
-        var xValues = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
-        new Chart("OnlineChart", {
-          type: "line",
-          data: {
-            labels: xValues,
-            datasets: [{
-              label: 'Online Devices',
-              data: [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>],
-              borderColor: "#00a65a",
-              fill: true,
-              backgroundColor: "rgba(0, 166, 89, .3)",
-              pointStyle: 'circle',
-              pointRadius: 3,
-              pointHoverRadius: 3
-            }, {
-              label: 'Offline/Down Devices',
-              data: [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>],
-              borderColor: "#dd4b39",
-              fill: true,
-              backgroundColor: "rgba(222, 74, 56, .3)",
-              pointStyle: 'circle',
-              pointRadius: 3,
-              pointHoverRadius: 3
-            }]
-          },
-          options: {
-            legend: {
-                display: true,
-                labels: {
-                    fontColor: "#A0A0A0",
-                }
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true,
-                        fontColor: '#A0A0A0'
-                    },
-                    gridLines: {
-                        color: "#999999"
-                    },
-                }],
-                xAxes: [{
-                    ticks: {
-                        fontColor: '#A0A0A0',
-                    },
-                    gridLines: {
-                        color: "#999999"
-                    },
-                }],
-            }
-          }
-        });
-        </script>
-
-      <!-- /.row -->
+      <script src="js/graph_online_history.js"></script>
+      <script>
+        var pia_js_online_history_time = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
+        var pia_js_online_history_ondev = [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>];
+        var pia_js_online_history_dodev = [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>];
+        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev);
+      </script>
 
 <!-- datatable ------------------------------------------------------------- -->
       <div class="row">
