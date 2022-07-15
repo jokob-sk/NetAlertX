@@ -34,9 +34,7 @@ RUN ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
 
 EXPOSE 20211
 
-# https://github.com/rtsp/docker-lighttpd/blob/main/Dockerfile
-# > this one maybe better? https://hub.docker.com/r/jitesoft/lighttpd
-# Todo, refacto CMD so that we can run lighttpd and make it respond instant
-# The above Dockerfile is doing this well, but i don't see why it isn't working for us
+# it's easy for permissions set in Git to be overridden, so doing it manually
+RUN chmod -R a+rxw /home/pi/pialert/
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
