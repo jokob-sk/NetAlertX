@@ -10,7 +10,11 @@ RUN apt-get update \
     && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 -y \
     && apt-get clean autoclean \
     && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
+    && ln -s /home/pi/pialert/front /var/www/html/pialert \
+    && lighttpd-enable-mod fastcgi-php 
+ 
    
 # now creating user
 RUN groupadd --gid "${USER_GID}" "${USER}" && \
@@ -24,11 +28,7 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY . /home/pi/pialert
 
 # Pi.Alert 
-RUN ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
-    && ln -s /home/pi/pialert/front /var/www/html/pialert \
-    && lighttpd-enable-mod fastcgi-php \
-    # Redirect for lighthttpd to work properly
-    && python /home/pi/pialert/back/pialert.py update_vendors \    
+RUN python /home/pi/pialert/back/pialert.py update_vendors \    
     && sed -ie 's/= 80/= 20211/g' /etc/lighttpd/lighttpd.conf \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 
