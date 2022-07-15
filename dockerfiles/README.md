@@ -10,7 +10,7 @@ All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot
 A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).
 The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
 
-## :white_check_mark: Usage
+## :information_source: Usage
 
 Network
    - You will have to probably run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
@@ -23,7 +23,7 @@ Port
 ## :floppy_disk: Setup and Backups
 
 1. (**required**) Download `pialert.conf` and `version.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
-2. (**required**) In `pialert.config` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which significantly speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range specify it the following way: 
+2. (**required**) In `pialert.config` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range specify it the following way: 
    * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
 3. (**required**) Use your configuration by: 
    * Mapping the container folder `/home/pi/pialert/config` to a persistent folder containing `pialert.conf` and `version.conf`,     
@@ -56,7 +56,7 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
       - ${LOGS_LOCATION}/:/home/pi/pialert/log
     environment:
-      - TZ=Australia/Sydney
+      - TZ=France/Paris
       - HOST_USER_ID=1036 
       - HOST_USER_GID=1000
 ```
