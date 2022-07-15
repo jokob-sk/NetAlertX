@@ -19,9 +19,6 @@ function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_
               borderColor: "#dd4b39",
               fill: true,
               backgroundColor: "rgba(222, 74, 56, .6)",
-              pointStyle: 'circle',
-              pointRadius: 3,
-              pointHoverRadius: 3
             }]
           },
           options: {
@@ -51,6 +48,9 @@ function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_
                     },
                     stacked: true,
                 }],
+            },
+            tooltips: {
+                mode: 'index'
             }
           }
         });
