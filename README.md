@@ -7,7 +7,6 @@ Scan the devices connected to your WIFI / LAN and alert you the connection of
 unknown devices. It also warns the disconnection of "always connected" devices.
 
 ![Main screen][main]
-
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
@@ -21,6 +20,9 @@ JavaScript)*
 All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
 A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).
 The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
+
+![Main screen dark][main_dark]
+optional Darkmode within this fork
 
 ## How it works
 The system continuously scans the network for:
@@ -53,6 +55,7 @@ In charge of:
     described
   - Store the information in the DB
   - Report the changes detected by e-mail
+  - Optional speedtest for Device "Internet"
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
@@ -69,12 +72,25 @@ A web frontal that allows:
     - Concurrent devices
     - Down alerts
     - IP's
+    - manuel nmap scans
+    - Optional speedtest for Device "Internet"
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
   | -------------------- | -------------------- |
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
+  | ![Screen 5][screen5] | ![Screen 6][screen6] |
 
+With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, the new maintenance page was added with various possibilities for maintenance and settings:
+  - Status Infos (active scans, database size, backup counter)
+  - Theme Selection (blue, red, green, yellow, black, purple)
+  - Language Selection (english, german)
+  - Light/Dark-Mode Switch
+  - Pause arp-scan
+  - DB maintenance tools
+  - DB Backup and Restore
+
+![Maintain screen dark][maintain_dark]
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
@@ -83,6 +99,9 @@ Linux distributions.
 
 - One-step Automated Install:
   #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+
+- One-step Automated Install (forked) without Webserver:
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
 
 - [Installation Guide (step by step)](docs/INSTALL.md)
 
@@ -108,23 +127,32 @@ Linux distributions.
 ### [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### Powered by:
-  | Product      | Objetive                               |
-  | ------------ | -------------------------------------- |
-  | Python       | Programming language for the Back      |
-  | PHP          | Programming language for the Front-end |
-  | JavaScript   | Programming language for the Front-end |
-  | Bootstrap    | Front-end framework                    |
-  | Admin.LTE    | Bootstrap template                     |
-  | FullCalendar | Calendar component                     |
-  | Sqlite       | DB engine                              |
-  | Lighttpd     | Webserver                              |
-  | arp-scan     | Scan network using arp commands        |
-  | Pi.hole      | DNS Server with Ad-block               |
-  | dnsmasq      | DHCP Server                            |
+  | Product       | Objetive                                                |
+  | ------------- | ------------------------------------------------------- |
+  | Python        | Programming language for the Back                       |
+  | PHP           | Programming language for the Front-end                  |
+  | JavaScript    | Programming language for the Front-end                  |
+  | Bootstrap     | Front-end framework                                     |
+  | Admin.LTE     | Bootstrap template                                      |
+  | FullCalendar  | Calendar component                                      |
+  | Sqlite        | DB engine                                               |
+  | Lighttpd      | Webserver                                               |
+  | arp-scan      | Scan network using arp commands                         |
+  | Pi.hole       | DNS Server with Ad-block                                |
+  | dnsmasq       | DHCP Server                                             |
+  | nmap          | Network Scanner                                         |
+  | zip           | Filecompression Tool                                    |
+  | speedtest-cli | Python SpeedTest https://github.com/sivel/speedtest-cli |
 
 ### License
   GPL 3.0
   [Read more here](LICENSE.txt)
+
+  Source of the animated GIF (Loading Animation)
+  https://commons.wikimedia.org/wiki/File:Loading_Animation.gif
+  
+  Source of the selfhosted Fonts
+  https://github.com/adobe-fonts/source-sans
 
 ### Contact
   pi.alert.application@gmail.com
@@ -138,6 +166,10 @@ Linux distributions.
 [screen2]: ./docs/img/2_2_device_sessions.jpg "Screen 2"
 [screen3]: ./docs/img/2_3_device_presence.jpg "Screen 3"
 [screen4]: ./docs/img/3_presence.jpg          "Screen 4"
+[screen5]: ./docs/img/2_4_device_nmap.jpg     "Screen 5"
+[screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
+[main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
+[maintain_dark]: /docs/img/5_maintain.jpg     "Maintain screen dark"
 

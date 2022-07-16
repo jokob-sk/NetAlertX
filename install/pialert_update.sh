@@ -112,7 +112,7 @@ download_pialert() {
   fi
   
   print_msg "- Downloading update file..."
-  curl -Lo "$INSTALL_DIR/pialert_latest.tar" https://github.com/pucherot/Pi.Alert/raw/main/tar/pialert_latest.tar
+  curl -Lo "$INSTALL_DIR/pialert_latest.tar" https://github.com/leiweibau/Pi.Alert/raw/main/tar/pialert_latest.tar
   echo ""
 
   print_msg "- Uncompressing tar file"

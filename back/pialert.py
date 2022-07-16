@@ -34,6 +34,7 @@ import csv
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 PIALERT_PATH = PIALERT_BACK_PATH + "/.."
+STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
 
 if (sys.version_info > (3,0)):
     exec(open(PIALERT_PATH + "/config/version.conf").read())
@@ -81,8 +82,10 @@ def main ():
         res = update_devices_MAC_vendors()
     elif cycle == 'update_vendors_silent':
         res = update_devices_MAC_vendors('-s')
-    else :
+    elif os.path.exists(STOPARPSCAN) == False :
         res = scan_network()
+    elif os.path.exists(STOPARPSCAN) == True :
+        res = 0
     
     # Check error
     if res != 0 :
@@ -449,7 +452,13 @@ def execute_arpscan (pRetries):
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=' + str(pRetries)] + subnets
+
+    # arp-scan for larger Networks like /16
+    # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
+    # the scan is about 4min on a /16 network
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+
+    # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
     # print (arpscan_args)
 
@@ -687,6 +696,17 @@ def print_scan_stats ():
                       AND dev_LastIP <> cur_IP """,
                     (cycle,))
     print ('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
+
+    # Add to History
+    sql.execute("SELECT * FROM Devices")
+    History_All = sql.fetchall()
+    History_All_Devices  = len(History_All)
+    sql.execute("SELECT * FROM CurrentScan")
+    History_Online = sql.fetchall()
+    History_Online_Devices  = len(History_Online)
+    History_Offline_Devices = History_All_Devices - History_Online_Devices
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices) "+
+                 "VALUES ( ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices ) )
 
 #-------------------------------------------------------------------------------
 def create_new_devices ():
@@ -931,7 +951,7 @@ def update_devices_data_from_scan ():
 
     # New Apple devices -> Cycle 15
     print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 15
+    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
                     WHERE dev_FirstConnection = ?
                       AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
                 (startTime,) )
@@ -1173,6 +1193,9 @@ def email_reporting ():
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
 						)""")
+
+    # Open text Template
+
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
