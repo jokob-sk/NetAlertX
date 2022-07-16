@@ -10,6 +10,12 @@ All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot
 A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).
 The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
 
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
+
+<a href="https://github.com/Macleykun">
+  <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
+</a>
+
 ## :information_source: Usage
 
 Network
