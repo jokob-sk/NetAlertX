@@ -209,7 +209,7 @@ if (submit && isset($_POST['langselector_set'])) {
           <div class="col-md-12">
           <div class="box" id="Maintain-Skin">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Maintenance_themeselector_lable'];?>:</h3>
+                <h3 class="box-title"><?php echo $pia_lang['Maintenance_themeselector_lable'];?></h3>
               </div>
               <div class="box-body">
                 <form method="post" action="maintenance.php">
@@ -255,7 +255,7 @@ if (submit && isset($_POST['langselector_set'])) {
           <div class="col-md-12">
           <div class="box" id="Maintain-Lang">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Maintenance_lang_selector_lable'];?>:</h3>
+                <h3 class="box-title"><?php echo $pia_lang['Maintenance_lang_selector_lable'];?></h3>
               </div>
               <div class="box-body">
                 <form method="post" action="maintenance.php">
@@ -290,7 +290,7 @@ if (submit && isset($_POST['langselector_set'])) {
           <div class="col-md-12">
           <div class="box" id="Maintain-Tools">
               <div class="box-header with-border">
-                <h3 class="box-title">Tools:</h3>
+                <h3 class="box-title">Tools</h3>
               </div>
               <div class="box-body">
                 <div class="db_info_table">
