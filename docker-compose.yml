@@ -2,7 +2,7 @@ version: "3"
 services:
   pialert:
     build: .
-    container_name: pialert_dev
+    container_name: pialert
     network_mode: "host"
     restart: always
     volumes:
@@ -10,6 +10,7 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
       - ${LOGS_LOCATION}/tmp:/home/pi/pialert/log
     environment:
-      - TZ=France/Paris
-      - HOST_USER_ID=1036
+      - TZ=Europe/London
+      - PORT=20211
+      - HOST_USER_ID=1000
       - HOST_USER_GID=1000

@@ -15,8 +15,8 @@ The source :page_facing_up: Dockerfile is available [here](https://github.com/jo
 Network
    - You will have to probably run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
 
-Port 
-   - The container runs on the port `:20211`.
+Default Port 
+   - The app is accessible on the port `:20211`.
 
 > Please note - the cronjob is executed every 1, 5 and 15 minutes so wait that long for all of the scans to run.
 
@@ -34,6 +34,7 @@ Port
    * Automated copy
      The docker image copies the DB once every 30 min to `/home/pi/pialert/config/pialert.db_bak`. If you have a backup already available, make sure you rename this file if you want to keep older backups before starting a new container. To restore the DB run: `cp /home/pi/pialert/config/pialert.db_bak /home/pi/pialert/db/pialert.db`   
 6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
+7. You can override the port by specifying the `PORT` env variable.
 
 Config examples can be found below.
 
@@ -56,8 +57,9 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
       - ${LOGS_LOCATION}/:/home/pi/pialert/log
     environment:
-      - TZ=France/Paris
-      - HOST_USER_ID=1036 
+      - TZ=Europe/London
+      - PORT=20211
+      - HOST_USER_ID=1000
       - HOST_USER_GID=1000
 ```
 

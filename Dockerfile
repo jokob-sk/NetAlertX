@@ -1,7 +1,7 @@
 FROM debian:buster-slim
 
 # default UID and GID
-ENV USER=pi USER_ID=1000 USER_GID=1000
+ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 
 # Todo, figure out why using a workdir instead of full paths don't work
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
@@ -28,11 +28,10 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY . /home/pi/pialert
 
 # Pi.Alert 
-RUN python /home/pi/pialert/back/pialert.py update_vendors \    
-    && sed -ie 's/= 80/= 20211/g' /etc/lighttpd/lighttpd.conf \
+RUN sed -ie "s|TIMEZONE|${TZ}|g" /home/pi/pialert/install/pialert.cron \
+    && python /home/pi/pialert/back/pialert.py update_vendors \    
+    && sed -ie 's/= 80/= '${PORT}'/g' /etc/lighttpd/lighttpd.conf \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
-
-EXPOSE 20211
 
 # it's easy for permissions set in Git to be overridden, so doing it manually
 RUN chmod -R a+rxw /home/pi/pialert/
