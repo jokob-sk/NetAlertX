@@ -342,6 +342,12 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_restore_text'];?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUpgadeDatabase" style="border-top: solid 3px #dd4b39;" onclick="askUpgradeDatabase()"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?><br><?php echo $latestbackup_date;?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?></div>
+                    </div>
                 </div>
              </div>
               <!-- /.box-body -->
@@ -365,6 +371,21 @@ if (submit && isset($_POST['langselector_set'])) {
 
 
 <script>
+
+// delete devices with emty macs
+function askUpgradeDatabase () {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?>',
+    'Cancel', 'Delete', 'upgradeDatabase');
+}
+function upgradeDatabase()
+{ 
+  // Delete device
+  $.get('php/server/devices.php?action=upgradeDatabase', function(msg) {
+    showMessage (msg);
+  });
+}
+
 
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {

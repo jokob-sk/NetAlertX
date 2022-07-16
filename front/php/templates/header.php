@@ -226,11 +226,6 @@ function show_pia_servertime() {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
         </li>
-
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <a href="maintenance.php"><i class="fa fa-cog"></i> <span>Maintenance</span></a>
-        </li>
-
 <!--
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Config</span>
