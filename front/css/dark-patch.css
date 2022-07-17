@@ -677,3 +677,15 @@ input[type="password"]::-webkit-caps-lock-indicator {
    width: 100%;
    margin: auto;
 }
+
+
+.box-body {
+    border: 0px;
+}
+.table-responsive {
+  border: 0px;
+}
+.pa-small-box-footer {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
