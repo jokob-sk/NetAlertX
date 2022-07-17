@@ -75,6 +75,9 @@ def main ():
         return
     cycle = str(sys.argv[1])
 
+    ## Upgrade DB if needed
+    upgradeDB()
+
     ## Main Commands
     if cycle == 'internet_IP':
         res = check_internet_IP()
@@ -452,11 +455,18 @@ def execute_arpscan (pRetries):
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-
+    
+    # ---------------START----------------Rollback-----------------START---------------
+    # rolled-back to previous code - arp-scan wouldn't discover all devices
     # arp-scan for larger Networks like /16
     # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
     # the scan is about 4min on a /16 network
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+
+    # Rolled back line(FROM) :
+    #arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+    # Rolled back line(TO) :
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=3'] + subnets
+    # ---------------END------------------Rollback-----------------END---------------
 
     # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
@@ -951,7 +961,7 @@ def update_devices_data_from_scan ():
 
     # New Apple devices -> Cycle 15
     print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
+    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 15
                     WHERE dev_FirstConnection = ?
                       AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
                 (startTime,) )
@@ -1193,9 +1203,6 @@ def email_reporting ():
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
 						)""")
-
-    # Open text Template
-
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
@@ -1453,6 +1460,30 @@ def send_email (pText, pHTML):
 #===============================================================================
 # DB
 #===============================================================================
+def upgradeDB ():
+
+    openDB()
+
+    # check if table exists    
+    listOfTables = sql.execute(
+      """SELECT name FROM sqlite_master WHERE type='table'
+      AND name='Online_History'; """).fetchall()
+    
+    if listOfTables == []:
+      print_log ('Upgrading DB (creating Online_History table)')
+      sql.execute("""      
+      CREATE TABLE "Online_History" (
+        "Index"	INTEGER,
+        "Scan_Date"	TEXT,
+        "Online_Devices"	INTEGER,
+        "Down_Devices"	INTEGER,
+        "All_Devices"	INTEGER,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+      );      
+      """)
+
+#-------------------------------------------------------------------------------
+
 def openDB ():
     global sql_connection
     global sql
