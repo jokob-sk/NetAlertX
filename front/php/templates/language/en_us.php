@@ -187,6 +187,7 @@ $pia_lang['Maintenance_Tool_del_empty_macs_text'] = 'Before using this function,
 $pia_lang['Maintenance_Tool_del_empty_macs_noti'] = 'Delete Devices';
 $pia_lang['Maintenance_Tool_del_empty_macs_noti_text'] = 'Are you sure you want to delete all devices with empty MAC addresses?<br>(maybe you prefer to archive it)';
 $pia_lang['Maintenance_Tool_upgrade_database_noti'] = 'Upgrade database';
+$pia_lang['Maintenance_Tool_upgrade_database_text'] = 'This button will upgrade the database to enable the Network activity over last 12 hours chart. Please backup your database in case of issues.';
 $pia_lang['Maintenance_Tool_upgrade_database_noti_text'] = 'Are you sure you want to upgrade the database?<br>(maybe you prefer to archive it)';
 $pia_lang['Maintenance_Tool_del_alldev'] = 'Delete all Devices';
 $pia_lang['Maintenance_Tool_del_alldev_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All devices will be deleted from the database.';
