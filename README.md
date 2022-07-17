@@ -22,7 +22,7 @@ A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https:/
 The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
 
 ![Main screen dark][main_dark]
-optional Darkmode within this fork
+Optional Darkmode (and 12H activity chart) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
 The system continuously scans the network for:
