@@ -5,8 +5,9 @@
 //
 //  devices.php - Front module. Server side. Manage Devices
 //------------------------------------------------------------------------------
-//  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
-//  jokob-sk 2022        jokob.sk@gmail.com        GNU GPLv3
+//  Puche      2021        pi.alert.application@gmail.com   GNU GPLv3
+//  jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3
+//  leiweibau  2022        https://github.com/leiweibau     GNU GPLv3
 //------------------------------------------------------------------------------
 
 // Language selector config ----------------------------------------------------
@@ -344,9 +345,9 @@ if (submit && isset($_POST['langselector_set'])) {
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUpgadeDatabase" style="border-top: solid 3px #dd4b39;" onclick="askUpgradeDatabase()"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?><br><?php echo $latestbackup_date;?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUpgadeDatabase" style="border-top: solid 3px #dd4b39;" onclick="askUpgradeDatabase()"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_text'];?></div>
                     </div>
                 </div>
              </div>
@@ -371,20 +372,6 @@ if (submit && isset($_POST['langselector_set'])) {
 
 
 <script>
-
-// delete devices with emty macs
-function askUpgradeDatabase () {
-  // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?>',
-    'Cancel', 'Delete', 'upgradeDatabase');
-}
-function upgradeDatabase()
-{ 
-  // Delete device
-  $.get('php/server/devices.php?action=upgradeDatabase', function(msg) {
-    showMessage (msg);
-  });
-}
 
 
 // delete devices with emty macs
@@ -497,6 +484,20 @@ function PiaToggleArpScan()
 { 
   // Execute
   $.get('php/server/devices.php?action=PiaToggleArpScan', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// upgrade DB
+function askUpgradeDatabase () {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?>',
+    'Cancel', 'Upgrade', 'upgradeDatabase');
+}
+function upgradeDatabase()
+{ 
+  // Upgrade DB
+  $.get('php/server/devices.php?action=upgradeDatabase', function(msg) {
     showMessage (msg);
   });
 }
