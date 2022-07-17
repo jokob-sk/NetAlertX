@@ -711,7 +711,7 @@ def print_scan_stats ():
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
     History_All_Devices  = len(History_All)
-    sql.execute("SELECT * FROM CurrentScan")
+    sql.execute("SELECT * FROM Devices WHERE dev_PresentLastScan is True")
     History_Online = sql.fetchall()
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Online_Devices
