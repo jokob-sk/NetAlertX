@@ -611,6 +611,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
 /*** Additional fixes For Pi.Alert UI ***/
 .small-box {
     border-radius: 10px;
+    border-top: 0px;
 }
 .pa-small-box-aqua .inner {
   background-color: rgb(45,108,133);
@@ -676,4 +677,30 @@ input[type="password"]::-webkit-caps-lock-indicator {
    font-size: 15px;
    width: 100%;
    margin: auto;
+}
+
+/* remove white border that appears on mobile screen sizes */
+.box-body {
+    border: 0px;
+}
+/* remove white border that appears on mobile screen sizes */
+.table-responsive {
+  border: 0px;
+}
+/* Add border radius to bottom of the status boxes*/
+.pa-small-box-footer {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.small-box > .inner h3 {
+  margin-bottom: 0px;
+  margin-left: 0px;
+}
+.small-box:hover .icon {
+  font-size: 3.74em;
+}
+.small-box .icon { 
+  top: 0.01em;
+  font-size: 3.25em;
 }
