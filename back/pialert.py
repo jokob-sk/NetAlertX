@@ -963,11 +963,11 @@ def update_devices_data_from_scan ():
         recordsToUpdate )
 
     # New Apple devices -> Cycle 15
-    print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
-                    WHERE dev_FirstConnection = ?
-                      AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
-                (startTime,) )
+    # print_log ('Update devices - 6 Cycle for Apple devices')
+    # sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
+    #                 WHERE dev_FirstConnection = ?
+    #                   AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
+    #             (startTime,) )
 
     print_log ('Update devices end')
 

@@ -314,9 +314,9 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')">   Scan 1 min every 5 min</a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','Enabled')">   Scan Device</a></li>
                                 <!-- <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','15 min');"> Scan 12 min every 15 min</a></li> -->
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');">  Don't Scan</a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','Disabled');">  Don't Scan</a></li>
                               </ul>
                             </div>
                           </div>
