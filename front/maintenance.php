@@ -160,14 +160,13 @@ if (submit && isset($_POST['langselector_set'])) {
 }
 ?>
 
-
       <div class="row">
           <div class="col-md-12">
           <div class="box" id="Maintain-Status">
               <div class="box-header with-border">
                 <h3 class="box-title">Status</h3>
               </div>
-              <div class="box-body">
+              <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?php echo $pia_lang['Maintenance_database_path'];?></div>
@@ -205,19 +204,39 @@ if (submit && isset($_POST['langselector_set'])) {
           </div>
       </div>
 
-      <div class="row">
-          <div class="col-md-12">
-          <div class="box" id="Maintain-Skin">
-              <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Maintenance_themeselector_lable'];?></h3>
-              </div>
-              <div class="box-body">
-                <form method="post" action="maintenance.php">
+
+    <div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab_Settings" data-toggle="tab">Settings</a></li>
+        <li><a href="#tab_DBTools" data-toggle="tab">DB Tools</a></li>
+        <li><a href="#tab_BackupRestore" data-toggle="tab">Backup / Restore</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab_Settings">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="padding-left: 5px; height:50px; text-align:center; vertical-align: middle;">
+                        <div class="db_tools_table_cell_a" style="text-align:center;">
+                            <form method="post" action="maintenance.php">
                             <div style="display: inline-block;">
-                                <select name="skinselector">
+                                <select name="langselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
+                                    <option value=""><?php echo $pia_lang['Maintenance_lang_selector_empty'];?></option>
+                                    <option value="en_us"><?php echo $pia_lang['Maintenance_lang_en_us'];?></option>
+                                    <option value="de_de"><?php echo $pia_lang['Maintenance_lang_de_de'];?></option>
+                                </select></div>
+                            <div style="display: block;"><input type="submit" name="langselector_set" value="<?php echo $pia_lang['Maintenance_lang_selector_apply'];?>" class="btn bg-green" style="width:160px;">
+                                <?php echo $pia_lang_test; ?>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
+                            <?php echo $pia_lang['Maintenance_lang_selector_text'];?>
+                        </div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="text-align: center;">
+                            <form method="post" action="maintenance.php">
+                            <div style="display: inline-block; text-align: center;">
+                                <select name="skinselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
                                     <option value=""><?php echo $pia_lang['Maintenance_themeselector_empty'];?></option>
                                     <option value="skin-black-light">black light</option>
                                     <option value="skin-black">black</option>
@@ -232,122 +251,77 @@ if (submit && isset($_POST['langselector_set'])) {
                                     <option value="skin-yellow-light">yellow light</option>
                                     <option value="skin-yellow">yellow</option>
                                 </select></div>
-                            <div style="display: inline-block;"><input type="submit" name="skinselector_set" value="Okay">
+                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?php echo $pia_lang['Maintenance_themeselector_apply'];?>" class="btn bg-green" style="width:160px;">
                                 <?php echo $pia_skin_test; ?>
                             </div>
+                            </form>
                         </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:center; vertical-align: middle;">
+                        <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
                             <?php echo $pia_lang['Maintenance_themeselector_text'];?>
-                        </div>
-                    </div>
-                </div>
-                </form>
-              </div>
-              <!-- /.box-body -->
-            </div>
-          </div>
-      </div>
-
-
-      <div class="row">
-          <div class="col-md-12">
-          <div class="box" id="Maintain-Lang">
-              <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Maintenance_lang_selector_lable'];?></h3>
-              </div>
-              <div class="box-body">
-                <form method="post" action="maintenance.php">
-                <div class="db_info_table">
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="padding-left: 5px; height:50px; text-align:center; vertical-align: middle;">
-                            <div style="display: inline-block;">
-                                <select name="langselector">
-                                    <option value=""><?php echo $pia_lang['Maintenance_lang_selector_empty'];?></option>
-                                    <option value="en_us"><?php echo $pia_lang['Maintenance_lang_en_us'];?></option>
-                                    <option value="de_de"><?php echo $pia_lang['Maintenance_lang_de_de'];?></option>
-                                </select></div>
-                            <div style="display: inline-block;"><input type="submit" name="langselector_set" value="Okay">
-                                <?php echo $pia_lang_test; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:center; vertical-align: middle;">
-                            <?php echo $pia_lang['Maintenance_lang_selector_text'];?>
-                        </div>
-                    </div>
-                </div>
-                </form>
-              </div>
-              <!-- /.box-body -->
-            </div>
-          </div>
-      </div>
-
-      <div class="row">
-          <div class="col-md-12">
-          <div class="box" id="Maintain-Tools">
-              <div class="box-header with-border">
-                <h3 class="box-title">Tools</h3>
-              </div>
-              <div class="box-body">
-                <div class="db_info_table">
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-green dbtools-button" id="btnPiaEnableDarkmode" style="border-top: solid 3px #00a65a;" onclick="askPiaEnableDarkmode()"><?php echo $pia_lang['Maintenance_Tool_darkmode'];?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b" style=""><?php echo $pia_lang['Maintenance_Tool_darkmode_text'];?></div>
+                        </div>    
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-yellow dbtools-button" id="btnPiaToggleArpScan" style="border-top: solid 3px #ffd080;" onclick="askPiaToggleArpScan()"><?php echo $pia_lang['Maintenance_Tool_arpscansw'];?></button>
+                            <button type="button" class="btn bg-green dbtools-button" id="btnPiaEnableDarkmode" onclick="askPiaEnableDarkmode()"><?php echo $pia_lang['Maintenance_Tool_darkmode'];?></button>
                         </div>
-                        <div class="db_tools_table_cell_b" style=""><?php echo $pia_lang['Maintenance_Tool_arpscansw_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_darkmode_text'];?></div>
                     </div>
                     <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a">
+                            <button type="button" class="btn bg-yellow dbtools-button" id="btnPiaToggleArpScan" onclick="askPiaToggleArpScan()"><?php echo $pia_lang['Maintenance_Tool_arpscansw'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_arpscansw_text'];?></div>
+                    </div>
+                </div>
+        </div>
+        <div class="tab-pane" id="tab_DBTools">
+                <div class="db_info_table">
+                    <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteDevicesWithEmptyMACs()"><?php echo $pia_lang['Maintenance_Tool_del_empty_macs'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?php echo $pia_lang['Maintenance_Tool_del_empty_macs'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_empty_macs_text'];?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" style="border-top: solid 3px #dd4b39;" onclick="askDeleteAllDevices()"><?php echo $pia_lang['Maintenance_Tool_del_alldev'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?php echo $pia_lang['Maintenance_Tool_del_alldev'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_alldev_text'];?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" style="border-top: solid 3px #dd4b39;" onclick="askDeleteUnknown()"><?php echo $pia_lang['Maintenance_Tool_del_unknowndev'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?php echo $pia_lang['Maintenance_Tool_del_unknowndev'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_unknowndev_text'];?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" style="border-top: solid 3px #dd4b39;" onclick="askDeleteEvents()"><?php echo $pia_lang['Maintenance_Tool_del_allevents'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?php echo $pia_lang['Maintenance_Tool_del_allevents'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents_text'];?></div>
                     </div>
+                </div>
+        </div>
+        <div class="tab-pane" id="tab_BackupRestore">
+                <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" style="border-top: solid 3px #dd4b39;" onclick="askPiaBackupDBtoArchive()"><?php echo $pia_lang['Maintenance_Tool_backup'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?php echo $pia_lang['Maintenance_Tool_backup'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_backup_text'];?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" style="border-top: solid 3px #dd4b39;" onclick="askPiaRestoreDBfromArchive()"><?php echo $pia_lang['Maintenance_Tool_restore'];?><br><?php echo $latestbackup_date;?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" onclick="askPiaRestoreDBfromArchive()"><?php echo $pia_lang['Maintenance_Tool_restore'];?><br><?php echo $latestbackup_date;?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_restore_text'];?></div>
                     </div>
                 </div>
-             </div>
-              <!-- /.box-body -->
-            </div>
-          </div>
-      </div>
+        </div>
+    </div>
+</div>
+
+
 
 <div style="width: 100%; height: 20px;"></div>
     <!-- ----------------------------------------------------------------------- -->
@@ -422,7 +396,6 @@ function deleteEvents()
   });
 }
 
-
 // Backup DB to Archive 
 function askPiaBackupDBtoArchive () {
   // Ask 
@@ -436,7 +409,6 @@ function PiaBackupDBtoArchive()
     showMessage (msg);
   });
 }
-
 
 // Restore DB from Archive 
 function askPiaRestoreDBfromArchive () {

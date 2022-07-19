@@ -199,21 +199,6 @@ h4 {
 .box.box-danger {
   border-top-width: 3px;
 }
-.box.box-info {
-  border-top-color: #00c0ef;
-}
-.box.box-primary {
-  border-top-color: #075383;
-}
-.box.box-success {
-  border-top-color: #00a65a;
-}
-.box.box-warning {
-  border-top-color: #ff851b;
-}
-.box.box-danger {
-  border-top-color: #dd4b39;
-}
 .main-header .navbar {
   background-color: #272c30;
 }
@@ -609,41 +594,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
 }
 
 /*** Additional fixes For Pi.Alert UI ***/
-.small-box {
-    border-radius: 10px;
-}
-.pa-small-box-aqua .inner {
-  background-color: rgb(45,108,133);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-.pa-small-box-green .inner {
-  background-color: rgb(31,76,46);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-.pa-small-box-yellow .inner {
-  background-color: rgb(151,104,37);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-.pa-small-box-red .inner {
-  background-color: rgb(120,50,38);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-.pa-small-box-gray .inner {
-  background-color: #777;
-  color: rgba(20,20,20,30%);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-.pa-small-box-gray .inner h3 {
-  color:  #bbb;
-}
-.text-gray-20 {
-  color: rgba(220,220,220,30%);
-}
+
 .bg-gray {
   background-color: #888888 !important;
 }
@@ -676,4 +627,31 @@ input[type="password"]::-webkit-caps-lock-indicator {
    font-size: 15px;
    width: 100%;
    margin: auto;
+}
+
+.nav-tabs-custom > .nav-tabs > li:hover > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: #272c30;
+  color: #bec5cb;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  border-left-color: #30383f;
+  border-right-color: #30383f;
+  background-color: #272c30;
+  color: #bec5cb;
+}
+.nav-tabs-custom .tab-content {
+  background-color: #272c30;
+}
+.top_small_box_gray_text {
+  color: white !important;
+}
+
+/* remove white border that appears on mobile screen sizes */
+.box-body {
+    border: 0px;
+}
+/* remove white border that appears on mobile screen sizes */
+.table-responsive {
+  border: 0px;
 }
