@@ -373,7 +373,6 @@ if (submit && isset($_POST['langselector_set'])) {
 
 <script>
 
-
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {
   // Ask 

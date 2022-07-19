@@ -711,12 +711,15 @@ def print_scan_stats ():
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
     History_All_Devices  = len(History_All)
+    sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
+    History_Archived = sql.fetchall()
+    History_Archived_Devices  = len(History_Archived)
     sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
     History_Online = sql.fetchall()
     History_Online_Devices  = len(History_Online)
-    History_Offline_Devices = History_All_Devices - History_Online_Devices
-    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices) "+
-                 "VALUES ( ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices ) )
+    History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices, ScanCycle) "+
+                 "VALUES ( ?, ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices, cycle ) )
 
 #-------------------------------------------------------------------------------
 def create_new_devices ():
@@ -961,7 +964,7 @@ def update_devices_data_from_scan ():
 
     # New Apple devices -> Cycle 15
     print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 15
+    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
                     WHERE dev_FirstConnection = ?
                       AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
                 (startTime,) )
