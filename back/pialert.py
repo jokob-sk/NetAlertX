@@ -711,15 +711,20 @@ def print_scan_stats ():
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
     History_All_Devices  = len(History_All)
+
     sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
     History_Archived = sql.fetchall()
     History_Archived_Devices  = len(History_Archived)
+
     sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
     History_Online = sql.fetchall()
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
-    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices, ScanCycle) "+
-                 "VALUES ( ?, ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices, cycle ) )
+
+
+
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
+                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
 
 #-------------------------------------------------------------------------------
 def create_new_devices ():
