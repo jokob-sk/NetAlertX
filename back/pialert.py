@@ -1481,6 +1481,7 @@ def upgradeDB ():
         "Online_Devices"	INTEGER,
         "Down_Devices"	INTEGER,
         "All_Devices"	INTEGER,
+        "Archived_Devices" INTEGER,
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)
