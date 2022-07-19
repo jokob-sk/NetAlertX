@@ -356,7 +356,7 @@ def scan_network ():
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
-    arpscan_retries = scanCycle_data['cic_arpscanCycles']
+    # arpscan_retries = scanCycle_data['cic_arpscanCycles'] no longer needed
     # TESTING - Fast scan
         # arpscan_retries = 1
     
@@ -364,7 +364,7 @@ def scan_network ():
     print ('\nScanning...')
     print ('    arp-scan Method...')
     print_log ('arp-scan starts...')
-    arpscan_devices = execute_arpscan (arpscan_retries)
+    arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
@@ -450,7 +450,7 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
     return sqlRow
 
 #-------------------------------------------------------------------------------
-def execute_arpscan (pRetries):
+def execute_arpscan ():
  
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
@@ -465,7 +465,7 @@ def execute_arpscan (pRetries):
     # Rolled back line(FROM) :
     #arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
     # Rolled back line(TO) :
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=3'] + subnets
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
     # ---------------END------------------Rollback-----------------END---------------
 
     # Default arp-scan
