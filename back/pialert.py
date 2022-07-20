@@ -27,6 +27,8 @@ import socket
 import io
 import smtplib
 import csv
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 
 #===============================================================================
@@ -1359,6 +1361,11 @@ def email_reporting ():
             print ('    Skip mail...')
     else :
         print ('    No changes to report...')
+    if REPORT_PUSHSAFER :
+        print ('    Sending report by PUSHSAFER...')
+        send_pushsafer (mail_text)
+    else :
+        print ('    Skip PUSHSAFER...')
     
 
     # Clean Pending Alert Events
@@ -1375,6 +1382,27 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
+
+#-------------------------------------------------------------------------------
+
+def send_pushsafer (_Text):
+    url = 'https://www.pushsafer.com/api'
+    post_fields = {
+        "t" : 'Pi.Alert Message',
+        "m" : 'Something has changed',
+        "s" : 11,
+        "v" : 3,
+        "i" : 148,
+        "c" : '#ef7f7f',
+        "d" : 'a',
+        "u" : REPORT_DASHBOARD_URL,
+        "ut" : 'Open Pi.Alert',
+        "k" : PUSHSAFER_TOKEN,
+        }
+
+    request = Request(url, urlencode(post_fields).encode())
+    json = urlopen(request).read().decode()
+    # print(json)
 
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
