@@ -27,6 +27,7 @@ import socket
 import io
 import smtplib
 import csv
+import requests
 
 
 #===============================================================================
@@ -1369,6 +1370,11 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
     else :
         print ('    No changes to report...')
     
@@ -1387,7 +1393,16 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
-
+#-------------------------------------------------------------------------------
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
