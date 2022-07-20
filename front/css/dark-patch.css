@@ -199,21 +199,6 @@ h4 {
 .box.box-danger {
   border-top-width: 3px;
 }
-.box.box-info {
-  border-top-color: #00c0ef;
-}
-.box.box-primary {
-  border-top-color: #075383;
-}
-.box.box-success {
-  border-top-color: #00a65a;
-}
-.box.box-warning {
-  border-top-color: #ff851b;
-}
-.box.box-danger {
-  border-top-color: #dd4b39;
-}
 .main-header .navbar {
   background-color: #272c30;
 }

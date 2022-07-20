@@ -161,7 +161,7 @@
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-aqua {
-    border-top: 3px solid #00c0ef;
+    /* border-top: 3px solid #00c0ef; */
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -180,7 +180,7 @@
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-green {
-    border-top: 3px solid #00a65a;
+    /* border-top: 3px solid #00a65a; */
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -199,7 +199,7 @@
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-yellow {
-    border-top: 3px solid #f39c12;
+    /* border-top: 3px solid #f39c12; */
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -218,7 +218,7 @@
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-red {
-    border-top: 3px solid #dd4b39;
+    /* border-top: 3px solid #dd4b39; */
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -237,7 +237,7 @@
 
 /* -------------------------------------------------------------------------- */
 .pa-small-box-gray {
-    border-top: 3px solid #a0a0a0;
+    /* border-top: 3px solid #a0a0a0; */
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -257,7 +257,7 @@
 /* -----------------------------------------------------------------------------
    Customized Box Borders
 ----------------------------------------------------------------------------- */
-.box.box-aqua {
+/* .box.box-aqua {
     border-top-color: #00c0ef;
 }
 
@@ -271,7 +271,7 @@
 
 .box.box-red {
     border-top-color: #dd4b39;
-}
+} */
 
 /* -----------------------------------------------------------------------------
    Custom Border
@@ -459,7 +459,6 @@
     white-space: normal;
     word-wrap: break-word;
     font-size: 16px;
-    border-radius: 10px;
     padding: 4px;
 }
 
@@ -526,4 +525,20 @@ background-image: url('../img/Loading_Animation.gif');
 background-repeat: no-repeat;
 background-position: center;
 height: 50px;
+}
+
+.nav-tabs-custom .tab-content {
+  background-color: white;
+}
+
+.top_small_box_gray_text {
+  color: white !important;
+}
+
+.bg-gray {
+    background-color: #b2b6be !important;
+}
+
+.infobox_label {
+    font-size: 16px !important;
 }
