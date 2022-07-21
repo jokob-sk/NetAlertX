@@ -85,8 +85,9 @@ if ($ENABLED_DARKMODE === True) {
 <!-- Servertime to the right of the hostname -->
 <script>
 <?php
-  $conf_file = '../config/version.conf';
+  $conf_file = '../config/pialert.conf';
   $conf_data = parse_ini_file($conf_file);
+  # set timezone for server time in header 
   date_default_timezone_set($conf_data['TZ']);
 ?>
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
