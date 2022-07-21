@@ -28,7 +28,6 @@ import io
 import smtplib
 import csv
 import requests
-from prettytable import PrettyTable
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -1201,7 +1200,6 @@ def skip_repeated_notifications ():
 def email_reporting ():
     global mail_text
     global mail_html
-    
     # Reporting section
     print ('\nReporting...')
     openDB()
@@ -1248,7 +1246,7 @@ def email_reporting ():
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
-    text_line_template = '    {} \t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n{}\t{}\n{}\t{}\n{}\t{}\n\n'
     html_line_template = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
         '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
@@ -1258,15 +1256,17 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
                     ORDER BY eve_DateTime""")
 
+    
     for eventAlert in sql :
         mail_section_Internet = True
         mail_text_Internet += text_line_template.format (
-            eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+            'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
+            'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_Internet += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'],
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+
 
     format_report_section (mail_section_Internet, 'SECTION_INTERNET',
         'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
@@ -1275,7 +1275,7 @@ def email_reporting ():
     mail_section_new_devices = False
     mail_text_new_devices = ''
     mail_html_new_devices = ''
-    text_line_template    = '    {}\t{}\t{}\t{}\t{}\n'
+    text_line_template    = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template    = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
         '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1284,21 +1284,17 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1
                       AND eve_EventType = 'New Device'
                     ORDER BY eve_DateTime""")
-    mail_text_table = PrettyTable()
-    mail_text_table.field_names = ["MAC", "Time", "IP", "Name", "Additional Info"]
+
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'],
-            eventAlert['eve_AdditionalInfo'])
+            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
+            'Time:', eventAlert['eve_DateTime'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
-        mail_text_table.add_row([eventAlert['eve_MAC'], eventAlert['eve_DateTime'], eventAlert['eve_IP'], eventAlert['dev_Name'],eventAlert['eve_AdditionalInfo']])
-
-    mail_text_new_devices = mail_text_table
+ 
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
@@ -1306,7 +1302,7 @@ def email_reporting ():
     mail_section_devices_down = False
     mail_text_devices_down = ''
     mail_html_devices_down = ''
-    text_line_template     = '    {}\t{}\t{}\t{}\n'
+    text_line_template     = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template     = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
         '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1319,8 +1315,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_devices_down = True
         mail_text_devices_down += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'])
+            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'],
+            'Time:', eventAlert['eve_DateTime'],'IP:', eventAlert['eve_IP'])
         mail_html_devices_down += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1333,7 +1329,7 @@ def email_reporting ():
     mail_section_events = False
     mail_text_events   = ''
     mail_html_events   = ''
-    text_line_template = '    {}\t{}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template = '<tr>\n  <td>'+ \
             ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
             '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
@@ -1348,9 +1344,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_EventType'],
-            eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'], 
+            'IP:', eventAlert['eve_IP'],'Time:', eventAlert['eve_DateTime'],
+            'Event:', eventAlert['eve_EventType'],'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],

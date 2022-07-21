@@ -8,7 +8,7 @@ ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 
 RUN apt-get update \
     && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 nmap python-pip -y \
-    && pip install requests  prettytable \
+    && pip install requests  \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
