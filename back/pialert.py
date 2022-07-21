@@ -28,7 +28,7 @@ import io
 import smtplib
 import csv
 import requests
-
+from prettytable import PrettyTable
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -1284,7 +1284,8 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1
                       AND eve_EventType = 'New Device'
                     ORDER BY eve_DateTime""")
-
+    mail_text_table = PrettyTable()
+    mail_text_table.field_names = ["MAC", "Time", "IP", "Name", "Additional Info"]
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
@@ -1295,7 +1296,9 @@ def email_reporting ():
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+        mail_text_table.add_row([eventAlert['eve_MAC'], eventAlert['eve_DateTime'], eventAlert['eve_IP'], eventAlert['dev_Name'],eventAlert['eve_AdditionalInfo']])
 
+    mail_text_new_devices = mail_text_table
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
