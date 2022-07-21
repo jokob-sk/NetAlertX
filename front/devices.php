@@ -247,13 +247,7 @@ function initializeDatatable () {
 
     'columnDefs'   : [
       // Only display all collums on non mobile device width - still in testing phase
-      if ($(window).width() < 400) {
-        {visible:   false,         targets: [10,11,12,1,2,3,4,5,6,8] },
-      }
-      else {
-        {visible:   false,         targets: [10, 11, 12] },
-      }
-      // {visible:   false,         targets: [10, 11, 12] },
+      {visible:   false,         targets: if ($(window).width() < 400) {[10,11,12,1,2,3,4,5,6,8]} else {[10, 11, 12]} },
       {className: 'text-center', targets: [3, 8, 9] },
       {width:     '80px',        targets: [5, 6] },
       {width:     '0px',         targets: 9 },
