@@ -678,7 +678,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
   border-bottom-right-radius: 10px;
 }
 
-.small-box > .inner h3 {
+.small-box > .inner h3, .small-box > .inner p {
   margin-bottom: 0px;
   margin-left: 0px;
 }
