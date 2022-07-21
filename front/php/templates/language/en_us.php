@@ -176,6 +176,7 @@ $pia_lang['Maintenance_lang_selector_lable'] = 'Select Language';
 $pia_lang['Maintenance_lang_selector_empty'] = 'Choose Language';
 $pia_lang['Maintenance_lang_en_us'] = 'English (US)';
 $pia_lang['Maintenance_lang_de_de'] = 'German (DE)';
+$pia_lang['Maintenance_lang_es_es'] = 'Spanish (ES)';
 $pia_lang['Maintenance_lang_selector_text'] = 'The change takes place on the server side, so it affects all devices in use.';
 $pia_lang['Maintenance_lang_selector_apply'] = 'Apply';
 $pia_lang['Maintenance_Tool_darkmode'] = 'Toggle Modes (Dark/Light)';

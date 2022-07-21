@@ -17,7 +17,8 @@
 // then accepted.
 //
 $pia_installed_langs = array('en_us', 
-                             'de_de');
+                             'de_de',
+                             'es_es');
 //
 // In addition to this, the language must also be added to the select tag in 
 // line 235. Later, the whole thing may become dynamic.
@@ -223,6 +224,7 @@ if (submit && isset($_POST['langselector_set'])) {
                                     <option value=""><?php echo $pia_lang['Maintenance_lang_selector_empty'];?></option>
                                     <option value="en_us"><?php echo $pia_lang['Maintenance_lang_en_us'];?></option>
                                     <option value="de_de"><?php echo $pia_lang['Maintenance_lang_de_de'];?></option>
+                                    <option value="es_es"><?php echo $pia_lang['Maintenance_lang_es_es'];?></option>
                                 </select></div>
                             <div style="display: block;"><input type="submit" name="langselector_set" value="<?php echo $pia_lang['Maintenance_lang_selector_apply'];?>" class="btn bg-green" style="width:160px;">
                                 <?php echo $pia_lang_test; ?>
