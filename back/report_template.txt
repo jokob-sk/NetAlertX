@@ -19,5 +19,3 @@ Events
 ---------------------
 <TABLE_EVENTS>
 </SECTION_EVENTS>
----------------------
-<PIALERT_YEAR> Puche - Pi.Alert <PIALERT_VERSION> - GNU GPLv3
