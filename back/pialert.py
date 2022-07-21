@@ -1344,9 +1344,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'], 
-            'IP:', eventAlert['eve_IP'],'Time:', eventAlert['eve_DateTime'],
-            'Event:', eventAlert['eve_EventType'],'More Info:', eventAlert['eve_AdditionalInfo'])
+            'Name:', eventAlert['dev_Name'],'Event:', eventAlert['eve_EventType'],
+            'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
+            'Time:', eventAlert['eve_DateTime'],'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
