@@ -191,6 +191,9 @@ $pia_lang['Maintenance_Tool_del_empty_macs'] = 'Alle Geräte ohne MAC löschen';
 $pia_lang['Maintenance_Tool_del_empty_macs_text'] = 'Machen Sie ein Backup, bevor Sie diese Funk&shy;tion nutzen. Der Vor&shy;gang kann ohne Back&shy;up nicht rück&shy;gängig gemacht werden. Alle Geäte ohne MAC-Adresse werden aus der Datenbank ge&shy;löscht.';
 $pia_lang['Maintenance_Tool_del_empty_macs_noti'] = 'Geräte löschen';
 $pia_lang['Maintenance_Tool_del_empty_macs_noti_text'] = 'Sind Sie sicher, dass Sie alle Geräte ohne MAC-Adresse löschen wollen?<br>(Vielleicht bevorzugenn Sie eine Archivierung.)';
+$pia_lang['Maintenance_Tool_upgrade_database_noti'] = 'Aktualisiere Datenbank';
+$pia_lang['Maintenance_Tool_upgrade_database_text'] = 'Mit dieser Schaltfläche wird die Datenbank aktualisiert, um das Diagramm der Netzwerkaktivitäten der letzten 12 Stunden zu aktivieren. Bitte sichern Sie Ihre Datenbank, falls Probleme auftreten.';
+$pia_lang['Maintenance_Tool_upgrade_database_noti_text'] = 'Machen Sie ein Backup, bevor Sie diese Funk&shy;tion nutzen.';
 $pia_lang['Maintenance_Tool_del_alldev'] = 'Alle Geräte löschen';
 $pia_lang['Maintenance_Tool_del_alldev_text'] = 'Machen Sie ein Backup, bevor Sie diese Funk&shy;tion nutzen. Der Vor&shy;gang kann ohne Back&shy;up nicht rück&shy;gängig gemacht werden. Alle Geräte werden in der Datenbank ge&shy;löscht.';
 $pia_lang['Maintenance_Tool_del_alldev_noti'] = 'Geräte löschen';
@@ -234,5 +237,7 @@ $pia_lang['BackDevices_DBTools_DelDevError_a'] = 'Fehler beim Löschen des Gerä
 $pia_lang['BackDevices_DBTools_DelDevError_b'] = 'Fehler beim Löschen der Geräte';
 $pia_lang['BackDevices_DBTools_UpdDev'] = 'Gerät erfolgreich aktualisiert';
 $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Fehler beim Aktualisieren des Gerätes';
+$pia_lang['BackDevices_DBTools_Upgrade'] = 'Datenbank erfolgreich aktualisiert';
+$pia_lang['BackDevices_DBTools_UpgradeError'] = 'Fehler beim Aktualisieren der Datenbank';
 ?>
 
