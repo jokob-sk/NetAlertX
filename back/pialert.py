@@ -1388,7 +1388,7 @@ def email_reporting ():
 def send_pushsafer (_Text):
     url = 'https://www.pushsafer.com/api'
     post_fields = {
-#        "t" : 'Pi.Alert Message',
+        "t" : 'Pi.Alert Message',
         "m" : _Text,
         "s" : 11,
         "v" : 3,
