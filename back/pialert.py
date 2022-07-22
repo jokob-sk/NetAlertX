@@ -458,7 +458,7 @@ def execute_arpscan (pRetries):
     # arp-scan for larger Networks like /16
     # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
     # the scan is about 4min on a /16 network
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=2', SCAN_SUBNETS]
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
 
     # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
@@ -1223,11 +1223,11 @@ def email_reporting ():
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
     
-    mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
-    mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
 
-    mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-    mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
 
     # mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
     # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
@@ -1474,12 +1474,22 @@ def send_email (pText, pHTML):
     # Send mail
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
-    smtp_connection.starttls()
-    smtp_connection.ehlo()
-    smtp_connection.login (SMTP_USER, SMTP_PASS)
+#    smtp_connection.starttls()
+#    smtp_connection.ehlo()
+#    smtp_connection.login (SMTP_USER, SMTP_PASS)
+    if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
+        smtp_connection.starttls()
+        smtp_connection.ehlo()
+    if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
+        smtp_connection.login (SMTP_USER, SMTP_PASS)
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
+#-------------------------------------------------------------------------------
+def SafeParseGlobalBool(boolVariable):
+    if boolVariable in globals():
+        return eval(boolVariable)
+    return False
 
 #===============================================================================
 # DB
