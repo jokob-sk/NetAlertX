@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
 //------------------------------------------------------------------------------
 //  Pi.Alert
 //  Open Source Network Guard / WIFI & LAN intrusion detector 

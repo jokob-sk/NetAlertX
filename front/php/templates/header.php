@@ -146,9 +146,9 @@ function show_pia_servertime() {
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
-              <li class="user-header">
-                <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent">
-                <p>
+              <li class="user-header" style=" height: 100px;">
+                <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
+                <p style="float: right; width: 200px">
                   Open Source Network Guard
                   <small>Designed for Raspberry Pi</small>
                 </p>
@@ -156,27 +156,11 @@ function show_pia_servertime() {
 
               <!-- Menu Body -->
 
-
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a target="_blank" href="https://github.com/pucherot/Pi.Alert">GitHub Pi.Alert</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="mailto:pi.alert.application@gmail.com">email Support</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a target="_blank" href="https://github.com/pucherot/Pi.Alert/blob/main/LICENSE.txt">GNU GPLv3</a>
-                  </div>
-                  <!--
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Updates</a>
-                  </div>
-                  -->
+              <li class="user-footer">
+                <div class="pull-right">
+                  <a href="/pialert/index.php?action=logout" class="btn btn-danger">Sign out</a>
                 </div>
-                <!-- /.row -->
               </li>
-              
             </ul>
           </li>
         </ul>
