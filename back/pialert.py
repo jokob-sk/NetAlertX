@@ -1363,6 +1363,11 @@ def email_reporting ():
             send_pushsafer (mail_text)
         else :
             print ('    Skip PUSHSAFER...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
     else :
         print ('    No changes to report...')
 
@@ -1403,6 +1408,18 @@ def send_pushsafer (_Text):
     request = Request(url, urlencode(post_fields).encode())
     json = urlopen(request).read().decode()
     # print(json)
+
+#-------------------------------------------------------------------------------
+
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
 
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):

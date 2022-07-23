@@ -8,7 +8,23 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+###################################
+## TimeZone processing start
+###################################
+$config_file = "../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
+###################################
+## TimeZone processing end
+###################################
 
+
+###################################
+## GUI settings processing start
+###################################
 if (file_exists('../db/setting_darkmode')) {
     $ENABLED_DARKMODE = True;
 }
@@ -22,7 +38,9 @@ foreach (glob("../db/setting_language*") as $filename) {
 }
 if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
 require 'php/templates/language/'.$pia_lang_selected.'.php';
-
+###################################
+## GUI settings processing end
+###################################
 ?>
 
 <!DOCTYPE html> 

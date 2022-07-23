@@ -4,7 +4,7 @@
 WIFI / LAN intruder detector.
 
 Scan the devices connected to your WIFI / LAN and alert you the connection of
-unknown devices. It also warns the disconnection of "always connected" devices.
+unknown devices. It also warns if a "always connected" devices disconnects.
 
 ![Main screen][main]
 *(Apologies for my English and my limited knowledge of Python, php and
@@ -43,14 +43,16 @@ In charge of:
   - Scan the network searching connected devices using the scanning methods
     described
   - Store the information in the DB
-  - Report the changes detected by e-mail
+  - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
   - Optional speedtest for Device "Internet"
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
 
 ### Front
-A web frontal that allows:
+There is a configurable login to prevent unauthorized use. The default password is "123456"
+
+A web frontend that allows:
   - Manage the devices inventory and the characteristics
   - Display in a visual way all the information collected by the back
     - Sessions
@@ -61,8 +63,8 @@ A web frontal that allows:
     - Concurrent devices
     - Down alerts
     - IP's
-    - manuel nmap scans
-    - Optional speedtest for Device "Internet"
+    - Manuel Nmap scans
+    - Optional speedtest for Device "Internet" in the details view
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -148,6 +150,15 @@ Linux distributions.
   
   ***Suggestions and comments are welcome***
 
+### Special thanks 🥇
+
+  This code is a collaborative body of work, with special thanks to: 
+
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Last X scans activity chart)
+   - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
+   - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
+   - [terorero](https://github.com/terorero): Spanish translation
+   - [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
