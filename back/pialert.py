@@ -1480,17 +1480,31 @@ def send_email (pText, pHTML):
 #===============================================================================
 # DB
 #===============================================================================
-def upgradeDB ():
+def upgradeDB (): 
 
     openDB()
 
-    # check if table exists    
-    listOfTables = sql.execute(
-      """SELECT name FROM sqlite_master WHERE type='table'
-      AND name='Online_History'; """).fetchall()
+    # indicates, if Online_History table is available 
+    onlineHistoryAvailable = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Online_History'; 
+    """).fetchall() != []
+
+    # Check if it is incompatible (Check if table has all required columns)
+    isIncompatible = False
     
-    if listOfTables == []:
-      print_log ('Upgrading DB (creating Online_History table)')
+    if onlineHistoryAvailable :
+      isIncompatible = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+      """).fetchone()[0] == 0
+    
+    # Drop table if available, but incompatible
+    if onlineHistoryAvailable and isIncompatible:
+      print_log ('Table is incompatible, Dropping the Online_History table)')
+      sql.execute("DROP TABLE Online_History;")
+      onlineHistoryAvailable = False
+
+    if onlineHistoryAvailable == False :
       sql.execute("""      
       CREATE TABLE "Online_History" (
         "Index"	INTEGER,
@@ -1502,6 +1516,7 @@ def upgradeDB ():
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)
+
 
 #-------------------------------------------------------------------------------
 

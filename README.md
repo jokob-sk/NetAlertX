@@ -23,7 +23,7 @@ JavaScript)*
 📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
 
 ![Main screen dark][main_dark]
-Dark mode (and Activity over the last x scans) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
+Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
 The system continuously scans the network for:
@@ -164,7 +164,7 @@ Linux distributions.
 
   This code is a collaborative body of work, with special thanks to: 
 
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Last X scans activity chart)
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Device presence over time)
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project

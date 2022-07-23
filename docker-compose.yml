@@ -10,7 +10,7 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
       - ${LOGS_LOCATION}/tmp:/home/pi/pialert/log
     environment:
-      - TZ=Europe/London
-      - PORT=20211
-      - HOST_USER_ID=1000
-      - HOST_USER_GID=1000
+      - TZ=${TZ}
+      - PORT=${PORT}
+      - HOST_USER_ID=${HOST_USER_ID}
+      - HOST_USER_GID=${HOST_USER_GID}
