@@ -61,6 +61,14 @@ In charge of:
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
 
+### Logging in
+
+- Default password is `123456`
+- there is a warning on the login page, when the default password is active
+- to set ne new password, use the reset_password.sh in the config folder (./reset_password.sh newpassword)
+- the password is stored as a sha256 hash
+- the script creates a backup of the config file, just in case
+
 ### Front
 A web front that allows:
   - Manage the devices inventory and the characteristics
