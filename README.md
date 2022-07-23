@@ -158,7 +158,7 @@ Linux distributions.
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [terorero](https://github.com/terorero): Spanish translation
-   - [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
