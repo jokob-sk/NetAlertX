@@ -4,11 +4,12 @@
     <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
   </a>
 
-# :whale: A docker image for Pi.Alert 
+# 🐳 A docker image for Pi.Alert 
 
-All credit for Pi.Alert goes to: [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert).
-A pre-built image is available on :whale: Docker Hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert).
-The source :page_facing_up: Dockerfile is available [here](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) with a detailed :books: [readme](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) included.
+🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert). <br/>
+🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert). <br/>
+📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
+📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
 
 Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
 
@@ -16,7 +17,7 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
   <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
 </a>
 
-## :information_source: Usage
+## ℹ Usage
 
 Network
    - You will have to probably run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
@@ -26,10 +27,10 @@ Default Port
 
 > Please note - the cronjob is executed every 1, 5 and 15 minutes so wait that long for all of the scans to run.
 
-## :floppy_disk: Setup and Backups
+## 💾 Setup and Backups
 
 1. (**required**) Download `pialert.conf` and `version.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
-2. (**required**) In `pialert.config` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range specify it the following way: 
+2. (**required**) In `pialert.conf` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range specify it the following way: 
    * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
 3. (**required**) Use your configuration by: 
    * Mapping the container folder `/home/pi/pialert/config` to a persistent folder containing `pialert.conf` and `version.conf`,     
@@ -44,7 +45,7 @@ Default Port
 
 Config examples can be found below.
 
-## :page_facing_up: Examples
+## 📄 Examples
 
 ### Example 1
 
@@ -102,7 +103,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
       - ./pialert/version.conf:/home/pi/pialert/config/version.conf
 ```
 
-## :coffee: Support 
+## ☕ Support 
 
 > Disclaimer: This is my second container and I might have used unconventional hacks so if anyone is more experienced, feel free to fork/create pull requests. Also, please only donate if you don't have any debt yourself. Support yourself first, then others.
 
