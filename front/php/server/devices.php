@@ -36,6 +36,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
+      case 'upgradeDatabase':         upgradeDB();                             break;
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
       case 'deleteAllDevices':        deleteAllDevices();                      break;
@@ -208,6 +209,36 @@ function deleteAllWithEmptyMACs() {
     echo $pia_lang['BackDevices_DBTools_DelDev_b'];
   } else {
     echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Upgrade the database to enable new functionality
+//------------------------------------------------------------------------------
+function upgradeDB() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = '
+  -- Online_History definition
+
+  CREATE TABLE "Online_History" (
+    "Index"	INTEGER,
+    "Scan_Date"	TEXT,
+    "Online_Devices"	INTEGER,
+    "Down_Devices"	INTEGER,
+    "All_Devices"	INTEGER,
+    PRIMARY KEY("Index" AUTOINCREMENT)
+  );';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_Upgrade'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_UpgradeError']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 

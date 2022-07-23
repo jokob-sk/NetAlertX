@@ -114,7 +114,7 @@ if ($_SESSION["login"] != 1)
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart_a'];?>  <span class="maxlogage-interval">12</span> <?php echo $pia_lang['Device_Shortcut_OnlineChart_b'];?></h3>
+                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart'];?> </h3>
               </div>
               <div class="box-body">
                 <div class="chart">
@@ -237,6 +237,12 @@ function main () {
 
 // -----------------------------------------------------------------------------
 function initializeDatatable () {
+  // If the device has a small width (mobile) only show name, ip, and status columns. 
+  if (window.screen.width < 400) {
+    var tableColumnShow = [10,11,12,1,2,3,4,5,6,8];
+  } else {
+    var tableColumnShow = [10, 11, 12];
+  };
   var table=
   $('#tableDevices').DataTable({
     'paging'       : true,
@@ -254,7 +260,7 @@ function initializeDatatable () {
     // 'order'       : [[3,'desc'], [0,'asc']],
 
     'columnDefs'   : [
-      {visible:   false,         targets: [10, 11, 12] },
+      {visible:   false,         targets: tableColumnShow },
       {className: 'text-center', targets: [3, 8, 9] },
       {width:     '80px',        targets: [5, 6] },
       {width:     '0px',         targets: 9 },

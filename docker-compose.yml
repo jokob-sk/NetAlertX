@@ -1,0 +1,16 @@
+version: "3"
+services:
+  pialert:
+    build: .
+    container_name: pialert
+    network_mode: "host"
+    restart: always
+    volumes:
+      - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
+      - ${LOGS_LOCATION}/tmp:/home/pi/pialert/log
+    environment:
+      - TZ=${TZ}
+      - PORT=${PORT}
+      - HOST_USER_ID=${HOST_USER_ID}
+      - HOST_USER_GID=${HOST_USER_GID}

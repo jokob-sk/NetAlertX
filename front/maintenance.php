@@ -327,6 +327,12 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_restore_text'];?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUpgadeDatabase" style="border-top: solid 3px #dd4b39;" onclick="askUpgradeDatabase()"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_text'];?></div>
+                    </div>
                 </div>
         </div>
     </div>
@@ -459,6 +465,20 @@ function PiaToggleArpScan()
 { 
   // Execute
   $.get('php/server/devices.php?action=PiaToggleArpScan', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// upgrade DB
+function askUpgradeDatabase () {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?>',
+    'Cancel', 'Upgrade', 'upgradeDatabase');
+}
+function upgradeDatabase()
+{ 
+  // Upgrade DB
+  $.get('php/server/devices.php?action=upgradeDatabase', function(msg) {
     showMessage (msg);
   });
 }
