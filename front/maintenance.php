@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
 //------------------------------------------------------------------------------
 //  Pi.Alert
 //  Open Source Network Guard / WIFI & LAN intrusion detector 
@@ -209,9 +217,9 @@ if (submit && isset($_POST['langselector_set'])) {
 
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_Settings" data-toggle="tab">Settings</a></li>
-        <li><a href="#tab_DBTools" data-toggle="tab">DB Tools</a></li>
-        <li><a href="#tab_BackupRestore" data-toggle="tab">Backup / Restore</a></li>
+        <li class="active"><a href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a></li>
+        <li><a href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a></li>
+        <li><a href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_Settings">
