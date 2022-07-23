@@ -217,6 +217,10 @@ $pia_lang['Maintenance_Tool_restore'] = 'DB Restore';
 $pia_lang['Maintenance_Tool_restore_text'] = 'The latest backup can be restored via the button, but older backups can only be restored manually. After the restore, make an integrity check on the database for safety, in case the db was currently in write access when the backup was created.';
 $pia_lang['Maintenance_Tool_restore_noti'] = 'DB Restore';
 $pia_lang['Maintenance_Tool_restore_noti_text'] = 'Are you sure you want to exectute the the DB Restore? Be sure that no scan is currently running.';
+$pia_lang['Maintenance_Tool_purgebackup'] = 'Purge Backups';
+$pia_lang['Maintenance_Tool_purgebackup_text'] = 'All other backups will be deleted except for the last 3 backups.';
+$pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purge Backups';
+$pia_lang['Maintenance_Tool_purgebackup_noti_text'] = 'Are you sure you want to delete all backups except the last 3?';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
@@ -242,5 +246,6 @@ $pia_lang['BackDevices_DBTools_UpdDev'] = 'Device updated successfully';
 $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Error updating device';
 $pia_lang['BackDevices_DBTools_Upgrade'] = 'Database upgraded successfully';
 $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Database upgrade failed';
+$pia_lang['BackDevices_DBTools_Purge'] = 'The oldest backups were deleted';
 ?>
 

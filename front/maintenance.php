@@ -327,6 +327,12 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_restore_text'];?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?php echo $pia_lang['Maintenance_Tool_purgebackup'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_purgebackup_text'];?></div>
+                    </div>
                 </div>
         </div>
     </div>
@@ -435,8 +441,22 @@ function PiaRestoreDBfromArchive()
   });
 }
 
-// Restore DB from Archive 
-function askPiaEnableDarkmode () {
+// Purge Backups 
+function askPiaPurgeDBBackups() {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti_text'];?>',
+    'Cancel', 'Purge', 'PiaPurgeDBBackups');
+}
+function PiaPurgeDBBackups()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=PiaPurgeDBBackups', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// Switch Darkmode 
+function askPiaEnableDarkmode() {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_darkmode_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_darkmode_noti_text'];?>',
     'Cancel', 'Switch', 'PiaEnableDarkmode');

@@ -45,6 +45,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'deleteEvents':            deleteEvents();                          break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
+      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
       case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
       case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;
 
@@ -329,6 +330,37 @@ function PiaRestoreDBfromArchive() {
   }
 
 }
+
+//------------------------------------------------------------------------------
+//  Purge Backups
+//------------------------------------------------------------------------------
+function PiaPurgeDBBackups() {
+  global $pia_lang;
+
+  $Pia_Archive_Path = '../../../db';
+  $Pia_Backupfiles = array();
+  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', 'pialert.db', 'pialertdb-reset.zip'));
+
+  foreach ($files as &$item) 
+    {
+      $item = $Pia_Archive_Path.'/'.$item;
+      if (stristr($item, 'setting_') == '') {array_push($Pia_Backupfiles, $item);}
+    }
+
+  if (sizeof($Pia_Backupfiles) > 3) 
+    {
+      rsort($Pia_Backupfiles);
+      unset($Pia_Backupfiles[0], $Pia_Backupfiles[1], $Pia_Backupfiles[2]);
+      $Pia_Backupfiles_Purge = array_values($Pia_Backupfiles);
+      for ($i = 0; $i < sizeof($Pia_Backupfiles_Purge); $i++) 
+        {
+          unlink($Pia_Backupfiles_Purge[$i]);
+        }
+  }
+  echo $pia_lang['BackDevices_DBTools_Purge'];
+  echo("<meta http-equiv='refresh' content='1'>");
+    
+  }
 
 //------------------------------------------------------------------------------
 //  Toggle Dark/Light Themes
