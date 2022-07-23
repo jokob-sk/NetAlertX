@@ -42,10 +42,11 @@
 
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabDetails').trigger('click')">
-            <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
-              <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3> </div>
-              <div class="icon"> <i id="deviceStatusIcon" class=""></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['DevDetail_Shortcut_CurrentStatus'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+            <div class="small-box bg-aqua">
+              <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_CurrentStatus'];?></p>
+              </div>
+              <div class="icon"> <i id="deviceStatusIcon" class=""></i></div>
             </div>
           </a>
         </div>
@@ -53,10 +54,11 @@
 <!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabSessions').trigger('click');">
-            <div class="small-box bg-green pa-small-box-green pa-small-box-2">
-              <div class="inner"> <h3 id="deviceSessions"> -- </h3> </div>
+            <div class="small-box bg-green">
+              <div class="inner"> <h3 id="deviceSessions"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_Sessions'];?></p>
+              </div>
               <div class="icon"> <i class="fa fa-plug"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['DevDetail_Shortcut_Sessions'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -64,10 +66,11 @@
 <!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabPresence').trigger('click')">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3> </div>
+            <div  class="small-box bg-yellow">
+              <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_Presence'];?></p>
+              </div>
               <div id="deviceEventsIcon" class="icon"> <i class="fa fa-calendar"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['DevDetail_Shortcut_Presence'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -75,10 +78,11 @@
 <!--  top small box 4 ------------------------------------------------------ -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabEvents').trigger('click');">
-            <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
-              <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3> </div>
+            <div  class="small-box bg-red">
+              <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_DownAlerts'];?></p>
+              </div>
               <div class="icon"> <i class="fa fa-warning"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['DevDetail_Shortcut_DownAlerts'];?> <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -95,7 +99,10 @@
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Details'];?>  </a></li>
-              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Nmap'];?>     </a></li>
+<?php
+if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = $pia_lang['DevDetail_Tab_Nmap'];}
+?>
+              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Sessions'];?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Presence'];?> </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Events'];?>   </a></li>
@@ -114,7 +121,7 @@
 
 
 
-            <div class="tab-content" style="min-height: 430px">
+            <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
 <!--
@@ -314,9 +321,9 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')">   Scan 1 min every 5 min</a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')"><?php echo $pia_lang['DevDetail_EveandAl_ScanCycle_a'];?></a></li>
                                 <!-- <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','15 min');"> Scan 12 min every 15 min</a></li> -->
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');">  Don't Scan</a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');"><?php echo $pia_lang['DevDetail_EveandAl_ScanCycle_z'];?></a></li>
                               </ul>
                             </div>
                           </div>

@@ -27,7 +27,7 @@ import socket
 import io
 import smtplib
 import csv
-
+import requests
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -356,7 +356,7 @@ def scan_network ():
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
-    arpscan_retries = scanCycle_data['cic_arpscanCycles']
+    # arpscan_retries = scanCycle_data['cic_arpscanCycles'] no longer needed
     # TESTING - Fast scan
         # arpscan_retries = 1
     
@@ -364,7 +364,7 @@ def scan_network ():
     print ('\nScanning...')
     print ('    arp-scan Method...')
     print_log ('arp-scan starts...')
-    arpscan_devices = execute_arpscan (arpscan_retries)
+    arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
@@ -450,7 +450,7 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
     return sqlRow
 
 #-------------------------------------------------------------------------------
-def execute_arpscan (pRetries):
+def execute_arpscan ():
  
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
@@ -465,7 +465,7 @@ def execute_arpscan (pRetries):
     # Rolled back line(FROM) :
     #arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
     # Rolled back line(TO) :
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=3'] + subnets
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
     # ---------------END------------------Rollback-----------------END---------------
 
     # Default arp-scan
@@ -711,12 +711,18 @@ def print_scan_stats ():
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
     History_All_Devices  = len(History_All)
+
+    sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
+    History_Archived = sql.fetchall()
+    History_Archived_Devices  = len(History_Archived)
+
     sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
     History_Online = sql.fetchall()
     History_Online_Devices  = len(History_Online)
-    History_Offline_Devices = History_All_Devices - History_Online_Devices
-    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices) "+
-                 "VALUES ( ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices ) )
+    History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
+    
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
+                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
 
 #-------------------------------------------------------------------------------
 def create_new_devices ():
@@ -960,11 +966,11 @@ def update_devices_data_from_scan ():
         recordsToUpdate )
 
     # New Apple devices -> Cycle 15
-    print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 15
-                    WHERE dev_FirstConnection = ?
-                      AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
-                (startTime,) )
+    # print_log ('Update devices - 6 Cycle for Apple devices')
+    # sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
+    #                 WHERE dev_FirstConnection = ?
+    #                   AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
+    #             (startTime,) )
 
     print_log ('Update devices end')
 
@@ -1192,7 +1198,6 @@ def skip_repeated_notifications ():
 def email_reporting ():
     global mail_text
     global mail_html
-    
     # Reporting section
     print ('\nReporting...')
     openDB()
@@ -1239,7 +1244,7 @@ def email_reporting ():
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
-    text_line_template = '    {} \t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n{}\t{}\n{}\t{}\n{}\t{}\n\n'
     html_line_template = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
         '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
@@ -1249,15 +1254,17 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
                     ORDER BY eve_DateTime""")
 
+    
     for eventAlert in sql :
         mail_section_Internet = True
         mail_text_Internet += text_line_template.format (
-            eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+            'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
+            'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_Internet += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'],
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+
 
     format_report_section (mail_section_Internet, 'SECTION_INTERNET',
         'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
@@ -1266,7 +1273,7 @@ def email_reporting ():
     mail_section_new_devices = False
     mail_text_new_devices = ''
     mail_html_new_devices = ''
-    text_line_template    = '    {}\t{}\t{}\t{}\t{}\n'
+    text_line_template    = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template    = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
         '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1279,14 +1286,13 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'],
-            eventAlert['eve_AdditionalInfo'])
+            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
+            'Time:', eventAlert['eve_DateTime'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
-
+ 
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
@@ -1294,7 +1300,7 @@ def email_reporting ():
     mail_section_devices_down = False
     mail_text_devices_down = ''
     mail_html_devices_down = ''
-    text_line_template     = '    {}\t{}\t{}\t{}\n'
+    text_line_template     = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template     = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
         '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1307,8 +1313,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_devices_down = True
         mail_text_devices_down += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'])
+            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'],
+            'Time:', eventAlert['eve_DateTime'],'IP:', eventAlert['eve_IP'])
         mail_html_devices_down += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1321,7 +1327,7 @@ def email_reporting ():
     mail_section_events = False
     mail_text_events   = ''
     mail_html_events   = ''
-    text_line_template = '    {}\t{}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template = '<tr>\n  <td>'+ \
             ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
             '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
@@ -1336,9 +1342,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_EventType'],
-            eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+            'Name:', eventAlert['dev_Name'],'Event:', eventAlert['eve_EventType'],
+            'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
+            'Time:', eventAlert['eve_DateTime'],'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1361,6 +1367,11 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
     else :
         print ('    No changes to report...')
     
@@ -1379,7 +1390,16 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
-
+#-------------------------------------------------------------------------------
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
@@ -1478,6 +1498,7 @@ def upgradeDB ():
         "Online_Devices"	INTEGER,
         "Down_Devices"	INTEGER,
         "All_Devices"	INTEGER,
+        "Archived_Devices" INTEGER,
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)

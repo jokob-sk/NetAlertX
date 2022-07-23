@@ -199,21 +199,6 @@ h4 {
 .box.box-danger {
   border-top-width: 3px;
 }
-.box.box-info {
-  border-top-color: #00c0ef;
-}
-.box.box-primary {
-  border-top-color: #075383;
-}
-.box.box-success {
-  border-top-color: #00a65a;
-}
-.box.box-warning {
-  border-top-color: #ff851b;
-}
-.box.box-danger {
-  border-top-color: #dd4b39;
-}
 .main-header .navbar {
   background-color: #272c30;
 }
@@ -635,7 +620,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
 }
 .pa-small-box-gray .inner {
   background-color: #777;
-  color: rgba(20,20,20,30%);
+  /* color: rgba(20,20,20,30%); */
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -693,7 +678,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
   border-bottom-right-radius: 10px;
 }
 
-.small-box > .inner h3 {
+.small-box > .inner h3, .small-box > .inner p {
   margin-bottom: 0px;
   margin-left: 0px;
 }

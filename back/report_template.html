@@ -14,20 +14,19 @@
 
 <body>
     <font face=sans-serif>
-    <table align=center width=80% border=1 bordercolor=#909090 cellpadding=0 cellspacing=0 style="border-collapse: collapse; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.5)">
+    <table align=center width=100% cellpadding=0 cellspacing=0 style="border-radius: 5px;">
         <tr>
-        <td bgcolor=#EFB956  align=center style="padding: 20px 10px 10px 10px; font-size: 36px; font-weight: bold; color:#7F6000; text-shadow: 4px 4px 6px #909090">
+        <td bgcolor=#EFB956  align=center style="padding: 20px 10px 10px 10px; font-size: 30px; font-weight: bold; color:#000000; border-top-right-radius: 5px; border-top-left-radius: 5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
             Pi.Alert Report
         </td>
         </tr>
 
         <tr>
         <td>
-            <table width=100% border=0 bgcolor=#FFD966 cellpadding=5px cellspacing=0 style="border-collapse: collapse; font-size: 16px; text-align:center; color:#5F5000">
-            <tr>
-                <td width=33%> Report Date: <b><REPORT_DATE></b> </td>
-                <td width=34%> Scan Cycle: <b><SCAN_CYCLE></b> </td>
-                <td width=33%> Server: <b><SERVER_NAME></b> </td>
+            <table width=100% border=0 bgcolor=#FFD966 cellpadding=5px cellspacing=0 style="border-collapse: collapse; font-size: 15px; text-align:center; color:#404040">            <tr>
+                <td width=50%> Report Date: <b><REPORT_DATE></b> </td>
+                <td width=50%> Scan Cycle: <b><SCAN_CYCLE></b> </td>
+                
             </tr>
             </table>
         </td>
@@ -36,9 +35,9 @@
         <tr>
         <td bgcolor=#F5F5F5 height=200 valign=top style="padding: 10px">
             <SECTION_INTERNET>
-            <p style="font-size: 24px; font-weight: bold; color:#C04040; text-shadow: 2px 2px 4px #A0A0A0"> Internet: </p> 
+            <p style="font-size: 24px; font-weight: bold; color:#C04040"> Internet: </p> 
 
-            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070">
                 <tr bgcolor=#909090 style="color:#F0F0F0">
                     <th width=140> Event Type </th>
                     <th width=130> Datetime </th>
@@ -53,11 +52,11 @@
             </SECTION_INTERNET>
 
             <SECTION_NEW_DEVICES>
-            <p style="font-size: 14px; font-weight: bold; color:#C04040; text-shadow: 2px 2px 4px #A0A0A0"> New Devices: </p> 
+            <p style="font-size: 14px; font-weight: bold; color:#C04040"> New Devices: </p> 
 
-            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070">
                 <tr bgcolor=#909090 style="color:#F0F0F0">
-                    <th width=140> MAC </th>
+                    <th width=150> MAC </th>
                     <th width=130> Datetime </th>
                     <th width=100> IP </th>
                     <th width=140> Device Name </th>
@@ -71,9 +70,9 @@
             </SECTION_NEW_DEVICES>
 
             <SECTION_DEVICES_DOWN>
-            <p style="font-size: 14px; font-weight: bold; color:#C04040; text-shadow: 2px 2px 4px #A0A0A0"> Devices Down: </p> 
+            <p style="font-size: 14px; font-weight: bold; color:#C04040"> Devices Down: </p> 
 
-            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070">
                 <tr bgcolor=#909090 style="color:#F0F0F0">
                     <th width=140> MAC </th>
                     <th width=130> Datetime </th>
@@ -88,9 +87,9 @@
             </SECTION_DEVICES_DOWN>
 
             <SECTION_EVENTS>
-            <p style="font-size: 14px; font-weight: bold; color:#409040; text-shadow: 2px 2px 4px #A0A0A0"> Events: </p> 
+            <p style="font-size: 14px; font-weight: bold; color:#409040"> Events: </p> 
 
-            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+            <table width=100% border=1 bordercolor=#C0C0C0 cellpadding=3px cellspacing=0 style="border-collapse: collapse; font-size: 12px; color:#707070">
                 <tr bgcolor=#909090 style="color:#F0F0F0">
                     <th width=140> MAC </th>
                     <th width=130> Datetime </th>
@@ -108,11 +107,10 @@
         
         <tr>
         <td>
-            <table width=100% border=0 bgcolor=#70AD47 cellpadding=5px cellspacing=0 style="border-collapse: collapse; font-size: 12px; font-weight: bold; color:#385723">
+            <table width=100% bgcolor=#46802e cellpadding=5px cellspacing=0 style="font-size: 13px; font-weight: bold; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
                <tr>
-                    <td width=25% style="text-align:Left"> <span style="display:inline-block; transform: rotate(180deg)">&copy;</span> <PIALERT_YEAR> Puche</td>
+                    <td width=50% style="text-align:center"> Pi.Alert - <SERVER_NAME></td>
                     <td width=50% style="text-align:center"> Pi.Alert <PIALERT_VERSION> &nbsp; &nbsp; (<PIALERT_VERSION_DATE>)  </td>
-                    <td width=25% style="text-align:right"> GNU GPLv3</td>
                 </tr>
             </table>
         </td>

@@ -27,69 +27,74 @@
 
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
-
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('all');">
-            <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
-              <div class="inner"> <h3 id="devicesAll"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-laptop text-aqua-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_AllDevices'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-aqua">
+            <div class="inner"><h3 id="devicesAll"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_AllDevices'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
+          </div>
           </a>
         </div>
         
 <!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('connected');">
-            <div class="small-box bg-green pa-small-box-green pa-small-box-2">
-              <div class="inner"> <h3 id="devicesConnected"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-plug text-green-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_Connected'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-green">
+            <div class="inner"><h3 id="devicesConnected"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Connected'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-plug text-green-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('favorites');">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="devicesFavorites"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-star text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_Favorites'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-yellow">
+            <div class="inner"><h3 id="devicesFavorites"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Favorites'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-star text-yellow-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 4 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('new');">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="devicesNew"> -- </h3> </div>
-              <div class="icon"> <i class="ion ion-plus-round text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_NewDevices'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-yellow">
+            <div class="inner"><h3 id="devicesNew"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_NewDevices'];?></p>
             </div>
+            <div class="icon"><i class="ion ion-plus-round text-yellow-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 5 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('down');">
-            <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
-              <div class="inner"> <h3 id="devicesDown"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-warning text-red-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_DownAlerts'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-red">
+            <div class="inner"><h3 id="devicesDown"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_DownAlerts'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-warning text-red-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 6 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('archived');">
-            <div  class="small-box bg-gray pa-small-box-gray pa-small-box-2">
-              <div class="inner"> <h3 id="devicesArchived"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-eye-slash text-gray-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> <?php echo $pia_lang['Device_Shortcut_Archived'];?> <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-gray top_small_box_gray_text">
+            <div class="inner"><h3 id="devicesArchived"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Archived'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-eye-slash text-gray-40"></i></div>
+          </div>
           </a>
         </div>
 
@@ -118,7 +123,8 @@
         var pia_js_online_history_time = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
         var pia_js_online_history_ondev = [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>];
         var pia_js_online_history_dodev = [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>];
-        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev);
+        var pia_js_online_history_ardev = [<?php pia_graph_devices_data($Pia_Graph_Device_Arch); ?>];
+        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev, pia_js_online_history_ardev);
       </script>
 
 <!-- datatable ------------------------------------------------------------- -->
@@ -223,6 +229,12 @@ function main () {
 
 // -----------------------------------------------------------------------------
 function initializeDatatable () {
+  // If the device has a small width (mobile) only show name, ip, and status columns. 
+  if (window.screen.width < 400) {
+    var tableColumnShow = [10,11,12,1,2,3,4,5,6,8];
+  } else {
+    var tableColumnShow = [10, 11, 12];
+  };
   var table=
   $('#tableDevices').DataTable({
     'paging'       : true,
@@ -240,7 +252,7 @@ function initializeDatatable () {
     // 'order'       : [[3,'desc'], [0,'asc']],
 
     'columnDefs'   : [
-      {visible:   false,         targets: [10, 11, 12] },
+      {visible:   false,         targets: tableColumnShow },
       {className: 'text-center', targets: [3, 8, 9] },
       {width:     '80px',        targets: [5, 6] },
       {width:     '0px',         targets: 9 },
