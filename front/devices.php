@@ -8,6 +8,14 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
   require 'php/templates/header.php';
   require 'php/templates/graph.php';
 ?>

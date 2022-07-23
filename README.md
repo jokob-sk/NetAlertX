@@ -73,7 +73,7 @@ A web frontal that allows:
 With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, the new maintenance page was added with various possibilities for maintenance and settings:
   - Status Infos (active scans, database size, backup counter)
   - Theme Selection (blue, red, green, yellow, black, purple)
-  - Language Selection (english, german)
+  - Language Selection (english, german, spanish)
   - Light/Dark-Mode Switch
   - Pause arp-scan
   - DB maintenance tools

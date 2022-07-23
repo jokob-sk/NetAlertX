@@ -458,7 +458,7 @@ def execute_arpscan (pRetries):
     # arp-scan for larger Networks like /16
     # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
     # the scan is about 4min on a /16 network
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=2', SCAN_SUBNETS]
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
 
     # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
@@ -1223,21 +1223,21 @@ def email_reporting ():
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
     
-    mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
-    mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
 
-    mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-    mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
 
-    mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
-    mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
 
     # Compose Internet Section
     print ('    Formating report...')
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
-    text_line_template = '    {} \t{}\t{}\t{}\n'
+    text_line_template = '{} \t{}\t{}\t{}\n'
     html_line_template = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
         '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
@@ -1264,7 +1264,7 @@ def email_reporting ():
     mail_section_new_devices = False
     mail_text_new_devices = ''
     mail_html_new_devices = ''
-    text_line_template    = '    {}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template    = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
         '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1277,9 +1277,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'],
-            eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
+            'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1292,7 +1291,7 @@ def email_reporting ():
     mail_section_devices_down = False
     mail_text_devices_down = ''
     mail_html_devices_down = ''
-    text_line_template     = '    {}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template     = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
         '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1305,8 +1304,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_devices_down = True
         mail_text_devices_down += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
+            'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
         mail_html_devices_down += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1319,7 +1318,7 @@ def email_reporting ():
     mail_section_events = False
     mail_text_events   = ''
     mail_html_events   = ''
-    text_line_template = '    {}\t{}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template = '<tr>\n  <td>'+ \
             ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
             '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
@@ -1334,9 +1333,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_EventType'],
-            eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
+            'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
+            'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1359,13 +1358,14 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_PUSHSAFER :
+            print ('    Sending report by PUSHSAFER...')
+            send_pushsafer (mail_text)
+        else :
+            print ('    Skip PUSHSAFER...')
     else :
         print ('    No changes to report...')
-    if REPORT_PUSHSAFER :
-        print ('    Sending report by PUSHSAFER...')
-        send_pushsafer (mail_text)
-    else :
-        print ('    Skip PUSHSAFER...')
+
     
 
     # Clean Pending Alert Events
@@ -1389,7 +1389,7 @@ def send_pushsafer (_Text):
     url = 'https://www.pushsafer.com/api'
     post_fields = {
         "t" : 'Pi.Alert Message',
-        "m" : 'Something has changed',
+        "m" : _Text,
         "s" : 11,
         "v" : 3,
         "i" : 148,
@@ -1474,12 +1474,22 @@ def send_email (pText, pHTML):
     # Send mail
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
-    smtp_connection.starttls()
-    smtp_connection.ehlo()
-    smtp_connection.login (SMTP_USER, SMTP_PASS)
+#    smtp_connection.starttls()
+#    smtp_connection.ehlo()
+#    smtp_connection.login (SMTP_USER, SMTP_PASS)
+    if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
+        smtp_connection.starttls()
+        smtp_connection.ehlo()
+    if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
+        smtp_connection.login (SMTP_USER, SMTP_PASS)
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
+#-------------------------------------------------------------------------------
+def SafeParseGlobalBool(boolVariable):
+    if boolVariable in globals():
+        return eval(boolVariable)
+    return False
 
 #===============================================================================
 # DB
