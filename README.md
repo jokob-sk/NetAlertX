@@ -63,7 +63,7 @@ A web frontend that allows:
     - Concurrent devices
     - Down alerts
     - IP's
-    - Manuel Nmap scans
+    - Manual Nmap scans
     - Optional speedtest for Device "Internet" in the details view
     - ...
 
