@@ -655,3 +655,16 @@ input[type="password"]::-webkit-caps-lock-indicator {
 .table-responsive {
   border: 0px;
 }
+
+.login-page {
+  background-color: transparent;
+}
+
+.login-logo a {
+  color: white;
+}
+
+.login-box-body {
+  color: #bec5cb;
+  background-color: #272c30;
+}
