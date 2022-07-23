@@ -29,8 +29,7 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY . /home/pi/pialert
 
 # Pi.Alert 
-RUN sed -ie "s|TIMEZONE|${TZ}|g" /home/pi/pialert/install/pialert.cron \
-    && python /home/pi/pialert/back/pialert.py update_vendors \    
+RUN python /home/pi/pialert/back/pialert.py update_vendors \    
     && sed -ie 's/= 80/= '${PORT}'/g' /etc/lighttpd/lighttpd.conf \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 

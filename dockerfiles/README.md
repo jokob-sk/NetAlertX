@@ -38,8 +38,6 @@ Default Port
 4. Set the `TZ` environment variable to your current time zone (e.g.`Europe/Paris`). Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 5. Database backup
    * The DB is stored under `/home/pi/pialert/db/pialert.db`. Map this file to a persistent location (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#page_facing_up-examples) for details). If facing issues (AJAX errors, can't write to DB, etc, make sure permissions are set correctly, alternatively check the logs under `/home/pi/pialert/log`)
-   * Automated copy
-     The docker image copies the DB once every 30 min to `/home/pi/pialert/config/pialert.db_bak`. If you have a backup already available, make sure you rename this file if you want to keep older backups before starting a new container. To restore the DB run: `cp /home/pi/pialert/config/pialert.db_bak /home/pi/pialert/db/pialert.db`   
 6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
 7. You can override the port by specifying the `PORT` env variable.
 
