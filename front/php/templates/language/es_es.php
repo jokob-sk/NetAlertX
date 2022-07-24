@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////
-// Device Page - by @TeroRERO 23jul2022
+// Device Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Navigation_Devices'] = 'Dispositivos';
@@ -37,7 +37,7 @@ $pia_lang['Device_Table_nav_next'] = 'Siguiente';
 $pia_lang['Device_Table_nav_prev'] = 'Anterior';
 
 //////////////////////////////////////////////////////////////////
-// Presence Page - by @TeroRERO 23jul2022
+// Presence Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Presence_Title'] = 'Historial por dispositivo';
@@ -58,7 +58,7 @@ $pia_lang['Presence_CalHead_month'] = 'mes';
 $pia_lang['Presence_CalHead_week'] = 'semana';
 
 //////////////////////////////////////////////////////////////////
-// Events Page - by @TeroRERO 23jul2022
+// Events Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Events_Title'] = 'Eventos';
@@ -94,7 +94,7 @@ $pia_lang['Events_Table_nav_next'] = 'Siguiente';
 $pia_lang['Events_Table_nav_prev'] = 'Anterior';
 
 //////////////////////////////////////////////////////////////////
-// Device Details Page - by @TeroRERO 23jul2022
+// Device Details Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['DevDetail_Periodselect_today'] = 'Hoy';
@@ -155,7 +155,7 @@ $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP e
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - by @TeroRERO 23jul2022
+// Maintenance Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Maintenance_Title'] = 'Herramientas de mantenimiento';
@@ -217,13 +217,13 @@ $pia_lang['Maintenance_Tool_restore'] = 'Restaurar DB';
 $pia_lang['Maintenance_Tool_restore_text'] = 'La última copia de seguridad se puede restaurar a través del botón, pero las copias de seguridad anteriores solo se pueden restaurar manualmente. Después de la restauración, realice una verificación de integridad en la base de datos por seguridad, en caso de que el DB estuviera actualmente en acceso de escritura cuando se creó la copia de seguridad.';
 $pia_lang['Maintenance_Tool_restore_noti'] = 'Restaurar DB';
 $pia_lang['Maintenance_Tool_restore_noti_text'] = '¿Estás seguro de que quieres hacer exactos la restauración de DB? Asegúrese de que ningún escaneo se esté ejecutando actualmente.';
-$pia_lang['Maintenance_Tool_purgebackup'] = 'Purge Backups';
-$pia_lang['Maintenance_Tool_purgebackup_text'] = 'All other backups will be deleted except for the last 3 backups.';
-$pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purge Backups';
-$pia_lang['Maintenance_Tool_purgebackup_noti_text'] = 'Are you sure you want to delete all backups except the last 3?';
+$pia_lang['Maintenance_Tool_purgebackup'] = 'Purgar Respaldos';
+$pia_lang['Maintenance_Tool_purgebackup_text'] = 'Todas las copias de seguridad serán eliminadas, excepto las 3 últimas.';
+$pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purgar Respaldos';
+$pia_lang['Maintenance_Tool_purgebackup_noti_text'] = '¿Está seguro de borrar todas las copias de seguridad excepto las 3 últimas?';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - by @TeroRERO 23jul2022
+// Maintenance Page - by @TeroRERO 24jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['BackDevices_Arpscan_disabled'] = 'Arp-Scan Desactivado';
@@ -246,6 +246,5 @@ $pia_lang['BackDevices_DBTools_UpdDev'] = 'Dispositivo actualizado con éxito';
 $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Error al actualizar el dispositivo';
 $pia_lang['BackDevices_DBTools_Upgrade'] = 'Base de datos actualizada correctamente';
 $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Falló la actualización de la base de datos';
-$pia_lang['BackDevices_DBTools_Purge'] = 'The oldest backups were deleted';
+$pia_lang['BackDevices_DBTools_Purge'] = 'Las copias de seguridad más antiguas fueron eliminadas';
 ?>
-
