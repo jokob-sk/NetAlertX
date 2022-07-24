@@ -20,7 +20,7 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 ## ℹ Usage
 
 Network
-   - You will have to probably run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
+   - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
 
 Default Port 
    - The app is accessible on the port `:20211`.
@@ -60,22 +60,25 @@ services:
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      - ${LOGS_LOCATION}/:/home/pi/pialert/log
+      - ${LOGS_LOCATION}/tmp:/home/pi/pialert/log
     environment:
-      - TZ=Europe/London
-      - PORT=20211
-      - HOST_USER_ID=1000
-      - HOST_USER_GID=1000
+      - TZ=${TZ}
+      - PORT=${PORT}
+      - HOST_USER_ID=${HOST_USER_ID}
+      - HOST_USER_GID=${HOST_USER_GID}
 ```
 
 `.env` file
 
 ```yaml
-
+#GLOBAL
 APP_DATA_LOCATION=/path/to/docker_appdata
 APP_CONFIG_LOCATION=/path/to/docker_config
 LOGS_LOCATION=/path/to/docker_logs
-
+TZ=Europe/Paris
+HOST_USER_ID=1000
+HOST_USER_GID=1000
+PORT=20211
 ```
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
