@@ -214,7 +214,6 @@ if (submit && isset($_POST['langselector_set'])) {
           </div>
       </div>
 
-
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a></li>
@@ -338,8 +337,6 @@ if (submit && isset($_POST['langselector_set'])) {
     </div>
 </div>
 
-
-
 <div style="width: 100%; height: 20px;"></div>
     <!-- ----------------------------------------------------------------------- -->
 
@@ -353,7 +350,6 @@ if (submit && isset($_POST['langselector_set'])) {
 <?php
   require 'php/templates/footer.php';
 ?>
-
 
 <script>
 
