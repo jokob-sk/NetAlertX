@@ -65,11 +65,6 @@ In charge of:
 There is a configurable login to prevent unauthorized use. 
 
 > * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable
-> * The default password is `123456`
-> * Set a new password by running `<install directory>/config/reset_password.sh newpassword`
-> * The script creates a backup of the config file `pialert.conf.bak`
-> * The password is stored as a sha256 hash
-
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
