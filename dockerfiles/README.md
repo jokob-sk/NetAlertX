@@ -17,7 +17,7 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
   <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
 </a>
 
-## ℹ Usage
+## ℹ Usage 
 
 Network
    - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
