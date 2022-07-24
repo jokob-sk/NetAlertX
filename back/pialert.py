@@ -1377,11 +1377,6 @@ def email_reporting ():
             send_pushsafer (mail_text)
         else :
             print ('    Skip PUSHSAFER...')
-        if REPORT_NTFY :
-            print ('    Sending report by NTFY...')
-            send_ntfy (mail_text)
-        else :
-            print ('    Skip NTFY...')
     else :
         print ('    No changes to report...')
 
@@ -1426,10 +1421,8 @@ def send_pushsafer (_Text):
         "ut" : 'Open Pi.Alert',
         "k" : PUSHSAFER_TOKEN,
         }
-
-    request = Request(url, urlencode(post_fields).encode())
-    json = urlopen(request).read().decode()
-    # print(json)
+    requests.post(url, data=post_fields)
+   
 
 #-------------------------------------------------------------------------------
 
