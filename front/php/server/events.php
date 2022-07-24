@@ -267,7 +267,7 @@ function getDevicePresence() {
 
   // SQL
   $SQL = 'SELECT ses_EventTypeConnection, ses_DateTimeConnection,
-                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
                  CASE
                    WHEN ses_EventTypeConnection = "<missing event>" THEN
@@ -290,11 +290,13 @@ function getDevicePresence() {
   // arrays of rows
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
-    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-      $color = '#f39c12';
-    } else {
-      $color = '#0073b7';
-    }
+  if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+        $color = '#f39c12';
+      } elseif ($row['ses_StillConnected'] == 1 ) {
+        $color = '#00a659';
+      } else {
+        $color = '#0073b7';
+      }
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
@@ -333,7 +335,7 @@ function getEventsCalendar() {
 
   // SQL
   $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
-                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
                  CASE
                    WHEN ses_EventTypeConnection = "<missing event>" THEN
@@ -356,10 +358,12 @@ function getEventsCalendar() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-      $color = '#f39c12';
-    } else {
-      $color = '#0073b7';
-    }
+        $color = '#f39c12';
+      } elseif ($row['ses_StillConnected'] == 1 ) {
+        $color = '#00a659';
+      } else {
+        $color = '#0073b7';
+      }
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
