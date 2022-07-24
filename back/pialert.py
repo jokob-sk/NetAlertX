@@ -27,8 +27,9 @@ import socket
 import io
 import smtplib
 import csv
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+import requests
+#from urllib.parse import urlencode
+#from urllib.request import Request, urlopen
 
 
 #===============================================================================
@@ -1404,9 +1405,10 @@ def send_pushsafer (_Text):
         "ut" : 'Open Pi.Alert',
         "k" : PUSHSAFER_TOKEN,
         }
-
-    request = Request(url, urlencode(post_fields).encode())
-    json = urlopen(request).read().decode()
+    
+    requests.post(url, data=post_fields)
+    #request = Request(url, urlencode(post_fields).encode())
+    #json = urlopen(request).read().decode()
     # print(json)
 
 #-------------------------------------------------------------------------------
