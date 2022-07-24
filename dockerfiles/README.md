@@ -25,7 +25,7 @@ Network
 Default Port 
    - The app is accessible on the port `:20211`.
 
-> Please note - the cronjob is executed every 1, 5 and 15 minutes so wait that long for all of the scans to run.
+> Please note - the cronjob is executed every 3 and 5 minutes so wait that long for all of the scans to run.
 
 ## 💾 Setup and Backups
 
