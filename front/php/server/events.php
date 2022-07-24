@@ -217,9 +217,9 @@ function getDeviceSessions() {
     
     // Disconnection DateTime
     if ($row['ses_StillConnected'] == true) {
-      $end = '...';
+      $end = '...'; 
     } elseif ($row['ses_EventTypeDisconnection'] == '<missing event>') {
-      $end = $row['ses_EventTypeDisconnection'];
+      $end = $row['ses_EventTypeDisconnection'];      
     } else {
       $end = formatDate ($row['ses_DateTimeDisconnection']);
     }
@@ -267,7 +267,7 @@ function getDevicePresence() {
 
   // SQL
   $SQL = 'SELECT ses_EventTypeConnection, ses_DateTimeConnection,
-                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
                  CASE
                    WHEN ses_EventTypeConnection = "<missing event>" THEN
@@ -292,9 +292,12 @@ function getDevicePresence() {
     // Event color
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
       $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
     } else {
       $color = '#0073b7';
     }
+
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
@@ -331,9 +334,9 @@ function getEventsCalendar() {
   $startDate  = '"'. $_REQUEST ['start'] .'"';
   $endDate    = '"'. $_REQUEST ['end'] .'"';
 
-  // SQL
+  // SQL 
   $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
-                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo,
+                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
                  CASE
                    WHEN ses_EventTypeConnection = "<missing event>" THEN
@@ -357,6 +360,8 @@ function getEventsCalendar() {
     // Event color
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
       $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
     } else {
       $color = '#0073b7';
     }
