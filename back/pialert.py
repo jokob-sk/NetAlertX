@@ -27,9 +27,7 @@ import socket
 import io
 import smtplib
 import csv
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-
+import requests
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -76,6 +74,9 @@ def main ():
         print ('usage pialert [scan_cycle] | internet_IP | update_vendors' )
         return
     cycle = str(sys.argv[1])
+
+    ## Upgrade DB if needed
+    upgradeDB()
 
     ## Main Commands
     if cycle == 'internet_IP':
@@ -355,7 +356,7 @@ def scan_network ():
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
-    arpscan_retries = scanCycle_data['cic_arpscanCycles']
+    # arpscan_retries = scanCycle_data['cic_arpscanCycles'] no longer needed
     # TESTING - Fast scan
         # arpscan_retries = 1
     
@@ -363,7 +364,7 @@ def scan_network ():
     print ('\nScanning...')
     print ('    arp-scan Method...')
     print_log ('arp-scan starts...')
-    arpscan_devices = execute_arpscan (arpscan_retries)
+    arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
@@ -449,16 +450,23 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
     return sqlRow
 
 #-------------------------------------------------------------------------------
-def execute_arpscan (pRetries):
+def execute_arpscan ():
  
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-
+    
+    # ---------------START----------------Rollback-----------------START---------------
+    # rolled-back to previous code - arp-scan wouldn't discover all devices
     # arp-scan for larger Networks like /16
     # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
     # the scan is about 4min on a /16 network
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+
+    # Rolled back line(FROM) :
+    #arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
+    # Rolled back line(TO) :
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
+    # ---------------END------------------Rollback-----------------END---------------
 
     # Default arp-scan
     # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
@@ -703,15 +711,18 @@ def print_scan_stats ():
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
     History_All_Devices  = len(History_All)
+
     sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
     History_Archived = sql.fetchall()
     History_Archived_Devices  = len(History_Archived)
-    sql.execute("SELECT * FROM CurrentScan")
+
+    sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
     History_Online = sql.fetchall()
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
-    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices, ScanCycle) "+
-                 "VALUES ( ?, ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices, cycle ) )
+    
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
+                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
 
 #-------------------------------------------------------------------------------
 def create_new_devices ():
@@ -955,11 +966,11 @@ def update_devices_data_from_scan ():
         recordsToUpdate )
 
     # New Apple devices -> Cycle 15
-    print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
-                    WHERE dev_FirstConnection = ?
-                      AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
-                (startTime,) )
+    # print_log ('Update devices - 6 Cycle for Apple devices')
+    # sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
+    #                 WHERE dev_FirstConnection = ?
+    #                   AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
+    #             (startTime,) )
 
     print_log ('Update devices end')
 
@@ -1187,7 +1198,6 @@ def skip_repeated_notifications ():
 def email_reporting ():
     global mail_text
     global mail_html
-    
     # Reporting section
     print ('\nReporting...')
     openDB()
@@ -1198,9 +1208,6 @@ def email_reporting ():
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
 						)""")
-
-    # Open text Template
-
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
@@ -1247,15 +1254,17 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
                     ORDER BY eve_DateTime""")
 
+    
     for eventAlert in sql :
         mail_section_Internet = True
         mail_text_Internet += text_line_template.format (
-            eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+            'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
+            'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_Internet += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'],
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+
 
     format_report_section (mail_section_Internet, 'SECTION_INTERNET',
         'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
@@ -1283,7 +1292,7 @@ def email_reporting ():
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
-
+ 
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
@@ -1358,6 +1367,11 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
         if REPORT_PUSHSAFER :
             print ('    Sending report by PUSHSAFER...')
             send_pushsafer (mail_text)
@@ -1387,8 +1401,16 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
-
 #-------------------------------------------------------------------------------
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
 
 def send_pushsafer (_Text):
     url = 'https://www.pushsafer.com/api'
@@ -1511,6 +1533,46 @@ def SafeParseGlobalBool(boolVariable):
 #===============================================================================
 # DB
 #===============================================================================
+def upgradeDB (): 
+
+    openDB()
+
+    # indicates, if Online_History table is available 
+    onlineHistoryAvailable = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Online_History'; 
+    """).fetchall() != []
+
+    # Check if it is incompatible (Check if table has all required columns)
+    isIncompatible = False
+    
+    if onlineHistoryAvailable :
+      isIncompatible = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+      """).fetchone()[0] == 0
+    
+    # Drop table if available, but incompatible
+    if onlineHistoryAvailable and isIncompatible:
+      print_log ('Table is incompatible, Dropping the Online_History table)')
+      sql.execute("DROP TABLE Online_History;")
+      onlineHistoryAvailable = False
+
+    if onlineHistoryAvailable == False :
+      sql.execute("""      
+      CREATE TABLE "Online_History" (
+        "Index"	INTEGER,
+        "Scan_Date"	TEXT,
+        "Online_Devices"	INTEGER,
+        "Down_Devices"	INTEGER,
+        "All_Devices"	INTEGER,
+        "Archived_Devices" INTEGER,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+      );      
+      """)
+
+
+#-------------------------------------------------------------------------------
+
 def openDB ():
     global sql_connection
     global sql
