@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////
-// Device Page - by @TeroRERO 24jul2022
+// Device Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Navigation_Devices'] = 'Dispositivos';
@@ -37,7 +37,7 @@ $pia_lang['Device_Table_nav_next'] = 'Siguiente';
 $pia_lang['Device_Table_nav_prev'] = 'Anterior';
 
 //////////////////////////////////////////////////////////////////
-// Presence Page - by @TeroRERO 24jul2022
+// Presence Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Presence_Title'] = 'Historial por dispositivo';
@@ -58,7 +58,7 @@ $pia_lang['Presence_CalHead_month'] = 'mes';
 $pia_lang['Presence_CalHead_week'] = 'semana';
 
 //////////////////////////////////////////////////////////////////
-// Events Page - by @TeroRERO 24jul2022
+// Events Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Events_Title'] = 'Eventos';
@@ -94,7 +94,7 @@ $pia_lang['Events_Table_nav_next'] = 'Siguiente';
 $pia_lang['Events_Table_nav_prev'] = 'Anterior';
 
 //////////////////////////////////////////////////////////////////
-// Device Details Page - by @TeroRERO 24jul2022
+// Device Details Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['DevDetail_Periodselect_today'] = 'Hoy';
@@ -155,7 +155,7 @@ $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP e
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - by @TeroRERO 24jul2022
+// Maintenance Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Maintenance_Title'] = 'Herramientas de mantenimiento';
@@ -221,13 +221,13 @@ $pia_lang['Maintenance_Tool_purgebackup'] = 'Purgar Respaldos';
 $pia_lang['Maintenance_Tool_purgebackup_text'] = 'Todas las copias de seguridad serán eliminadas, excepto las 3 últimas.';
 $pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purgar Respaldos';
 $pia_lang['Maintenance_Tool_purgebackup_noti_text'] = '¿Está seguro de borrar todas las copias de seguridad excepto las 3 últimas?';
-$pia_lang['Maintenance_Tool_del_ActHistory'] = 'Deleting the network activity';
-$pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'The network activity graph is reset. This does not affect the events.';
-$pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Delete network activity';
-$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Are you sure you want to reset the network activity?';
+$pia_lang['Maintenance_Tool_del_ActHistory'] = 'Eliminar la actividad de la red';
+$pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'El gráfico de actividad de la red se resetea. Esto no afecta a los eventos.';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Borrar la actividad de la red';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = '¿Está seguro de restablecer la actividad de la red?';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - by @TeroRERO 24jul2022
+// Maintenance Page - Update by @TeroRERO 25jul2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['BackDevices_Arpscan_disabled'] = 'Arp-Scan Desactivado';
