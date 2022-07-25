@@ -15,8 +15,7 @@ $pia_lang['Device_Shortcut_NewDevices'] = 'Neue Geräte';
 $pia_lang['Device_Shortcut_DownAlerts'] = 'Down Meldungen';
 $pia_lang['Device_Shortcut_Archived'] = 'Archiviert';
 $pia_lang['Device_Shortcut_Devices'] = 'Geräte';
-$pia_lang['Device_Shortcut_OnlineChart_a'] = 'Netzwerkaktivität über die letzten';
-$pia_lang['Device_Shortcut_OnlineChart_b'] = 'Stunden';
+$pia_lang['Device_Shortcut_OnlineChart'] = 'Gerätepräsenz im Laufe der Zeit';
 $pia_lang['Device_TableHead_Name'] = 'Name';
 $pia_lang['Device_TableHead_Owner'] = 'Eigentümer';
 $pia_lang['Device_TableHead_Type'] = 'Typ';
@@ -179,6 +178,9 @@ $pia_lang['Maintenance_lang_de_de'] = 'Deutsch (DE)';
 $pia_lang['Maintenance_lang_es_es'] = 'Spanisch (ES)';
 $pia_lang['Maintenance_lang_selector_text'] = 'Die Änderung findet serverseitig statt, betrifft also alle verwendeten Geräte.';
 $pia_lang['Maintenance_lang_selector_apply'] = 'Übernehmen';
+$pia_lang['Maintenance_Tools_Tab_Settings'] = 'Einstellungen';
+$pia_lang['Maintenance_Tools_Tab_Tools'] = 'Werkzeuge';
+$pia_lang['Maintenance_Tools_Tab_BackupRestore'] = 'Sicherg. / Wiederherstellg.';
 $pia_lang['Maintenance_Tool_darkmode'] = 'Darstellungswechsel (Dunkel/Hell)';
 $pia_lang['Maintenance_Tool_darkmode_text'] = 'Wechselt zwischen der hellen und der dunklen Darstellung. Wenn der Wechsel nicht richtig funktionieren sollte, versuchen Sie den Browsercache zu löschen. Die Änderung findet serverseitig statt, betrifft also alle verwendeten Geräte.';
 $pia_lang['Maintenance_Tool_darkmode_noti'] = 'Darstellungswechsel';
@@ -214,6 +216,10 @@ $pia_lang['Maintenance_Tool_restore'] = 'DB Wiederherstellung';
 $pia_lang['Maintenance_Tool_restore_text'] = 'Das neuste Backup kann über diese Funk&shy;tion wiederhergestellt werden. Ältere Sicher&shy;ungen müssen manuell wieder&shy;hergestellt wer&shy;den. Es empfiehlt sich eine Integritäts&shy;prüfung nach der Wieder&shy;her&shy;stellung zu machen, falls die Datenbank bei der Sicherung geöffnet war.';
 $pia_lang['Maintenance_Tool_restore_noti'] = 'DB Wiederherstellung';
 $pia_lang['Maintenance_Tool_restore_noti_text'] = 'Sind Sie sicher, dass Sie die Datenbank aus der neusten Sicherung wiederherstellen möchten? Prüfen Sie, dass gerade keine Scans stattfinden.';
+$pia_lang['Maintenance_Tool_purgebackup'] = 'Sicherungen aufräumen';
+$pia_lang['Maintenance_Tool_purgebackup_text'] = 'Es werden, bis auf die letzten 3 Backups, alle übrigen Backups gelöscht.';
+$pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Sicherungen aufräumen';
+$pia_lang['Maintenance_Tool_purgebackup_noti_text'] = 'Sind Sie sicher, alle Backups, bis auf die letzten 3 löschen möchten?';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
@@ -239,5 +245,6 @@ $pia_lang['BackDevices_DBTools_UpdDev'] = 'Gerät erfolgreich aktualisiert';
 $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Fehler beim Aktualisieren des Gerätes';
 $pia_lang['BackDevices_DBTools_Upgrade'] = 'Datenbank erfolgreich aktualisiert';
 $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Fehler beim Aktualisieren der Datenbank';
+$pia_lang['BackDevices_DBTools_Purge'] = 'Die ältesten Backups wurden gelöscht';
 ?>
 

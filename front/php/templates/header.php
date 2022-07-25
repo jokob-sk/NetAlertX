@@ -8,7 +8,23 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+// ###################################
+// ## TimeZone processing start
+// ###################################
+$config_file = "../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
+// ###################################
+// ## TimeZone processing end
+// ###################################
 
+
+// ###################################
+// ## GUI settings processing start
+// ###################################
 if (file_exists('../db/setting_darkmode')) {
     $ENABLED_DARKMODE = True;
 }
@@ -22,7 +38,9 @@ foreach (glob("../db/setting_language*") as $filename) {
 }
 if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
 require 'php/templates/language/'.$pia_lang_selected.'.php';
-
+// ###################################
+// ## GUI settings processing end
+// ###################################
 ?>
 
 <!DOCTYPE html> 
@@ -84,12 +102,7 @@ if ($ENABLED_DARKMODE === True) {
 
 <!-- Servertime to the right of the hostname -->
 <script>
-<?php
-  $conf_file = '../config/version.conf';
-  $conf_data = parse_ini_file($conf_file);
-  # set timezone for server time in header 
-  date_default_timezone_set($conf_data['TZ']);
-?>
+
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
 
 function show_pia_servertime() {
@@ -152,9 +165,9 @@ function show_pia_servertime() {
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
-              <li class="user-header">
-                <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent">
-                <p>
+              <li class="user-header" style=" height: 100px;">
+                <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
+                <p style="float: right; width: 200px">
                   Open Source Network Guard
                   <small>Designed for Raspberry Pi</small>
                 </p>
@@ -162,27 +175,11 @@ function show_pia_servertime() {
 
               <!-- Menu Body -->
 
-
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a target="_blank" href="https://github.com/pucherot/Pi.Alert">GitHub Pi.Alert</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="mailto:pi.alert.application@gmail.com">email Support</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a target="_blank" href="https://github.com/pucherot/Pi.Alert/blob/main/LICENSE.txt">GNU GPLv3</a>
-                  </div>
-                  <!--
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Updates</a>
-                  </div>
-                  -->
+              <li class="user-footer">
+                <div class="pull-right">
+                  <a href="/pialert/index.php?action=logout" class="btn btn-danger">Sign out</a>
                 </div>
-                <!-- /.row -->
               </li>
-              
             </ul>
           </li>
         </ul>

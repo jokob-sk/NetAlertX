@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
 //------------------------------------------------------------------------------
 //  Pi.Alert
 //  Open Source Network Guard / WIFI & LAN intrusion detector 
@@ -209,9 +217,9 @@ if (submit && isset($_POST['langselector_set'])) {
 
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_Settings" data-toggle="tab">Settings</a></li>
-        <li><a href="#tab_DBTools" data-toggle="tab">DB Tools</a></li>
-        <li><a href="#tab_BackupRestore" data-toggle="tab">Backup / Restore</a></li>
+        <li class="active"><a href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a></li>
+        <li><a href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a></li>
+        <li><a href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_Settings">
@@ -321,13 +329,13 @@ if (submit && isset($_POST['langselector_set'])) {
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUpgadeDatabase" style="border-top: solid 3px #dd4b39;" onclick="askUpgradeDatabase()"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?php echo $pia_lang['Maintenance_Tool_purgebackup'];?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_upgrade_database_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_purgebackup_text'];?></div>
                     </div>
-                </div>
-        </div>
-    </div>
+                 </div>
+          </div>
+      </div>
 </div>
 
 
@@ -433,8 +441,22 @@ function PiaRestoreDBfromArchive()
   });
 }
 
-// Restore DB from Archive 
-function askPiaEnableDarkmode () {
+// Purge Backups 
+function askPiaPurgeDBBackups() {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti_text'];?>',
+    'Cancel', 'Purge', 'PiaPurgeDBBackups');
+}
+function PiaPurgeDBBackups()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=PiaPurgeDBBackups', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// Switch Darkmode 
+function askPiaEnableDarkmode() {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_darkmode_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_darkmode_noti_text'];?>',
     'Cancel', 'Switch', 'PiaEnableDarkmode');
@@ -457,20 +479,6 @@ function PiaToggleArpScan()
 { 
   // Execute
   $.get('php/server/devices.php?action=PiaToggleArpScan', function(msg) {
-    showMessage (msg);
-  });
-}
-
-// upgrade DB
-function askUpgradeDatabase () {
-  // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_upgrade_database_noti_text'];?>',
-    'Cancel', 'Upgrade', 'upgradeDatabase');
-}
-function upgradeDatabase()
-{ 
-  // Upgrade DB
-  $.get('php/server/devices.php?action=upgradeDatabase', function(msg) {
     showMessage (msg);
   });
 }

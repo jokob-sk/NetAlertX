@@ -4,18 +4,18 @@ Server:      <SERVER_NAME>
 
 <SECTION_INTERNET>
 Internet
----------------------
+----------------------
 <TABLE_INTERNET>
 </SECTION_INTERNET><SECTION_NEW_DEVICES>
 New Devices
----------------------
+----------------------
 <TABLE_NEW_DEVICES>
 </SECTION_NEW_DEVICES><SECTION_DEVICES_DOWN>
 Devices Down
----------------------
+----------------------
 <TABLE_DEVICES_DOWN>
 </SECTION_DEVICES_DOWN><SECTION_EVENTS>
 Events
----------------------
+----------------------
 <TABLE_EVENTS>
 </SECTION_EVENTS>

@@ -1230,21 +1230,21 @@ def email_reporting ():
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
     
-    mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
-    mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
 
-    mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-    mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
 
-    mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
-    mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
 
     # Compose Internet Section
     print ('    Formating report...')
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
-    text_line_template = '{}\t{}\n{}\t{}\n{}\t{}\n{}\t{}\n\n'
+    text_line_template = '{} \t{}\t{}\t{}\n'
     html_line_template = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
         '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
@@ -1273,7 +1273,7 @@ def email_reporting ():
     mail_section_new_devices = False
     mail_text_new_devices = ''
     mail_html_new_devices = ''
-    text_line_template    = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template    = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
         '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1286,8 +1286,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
-            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
-            'Time:', eventAlert['eve_DateTime'], 'More Info:', eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
+            'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1300,7 +1300,7 @@ def email_reporting ():
     mail_section_devices_down = False
     mail_text_devices_down = ''
     mail_html_devices_down = ''
-    text_line_template     = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template     = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
         '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1313,8 +1313,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_devices_down = True
         mail_text_devices_down += text_line_template.format (
-            'Name:', eventAlert['dev_Name'], 'MAC:', eventAlert['eve_MAC'],
-            'Time:', eventAlert['eve_DateTime'],'IP:', eventAlert['eve_IP'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
+            'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
         mail_html_devices_down += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1342,9 +1342,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            'Name:', eventAlert['dev_Name'],'Event:', eventAlert['eve_EventType'],
-            'MAC:', eventAlert['eve_MAC'], 'IP:', eventAlert['eve_IP'],
-            'Time:', eventAlert['eve_DateTime'],'More Info:', eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
+            'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
+            'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1372,8 +1372,14 @@ def email_reporting ():
             send_ntfy (mail_text)
         else :
             print ('    Skip NTFY...')
+        if REPORT_PUSHSAFER :
+            print ('    Sending report by PUSHSAFER...')
+            send_pushsafer (mail_text)
+        else :
+            print ('    Skip PUSHSAFER...')
     else :
         print ('    No changes to report...')
+
     
 
     # Clean Pending Alert Events
@@ -1400,6 +1406,36 @@ def send_ntfy (_Text):
         "Priority": "urgent",
         "Tags": "warning"
     })
+
+def send_pushsafer (_Text):
+    url = 'https://www.pushsafer.com/api'
+    post_fields = {
+        "t" : 'Pi.Alert Message',
+        "m" : _Text,
+        "s" : 11,
+        "v" : 3,
+        "i" : 148,
+        "c" : '#ef7f7f',
+        "d" : 'a',
+        "u" : REPORT_DASHBOARD_URL,
+        "ut" : 'Open Pi.Alert',
+        "k" : PUSHSAFER_TOKEN,
+        }
+    requests.post(url, data=post_fields)
+   
+
+#-------------------------------------------------------------------------------
+
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Click": REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
+
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
@@ -1470,27 +1506,51 @@ def send_email (pText, pHTML):
     # Send mail
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
-    smtp_connection.starttls()
-    smtp_connection.ehlo()
-    smtp_connection.login (SMTP_USER, SMTP_PASS)
+#    smtp_connection.starttls()
+#    smtp_connection.ehlo()
+#    smtp_connection.login (SMTP_USER, SMTP_PASS)
+    if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
+        smtp_connection.starttls()
+        smtp_connection.ehlo()
+    if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
+        smtp_connection.login (SMTP_USER, SMTP_PASS)
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
+#-------------------------------------------------------------------------------
+def SafeParseGlobalBool(boolVariable):
+    if boolVariable in globals():
+        return eval(boolVariable)
+    return False
 
 #===============================================================================
 # DB
 #===============================================================================
-def upgradeDB ():
+def upgradeDB (): 
 
     openDB()
 
-    # check if table exists    
-    listOfTables = sql.execute(
-      """SELECT name FROM sqlite_master WHERE type='table'
-      AND name='Online_History'; """).fetchall()
+    # indicates, if Online_History table is available 
+    onlineHistoryAvailable = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Online_History'; 
+    """).fetchall() != []
+
+    # Check if it is incompatible (Check if table has all required columns)
+    isIncompatible = False
     
-    if listOfTables == []:
-      print_log ('Upgrading DB (creating Online_History table)')
+    if onlineHistoryAvailable :
+      isIncompatible = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+      """).fetchone()[0] == 0
+    
+    # Drop table if available, but incompatible
+    if onlineHistoryAvailable and isIncompatible:
+      print_log ('Table is incompatible, Dropping the Online_History table)')
+      sql.execute("DROP TABLE Online_History;")
+      onlineHistoryAvailable = False
+
+    if onlineHistoryAvailable == False :
       sql.execute("""      
       CREATE TABLE "Online_History" (
         "Index"	INTEGER,
@@ -1502,6 +1562,7 @@ def upgradeDB ():
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)
+
 
 #-------------------------------------------------------------------------------
 

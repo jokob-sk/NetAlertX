@@ -35,8 +35,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
-      case 'upgradeDatabase':         upgradeDB();                             break;
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
       case 'deleteAllDevices':        deleteAllDevices();                      break;
@@ -46,6 +45,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'deleteEvents':            deleteEvents();                          break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
+      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
       case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
       case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;
 
@@ -213,36 +213,6 @@ function deleteAllWithEmptyMACs() {
 }
 
 //------------------------------------------------------------------------------
-//  Upgrade the database to enable new functionality
-//------------------------------------------------------------------------------
-function upgradeDB() {
-  global $db;
-  global $pia_lang;
-
-  // sql
-  $sql = '
-  -- Online_History definition
-
-  CREATE TABLE "Online_History" (
-    "Index"	INTEGER,
-    "Scan_Date"	TEXT,
-    "Online_Devices"	INTEGER,
-    "Down_Devices"	INTEGER,
-    "All_Devices"	INTEGER,
-    PRIMARY KEY("Index" AUTOINCREMENT)
-  );';
-  // execute sql
-  $result = $db->query($sql);
-
-  // check result
-  if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_Upgrade'];
-  } else {
-    echo $pia_lang['BackDevices_DBTools_UpgradeError']."\n\n$sql \n\n". $db->lastErrorMsg();
-  }
-}
-
-//------------------------------------------------------------------------------
 //  Delete all devices with empty MAC addresses
 //------------------------------------------------------------------------------
 function deleteUnknownDevices() {
@@ -261,8 +231,6 @@ function deleteUnknownDevices() {
     echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
-
-
 
 //------------------------------------------------------------------------------
 //  Delete all devices 
@@ -360,6 +328,37 @@ function PiaRestoreDBfromArchive() {
   }
 
 }
+
+//------------------------------------------------------------------------------
+//  Purge Backups
+//------------------------------------------------------------------------------
+function PiaPurgeDBBackups() {
+  global $pia_lang;
+
+  $Pia_Archive_Path = '../../../db';
+  $Pia_Backupfiles = array();
+  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', 'pialert.db', 'pialertdb-reset.zip'));
+
+  foreach ($files as &$item) 
+    {
+      $item = $Pia_Archive_Path.'/'.$item;
+      if (stristr($item, 'setting_') == '') {array_push($Pia_Backupfiles, $item);}
+    }
+
+  if (sizeof($Pia_Backupfiles) > 3) 
+    {
+      rsort($Pia_Backupfiles);
+      unset($Pia_Backupfiles[0], $Pia_Backupfiles[1], $Pia_Backupfiles[2]);
+      $Pia_Backupfiles_Purge = array_values($Pia_Backupfiles);
+      for ($i = 0; $i < sizeof($Pia_Backupfiles_Purge); $i++) 
+        {
+          unlink($Pia_Backupfiles_Purge[$i]);
+        }
+  }
+  echo $pia_lang['BackDevices_DBTools_Purge'];
+  echo("<meta http-equiv='refresh' content='1'>");
+    
+  }
 
 //------------------------------------------------------------------------------
 //  Toggle Dark/Light Themes
