@@ -7,7 +7,7 @@ if [ $CHECK_PROT -eq 0 ]
 then
     echo "   Key not found. Key 'PIALERT_WEB_PROTECTION' will be created."
     echo "   Check Config after the script is finished."
-    sed "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE > pialert.tmp
+    sed "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = False" $PIA_CONF_FILE > pialert.tmp
     rm $PIA_CONF_FILE.bak
     mv $PIA_CONF_FILE $PIA_CONF_FILE.bak
     mv pialert.tmp $PIA_CONF_FILE
