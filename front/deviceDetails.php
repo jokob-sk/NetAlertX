@@ -687,7 +687,6 @@ function main () {
       
             // Read Cookies
             devicesList = getCookie('devicesList');
-            deleteCookie ('devicesList');
             if (devicesList != '') {
                 devicesList = JSON.parse (devicesList);
             } else {
@@ -1179,6 +1178,7 @@ function getDeviceData (readAllData=false) {
         searchParams.set("mac", mac);
         var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
         history.pushState(null, '', newRelativePathQuery);
+        getSessionsPresenceEvents();
 
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
@@ -1239,7 +1239,7 @@ function getDeviceData (readAllData=false) {
       $('#btnNext').removeAttr  ('disabled');
       $('#btnNext').removeClass ('text-gray50');
     }
-    getSessionsPresenceEvents();
+    
     // Timer for refresh data
     $("body").css("cursor", "default");
     newTimerRefreshData (getDeviceData);
