@@ -640,6 +640,9 @@ input[type="password"]::-webkit-caps-lock-indicator {
   background-color: #272c30;
   color: #bec5cb;
 }
+.nav-tabs-custom > .nav-tabs {
+  background-color: #353c42;
+}
 .nav-tabs-custom .tab-content {
   background-color: #272c30;
 }
