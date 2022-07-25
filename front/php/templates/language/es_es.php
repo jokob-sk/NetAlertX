@@ -221,6 +221,10 @@ $pia_lang['Maintenance_Tool_purgebackup'] = 'Purgar Respaldos';
 $pia_lang['Maintenance_Tool_purgebackup_text'] = 'Todas las copias de seguridad serán eliminadas, excepto las 3 últimas.';
 $pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purgar Respaldos';
 $pia_lang['Maintenance_Tool_purgebackup_noti_text'] = '¿Está seguro de borrar todas las copias de seguridad excepto las 3 últimas?';
+$pia_lang['Maintenance_Tool_del_ActHistory'] = 'Deleting the network activity';
+$pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'The network activity graph is reset. This does not affect the events.';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Delete network activity';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Are you sure you want to reset the network activity?';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page - by @TeroRERO 24jul2022

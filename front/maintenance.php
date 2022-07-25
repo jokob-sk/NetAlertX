@@ -310,6 +310,14 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents_text'];?></div>
                     </div>
+
+
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory_text'];?></div>
+                    </div>
                 </div>
         </div>
         <div class="tab-pane" id="tab_BackupRestore">
@@ -405,6 +413,20 @@ function deleteEvents()
 { 
   // Execute
   $.get('php/server/devices.php?action=deleteEvents', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// delete Hostory 
+function askDeleteActHistory () {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'];?>',
+    'Cancel', 'Delete', 'deleteActHistory');
+}
+function deleteActHistory()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=deleteActHistory', function(msg) {
     showMessage (msg);
   });
 }

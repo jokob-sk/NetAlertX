@@ -221,31 +221,37 @@ $pia_lang['Maintenance_Tool_purgebackup'] = 'Sicherungen aufräumen';
 $pia_lang['Maintenance_Tool_purgebackup_text'] = 'Es werden, bis auf die letzten 3 Backups, alle übrigen Backups gelöscht.';
 $pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Sicherungen aufräumen';
 $pia_lang['Maintenance_Tool_purgebackup_noti_text'] = 'Sind Sie sicher, alle Backups, bis auf die letzten 3 löschen möchten?';
+$pia_lang['Maintenance_Tool_del_ActHistory'] = 'Löschen der Netzwerkaktivität';
+$pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'Der Graph für die Netzwerkaktivität wird zurückgesetzt. Hierbei werden die Events nicht beeinflusst.';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Netzwerkaktivität löschen';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Sind Sie sicher, dass Sie die Netzwerkaktivität zurücksetzen möchten?';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
 //////////////////////////////////////////////////////////////////
 
-$pia_lang['BackDevices_Arpscan_disabled'] = 'Automatischer Arp-Scan deaktiviert';
-$pia_lang['BackDevices_Arpscan_enabled'] = 'Automatischer Arp-Scan aktiviert';
-$pia_lang['BackDevices_darkmode_disabled'] = 'Heller Modus aktiviert';
-$pia_lang['BackDevices_darkmode_enabled'] = 'Dunkler Modus aktiviert';
+$pia_lang['BackDevices_Arpscan_disabled'] = 'Automatischer Arp-Scan deaktiviert.';
+$pia_lang['BackDevices_Arpscan_enabled'] = 'Automatischer Arp-Scan aktiviert.';
+$pia_lang['BackDevices_darkmode_disabled'] = 'Heller Modus aktiviert.';
+$pia_lang['BackDevices_darkmode_enabled'] = 'Dunkler Modus aktiviert.';
 $pia_lang['BackDevices_Restore_CopError'] = 'Die originale Datenbank konnte nicht kopiert werden.';
-$pia_lang['BackDevices_Restore_okay'] = 'Die Wiederherstellung wurde erfolgreich ausgeführt';
+$pia_lang['BackDevices_Restore_okay'] = 'Die Wiederherstellung wurde erfolgreich ausgeführt.';
 $pia_lang['BackDevices_Restore_Failed'] = 'Die Wiederherstellung ist fehlgeschlagen. Stellen Sie das Backup manuell her.';
 $pia_lang['BackDevices_Backup_CopError'] = 'Die originale Datenbank konnte nicht gesichert werden.';
-$pia_lang['BackDevices_Backup_okay'] = 'Das Backup wurde erfolgreich beendet';
+$pia_lang['BackDevices_Backup_okay'] = 'Das Backup wurde erfolgreich beendet.';
 $pia_lang['BackDevices_Backup_Failed'] = 'Das Backup wurde teilweise ausgeführt. Das Archiv ist entweder leer oder nicht vorhanden.';
-$pia_lang['BackDevices_DBTools_DelDev_a'] = 'Gerät erfolgreich gelöscht';
-$pia_lang['BackDevices_DBTools_DelDev_b'] = 'Geräte erfolgreich gelöscht';
-$pia_lang['BackDevices_DBTools_DelEvents'] = 'Events erfolgreich gelöscht';
-$pia_lang['BackDevices_DBTools_DelEventsError'] = 'Fehler beim Löschen der Ereignisse';
-$pia_lang['BackDevices_DBTools_DelDevError_a'] = 'Fehler beim Löschen des Gerätes';
-$pia_lang['BackDevices_DBTools_DelDevError_b'] = 'Fehler beim Löschen der Geräte';
-$pia_lang['BackDevices_DBTools_UpdDev'] = 'Gerät erfolgreich aktualisiert';
-$pia_lang['BackDevices_DBTools_UpdDevError'] = 'Fehler beim Aktualisieren des Gerätes';
-$pia_lang['BackDevices_DBTools_Upgrade'] = 'Datenbank erfolgreich aktualisiert';
-$pia_lang['BackDevices_DBTools_UpgradeError'] = 'Fehler beim Aktualisieren der Datenbank';
-$pia_lang['BackDevices_DBTools_Purge'] = 'Die ältesten Backups wurden gelöscht';
+$pia_lang['BackDevices_DBTools_DelDev_a'] = 'Gerät erfolgreich gelöscht.';
+$pia_lang['BackDevices_DBTools_DelDev_b'] = 'Geräte erfolgreich gelöscht.';
+$pia_lang['BackDevices_DBTools_DelEvents'] = 'Events erfolgreich gelöscht.';
+$pia_lang['BackDevices_DBTools_DelEventsError'] = 'Fehler beim Löschen der Ereignisse.';
+$pia_lang['BackDevices_DBTools_DelDevError_a'] = 'Fehler beim Löschen des Gerätes.';
+$pia_lang['BackDevices_DBTools_DelDevError_b'] = 'Fehler beim Löschen der Geräte.';
+$pia_lang['BackDevices_DBTools_UpdDev'] = 'Gerät erfolgreich aktualisiert.';
+$pia_lang['BackDevices_DBTools_UpdDevError'] = 'Fehler beim Aktualisieren des Gerätes.';
+$pia_lang['BackDevices_DBTools_Upgrade'] = 'Datenbank erfolgreich aktualisiert.';
+$pia_lang['BackDevices_DBTools_UpgradeError'] = 'Fehler beim Aktualisieren der Datenbank.';
+$pia_lang['BackDevices_DBTools_Purge'] = 'Die ältesten Backups wurden gelöscht.';
+$pia_lang['BackDevices_DBTools_DelActHistory'] = 'Die Anzeige der Netzwerkaktivität wurde zurückgesetzt.';
+$pia_lang['BackDevices_DBTools_DelActHistoryError'] = 'Fehler beim Zurücksetzen der Netzwerkaktivitätsanzeige.';
 ?>
 

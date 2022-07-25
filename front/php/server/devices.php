@@ -43,6 +43,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
+      case 'deleteActHistory':        deleteActHistory();                      break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
@@ -275,6 +276,26 @@ function deleteEvents() {
 }
 
 //------------------------------------------------------------------------------
+//  Delete History
+//------------------------------------------------------------------------------
+function deleteActHistory() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Online_History';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelActHistory'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelActHistoryError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
 //  Backup DB to Archiv
 //------------------------------------------------------------------------------
 function PiaBackupDBtoArchive() {
@@ -360,7 +381,7 @@ function PiaPurgeDBBackups() {
   echo $pia_lang['BackDevices_DBTools_Purge'];
   echo("<meta http-equiv='refresh' content='1'>");
     
-  }
+}
 
 //------------------------------------------------------------------------------
 //  Toggle Dark/Light Themes
