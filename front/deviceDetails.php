@@ -265,9 +265,15 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                       </div>
 
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Infrastructure</label>
+                        <label class="col-sm-3 control-label">Network Hardward</label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtInfrastructure" type="text" value="--">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label">Network HW Port</label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtInfrastructurePort" type="text" value="--">
                         </div>
                       </div>
 
@@ -1099,34 +1105,35 @@ function getDeviceData (readAllData=false) {
       $('#deviceStatus')[0].className = 'text-gray';
       $('#deviceStatusIcon')[0].className = '';
   
-      $('#deviceSessions').html   ('--');
-      $('#deviceDownAlerts').html ('--');
-      $('#deviceEvents').html     ('--');
+      $('#deviceSessions').html        ('--');
+      $('#deviceDownAlerts').html      ('--');
+      $('#deviceEvents').html          ('--');
  
-      $('#txtMAC').val             ('--');
-      $('#txtName').val            ('--');
-      $('#txtOwner').val           ('--');
-      $('#txtDeviceType').val      ('--');
-      $('#txtVendor').val          ('--');
+      $('#txtMAC').val                 ('--');
+      $('#txtName').val                ('--');
+      $('#txtOwner').val               ('--');
+      $('#txtDeviceType').val          ('--');
+      $('#txtVendor').val              ('--');
 
-      $('#chkFavorite').iCheck     ('uncheck'); 
-      $('#txtGroup').val           ('--');
-      $('#txtLocation').val        ('--');
-      $('#txtComments').val        ('--');
-      $('#txtInfrastructure').val  ('--');
+      $('#chkFavorite').iCheck         ('uncheck'); 
+      $('#txtGroup').val               ('--');
+      $('#txtLocation').val            ('--');
+      $('#txtComments').val            ('--');
+      $('#txtInfrastructure').val      ('--');
+      $('#txtInfrastructurePort').val  ('--');
 
-      $('#txtFirstConnection').val ('--');
-      $('#txtLastConnection').val  ('--');
-      $('#txtLastIP').val          ('--');
-      $('#txtStatus').val          ('--');
-      $('#chkStaticIP').iCheck     ('uncheck'); 
+      $('#txtFirstConnection').val     ('--');
+      $('#txtLastConnection').val      ('--');
+      $('#txtLastIP').val              ('--');
+      $('#txtStatus').val              ('--');
+      $('#chkStaticIP').iCheck         ('uncheck'); 
   
-      $('#txtScanCycle').val       ('--');
-      $('#chkAlertEvents').iCheck  ('uncheck') 
-      $('#chkAlertDown').iCheck    ('uncheck') 
-      $('#txtSkipRepeated').val    ('--');
-      $('#chkNewDevice').iCheck    ('uncheck'); 
-      $('#chkArchived').iCheck     ('uncheck'); 
+      $('#txtScanCycle').val           ('--');
+      $('#chkAlertEvents').iCheck      ('uncheck') 
+      $('#chkAlertDown').iCheck        ('uncheck') 
+      $('#txtSkipRepeated').val        ('--');
+      $('#chkNewDevice').iCheck        ('uncheck'); 
+      $('#chkArchived').iCheck         ('uncheck'); 
 
       $('#iconRandomMACactive').addClass ('hidden');
       $('#iconRandomMACinactive').removeClass ('hidden');
@@ -1195,6 +1202,7 @@ function getDeviceData (readAllData=false) {
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
         $('#txtInfrastructure').val                  (deviceData['dev_Infrastructure']);
+        $('#txtInfrastructurePort').val              (deviceData['dev_Infrastructure_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
@@ -1304,6 +1312,7 @@ function setDeviceData (refreshCallback='') {
     + '&location='       + $('#txtLocation').val()
     + '&comments='       + $('#txtComments').val()
     + '&infrastructure=' + $('#txtInfrastructure').val()
+    + '&infrastructureport=' + $('#txtInfrastructurePort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + $('#txtScanCycle').val().split(' ')[0]
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)

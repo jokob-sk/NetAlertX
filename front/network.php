@@ -9,10 +9,11 @@ if ($_SESSION["login"] != 1)
 require 'php/templates/header.php';
 require 'php/server/db.php';
 
-
 $DBFILE = '../db/pialert.db';
 OpenDB();
-// Create Table if not exists'
+// #####################################
+// ## Create Table if not exists'
+// #####################################
 $sql = 'CREATE TABLE IF NOT EXISTS "network_infrastructure" (
 	"device_id"	INTEGER,
 	"net_device_name"	TEXT NOT NULL,
@@ -20,13 +21,16 @@ $sql = 'CREATE TABLE IF NOT EXISTS "network_infrastructure" (
 	PRIMARY KEY("device_id" AUTOINCREMENT)
 )';
 $result = $db->query($sql);
-// Expand Devices Table
+// #####################################
+// ## Expand Devices Table
+// #####################################
 $sql = 'ALTER TABLE "Devices" ADD "dev_Infrastructure" INTEGER';
 $result = $db->query($sql);
 $sql = 'ALTER TABLE "Devices" ADD "dev_Infrastructure_port" INTEGER';
 $result = $db->query($sql);
-
-
+// #####################################
+// Add New Network Devices
+// #####################################
 if ($_REQUEST['Networkinsert'] == "yes") {
 	if (isset($_REQUEST['NetworkDeviceName']) && isset($_REQUEST['NetworkDeviceTyp']))
 	{
@@ -34,7 +38,9 @@ if ($_REQUEST['Networkinsert'] == "yes") {
 		$result = $db->query($sql);
 	}
 }
-
+// #####################################
+// remove Network Devices
+// #####################################
 if ($_REQUEST['Networkdelete'] == "yes") {
 	if (isset($_REQUEST['NetworkDeviceID']))
 	{
@@ -63,10 +69,8 @@ echo $_REQUEST['device_id'];
 		<div class="box box-default collapsed-box">
         <div class="box-header with-border">
           <h3 class="box-title">Verwalte Netzwerk-Geräte</h3>
-
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button> -->
           </div>
         </div>
         <!-- /.box-header -->
@@ -102,7 +106,6 @@ echo $_REQUEST['device_id'];
                   <select class="form-control" name="NetworkDeviceID">
                     <option value="">-- Select Typ --</option>
 					<?php
-
 					$sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
 					$result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
 					while($res = $result->fetchArray(SQLITE3_ASSOC)){
@@ -126,7 +129,6 @@ echo $_REQUEST['device_id'];
         <!-- /.box-body -->
       </div>
 
-	
 <?php
 function createnetworktab($pia_func_netdevid, $pia_func_netdevname, $pia_func_netdevtyp, $activetab) {
 	echo '<li class="'.$activetab.'"><a href="#'.$pia_func_netdevid.'" data-toggle="tab">'.$pia_func_netdevname.' / '.$pia_func_netdevtyp.'</a></li>';
@@ -140,12 +142,11 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
 
 	while($func_res = $func_result->fetchArray(SQLITE3_ASSOC)){
 		if(!isset($func_res['dev_Name'])) continue;
-		echo $func_res['dev_Name'].' - '.$func_res['dev_LastIP'].' - '.$func_res['dev_PresentLastScan'].'<br>';
+		if ($func_res['dev_PresentLastScan'] == 1) {$port_state = '<div class="badge bg-green text-white">Up</div>';} else {$port_state = '<div class="badge bg-red text-white">Down</div>';}
+		echo 'Port: '.$func_res['dev_Infrastructure_port'].' - '.$port_state.' - <a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'">'.$func_res['dev_Name'].' - '.$func_res['dev_LastIP'].'</a><br>';
 	}
-
 	echo '</div> ';
 }
-
 $sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
 $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
 ?>
@@ -163,8 +164,7 @@ while($res = $result->fetchArray(SQLITE3_ASSOC)){
 }
 ?>              
             </ul>
-
-            <div class="tab-content">
+			<div class="tab-content">
 <?php
 $i = 0;
 while($res = $result->fetchArray(SQLITE3_ASSOC)){
