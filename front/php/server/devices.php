@@ -116,8 +116,10 @@ function getDeviceData() {
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_DownAlerts'] = $row[0];
 
+  // Get current date using php, sql datetime does not return time respective to timezone.
+  $currentdate = date("Y-m-d H:i:s");
   // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now","localtime")))
+  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
                                      - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
                                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
           FROM Sessions

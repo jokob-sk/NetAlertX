@@ -275,7 +275,7 @@ function getDevicePresence() {
                  END AS ses_DateTimeConnectionCorrected,
 
                  CASE
-                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                   WHEN ses_EventTypeDisconnection = "<missing event>" OR ses_EventTypeDisconnection = NULL THEN
                         (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
                    ELSE ses_DateTimeDisconnection
                  END AS ses_DateTimeDisconnectionCorrected
