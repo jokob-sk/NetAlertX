@@ -1387,7 +1387,7 @@ function getSessionsPresenceEvents () {
   // Define Presence datasource and query data
   $('#calendar').fullCalendar('removeEventSources');
   $('#calendar').fullCalendar('addEventSource',
-  { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac +'&period='+ period });
+  { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac});
 
   // Query events
   getDeviceEvents();

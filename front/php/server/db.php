@@ -51,6 +51,7 @@ function OpenDB () {
   }
 
   $db = SQLite3_connect(true);
+  $db->exec('PRAGMA journal_mode = wal;');
   if(!$db)
   {
     die ('Error connecting to database');

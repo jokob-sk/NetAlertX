@@ -356,9 +356,6 @@ def scan_network ():
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
-    # arpscan_retries = scanCycle_data['cic_arpscanCycles'] no longer needed
-    # TESTING - Fast scan
-        # arpscan_retries = 1
     
     # arp-scan command
     print ('\nScanning...')
@@ -451,33 +448,12 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
 
 #-------------------------------------------------------------------------------
 def execute_arpscan ():
- 
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-    
-    # ---------------START----------------Rollback-----------------START---------------
-    # rolled-back to previous code - arp-scan wouldn't discover all devices
-    # arp-scan for larger Networks like /16
-    # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
-    # the scan is about 4min on a /16 network
-
-    # Rolled back line(FROM) :
-    #arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--bandwidth=512k', '--retry=3', SCAN_SUBNETS]
-    # Rolled back line(TO) :
+    # Retry is 6 to avoid false offline devices
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
-    # ---------------END------------------Rollback-----------------END---------------
-
-    # Default arp-scan
-    # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
-    # print (arpscan_args)
-
-    # TESTING - Fast Scan
-        # arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=1']
-
-    # DEBUG - arp-scan command
-        # print (" ".join (arpscan_args))
-
+   
     # Execute command
     arpscan_output = subprocess.check_output (arpscan_args, universal_newlines=True)
 
@@ -491,9 +467,6 @@ def execute_arpscan ():
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
 
-    # Bugfix #5 - Delete duplicated MAC's with different IP's
-    # TEST - Force duplicated device
-        # devices_list.append(devices_list[0])
     # Delete duplicate MAC
     unique_mac = [] 
     unique_devices = [] 
@@ -738,6 +711,16 @@ def create_new_devices ():
                                       WHERE dev_MAC = cur_MAC) """,
                     (startTime, cycle) ) 
 
+    print_log ('New devices - Insert Connection into session table')
+    sql.execute ("""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
+                        ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
+                    SELECT cur_MAC, cur_IP,'Connected',?, NULL , NULL ,1, cur_Vendor
+                    FROM CurrentScan 
+                    WHERE cur_ScanCycle = ? 
+                      AND NOT EXISTS (SELECT 1 FROM Sessions
+                                      WHERE ses_MAC = cur_MAC) """,
+                    (startTime, cycle) ) 
+                    
     # arpscan - Create new devices
     print_log ('New devices - 2 Create devices')
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
@@ -965,17 +948,10 @@ def update_devices_data_from_scan ():
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
-    # New Apple devices -> Cycle 15
-    # print_log ('Update devices - 6 Cycle for Apple devices')
-    # sql.execute ("""UPDATE Devices SET dev_ScanCycle = 1
-    #                 WHERE dev_FirstConnection = ?
-    #                   AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
-    #             (startTime,) )
-
     print_log ('Update devices end')
 
 #-------------------------------------------------------------------------------
-# Feature #43 - Resoltion name for unknown devices
+# Feature #43 - Resolve name for unknown devices
 def update_devices_names ():
     # Initialize variables
     recordsToUpdate = []
@@ -1204,9 +1180,9 @@ def email_reporting ():
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                    WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType != 'Device Down' AND eve_MAC IN
                         (
-                            SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0 
 						)""")
 
     # Open text Template
@@ -1402,7 +1378,7 @@ def send_ntfy (_Text):
     data=_Text,
     headers={
         "Title": "Pi.Alert Notification",
-        "Click": REPORT_DASHBOARD_URL,
+        "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
         "Priority": "urgent",
         "Tags": "warning"
     })
@@ -1423,19 +1399,6 @@ def send_pushsafer (_Text):
         }
     requests.post(url, data=post_fields)
    
-
-#-------------------------------------------------------------------------------
-
-def send_ntfy (_Text):
-    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
-    data=_Text,
-    headers={
-        "Title": "Pi.Alert Notification",
-        "Click": REPORT_DASHBOARD_URL,
-        "Priority": "urgent",
-        "Tags": "warning"
-    })
-
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
