@@ -225,7 +225,7 @@ function getDeviceSessions() {
     }
 
     // Duration
-    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeConnection'] == NULL || $row['ses_EventTypeDisconnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == NULL) {
       $dur = '...';
     } elseif ($row['ses_StillConnected'] == true) {
       $dur = formatDateDiff ($row['ses_DateTimeConnection'], '');  //***********
@@ -261,7 +261,6 @@ function getDevicePresence() {
 
   // Request Parameters
   $mac        = $_REQUEST['mac'];
-  $periodDate = getDateFromPeriod();
   $startDate  = '"'. formatDateISO ($_REQUEST ['start']) .'"';
   $endDate    = '"'. formatDateISO ($_REQUEST ['end'])   .'"';
 
