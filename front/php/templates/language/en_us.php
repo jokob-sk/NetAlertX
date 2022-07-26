@@ -220,6 +220,10 @@ $pia_lang['Maintenance_Tool_purgebackup'] = 'Purge Backups';
 $pia_lang['Maintenance_Tool_purgebackup_text'] = 'All other backups will be deleted except for the last 3 backups.';
 $pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purge Backups';
 $pia_lang['Maintenance_Tool_purgebackup_noti_text'] = 'Are you sure you want to delete all backups except the last 3?';
+$pia_lang['Maintenance_Tool_del_ActHistory'] = 'Deleting the network activity';
+$pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'The network activity graph is reset. This does not affect the events.';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Delete network activity';
+$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Are you sure you want to reset the network activity?';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page

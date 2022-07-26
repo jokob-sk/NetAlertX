@@ -664,6 +664,27 @@ input[type="password"]::-webkit-caps-lock-indicator {
    margin: auto;
 }
 
+.nav-tabs-custom > .nav-tabs > li:hover > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: #272c30;
+  color: #bec5cb;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  border-left-color: #30383f;
+  border-right-color: #30383f;
+  background-color: #272c30;
+  color: #bec5cb;
+}
+.nav-tabs-custom > .nav-tabs {
+  background-color: #353c42;
+}
+.nav-tabs-custom .tab-content {
+  background-color: #272c30;
+}
+.top_small_box_gray_text {
+  color: white !important;
+}
+
 /* remove white border that appears on mobile screen sizes */
 .box-body {
     border: 0px;
