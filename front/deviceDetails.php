@@ -687,7 +687,6 @@ function main () {
       
             // Read Cookies
             devicesList = getCookie('devicesList');
-            deleteCookie ('devicesList');
             if (devicesList != '') {
                 devicesList = JSON.parse (devicesList);
             } else {
@@ -1174,6 +1173,13 @@ function getDeviceData (readAllData=false) {
 
         mac                                          =deviceData['dev_MAC'];
 
+        // update the mac parameter in the URL, this makes the selected device persistent when the page is reloaded
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("mac", mac);
+        var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        history.pushState(null, '', newRelativePathQuery);
+        getSessionsPresenceEvents();
+
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
         $('#txtOwner').val                           (deviceData['dev_Owner']);
@@ -1233,7 +1239,7 @@ function getDeviceData (readAllData=false) {
       $('#btnNext').removeAttr  ('disabled');
       $('#btnNext').removeClass ('text-gray50');
     }
-
+    
     // Timer for refresh data
     $("body").css("cursor", "default");
     newTimerRefreshData (getDeviceData);
@@ -1372,13 +1378,16 @@ function deleteDevice () {
 
 // -----------------------------------------------------------------------------
 function getSessionsPresenceEvents () {
+  // Check MAC in url
+  var urlParams = new URLSearchParams(window.location.search);
+  mac = urlParams.get ('mac');
   // Define Sessions datasource and query dada
   $('#tableSessions').DataTable().ajax.url('php/server/events.php?action=getDeviceSessions&mac=' + mac +'&period='+ period).load();
   
   // Define Presence datasource and query data
   $('#calendar').fullCalendar('removeEventSources');
   $('#calendar').fullCalendar('addEventSource',
-    { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac +'&period='+ period });
+  { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac +'&period='+ period });
 
   // Query events
   getDeviceEvents();
