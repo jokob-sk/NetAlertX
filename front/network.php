@@ -130,6 +130,9 @@ echo $_REQUEST['device_id'];
       </div>
 
 <?php
+// #####################################
+// Create functions
+// #####################################
 function createnetworktab($pia_func_netdevid, $pia_func_netdevname, $pia_func_netdevtyp, $activetab) {
 	echo '<li class="'.$activetab.'"><a href="#'.$pia_func_netdevid.'" data-toggle="tab">'.$pia_func_netdevname.' / '.$pia_func_netdevtyp.'</a></li>';
 }
@@ -147,39 +150,41 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
 	}
 	echo '</div> ';
 }
+// #####################################
+// Build Tab Box
+// #####################################
+
 $sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
 $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
 ?>
-
-<div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-
-<?php
-$i = 0;
-while($res = $result->fetchArray(SQLITE3_ASSOC)){
-	if(!isset($res['device_id'])) continue;
-	if ($i == 0) {$active = 'active';} else {$active = '';}
-    createnetworktab($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $active);
-    $i++;
-}
-?>              
-            </ul>
+      <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <?php
+            $i = 0;
+            while($res = $result->fetchArray(SQLITE3_ASSOC)){
+            	if(!isset($res['device_id'])) continue;
+            	if ($i == 0) {$active = 'active';} else {$active = '';}
+                createnetworktab($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $active);
+                $i++;
+            }
+            ?>              
+          </ul>
 			<div class="tab-content">
-<?php
-$i = 0;
-while($res = $result->fetchArray(SQLITE3_ASSOC)){
-	if(!isset($res['device_id'])) continue; 
-	if ($i == 0) {$active = 'active';} else {$active = '';}
-    createnetworktabcontent($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $active);
-    $i++;
-}
-unset($i);
-?>
+          <?php
+          $i = 0;
+          while($res = $result->fetchArray(SQLITE3_ASSOC)){
+          	if(!isset($res['device_id'])) continue; 
+          	if ($i == 0) {$active = 'active';} else {$active = '';}
+              createnetworktabcontent($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $active);
+              $i++;
+          }
+          unset($i);
+          ?>
               <!-- /.tab-pane -->
             </div>
             <!-- /.tab-content -->
-  </div>
-</section>
+          </div>
+      </section>
 
     <!-- /.content -->
   </div>
