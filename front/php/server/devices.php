@@ -86,6 +86,7 @@ function getDeviceData() {
   $deviceData = $row;
   $mac = $deviceData['dev_MAC'];
 
+  $deviceData['dev_Infrastructure'] = $row['dev_Infrastructure'];
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
 
@@ -153,6 +154,7 @@ function setDeviceData() {
                  dev_Group           = "'. quotes($_REQUEST['group'])        .'",
                  dev_Location        = "'. quotes($_REQUEST['location'])     .'",
                  dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
+                 dev_Infrastructure  = "'. quotes($_REQUEST['infrastructure']).'",
                  dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
                  dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
                  dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
