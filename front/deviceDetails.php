@@ -265,7 +265,7 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                       </div>
 
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Network Hardward</label>
+                        <label class="col-sm-3 control-label">Network Hardware</label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtInfrastructure" type="text" value="--">
                         </div>
