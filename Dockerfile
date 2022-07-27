@@ -31,7 +31,7 @@ COPY . /home/pi/pialert
 # Pi.Alert 
 RUN python /home/pi/pialert/back/pialert.py update_vendors \    
     && sed -ie 's/= 80/= '${PORT}'/g' /etc/lighttpd/lighttpd.conf \
-    # && sed -i.bak 's/^TIMEZONE=.*/TIMEZONE='${TZ}'/' /home/pi/pialert/config/pialert.conf \
+    sed "s+TIMEZONE.*+TIMEZONE = '" ${TZ} "'+" /home/pi/pialert/config/pialert.conf \
     && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 
 # it's easy for permissions set in Git to be overridden, so doing it manually

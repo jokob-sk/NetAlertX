@@ -7,6 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 foreach (glob("../../../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));
