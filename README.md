@@ -171,7 +171,7 @@ Linux distributions.
    - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Last X scans activity chart)
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
-   - [terorero](https://github.com/terorero): Spanish translation
+   - [TeroRERO](https://github.com/terorero): Spanish translation
    - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
    - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
