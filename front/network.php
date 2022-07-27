@@ -182,7 +182,7 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
         $network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
       } else {
 // Table without Port
-        echo '<tr><td>###</td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'">'.$func_res['dev_Name'].'</td><td>'.$func_res['dev_LastIP'].'</a></td></tr>';
+        echo '<tr><td>###</td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
       }
 	}
   // Debug
@@ -199,12 +199,12 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
           echo '<tr>
                   <td>'.$x.'</td>
                   <td>'.$port_state.'</td>
-                  <td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'">'.$network_device_portname[$x].'</td>
+                  <td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></td>
                   <td>'.$network_device_portip[$x].'</a></td>
                 </tr>';
         }
     }
-  echo '              </tbody></table>
+  echo '        </tbody></table>
             </div>';
 	echo '</div> ';
 }
