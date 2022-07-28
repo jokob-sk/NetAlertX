@@ -163,10 +163,6 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
   $network_device_portmac = array();
   $network_device_portip = array();
   $network_device_portstate = array();
-  if ($pia_func_netdevport > 1)
-    {
-        for ($x=1; $x<=$pia_func_netdevport; $x++) { $network_device_portname[$x] = ''; $network_device_portmac[$x] = ''; $network_device_portip[$x] = ''; $network_device_portstate[$x] = ''; }
-    }
   // make sql query for Network Hardware ID
 	global $db;
 	$func_sql = 'SELECT * FROM "Devices" WHERE "dev_Infrastructure" = "'.$pia_func_netdevid.'"';
@@ -178,10 +174,14 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
     if ($pia_func_netdevport > 1)
       {
         if (stristr($func_res['dev_Infrastructure_port'], ',') == '') {
-        $network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
-        $network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
-        $network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
-        $network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
+        if ($network_device_portname[$func_res['dev_Infrastructure_port']] != '') {$network_device_portname[$func_res['dev_Infrastructure_port']] = $network_device_portname[$func_res['dev_Infrastructure_port']].','.$func_res['dev_Name'];} else {$network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];}
+        if ($network_device_portmac[$func_res['dev_Infrastructure_port']] != '') {$network_device_portmac[$func_res['dev_Infrastructure_port']] = $network_device_portmac[$func_res['dev_Infrastructure_port']].','.$func_res['dev_MAC'];} else {$network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];}
+        if ($network_device_portip[$func_res['dev_Infrastructure_port']] != '') {$network_device_portip[$func_res['dev_Infrastructure_port']] = $network_device_portip[$func_res['dev_Infrastructure_port']].','.$func_res['dev_LastIP'];} else {$network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];}
+        if (isset($network_device_portstate[$func_res['dev_Infrastructure_port']])) {$network_device_portstate[$func_res['dev_Infrastructure_port']] = $network_device_portstate[$func_res['dev_Infrastructure_port']].','.$func_res['dev_PresentLastScan'];} else {$network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];}
+        //$network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
+        //$network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
+        //$network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
+        //$network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
         } else {
           $multiport = array();
           $multiport = explode(',',$func_res['dev_Infrastructure_port']);
@@ -193,10 +193,6 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
           }
           unset($multiport);
         }
-        // $network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
-        // $network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
-        // $network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
-        // $network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
       } else {
         // Table without Port > echo values
         echo '<tr><td>###</td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
@@ -207,13 +203,52 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
     {
       for ($x=1; $x<=$pia_func_netdevport; $x++) 
         {
-          if ($network_device_portstate[$x] == 1) {$port_state = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';} else {$port_state = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';}
-          echo '<tr>
-                  <td>'.$x.'</td>
-                  <td>'.$port_state.'</td>
-                  <td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></td>
-                  <td>'.$network_device_portip[$x].'</a></td>
-                </tr>';
+          $online_badge = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';
+          $offline_baadge = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';
+          if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+          echo '<tr>';
+          echo '<td>'.$x.'</td>';
+          if (stristr($network_device_portstate[$x],',') == '') {
+            if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+            echo '<td>'.$port_state.'</td>';
+          } else {
+            $multistate = array();
+            $multistate = explode(',',$network_device_portstate[$x]);
+            echo '<td>';
+            foreach($multistate as $key => $value) {
+                if ($value == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+                echo $port_state.'<br>';
+            }
+            echo '</td>';
+            unset($multistate);
+          }           
+          if (stristr($network_device_portmac[$x],',') == '') {
+            echo '<td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></td>';
+          } else {
+            $multimac = array();
+            $multimac = explode(',',$network_device_portmac[$x]);
+            $multiname = array();
+            $multiname = explode(',',$network_device_portname[$x]);
+            echo '<td>';
+            foreach($multiname as $key => $value) {
+                echo '<a href="./deviceDetails.php?mac='.$multimac[$key].'"><b>'.$value.'</b><br>';
+            }
+            echo '</td>';
+            unset($multiname, $multimac);
+          } 
+          if (stristr($network_device_portip[$x],',') == '') {
+            echo '<td>'.$network_device_portip[$x].'</a></td>';
+          } else {
+            $multiip = array();
+            $multiip = explode(',',$network_device_portip[$x]);
+            echo '<td>';
+            foreach($multiip as $key => $value) {
+                echo $value.'<br>';
+            }
+            echo '</td>';
+            unset($multiip);
+          }
+          echo '</tr>';
         }
     }
   echo '        </tbody></table>
