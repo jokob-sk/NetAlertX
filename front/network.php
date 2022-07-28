@@ -80,7 +80,7 @@ echo $_REQUEST['device_id'];
             <div class="col-md-6">
             <form role="form" method="post" action="./network.php">
               <div class="form-group">
-                <label for="exampleInputEmail1">Netzwerk Gerät hinzufügen:</label>
+                <label for="NetworkDeviceName">Netzwerk Gerät hinzufügen:</label>
                 <input type="text" class="form-control" id="NetworkDeviceName" name="NetworkDeviceName" placeholder="Name">
               </div>
               <!-- /.form-group -->
@@ -95,7 +95,7 @@ echo $_REQUEST['device_id'];
                   </select>
               </div>
               <div class="form-group">
-                <label for="exampleInputEmail1">Portanzahl des Gerätes (bei WLAN leer lassen):</label>
+                <label for="NetworkDevicePort">Portanzahl des Gerätes (bei WLAN leer lassen):</label>
                 <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="Portanzahl">
               </div>
               <div class="form-group">
@@ -223,7 +223,7 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
             unset($multistate);
           }           
           if (stristr($network_device_portmac[$x],',') == '') {
-            echo '<td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></td>';
+            echo '<td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></a></td>';
           } else {
             $multimac = array();
             $multimac = explode(',',$network_device_portmac[$x]);
@@ -231,13 +231,13 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
             $multiname = explode(',',$network_device_portname[$x]);
             echo '<td>';
             foreach($multiname as $key => $value) {
-                echo '<a href="./deviceDetails.php?mac='.$multimac[$key].'"><b>'.$value.'</b><br>';
+                echo '<a href="./deviceDetails.php?mac='.$multimac[$key].'"><b>'.$value.'</b></a><br>';
             }
             echo '</td>';
             unset($multiname, $multimac);
           } 
           if (stristr($network_device_portip[$x],',') == '') {
-            echo '<td>'.$network_device_portip[$x].'</a></td>';
+            echo '<td>'.$network_device_portip[$x].'</td>';
           } else {
             $multiip = array();
             $multiip = explode(',',$network_device_portip[$x]);
@@ -265,7 +265,7 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
 $sql = 'SELECT "device_id", "net_device_name", "net_device_typ", "net_device_port" FROM "network_infrastructure"'; 
 $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
 ?>
-      <div class="nav-tabs-custom">
+      <div class="nav-tabs-custom" style="margin-bottom: 0px;">
             <ul class="nav nav-tabs">
 <?php
 $i = 0;
@@ -295,6 +295,7 @@ unset($i);
             </div>
             <!-- /.tab-content -->
   </div>
+  <div style="width: 100%; height: 20px;"></div>
 </section>
 
     <!-- /.content -->
