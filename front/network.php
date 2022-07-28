@@ -68,10 +68,10 @@ echo $_REQUEST['device_id'];
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 		<div class="box box-default collapsed-box">
-        <div class="box-header with-border">
+        <div class="box-header with-border" data-widget="collapse">
           <h3 class="box-title">Verwalte Netzwerk-Geräte</h3>
           <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
           </div>
         </div>
         <!-- /.box-header -->
@@ -91,10 +91,11 @@ echo $_REQUEST['device_id'];
                     <option value="Router">Router</option>
                     <option value="Switch">Switch</option>
                     <option value="WLAN">WLAN</option>
+                    <option value="Powerline">Powerline</option>
                   </select>
               </div>
               <div class="form-group">
-                <label for="exampleInputEmail1">Portanzahl des Gerätes:</label>
+                <label for="exampleInputEmail1">Portanzahl des Gerätes (bei WLAN leer lassen):</label>
                 <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="Portanzahl">
               </div>
               <div class="form-group">
@@ -135,6 +136,9 @@ echo $_REQUEST['device_id'];
       </div>
 
 <?php
+// #####################################
+// ## Start Function Setup
+// #####################################
 function createnetworktab($pia_func_netdevid, $pia_func_netdevname, $pia_func_netdevtyp, $pia_func_netdevport, $activetab) {
 	echo '<li class="'.$activetab.'"><a href="#'.$pia_func_netdevid.'" data-toggle="tab">'.$pia_func_netdevname.' / '.$pia_func_netdevtyp;
   if ($pia_func_netdevport != "") {echo ' ('.$pia_func_netdevport.')';}
@@ -143,7 +147,6 @@ function createnetworktab($pia_func_netdevid, $pia_func_netdevname, $pia_func_ne
 function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_func_netdevtyp, $pia_func_netdevport, $activetab) {
 	echo '<div class="tab-pane '.$activetab.'" id="'.$pia_func_netdevid.'">
 	      <h4>'.$pia_func_netdevname.' (ID: '.$pia_func_netdevid.')</h4><br>';
-
   echo '<div class="box-body no-padding">
     <table class="table table-striped">
       <tbody><tr>
@@ -152,9 +155,10 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
         <th>Hostname</th>
         <th>Last known IP</th>
       </tr>';
-  // Prepare Array
+  // Prepare Array for Devices with Port value
+  // If no Port is set, the Port number is set to 1
   if ($pia_func_netdevport == "") {$pia_func_netdevport = 1;}
-  //echo $pia_func_netdevport;
+  // Create Array with specific length
   $network_device_portname = array();
   $network_device_portmac = array();
   $network_device_portip = array();
@@ -163,39 +167,47 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
     {
         for ($x=1; $x<=$pia_func_netdevport; $x++) { $network_device_portname[$x] = ''; $network_device_portmac[$x] = ''; $network_device_portip[$x] = ''; $network_device_portstate[$x] = ''; }
     }
-  // Debug
-  // print_r($network_device_port);
-  // SQL for Devices with Network Device Number
+  // make sql query for Network Hardware ID
 	global $db;
 	$func_sql = 'SELECT * FROM "Devices" WHERE "dev_Infrastructure" = "'.$pia_func_netdevid.'"';
 	$func_result = $db->query($func_sql);//->fetchArray(SQLITE3_ASSOC); 
-	while($func_res = $func_result->fetchArray(SQLITE3_ASSOC)){
-    // Debug
-		//if(!isset($func_res['dev_Name'])) continue;
-		if ($func_res['dev_PresentLastScan'] == 1) {$port_state = '<div class="badge bg-green text-white" style="width: 60px;">Up</div>';} else {$port_state = '<div class="badge bg-red text-white" style="width: 60px;">Down</div>';}
-		//echo 'Port: '.$func_res['dev_Infrastructure_port'].' - '.$port_state.' - <a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'">'.$func_res['dev_Name'].' - '.$func_res['dev_LastIP'].'</a><br>';
+	while($func_res = $func_result->fetchArray(SQLITE3_ASSOC)) {
+    //if(!isset($func_res['dev_Name'])) continue;
+		if ($func_res['dev_PresentLastScan'] == 1) {$port_state = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';} else {$port_state = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';}
+		// Prepare Table with Port > push values in array
     if ($pia_func_netdevport > 1)
       {
+        if (stristr($func_res['dev_Infrastructure_port'], ',') == '') {
         $network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
         $network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
         $network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
         $network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
+        } else {
+          $multiport = array();
+          $multiport = explode(',',$func_res['dev_Infrastructure_port']);
+          foreach($multiport as $row) {
+              $network_device_portname[trim($row)] = $func_res['dev_Name'];
+              $network_device_portmac[trim($row)] = $func_res['dev_MAC'];
+              $network_device_portip[trim($row)] = $func_res['dev_LastIP'];
+              $network_device_portstate[trim($row)] = $func_res['dev_PresentLastScan'];
+          }
+          unset($multiport);
+        }
+        // $network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
+        // $network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
+        // $network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
+        // $network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
       } else {
-// Table without Port
+        // Table without Port > echo values
         echo '<tr><td>###</td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
       }
 	}
-  // Debug
-  //print_r($network_device_portname);
-  //print_r($network_device_portmac);
-  //print_r($network_device_portip);
-  //print_r($network_device_portstate);
-
+  // Create table with Port
   if ($pia_func_netdevport > 1)
     {
       for ($x=1; $x<=$pia_func_netdevport; $x++) 
         {
-          if ($network_device_portstate[$x] == 1) {$port_state = '<div class="badge bg-green text-white" style="width: 60px;">Up</div>';} else {$port_state = '<div class="badge bg-red text-white" style="width: 60px;">Down</div>';}
+          if ($network_device_portstate[$x] == 1) {$port_state = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';} else {$port_state = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';}
           echo '<tr>
                   <td>'.$x.'</td>
                   <td>'.$port_state.'</td>
@@ -208,13 +220,18 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
             </div>';
 	echo '</div> ';
 }
+// #####################################
+// ## End Function Setup
+// #####################################
+
+// #####################################
+// ## Create Tabs
+// #####################################
 $sql = 'SELECT "device_id", "net_device_name", "net_device_typ", "net_device_port" FROM "network_infrastructure"'; 
 $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
 ?>
-
-<div class="nav-tabs-custom">
+      <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-
 <?php
 $i = 0;
 while($res = $result->fetchArray(SQLITE3_ASSOC)){
@@ -226,15 +243,15 @@ while($res = $result->fetchArray(SQLITE3_ASSOC)){
 ?>              
             </ul>
 			<div class="tab-content">
-
-
-
 <?php
+// #####################################
+// ## Ctreate Tab Content
+// #####################################
 $i = 0;
 while($res = $result->fetchArray(SQLITE3_ASSOC)){
 	if(!isset($res['device_id'])) continue; 
 	if ($i == 0) {$active = 'active';} else {$active = '';}
-    createnetworktabcontent($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $res['net_device_port'], $active);
+  createnetworktabcontent($res['device_id'], $res['net_device_name'], $res['net_device_typ'], $res['net_device_port'], $active);
     $i++;
 }
 unset($i);
