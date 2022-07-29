@@ -1184,6 +1184,11 @@ def email_reporting ():
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0 
 						)""")
+    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType = 'Device Down' AND eve_MAC IN
+                        (
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0 
+						)""")
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
