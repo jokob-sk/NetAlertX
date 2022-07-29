@@ -19,11 +19,14 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 
 ## ℹ Usage 
 
+pialert.conf
+ - Everytime you rebuilt the container with a new image check if new settings have been added in [pialert.conf](https://github.com/jokob-sk/Pi.Alert/blob/main/config/pialert.conf).
+
 Network
-   - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
+ - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
 
 Default Port 
-   - The app is accessible on the port `:20211`.
+ - The app is accessible on the port `:20211`.
 
 > Please note - the cronjob is executed every 3 and 5 minutes so wait that long for all of the scans to run.
 
