@@ -1215,8 +1215,8 @@ def email_reporting ():
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
-    mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
-    mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
+    # mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
+    # mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
 
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
