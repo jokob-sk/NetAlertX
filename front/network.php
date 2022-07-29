@@ -40,6 +40,17 @@ if ($_REQUEST['Networkinsert'] == "yes") {
 	}
 }
 // #####################################
+// Add New Network Devices
+// #####################################
+if ($_REQUEST['Networkedit'] == "yes") {
+  if (isset($_REQUEST['NewNetworkDeviceName']) && isset($_REQUEST['NewNetworkDeviceTyp']))
+  {
+    $sql = 'UPDATE "network_infrastructure" SET "net_device_name" = "'.$_REQUEST['NewNetworkDeviceName'].'", "net_device_typ" = "'.$_REQUEST['NewNetworkDeviceTyp'].'", "net_device_port" = "'.$_REQUEST['NewNetworkDevicePort'].'" WHERE "device_id"="'.$_REQUEST['NetworkDeviceID'].'"';
+    //$sql = 'INSERT INTO "network_infrastructure" ("net_device_name", "net_device_typ", "net_device_port") VALUES("'.$_REQUEST['NetworkDeviceName'].'", "'.$_REQUEST['NetworkDeviceTyp'].'", "'.$_REQUEST['NetworkDevicePort'].'")'; 
+    $result = $db->query($sql);
+  }
+}
+// #####################################
 // remove Network Devices
 // #####################################
 if ($_REQUEST['Networkdelete'] == "yes") {
@@ -67,7 +78,7 @@ echo $_REQUEST['device_id'];
 ?>
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
-		<div class="box box-default collapsed-box">
+		<div class="box box-default collapsed-box"> <!-- collapsed-box -->
         <div class="box-header with-border" data-widget="collapse">
           <h3 class="box-title">Verwalte Netzwerk-Geräte</h3>
           <div class="box-tools pull-right">
@@ -77,7 +88,7 @@ echo $_REQUEST['device_id'];
         <!-- /.box-header -->
         <div class="box-body" style="">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
             <form role="form" method="post" action="./network.php">
               <div class="form-group">
                 <label for="NetworkDeviceName">Netzwerk Gerät hinzufügen:</label>
@@ -87,7 +98,7 @@ echo $_REQUEST['device_id'];
               <div class="form-group">
                <label>Typ</label>
                   <select class="form-control" name="NetworkDeviceTyp">
-                    <option value="">-- Select Typ --</option>
+                    <option value="">-- Select Type --</option>
                     <option value="Router">Router</option>
                     <option value="Switch">Switch</option>
                     <option value="WLAN">WLAN</option>
@@ -95,8 +106,8 @@ echo $_REQUEST['device_id'];
                   </select>
               </div>
               <div class="form-group">
-                <label for="NetworkDevicePort">Portanzahl des Gerätes (bei WLAN leer lassen):</label>
-                <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="Portanzahl">
+                <label for="NetworkDevicePort">Portanzahl des Gerätes:</label>
+                <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="Portanzahl (bei WLAN leer lassen)">
               </div>
               <div class="form-group">
               <button type="submit" class="btn btn-success" name="Networkinsert" value="yes">Hinzufügen</button>
@@ -105,12 +116,12 @@ echo $_REQUEST['device_id'];
               <!-- /.form-group -->
             </div>
             <!-- /.col -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <form role="form" method="post" action="./network.php">
               <div class="form-group">
-              	<label>Netzwerk Gerät entfernen:</label>
+              	<label>Netzwerk Gerät bearbeiten:</label>
                   <select class="form-control" name="NetworkDeviceID">
-                    <option value="">-- Select Typ --</option>
+                    <option value="">-- Select Device --</option>
 					<?php
 					$sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
 					$result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
@@ -121,14 +132,55 @@ echo $_REQUEST['device_id'];
 					?>
                   </select>
               </div>
+              <div class="form-group">
+                <label for="NetworkDeviceName">Neuen Namen festlegen:</label>
+                <input type="text" class="form-control" id="NewNetworkDeviceName" name="NewNetworkDeviceName" placeholder="Name">
+              </div>
+              <div class="form-group">
+               <label>Neuen Typ festlegen:</label>
+                  <select class="form-control" name="NewNetworkDeviceTyp">
+                    <option value="">-- Select Type --</option>
+                    <option value="Router">Router</option>
+                    <option value="Switch">Switch</option>
+                    <option value="WLAN">WLAN</option>
+                    <option value="Powerline">Powerline</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                <label for="NetworkDevicePort">Neue Portanzahl festlegen:</label>
+                <input type="text" class="form-control" id="NewNetworkDevicePort" name="NewNetworkDevicePort" placeholder="Portanzahl (bei WLAN leer lassen)">
+              </div>
               <!-- /.form-group -->
               <div class="form-group">
-                <button type="submit" class="btn btn-danger" name="Networkdelete" value="yes">Entfernen</button>
+                <button type="submit" class="btn btn-primary" name="Networkedit" value="yes">Speichern</button>
               </div>
          	 </form>
               <!-- /.form-group -->
             </div>
             <!-- /.col -->
+           <div class="col-md-4">
+              <form role="form" method="post" action="./network.php">
+              <div class="form-group">
+                <label>Netzwerk Gerät entfernen:</label>
+                  <select class="form-control" name="NetworkDeviceID">
+                    <option value="">-- Select Device --</option>
+          <?php
+          $sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
+          $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
+          while($res = $result->fetchArray(SQLITE3_ASSOC)){
+            if(!isset($res['device_id'])) continue; 
+              echo '<option value="'.$res['device_id'].'">'.$res['net_device_name'].' / '.$res['net_device_typ'].'</option>';
+          } 
+          ?>
+                  </select>
+              </div>
+              <!-- /.form-group -->
+              <div class="form-group">
+                <button type="submit" class="btn btn-danger" name="Networkdelete" value="yes">Entfernen</button>
+              </div>
+           </form>
+              <!-- /.form-group -->
+            </div>
           </div>
           <!-- /.row -->
         </div>
@@ -178,10 +230,6 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
         if ($network_device_portmac[$func_res['dev_Infrastructure_port']] != '') {$network_device_portmac[$func_res['dev_Infrastructure_port']] = $network_device_portmac[$func_res['dev_Infrastructure_port']].','.$func_res['dev_MAC'];} else {$network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];}
         if ($network_device_portip[$func_res['dev_Infrastructure_port']] != '') {$network_device_portip[$func_res['dev_Infrastructure_port']] = $network_device_portip[$func_res['dev_Infrastructure_port']].','.$func_res['dev_LastIP'];} else {$network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];}
         if (isset($network_device_portstate[$func_res['dev_Infrastructure_port']])) {$network_device_portstate[$func_res['dev_Infrastructure_port']] = $network_device_portstate[$func_res['dev_Infrastructure_port']].','.$func_res['dev_PresentLastScan'];} else {$network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];}
-        //$network_device_portname[$func_res['dev_Infrastructure_port']] = $func_res['dev_Name'];
-        //$network_device_portmac[$func_res['dev_Infrastructure_port']] = $func_res['dev_MAC'];
-        //$network_device_portip[$func_res['dev_Infrastructure_port']] = $func_res['dev_LastIP'];
-        //$network_device_portstate[$func_res['dev_Infrastructure_port']] = $func_res['dev_PresentLastScan'];
         } else {
           $multiport = array();
           $multiport = explode(',',$func_res['dev_Infrastructure_port']);
@@ -195,7 +243,10 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
         }
       } else {
         // Table without Port > echo values
-        echo '<tr><td>###</td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
+        // Specific icon for devicetype
+        if ($pia_func_netdevtyp == "WLAN") {$dev_port_icon = 'fa-wifi';}
+        if ($pia_func_netdevtyp == "Powerline") {$dev_port_icon = 'fa-flash';}
+        echo '<tr><td style="text-align: center;"><i class="fa '.$dev_port_icon.'"></i></td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
       }
 	}
   // Create table with Port
@@ -203,28 +254,36 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
     {
       for ($x=1; $x<=$pia_func_netdevport; $x++) 
         {
+          // Prepare online/offline badge for later functions
           $online_badge = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';
-          $offline_baadge = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';
-          if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+          $offline_badge = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';
+          // Set online/offline badge
           echo '<tr>';
-          echo '<td>'.$x.'</td>';
+          echo '<td style="text-align: right; padding-right:16px;">'.$x.'</td>';
+          // Set online/offline badge
+          // Check if multiple badges necessary
           if (stristr($network_device_portstate[$x],',') == '') {
-            if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+            // Set single online/offline badge
+            if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_badge;}
             echo '<td>'.$port_state.'</td>';
           } else {
+            // Set multiple online/offline badges
             $multistate = array();
             $multistate = explode(',',$network_device_portstate[$x]);
             echo '<td>';
             foreach($multistate as $key => $value) {
-                if ($value == 1) {$port_state = $online_badge;} else {$port_state = $offline_baadge;}
+                if ($value == 1) {$port_state = $online_badge;} else {$port_state = $offline_badge;}
                 echo $port_state.'<br>';
             }
             echo '</td>';
             unset($multistate);
-          }           
+          }  
+          // Check if multiple Hostnames are set
+          // print single hostname         
           if (stristr($network_device_portmac[$x],',') == '') {
             echo '<td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></a></td>';
           } else {
+            // print multiple hostnames with separate links  
             $multimac = array();
             $multimac = explode(',',$network_device_portmac[$x]);
             $multiname = array();
@@ -235,10 +294,13 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
             }
             echo '</td>';
             unset($multiname, $multimac);
-          } 
+          }
+          // Check if multiple IP are set
+          // print single IP  
           if (stristr($network_device_portip[$x],',') == '') {
             echo '<td>'.$network_device_portip[$x].'</td>';
           } else {
+            // print multiple IPs
             $multiip = array();
             $multiip = explode(',',$network_device_portip[$x]);
             echo '<td>';
