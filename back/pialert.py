@@ -1184,6 +1184,11 @@ def email_reporting ():
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0 
 						)""")
+    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType = 'Device Down' AND eve_MAC IN
+                        (
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0 
+						)""")
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
@@ -1200,7 +1205,7 @@ def email_reporting ():
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
-    mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
+    # mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
     mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
 
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )

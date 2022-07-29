@@ -7,6 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 foreach (glob("../../../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));
@@ -116,8 +123,10 @@ function getDeviceData() {
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_DownAlerts'] = $row[0];
 
+  // Get current date using php, sql datetime does not return time respective to timezone.
+  $currentdate = date("Y-m-d H:i:s");
   // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now","localtime")))
+  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
                                      - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
                                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
           FROM Sessions

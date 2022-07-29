@@ -7,7 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
-
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 //------------------------------------------------------------------------------
   // External files
@@ -275,7 +281,7 @@ function getDevicePresence() {
                  END AS ses_DateTimeConnectionCorrected,
 
                  CASE
-                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                   WHEN ses_EventTypeDisconnection = "<missing event>" OR ses_EventTypeDisconnection = NULL THEN
                         (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
                    ELSE ses_DateTimeDisconnection
                  END AS ses_DateTimeDisconnectionCorrected
