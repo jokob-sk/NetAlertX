@@ -1,5 +1,12 @@
 <?php
 //////////////////////////////////////////////////////////////////
+// General
+//////////////////////////////////////////////////////////////////
+$pia_lang['Gen_Delete'] = 'Delete';
+$pia_lang['Gen_Cancel'] = 'Cancel';
+
+
+//////////////////////////////////////////////////////////////////
 // Device Page
 //////////////////////////////////////////////////////////////////
 
@@ -137,6 +144,8 @@ $pia_lang['DevDetail_EveandAl_RandomMAC'] = 'Random MAC';
 $pia_lang['DevDetail_EveandAl_ScanCycle_a'] = 'Scan Device (1 min)';
 $pia_lang['DevDetail_EveandAl_ScanCycle_z'] = 'Don&#39;t Scan Device (0 min)';
 $pia_lang['DevDetail_button_Delete'] = 'Delete Device';
+$pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
+$pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Are you sure you want to delete all Events of this device?<br><br>(this will clear the <b>Events history</b> and the <b>Sessions</b> and might help with constant (persistent) notifications)';
 $pia_lang['DevDetail_button_Reset'] = 'Reset Changes';
 $pia_lang['DevDetail_button_Save'] = 'Save';
 $pia_lang['DevDetail_SessionTable_Order'] = 'Order';

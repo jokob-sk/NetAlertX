@@ -413,6 +413,8 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                   <div class="col-xs-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?php echo $pia_lang['DevDetail_button_DeleteEvents'];?> </button>
+                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
                           id="btnDelete"   onclick="askDeleteDevice()">   <?php echo $pia_lang['DevDetail_button_Delete'];?> </button>
                         <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
                           id="btnRestore"  onclick="getDeviceData(true)"> <?php echo $pia_lang['DevDetail_button_Reset'];?> </button>
@@ -1344,6 +1346,33 @@ function skipNotifications () {
   // Set cycle 0
   $('#txtScanCycle').val ('0 min');
   activateSaveRestoreData();
+}
+
+// -----------------------------------------------------------------------------
+function askDeleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Ask delete device Events 
+  showModalWarning ('<?php echo $pia_lang['DevDetail_button_DeleteEvents'];?>', '<?php echo $pia_lang['DevDetail_button_DeleteEvents_Warning'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteDeviceEvents');
+}
+
+function deleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Delete device events
+  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+    showMessage (msg);
+  });
+
+  // Deactivate controls
+  $('#panDetails :input').attr('disabled', true);
 }
 
 // -----------------------------------------------------------------------------
