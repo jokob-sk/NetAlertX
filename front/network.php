@@ -69,7 +69,7 @@ if ($_REQUEST['Networkdelete'] == "yes") {
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         Netzwerkvisualisierung
+         <?php echo $pia_lang['Network_Title'];?>
       </h1>
     </section>
 
@@ -80,7 +80,7 @@ echo $_REQUEST['device_id'];
     <section class="content">
 		<div class="box box-default collapsed-box"> <!-- collapsed-box -->
         <div class="box-header with-border" data-widget="collapse">
-          <h3 class="box-title">Verwalte Netzwerk-Geräte</h3>
+          <h3 class="box-title"><?php echo $pia_lang['Network_ManageDevices'];?></h3>
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
           </div>
@@ -89,16 +89,17 @@ echo $_REQUEST['device_id'];
         <div class="box-body" style="">
           <div class="row">
             <div class="col-md-4">
+            <h4 class="box-title"><?php echo $pia_lang['Network_ManageAdd'];?></h4>
             <form role="form" method="post" action="./network.php">
               <div class="form-group">
-                <label for="NetworkDeviceName">Netzwerk Gerät hinzufügen:</label>
-                <input type="text" class="form-control" id="NetworkDeviceName" name="NetworkDeviceName" placeholder="Name">
+                <label for="NetworkDeviceName"><?php echo $pia_lang['Network_ManageAdd_Name'];?>:</label>
+                <input type="text" class="form-control" id="NetworkDeviceName" name="NetworkDeviceName" placeholder="<?php echo $pia_lang['Network_ManageAdd_Name_text'];?>">
               </div>
               <!-- /.form-group -->
               <div class="form-group">
-               <label>Typ</label>
+               <label><?php echo $pia_lang['Network_ManageAdd_Type'];?>:</label>
                   <select class="form-control" name="NetworkDeviceTyp">
-                    <option value="">-- Select Type --</option>
+                    <option value=""><?php echo $pia_lang['Network_ManageAdd_Type_text'];?></option>
                     <option value="Router">Router</option>
                     <option value="Switch">Switch</option>
                     <option value="WLAN">WLAN</option>
@@ -106,22 +107,23 @@ echo $_REQUEST['device_id'];
                   </select>
               </div>
               <div class="form-group">
-                <label for="NetworkDevicePort">Portanzahl des Gerätes:</label>
-                <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="Portanzahl (bei WLAN leer lassen)">
+                <label for="NetworkDevicePort"><?php echo $pia_lang['Network_ManageAdd_Port'];?>:</label>
+                <input type="text" class="form-control" id="NetworkDevicePort" name="NetworkDevicePort" placeholder="<?php echo $pia_lang['Network_ManageAdd_Port_text'];?>">
               </div>
               <div class="form-group">
-              <button type="submit" class="btn btn-success" name="Networkinsert" value="yes">Hinzufügen</button>
+              <button type="submit" class="btn btn-success" name="Networkinsert" value="yes"><?php echo $pia_lang['Network_ManageAdd_Submit'];?></button>
           	  </div>
           </form>
               <!-- /.form-group -->
             </div>
             <!-- /.col -->
             <div class="col-md-4">
+              <h4 class="box-title"><?php echo $pia_lang['Network_ManageEdit'];?></h4>
               <form role="form" method="post" action="./network.php">
               <div class="form-group">
-              	<label>Netzwerk Gerät bearbeiten:</label>
+              	<label><?php echo $pia_lang['Network_ManageEdit_ID'];?>:</label>
                   <select class="form-control" name="NetworkDeviceID">
-                    <option value="">-- Select Device --</option>
+                    <option value=""><?php echo $pia_lang['Network_ManageEdit_ID_text'];?></option>
 					<?php
 					$sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
 					$result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
@@ -133,13 +135,13 @@ echo $_REQUEST['device_id'];
                   </select>
               </div>
               <div class="form-group">
-                <label for="NetworkDeviceName">Neuen Namen festlegen:</label>
-                <input type="text" class="form-control" id="NewNetworkDeviceName" name="NewNetworkDeviceName" placeholder="Name">
+                <label for="NetworkDeviceName"><?php echo $pia_lang['Network_ManageEdit_Name'];?>:</label>
+                <input type="text" class="form-control" id="NewNetworkDeviceName" name="NewNetworkDeviceName" placeholder="<?php echo $pia_lang['Network_ManageEdit_Name_text'];?>">
               </div>
               <div class="form-group">
-               <label>Neuen Typ festlegen:</label>
+               <label><?php echo $pia_lang['Network_ManageEdit_Type'];?>:</label>
                   <select class="form-control" name="NewNetworkDeviceTyp">
-                    <option value="">-- Select Type --</option>
+                    <option value=""><?php echo $pia_lang['Network_ManageEdit_Type_text'];?></option>
                     <option value="Router">Router</option>
                     <option value="Switch">Switch</option>
                     <option value="WLAN">WLAN</option>
@@ -147,23 +149,24 @@ echo $_REQUEST['device_id'];
                   </select>
               </div>
               <div class="form-group">
-                <label for="NetworkDevicePort">Neue Portanzahl festlegen:</label>
-                <input type="text" class="form-control" id="NewNetworkDevicePort" name="NewNetworkDevicePort" placeholder="Portanzahl (bei WLAN leer lassen)">
+                <label for="NetworkDevicePort"><?php echo $pia_lang['Network_ManageEdit_Port'];?>:</label>
+                <input type="text" class="form-control" id="NewNetworkDevicePort" name="NewNetworkDevicePort" placeholder="<?php echo $pia_lang['Network_ManageEdit_Port_text'];?>">
               </div>
               <!-- /.form-group -->
               <div class="form-group">
-                <button type="submit" class="btn btn-primary" name="Networkedit" value="yes">Speichern</button>
+                <button type="submit" class="btn btn-primary" name="Networkedit" value="yes"><?php echo $pia_lang['Network_ManageEdit_Submit'];?></button>
               </div>
          	 </form>
               <!-- /.form-group -->
             </div>
             <!-- /.col -->
            <div class="col-md-4">
+            <h4 class="box-title"><?php echo $pia_lang['Network_ManageDel'];?></h4>
               <form role="form" method="post" action="./network.php">
               <div class="form-group">
-                <label>Netzwerk Gerät entfernen:</label>
+                <label><?php echo $pia_lang['Network_ManageDel_Name'];?>:</label>
                   <select class="form-control" name="NetworkDeviceID">
-                    <option value="">-- Select Device --</option>
+                    <option value=""><?php echo $pia_lang['Network_ManageDel_Name_text'];?></option>
           <?php
           $sql = 'SELECT "device_id", "net_device_name", "net_device_typ" FROM "network_infrastructure"'; 
           $result = $db->query($sql);//->fetchArray(SQLITE3_ASSOC); 
@@ -176,7 +179,7 @@ echo $_REQUEST['device_id'];
               </div>
               <!-- /.form-group -->
               <div class="form-group">
-                <button type="submit" class="btn btn-danger" name="Networkdelete" value="yes">Entfernen</button>
+                <button type="submit" class="btn btn-danger" name="Networkdelete" value="yes"><?php echo $pia_lang['Network_ManageDel_Submit'];?></button>
               </div>
            </form>
               <!-- /.form-group -->
@@ -197,15 +200,16 @@ function createnetworktab($pia_func_netdevid, $pia_func_netdevname, $pia_func_ne
   echo '</a></li>';
 }
 function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_func_netdevtyp, $pia_func_netdevport, $activetab) {
-	echo '<div class="tab-pane '.$activetab.'" id="'.$pia_func_netdevid.'">
+	global $pia_lang;
+  echo '<div class="tab-pane '.$activetab.'" id="'.$pia_func_netdevid.'">
 	      <h4>'.$pia_func_netdevname.' (ID: '.$pia_func_netdevid.')</h4><br>';
   echo '<div class="box-body no-padding">
     <table class="table table-striped">
       <tbody><tr>
         <th style="width: 40px">Port</th>
-        <th style="width: 100px">State</th>
-        <th>Hostname</th>
-        <th>Last known IP</th>
+        <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
+        <th>'.$pia_lang['Network_Table_Hostname'].'</th>
+        <th>'.$pia_lang['Network_Table_IP'].'</th>
       </tr>';
   // Prepare Array for Devices with Port value
   // If no Port is set, the Port number is set to 1
@@ -246,7 +250,7 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
         // Specific icon for devicetype
         if ($pia_func_netdevtyp == "WLAN") {$dev_port_icon = 'fa-wifi';}
         if ($pia_func_netdevtyp == "Powerline") {$dev_port_icon = 'fa-flash';}
-        echo '<tr><td style="text-align: center;"><i class="fa '.$dev_port_icon.'"></i></td><td>'.$port_state.'</td><td><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
+        echo '<tr><td style="text-align: center;"><i class="fa '.$dev_port_icon.'"></i></td><td>'.$port_state.'</td><td style="padding-left: 10px;"><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
       }
 	}
   // Create table with Port
@@ -281,14 +285,14 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
           // Check if multiple Hostnames are set
           // print single hostname         
           if (stristr($network_device_portmac[$x],',') == '') {
-            echo '<td><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></a></td>';
+            echo '<td style="padding-left: 10px;"><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></a></td>';
           } else {
             // print multiple hostnames with separate links  
             $multimac = array();
             $multimac = explode(',',$network_device_portmac[$x]);
             $multiname = array();
             $multiname = explode(',',$network_device_portname[$x]);
-            echo '<td>';
+            echo '<td style="padding-left: 10px;">';
             foreach($multiname as $key => $value) {
                 echo '<a href="./deviceDetails.php?mac='.$multimac[$key].'"><b>'.$value.'</b></a><br>';
             }
@@ -298,12 +302,12 @@ function createnetworktabcontent($pia_func_netdevid, $pia_func_netdevname, $pia_
           // Check if multiple IP are set
           // print single IP  
           if (stristr($network_device_portip[$x],',') == '') {
-            echo '<td>'.$network_device_portip[$x].'</td>';
+            echo '<td style="padding-left: 10px;">'.$network_device_portip[$x].'</td>';
           } else {
             // print multiple IPs
             $multiip = array();
             $multiip = explode(',',$network_device_portip[$x]);
-            echo '<td>';
+            echo '<td style="padding-left: 10px;">';
             foreach($multiip as $key => $value) {
                 echo $value.'<br>';
             }

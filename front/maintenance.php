@@ -310,8 +310,6 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents_text'];?></div>
                     </div>
-
-
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory'];?></button>
@@ -379,7 +377,7 @@ function deleteDevicesWithEmptyMACs()
 function askDeleteAllDevices () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_alldev_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_alldev_noti_text'];?>',
-    'Cancel', 'Delete', 'deleteAllDevices');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteAllDevices');
 }
 function deleteAllDevices()
 { 
@@ -393,7 +391,7 @@ function deleteAllDevices()
 function askDeleteUnknown () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_unknowndev_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_unknowndev_noti_text'];?>',
-    'Cancel', 'Delete', 'deleteUnknownDevices');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteUnknownDevices');
 }
 function deleteUnknownDevices()
 { 
@@ -407,7 +405,7 @@ function deleteUnknownDevices()
 function askDeleteEvents () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_allevents_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_allevents_noti_text'];?>',
-    'Cancel', 'Delete', 'deleteEvents');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteEvents');
 }
 function deleteEvents()
 { 
@@ -421,7 +419,7 @@ function deleteEvents()
 function askDeleteActHistory () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'];?>',
-    'Cancel', 'Delete', 'deleteActHistory');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteActHistory');
 }
 function deleteActHistory()
 { 
@@ -435,7 +433,7 @@ function deleteActHistory()
 function askPiaBackupDBtoArchive () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_backup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_backup_noti_text'];?>',
-    'Cancel', 'Run Backup', 'PiaBackupDBtoArchive');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Backup'];?>', 'PiaBackupDBtoArchive');
 }
 function PiaBackupDBtoArchive()
 { 
@@ -449,7 +447,7 @@ function PiaBackupDBtoArchive()
 function askPiaRestoreDBfromArchive () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_restore_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_restore_noti_text'];?>',
-    'Cancel', 'Run Restore', 'PiaRestoreDBfromArchive');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Restore'];?>', 'PiaRestoreDBfromArchive');
 }
 function PiaRestoreDBfromArchive()
 { 
@@ -463,7 +461,7 @@ function PiaRestoreDBfromArchive()
 function askPiaPurgeDBBackups() {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti_text'];?>',
-    'Cancel', 'Purge', 'PiaPurgeDBBackups');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Purge'];?>', 'PiaPurgeDBBackups');
 }
 function PiaPurgeDBBackups()
 { 
@@ -477,7 +475,7 @@ function PiaPurgeDBBackups()
 function askPiaEnableDarkmode() {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_darkmode_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_darkmode_noti_text'];?>',
-    'Cancel', 'Switch', 'PiaEnableDarkmode');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Switch'];?>', 'PiaEnableDarkmode');
 }
 function PiaEnableDarkmode()
 { 
@@ -491,7 +489,7 @@ function PiaEnableDarkmode()
 function askPiaToggleArpScan () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_arpscansw_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_arpscansw_noti_text'];?>',
-    'Cancel', 'Switch', 'PiaToggleArpScan');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Switch'];?>', 'PiaToggleArpScan');
 }
 function PiaToggleArpScan()
 { 

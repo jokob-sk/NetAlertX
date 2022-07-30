@@ -44,6 +44,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
       case 'deleteActHistory':        deleteActHistory();                      break;
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
@@ -237,7 +238,25 @@ function deleteUnknownDevices() {
   }
 }
 
+//------------------------------------------------------------------------------
+//  Delete Device Events
+//------------------------------------------------------------------------------
+function deleteDeviceEvents() {
+  global $db;
+  global $pia_lang;
 
+  // sql
+  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
 
 //------------------------------------------------------------------------------
 //  Delete all devices 

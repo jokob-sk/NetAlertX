@@ -1,5 +1,16 @@
 <?php
 //////////////////////////////////////////////////////////////////
+// General
+//////////////////////////////////////////////////////////////////
+$pia_lang['Gen_Delete'] = 'Löschen';
+$pia_lang['Gen_Cancel'] = 'Abbrechen';
+$pia_lang['Gen_Okay'] = 'Ok';
+$pia_lang['Gen_Purge'] = 'Aufräumen';
+$pia_lang['Gen_Backup'] = 'Sichern';
+$pia_lang['Gen_Restore'] = 'Wiederherstellen';
+$pia_lang['Gen_Switch'] = 'Umschalten';
+
+//////////////////////////////////////////////////////////////////
 // Device Page
 //////////////////////////////////////////////////////////////////
 
@@ -7,6 +18,7 @@ $pia_lang['Navigation_Devices'] = 'Geräte';
 $pia_lang['Navigation_Presence'] = 'Anwesenheit';
 $pia_lang['Navigation_Events'] = 'Ereignisse';
 $pia_lang['Navigation_Maintenance'] = 'Wartung';
+$pia_lang['Navigation_Network'] = 'Netzwerk';
 $pia_lang['Device_Title'] = 'Geräte';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Alle Geräte';
 $pia_lang['Device_Shortcut_Connected'] = 'Verbunden';
@@ -140,6 +152,8 @@ $pia_lang['DevDetail_EveandAl_ScanCycle_z'] = 'Gerät nicht scannen (0 min)';
 $pia_lang['DevDetail_button_Delete'] = 'Lösche Gerät';
 $pia_lang['DevDetail_button_Reset'] = 'Verwerfen';
 $pia_lang['DevDetail_button_Save'] = 'Speichern';
+$pia_lang['DevDetail_button_DeleteEvents'] = 'Lösche Events';
+$pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Sind Sie sicher, dass Sie alle Ereignisse dieses Geräts löschen möchten? (dies löscht den Ereignisverlauf und die Sitzungen und könnte bei ständigen (anhaltenden) Benachrichtigungen helfen)';
 $pia_lang['DevDetail_SessionTable_Order'] = 'Order';
 $pia_lang['DevDetail_SessionTable_Connection'] = 'Verbindung';
 $pia_lang['DevDetail_SessionTable_Disconnection'] = 'Trennung';
@@ -253,5 +267,36 @@ $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Fehler beim Aktualisieren der D
 $pia_lang['BackDevices_DBTools_Purge'] = 'Die ältesten Backups wurden gelöscht.';
 $pia_lang['BackDevices_DBTools_DelActHistory'] = 'Die Anzeige der Netzwerkaktivität wurde zurückgesetzt.';
 $pia_lang['BackDevices_DBTools_DelActHistoryError'] = 'Fehler beim Zurücksetzen der Netzwerkaktivitätsanzeige.';
-?>
 
+//////////////////////////////////////////////////////////////////
+// Maintenance Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['Network_Title'] = 'Netzwerkübersicht';
+$pia_lang['Network_ManageDevices'] = 'Geräte verwalten';
+$pia_lang['Network_ManageAdd'] = 'Geräte hinzufügen';
+$pia_lang['Network_ManageEdit'] = 'Geräte bearbeiten';
+$pia_lang['Network_ManageDel'] = 'Geräte löschen';
+$pia_lang['Network_ManageAdd_Name'] = 'Name des Geräte';
+$pia_lang['Network_ManageAdd_Name_text'] = 'Name ohne Sonderzeichen';
+$pia_lang['Network_ManageAdd_Type'] = 'Gerätetyp';
+$pia_lang['Network_ManageAdd_Type_text'] = '-- Typ wählen --';
+$pia_lang['Network_ManageAdd_Port'] = 'Portanzahl';
+$pia_lang['Network_ManageAdd_Port_text'] = 'bei WLAN oder Powerline leer lassen';
+$pia_lang['Network_ManageAdd_Submit'] = 'Hinzufügen';
+$pia_lang['Network_ManageEdit_ID'] = 'Gerät zum Bearbeiten auswählen';
+$pia_lang['Network_ManageEdit_ID_text'] = '-- Gerät wählen --';
+$pia_lang['Network_ManageEdit_Name'] = 'Neuer Name des Geräte';
+$pia_lang['Network_ManageEdit_Name_text'] = 'Name ohne Sonderzeichen';
+$pia_lang['Network_ManageEdit_Type'] = 'Neuer Gerätetyp';
+$pia_lang['Network_ManageEdit_Type_text'] = '-- Typ wählen --';
+$pia_lang['Network_ManageEdit_Port'] = 'Neue Portanzahl';
+$pia_lang['Network_ManageEdit_Port_text'] = 'bei WLAN oder Powerline leer lassen';
+$pia_lang['Network_ManageEdit_Submit'] = 'Speichern';
+$pia_lang['Network_ManageDel_Name'] = 'Geräte zum Löschen auswählen';
+$pia_lang['Network_ManageDel_Name_text'] = '-- Gerät wählen --';
+$pia_lang['Network_ManageDel_Submit'] = 'Löschen';
+$pia_lang['Network_Table_State'] = 'Status';
+$pia_lang['Network_Table_Hostname'] = 'Gerätename';
+$pia_lang['Network_Table_IP'] = 'IP';
+?>
