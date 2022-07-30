@@ -265,14 +265,14 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                       </div>
 
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Network Hardware</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network'];?></label>
+                        <div class="col-sm-6">
                           <input class="form-control" id="txtInfrastructure" type="text" value="--">
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Network HW Port</label>
-                        <div class="col-sm-9">
+                        <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network_Port'];?></label>
+                        <div class="col-sm-6">
                           <input class="form-control" id="txtInfrastructurePort" type="text" value="--">
                         </div>
                       </div>
