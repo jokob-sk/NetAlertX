@@ -92,6 +92,7 @@ require 'php/templates/language/'.$pia_lang_selected.'.php';
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">
+  <link rel="apple-touch-icon" href="https://net-dev.de/pialert_homescreen.png">
   <!-- Dark-Mode Patch -->
 <?php
 if ($ENABLED_DARKMODE === True) {
@@ -99,7 +100,6 @@ if ($ENABLED_DARKMODE === True) {
    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
 } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
-
 <!-- Servertime to the right of the hostname -->
 <script>
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
@@ -151,7 +151,7 @@ function show_pia_servertime() {
         <ul class="nav navbar-nav">
 
           <!-- Server Name -->
-          <li><a style="pointer-events:none;"><?php echo gethostname();?> <span id="PIA_Servertime_place"></a></li>
+          <li><a style="pointer-events:none;"><?php echo gethostname();?> <span id="PIA_Servertime_place"></span></a></li>
 
           <!-- Header right info -->
           <li class="dropdown user user-menu">
@@ -223,6 +223,10 @@ function show_pia_servertime() {
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
           <a href="events.php"><i class="fa fa-bolt"></i> <span><?php echo $pia_lang['Navigation_Events'];?></span></a>
+        </li>
+
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
+          <a href="network.php"><i class="fa fa-server"></i> <span><?php echo $pia_lang['Navigation_Network'];?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">

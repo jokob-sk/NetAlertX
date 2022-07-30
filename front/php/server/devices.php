@@ -44,6 +44,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
       case 'deleteActHistory':        deleteActHistory();                      break;
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
@@ -86,6 +87,8 @@ function getDeviceData() {
   $deviceData = $row;
   $mac = $deviceData['dev_MAC'];
 
+  $deviceData['dev_Infrastructure'] = $row['dev_Infrastructure'];
+  $deviceData['dev_Infrastructure_port'] = $row['dev_Infrastructure_port'];
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
 
@@ -153,6 +156,8 @@ function setDeviceData() {
                  dev_Group           = "'. quotes($_REQUEST['group'])        .'",
                  dev_Location        = "'. quotes($_REQUEST['location'])     .'",
                  dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
+                 dev_Infrastructure  = "'. quotes($_REQUEST['infrastructure']).'",
+                 dev_Infrastructure_port  = "'. quotes($_REQUEST['infrastructureport']).'",
                  dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
                  dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
                  dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
@@ -233,7 +238,25 @@ function deleteUnknownDevices() {
   }
 }
 
+//------------------------------------------------------------------------------
+//  Delete Device Events
+//------------------------------------------------------------------------------
+function deleteDeviceEvents() {
+  global $db;
+  global $pia_lang;
 
+  // sql
+  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
 
 //------------------------------------------------------------------------------
 //  Delete all devices 

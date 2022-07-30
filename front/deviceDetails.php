@@ -17,6 +17,7 @@ if ($_SESSION["login"] != 1)
   }
 
   require 'php/templates/header.php';
+  require 'php/server/db.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -263,6 +264,20 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                         </div>
                       </div>
 
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label">Network Hardware</label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtInfrastructure" type="text" value="--">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label">Network HW Port</label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtInfrastructurePort" type="text" value="--">
+                        </div>
+                      </div>
+
+
                     </div>          
                   </div>          
 
@@ -413,6 +428,8 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                   <div class="col-xs-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?php echo $pia_lang['DevDetail_button_DeleteEvents'];?> </button>
+                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
                           id="btnDelete"   onclick="askDeleteDevice()">   <?php echo $pia_lang['DevDetail_button_Delete'];?> </button>
                         <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
                           id="btnRestore"  onclick="getDeviceData(true)"> <?php echo $pia_lang['DevDetail_button_Reset'];?> </button>
@@ -453,7 +470,7 @@ if ($_REQUEST['mac'] == 'Internet') {
 ?>
                 <h4 class="">Online Speedtest</h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-default pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
                 </div>
                    
                   <script>
@@ -483,11 +500,11 @@ if ($_REQUEST['mac'] == 'Internet') {
                       }, 2000);
                   </script>
 
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
                 
-                  <div style="margin-top: 20px; text-align: left;">
+                  <div style="text-align: left;">
                     <ul style="padding:20px;">
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
@@ -1090,33 +1107,35 @@ function getDeviceData (readAllData=false) {
       $('#deviceStatus')[0].className = 'text-gray';
       $('#deviceStatusIcon')[0].className = '';
   
-      $('#deviceSessions').html   ('--');
-      $('#deviceDownAlerts').html ('--');
-      $('#deviceEvents').html     ('--');
+      $('#deviceSessions').html        ('--');
+      $('#deviceDownAlerts').html      ('--');
+      $('#deviceEvents').html          ('--');
  
-      $('#txtMAC').val             ('--');
-      $('#txtName').val            ('--');
-      $('#txtOwner').val           ('--');
-      $('#txtDeviceType').val      ('--');
-      $('#txtVendor').val          ('--');
+      $('#txtMAC').val                 ('--');
+      $('#txtName').val                ('--');
+      $('#txtOwner').val               ('--');
+      $('#txtDeviceType').val          ('--');
+      $('#txtVendor').val              ('--');
 
-      $('#chkFavorite').iCheck     ('uncheck'); 
-      $('#txtGroup').val           ('--');
-      $('#txtLocation').val        ('--');
-      $('#txtComments').val        ('--');
+      $('#chkFavorite').iCheck         ('uncheck'); 
+      $('#txtGroup').val               ('--');
+      $('#txtLocation').val            ('--');
+      $('#txtComments').val            ('--');
+      $('#txtInfrastructure').val      ('--');
+      $('#txtInfrastructurePort').val  ('--');
 
-      $('#txtFirstConnection').val ('--');
-      $('#txtLastConnection').val  ('--');
-      $('#txtLastIP').val          ('--');
-      $('#txtStatus').val          ('--');
-      $('#chkStaticIP').iCheck     ('uncheck'); 
+      $('#txtFirstConnection').val     ('--');
+      $('#txtLastConnection').val      ('--');
+      $('#txtLastIP').val              ('--');
+      $('#txtStatus').val              ('--');
+      $('#chkStaticIP').iCheck         ('uncheck'); 
   
-      $('#txtScanCycle').val       ('--');
-      $('#chkAlertEvents').iCheck  ('uncheck') 
-      $('#chkAlertDown').iCheck    ('uncheck') 
-      $('#txtSkipRepeated').val    ('--');
-      $('#chkNewDevice').iCheck    ('uncheck'); 
-      $('#chkArchived').iCheck     ('uncheck'); 
+      $('#txtScanCycle').val           ('--');
+      $('#chkAlertEvents').iCheck      ('uncheck') 
+      $('#chkAlertDown').iCheck        ('uncheck') 
+      $('#txtSkipRepeated').val        ('--');
+      $('#chkNewDevice').iCheck        ('uncheck'); 
+      $('#chkArchived').iCheck         ('uncheck'); 
 
       $('#iconRandomMACactive').addClass ('hidden');
       $('#iconRandomMACinactive').removeClass ('hidden');
@@ -1184,6 +1203,8 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
+        $('#txtInfrastructure').val                  (deviceData['dev_Infrastructure']);
+        $('#txtInfrastructurePort').val              (deviceData['dev_Infrastructure_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
@@ -1292,6 +1313,8 @@ function setDeviceData (refreshCallback='') {
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()
     + '&comments='       + $('#txtComments').val()
+    + '&infrastructure=' + $('#txtInfrastructure').val()
+    + '&infrastructureport=' + $('#txtInfrastructurePort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + $('#txtScanCycle').val().split(' ')[0]
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
@@ -1324,7 +1347,7 @@ function askSkipNotifications () {
   if ($('#chkArchived')[0].checked && $('#txtScanCycle').val().split(' ')[0] != "0") {
     // Ask skip notifications
     showModalDefault ('Device Archived', 'Do you want to skip all notifications for this device?',
-      'Cancel', 'Ok', 'skipNotifications');
+      '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'skipNotifications');
   }
 }
 
@@ -1341,6 +1364,33 @@ function skipNotifications () {
 }
 
 // -----------------------------------------------------------------------------
+function askDeleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Ask delete device Events 
+  showModalWarning ('<?php echo $pia_lang['DevDetail_button_DeleteEvents'];?>', '<?php echo $pia_lang['DevDetail_button_DeleteEvents_Warning'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteDeviceEvents');
+}
+
+function deleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Delete device events
+  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+    showMessage (msg);
+  });
+
+  // Deactivate controls
+  $('#panDetails :input').attr('disabled', true);
+}
+
+// -----------------------------------------------------------------------------
 function askDeleteDevice () {
   // Check MAC
   if (mac == '') {
@@ -1349,7 +1399,7 @@ function askDeleteDevice () {
 
   // Ask delete device
   showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    'Cancel', 'Delete', 'deleteDevice');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteDevice');
 }
 
 

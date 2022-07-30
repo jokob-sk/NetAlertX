@@ -1,5 +1,4 @@
 Report Date: <REPORT_DATE>
-Scan Cycle:  <SCAN_CYCLE>
 Server:      <SERVER_NAME>
 
 <SECTION_INTERNET>
