@@ -42,7 +42,6 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
@@ -205,26 +204,6 @@ function deleteDevice() {
     echo $pia_lang['BackDevices_DBTools_DelDev_a'];
   } else {
     echo $pia_lang['BackDevices_DBTools_DelDevError_a']."\n\n$sql \n\n". $db->lastErrorMsg();
-  }
-}
-
-//------------------------------------------------------------------------------
-//  Delete Device Events
-//------------------------------------------------------------------------------
-function deleteDeviceEvents() {
-  global $db;
-  global $pia_lang;
-
-  // sql
-  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
-  // execute sql
-  $result = $db->query($sql);
-
-  // check result
-  if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelEvents'];
-  } else {
-    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
