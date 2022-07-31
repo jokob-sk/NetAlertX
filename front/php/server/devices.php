@@ -7,6 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 foreach (glob("../../../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));
@@ -35,7 +42,8 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
       case 'deleteAllDevices':        deleteAllDevices();                      break;
@@ -49,7 +57,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
       case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
-      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;
+      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;      
 
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -119,8 +127,10 @@ function getDeviceData() {
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_DownAlerts'] = $row[0];
 
+  // Get current date using php, sql datetime does not return time respective to timezone.
+  $currentdate = date("Y-m-d H:i:s");
   // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now","localtime")))
+  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
                                      - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
                                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
           FROM Sessions
@@ -195,6 +205,26 @@ function deleteDevice() {
     echo $pia_lang['BackDevices_DBTools_DelDev_a'];
   } else {
     echo $pia_lang['BackDevices_DBTools_DelDevError_a']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete Device Events
+//------------------------------------------------------------------------------
+function deleteDeviceEvents() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 

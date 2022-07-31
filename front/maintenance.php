@@ -338,9 +338,9 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_purgebackup_text'];?></div>
                     </div>
-                </div>
-        </div>
-    </div>
+                 </div>
+          </div>
+      </div>
 </div>
 
 <div style="width: 100%; height: 20px;"></div>

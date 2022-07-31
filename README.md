@@ -10,8 +10,20 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
+# Docker image 🐳
+[![Docker](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
+  <a href="https://hub.docker.com/r/jokobsk/pi.alert">
+    <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
+  </a>
+
+🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert). <br/>
+🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert). <br/>
+📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
+📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
+
 ![Main screen dark][main_dark]
-optional Darkmode within this fork
+Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
 The system continuously scans the network for:
@@ -50,7 +62,9 @@ In charge of:
   | -------------------- | -------------------- |
 
 ### Front
-There is a configurable login to prevent unauthorized use. The default password is "123456"
+There is a configurable login to prevent unauthorized use. 
+
+> * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
@@ -64,7 +78,7 @@ A web frontend that allows:
     - Down alerts
     - IP's
     - Manual Nmap scans
-    - Optional speedtest for Device "Internet" in the details view
+    - Optional speedtest for Device "Internet"
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -149,7 +163,7 @@ Linux distributions.
   pi.alert.application@gmail.com
   
   ***Suggestions and comments are welcome***
-
+  
 ### Special thanks 🥇
 
   This code is a collaborative body of work, with special thanks to: 
@@ -159,6 +173,7 @@ Linux distributions.
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation
    - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+   - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"

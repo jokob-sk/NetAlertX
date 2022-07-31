@@ -7,7 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
-
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 //------------------------------------------------------------------------------
   // External files
@@ -217,15 +223,15 @@ function getDeviceSessions() {
     
     // Disconnection DateTime
     if ($row['ses_StillConnected'] == true) {
-      $end = '...';
+      $end = '...'; 
     } elseif ($row['ses_EventTypeDisconnection'] == '<missing event>') {
-      $end = $row['ses_EventTypeDisconnection'];
+      $end = $row['ses_EventTypeDisconnection'];      
     } else {
       $end = formatDate ($row['ses_DateTimeDisconnection']);
     }
 
     // Duration
-    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeConnection'] == NULL || $row['ses_EventTypeDisconnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == NULL) {
       $dur = '...';
     } elseif ($row['ses_StillConnected'] == true) {
       $dur = formatDateDiff ($row['ses_DateTimeConnection'], '');  //***********
@@ -261,7 +267,6 @@ function getDevicePresence() {
 
   // Request Parameters
   $mac        = $_REQUEST['mac'];
-  $periodDate = getDateFromPeriod();
   $startDate  = '"'. formatDateISO ($_REQUEST ['start']) .'"';
   $endDate    = '"'. formatDateISO ($_REQUEST ['end'])   .'"';
 
@@ -276,7 +281,7 @@ function getDevicePresence() {
                  END AS ses_DateTimeConnectionCorrected,
 
                  CASE
-                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                   WHEN ses_EventTypeDisconnection = "<missing event>" OR ses_EventTypeDisconnection = NULL THEN
                         (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
                    ELSE ses_DateTimeDisconnection
                  END AS ses_DateTimeDisconnectionCorrected
@@ -290,13 +295,14 @@ function getDevicePresence() {
   // arrays of rows
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
-  if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-        $color = '#f39c12';
-      } elseif ($row['ses_StillConnected'] == 1 ) {
-        $color = '#00a659';
-      } else {
-        $color = '#0073b7';
-      }
+    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+      $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
+    } else {
+      $color = '#0073b7';
+    }
+
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
@@ -333,7 +339,7 @@ function getEventsCalendar() {
   $startDate  = '"'. $_REQUEST ['start'] .'"';
   $endDate    = '"'. $_REQUEST ['end'] .'"';
 
-  // SQL
+  // SQL 
   $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
                  ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
@@ -358,12 +364,12 @@ function getEventsCalendar() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-        $color = '#f39c12';
-      } elseif ($row['ses_StillConnected'] == 1 ) {
-        $color = '#00a659';
-      } else {
-        $color = '#0073b7';
-      }
+      $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
+    } else {
+      $color = '#0073b7';
+    }
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
