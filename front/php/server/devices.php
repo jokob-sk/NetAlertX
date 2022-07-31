@@ -7,19 +7,30 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
+foreach (glob("../../../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+}
+if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
 
 //------------------------------------------------------------------------------
   // External files
   require 'db.php';
   require 'util.php';
- 
+  require '../templates/language/'.$pia_lang_selected.'.php';
 
 //------------------------------------------------------------------------------
 //  Action selector
 //------------------------------------------------------------------------------
   // Set maximum execution time to 15 seconds
-  ini_set ('max_execution_time','15');
+  ini_set ('max_execution_time','30');
   
   // Open DB
   OpenDB();
@@ -31,7 +42,22 @@
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
- 
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
+      case 'createBackupDB':          createBackupDB();                        break;
+      case 'restoreBackupDB':         restoreBackupDB();                       break;
+      case 'deleteAllDevices':        deleteAllDevices();                      break;
+      case 'runScan15min':            runScan15min();                          break;
+      case 'runScan1min':             runScan1min();                           break;
+      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
+      case 'deleteEvents':            deleteEvents();                          break;
+      case 'deleteActHistory':        deleteActHistory();                      break;
+      case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
+      case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
+      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
+      case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
+      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;      
+
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
@@ -98,8 +124,10 @@ function getDeviceData() {
   $row = $result -> fetchArray (SQLITE3_NUM);
   $deviceData['dev_DownAlerts'] = $row[0];
 
+  // Get current date using php, sql datetime does not return time respective to timezone.
+  $currentdate = date("Y-m-d H:i:s");
   // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection, DATETIME("now","localtime")))
+  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
                                      - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
                                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
           FROM Sessions
@@ -123,6 +151,7 @@ function getDeviceData() {
 //------------------------------------------------------------------------------
 function setDeviceData() {
   global $db;
+  global $pia_lang;
 
   // sql
   $sql = 'UPDATE Devices SET
@@ -147,9 +176,9 @@ function setDeviceData() {
 
   // check result
   if ($result == TRUE) {
-    echo "Device updated successfully";
+    echo $pia_lang['BackDevices_DBTools_UpdDev'];
   } else {
-    echo "Error updating device\n\n$sql \n\n". $db->lastErrorMsg();
+    echo $pia_lang['BackDevices_DBTools_UpdDevError']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -159,6 +188,7 @@ function setDeviceData() {
 //------------------------------------------------------------------------------
 function deleteDevice() {
   global $db;
+  global $pia_lang;
 
   // sql
   $sql = 'DELETE FROM Devices WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
@@ -167,12 +197,256 @@ function deleteDevice() {
 
   // check result
   if ($result == TRUE) {
-    echo "Device deleted successfully";
+    echo $pia_lang['BackDevices_DBTools_DelDev_a'];
   } else {
-    echo "Error deleting device\n\n$sql \n\n". $db->lastErrorMsg();
+    echo $pia_lang['BackDevices_DBTools_DelDevError_a']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
+//------------------------------------------------------------------------------
+//  Delete Device Events
+//------------------------------------------------------------------------------
+function deleteDeviceEvents() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteAllWithEmptyMACs() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all devices with empty MAC addresses
+//------------------------------------------------------------------------------
+function deleteUnknownDevices() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all devices 
+//------------------------------------------------------------------------------
+function deleteAllDevices() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Devices';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all Events 
+//------------------------------------------------------------------------------
+function deleteEvents() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Events';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete History
+//------------------------------------------------------------------------------
+function deleteActHistory() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Online_History';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelActHistory'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelActHistoryError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Backup DB to Archiv
+//------------------------------------------------------------------------------
+function PiaBackupDBtoArchive() {
+  // prepare fast Backup
+  $file = '../../../db/pialert.db';
+  $newfile = '../../../db/pialert.db.latestbackup';
+  global $pia_lang;
+
+  // copy files as a fast Backup
+  if (!copy($file, $newfile)) {
+      echo $pia_lang['BackDevices_Backup_CopError'];
+  } else {
+    // Create archive with actual date
+    $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
+    $Pia_Archive_Path = '../../../db/';
+    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/pialert.db', $output);
+    // chheck if archive exists
+    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
+      echo $pia_lang['BackDevices_Backup_okay'].': ('.$Pia_Archive_Name.')';
+      unlink($newfile);
+      echo("<meta http-equiv='refresh' content='1'>");
+    } else {
+      echo $pia_lang['BackDevices_Backup_Failed'].' (pialert.db.latestbackup)';
+    }
+  }
+
+}
+
+//------------------------------------------------------------------------------
+//  Restore DB from Archiv
+//------------------------------------------------------------------------------
+function PiaRestoreDBfromArchive() {
+  // prepare fast Backup
+  $file = '../../../db/pialert.db';
+  $oldfile = '../../../db/pialert.db.prerestore';
+  global $pia_lang;
+
+  // copy files as a fast Backup
+  if (!copy($file, $oldfile)) {
+      echo $pia_lang['BackDevices_Restore_CopError'];
+  } else {
+    // extract latest archive and overwrite the actual pialert.db
+    $Pia_Archive_Path = '../../../db/';
+    exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
+    // check if the pialert.db exists
+    if (file_exists($file)) {
+       echo $pia_lang['BackDevices_Restore_okay'];
+       unlink($oldfile);
+       echo("<meta http-equiv='refresh' content='1'>");
+     } else {
+       echo $pia_lang['BackDevices_Restore_Failed'];
+     }
+  }
+
+}
+
+//------------------------------------------------------------------------------
+//  Purge Backups
+//------------------------------------------------------------------------------
+function PiaPurgeDBBackups() {
+  global $pia_lang;
+
+  $Pia_Archive_Path = '../../../db';
+  $Pia_Backupfiles = array();
+  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', 'pialert.db', 'pialertdb-reset.zip'));
+
+  foreach ($files as &$item) 
+    {
+      $item = $Pia_Archive_Path.'/'.$item;
+      if (stristr($item, 'setting_') == '') {array_push($Pia_Backupfiles, $item);}
+    }
+
+  if (sizeof($Pia_Backupfiles) > 3) 
+    {
+      rsort($Pia_Backupfiles);
+      unset($Pia_Backupfiles[0], $Pia_Backupfiles[1], $Pia_Backupfiles[2]);
+      $Pia_Backupfiles_Purge = array_values($Pia_Backupfiles);
+      for ($i = 0; $i < sizeof($Pia_Backupfiles_Purge); $i++) 
+        {
+          unlink($Pia_Backupfiles_Purge[$i]);
+        }
+  }
+  echo $pia_lang['BackDevices_DBTools_Purge'];
+  echo("<meta http-equiv='refresh' content='1'>");
+    
+}
+
+//------------------------------------------------------------------------------
+//  Toggle Dark/Light Themes
+//------------------------------------------------------------------------------
+function PiaEnableDarkmode() {
+  $file = '../../../db/setting_darkmode';
+  global $pia_lang;
+
+  if (file_exists($file)) {
+      echo $pia_lang['BackDevices_darkmode_disabled'];
+      unlink($file);
+      echo("<meta http-equiv='refresh' content='1'>");
+     } else {
+      echo $pia_lang['BackDevices_darkmode_enabled'];
+      $darkmode = fopen($file, 'w');
+      echo("<meta http-equiv='refresh' content='1'>");
+     }
+  }
+
+
+//------------------------------------------------------------------------------
+//  Toggle on/off Arp-Scans
+//------------------------------------------------------------------------------
+function PiaToggleArpScan() {
+  $file = '../../../db/setting_stoparpscan';
+  global $pia_lang;
+
+  if (file_exists($file)) {
+      echo $pia_lang['BackDevices_Arpscan_enabled'];
+      unlink($file);
+      echo("<meta http-equiv='refresh' content='1'>");
+     } else {
+      echo $pia_lang['BackDevices_Arpscan_disabled'];
+      $startarpscan = fopen($file, 'w');
+      echo("<meta http-equiv='refresh' content='1'>");
+     }
+  }
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status

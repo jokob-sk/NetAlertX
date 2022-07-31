@@ -8,6 +8,14 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
   require 'php/templates/header.php';
 ?>
 
@@ -25,11 +33,11 @@
       <!-- period selector -->
       <span class="breadcrumb" style="top: 0px;">
         <select class="form-control" id="period" onchange="javascript: periodChanged();">
-          <option value="1 day">Today</option>
-          <option value="7 days">Last Week</option>
-          <option value="1 month" selected>Last Month</option>
-          <option value="1 year">Last Year</option>
-          <option value="100 years">All info</option>
+          <option value="1 day"><?php echo $pia_lang['DevDetail_Periodselect_today'];?></option>
+          <option value="7 days"><?php echo $pia_lang['DevDetail_Periodselect_LastWeek'];?></option>
+          <option value="1 month" selected><?php echo $pia_lang['DevDetail_Periodselect_LastMonth'];?></option>
+          <option value="1 year"><?php echo $pia_lang['DevDetail_Periodselect_LastYear'];?></option>
+          <option value="100 years"><?php echo $pia_lang['DevDetail_Periodselect_All'];?></option>
         </select>
       </span>
     </section>
@@ -42,10 +50,11 @@
 
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabDetails').trigger('click')">
-            <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
-              <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3> </div>
-              <div class="icon"> <i id="deviceStatusIcon" class=""></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Current Status <i class="fa fa-arrow-circle-right"></i> </div>
+            <div class="small-box bg-aqua">
+              <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_CurrentStatus'];?></p>
+              </div>
+              <div class="icon"> <i id="deviceStatusIcon" class=""></i></div>
             </div>
           </a>
         </div>
@@ -53,10 +62,11 @@
 <!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabSessions').trigger('click');">
-            <div class="small-box bg-green pa-small-box-green pa-small-box-2">
-              <div class="inner"> <h3 id="deviceSessions"> -- </h3> </div>
+            <div class="small-box bg-green">
+              <div class="inner"> <h3 id="deviceSessions"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_Sessions'];?></p>
+              </div>
               <div class="icon"> <i class="fa fa-plug"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Sesions <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -64,10 +74,11 @@
 <!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabPresence').trigger('click')">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3> </div>
+            <div  class="small-box bg-yellow">
+              <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_Presence'];?></p>
+              </div>
               <div id="deviceEventsIcon" class="icon"> <i class="fa fa-calendar"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Presence <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -75,10 +86,11 @@
 <!--  top small box 4 ------------------------------------------------------ -->
         <div class="col-lg-3 col-sm-6 col-xs-6">
           <a href="#" onclick="javascript: $('#tabEvents').trigger('click');">
-            <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
-              <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3> </div>
+            <div  class="small-box bg-red">
+              <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['DevDetail_Shortcut_DownAlerts'];?></p>
+              </div>
               <div class="icon"> <i class="fa fa-warning"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
             </div>
           </a>
         </div>
@@ -94,10 +106,14 @@
 
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
-              <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> Details  </a></li>
-              <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> Sessions </a></li>
-              <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> Presence </a></li>
-              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> Events   </a></li>
+              <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Details'];?>  </a></li>
+<?php
+if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = $pia_lang['DevDetail_Tab_Nmap'];}
+?>
+              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
+              <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Sessions'];?> </a></li>
+              <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Presence'];?> </a></li>
+              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?php echo $pia_lang['DevDetail_Tab_Events'];?>   </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -113,7 +129,7 @@
 
 
 
-            <div class="tab-content" style="min-height: 430px">
+            <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
 <!--
@@ -124,12 +140,12 @@
                 <div class="row">
     <!-- column 1 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua">Main Info</h4>
+                    <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_MainInfo_Title'];?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- MAC -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">MAC</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_mac'];?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtMAC" type="text" readonly value="--">
                         </div>
@@ -137,7 +153,7 @@
       
                       <!-- Name -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Name</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Name'];?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtName" type="text" value="--">
                         </div>
@@ -145,7 +161,7 @@
 
                       <!-- Owner -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Owner</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Owner'];?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
@@ -161,7 +177,7 @@
 
                       <!-- Type -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Type</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Type'];?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
@@ -181,7 +197,7 @@
 
                       <!-- Vendor -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Vendor</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Vendor'];?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtVendor" type="text" value="--">
                         </div>
@@ -189,7 +205,7 @@
 
                       <!-- Favorite -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Favorite</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Favorite'];?></label>
                         <div class="col-sm-9" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkFavorite" type="checkbox">
                         </div>
@@ -197,7 +213,7 @@
 
                       <!-- Group -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Group</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Group'];?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
@@ -218,7 +234,7 @@
 
                       <!-- Location -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Location</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Location'];?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
@@ -241,7 +257,7 @@
 
                       <!-- Comments -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label">Comments</label>
+                        <label class="col-sm-3 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Comments'];?></label>
                         <div class="col-sm-9">
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
@@ -252,12 +268,12 @@
 
     <!-- column 2 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua">Session Info</h4>
+                    <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_SessionInfo_Title'];?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- Status -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Status</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_SessionInfo_Status'];?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtStatus" type="text" readonly value="--">
                         </div>
@@ -265,7 +281,7 @@
       
                       <!-- First Session -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">First Session</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_SessionInfo_FirstSession'];?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtFirstConnection" type="text" readonly value="--">
                         </div>
@@ -273,7 +289,7 @@
       
                       <!-- Last Session -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Last Session</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_SessionInfo_LastSession'];?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtLastConnection" type="text" readonly value="--">
                         </div>
@@ -281,7 +297,7 @@
       
                       <!-- Last IP -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Last IP</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_SessionInfo_LastIP'];?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtLastIP" type="text" readonly value="--">
                         </div>
@@ -289,7 +305,7 @@
 
                       <!-- Static IP -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Static IP</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_SessionInfo_StaticIP'];?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkStaticIP" type="checkbox">
                         </div>
@@ -300,22 +316,22 @@
 
     <!-- column 3 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua">Events & Alerts config</h4>
+                    <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_EveandAl_Title'];?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- Scan Cycle -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Scan Cycle</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_ScanCycle'];?></label>
                         <div class="col-sm-7">
                           <div class="input-group">
-                            <input class="form-control" id="txtScanCycle" type="text" value="--" readonly style="background-color: #fff;">
+                            <input class="form-control" id="txtScanCycle" type="text" value="--" readonly >
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')">   Scan 1 min every 5 min</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','15 min');"> Scan 12 min every 15 min</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');">  Don't Scan</a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')"><?php echo $pia_lang['DevDetail_EveandAl_ScanCycle_a'];?></a></li>
+                                <!-- <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','15 min');"> Scan 12 min every 15 min</a></li> -->
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');"><?php echo $pia_lang['DevDetail_EveandAl_ScanCycle_z'];?></a></li>
                               </ul>
                             </div>
                           </div>
@@ -324,7 +340,7 @@
 
                       <!-- Alert events -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Alert All Events</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_AlertAllEvents'];?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkAlertEvents" type="checkbox">
                         </div>
@@ -332,7 +348,7 @@
       
                       <!-- Alert Down -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Alert Down</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_AlertDown'];?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox red hidden" id="chkAlertDown" type="checkbox">
                         </div>
@@ -340,10 +356,10 @@
 
                       <!-- Skip Notifications -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label" style="padding-top: 0px; padding-left: 0px;">Skip repeated notifications during</label>
+                        <label class="col-sm-5 control-label" style="padding-top: 0px; padding-left: 0px;"><?php echo $pia_lang['DevDetail_EveandAl_Skip'];?></label>
                         <div class="col-sm-7">
                           <div class="input-group">
-                            <input class="form-control" id="txtSkipRepeated" type="text" value="--" readonly style="background-color: #fff;">
+                            <input class="form-control" id="txtSkipRepeated" type="text" value="--" readonly >
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonSkipRepeated">
                                 <span class="fa fa-caret-down"></span></button>
@@ -361,7 +377,7 @@
 
                       <!-- New Device -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">New Device:</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_NewDevice'];?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox orange hidden" id="chkNewDevice" type="checkbox">
                         </div>
@@ -369,7 +385,7 @@
 
                       <!-- Archived -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label">Archived:</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_Archived'];?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkArchived" type="checkbox">
                         </div>
@@ -377,7 +393,7 @@
 
                       <!-- Randomized MAC -->
                       <div class="form-group" >
-                        <label class="col-sm-5 control-label">Random MAC:</label>
+                        <label class="col-sm-5 control-label"><?php echo $pia_lang['DevDetail_EveandAl_RandomMAC'];?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <span id="iconRandomMACinactive" data-toggle="tooltip" data-placement="right" title="Random MAC is Inactive">
                             <i style="font-size: 24px;" class="text-gray glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
@@ -385,7 +401,7 @@
                           <span id="iconRandomMACactive"   data-toggle="tooltip" data-placement="right" title="Random MAC is Active" class="hidden">
                             <i style="font-size: 24px;" class="text-yellow glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
 
-                          <a href="https://github.com/pucherot/Pi.Alert/blob/main/docs/RAMDOM_MAC.md" target="_blank" style="color: #777;"> 
+                          <a href="https://github.com/leiweibau/Pi.Alert/blob/main/docs/RAMDOM_MAC.md" target="_blank" style="color: #777;"> 
                             <i class="fa fa-info-circle"></i> </a>
                         </div>
                       </div>
@@ -397,11 +413,13 @@
                   <div class="col-xs-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-                          id="btnDelete"   onclick="askDeleteDevice()">   Delete Device </button>
+                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?php echo $pia_lang['DevDetail_button_DeleteEvents'];?> </button>
+                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
+                          id="btnDelete"   onclick="askDeleteDevice()">   <?php echo $pia_lang['DevDetail_button_Delete'];?> </button>
                         <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
-                          id="btnRestore"  onclick="getDeviceData(true)"> Reset Changes </button>
+                          id="btnRestore"  onclick="getDeviceData(true)"> <?php echo $pia_lang['DevDetail_button_Reset'];?> </button>
                         <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; " 
-                          id="btnSave"     onclick="setDeviceData()" >     Save </button>
+                          id="btnSave"     onclick="setDeviceData()" >     <?php echo $pia_lang['DevDetail_button_Save'];?> </button>
                     </div>
                   </div>
 
@@ -415,16 +433,96 @@
                 <table id="tableSessions" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th>Order</th>
-                    <th>Connection</th>
-                    <th>Disconnection</th>
-                    <th>Duration</th>
-                    <th>IP</th>
-                    <th>Additional info</th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_Order'];?></th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_Connection'];?></th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_Disconnection'];?></th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_Duration'];?></th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_IP'];?></th>
+                    <th><?php echo $pia_lang['DevDetail_SessionTable_Additionalinfo'];?></th>
                   </tr>
                   </thead>
                 </table>
               </div>
+
+
+<!-- tab page 5 ------------------------------------------------------------ -->
+
+
+              <div class="tab-pane fade" id="panNmap">
+
+<?php
+if ($_REQUEST['mac'] == 'Internet') {
+?>
+                <h4 class="">Online Speedtest</h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="speedtestcli" class="btn btn-default pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
+                </div>
+                   
+                  <script>
+                  function speedtestcli() {
+                    $( "#scanoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/speedtestcli.php",
+                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#scanoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+<?php  
+}
+?>
+                <h4 class="">Nmap Scans</h4>
+                <div style="width:100%; text-align: center;">
+                  <script>
+                      setTimeout(function(){
+                        document.getElementById('piamanualnmap_fast').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonFast'];?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_normal').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonDefault'];?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_detail').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonDetail'];?> (' + document.getElementById('txtLastIP').value +')';
+                      }, 2000);
+                  </script>
+
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
+                
+                  <div style="margin-top: 20px; text-align: left;">
+                    <ul style="padding:20px;">
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonDetail_text'];?></li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div id="scanoutput" style="margin-top: 30px;"></div>
+                   
+                  <script>
+                  function manualnmapscan(targetip, mode) {
+                    $( "#scanoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/nmap_scan.php",
+                      data: { scan: targetip, mode: mode },
+                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#scanoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              
+              </div>
+
+
+
+
+<!-- ----------------------------------------------------------------------- -->
+
 
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
@@ -449,7 +547,7 @@
                 <div class="text-center">
                   <label>
                     <input class="checkbox blue hidden" id="chkHideConnectionEvents" type="checkbox" checked>
-                    Hide Connection Events
+                    <?php echo $pia_lang['DevDetail_Events_CheckBox'];?>
                   </label>
                 </div>
                 
@@ -477,7 +575,6 @@
       </div>
       <!-- /.row -->
 
-<!-- ----------------------------------------------------------------------- -->
     </section>
     <!-- /.content -->
   </div>
@@ -505,7 +602,14 @@
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
   <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
+  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
 
+<!-- Dark-Mode Patch -->
+<?php
+if ($ENABLED_DARKMODE === True) {
+   echo '<link rel="stylesheet" href="css/dark-patch-cal.css">';
+}
+?>
 
 <!-- page script ----------------------------------------------------------- -->
 <script>
@@ -585,7 +689,6 @@ function main () {
       
             // Read Cookies
             devicesList = getCookie('devicesList');
-            deleteCookie ('devicesList');
             if (devicesList != '') {
                 devicesList = JSON.parse (devicesList);
             } else {
@@ -777,7 +880,14 @@ function initializeDatatables () {
       processing: '<table><td width="130px" align="middle">Loading...</td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
-      emptyTable: 'No data'
+      emptyTable: 'No data',
+      "lengthMenu": "<?php echo $pia_lang['Events_Tablelenght'];?>",
+      "search":     "<?php echo $pia_lang['Events_Searchbox'];?>: ",
+      "paginate": {
+          "next":       "<?php echo $pia_lang['Events_Table_nav_next'];?>",
+          "previous":   "<?php echo $pia_lang['Events_Table_nav_prev'];?>"
+      },
+      "info":           "<?php echo $pia_lang['Events_Table_info'];?>",
     }
   });
 
@@ -809,7 +919,14 @@ function initializeDatatables () {
       processing: '<table><td width="130px" align="middle">Loading...</td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
-      emptyTable: 'No data'
+      emptyTable: 'No data',
+      "lengthMenu": "<?php echo $pia_lang['Events_Tablelenght'];?>",
+      "search":     "<?php echo $pia_lang['Events_Searchbox'];?>: ",
+      "paginate": {
+          "next":       "<?php echo $pia_lang['Events_Table_nav_next'];?>",
+          "previous":   "<?php echo $pia_lang['Events_Table_nav_prev'];?>"
+      },
+      "info":           "<?php echo $pia_lang['Events_Table_info'];?>",
     }
   });
 
@@ -848,7 +965,7 @@ function initializeCalendar () {
     slotLabelInterval : '04:00:00',
     slotLabelFormat   : 'H:mm',
     timeFormat        : 'H:mm', 
-
+    locale            : '<?php echo $pia_lang['Presence_CalHead_lang'];?>',
     header: {
       left            : 'prev,next today',
       center          : 'title',
@@ -859,14 +976,14 @@ function initializeCalendar () {
       agendaYear: {
         type               : 'agenda',
         duration           : { year: 1 },
-        buttonText         : 'year',
+        buttonText         : '<?php echo $pia_lang['Presence_CalHead_year'];?>',
         columnHeaderFormat : ''
       },
 
       agendaMonth: {
         type               : 'agenda',
         duration           : { month: 1 },
-        buttonText         : 'month',
+        buttonText         : '<?php echo $pia_lang['Presence_CalHead_month'];?>',
         columnHeaderFormat : 'D'
       }
     },
@@ -1027,7 +1144,7 @@ function getDeviceData (readAllData=false) {
       }
 
       // Status
-      $('#deviceStatus').html (deviceData['dev_Status']);
+      $('#deviceStatus').html (deviceData['dev_Status'].replace('-', ''));
       switch (deviceData['dev_Status']) {
         case 'On-line':   icon='fa fa-check';    color='text-green';   break;
         case 'Off-line':  icon='fa fa-close';    color='text-gray';    break;
@@ -1058,6 +1175,13 @@ function getDeviceData (readAllData=false) {
 
         mac                                          =deviceData['dev_MAC'];
 
+        // update the mac parameter in the URL, this makes the selected device persistent when the page is reloaded
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("mac", mac);
+        var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+        history.pushState(null, '', newRelativePathQuery);
+        getSessionsPresenceEvents();
+
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
         $('#txtOwner').val                           (deviceData['dev_Owner']);
@@ -1072,7 +1196,7 @@ function getDeviceData (readAllData=false) {
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
         $('#txtLastIP').val                          (deviceData['dev_LastIP']);
-        $('#txtStatus').val                          (deviceData['dev_Status']);
+        $('#txtStatus').val                          (deviceData['dev_Status'].replace('-', ''));
         if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
     
         $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] +' min');
@@ -1117,7 +1241,7 @@ function getDeviceData (readAllData=false) {
       $('#btnNext').removeAttr  ('disabled');
       $('#btnNext').removeClass ('text-gray50');
     }
-
+    
     // Timer for refresh data
     $("body").css("cursor", "default");
     newTimerRefreshData (getDeviceData);
@@ -1225,6 +1349,33 @@ function skipNotifications () {
 }
 
 // -----------------------------------------------------------------------------
+function askDeleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Ask delete device Events 
+  showModalWarning ('<?php echo $pia_lang['DevDetail_button_DeleteEvents'];?>', '<?php echo $pia_lang['DevDetail_button_DeleteEvents_Warning'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteDeviceEvents');
+}
+
+function deleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Delete device events
+  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+    showMessage (msg);
+  });
+
+  // Deactivate controls
+  $('#panDetails :input').attr('disabled', true);
+}
+
+// -----------------------------------------------------------------------------
 function askDeleteDevice () {
   // Check MAC
   if (mac == '') {
@@ -1256,13 +1407,16 @@ function deleteDevice () {
 
 // -----------------------------------------------------------------------------
 function getSessionsPresenceEvents () {
+  // Check MAC in url
+  var urlParams = new URLSearchParams(window.location.search);
+  mac = urlParams.get ('mac');
   // Define Sessions datasource and query dada
   $('#tableSessions').DataTable().ajax.url('php/server/events.php?action=getDeviceSessions&mac=' + mac +'&period='+ period).load();
   
   // Define Presence datasource and query data
   $('#calendar').fullCalendar('removeEventSources');
   $('#calendar').fullCalendar('addEventSource',
-    { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac +'&period='+ period });
+  { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac});
 
   // Query events
   getDeviceEvents();
