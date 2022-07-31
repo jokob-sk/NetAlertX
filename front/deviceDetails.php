@@ -266,14 +266,25 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
 
                       <div class="form-group">
                         <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network'];?></label>
-                        <div class="col-sm-6">
-                          <input class="form-control" id="txtInfrastructure" type="text" value="--">
+                        <div class="col-sm-6">  
+                          <div class="input-group"> 
+
+                            <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
+                            <div class="input-group-btn">
+
+                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
+                                    <span class="fa fa-caret-down"></span></button>
+                              <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
+                              </ul>
+                            </div>
+
+                          </div>
                         </div>
                       </div>
                       <div class="form-group">
                         <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network_Port'];?></label>
                         <div class="col-sm-6">
-                          <input class="form-control" id="txtInfrastructurePort" type="text" value="--">
+                          <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
                       </div>
 
@@ -803,10 +814,11 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( $('#dropdownOwner')[0],       'getOwners',       'txtOwner');
-  initializeCombo ( $('#dropdownDeviceType')[0],  'getDeviceTypes',  'txtDeviceType');
-  initializeCombo ( $('#dropdownGroup')[0],       'getGroups',       'txtGroup');
-  initializeCombo ( $('#dropdownLocation')[0],    'getLocations',    'txtLocation');
+  initializeCombo ( $('#dropdownOwner')[0],                      'getOwners',       'txtOwner');
+  initializeCombo ( $('#dropdownDeviceType')[0],                 'getDeviceTypes',  'txtDeviceType');
+  initializeCombo ( $('#dropdownGroup')[0],                      'getGroups',       'txtGroup');
+  initializeCombo ( $('#dropdownLocation')[0],                   'getLocations',    'txtLocation');
+  initializeCombo ( $('#dropdownNetworkNodeMac')[0],             'getNetworkNodes', 'txtNetworkNodeMac');
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -827,10 +839,17 @@ function initializeCombo (HTMLelement, queryAction, txtDataField) {
         order = item['order'];
       }
 
+      id = item['name'];
+      // use explicitly specified id (value) if avaliable
+      if(item['id'])
+      {
+        id = item['id'];
+      }
+
       // add dropdown item
       HTMLelement.innerHTML +=
         '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
-        txtDataField +'\',\''+ item['name'] +'\')">'+ item['name'] + '</a></li>'
+        txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
     });
   });
 }
@@ -1120,8 +1139,8 @@ function getDeviceData (readAllData=false) {
       $('#txtGroup').val               ('--');
       $('#txtLocation').val            ('--');
       $('#txtComments').val            ('--');
-      $('#txtInfrastructure').val      ('--');
-      $('#txtInfrastructurePort').val  ('--');
+      $('#networkNodeMac').val      ('--');
+      $('#txtNetworkPort').val  ('--');
 
       $('#txtFirstConnection').val     ('--');
       $('#txtLastConnection').val      ('--');
@@ -1209,8 +1228,8 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
-        $('#txtInfrastructure').val                  (deviceData['dev_Infrastructure']);
-        $('#txtInfrastructurePort').val              (deviceData['dev_Infrastructure_port']);
+        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC']);
+        $('#txtNetworkPort').val              (deviceData['dev_Network_Node_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
@@ -1319,8 +1338,8 @@ function setDeviceData (refreshCallback='') {
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()
     + '&comments='       + $('#txtComments').val()
-    + '&infrastructure=' + $('#txtInfrastructure').val()
-    + '&infrastructureport=' + $('#txtInfrastructurePort').val()
+    + '&networknode='    + $('#txtNetworkNodeMac').val()
+    + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + $('#txtScanCycle').val().split(' ')[0]
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
@@ -1340,6 +1359,7 @@ function setDeviceData (refreshCallback='') {
     }
   });
 }
+
 
 
 // -----------------------------------------------------------------------------

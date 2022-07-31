@@ -65,4 +65,12 @@ function logServerConsole ($text) {
   $y = $x['__________'. $text .'__________'];
 }
 
+function getNetworkTypes(){
+
+  $array = array(
+    "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
+  );
+
+  return $array;
+}
 ?>
