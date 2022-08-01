@@ -1139,7 +1139,7 @@ function getDeviceData (readAllData=false) {
       $('#txtGroup').val               ('--');
       $('#txtLocation').val            ('--');
       $('#txtComments').val            ('--');
-      $('#networkNodeMac').val      ('--');
+      $('#txtNetworkNodeMac').val      ('--');
       $('#txtNetworkPort').val  ('--');
 
       $('#txtFirstConnection').val     ('--');
