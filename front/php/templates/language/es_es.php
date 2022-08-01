@@ -1,14 +1,14 @@
 <?php
 //////////////////////////////////////////////////////////////////
-// General
+// General - Update by @TeroRERO 01ago2022
 //////////////////////////////////////////////////////////////////
-$pia_lang['Gen_Delete'] = 'Delete';
-$pia_lang['Gen_Cancel'] = 'Cancel';
+$pia_lang['Gen_Delete'] = 'Eliminar';
+$pia_lang['Gen_Cancel'] = 'Cancelar';
 $pia_lang['Gen_Okay'] = 'Ok';
-$pia_lang['Gen_Purge'] = 'Purge';
-$pia_lang['Gen_Backup'] = 'Run Backup';
-$pia_lang['Gen_Restore'] = 'Run Restore';
-$pia_lang['Gen_Switch'] = 'Switch';
+$pia_lang['Gen_Purge'] = 'Purgar';
+$pia_lang['Gen_Backup'] = 'Ejecutar copia de seguridad';
+$pia_lang['Gen_Restore'] = 'Ejecutar restauración';
+$pia_lang['Gen_Switch'] = 'Cambiar';
 
 //////////////////////////////////////////////////////////////////
 // Device Page - Update by @TeroRERO 25jul2022
@@ -105,7 +105,7 @@ $pia_lang['Events_Table_nav_next'] = 'Siguiente';
 $pia_lang['Events_Table_nav_prev'] = 'Anterior';
 
 //////////////////////////////////////////////////////////////////
-// Device Details Page - Update by @TeroRERO 25jul2022
+// Device Details Page - Update by @TeroRERO 01ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['DevDetail_Periodselect_today'] = 'Hoy';
@@ -132,8 +132,8 @@ $pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorito';
 $pia_lang['DevDetail_MainInfo_Group'] = 'Grupo';
 $pia_lang['DevDetail_MainInfo_Location'] = 'Ubicación';
 $pia_lang['DevDetail_MainInfo_Comments'] = 'Comentario';
-$pia_lang['DevDetail_MainInfo_Network'] = 'Network Hardware (ID)';
-$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Network HW Port';
+$pia_lang['DevDetail_MainInfo_Network'] = 'Hardware de Red (ID)';
+$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Puerto de Red HW';
 $pia_lang['DevDetail_SessionInfo_Title'] = 'Información de sesión';
 $pia_lang['DevDetail_SessionInfo_Status'] = 'Estado';
 $pia_lang['DevDetail_SessionInfo_FirstSession'] = '1ra. sesión';
@@ -266,34 +266,34 @@ $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Falló la actualización de la 
 $pia_lang['BackDevices_DBTools_Purge'] = 'Las copias de seguridad más antiguas fueron eliminadas';
 
 //////////////////////////////////////////////////////////////////
-// Network Page
+// Network Page - Update by @TeroRERO 01ago2022
 //////////////////////////////////////////////////////////////////
 
-$pia_lang['Network_Title'] = 'Network overview';
-$pia_lang['Network_ManageDevices'] = 'Manage Devices';
-$pia_lang['Network_ManageAdd'] = 'Add Device';
-$pia_lang['Network_ManageEdit'] = 'Update Device';
-$pia_lang['Network_ManageDel'] = 'Delete Device';
-$pia_lang['Network_ManageAdd_Name'] = 'Device Name';
-$pia_lang['Network_ManageAdd_Name_text'] = 'Name without special characters';
-$pia_lang['Network_ManageAdd_Type'] = 'Device Type';
-$pia_lang['Network_ManageAdd_Type_text'] = '-- Select Type --';
-$pia_lang['Network_ManageAdd_Port'] = 'Port Count';
-$pia_lang['Network_ManageAdd_Port_text'] = 'leave blank for wifi and powerline';
-$pia_lang['Network_ManageAdd_Submit'] = 'Add Device';
-$pia_lang['Network_ManageEdit_ID'] = 'Device to update';
-$pia_lang['Network_ManageEdit_ID_text'] = '-- Select Device for editing --';
-$pia_lang['Network_ManageEdit_Name'] = 'New Device Name';
-$pia_lang['Network_ManageEdit_Name_text'] = 'Name without special characters';
-$pia_lang['Network_ManageEdit_Type'] = 'New Device Type';
-$pia_lang['Network_ManageEdit_Type_text'] = '-- Select Type --';
-$pia_lang['Network_ManageEdit_Port'] = ' New Port Count';
-$pia_lang['Network_ManageEdit_Port_text'] = 'leave blank for wifi and powerline';
-$pia_lang['Network_ManageEdit_Submit'] = 'Save Changes';
-$pia_lang['Network_ManageDel_Name'] = 'Device to delete';
-$pia_lang['Network_ManageDel_Name_text'] = '-- Select Device --';
-$pia_lang['Network_ManageDel_Submit'] = 'Delete';
-$pia_lang['Network_Table_State'] = 'State';
-$pia_lang['Network_Table_Hostname'] = 'Hostname';
-$pia_lang['Network_Table_IP'] = 'IP';
+$pia_lang['Network_Title'] = 'Descripción general de la red';
+$pia_lang['Network_ManageDevices'] = 'Administrar dispositivos';
+$pia_lang['Network_ManageAdd'] = 'Añadir dispositivo';
+$pia_lang['Network_ManageEdit'] = 'Actualizar dispositivo';
+$pia_lang['Network_ManageDel'] = 'Eliminar dispositivo';
+$pia_lang['Network_ManageAdd_Name'] = 'Nombre del dispositivo';
+$pia_lang['Network_ManageAdd_Name_text'] = 'Nombre sin caracteres especiales';
+$pia_lang['Network_ManageAdd_Type'] = 'Tipo de dispositivo';
+$pia_lang['Network_ManageAdd_Type_text'] = '-- Seleccionar tipo --';
+$pia_lang['Network_ManageAdd_Port'] = 'Recuento de puertos';
+$pia_lang['Network_ManageAdd_Port_text'] = 'dejar en blanco para WiFi y Powerline';
+$pia_lang['Network_ManageAdd_Submit'] = 'Añadir dispositivo';
+$pia_lang['Network_ManageEdit_ID'] = 'Dispositivo para actualizar';
+$pia_lang['Network_ManageEdit_ID_text'] = '-- Seleccione el dispositivo para editar --';
+$pia_lang['Network_ManageEdit_Name'] = 'Nuevo nombre del dispositivo';
+$pia_lang['Network_ManageEdit_Name_text'] = 'Nombre sin caracteres especiales';
+$pia_lang['Network_ManageEdit_Type'] = 'Nuevo tipo de dispositivo';
+$pia_lang['Network_ManageEdit_Type_text'] = '-- Seleccione tipo --';
+$pia_lang['Network_ManageEdit_Port'] = ' Nuevo recuento de puertos';
+$pia_lang['Network_ManageEdit_Port_text'] = 'Dejar en blanco para WiFi y Powerline';
+$pia_lang['Network_ManageEdit_Submit'] = 'Guardar los cambios';
+$pia_lang['Network_ManageDel_Name'] = 'Dispositivo para eliminar';
+$pia_lang['Network_ManageDel_Name_text'] = '-- Seleccione el dispositivo --';
+$pia_lang['Network_ManageDel_Submit'] = 'Eliminar';
+$pia_lang['Network_Table_State'] = 'Estado';
+$pia_lang['Network_Table_Hostname'] = 'Nombre de host';
+$pia_lang['Network_Table_IP'] = 'Dirección IP';
 ?>
