@@ -8,8 +8,13 @@
 
   require 'php/templates/header.php';
   require 'php/server/db.php';
+  require 'php/server/util.php';
+
+  global $pia_lang;
+  
 
   $DBFILE = '../db/pialert.db';
+  $NETWORKTYPES = getNetworkTypes();
   OpenDB();
 
   // #####################################
@@ -32,224 +37,236 @@
     </h1>
   </section>
 
-<?php
-  echo $_REQUEST['net_MAC'];
-?>
+  <?php
+    echo $_REQUEST['net_MAC'];
+  ?>
 
   <!-- Main content ---------------------------------------------------------- -->
   <section class="content">
     <?php
 
-      function createDeviceTabs($mac, $name, $type, $port, $activetab) {
+      // Create top-level node (network devices) tabs 
+      function createDeviceTabs($node_mac, $node_name, $node_type, $node_ports_count, $activetab) {
 
-        echo '<li class="'.$activetab.'"><a href="#'.str_replace(":", "_", $mac).'" data-toggle="tab">'.$name.' / '.$type;
-        if ($port != "") {
-          echo ' ('.$port.')';
+        // prepare string with port number in brackets if available
+        $str_port = "";
+        if ($node_ports_count != "") {
+          $str_port = ' ('.$node_ports_count.')';
         }
-        echo '</a></li>';
+
+        
+
+        $str_tab_header = '<li class="'.$activetab.'">
+                              <a href="#'.str_replace(":", "_", $node_mac).'" data-toggle="tab">'
+                                  .$node_name.' / '.$node_type. ' ' .$str_port.
+                              '</a>
+                          </li>';
+
+        echo $str_tab_header;
+
       }
 
-     function createTabContent($mac, $name, $type, $port, $activetab) {
-        global $pia_lang;
-        echo '<div class="tab-pane '.$activetab.'" id="'.str_replace(":", "_", $mac).'">
-              <h4>'.$name.' (ID: '.str_replace(":", "_", $mac).')</h4><br>';
-        echo '<div class="box-body no-padding">
-          <table class="table table-striped">
-            <tbody><tr>
-              <th style="width: 40px">Port</th>
-              <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
-              <th>'.$pia_lang['Network_Table_Hostname'].'</th>
-              <th>'.$pia_lang['Network_Table_IP'].'</th>
-            </tr>';
+      function createPane($node_mac, $node_name, $node_type, $node_ports_count, $activetab){
+        $str_tab_pane = '<div class="tab-pane '.$activetab.'" id="'.str_replace(":", "_", $node_mac).'">
+                            <h4>'.$node_name.' (ID: '.str_replace(":", "_", $node_mac).')</h4>
+                            <br>
+                             <div class="box-body no-padding">';
+
+
+
+
+        $str_table =      '
+                              <table class="table table-striped">
+                                <tbody>
+                                <tr>
+                                  <th style="width: 40px">Port</th>
+                                  <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
+                                  <th>'.$pia_lang['Network_Table_Hostname'].'</th>
+                                  <th>'.$pia_lang['Network_Table_IP'].'</th>
+                                </tr>';
+        
         // Prepare Array for Devices with Port value
-        // If no Port is set, the Port number is set to 1
-        if ($port == "") {$port = 1;}
-        // Create Array with specific length
-        $network_device_portname = array();
-        $network_device_portmac = array();
-        $network_device_portip = array();
-        $network_device_portstate = array();
-        // make sql query for Network Hardware ID
+        // If no Port is set, the Port number is set to 0
+        if ($node_ports_count == "") {
+          $node_ports_count = 0;
+        }
+
+        // Get all leafs connected to a node based on the node_mac        
+        $func_sql = 'SELECT dev_Network_Node_port as port,
+                            dev_MAC as mac,  
+                            dev_PresentLastScan as online, 
+                            dev_Name as name,
+                            dev_DeviceType as type, 
+                            dev_LastIP as last_ip 
+        FROM "Devices" WHERE "dev_Network_Node_MAC" = "'.$node_mac.'"';
+        
         global $db;
-        $func_sql = 'SELECT * FROM "Devices" WHERE "dev_Network_Node_MAC" = "'.$mac.'"';
-        $func_result = $db->query($func_sql);
-        while($func_res = $func_result->fetchArray(SQLITE3_ASSOC)) { 
-          // Online / Offline state of port     
-          if ($func_res['dev_PresentLastScan'] == 1) {
+        $func_result = $db->query($func_sql);        
+        
+        // array 
+        $tableData = array();
+        while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
+            // Push row data      
+            $tableData[] = array( 'port'            => $row['port'], 
+                                  'mac'             => $row['mac'],
+                                  'online'          => $row['online'],
+                                  'name'            => $row['name'],
+                                  'type'            => $row['type'],
+                                  'last_ip'         => $row['last_ip']); 
+        }
+    
+        // Control no rows
+        if (empty($tableData)) {
+          $tableData = [];
+        }
+
+        $str_table_rows = "";        
+
+        foreach ($tableData as $row) {                            
+         
+          if ($row['online'] == 1) {
             $port_state = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';
           } else {
             $port_state = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';
           }
-          // Prepare Table with Port > push values in array
-          if ($port > 1)
-            {
-              if (stristr($func_res['dev_Network_Node_port'], ',') == '') {
-                if ($network_device_portname[$func_res['dev_Network_Node_port']] != '') {
-                  $network_device_portname[$func_res['dev_Network_Node_port']] = $network_device_portname[$func_res['dev_Network_Node_port']].','.$func_res['dev_Name'];
-                } else {
-                  $network_device_portname[$func_res['dev_Network_Node_port']] = $func_res['dev_Name'];
-                }
-              if ($network_device_portmac[$func_res['dev_Network_Node_port']] != '') {
-                  $network_device_portmac[$func_res['dev_Network_Node_port']] = $network_device_portmac[$func_res['dev_Network_Node_port']].','.$func_res['dev_MAC'];
-                  } else {
-                    $network_device_portmac[$func_res['dev_Network_Node_port']] = $func_res['dev_MAC'];
-                }
-              if ($network_device_portip[$func_res['dev_Network_Node_port']] != '') {
-                  $network_device_portip[$func_res['dev_Network_Node_port']] = $network_device_portip[$func_res['dev_Network_Node_port']].','.$func_res['dev_LastIP'];
-                } else {
-                  $network_device_portip[$func_res['dev_Network_Node_port']] = $func_res['dev_LastIP'];
-                }
-              if (isset($network_device_portstate[$func_res['dev_Network_Node_port']])) {
-                  $network_device_portstate[$func_res['dev_Network_Node_port']] = $network_device_portstate[$func_res['dev_Network_Node_port']].','.$func_res['dev_PresentLastScan'];
-                } else {
-                  $network_device_portstate[$func_res['dev_Network_Node_port']] = $func_res['dev_PresentLastScan'];
-                }
-              } else {
-                $multiport = array();
-                $multiport = explode(',',$func_res['dev_Network_Node_port']);
-                foreach($multiport as $row) {
-                    $network_device_portname[trim($row)] = $func_res['dev_Name'];
-                    $network_device_portmac[trim($row)] = $func_res['dev_MAC'];
-                    $network_device_portip[trim($row)] = $func_res['dev_LastIP'];
-                    $network_device_portstate[trim($row)] = $func_res['dev_PresentLastScan'];
-                }
-                unset($multiport);
-              }
-            } else {
-              // Table without Port > echo values
-              // Specific icon for devicetype
-              if ($type == "WLAN") {$dev_port_icon = 'fa-wifi';}
-              if ($type == "Powerline") {$dev_port_icon = 'fa-flash';}
-              echo '<tr><td style="text-align: center;"><i class="fa '.$dev_port_icon.'"></i></td><td>'.$port_state.'</td><td style="padding-left: 10px;"><a href="./deviceDetails.php?mac='.$func_res['dev_MAC'].'"><b>'.$func_res['dev_Name'].'</b></a></td><td>'.$func_res['dev_LastIP'].'</td></tr>';
-            }
-        }
-        // Create table with Port
-        if ($port > 1)
+          
+          // BUG: TODO fix icons - I'll need to fix the SQL query to add the type of the node on line 95
+          // prepare HTML for the port table column cell
+          $port_content = "N/A";
+  
+          if ($row['type'] == "WLAN" || $row['type'] == "AP" ) { 
+            $port_content = '<i class="fa fa-wifi"></i>';
+          } elseif ($row['type'] == "Powerline") 
           {
-            for ($x=1; $x<=$port; $x++) 
-              {
-                // Prepare online/offline badge for later functions
-                $online_badge = '<div class="badge bg-green text-white" style="width: 60px;">Online</div>';
-                $offline_badge = '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>';
-                // Set online/offline badge
-                echo '<tr>';
-                echo '<td style="text-align: right; padding-right:16px;">'.$x.'</td>';
-                // Set online/offline badge
-                // Check if multiple badges necessary
-                if (stristr($network_device_portstate[$x],',') == '') {
-                  // Set single online/offline badge
-                  if ($network_device_portstate[$x] == 1) {$port_state = $online_badge;} else {$port_state = $offline_badge;}
-                  echo '<td>'.$port_state.'</td>';
-                } else {
-                  // Set multiple online/offline badges
-                  $multistate = array();
-                  $multistate = explode(',',$network_device_portstate[$x]);
-                  echo '<td>';
-                  foreach($multistate as $key => $value) {
-                      if ($value == 1) {$port_state = $online_badge;} else {$port_state = $offline_badge;}
-                      echo $port_state.'<br>';
-                  }
-                  echo '</td>';
-                  unset($multistate);
-                }  
-                // Check if multiple Hostnames are set
-                // print single hostname         
-                if (stristr($network_device_portmac[$x],',') == '') {
-                  echo '<td style="padding-left: 10px;"><a href="./deviceDetails.php?mac='.$network_device_portmac[$x].'"><b>'.$network_device_portname[$x].'</b></a></td>';
-                } else {
-                  // print multiple hostnames with separate links  
-                  $multimac = array();
-                  $multimac = explode(',',$network_device_portmac[$x]);
-                  $multiname = array();
-                  $multiname = explode(',',$network_device_portname[$x]);
-                  echo '<td style="padding-left: 10px;">';
-                  foreach($multiname as $key => $value) {
-                      echo '<a href="./deviceDetails.php?mac='.$multimac[$key].'"><b>'.$value.'</b></a><br>';
-                  }
-                  echo '</td>';
-                  unset($multiname, $multimac);
-                }
-                // Check if multiple IP are set
-                // print single IP  
-                if (stristr($network_device_portip[$x],',') == '') {
-                  echo '<td style="padding-left: 10px;">'.$network_device_portip[$x].'</td>';
-                } else {
-                  // print multiple IPs
-                  $multiip = array();
-                  $multiip = explode(',',$network_device_portip[$x]);
-                  echo '<td style="padding-left: 10px;">';
-                  foreach($multiip as $key => $value) {
-                      echo $value.'<br>';
-                  }
-                  echo '</td>';
-                  unset($multiip);
-                }
-                echo '</tr>';
-              }
+            $port_content = '<i class="fa fa-flash"></i>';
+          } elseif ($row['port'] != NULL && $row['port'] != "") 
+          {
+            $port_content = $row['port'];
+          }
+  
+          $str_table_rows = $str_table_rows.
+                            '<tr>
+                              <td style="text-align: center;">
+                                '.$port_content.'                  
+                              </td>
+                              <td>'
+                                .$port_state.
+                              '</td>
+                              <td style="padding-left: 10px;">
+                                <a href="./deviceDetails.php?mac='.$row['mac'].'">
+                                  <b>'.$row['name'].'</b>
+                                </a>
+                              </td>
+                              <td>'
+                                .$row['last_ip'].
+                              '</td>
+                            </tr>';
+          
+        }        
+
+        $str_table_close =    '</tbody>
+                            </table>';
+
+        // no connected device - don't render table
+        if($str_table_rows == "")
+        {
+          $str_table = "";
+          $str_table_close = "";
         }
-      echo '        </tbody>
-                  </table>
-                </div>';
-      echo '</div> ';
-    }
+         
+        $str_close_pane = '</div>       
+          </div>     
+          <div class="aaaaaaa"></div>';  
+
+        // write the HTML
+        echo  ''.$str_tab_header.
+              $str_tab_pane.
+              $str_table.
+              $str_table_rows.
+              $str_table_close.
+              $str_close_pane;
+      }     
 
     
-    // Create Tabs   
+    // Create Top level tabs   (List of network devices), explanation of the terminology below:
+    //
+    //             Switch 1 (node) 
+    //              /(p1)    \ (p2)     <----- port numbers
+    //             /          \
+    //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
+    //                          \
+    //                          PC (leaf)
+    
+    $sql = "SELECT node_name, node_mac, node_type, node_ports_count
+              FROM 
+              (
+                  SELECT a.dev_Name as  node_name,        
+                         a.dev_MAC as node_mac,
+                         a.dev_DeviceType as node_type 
+                    FROM Devices a 
+                    WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
+              ) t1
+              LEFT JOIN
+              (
+                  SELECT b.dev_Network_Node_MAC as node_mac_2,
+                         count() as node_ports_count 
+                    FROM Devices b 
+                    WHERE b.dev_Network_Node_MAC NOT NULL group by b.dev_Network_Node_MAC
+              ) t2
+              ON (t1.node_mac = t2.node_mac_2);
+          ";
 
-      $sql = 'select dev_MAC, dev_Name, dev_DeviceType, dev_Network_Node_port from Devices where dev_DeviceType in ("AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter")'; 
-      $result = $db->query($sql);
+    $result = $db->query($sql);    
 
-      // array
-      $tableData = array();
-      while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-        // Push row data
-        $tableData[] = array('dev_MAC'                => $row['dev_MAC'], 
-                             'dev_Name'               => $row['dev_Name'],
-                             'dev_DeviceType'         => $row['dev_DeviceType'],
-                             'dev_Network_Node_port'  => $row['dev_Network_Node_port'] ); 
-      }
+    // array 
+    $tableData = array();
+    while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
+        // Push row data      
+        $tableData[] = array( 'node_mac'                => $row['node_mac'], 
+                              'node_name'               => $row['node_name'],
+                              'node_type'               => $row['node_type'],
+                              'node_ports_count'        => $row['node_ports_count']); 
+    }
 
-      // Control no rows
-      if (empty($tableData)) {
-        $tableData = [];
-      }
+    // Control no rows
+    if (empty($tableData)) {
+      $tableData = [];
+    }
 
+    echo '<div class="nav-tabs-custom" style="margin-bottom: 0px;">
+    <ul class="nav nav-tabs">';
+
+    $activetab='active';                    
+    foreach ($tableData as $row) {                            
+        createDeviceTabs($row['node_mac'], 
+                          $row['node_name'], 
+                          $row['node_type'], 
+                          $row['node_ports_count'],
+                          $activetab);
+
+                          $activetab = ""; // reset active tab indicator, only the first tab is active
+      
+    }
+    echo ' </ul>  <div class="tab-content">';
+
+    $activetab='active';    
+
+    foreach ($tableData as $row) {                            
+      createPane($row['node_mac'], 
+                  $row['node_name'], 
+                  $row['node_type'], 
+                  $row['node_ports_count'],
+                  $activetab);
+
+                  $activetab = ""; // reset active tab indicator, only the first tab is active
+    
+  }
+                              
+    
     ?>
-          <div class="nav-tabs-custom" style="margin-bottom: 0px;">
-                <ul class="nav nav-tabs">
-                    <?php 
-                          $activetab='active';                    
-                          foreach ($tableData as $row) {
-                              createDeviceTabs($row['dev_MAC'], 
-                                               $row['dev_Name'], 
-                                               $row['dev_DeviceType'], 
-                                               $row['dev_Network_Node_port'],
-                                               $activetab);
-
-                                               $activetab = "";
-                          }                    
-                    ?>                                  
-                </ul>
-          <div class="tab-content">
-              <?php              
-                // Ctreate Tab Content
-                $activetab='active';
-                while($res = $result->fetchArray(SQLITE3_ASSOC)){                                  
-                  createTabContent(
-                    $res['dev_MAC'], 
-                    $res['dev_Name'], 
-                    $res['dev_DeviceType'], 
-                    $res['dev_Network_Node_port'],
-                    $activetab); 
-                    
-                    $activetab = "";
-                }              
-              ?>
                   <!-- /.tab-pane -->
           </div>
-          <!-- /.tab-content -->
-      </div>
-      <div style="width: 100%; height: 20px;"></div>
+         
   </section>
 
     <!-- /.content -->
