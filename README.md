@@ -13,6 +13,9 @@ JavaScript)*
 ![Main screen dark][main_dark]
 optional Darkmode within this fork
 
+## Modifications within this Fork
+... will follow soon
+
 ## How it works
 The system continuously scans the network for:
   - New devices
@@ -88,8 +91,8 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-- One-step Automated Install:
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+- One-step Automated Install (original):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
 - One-step Automated Install without Webserver if another Webserver is already installed. (not recommended):
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
@@ -99,8 +102,8 @@ Linux distributions.
 
 # Update
 <!--- --------------------------------------------------------------------- --->
-- One-step Automated Update:
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+- One-step Automated Update (original):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
 <!--- --------------------------------------------------------------------- --->
