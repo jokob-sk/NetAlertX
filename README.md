@@ -102,9 +102,18 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
+> Please note, this [fork](https://github.com/jokob-sk/) is only tested via the [docker install method](dockerfiles/README.md)
+
+Instructions for [puncherot's original code](https://github.com/pucherot/Pi.Alert/)
+
+- One-step Automated Install:
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+  
+Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
+  
 - One-step Automated Install:
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
-
+  
 - One-step Automated Install without Webserver if another Webserver is already installed. (not recommended):
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
 
