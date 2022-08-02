@@ -1472,7 +1472,10 @@ def send_email (pText, pHTML):
     msg.attach (MIMEText (pHTML, 'html'))
 
     # Send mail
-    smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
+    if not SafeParseGlobalBool(SMTP_USE_SSL):
+        smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
+    else:
+        smtp_connection = smtplib.SMTP_SSL (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
 #    smtp_connection.starttls()
 #    smtp_connection.ehlo()
