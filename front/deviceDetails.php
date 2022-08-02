@@ -263,7 +263,8 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
                       </div>
-
+                      <!-- Network -->
+                      <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_MainInfo_Network_Title'];?></h4>                    
                       <div class="form-group">
                         <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network'];?></label>
                         <div class="col-sm-6">  

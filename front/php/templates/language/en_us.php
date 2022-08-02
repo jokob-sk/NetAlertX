@@ -133,6 +133,7 @@ $pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorite';
 $pia_lang['DevDetail_MainInfo_Group'] = 'Group';
 $pia_lang['DevDetail_MainInfo_Location'] = 'Location';
 $pia_lang['DevDetail_MainInfo_Comments'] = 'Comments';
+$pia_lang['DevDetail_MainInfo_Network_Title'] = 'Network';
 $pia_lang['DevDetail_MainInfo_Network'] = 'Network Node (MAC)';
 $pia_lang['DevDetail_MainInfo_Network_Port'] = 'Connected to Port';
 $pia_lang['DevDetail_SessionInfo_Title'] = 'Session Info';
