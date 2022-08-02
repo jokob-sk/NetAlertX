@@ -102,7 +102,7 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-> Please note, this [fork](https://github.com/jokob-sk/) is only tested via the [docker install method](dockerfiles/README.md)
+> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md)
 
 Instructions for [puncherot's original code](https://github.com/pucherot/Pi.Alert/)
 
