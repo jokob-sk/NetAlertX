@@ -104,7 +104,7 @@ Linux distributions.
 
 > ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md)
 
-Instructions for [puncherot's original code](https://github.com/pucherot/Pi.Alert/)
+Instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
 
 - One-step Automated Install:
   #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
@@ -122,7 +122,10 @@ Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
 
 # Update
 <!--- --------------------------------------------------------------------- --->
-- One-step Automated Update:
+- One-step Automated Update (pucherot):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+  
+- One-step Automated Update (leiweibau):
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
