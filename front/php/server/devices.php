@@ -51,6 +51,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
+      case 'deleteEvents30':          deleteEvents30();                        break;
       case 'deleteActHistory':        deleteActHistory();                      break;
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
@@ -297,6 +298,26 @@ function deleteEvents() {
 
   // sql
   $sql = 'DELETE FROM Events';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all Events older than 30 days
+//------------------------------------------------------------------------------
+function deleteEvents30() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', '-30 day')";
   // execute sql
   $result = $db->query($sql);
 

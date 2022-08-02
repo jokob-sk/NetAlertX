@@ -312,6 +312,12 @@ if (submit && isset($_POST['langselector_set'])) {
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?php echo $pia_lang['Maintenance_Tool_del_allevents30'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents30_text'];?></div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory'];?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory_text'];?></div>
@@ -411,6 +417,20 @@ function deleteEvents()
 { 
   // Execute
   $.get('php/server/devices.php?action=deleteEvents', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// delete all Events older than 30 days
+function askDeleteEvents30 () {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_allevents30_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_allevents30_noti_text'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteEvents30');
+}
+function deleteEvents30()
+{ 
+  // Execute
+  $.get('php/server/devices.php?action=deleteEvents30', function(msg) {
     showMessage (msg);
   });
 }
