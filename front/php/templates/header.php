@@ -102,6 +102,7 @@ if ($ENABLED_DARKMODE === True) {
 ?>
 <!-- Servertime to the right of the hostname -->
 <script>
+
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
 
 function show_pia_servertime() {
@@ -232,7 +233,6 @@ function show_pia_servertime() {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
         </li>
-
 <!--
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Config</span>

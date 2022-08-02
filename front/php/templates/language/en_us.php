@@ -10,6 +10,7 @@ $pia_lang['Gen_Backup'] = 'Run Backup';
 $pia_lang['Gen_Restore'] = 'Run Restore';
 $pia_lang['Gen_Switch'] = 'Switch';
 
+
 //////////////////////////////////////////////////////////////////
 // Device Page
 //////////////////////////////////////////////////////////////////
@@ -27,8 +28,7 @@ $pia_lang['Device_Shortcut_NewDevices'] = 'New Devices';
 $pia_lang['Device_Shortcut_DownAlerts'] = 'Down Alerts';
 $pia_lang['Device_Shortcut_Archived'] = 'Archived';
 $pia_lang['Device_Shortcut_Devices'] = 'Devices';
-$pia_lang['Device_Shortcut_OnlineChart_a'] = 'Network activity over last';
-$pia_lang['Device_Shortcut_OnlineChart_b'] = 'hours';
+$pia_lang['Device_Shortcut_OnlineChart'] = 'Device presence over time';
 $pia_lang['Device_TableHead_Name'] = 'Name';
 $pia_lang['Device_TableHead_Owner'] = 'Owner';
 $pia_lang['Device_TableHead_Type'] = 'Type';
@@ -133,8 +133,9 @@ $pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorite';
 $pia_lang['DevDetail_MainInfo_Group'] = 'Group';
 $pia_lang['DevDetail_MainInfo_Location'] = 'Location';
 $pia_lang['DevDetail_MainInfo_Comments'] = 'Comments';
-$pia_lang['DevDetail_MainInfo_Network'] = 'Network Hardware (ID)';
-$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Network HW Port';
+$pia_lang['DevDetail_MainInfo_Network_Title'] = 'Network';
+$pia_lang['DevDetail_MainInfo_Network'] = 'Network Node (MAC)';
+$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Connected to Port';
 $pia_lang['DevDetail_SessionInfo_Title'] = 'Session Info';
 $pia_lang['DevDetail_SessionInfo_Status'] = 'Status';
 $pia_lang['DevDetail_SessionInfo_FirstSession'] = 'First Session';
@@ -152,6 +153,8 @@ $pia_lang['DevDetail_EveandAl_RandomMAC'] = 'Random MAC';
 $pia_lang['DevDetail_EveandAl_ScanCycle_a'] = 'Scan Device (1 min)';
 $pia_lang['DevDetail_EveandAl_ScanCycle_z'] = 'Don&#39;t Scan Device (0 min)';
 $pia_lang['DevDetail_button_Delete'] = 'Delete Device';
+$pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
+$pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Are you sure you want to delete all Events of this device?<br><br>(this will clear the <b>Events history</b> and the <b>Sessions</b> and might help with constant (persistent) notifications)';
 $pia_lang['DevDetail_button_Reset'] = 'Reset Changes';
 $pia_lang['DevDetail_button_Save'] = 'Save';
 $pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
