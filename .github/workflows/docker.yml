@@ -3,7 +3,7 @@ name: docker
 
 on:
   schedule:
-    - cron: 0 14 * * 0    # every sunday at 14:00
+    - cron: 0 0 1 * *    # The first of the month at 00:00
   push:
     branches:
       - '**'
@@ -36,7 +36,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            jokobsk/pi.alert_dev
+            jokobsk/pi.alert
           # generate Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest
