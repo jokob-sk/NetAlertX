@@ -9,7 +9,7 @@ ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 RUN apt-get update \
     && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip -y \
     && pip3 install requests  \
-	&& update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
