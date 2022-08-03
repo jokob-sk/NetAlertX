@@ -29,4 +29,5 @@ function pia_graph_devices_data($Pia_Graph_Array) {
   }
 }
 $db->close();
+
 ?>
