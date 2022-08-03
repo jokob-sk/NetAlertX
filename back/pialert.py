@@ -27,13 +27,14 @@ import socket
 import io
 import smtplib
 import csv
-
+import requests
 
 #===============================================================================
 # CONFIG CONSTANTS
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 PIALERT_PATH = PIALERT_BACK_PATH + "/.."
+STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
 
 if (sys.version_info > (3,0)):
     exec(open(PIALERT_PATH + "/config/version.conf").read())
@@ -74,6 +75,9 @@ def main ():
         return
     cycle = str(sys.argv[1])
 
+    ## Upgrade DB if needed
+    upgradeDB()
+
     ## Main Commands
     if cycle == 'internet_IP':
         res = check_internet_IP()
@@ -81,8 +85,10 @@ def main ():
         res = update_devices_MAC_vendors()
     elif cycle == 'update_vendors_silent':
         res = update_devices_MAC_vendors('-s')
-    else :
+    elif os.path.exists(STOPARPSCAN) == False :
         res = scan_network()
+    elif os.path.exists(STOPARPSCAN) == True :
+        res = 0
     
     # Check error
     if res != 0 :
@@ -350,15 +356,12 @@ def scan_network ():
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
-    arpscan_retries = scanCycle_data['cic_arpscanCycles']
-    # TESTING - Fast scan
-        # arpscan_retries = 1
     
     # arp-scan command
     print ('\nScanning...')
     print ('    arp-scan Method...')
     print_log ('arp-scan starts...')
-    arpscan_devices = execute_arpscan (arpscan_retries)
+    arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     # DEBUG - print number of rows updated
         # print (arpscan_devices)
@@ -444,21 +447,13 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
     return sqlRow
 
 #-------------------------------------------------------------------------------
-def execute_arpscan (pRetries):
- 
+def execute_arpscan ():
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
     subnets = SCAN_SUBNETS.strip().split()
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=' + str(pRetries)] + subnets
-    # arpscan_args = ['sudo', 'arp-scan', SCAN_SUBNETS, '--ignoredups', '--retry=' + str(pRetries)]
-    # print (arpscan_args)
-
-    # TESTING - Fast Scan
-        # arpscan_args = ['sudo', 'arp-scan', '--localnet', '--ignoredups', '--retry=1']
-
-    # DEBUG - arp-scan command
-        # print (" ".join (arpscan_args))
-
+    # Retry is 6 to avoid false offline devices
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
+   
     # Execute command
     arpscan_output = subprocess.check_output (arpscan_args, universal_newlines=True)
 
@@ -472,9 +467,6 @@ def execute_arpscan (pRetries):
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
 
-    # Bugfix #5 - Delete duplicated MAC's with different IP's
-    # TEST - Force duplicated device
-        # devices_list.append(devices_list[0])
     # Delete duplicate MAC
     unique_mac = [] 
     unique_devices = [] 
@@ -688,6 +680,23 @@ def print_scan_stats ():
                     (cycle,))
     print ('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
 
+    # Add to History
+    sql.execute("SELECT * FROM Devices")
+    History_All = sql.fetchall()
+    History_All_Devices  = len(History_All)
+
+    sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
+    History_Archived = sql.fetchall()
+    History_Archived_Devices  = len(History_Archived)
+
+    sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
+    History_Online = sql.fetchall()
+    History_Online_Devices  = len(History_Online)
+    History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
+    
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
+                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
+
 #-------------------------------------------------------------------------------
 def create_new_devices ():
     # arpscan - Insert events for new devices
@@ -702,6 +711,16 @@ def create_new_devices ():
                                       WHERE dev_MAC = cur_MAC) """,
                     (startTime, cycle) ) 
 
+    print_log ('New devices - Insert Connection into session table')
+    sql.execute ("""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
+                        ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
+                    SELECT cur_MAC, cur_IP,'Connected',?, NULL , NULL ,1, cur_Vendor
+                    FROM CurrentScan 
+                    WHERE cur_ScanCycle = ? 
+                      AND NOT EXISTS (SELECT 1 FROM Sessions
+                                      WHERE ses_MAC = cur_MAC) """,
+                    (startTime, cycle) ) 
+                    
     # arpscan - Create new devices
     print_log ('New devices - 2 Create devices')
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
@@ -929,17 +948,10 @@ def update_devices_data_from_scan ():
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
-    # New Apple devices -> Cycle 15
-    print_log ('Update devices - 6 Cycle for Apple devices')
-    sql.execute ("""UPDATE Devices SET dev_ScanCycle = 15
-                    WHERE dev_FirstConnection = ?
-                      AND UPPER(dev_Vendor) LIKE '%APPLE%' """,
-                (startTime,) )
-
     print_log ('Update devices end')
 
 #-------------------------------------------------------------------------------
-# Feature #43 - Resoltion name for unknown devices
+# Feature #43 - Resolve name for unknown devices
 def update_devices_names ():
     # Initialize variables
     recordsToUpdate = []
@@ -1162,10 +1174,21 @@ def skip_repeated_notifications ():
 def email_reporting ():
     global mail_text
     global mail_html
-    
     # Reporting section
     print ('\nReporting...')
     openDB()
+
+    # Disable reporting on events for devices where reporting is disabled based on the MAC address
+    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType != 'Device Down' AND eve_MAC IN
+                        (
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0 
+						)""")
+    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType = 'Device Down' AND eve_MAC IN
+                        (
+                            SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0 
+						)""")
 
     # Open text Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
@@ -1182,27 +1205,27 @@ def email_reporting ():
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
-    mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
-    mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
+    # mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
+    # mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
 
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
     
-    mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
-    mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
 
-    mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-    mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
+    # mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
 
-    mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
-    mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
+    # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
 
     # Compose Internet Section
     print ('    Formating report...')
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
-    text_line_template = '    {} \t{}\t{}\t{}\n'
+    text_line_template = '{} \t{}\t{}\t{}\n'
     html_line_template = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
         '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
@@ -1212,15 +1235,17 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
                     ORDER BY eve_DateTime""")
 
+    
     for eventAlert in sql :
         mail_section_Internet = True
         mail_text_Internet += text_line_template.format (
-            eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+            'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
+            'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
         mail_html_Internet += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'],
             eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
             eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
+
 
     format_report_section (mail_section_Internet, 'SECTION_INTERNET',
         'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
@@ -1229,7 +1254,7 @@ def email_reporting ():
     mail_section_new_devices = False
     mail_text_new_devices = ''
     mail_html_new_devices = ''
-    text_line_template    = '    {}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template    = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
         '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1242,14 +1267,13 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_new_devices = True
         mail_text_new_devices += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'],
-            eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
+            'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_new_devices += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
             eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
-
+ 
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
 
@@ -1257,7 +1281,7 @@ def email_reporting ():
     mail_section_devices_down = False
     mail_text_devices_down = ''
     mail_html_devices_down = ''
-    text_line_template     = '    {}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template     = '<tr>\n'+ \
         '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
         '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
@@ -1270,8 +1294,8 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_devices_down = True
         mail_text_devices_down += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['dev_Name'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
+            'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
         mail_html_devices_down += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1284,7 +1308,7 @@ def email_reporting ():
     mail_section_events = False
     mail_text_events   = ''
     mail_html_events   = ''
-    text_line_template = '    {}\t{}\t{}\t{}\t{}\t{}\n'
+    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
     html_line_template = '<tr>\n  <td>'+ \
             ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
             '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
@@ -1299,9 +1323,9 @@ def email_reporting ():
     for eventAlert in sql :
         mail_section_events = True
         mail_text_events += text_line_template.format (
-            eventAlert['eve_MAC'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_EventType'],
-            eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
+            'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
+            'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
         mail_html_events += html_line_template.format (
             REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
             eventAlert['eve_DateTime'], eventAlert['eve_IP'],
@@ -1324,8 +1348,19 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_NTFY :
+            print ('    Sending report by NTFY...')
+            send_ntfy (mail_text)
+        else :
+            print ('    Skip NTFY...')
+        if REPORT_PUSHSAFER :
+            print ('    Sending report by PUSHSAFER...')
+            send_pushsafer (mail_text)
+        else :
+            print ('    Skip PUSHSAFER...')
     else :
         print ('    No changes to report...')
+
     
 
     # Clean Pending Alert Events
@@ -1342,7 +1377,33 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
+#-------------------------------------------------------------------------------
+def send_ntfy (_Text):
+    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    data=_Text,
+    headers={
+        "Title": "Pi.Alert Notification",
+        "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    })
 
+def send_pushsafer (_Text):
+    url = 'https://www.pushsafer.com/api'
+    post_fields = {
+        "t" : 'Pi.Alert Message',
+        "m" : _Text,
+        "s" : 11,
+        "v" : 3,
+        "i" : 148,
+        "c" : '#ef7f7f',
+        "d" : 'a',
+        "u" : REPORT_DASHBOARD_URL,
+        "ut" : 'Open Pi.Alert',
+        "k" : PUSHSAFER_TOKEN,
+        }
+    requests.post(url, data=post_fields)
+   
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
@@ -1413,16 +1474,66 @@ def send_email (pText, pHTML):
     # Send mail
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
-    smtp_connection.starttls()
-    smtp_connection.ehlo()
-    smtp_connection.login (SMTP_USER, SMTP_PASS)
+#    smtp_connection.starttls()
+#    smtp_connection.ehlo()
+#    smtp_connection.login (SMTP_USER, SMTP_PASS)
+    if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
+        smtp_connection.starttls()
+        smtp_connection.ehlo()
+    if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
+        smtp_connection.login (SMTP_USER, SMTP_PASS)
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
+#-------------------------------------------------------------------------------
+def SafeParseGlobalBool(boolVariable):
+    if boolVariable in globals():
+        return eval(boolVariable)
+    return False
 
 #===============================================================================
 # DB
 #===============================================================================
+def upgradeDB (): 
+
+    openDB()
+
+    # indicates, if Online_History table is available 
+    onlineHistoryAvailable = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Online_History'; 
+    """).fetchall() != []
+
+    # Check if it is incompatible (Check if table has all required columns)
+    isIncompatible = False
+    
+    if onlineHistoryAvailable :
+      isIncompatible = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+      """).fetchone()[0] == 0
+    
+    # Drop table if available, but incompatible
+    if onlineHistoryAvailable and isIncompatible:
+      print_log ('Table is incompatible, Dropping the Online_History table)')
+      sql.execute("DROP TABLE Online_History;")
+      onlineHistoryAvailable = False
+
+    if onlineHistoryAvailable == False :
+      sql.execute("""      
+      CREATE TABLE "Online_History" (
+        "Index"	INTEGER,
+        "Scan_Date"	TEXT,
+        "Online_Devices"	INTEGER,
+        "Down_Devices"	INTEGER,
+        "All_Devices"	INTEGER,
+        "Archived_Devices" INTEGER,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+      );      
+      """)
+
+
+#-------------------------------------------------------------------------------
+
 def openDB ():
     global sql_connection
     global sql

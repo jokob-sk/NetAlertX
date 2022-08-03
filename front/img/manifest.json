@@ -1,0 +1,14 @@
+{
+    "name": "Pi-Alert Console",
+    "short_name": "Pi-Alert",
+    "display": "standalone",
+    "icons": [
+    {
+      "src": "",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+    ],
+    "theme_color": "#000",
+    "background_color": "#000"
+}

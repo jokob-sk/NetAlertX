@@ -8,7 +8,16 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
+session_start();
+
+if ($_SESSION["login"] != 1)
+  {
+      header('Location: /pialert/index.php');
+      exit;
+  }
+
   require 'php/templates/header.php';
+  require 'php/templates/graph.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -17,7 +26,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         Devices
+           <?php echo $pia_lang['Device_Title'];?>
       </h1>
     </section>
 
@@ -26,74 +35,105 @@
 
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
-
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('all');">
-            <div class="small-box bg-aqua pa-small-box-aqua pa-small-box-2">
-              <div class="inner"> <h3 id="devicesAll"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-laptop text-aqua-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> All Devices <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-aqua">
+            <div class="inner"><h3 id="devicesAll"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_AllDevices'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
+          </div>
           </a>
         </div>
         
 <!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('connected');">
-            <div class="small-box bg-green pa-small-box-green pa-small-box-2">
-              <div class="inner"> <h3 id="devicesConnected"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-plug text-green-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Connected <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-green">
+            <div class="inner"><h3 id="devicesConnected"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Connected'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-plug text-green-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('favorites');">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="devicesFavorites"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-star text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Favorites <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-yellow">
+            <div class="inner"><h3 id="devicesFavorites"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Favorites'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-star text-yellow-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 4 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('new');">
-            <div  class="small-box bg-yellow pa-small-box-yellow pa-small-box-2">
-              <div class="inner"> <h3 id="devicesNew"> -- </h3> </div>
-              <div class="icon"> <i class="ion ion-plus-round text-yellow-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> New Devices <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-yellow">
+            <div class="inner"><h3 id="devicesNew"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_NewDevices'];?></p>
             </div>
+            <div class="icon"><i class="ion ion-plus-round text-yellow-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 5 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('down');">
-            <div  class="small-box bg-red pa-small-box-red pa-small-box-2">
-              <div class="inner"> <h3 id="devicesDown"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-warning text-red-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Down Alerts <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-red">
+            <div class="inner"><h3 id="devicesDown"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_DownAlerts'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-warning text-red-40"></i></div>
+          </div>
           </a>
         </div>
 
 <!-- top small box 6 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesList('archived');">
-            <div  class="small-box bg-gray pa-small-box-gray pa-small-box-2">
-              <div class="inner"> <h3 id="devicesArchived"> -- </h3> </div>
-              <div class="icon"> <i class="fa fa-eye-slash text-gray-20"></i> </div>
-              <div class="small-box-footer pa-small-box-footer"> Archived <i class="fa fa-arrow-circle-right"></i> </div>
+          <div class="small-box bg-gray top_small_box_gray_text">
+            <div class="inner"><h3 id="devicesArchived"> -- </h3>
+                <p class="infobox_label"><?php echo $pia_lang['Device_Shortcut_Archived'];?></p>
             </div>
+            <div class="icon"><i class="fa fa-eye-slash text-gray-40"></i></div>
+          </div>
           </a>
         </div>
 
       </div>
-      <!-- /.row -->
+
+<!-- Activity Chart ------------------------------------------------------- -->
+
+      <div class="row">
+          <div class="col-md-12">
+          <div class="box" id="clients">
+              <div class="box-header with-border">
+                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart'];?> </h3>
+              </div>
+              <div class="box-body">
+                <div class="chart">
+                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
+                  <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
+                </div>
+              </div>
+              <!-- /.box-body -->
+            </div>
+          </div>
+      </div>
+      <script src="js/graph_online_history.js"></script>
+      <script>
+        var pia_js_online_history_time = [<?php pia_graph_devices_data($Pia_Graph_Device_Time); ?>];
+        var pia_js_online_history_ondev = [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>];
+        var pia_js_online_history_dodev = [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>];
+        var pia_js_online_history_ardev = [<?php pia_graph_devices_data($Pia_Graph_Device_Arch); ?>];
+        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev, pia_js_online_history_ardev);
+      </script>
 
 <!-- datatable ------------------------------------------------------------- -->
       <div class="row">
@@ -110,19 +150,19 @@
               <table id="tableDevices" class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Owner</th>
-                  <th>Type</th>
-                  <th>Favorite</th>
-                  <th>Group</th>
-                  <th>First Session</th>
-                  <th>Last Session</th>
-                  <th>Last IP</th>
-                  <th>MAC</th>
-                  <th>Status</th>
-                  <th>MAC</th>
-                  <th>Last IP Order</th>
-                  <th>Rowid</th>
+                  <th><?php echo $pia_lang['Device_TableHead_Name'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Owner'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Type'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Favorite'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Group'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_FirstSession'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_LastSession'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_LastIP'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_MAC'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Status'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_MAC'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_LastIPOrder'];?></th>
+                  <th><?php echo $pia_lang['Device_TableHead_Rowid'];?></th>
                 </tr>
                 </thead>
               </table>
@@ -197,12 +237,19 @@ function main () {
 
 // -----------------------------------------------------------------------------
 function initializeDatatable () {
+  // If the device has a small width (mobile) only show name, ip, and status columns. 
+  if (window.screen.width < 400) {
+    var tableColumnShow = [10,11,12,1,2,3,4,5,6,8];
+  } else {
+    var tableColumnShow = [10, 11, 12];
+  };
   var table=
   $('#tableDevices').DataTable({
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
+    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, '<?php echo $pia_lang['Device_Tablelenght_all'];?>']],
     'searching'    : true,
+
     'ordering'     : true,
     'info'         : true,
     'autoWidth'    : false,
@@ -213,7 +260,7 @@ function initializeDatatable () {
     // 'order'       : [[3,'desc'], [0,'asc']],
 
     'columnDefs'   : [
-      {visible:   false,         targets: [10, 11, 12] },
+      {visible:   false,         targets: tableColumnShow },
       {className: 'text-center', targets: [3, 8, 9] },
       {width:     '80px',        targets: [5, 6] },
       {width:     '0px',         targets: 9 },
@@ -263,7 +310,7 @@ function initializeDatatable () {
             default:          color='aqua';             break;
           };
       
-          $(td).html ('<a href="deviceDetails.php?mac='+ rowData[10] +'" class="badge bg-'+ color +'">'+ cellData +'</a>');
+          $(td).html ('<a href="deviceDetails.php?mac='+ rowData[10] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
       } },
     ],
     
@@ -271,7 +318,14 @@ function initializeDatatable () {
     'processing'  : true,
     'language'    : {
       processing: '<table> <td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td> </table>',
-      emptyTable: 'No data'
+      emptyTable: 'No data',
+      "lengthMenu": "<?php echo $pia_lang['Device_Tablelenght'];?>",
+      "search":     "<?php echo $pia_lang['Device_Searchbox'];?>: ",
+      "paginate": {
+          "next":       "<?php echo $pia_lang['Device_Table_nav_next'];?>",
+          "previous":   "<?php echo $pia_lang['Device_Table_nav_prev'];?>"
+      },
+      "info":           "<?php echo $pia_lang['Device_Table_info'];?>",
     }
   });
 
@@ -288,6 +342,7 @@ function initializeDatatable () {
   $('#tableDevices').on( 'search.dt', function () {
     setCookie ('devicesList', JSON.stringify (table.column(12, { 'search': 'applied' }).data().toArray()) );
   } );
+
 };
 
 
@@ -320,13 +375,13 @@ function getDevicesList (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = 'All Devices';         color = 'aqua';    break;
-    case 'connected':  tableTitle = 'Connected Devices';   color = 'green';   break;
-    case 'favorites':  tableTitle = 'Favorites';           color = 'yellow';  break;
-    case 'new':        tableTitle = 'New Devices';         color = 'yellow';  break;
-    case 'down':       tableTitle = 'Down Alerts';         color = 'red';     break;
-    case 'archived':   tableTitle = 'Archived Devices';    color = 'gray';    break;
-    default:           tableTitle = 'Devices';             color = 'gray';    break;
+    case 'all':        tableTitle = '<?php echo $pia_lang['Device_Shortcut_AllDevices']?>';  color = 'aqua';    break;
+    case 'connected':  tableTitle = '<?php echo $pia_lang['Device_Shortcut_Connected']?>';   color = 'green';   break;
+    case 'favorites':  tableTitle = '<?php echo $pia_lang['Device_Shortcut_Favorites']?>';   color = 'yellow';  break;
+    case 'new':        tableTitle = '<?php echo $pia_lang['Device_Shortcut_NewDevices']?>';  color = 'yellow';  break;
+    case 'down':       tableTitle = '<?php echo $pia_lang['Device_Shortcut_DownAlerts']?>';  color = 'red';     break;
+    case 'archived':   tableTitle = '<?php echo $pia_lang['Device_Shortcut_Archived']?>';    color = 'gray';    break;
+    default:           tableTitle = '<?php echo $pia_lang['Device_Shortcut_Devices']?>';     color = 'gray';    break;
   } 
 
   // Set title and color

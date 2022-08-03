@@ -1,0 +1,17 @@
+.fc-sat {  
+background-color: #444D56; }
+.fc-sun {  
+background-color: #444D56; }
+.fc-today {
+  background-color: #8D9AAC !important;
+  border: none !important;
+} 
+.fc-cell-content {
+	background-color: #272c30;
+}
+.fc-widget-header {
+	background-color: #353c42;
+}
+.fc-unthemed .fc-content, .fc-unthemed .fc-divider, .fc-unthemed .fc-list-heading td, .fc-unthemed .fc-list-view, .fc-unthemed .fc-popover, .fc-unthemed .fc-row, .fc-unthemed tbody, .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead{
+	border-color: #353c42 !important;
+}
