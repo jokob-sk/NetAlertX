@@ -11,10 +11,12 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 JavaScript)*
 
 ![Main screen dark][main_dark]
-optional Darkmode within this fork
+optional Darkmode
 
 ## Modifications within this Fork
-... will follow soon
+  - Only one scan cycle
+  - Bodified scanmethod. If you want to go back to the original method comment line 459 and uncomment line 462 in ~/pialert/back/pialert.py
+  - Because of the modified scan, the extended scan parameters in the configuration file do not work. For this reason they were removed. 
 
 ## How it works
 The system continuously scans the network for:
@@ -53,7 +55,7 @@ In charge of:
   | -------------------- | -------------------- |
 
 ### Front
-There is a configurable login to prevent unauthorized use. The default password is "123456"
+There is a configurable login to prevent unauthorized use. The default password is "123456". By default, this is disabled. If you want to use password protection, enable it in the configuration file ~/pialert/config/pialert.conf.
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
@@ -67,7 +69,7 @@ A web frontend that allows:
     - Down alerts
     - IP's
     - Manual Nmap scans
-    - Optional speedtest for Device "Internet" in the details view
+    - Speedtest for Device "Internet" in the details view
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -91,11 +93,8 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-- One-step Automated Install (original):
-  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
-
-- One-step Automated Install without Webserver if another Webserver is already installed. (not recommended):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
+- One-step Automated Install:
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
 - [Installation Guide (step by step)](docs/INSTALL.md)
 
@@ -103,7 +102,7 @@ Linux distributions.
 # Update
 <!--- --------------------------------------------------------------------- --->
 - One-step Automated Update (original):
-  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
 <!--- --------------------------------------------------------------------- --->
