@@ -177,7 +177,7 @@ function show_pia_servertime() {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="/pialert/index.php?action=logout" class="btn btn-danger">Sign out</a>
+                  <a href="/index.php?action=logout" class="btn btn-danger">Sign out</a>
                 </div>
               </li>
             </ul>
