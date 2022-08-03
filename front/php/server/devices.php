@@ -450,37 +450,20 @@ function PiaToggleArpScan() {
 function getDevicesTotals() {
   global $db;
 
-  // All
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $devices = $row[0];
-  
-  // On-Line
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $connected = $row[0];
-  
-  // Favorites
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $favorites = $row[0];
-  
-  // New
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $newDevices = $row[0];
-  
-  // Down Alerts
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $downAlert = $row[0];
+  // combined query
+  $result = $db->query(
+        'SELECT 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all').') as devices, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
+   ');
 
-  // Archived
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $archived = $row[0];
+  $row = $result -> fetchArray (SQLITE3_NUM);   
 
-  echo (json_encode (array ($devices, $connected, $favorites, $newDevices, $downAlert, $archived)));
+  echo (json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5])));
 }
 
 
