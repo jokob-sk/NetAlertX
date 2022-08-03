@@ -17,6 +17,7 @@ optional Darkmode
   - Only one scan cycle
   - Modified scanmethod. If you want to go back to the original method comment line 459 and uncomment line 462 in ~/pialert/back/pialert.py
   - Because of the modified scan, the extended scan parameters in the configuration file do not work. For this reason they were removed. 
+  - The Backend has the additional option cleanup.
 
 ## How it works
 The system continuously scans the network for:
@@ -49,7 +50,7 @@ In charge of:
     described
   - Store the information in the DB
   - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
-  - Optional speedtest for Device "Internet"
+  - DB cleanup tasks via cron
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
@@ -87,6 +88,8 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
   - DB Backup and Restore
 
 ![Maintain screen dark][maintain_dark]
+
+In addition, the network page was created from this collaboration. Here you can map your network in a rudimentary way by assigning the devices to specific nodes (switches, routers).
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
@@ -151,11 +154,11 @@ Linux distributions.
 
   This code is a collaborative body of work, with special thanks to: 
 
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Last X scans activity chart)
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Things
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation
-   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): Many more things
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
