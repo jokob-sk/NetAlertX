@@ -71,13 +71,15 @@ def main ():
 
     # Check parameters
     if len(sys.argv) != 2 :
-        print ('usage pialert [scan_cycle] | internet_IP | update_vendors' )
+        print ('usage pialert [scan_cycle] | internet_IP | update_vendors | cleanup' )
         return
     cycle = str(sys.argv[1])
 
     ## Main Commands
     if cycle == 'internet_IP':
         res = check_internet_IP()
+    elif cycle == 'cleanup':
+        res = cleanup_database()
     elif cycle == 'update_vendors':
         res = update_devices_MAC_vendors()
     elif cycle == 'update_vendors_silent':
@@ -251,6 +253,26 @@ def check_IP_format (pIP):
 
     # Return IP
     return IP.group(0)
+
+
+#===============================================================================
+# INTERNET IP CHANGE
+#===============================================================================
+def cleanup_database ():
+    # Header
+    print ('Cleanup Database')
+    print ('    Timestamp:', startTime )
+
+    openDB()
+
+    # Cleanup Online History
+    print ('\nCleanup Online_History')
+    sql.execute ("""DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')""")
+
+    closeDB()
+
+    # OK
+    return 0
 
 
 #===============================================================================
