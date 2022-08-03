@@ -266,8 +266,10 @@ def cleanup_database ():
     openDB()
 
     # Cleanup Online History
-    print ('\nCleanup Online_History')
+    print ('\nCleanup Online_History...')
     sql.execute ("""DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')""")
+    print ('\nOptimize Database...')
+    sql.execute ("VACUUM;")
 
     closeDB()
 
