@@ -451,7 +451,7 @@ def execute_arpscan (pRetries):
  
     # #101 - arp-scan subnet configuration
     # Prepare command arguments
-    subnets = SCAN_SUBNETS.strip().split()
+    # subnets = SCAN_SUBNETS.strip().split()
 
     # arp-scan for larger Networks like /16
     # otherwise the system starts multiple processes. the 15min cronjob isn't necessary.
