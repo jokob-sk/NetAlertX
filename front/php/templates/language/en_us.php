@@ -4,6 +4,11 @@
 //////////////////////////////////////////////////////////////////
 $pia_lang['Gen_Delete'] = 'Delete';
 $pia_lang['Gen_Cancel'] = 'Cancel';
+$pia_lang['Gen_Okay'] = 'Ok';
+$pia_lang['Gen_Purge'] = 'Purge';
+$pia_lang['Gen_Backup'] = 'Run Backup';
+$pia_lang['Gen_Restore'] = 'Run Restore';
+$pia_lang['Gen_Switch'] = 'Switch';
 
 
 //////////////////////////////////////////////////////////////////
@@ -14,6 +19,7 @@ $pia_lang['Navigation_Devices'] = 'Devices';
 $pia_lang['Navigation_Presence'] = 'Presence';
 $pia_lang['Navigation_Events'] = 'Events';
 $pia_lang['Navigation_Maintenance'] = 'Maintenance';
+$pia_lang['Navigation_Network'] = 'Network';
 $pia_lang['Device_Title'] = 'Devices';
 $pia_lang['Device_Shortcut_AllDevices'] = 'All Devices';
 $pia_lang['Device_Shortcut_Connected'] = 'Connected';
@@ -127,6 +133,9 @@ $pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorite';
 $pia_lang['DevDetail_MainInfo_Group'] = 'Group';
 $pia_lang['DevDetail_MainInfo_Location'] = 'Location';
 $pia_lang['DevDetail_MainInfo_Comments'] = 'Comments';
+$pia_lang['DevDetail_MainInfo_Network_Title'] = 'Network';
+$pia_lang['DevDetail_MainInfo_Network'] = 'Network Node (MAC)';
+$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Connected to Port';
 $pia_lang['DevDetail_SessionInfo_Title'] = 'Session Info';
 $pia_lang['DevDetail_SessionInfo_Status'] = 'Status';
 $pia_lang['DevDetail_SessionInfo_FirstSession'] = 'First Session';
@@ -148,6 +157,8 @@ $pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
 $pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Are you sure you want to delete all Events of this device?<br><br>(this will clear the <b>Events history</b> and the <b>Sessions</b> and might help with constant (persistent) notifications)';
 $pia_lang['DevDetail_button_Reset'] = 'Reset Changes';
 $pia_lang['DevDetail_button_Save'] = 'Save';
+$pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
+$pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Are you sure you want to delete all Events of this device?<br><br>(this will clear the <b>Events history</b> and the <b>Sessions</b> and might help with constant (persistent) notifications)';
 $pia_lang['DevDetail_SessionTable_Order'] = 'Order';
 $pia_lang['DevDetail_SessionTable_Connection'] = 'Connection';
 $pia_lang['DevDetail_SessionTable_Disconnection'] = 'Disconnection';
@@ -213,10 +224,14 @@ $pia_lang['Maintenance_Tool_del_unknowndev'] = 'Delete (unknown) Devices';
 $pia_lang['Maintenance_Tool_del_unknowndev_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All devices named (unknown) will be deleted from the database.';
 $pia_lang['Maintenance_Tool_del_unknowndev_noti'] = 'Delete (unknown) Devices';
 $pia_lang['Maintenance_Tool_del_unknowndev_noti_text'] = 'Are you sure you want to delete all (unknown) devices?';
-$pia_lang['Maintenance_Tool_del_allevents'] = 'Delete all Events (Reset Presence)';
+$pia_lang['Maintenance_Tool_del_allevents'] = 'Delete Events (Reset Presence)';
 $pia_lang['Maintenance_Tool_del_allevents_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All events in the database will be deleted. At that moment the presence of all devices will be reset. This can lead to invalid sessions. This means that devices are displayed as "present" although they are offline. A scan while the device in question is online solves the problem.';
 $pia_lang['Maintenance_Tool_del_allevents_noti'] = 'Delete Events';
 $pia_lang['Maintenance_Tool_del_allevents_noti_text'] = 'Are you sure you want to delete all Events? This resets Presence of all Devices.';
+$pia_lang['Maintenance_Tool_del_allevents30'] = 'Delete all Events older than 30 days';
+$pia_lang['Maintenance_Tool_del_allevents30_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All events older than 30 days in the database will be deleted. At that moment the presence of all devices will be reset. This can lead to invalid sessions. This means that devices are displayed as "present" although they are offline. A scan while the device in question is online solves the problem.';
+$pia_lang['Maintenance_Tool_del_allevents30_noti'] = 'Delete Events';
+$pia_lang['Maintenance_Tool_del_allevents30_noti_text'] = 'Are you sure you want to delete all Events older than 30 days? This resets Presence of all Devices.';
 $pia_lang['Maintenance_Tool_backup'] = 'DB Backup';
 $pia_lang['Maintenance_Tool_backup_text'] = 'The database backups are located in the database directory as a zip-archive, named with the creation date. There is no maximum number of backups.';
 $pia_lang['Maintenance_Tool_backup_noti'] = 'DB Backup';
@@ -259,5 +274,36 @@ $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Error updating device';
 $pia_lang['BackDevices_DBTools_Upgrade'] = 'Database upgraded successfully';
 $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Database upgrade failed';
 $pia_lang['BackDevices_DBTools_Purge'] = 'The oldest backups were deleted';
-?>
 
+//////////////////////////////////////////////////////////////////
+// Network Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['Network_Title'] = 'Network overview';
+$pia_lang['Network_ManageDevices'] = 'Manage Devices';
+$pia_lang['Network_ManageAdd'] = 'Add Device';
+$pia_lang['Network_ManageEdit'] = 'Update Device';
+$pia_lang['Network_ManageDel'] = 'Delete Device';
+$pia_lang['Network_ManageAdd_Name'] = 'Device Name';
+$pia_lang['Network_ManageAdd_Name_text'] = 'Name without special characters';
+$pia_lang['Network_ManageAdd_Type'] = 'Device Type';
+$pia_lang['Network_ManageAdd_Type_text'] = '-- Select Type --';
+$pia_lang['Network_ManageAdd_Port'] = 'Port Count';
+$pia_lang['Network_ManageAdd_Port_text'] = 'leave blank for wifi and powerline';
+$pia_lang['Network_ManageAdd_Submit'] = 'Add Device';
+$pia_lang['Network_ManageEdit_ID'] = 'Device to update';
+$pia_lang['Network_ManageEdit_ID_text'] = '-- Select Device for editing --';
+$pia_lang['Network_ManageEdit_Name'] = 'New Device Name';
+$pia_lang['Network_ManageEdit_Name_text'] = 'Name without special characters';
+$pia_lang['Network_ManageEdit_Type'] = 'New Device Type';
+$pia_lang['Network_ManageEdit_Type_text'] = '-- Select Type --';
+$pia_lang['Network_ManageEdit_Port'] = ' New Port Count';
+$pia_lang['Network_ManageEdit_Port_text'] = 'leave blank for wifi and powerline';
+$pia_lang['Network_ManageEdit_Submit'] = 'Save Changes';
+$pia_lang['Network_ManageDel_Name'] = 'Device to delete';
+$pia_lang['Network_ManageDel_Name_text'] = '-- Select Device --';
+$pia_lang['Network_ManageDel_Submit'] = 'Delete';
+$pia_lang['Network_Table_State'] = 'State';
+$pia_lang['Network_Table_Hostname'] = 'Hostname';
+$pia_lang['Network_Table_IP'] = 'IP';
+?>

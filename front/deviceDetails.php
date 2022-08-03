@@ -17,6 +17,7 @@ if ($_SESSION["login"] != 1)
   }
 
   require 'php/templates/header.php';
+  require 'php/server/db.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -262,6 +263,32 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
                       </div>
+                      <!-- Network -->
+                      <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_MainInfo_Network_Title'];?></h4>                    
+                      <div class="form-group">
+                        <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network'];?></label>
+                        <div class="col-sm-6">  
+                          <div class="input-group"> 
+
+                            <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
+                            <div class="input-group-btn">
+
+                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
+                                    <span class="fa fa-caret-down"></span></button>
+                              <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
+                              </ul>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network_Port'];?></label>
+                        <div class="col-sm-6">
+                          <input class="form-control" id="txtNetworkPort" type="text" value="--">
+                        </div>
+                      </div>
+
 
                     </div>          
                   </div>          
@@ -455,7 +482,7 @@ if ($_REQUEST['mac'] == 'Internet') {
 ?>
                 <h4 class="">Online Speedtest</h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-default pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
                 </div>
                    
                   <script>
@@ -485,11 +512,11 @@ if ($_REQUEST['mac'] == 'Internet') {
                       }, 2000);
                   </script>
 
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-default pa-btn" style="margin: auto;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
                 
-                  <div style="margin-top: 20px; text-align: left;">
+                  <div style="text-align: left;">
                     <ul style="padding:20px;">
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
@@ -788,10 +815,11 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( $('#dropdownOwner')[0],       'getOwners',       'txtOwner');
-  initializeCombo ( $('#dropdownDeviceType')[0],  'getDeviceTypes',  'txtDeviceType');
-  initializeCombo ( $('#dropdownGroup')[0],       'getGroups',       'txtGroup');
-  initializeCombo ( $('#dropdownLocation')[0],    'getLocations',    'txtLocation');
+  initializeCombo ( $('#dropdownOwner')[0],                      'getOwners',       'txtOwner');
+  initializeCombo ( $('#dropdownDeviceType')[0],                 'getDeviceTypes',  'txtDeviceType');
+  initializeCombo ( $('#dropdownGroup')[0],                      'getGroups',       'txtGroup');
+  initializeCombo ( $('#dropdownLocation')[0],                   'getLocations',    'txtLocation');
+  initializeCombo ( $('#dropdownNetworkNodeMac')[0],             'getNetworkNodes', 'txtNetworkNodeMac');
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -812,10 +840,17 @@ function initializeCombo (HTMLelement, queryAction, txtDataField) {
         order = item['order'];
       }
 
+      id = item['name'];
+      // use explicitly specified id (value) if avaliable
+      if(item['id'])
+      {
+        id = item['id'];
+      }
+
       // add dropdown item
       HTMLelement.innerHTML +=
         '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
-        txtDataField +'\',\''+ item['name'] +'\')">'+ item['name'] + '</a></li>'
+        txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
     });
   });
 }
@@ -1091,33 +1126,35 @@ function getDeviceData (readAllData=false) {
       $('#deviceStatus')[0].className = 'text-gray';
       $('#deviceStatusIcon')[0].className = '';
   
-      $('#deviceSessions').html   ('--');
-      $('#deviceDownAlerts').html ('--');
-      $('#deviceEvents').html     ('--');
+      $('#deviceSessions').html        ('--');
+      $('#deviceDownAlerts').html      ('--');
+      $('#deviceEvents').html          ('--');
  
-      $('#txtMAC').val             ('--');
-      $('#txtName').val            ('--');
-      $('#txtOwner').val           ('--');
-      $('#txtDeviceType').val      ('--');
-      $('#txtVendor').val          ('--');
+      $('#txtMAC').val                 ('--');
+      $('#txtName').val                ('--');
+      $('#txtOwner').val               ('--');
+      $('#txtDeviceType').val          ('--');
+      $('#txtVendor').val              ('--');
 
-      $('#chkFavorite').iCheck     ('uncheck'); 
-      $('#txtGroup').val           ('--');
-      $('#txtLocation').val        ('--');
-      $('#txtComments').val        ('--');
+      $('#chkFavorite').iCheck         ('uncheck'); 
+      $('#txtGroup').val               ('--');
+      $('#txtLocation').val            ('--');
+      $('#txtComments').val            ('--');
+      $('#txtNetworkNodeMac').val      ('--');
+      $('#txtNetworkPort').val  ('--');
 
-      $('#txtFirstConnection').val ('--');
-      $('#txtLastConnection').val  ('--');
-      $('#txtLastIP').val          ('--');
-      $('#txtStatus').val          ('--');
-      $('#chkStaticIP').iCheck     ('uncheck'); 
+      $('#txtFirstConnection').val     ('--');
+      $('#txtLastConnection').val      ('--');
+      $('#txtLastIP').val              ('--');
+      $('#txtStatus').val              ('--');
+      $('#chkStaticIP').iCheck         ('uncheck'); 
   
-      $('#txtScanCycle').val       ('--');
-      $('#chkAlertEvents').iCheck  ('uncheck') 
-      $('#chkAlertDown').iCheck    ('uncheck') 
-      $('#txtSkipRepeated').val    ('--');
-      $('#chkNewDevice').iCheck    ('uncheck'); 
-      $('#chkArchived').iCheck     ('uncheck'); 
+      $('#txtScanCycle').val           ('--');
+      $('#chkAlertEvents').iCheck      ('uncheck') 
+      $('#chkAlertDown').iCheck        ('uncheck') 
+      $('#txtSkipRepeated').val        ('--');
+      $('#chkNewDevice').iCheck        ('uncheck'); 
+      $('#chkArchived').iCheck         ('uncheck'); 
 
       $('#iconRandomMACactive').addClass ('hidden');
       $('#iconRandomMACinactive').removeClass ('hidden');
@@ -1192,6 +1229,8 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
+        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC']);
+        $('#txtNetworkPort').val              (deviceData['dev_Network_Node_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
@@ -1300,6 +1339,8 @@ function setDeviceData (refreshCallback='') {
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()
     + '&comments='       + $('#txtComments').val()
+    + '&networknode='    + $('#txtNetworkNodeMac').val()
+    + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + $('#txtScanCycle').val().split(' ')[0]
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
@@ -1321,6 +1362,7 @@ function setDeviceData (refreshCallback='') {
 }
 
 
+
 // -----------------------------------------------------------------------------
 function askSkipNotifications () {
   // Check MAC
@@ -1332,7 +1374,7 @@ function askSkipNotifications () {
   if ($('#chkArchived')[0].checked && $('#txtScanCycle').val().split(' ')[0] != "0") {
     // Ask skip notifications
     showModalDefault ('Device Archived', 'Do you want to skip all notifications for this device?',
-      'Cancel', 'Ok', 'skipNotifications');
+      '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'skipNotifications');
   }
 }
 
@@ -1384,7 +1426,7 @@ function askDeleteDevice () {
 
   // Ask delete device
   showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    'Cancel', 'Delete', 'deleteDevice');
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteDevice');
 }
 
 

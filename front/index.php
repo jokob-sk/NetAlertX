@@ -19,7 +19,7 @@ $config_file_lines_bypass = array_values(preg_grep('/^PIALERT_WEB_PROTECTION\s.*
 $protection_line = explode("=", $config_file_lines_bypass[0]);
 $Pia_WebProtection = strtolower(trim($protection_line[1]));
 
-if ($Pia_WebProtection != 'true')
+if ($Pia_WebProtection == 'false')
   {
       header('Location: /pialert/devices.php');
       $_SESSION["login"] = 1;
@@ -48,7 +48,15 @@ if ($_SESSION["login"] == 1)
 if ($_SESSION["login"] != 1)
   {
       if (file_exists('../db/setting_darkmode')) {$ENABLED_DARKMODE = True;}
-      if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') {$login_info = 'Defaultpassword "123456" is still active';
+      if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') {
+        $login_info = 'Defaultpassword "123456" is still active';
+        $login_mode = 'danger';
+        $login_headline = 'Password Alert!';
+        $login_icon = 'fa-ban';
+  } else {
+    $login_mode = 'info';
+    $login_headline = 'Password Information';
+    $login_icon = 'fa-info';
   }
 
 // ##################################################
@@ -122,9 +130,9 @@ if ($ENABLED_DARKMODE === True) {
   <!-- /.login-box-body -->
 
   <div class="box-body" style="margin-top: 50px;">
-      <div class="alert alert-danger alert-dismissible">
+      <div class="alert alert-<?php echo $login_mode;?> alert-dismissible">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-          <h4><i class="icon fa fa-ban"></i>Password Alert!</h4>
+          <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
           <p>To set a new password run:<br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh yournewpassword</span><br>in the config folder.</p>
       </div>

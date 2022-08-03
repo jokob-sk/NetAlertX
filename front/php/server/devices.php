@@ -41,8 +41,8 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
     switch ($action) {
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
+      case 'getNetworkNodes':         getNetworkNodes();                       break;
       case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
@@ -51,7 +51,9 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
+      case 'deleteEvents30':          deleteEvents30();                        break;
       case 'deleteActHistory':        deleteActHistory();                      break;
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
@@ -94,6 +96,8 @@ function getDeviceData() {
   $deviceData = $row;
   $mac = $deviceData['dev_MAC'];
 
+  $deviceData['dev_Network_Node_MAC'] = $row['dev_Network_Node_MAC'];
+  $deviceData['dev_Network_Node_port'] = $row['dev_Network_Node_port'];
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
 
@@ -163,6 +167,8 @@ function setDeviceData() {
                  dev_Group           = "'. quotes($_REQUEST['group'])        .'",
                  dev_Location        = "'. quotes($_REQUEST['location'])     .'",
                  dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
+                 dev_Network_Node_MAC  = "'. quotes($_REQUEST['networknode']).'",
+                 dev_Network_Node_port  = "'. quotes($_REQUEST['networknodeport']).'",
                  dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
                  dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
                  dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
@@ -200,26 +206,6 @@ function deleteDevice() {
     echo $pia_lang['BackDevices_DBTools_DelDev_a'];
   } else {
     echo $pia_lang['BackDevices_DBTools_DelDevError_a']."\n\n$sql \n\n". $db->lastErrorMsg();
-  }
-}
-
-//------------------------------------------------------------------------------
-//  Delete Device Events
-//------------------------------------------------------------------------------
-function deleteDeviceEvents() {
-  global $db;
-  global $pia_lang;
-
-  // sql
-  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
-  // execute sql
-  $result = $db->query($sql);
-
-  // check result
-  if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelEvents'];
-  } else {
-    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -264,6 +250,26 @@ function deleteUnknownDevices() {
 }
 
 //------------------------------------------------------------------------------
+//  Delete Device Events
+//------------------------------------------------------------------------------
+function deleteDeviceEvents() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
 //  Delete all devices 
 //------------------------------------------------------------------------------
 function deleteAllDevices() {
@@ -292,6 +298,26 @@ function deleteEvents() {
 
   // sql
   $sql = 'DELETE FROM Events';
+  // execute sql
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+  } else {
+    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Delete all Events older than 30 days
+//------------------------------------------------------------------------------
+function deleteEvents30() {
+  global $db;
+  global $pia_lang;
+
+  // sql
+  $sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', '-30 day')";
   // execute sql
   $result = $db->query($sql);
 
@@ -596,10 +622,41 @@ function getOwners() {
 
 
 //------------------------------------------------------------------------------
+//  Query Device Data
+//------------------------------------------------------------------------------
+function getNetworkNodes() {
+  global $db;
+
+  // Device Data
+  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in (  "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter")';
+
+  $result = $db->query($sql);
+
+  // arrays of rows
+  $tableData = array();
+  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
+    // Push row data
+    $tableData[] = array('id'    => $row['dev_MAC'], 
+                         'name'  => $row['dev_Name'] );                        
+  }
+  
+  // Control no rows
+  if (empty($tableData)) {
+    $tableData = [];
+  }
+  
+    // Return json
+  echo (json_encode ($tableData));
+}
+
+
+//------------------------------------------------------------------------------
 //  Query the List of types
 //------------------------------------------------------------------------------
 function getDeviceTypes() {
   global $db;
+
+  $networkTypes = getNetworkTypes();
 
   // SQL
   $sql = 'SELECT DISTINCT 9 as dev_Order, dev_DeviceType
@@ -609,7 +666,7 @@ function getDeviceTypes() {
                  "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)",
                  "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
                  "Clock", "House Appliance", "Phone", "Radio",
-                 "AP", "NAS", "PLC", "Router")
+                 "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter" )
 
           UNION SELECT 1 as dev_Order, "Smartphone"
           UNION SELECT 1 as dev_Order, "Tablet"
@@ -620,6 +677,7 @@ function getDeviceTypes() {
           UNION SELECT 2 as dev_Order, "Printer"
           UNION SELECT 2 as dev_Order, "Server"
           UNION SELECT 2 as dev_Order, "Singleboard Computer (SBC)"
+          UNION SELECT 2 as dev_Order, "NAS"
 
           UNION SELECT 3 as dev_Order, "Domotic"
           UNION SELECT 3 as dev_Order, "Game Console"
@@ -632,8 +690,12 @@ function getDeviceTypes() {
           UNION SELECT 4 as dev_Order, "Phone"
           UNION SELECT 4 as dev_Order, "Radio"
 
+          -- network devices
           UNION SELECT 5 as dev_Order, "AP"
-          UNION SELECT 5 as dev_Order, "NAS"
+          UNION SELECT 5 as dev_Order, "Gateway"
+          UNION SELECT 5 as dev_Order, "Powerline"
+          UNION SELECT 5 as dev_Order, "Switch"
+          UNION SELECT 5 as dev_Order, "WLAN"
           UNION SELECT 5 as dev_Order, "PLC"
           UNION SELECT 5 as dev_Order, "Router"
           UNION SELECT 5 as dev_Order, "USB LAN Adapter"
@@ -642,6 +704,8 @@ function getDeviceTypes() {
           UNION SELECT 10 as dev_Order, "Other"
 
           ORDER BY 1,2';
+
+          
   $result = $db->query($sql);
 
   // arrays of rows
@@ -654,8 +718,6 @@ function getDeviceTypes() {
   // Return json
   echo (json_encode ($tableData));
 }
-
-
 //------------------------------------------------------------------------------
 //  Query the List of groups
 //------------------------------------------------------------------------------
