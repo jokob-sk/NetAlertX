@@ -35,6 +35,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
+      case 'getNetworkNodes':         getNetworkNodes();                       break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;
       case 'createBackupDB':          createBackupDB();                        break;
       case 'restoreBackupDB':         restoreBackupDB();                       break;
@@ -87,8 +88,8 @@ function getDeviceData() {
   $deviceData = $row;
   $mac = $deviceData['dev_MAC'];
 
-  $deviceData['dev_Infrastructure'] = $row['dev_Infrastructure'];
-  $deviceData['dev_Infrastructure_port'] = $row['dev_Infrastructure_port'];
+  $deviceData['dev_Network_Node_MAC'] = $row['dev_Infrastructure'];
+  $deviceData['dev_Network_Node_port'] = $row['dev_Infrastructure_port'];
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
 
@@ -156,8 +157,8 @@ function setDeviceData() {
                  dev_Group           = "'. quotes($_REQUEST['group'])        .'",
                  dev_Location        = "'. quotes($_REQUEST['location'])     .'",
                  dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
-                 dev_Infrastructure  = "'. quotes($_REQUEST['infrastructure']).'",
-                 dev_Infrastructure_port  = "'. quotes($_REQUEST['infrastructureport']).'",
+                 dev_Infrastructure  = "'. quotes($_REQUEST['networknode']).'",
+                 dev_Infrastructure_port  = "'. quotes($_REQUEST['networknodeport']).'",
                  dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
                  dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
                  dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
@@ -729,6 +730,35 @@ function getLocations() {
   }
 
   // Return json
+  echo (json_encode ($tableData));
+}
+
+
+//------------------------------------------------------------------------------
+//  Query Device Data
+//------------------------------------------------------------------------------
+function getNetworkNodes() {
+  global $db;
+
+  // Device Data
+  $sql = 'SELECT * FROM network_infrastructure';
+
+  $result = $db->query($sql);
+
+  // arrays of rows
+  $tableData = array();
+  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
+    // Push row data
+    $tableData[] = array('id'    => $row['device_id'], 
+                         'name'  => $row['net_device_name'].'/'.$row['net_device_typ'] );                        
+  }
+  
+  // Control no rows
+  if (empty($tableData)) {
+    $tableData = [];
+  }
+  
+    // Return json
   echo (json_encode ($tableData));
 }
 
