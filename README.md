@@ -14,9 +14,9 @@ JavaScript)*
 optional Darkmode
 
 ## Modifications within this Fork
-  - only one scan cycle
-  - modified scanmethod. If you want to go back to the original method comment line 459 and uncomment line 462 in ~/pialert/back/pialert.py
-  - because of the modified scan, the extended scan parameters in the configuration file do not work at the moment
+  - Only one scan cycle
+  - Bodified scanmethod. If you want to go back to the original method comment line 459 and uncomment line 462 in ~/pialert/back/pialert.py
+  - Because of the modified scan, the extended scan parameters in the configuration file do not work. For this reason they were removed. 
 
 ## How it works
 The system continuously scans the network for:
