@@ -96,13 +96,8 @@ Linux distributions.
 - One-step Automated Install:
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
 
-- [Installation Guide (step by step)](docs/INSTALL.md)
+- [Installation Guide (step by step)](docs/INSTALL.
 
-
-# Update
-<!--- --------------------------------------------------------------------- --->
-- One-step Automated Update (original):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
 <!--- --------------------------------------------------------------------- --->
