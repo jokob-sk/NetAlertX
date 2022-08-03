@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 # default UID and GID
 ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
@@ -7,8 +7,9 @@ ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python iproute2 nmap python-pip zip -y \
-    && pip install requests  \
+    && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo lighttpd php php-cgi php-fpm php-sqlite3 sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip -y \
+    && pip3 install requests  \
+	&& update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
