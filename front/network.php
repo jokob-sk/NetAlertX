@@ -21,14 +21,6 @@
   $NETWORKTYPES = getNetworkTypes();
 
   OpenDB();
-
-  // #####################################
-  // ## Expand Devices Table
-  // #####################################
-  $sql = 'ALTER TABLE "Devices" ADD "dev_Network_Node_MAC" INTEGER';
-  $result = $db->query($sql);
-  $sql = 'ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER';
-  $result = $db->query($sql);
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -156,7 +148,7 @@
                             dev_DeviceType as type, 
                             dev_LastIP as last_ip,
                             (select dev_DeviceType from Devices a where dev_MAC = "'.$node_mac.'") as node_type
-                        FROM Devices WHERE dev_Network_Node_MAC = "'.$node_mac.'" order by port asc';
+                        FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port asc';
         
         global $db;
         $func_result = $db->query($func_sql);        
@@ -274,10 +266,10 @@
                   ) t1
                   LEFT JOIN
                   (
-                        SELECT  b.dev_Network_Node_MAC as node_mac_2,
+                        SELECT  b.dev_Network_Node_MAC_ADDR as node_mac_2,
                               count() as node_ports_count 
                         FROM Devices b 
-                        WHERE b.dev_Network_Node_MAC NOT NULL group by b.dev_Network_Node_MAC
+                        WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
                   ) t2
                   ON (t1.node_mac = t2.node_mac_2);
           ";

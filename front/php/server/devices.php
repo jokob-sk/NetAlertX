@@ -96,7 +96,7 @@ function getDeviceData() {
   $deviceData = $row;
   $mac = $deviceData['dev_MAC'];
 
-  $deviceData['dev_Network_Node_MAC'] = $row['dev_Network_Node_MAC'];
+  $deviceData['dev_Network_Node_MAC_ADDR'] = $row['dev_Network_Node_MAC_ADDR'];
   $deviceData['dev_Network_Node_port'] = $row['dev_Network_Node_port'];
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
@@ -159,23 +159,23 @@ function setDeviceData() {
 
   // sql
   $sql = 'UPDATE Devices SET
-                 dev_Name            = "'. quotes($_REQUEST['name'])         .'",
-                 dev_Owner           = "'. quotes($_REQUEST['owner'])        .'",
-                 dev_DeviceType      = "'. quotes($_REQUEST['type'])         .'",
-                 dev_Vendor          = "'. quotes($_REQUEST['vendor'])       .'",
-                 dev_Favorite        = "'. quotes($_REQUEST['favorite'])     .'",
-                 dev_Group           = "'. quotes($_REQUEST['group'])        .'",
-                 dev_Location        = "'. quotes($_REQUEST['location'])     .'",
-                 dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
-                 dev_Network_Node_MAC  = "'. quotes($_REQUEST['networknode']).'",
-                 dev_Network_Node_port  = "'. quotes($_REQUEST['networknodeport']).'",
-                 dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
-                 dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
-                 dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
-                 dev_AlertDeviceDown = "'. quotes($_REQUEST['alertdown'])    .'",
-                 dev_SkipRepeated    = "'. quotes($_REQUEST['skiprepeated']) .'",
-                 dev_NewDevice       = "'. quotes($_REQUEST['newdevice'])    .'",
-                 dev_Archived        = "'. quotes($_REQUEST['archived'])     .'"
+                 dev_Name                   = "'. quotes($_REQUEST['name'])         .'",
+                 dev_Owner                  = "'. quotes($_REQUEST['owner'])        .'",
+                 dev_DeviceType             = "'. quotes($_REQUEST['type'])         .'",
+                 dev_Vendor                 = "'. quotes($_REQUEST['vendor'])       .'",
+                 dev_Favorite               = "'. quotes($_REQUEST['favorite'])     .'",
+                 dev_Group                  = "'. quotes($_REQUEST['group'])        .'",
+                 dev_Location               = "'. quotes($_REQUEST['location'])     .'",
+                 dev_Comments               = "'. quotes($_REQUEST['comments'])     .'",
+                 dev_Network_Node_MAC_ADDR  = "'. quotes($_REQUEST['networknode']).'",
+                 dev_Network_Node_port      = "'. quotes($_REQUEST['networknodeport']).'",
+                 dev_StaticIP               = "'. quotes($_REQUEST['staticIP'])     .'",
+                 dev_ScanCycle              = "'. quotes($_REQUEST['scancycle'])    .'",
+                 dev_AlertEvents            = "'. quotes($_REQUEST['alertevents'])  .'",
+                 dev_AlertDeviceDown        = "'. quotes($_REQUEST['alertdown'])    .'",
+                 dev_SkipRepeated           = "'. quotes($_REQUEST['skiprepeated']) .'",
+                 dev_NewDevice              = "'. quotes($_REQUEST['newdevice'])    .'",
+                 dev_Archived               = "'. quotes($_REQUEST['archived'])     .'"
           WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
   // update Data
   $result = $db->query($sql);
@@ -480,37 +480,20 @@ function PiaToggleArpScan() {
 function getDevicesTotals() {
   global $db;
 
-  // All
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $devices = $row[0];
-  
-  // On-Line
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $connected = $row[0];
-  
-  // Favorites
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $favorites = $row[0];
-  
-  // New
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new') );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $newDevices = $row[0];
-  
-  // Down Alerts
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $downAlert = $row[0];
+  // combined query
+  $result = $db->query(
+        'SELECT 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all').') as devices, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down, 
+        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
+   ');
 
-  // Archived
-  $result = $db->query('SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived'));
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $archived = $row[0];
+  $row = $result -> fetchArray (SQLITE3_NUM);   
 
-  echo (json_encode (array ($devices, $connected, $favorites, $newDevices, $downAlert, $archived)));
+  echo (json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5])));
 }
 
 
