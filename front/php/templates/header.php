@@ -9,20 +9,6 @@
 
 <?php
 // ###################################
-// ## TimeZone processing start
-// ###################################
-$config_file = "../config/pialert.conf";
-$config_file_lines = file($config_file);
-$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
-$timezone_line = explode("'", $config_file_lines_timezone[0]);
-$Pia_TimeZone = $timezone_line[1];
-date_default_timezone_set($Pia_TimeZone);
-// ###################################
-// ## TimeZone processing end
-// ###################################
-
-
-// ###################################
 // ## GUI settings processing start
 // ###################################
 if (file_exists('../db/setting_darkmode')) {
@@ -231,6 +217,10 @@ function show_pia_servertime() {
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
+        </li>
+
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
+          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo $pia_lang['Navigation_HelpFAQ'];?></span></a>
         </li>
 
 <!--
