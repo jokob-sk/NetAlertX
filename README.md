@@ -10,9 +10,6 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
-![Main screen dark][main_dark]
-optional Darkmode
-
 ## Modifications within this Fork
   - Only one scan cycle
   - Modified scanmethod. If you want to go back to the original method comment line 488 and uncomment line 491 in ~/pialert/back/pialert.py
@@ -170,6 +167,5 @@ Linux distributions.
 [screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
-[main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
 [maintain_dark]: /docs/img/5_maintain.jpg     "Maintain screen dark"
 
