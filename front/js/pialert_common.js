@@ -187,7 +187,7 @@ function stopTimerRefreshData () {
 function newTimerRefreshData (refeshFunction) {
   timerRefreshData = setTimeout (function() {
     refeshFunction();
-  }, 5000);
+  }, 60000);
 }
 
 
