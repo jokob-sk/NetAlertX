@@ -5,30 +5,20 @@ if ($_REQUEST['action'] == 'logout') {
   session_destroy();
   header('Location: /pialert/index.php');
 }
-// ###################################
- // ## Login settings locale start
- // ###################################
- if (file_exists('../db/setting_darkmode')) {
-    $ENABLED_DARKMODE = True;
-  }
-  foreach (glob("../db/setting_skin*") as $filename) {
-    $pia_skin_selected = str_replace('setting_','',basename($filename));
-  }
-  if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
-  
-  foreach (glob("../db/setting_language*") as $filename) {
-    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-  }
-  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
-  require 'php/templates/language/'.$pia_lang_selected.'.php';
-// ###################################
- // ## Login settings locale end
- // ###################################
 // ##################################################
 // ## Login Processing start
 // ##################################################
 $config_file = "../config/pialert.conf";
 $config_file_lines = file($config_file);
+
+// ###################################
+// ## Login language settings
+// ###################################
+  foreach (glob("../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+  }
+  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+  require 'php/templates/language/'.$pia_lang_selected.'.php';
 
 // ###################################
 // ## PIALERT_WEB_PROTECTION FALSE
