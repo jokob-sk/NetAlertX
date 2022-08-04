@@ -15,7 +15,7 @@ optional Darkmode
 
 ## Modifications within this Fork
   - Only one scan cycle
-  - Modified scanmethod. If you want to go back to the original method comment line 459 and uncomment line 462 in ~/pialert/back/pialert.py
+  - Modified scanmethod. If you want to go back to the original method comment line 488 and uncomment line 491 in ~/pialert/back/pialert.py
   - Because of the modified scan, the extended scan parameters in the configuration file do not work. For this reason they were removed. 
   - The Backend has the additional option "cleanup"
 
