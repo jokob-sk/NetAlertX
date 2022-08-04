@@ -815,44 +815,85 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( $('#dropdownOwner')[0],                      'getOwners',       'txtOwner');
-  initializeCombo ( $('#dropdownDeviceType')[0],                 'getDeviceTypes',  'txtDeviceType');
-  initializeCombo ( $('#dropdownGroup')[0],                      'getGroups',       'txtGroup');
-  initializeCombo ( $('#dropdownLocation')[0],                   'getLocations',    'txtLocation');
-  initializeCombo ( $('#dropdownNetworkNodeMac')[0],             'getNetworkNodes', 'txtNetworkNodeMac');
+  initializeCombo ( '#dropdownOwner',                      'getOwners',       'txtOwner', true);
+  initializeCombo ( '#dropdownDeviceType',                 'getDeviceTypes',  'txtDeviceType', true);
+  initializeCombo ( '#dropdownGroup',                      'getGroups',       'txtGroup', true);
+  initializeCombo ( '#dropdownLocation',                   'getLocations',    'txtLocation', true);
+  initializeCombo ( '#dropdownNetworkNodeMac',             'getNetworkNodes', 'txtNetworkNodeMac', false);
 
   // Initialize static combos
   initializeComboSkipRepeated ();
 }
 
-function initializeCombo (HTMLelement, queryAction, txtDataField) {
-  // get data from server
-  $.get('php/server/devices.php?action='+queryAction, function(data) {
-    var listData = JSON.parse(data);
-    var order = 1;
+function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
 
-    HTMLelement.innerHTML = ''
-    // for each item
-    listData.forEach(function (item, index) {
-      // insert line divisor
-      if (order != item['order']) {
-        HTMLelement.innerHTML += '<li class="divider"></li>';
-        order = item['order'];
-      }
+  // check if we have the value cached already
+  var dropdownHtmlContent = useCache ? getCache(dropdownId) : ""; 
 
-      id = item['name'];
-      // use explicitly specified id (value) if avaliable
-      if(item['id'])
-      {
-        id = item['id'];
-      }
+  if(dropdownHtmlContent == "")
+  {
+    // get data from server
+    $.get('php/server/devices.php?action='+queryAction, function(data) {
+      var listData = JSON.parse(data);
+      var order = 1;
+      
 
-      // add dropdown item
-      HTMLelement.innerHTML +=
-        '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
-        txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
+      // for each item
+      listData.forEach(function (item, index) {
+        // insert line divisor
+        if (order != item['order']) {
+          dropdownHtmlContent += '<li class="divider"></li>';
+          order = item['order'];
+        }
+
+        id = item['name'];
+        // use explicitly specified id (value) if avaliable
+        if(item['id'])
+        {
+          id = item['id'];
+        }
+
+        // add dropdown item
+        dropdownHtmlContent +=
+          '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
+          txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
+      });
+
+      writeDropdownHtml(dropdownId, dropdownHtmlContent)
     });
-  });
+  } else
+  {
+    writeDropdownHtml(dropdownId, dropdownHtmlContent)
+  }
+}
+
+// write out the HTML for the dropdown
+function writeDropdownHtml(dropdownId, dropdownHtmlContent)
+{
+  // cache
+  setCache(dropdownId, dropdownHtmlContent);
+
+  // write HTML for the dropdown
+  var HTMLelement = $(dropdownId)[0];
+  HTMLelement.innerHTML = ''
+  HTMLelement.innerHTML += dropdownHtmlContent;
+}
+
+function getCache(key)
+{
+  // check cache
+  if(sessionStorage.getItem(key))
+  {
+    return sessionStorage.getItem(key);
+  } else
+  {
+    return "";
+  }
+}
+
+function setCache(key, data)
+{
+  sessionStorage.setItem(key, data); 
 }
 
 

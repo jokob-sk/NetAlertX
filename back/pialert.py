@@ -1576,6 +1576,9 @@ def upgradeDB ():
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
 
+    # don't hog DB access  
+    closeDB ()
+
 #-------------------------------------------------------------------------------
 
 def openDB ():
@@ -1591,6 +1594,7 @@ def openDB ():
 
     # Open DB and Cursor
     sql_connection = sqlite3.connect (DB_PATH, isolation_level=None)
+    sql_connection.execute('pragma journal_mode=wal') #
     sql_connection.text_factory = str
     sql_connection.row_factory = sqlite3.Row
     sql = sql_connection.cursor()
