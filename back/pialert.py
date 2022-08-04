@@ -1555,6 +1555,26 @@ def upgradeDB ():
       );      
       """)
 
+    # Alter Devices table
+    # dev_Network_Node_MAC_ADDR column
+    dev_Network_Node_MAC_ADDR_missing = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
+      """).fetchone()[0] == 0
+
+    if dev_Network_Node_MAC_ADDR_missing :
+      sql.execute("""      
+      ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
+      """)
+
+    # dev_Network_Node_port column
+    dev_Network_Node_port_missing = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
+      """).fetchone()[0] == 0
+
+    if dev_Network_Node_port_missing :
+      sql.execute("""      
+      ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
+      """)
 
 #-------------------------------------------------------------------------------
 
