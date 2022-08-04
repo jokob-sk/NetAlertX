@@ -71,7 +71,7 @@ def main ():
 
     # Check parameters
     if len(sys.argv) != 2 :
-        print ('usage pialert [scan_cycle] | internet_IP | update_vendors' )
+        print ('usage pialert [scan_cycle] | internet_IP | update_vendors | cleanup' )
         return
     cycle = str(sys.argv[1])
 
@@ -81,6 +81,8 @@ def main ():
     ## Main Commands
     if cycle == 'internet_IP':
         res = check_internet_IP()
+    elif cycle == 'cleanup':
+        res = cleanup_database()
     elif cycle == 'update_vendors':
         res = update_devices_MAC_vendors()
     elif cycle == 'update_vendors_silent':
@@ -254,6 +256,28 @@ def check_IP_format (pIP):
 
     # Return IP
     return IP.group(0)
+
+
+#===============================================================================
+# Cleanup Online History chart
+#===============================================================================
+def cleanup_database ():
+    # Header
+    print ('Cleanup Database')
+    print ('    Timestamp:', startTime )
+
+    openDB()
+
+    # Cleanup Online History
+    print ('\nCleanup Online_History...')
+    sql.execute ("""DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')""")
+    print ('\nOptimize Database...')
+    sql.execute ("VACUUM;")
+
+    closeDB()
+
+    # OK
+    return 0
 
 
 #===============================================================================
@@ -1531,6 +1555,26 @@ def upgradeDB ():
       );      
       """)
 
+    # Alter Devices table
+    # dev_Network_Node_MAC_ADDR column
+    dev_Network_Node_MAC_ADDR_missing = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
+      """).fetchone()[0] == 0
+
+    if dev_Network_Node_MAC_ADDR_missing :
+      sql.execute("""      
+      ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
+      """)
+
+    # dev_Network_Node_port column
+    dev_Network_Node_port_missing = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
+      """).fetchone()[0] == 0
+
+    if dev_Network_Node_port_missing :
+      sql.execute("""      
+      ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
+      """)
 
 #-------------------------------------------------------------------------------
 

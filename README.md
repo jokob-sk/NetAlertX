@@ -25,9 +25,6 @@ JavaScript)*
 ![Main screen dark][main_dark]
 Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
-## Modifications within this Fork
-... will follow soon
-
 ## How it works
 The system continuously scans the network for:
   - New devices
@@ -60,6 +57,7 @@ In charge of:
   - Store the information in the DB
   - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
   - Optional speedtest for Device "Internet"
+  - DB cleanup tasks via cron
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
@@ -67,7 +65,7 @@ In charge of:
 ### Front
 There is a configurable login to prevent unauthorized use. 
 
-> * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable
+> * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
@@ -183,7 +181,7 @@ Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
 
   This code is a collaborative body of work, with special thanks to: 
 
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and Last X scans activity chart)
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Things
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation

@@ -5,6 +5,25 @@ if ($_REQUEST['action'] == 'logout') {
   session_destroy();
   header('Location: /pialert/index.php');
 }
+// ###################################
+// ## Login settings locale start
+// ###################################
+ if (file_exists('../db/setting_darkmode')) {
+    $ENABLED_DARKMODE = True;
+  }
+  foreach (glob("../db/setting_skin*") as $filename) {
+    $pia_skin_selected = str_replace('setting_','',basename($filename));
+  }
+  if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
+  
+  foreach (glob("../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+  }
+  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+  require 'php/templates/language/'.$pia_lang_selected.'.php';
+// ###################################
+// ## Login settings locale end
+// ###################################
 // ##################################################
 // ## Login Processing start
 // ##################################################
@@ -103,24 +122,23 @@ if ($ENABLED_DARKMODE === True) {
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg">Sign in to start your session</p>
-
-    <form action="/pialert/index.php" method="post">
+    <p class="login-box-msg"><?php echo $pia_lang['Login_Box'];?></p>
+      <form action="/pialert/index.php" method="post">
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password" name="loginpassword">
+        <input type="password" class="form-control" placeholder="<?php echo $pia_lang['Login_Psw-box'];?>" name="loginpassword">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
         <div class="col-xs-8">
           <div class="checkbox icheck">
             <label>
-              <input type="checkbox" disabled> Remember Me
+              <input type="checkbox" disabled> <?php echo $pia_lang['Login_Remember'];?>
             </label>
           </div>
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+          <button type="submit" class="btn btn-primary btn-block btn-flat"><?php echo $pia_lang['Login_Submit'];?></button>
         </div>
         <!-- /.col -->
       </div>
@@ -134,7 +152,7 @@ if ($ENABLED_DARKMODE === True) {
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
-          <p>To set a new password run:<br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh yournewpassword</span><br>in the config folder.</p>
+          <p><?php echo $pia_lang['Login_Psw_run'];?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?php echo $pia_lang['Login_Psw_new'];?></span><br><?php echo $pia_lang['Login_Psw_folder'];?></p>
       </div>
   </div>
 

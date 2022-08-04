@@ -1141,7 +1141,7 @@ function getDeviceData (readAllData=false) {
       $('#txtLocation').val            ('--');
       $('#txtComments').val            ('--');
       $('#txtNetworkNodeMac').val      ('--');
-      $('#txtNetworkPort').val  ('--');
+      $('#txtNetworkPort').val         ('--');
 
       $('#txtFirstConnection').val     ('--');
       $('#txtLastConnection').val      ('--');
@@ -1229,8 +1229,8 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
-        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC']);
-        $('#txtNetworkPort').val              (deviceData['dev_Network_Node_port']);
+        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC_ADDR']);
+        $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
