@@ -11,13 +11,14 @@ $pia_lang['Gen_Restore'] = 'Ejecutar restauración';
 $pia_lang['Gen_Switch'] = 'Cambiar';
 
 //////////////////////////////////////////////////////////////////
-// Device Page - Update by @TeroRERO 25jul2022
+// Device Page - Update by @TeroRERO 03ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Navigation_Devices'] = 'Dispositivos';
 $pia_lang['Navigation_Presence'] = 'Historial';
 $pia_lang['Navigation_Events'] = 'Eventos';
 $pia_lang['Navigation_Maintenance'] = 'Mantenimiento';
+$pia_lang['Navigation_Network'] = 'Red';
 $pia_lang['Device_Title'] = 'Dispositivos';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Todos';
 $pia_lang['Device_Shortcut_Connected'] = 'Conectado(s)';
