@@ -1,8 +1,9 @@
-<?php 
+<?php
 session_start();
 
 if ($_REQUEST['action'] == 'logout') {
   session_destroy();
+  setcookie("PiAler_SaveLogin", "", time() - 3600);
   header('Location: /pialert/index.php');
 }
 // ##################################################
@@ -43,27 +44,34 @@ $config_file_lines = array_values(preg_grep('/^PIALERT_WEB_PASSWORD\s.*/', $conf
 $password_line = explode("'", $config_file_lines[0]);
 $Pia_Password = $password_line[1];
 
+// Password without Cookie check -> pass and set initial cookie
 if ($Pia_Password == hash('sha256',$_POST["loginpassword"]))
+  {
+      header('Location: /pialert/devices.php');
+      $_SESSION["login"] = 1;
+      if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+  }
+
+// active Session or valid cookie (cookie not extends)
+if (($_SESSION["login"] == 1) || ($Pia_Password == $_COOKIE["PiAler_SaveLogin"]))
   {
       header('Location: /pialert/devices.php');
       $_SESSION["login"] = 1;
   }
 
-if ($_SESSION["login"] == 1)
-  {
-      header('Location: /pialert/devices.php');
-  }
-
+// no active session, cookie not checked
 if ($_SESSION["login"] != 1)
   {
       if (file_exists('../db/setting_darkmode')) {$ENABLED_DARKMODE = True;}
       if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') {
         $login_info = 'Defaultpassword "123456" is still active';
         $login_mode = 'danger';
+        $login_display_mode = 'display: block;';
         $login_headline = 'Password Alert!';
         $login_icon = 'fa-ban';
   } else {
     $login_mode = 'info';
+    $login_display_mode = 'display: none;';
     $login_headline = 'Password Information';
     $login_icon = 'fa-info';
   }
@@ -122,24 +130,32 @@ if ($ENABLED_DARKMODE === True) {
         <div class="col-xs-8">
           <div class="checkbox icheck">
             <label>
-              <input type="checkbox" disabled> <?php echo $pia_lang['Login_Remember'];?>
+              <input type="checkbox" name="PWRemember">
+                <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
+                  <?php echo $pia_lang['Login_Remember'];?><br><span style="font-size: smaller"><?php echo $pia_lang['Login_Remember_small'];?></span>
+                </div>
             </label>
           </div>
         </div>
         <!-- /.col -->
-        <div class="col-xs-4">
+        <div class="col-xs-4" style="padding-top: 10px;">
           <button type="submit" class="btn btn-primary btn-block btn-flat"><?php echo $pia_lang['Login_Submit'];?></button>
         </div>
-        <!-- /.col -->
+        <!-- /.col --> 
       </div>
     </form>
+
+    <div style="padding-top: 10px;">
+      <button class="btn btn-xs btn-primary btn-block btn-flat" onclick="Passwordhinfo()">Password Information</button>
+    </div>
 
   </div>
   <!-- /.login-box-body -->
 
-  <div class="box-body" style="margin-top: 50px;">
+
+
+  <div id="myDIV" class="box-body" style="margin-top: 50px; <?php echo $login_display_mode;?>">
       <div class="alert alert-<?php echo $login_mode;?> alert-dismissible">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
           <p><?php echo $pia_lang['Login_Psw_run'];?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?php echo $pia_lang['Login_Psw_new'];?></span><br><?php echo $pia_lang['Login_Psw_folder'];?></p>
@@ -165,6 +181,16 @@ if ($ENABLED_DARKMODE === True) {
       increaseArea: '20%' /* optional */
     });
   });
+
+function Passwordhinfo() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+} 
+
 </script>
 </body>
 </html>
