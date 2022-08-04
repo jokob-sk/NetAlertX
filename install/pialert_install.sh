@@ -342,7 +342,7 @@ install_lighttpd() {
 # Install arp-scan & dnsutils
 # ------------------------------------------------------------------------------
 install_arpscan() {
-  print_header "arp-scan & dnsutils"
+  print_header "arp-scan, dnsutils and nmap"
 
   print_msg "- Installing arp-scan..."
   sudo apt-get install arp-scan -y                                2>&1 >> "$LOG"
@@ -352,6 +352,9 @@ install_arpscan() {
 
   print_msg "- Installing dnsutils & net-tools..."
   sudo apt-get install dnsutils net-tools -y                      2>&1 >> "$LOG"
+
+  print_msg "- Installing nmap and zip..."
+  sudo apt-get install nmap zip -y                                2>&1 >> "$LOG"
 }
   
 
@@ -384,7 +387,7 @@ install_python() {
       print_msg "- Using Python 2"
     else
       print_msg "- Installing Python 2..."
-      sudo apt-get install python -y                              2>&1 >> "$LOG"
+      sudo apt-get install python pip -y                              2>&1 >> "$LOG"
     fi
     PYTHON_BIN="python"
   elif [ $USE_PYTHON_VERSION -eq 3 ] ; then
@@ -392,7 +395,8 @@ install_python() {
       print_msg "- Using Python 3"
     else
       print_msg "- Installing Python 3..."
-      sudo apt-get install python3 -y                             2>&1 >> "$LOG"
+      sudo apt-get install python3 pip -y                             2>&1 >> "$LOG"
+      python3 -m pip install requests
     fi
     PYTHON_BIN="python3"
   else
@@ -524,6 +528,10 @@ test_pialert() {
   print_msg "- Testing Pi.Alert Network scan..."
   print_msg "*** PLEASE WAIT A COUPLE OF MINUTES..."
   stdbuf -i0 -o0 -e0  $PYTHON_BIN $PIALERT_HOME/back/pialert.py 1                                2>&1 | tee -ai "$LOG"
+
+  echo ""
+  print_msg "- Enable optional Speedtest..."
+  chmod +x $PIALERT_HOME/back/speedtest-cli
 
   if $FIRST_SCAN_KNOWN ; then
     echo ""

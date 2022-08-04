@@ -11,13 +11,14 @@ $pia_lang['Gen_Restore'] = 'Ejecutar restauración';
 $pia_lang['Gen_Switch'] = 'Cambiar';
 
 //////////////////////////////////////////////////////////////////
-// Device Page - Update by @TeroRERO 25jul2022
+// Device Page - Update by @TeroRERO 03ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Navigation_Devices'] = 'Dispositivos';
 $pia_lang['Navigation_Presence'] = 'Historial';
 $pia_lang['Navigation_Events'] = 'Eventos';
 $pia_lang['Navigation_Maintenance'] = 'Mantenimiento';
+$pia_lang['Navigation_Network'] = 'Red';
 $pia_lang['Device_Title'] = 'Dispositivos';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Todos';
 $pia_lang['Device_Shortcut_Connected'] = 'Conectado(s)';
@@ -167,7 +168,7 @@ $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP e
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - Update by @TeroRERO 25jul2022
+// Maintenance Page - Update by @TeroRERO 03ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Maintenance_Title'] = 'Herramientas de mantenimiento';
@@ -221,6 +222,10 @@ $pia_lang['Maintenance_Tool_del_allevents'] = 'Eliminar todo (Restablecer histor
 $pia_lang['Maintenance_Tool_del_allevents_text'] = 'Antes de usar esta función, haga una copia de seguridad. La eliminación no se puede deshacer. Se eliminarán todos los eventos en la base de datos. En ese momento se restablecerá la presencia de todos los dispositivos. Esto puede conducir a sesiones no válidas. Esto significa que los dispositivos se muestran como "presentes", aunque están fuera de línea. Un escaneo mientras el dispositivo en cuestión está en línea resuelve el problema.';
 $pia_lang['Maintenance_Tool_del_allevents_noti'] = 'Eliminar eventos';
 $pia_lang['Maintenance_Tool_del_allevents_noti_text'] = '¿Estás seguro de que quieres eliminar todos los eventos? Esto restablece la presencia de todos los dispositivos.';
+$pia_lang['Maintenance_Tool_del_allevents30'] = 'Eliminar eventos antiguos (30 días)';
+$pia_lang['Maintenance_Tool_del_allevents30_text'] = 'Antes de usar esta función, haga una copia de seguridad. La eliminación no se puede deshacer. Se eliminarán todos los eventos mayores a 30 días en la base de datos. En ese momento se restablecerá la presencia de todos los dispositivos. Esto puede conducir a sesiones no válidas. Esto significa que los dispositivos se muestran como "presentes", aunque están fuera de línea. Un escaneo mientras el dispositivo en cuestión está en línea resuelve el problema.';
+$pia_lang['Maintenance_Tool_del_allevents30_noti'] = 'Eliminar eventos';
+$pia_lang['Maintenance_Tool_del_allevents30_noti_text'] = '¿Está seguro de eliminar todos los eventos mayores a 30 días? Esto restablece la presencia de todos los dispositivos.';
 $pia_lang['Maintenance_Tool_backup'] = 'Respaldar DB';
 $pia_lang['Maintenance_Tool_backup_text'] = 'Las copias de seguridad de la base de datos se encuentran en el directorio de la base de datos como una Zip-Archive, nombrada con la fecha de creación. No hay un número máximo de copias de seguridad.';
 $pia_lang['Maintenance_Tool_backup_noti'] = 'Respaldar DB';
@@ -295,4 +300,18 @@ $pia_lang['Network_ManageDel_Submit'] = 'Eliminar';
 $pia_lang['Network_Table_State'] = 'Estado';
 $pia_lang['Network_Table_Hostname'] = 'Nombre de host';
 $pia_lang['Network_Table_IP'] = 'Dirección IP';
+
+//////////////////////////////////////////////////////////////////
+// Login Page - Update by @TeroRERO 03ago2022
+//////////////////////////////////////////////////////////////////
+
+// TeroRERO Off $pia_lang['Login_Box'] = 'Inicie su sesión';
+$pia_lang['Login_Box'] = 'Ingrese su contraseña';
+$pia_lang['Login_Remember'] = 'Recordar';
+$pia_lang['Login_Submit'] = 'Ingresar';
+$pia_lang['Login_Psw_run'] = 'Para cambiar contraseña ejecute:';
+$pia_lang['Login_Psw_new'] = 'nueva_contraseña';
+$pia_lang['Login_Psw_folder'] = 'en la carpeta config.';
+$pia_lang['Login_Psw_alert'] = '¡Alerta de Contraseña!';
+$pia_lang['Login_Psw-box'] = 'Contraseña';
 ?>

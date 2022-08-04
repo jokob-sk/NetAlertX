@@ -159,23 +159,23 @@ function setDeviceData() {
 
   // sql
   $sql = 'UPDATE Devices SET
-                 dev_Name            = "'. quotes($_REQUEST['name'])         .'",
-                 dev_Owner           = "'. quotes($_REQUEST['owner'])        .'",
-                 dev_DeviceType      = "'. quotes($_REQUEST['type'])         .'",
-                 dev_Vendor          = "'. quotes($_REQUEST['vendor'])       .'",
-                 dev_Favorite        = "'. quotes($_REQUEST['favorite'])     .'",
-                 dev_Group           = "'. quotes($_REQUEST['group'])        .'",
-                 dev_Location        = "'. quotes($_REQUEST['location'])     .'",
-                 dev_Comments        = "'. quotes($_REQUEST['comments'])     .'",
+                 dev_Name              = "'. quotes($_REQUEST['name'])         .'",
+                 dev_Owner             = "'. quotes($_REQUEST['owner'])        .'",
+                 dev_DeviceType        = "'. quotes($_REQUEST['type'])         .'",
+                 dev_Vendor            = "'. quotes($_REQUEST['vendor'])       .'",
+                 dev_Favorite          = "'. quotes($_REQUEST['favorite'])     .'",
+                 dev_Group             = "'. quotes($_REQUEST['group'])        .'",
+                 dev_Location          = "'. quotes($_REQUEST['location'])     .'",
+                 dev_Comments          = "'. quotes($_REQUEST['comments'])     .'",
                  dev_Network_Node_MAC  = "'. quotes($_REQUEST['networknode']).'",
-                 dev_Network_Node_port  = "'. quotes($_REQUEST['networknodeport']).'",
-                 dev_StaticIP        = "'. quotes($_REQUEST['staticIP'])     .'",
-                 dev_ScanCycle       = "'. quotes($_REQUEST['scancycle'])    .'",
-                 dev_AlertEvents     = "'. quotes($_REQUEST['alertevents'])  .'",
-                 dev_AlertDeviceDown = "'. quotes($_REQUEST['alertdown'])    .'",
-                 dev_SkipRepeated    = "'. quotes($_REQUEST['skiprepeated']) .'",
-                 dev_NewDevice       = "'. quotes($_REQUEST['newdevice'])    .'",
-                 dev_Archived        = "'. quotes($_REQUEST['archived'])     .'"
+                 dev_Network_Node_port = "'. quotes($_REQUEST['networknodeport']).'",
+                 dev_StaticIP          = "'. quotes($_REQUEST['staticIP'])     .'",
+                 dev_ScanCycle         = "'. quotes($_REQUEST['scancycle'])    .'",
+                 dev_AlertEvents       = "'. quotes($_REQUEST['alertevents'])  .'",
+                 dev_AlertDeviceDown   = "'. quotes($_REQUEST['alertdown'])    .'",
+                 dev_SkipRepeated      = "'. quotes($_REQUEST['skiprepeated']) .'",
+                 dev_NewDevice         = "'. quotes($_REQUEST['newdevice'])    .'",
+                 dev_Archived          = "'. quotes($_REQUEST['archived'])     .'"
           WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
   // update Data
   $result = $db->query($sql);
