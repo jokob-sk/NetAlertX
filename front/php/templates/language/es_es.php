@@ -169,7 +169,7 @@ $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP e
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - Update by @TeroRERO 25jul2022
+// Maintenance Page - Update by @TeroRERO 03ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Maintenance_Title'] = 'Herramientas de mantenimiento';
