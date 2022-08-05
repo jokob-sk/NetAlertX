@@ -22,7 +22,7 @@ JavaScript)*
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
 📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
 
-![Main screen dark][main_dark]
+
 Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
