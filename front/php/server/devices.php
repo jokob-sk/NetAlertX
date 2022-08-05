@@ -478,22 +478,35 @@ function PiaToggleArpScan() {
 //  Query total numbers of Devices by status
 //------------------------------------------------------------------------------
 function getDevicesTotals() {
-  global $db;
 
-  // combined query
-  $result = $db->query(
-        'SELECT 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all').') as devices, 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down, 
-        (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
-   ');
+  $resultJSON = "";
 
-  $row = $result -> fetchArray (SQLITE3_NUM);   
+  if(getCache("getDevicesTotals") != "")
+  {
+    $resultJSON = getCache("getDevicesTotals");
+  } else
+  {
+    global $db;
 
-  echo (json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5])));
+    // combined query
+    $result = $db->query(
+          'SELECT 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all').') as devices, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
+    ');
+
+    $row = $result -> fetchArray (SQLITE3_NUM); 
+    $resultJSON = json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]));
+
+    // save to cache
+    setCache("getDevicesTotals", $resultJSON );
+  }  
+
+  echo ($resultJSON);
 }
 
 
@@ -796,6 +809,23 @@ function getDeviceCondition ($deviceStatus) {
     case 'archived':   return 'WHERE dev_Archived=1';                                                      break;
     default:           return 'WHERE 1=0';                                                                 break;
   }
+}
+
+//------------------------------------------------------------------------------
+//  Simple cookie cache
+//------------------------------------------------------------------------------
+function getCache($key) {
+  if( isset($_COOKIE[$key]))
+  {
+    return $_COOKIE[$key];
+  }else
+  {
+    return "";
+  }
+}
+
+function setCache($key, $value) {
+  setcookie($key,  $value, time()+300, "/","", 0); // 5min cache
 }
 
 ?>
