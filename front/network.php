@@ -2,7 +2,7 @@
   session_start();
   if ($_SESSION["login"] != 1)
   {
-      header('Location: /pialert/index.php');
+      header('Location: /index.php');
       exit;
   }
 

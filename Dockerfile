@@ -13,7 +13,8 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -s /home/pi/pialert/install/index.html /var/www/html/index.html \
+    && rm -rf /var/www/html \
+    && ln -s /home/pi/pialert/front /var/www/html \
     && ln -s /home/pi/pialert/front /var/www/html/pialert \
     && lighttpd-enable-mod fastcgi-php 
  
