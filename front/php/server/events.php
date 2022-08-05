@@ -52,51 +52,57 @@ function getEventsTotals() {
   global $db;
 
   // Request Parameters
-  $periodDate = getDateFromPeriod();
+  $periodDate = $_REQUEST['period'];
 
-  // SQL 
-  $SQL1 = 'SELECT Count(*)
-           FROM Events 
-           WHERE eve_DateTime >= '. $periodDate;
- 
-  $SQL2 = 'SELECT Count(*)
-           FROM Sessions ';
+  $periodDateSQL = "";
+  $days = "";
 
-  // All
-  $result = $db->query($SQL1);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsAll = $row[0];
+  switch ($periodDate) {
+    case '7 days':
+      $days = "7";
+      break;
+    case '1 month':
+      $days = "30";
+      break;
+    case '1 year':
+      $days = "365";
+      break;
+    case '100 years':
+      $days = "3650"; //10 years
+      break;
+    default:
+    $days = "1";    
+  }  
 
-  // Sessions
-  $result = $db->query($SQL2. ' WHERE (  ses_DateTimeConnection >= '. $periodDate .'
-                                      OR ses_DateTimeDisconnection >= '. $periodDate .'
-                                      OR ses_StillConnected = 1 ) ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsSessions = $row[0];
+  $periodDateSQL = "-".$days." day"; 
 
-  // Missing
-  $result = $db->query($SQL2. ' WHERE    (ses_DateTimeConnection IS NULL    AND ses_DateTimeDisconnection >= '. $periodDate .' )
-                                      OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= '. $periodDate .' )' );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsMissing = $row[0];
+  $resultJSON = "";
 
-  // Voided
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "VOIDED%" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsVoided = $row[0];
+  // check cache if JSON available in a cookie
+  if(getCache("getEventsTotals".$days) != "")
+  {
+    $resultJSON = getCache("getEventsTotals".$days);
+  } else
+  {
+    // one query to get all numbers, whcih is quicker than multiple queries
+    $sql = "select 
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >=  date('now', '".$periodDateSQL."')) as all_events, 
+              (SELECT Count(*) FROM Sessions as sessions WHERE (  ses_DateTimeConnection >= date('now', '".$periodDateSQL."') OR ses_DateTimeDisconnection >= date('now', '".$periodDateSQL."') OR ses_StillConnected = 1 ))  as sessions,
+              (SELECT Count(*) FROM Sessions WHERE ((ses_DateTimeConnection IS NULL    AND ses_DateTimeDisconnection >= date('now', '".$periodDateSQL."' )) OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= date('now', '".$periodDateSQL."' )))) as missing,
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'VOIDED%' ) as voided, 
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'New Device' ) as new,
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'Device Down' ) as down";
 
-  // New
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "New Device" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsNew = $row[0];
+    $result = $db->query($sql);
+    $row = $result -> fetchArray (SQLITE3_NUM);
+    $resultJSON = json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]));
 
-  // Down
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "Device Down" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsDown = $row[0];
-
-  // Return json
-  echo (json_encode (array ($eventsAll, $eventsSessions, $eventsMissing, $eventsVoided, $eventsNew, $eventsDown)));
+    // save JSON result to cache
+    setCache("getEventsTotals".$days, $resultJSON );
+  }
+  
+  // Return json  
+  echo ($resultJSON);
 }
 
 

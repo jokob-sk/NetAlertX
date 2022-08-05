@@ -73,4 +73,24 @@ function getNetworkTypes(){
 
   return $array;
 }
+
+//------------------------------------------------------------------------------
+//  Simple cookie cache
+//------------------------------------------------------------------------------
+function getCache($key) {
+  if( isset($_COOKIE[$key]))
+  {
+    return $_COOKIE[$key];
+  }else
+  {
+    return "";
+  }
+}
+
+function setCache($key, $value) {
+  setcookie($key,  $value, time()+300, "/","", 0); // 5min cache
+}
+
+
+
 ?>
