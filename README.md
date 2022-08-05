@@ -80,6 +80,8 @@ A web frontend that allows:
     - IP's
     - Manual Nmap scans
     - Optional speedtest for Device "Internet"
+    - Simple Network relationship display
+    - CSV Export / Import (Experimental)
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
