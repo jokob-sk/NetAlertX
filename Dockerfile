@@ -15,7 +15,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
     && ln -s /home/pi/pialert/front /var/www/html \
-    && ln -s /home/pi/pialert/front /var/www/html/pialert \
     && lighttpd-enable-mod fastcgi-php 
  
    
@@ -37,5 +36,8 @@ RUN python /home/pi/pialert/back/pialert.py update_vendors \
 
 # it's easy for permissions set in Git to be overridden, so doing it manually
 RUN chmod -R a+rxw /home/pi/pialert/
+
+# keep backward-compatibility with old links using <url>/pialert as a base (remove in 2023)
+RUN ln -s /home/pi/pialert/front /var/www/html/pialert
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
