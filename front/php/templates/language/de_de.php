@@ -16,12 +16,16 @@ $pia_lang['Gen_Switch'] = 'Umschalten';
 
 $pia_lang['Login_Box'] = 'Passwort eingeben';
 $pia_lang['Login_Remember'] = 'Passwort speichern';
+$pia_lang['Login_Remember_small'] = '(für 7 Tage gültig)';
 $pia_lang['Login_Submit'] = 'Anmelden';
 $pia_lang['Login_Psw_run'] = 'Um das Passwort zu ändern nutze:';
 $pia_lang['Login_Psw_new'] = 'neues_passwort';
 $pia_lang['Login_Psw_folder'] = 'im Ordner "~/pialert/config"';
 $pia_lang['Login_Psw_alert'] = 'Sicherheitshinweis!';
 $pia_lang['Login_Psw-box'] = 'Passwort';
+$pia_lang['Login_Toggle_Info'] = 'Passwort Informationen';
+$pia_lang['Login_Toggle_Info_headline'] = 'Passwort Information';
+$pia_lang['Login_Toggle_Alert_headline'] = 'Passwort Warnung!';
 
 //////////////////////////////////////////////////////////////////
 // Device Page

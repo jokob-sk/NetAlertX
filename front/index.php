@@ -67,12 +67,12 @@ if ($_SESSION["login"] != 1)
         $login_info = 'Defaultpassword "123456" is still active';
         $login_mode = 'danger';
         $login_display_mode = 'display: block;';
-        $login_headline = 'Password Alert!';
+        $login_headline = $pia_lang['Login_Toggle_Alert_headline'];
         $login_icon = 'fa-ban';
   } else {
     $login_mode = 'info';
     $login_display_mode = 'display: none;';
-    $login_headline = 'Password Information';
+    $login_headline = $pia_lang['Login_Toggle_Info_headline'];
     $login_icon = 'fa-info';
   }
 
@@ -116,7 +116,7 @@ if ($ENABLED_DARKMODE === True) {
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="/pialert/index2.php">Pi.<b>Alert</b></a>
+    <a href="/pialert/index.php">Pi.<b>Alert</b></a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
@@ -146,7 +146,7 @@ if ($ENABLED_DARKMODE === True) {
     </form>
 
     <div style="padding-top: 10px;">
-      <button class="btn btn-xs btn-primary btn-block btn-flat" onclick="Passwordhinfo()">Password Information</button>
+      <button class="btn btn-xs btn-primary btn-block btn-flat" onclick="Passwordhinfo()"><?php echo $pia_lang['Login_Toggle_Info'];?></button>
     </div>
 
   </div>

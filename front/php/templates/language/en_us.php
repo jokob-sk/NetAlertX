@@ -11,6 +11,23 @@ $pia_lang['Gen_Restore'] = 'Run Restore';
 $pia_lang['Gen_Switch'] = 'Switch';
 
 //////////////////////////////////////////////////////////////////
+// Login Page - Update by @TeroRERO 03ago2022
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['Login_Box'] = 'Enter your password';
+$pia_lang['Login_Remember'] = 'Remember';
+$pia_lang['Login_Remember_small'] = '(valid for 7 days)';
+$pia_lang['Login_Submit'] = 'Log in';
+$pia_lang['Login_Psw_run'] = 'To change password run:';
+$pia_lang['Login_Psw_new'] = 'new_password';
+$pia_lang['Login_Psw_folder'] = 'in the config folder.';
+$pia_lang['Login_Psw_alert'] = 'Password Alert!';
+$pia_lang['Login_Psw-box'] = 'Password';
+$pia_lang['Login_Toggle_Info'] = 'Password Information';
+$pia_lang['Login_Toggle_Info_headline'] = 'Password Information';
+$pia_lang['Login_Toggle_Alert_headline'] = 'Password Alert!';
+
+//////////////////////////////////////////////////////////////////
 // Device Page
 //////////////////////////////////////////////////////////////////
 
@@ -27,8 +44,7 @@ $pia_lang['Device_Shortcut_NewDevices'] = 'New Devices';
 $pia_lang['Device_Shortcut_DownAlerts'] = 'Down Alerts';
 $pia_lang['Device_Shortcut_Archived'] = 'Archived';
 $pia_lang['Device_Shortcut_Devices'] = 'Devices';
-$pia_lang['Device_Shortcut_OnlineChart_a'] = 'Network activity over last';
-$pia_lang['Device_Shortcut_OnlineChart_b'] = 'hours';
+$pia_lang['Device_Shortcut_OnlineChart'] = 'Device presence over time';
 $pia_lang['Device_TableHead_Name'] = 'Name';
 $pia_lang['Device_TableHead_Owner'] = 'Owner';
 $pia_lang['Device_TableHead_Type'] = 'Type';
@@ -133,8 +149,9 @@ $pia_lang['DevDetail_MainInfo_Favorite'] = 'Favorite';
 $pia_lang['DevDetail_MainInfo_Group'] = 'Group';
 $pia_lang['DevDetail_MainInfo_Location'] = 'Location';
 $pia_lang['DevDetail_MainInfo_Comments'] = 'Comments';
-$pia_lang['DevDetail_MainInfo_Network'] = 'Network Hardware (ID)';
-$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Network HW Port';
+$pia_lang['DevDetail_MainInfo_Network_Title'] = 'Network';
+$pia_lang['DevDetail_MainInfo_Network'] = 'Network Node (MAC)';
+$pia_lang['DevDetail_MainInfo_Network_Port'] = 'Connected to Port';
 $pia_lang['DevDetail_SessionInfo_Title'] = 'Session Info';
 $pia_lang['DevDetail_SessionInfo_Status'] = 'Status';
 $pia_lang['DevDetail_SessionInfo_FirstSession'] = 'First Session';
@@ -152,6 +169,8 @@ $pia_lang['DevDetail_EveandAl_RandomMAC'] = 'Random MAC';
 $pia_lang['DevDetail_EveandAl_ScanCycle_a'] = 'Scan Device (1 min)';
 $pia_lang['DevDetail_EveandAl_ScanCycle_z'] = 'Don&#39;t Scan Device (0 min)';
 $pia_lang['DevDetail_button_Delete'] = 'Delete Device';
+$pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
+$pia_lang['DevDetail_button_DeleteEvents_Warning'] = 'Are you sure you want to delete all Events of this device?<br><br>(this will clear the <b>Events history</b> and the <b>Sessions</b> and might help with constant (persistent) notifications)';
 $pia_lang['DevDetail_button_Reset'] = 'Reset Changes';
 $pia_lang['DevDetail_button_Save'] = 'Save';
 $pia_lang['DevDetail_button_DeleteEvents'] = 'Delete Events';
@@ -221,10 +240,14 @@ $pia_lang['Maintenance_Tool_del_unknowndev'] = 'Delete (unknown) Devices';
 $pia_lang['Maintenance_Tool_del_unknowndev_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All devices named (unknown) will be deleted from the database.';
 $pia_lang['Maintenance_Tool_del_unknowndev_noti'] = 'Delete (unknown) Devices';
 $pia_lang['Maintenance_Tool_del_unknowndev_noti_text'] = 'Are you sure you want to delete all (unknown) devices?';
-$pia_lang['Maintenance_Tool_del_allevents'] = 'Delete all Events (Reset Presence)';
+$pia_lang['Maintenance_Tool_del_allevents'] = 'Delete Events (Reset Presence)';
 $pia_lang['Maintenance_Tool_del_allevents_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All events in the database will be deleted. At that moment the presence of all devices will be reset. This can lead to invalid sessions. This means that devices are displayed as "present" although they are offline. A scan while the device in question is online solves the problem.';
 $pia_lang['Maintenance_Tool_del_allevents_noti'] = 'Delete Events';
 $pia_lang['Maintenance_Tool_del_allevents_noti_text'] = 'Are you sure you want to delete all Events? This resets Presence of all Devices.';
+$pia_lang['Maintenance_Tool_del_allevents30'] = 'Delete all Events older than 30 days';
+$pia_lang['Maintenance_Tool_del_allevents30_text'] = 'Before using this function, please make a backup. The deletion cannot be undone. All events older than 30 days in the database will be deleted. At that moment the presence of all devices will be reset. This can lead to invalid sessions. This means that devices are displayed as "present" although they are offline. A scan while the device in question is online solves the problem.';
+$pia_lang['Maintenance_Tool_del_allevents30_noti'] = 'Delete Events';
+$pia_lang['Maintenance_Tool_del_allevents30_noti_text'] = 'Are you sure you want to delete all Events older than 30 days? This resets Presence of all Devices.';
 $pia_lang['Maintenance_Tool_backup'] = 'DB Backup';
 $pia_lang['Maintenance_Tool_backup_text'] = 'The database backups are located in the database directory as a zip-archive, named with the creation date. There is no maximum number of backups.';
 $pia_lang['Maintenance_Tool_backup_noti'] = 'DB Backup';
@@ -299,4 +322,5 @@ $pia_lang['Network_ManageDel_Submit'] = 'Delete';
 $pia_lang['Network_Table_State'] = 'State';
 $pia_lang['Network_Table_Hostname'] = 'Hostname';
 $pia_lang['Network_Table_IP'] = 'IP';
+
 ?>
