@@ -151,7 +151,7 @@
                         FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port asc';
         
         global $db;
-        $func_result = $db->query($func_sql);        
+        $func_result = $db->query($func_sql);  
         
         // array 
         $tableData = array();

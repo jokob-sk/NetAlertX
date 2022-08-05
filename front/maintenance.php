@@ -344,6 +344,18 @@ if (submit && isset($_POST['langselector_set'])) {
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_purgebackup_text'];?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="askExportCSV()"><?php echo $pia_lang['Maintenance_Tool_ExportCSV'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_ExportCSV_text'];?></div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" style="">
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?php echo $pia_lang['Maintenance_Tool_ImportCSV'];?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_ImportCSV_text'];?></div>
+                    </div>
                  </div>
           </div>
       </div>
@@ -487,6 +499,32 @@ function PiaPurgeDBBackups()
 { 
   // Execute
   $.get('php/server/devices.php?action=PiaPurgeDBBackups', function(msg) {
+    showMessage (msg);
+  });
+}
+
+// Export CSV
+function askExportCSV() {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_ExportCSV_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_ExportCSV_noti_text'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'ExportCSV');
+}
+function ExportCSV()
+{ 
+  // Execute
+  openInNewTab(window.location.origin + "/php/server/devices.php?action=ExportCSV")
+}
+
+// Import CSV
+function askImportCSV() {
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_ImportCSV_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_ImportCSV_noti_text'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'ImportCSV');
+}
+function ImportCSV()
+{   
+  // Execute
+  $.get('/php/server/devices.php?action=ImportCSV', function(msg) {
     showMessage (msg);
   });
 }
