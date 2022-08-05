@@ -266,12 +266,16 @@ def cleanup_database ():
     print ('Cleanup Database')
     print ('    Timestamp:', startTime )
 
-    openDB()
-
+    openDB()    
+    strdaystokeepEV = str(365)  # str(DAYS_TO_KEEP_EVENTS)
     # Cleanup Online History
     print ('\nCleanup Online_History...')
-    sql.execute ("""DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')""")
+    sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
     print ('\nOptimize Database...')
+    print ('\nCleanup Events, up to the lastest '+strdaystokeepEV+' days...')
+    sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+strdaystokeepEV+" day')")
+    # Shrink DB
+    print ('\nShrink Database...')
     sql.execute ("VACUUM;")
 
     closeDB()

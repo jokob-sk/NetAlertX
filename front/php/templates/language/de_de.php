@@ -11,6 +11,23 @@ $pia_lang['Gen_Restore'] = 'Wiederherstellen';
 $pia_lang['Gen_Switch'] = 'Umschalten';
 
 //////////////////////////////////////////////////////////////////
+// Login Page - Update by @TeroRERO 03ago2022
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['Login_Box'] = 'Passwort eingeben';
+$pia_lang['Login_Remember'] = 'Passwort speichern';
+$pia_lang['Login_Remember_small'] = '(für 7 Tage gültig)';
+$pia_lang['Login_Submit'] = 'Anmelden';
+$pia_lang['Login_Psw_run'] = 'Um das Passwort zu ändern nutze:';
+$pia_lang['Login_Psw_new'] = 'neues_passwort';
+$pia_lang['Login_Psw_folder'] = 'im Ordner "~/pialert/config"';
+$pia_lang['Login_Psw_alert'] = 'Sicherheitshinweis!';
+$pia_lang['Login_Psw-box'] = 'Passwort';
+$pia_lang['Login_Toggle_Info'] = 'Passwort Informationen';
+$pia_lang['Login_Toggle_Info_headline'] = 'Passwort Information';
+$pia_lang['Login_Toggle_Alert_headline'] = 'Passwort Warnung!';
+
+//////////////////////////////////////////////////////////////////
 // Device Page
 //////////////////////////////////////////////////////////////////
 
@@ -270,7 +287,7 @@ $pia_lang['BackDevices_DBTools_DelActHistory'] = 'Die Anzeige der Netzwerkaktivi
 $pia_lang['BackDevices_DBTools_DelActHistoryError'] = 'Fehler beim Zurücksetzen der Netzwerkaktivitätsanzeige.';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page
+// Network Page
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Network_Title'] = 'Netzwerkübersicht';
@@ -300,4 +317,10 @@ $pia_lang['Network_ManageDel_Submit'] = 'Löschen';
 $pia_lang['Network_Table_State'] = 'Status';
 $pia_lang['Network_Table_Hostname'] = 'Gerätename';
 $pia_lang['Network_Table_IP'] = 'IP';
+
+//////////////////////////////////////////////////////////////////
+// Help Page
+//////////////////////////////////////////////////////////////////
+
+$pia_lang['Navigation_HelpFAQ'] = 'Hilfe / FAQ';
 ?>

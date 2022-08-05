@@ -11,6 +11,24 @@ $pia_lang['Gen_Restore'] = 'Ejecutar restauración';
 $pia_lang['Gen_Switch'] = 'Cambiar';
 
 //////////////////////////////////////////////////////////////////
+// Login Page - Update by @TeroRERO 03ago2022
+//////////////////////////////////////////////////////////////////
+
+// TeroRERO Off $pia_lang['Login_Box'] = 'Inicie su sesión';
+$pia_lang['Login_Box'] = 'Ingrese su contraseña';
+$pia_lang['Login_Remember'] = 'Recordar';
+$pia_lang['Login_Remember_small'] = '(valid for 7 days)';
+$pia_lang['Login_Submit'] = 'Ingresar';
+$pia_lang['Login_Psw_run'] = 'Para cambiar contraseña ejecute:';
+$pia_lang['Login_Psw_new'] = 'nueva_contraseña';
+$pia_lang['Login_Psw_folder'] = 'en la carpeta config.';
+$pia_lang['Login_Psw_alert'] = '¡Alerta de Contraseña!';
+$pia_lang['Login_Psw-box'] = 'Contraseña';
+$pia_lang['Login_Toggle_Info'] = 'Password Information';
+$pia_lang['Login_Toggle_Info_headline'] = 'Password Information';
+$pia_lang['Login_Toggle_Alert_headline'] = 'Password Alert!';
+
+//////////////////////////////////////////////////////////////////
 // Device Page - Update by @TeroRERO 03ago2022
 //////////////////////////////////////////////////////////////////
 
@@ -301,17 +319,4 @@ $pia_lang['Network_Table_State'] = 'Estado';
 $pia_lang['Network_Table_Hostname'] = 'Nombre de host';
 $pia_lang['Network_Table_IP'] = 'Dirección IP';
 
-//////////////////////////////////////////////////////////////////
-// Login Page - Update by @TeroRERO 03ago2022
-//////////////////////////////////////////////////////////////////
-
-// TeroRERO Off $pia_lang['Login_Box'] = 'Inicie su sesión';
-$pia_lang['Login_Box'] = 'Ingrese su contraseña';
-$pia_lang['Login_Remember'] = 'Recordar';
-$pia_lang['Login_Submit'] = 'Ingresar';
-$pia_lang['Login_Psw_run'] = 'Para cambiar contraseña ejecute:';
-$pia_lang['Login_Psw_new'] = 'nueva_contraseña';
-$pia_lang['Login_Psw_folder'] = 'en la carpeta config.';
-$pia_lang['Login_Psw_alert'] = '¡Alerta de Contraseña!';
-$pia_lang['Login_Psw-box'] = 'Contraseña';
 ?>
