@@ -29,7 +29,7 @@ $config_file_lines_bypass = array_values(preg_grep('/^PIALERT_WEB_PROTECTION\s.*
 $protection_line = explode("=", $config_file_lines_bypass[0]);
 $Pia_WebProtection = strtolower(trim($protection_line[1]));
 
-if ($Pia_WebProtection == 'false')
+if ($Pia_WebProtection != 'true')
   {
       header('Location: /pialert/devices.php');
       $_SESSION["login"] = 1;
