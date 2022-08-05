@@ -74,6 +74,36 @@ function getNetworkTypes(){
   return $array;
 }
 
+function getDevicesColumns(){
+
+  $columns = ["dev_MAC", 
+              "dev_Name",
+              "dev_Owner",
+              "dev_DeviceType",
+              "dev_Vendor",
+              "dev_Favorite",
+              "dev_Group",
+              "dev_Comments", 
+              "dev_FirstConnection",
+              "dev_LastConnection",
+              "dev_LastIP",
+              "dev_StaticIP",
+              "dev_ScanCycle",
+              "dev_LogEvents",
+              "dev_AlertEvents",
+              "dev_AlertDeviceDown",
+              "dev_SkipRepeated",
+              "dev_LastNotification",
+              "dev_PresentLastScan",
+              "dev_NewDevice",
+              "dev_Location",
+              "dev_Archived",
+              "dev_Network_Node_port",
+              "dev_Network_Node_MAC_ADDR"]; 
+              
+  return $columns;
+}
+
 //------------------------------------------------------------------------------
 //  Simple cookie cache
 //------------------------------------------------------------------------------

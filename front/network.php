@@ -2,7 +2,7 @@
   session_start();
   if ($_SESSION["login"] != 1)
   {
-      header('Location: /index.php');
+      header('Location: index.php');
       exit;
   }
 
@@ -151,7 +151,7 @@
                         FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port asc';
         
         global $db;
-        $func_result = $db->query($func_sql);        
+        $func_result = $db->query($func_sql);  
         
         // array 
         $tableData = array();
@@ -226,7 +226,7 @@
                           </h4>
                           <div>
                             This network device (node) doesn't have any assigned devices (leaf nodes).                             
-                            Go to <a href='./devices.php'><b>".$pia_lang['Device_Title']."</b></a>, select a device you want to attach to this node and assign it in the <b>Details</b> tab by selecting it in the <b>".$pia_lang['DevDetail_MainInfo_Network'] ."</b> dropdown.
+                            Go to <a href='devices.php'><b>".$pia_lang['Device_Title']."</b></a>, select a device you want to attach to this node and assign it in the <b>Details</b> tab by selecting it in the <b>".$pia_lang['DevDetail_MainInfo_Network'] ."</b> dropdown.
                           </div>
                         </div>";
           $str_table_close = "";

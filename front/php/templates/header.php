@@ -133,7 +133,7 @@ function show_pia_servertime() {
 
 <!-- ----------------------------------------------------------------------- -->
     <!-- Logo -->
-    <a href="." class="logo">
+    <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">P<b>a</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -177,7 +177,7 @@ function show_pia_servertime() {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="/index.php?action=logout" class="btn btn-danger">Sign out</a>
+                  <a href="index.php?action=logout" class="btn btn-danger">Sign out</a>
                 </div>
               </li>
             </ul>

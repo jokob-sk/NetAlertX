@@ -58,7 +58,9 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
       case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
       case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
-      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break;      
+      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break; 
+      case 'ExportCSV':               ExportCSV();                             break;    
+      case 'ImportCSV':               ImportCSV();                             break;     
 
       case 'getDevicesTotals':        getDevicesTotals();                      break;
       case 'getDevicesList':          getDevicesList();                        break;
@@ -435,6 +437,120 @@ function PiaPurgeDBBackups() {
   echo $pia_lang['BackDevices_DBTools_Purge'];
   echo("<meta http-equiv='refresh' content='1'>");
     
+}
+
+//------------------------------------------------------------------------------
+//  Export CSV of devices
+//------------------------------------------------------------------------------
+function ExportCSV() {
+
+  header("Content-Type: application/octet-stream");
+  header("Content-Transfer-Encoding: Binary");
+  header("Content-disposition: attachment; filename=\"devices.csv\"");
+
+  global $db;
+  $func_result = $db->query("SELECT * FROM Devices");        
+
+  // prepare CSV header row
+  // header array with column names 
+  $columns = getDevicesColumns();
+
+  // wrap the headers with " (quotes) 
+  $resultCSV = '"'.implode('","', $columns).'"';  
+
+  //and append a new line
+  $resultCSV = $resultCSV."\n";
+
+  // retrieve the devices from the DB
+  while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
+
+    // loop through columns and add values to the string 
+    $index = 0;
+    foreach ($columns as $columnName) {
+
+      // add quotes around the value to prevent issues with commas in fields
+      $resultCSV = $resultCSV.'"'.$row[$columnName].'"';
+
+      // detect last loop - skip as no comma needed
+      if ($index != count($columns) - 1  )
+      {
+        $resultCSV = $resultCSV.',';
+      }
+      $index++;
+    } 
+
+    //$resultCSV = $resultCSV.implode(",", [$row["dev_MAC"], $row["dev_Name"]]);
+    $resultCSV = $resultCSV."\n";
+  }
+
+  //write the built CSV string
+  echo $resultCSV;    
+}
+
+//------------------------------------------------------------------------------
+//  Import CSV of devices
+//------------------------------------------------------------------------------
+function ImportCSV() {
+
+
+  $file = '../../../config/devices.csv';
+
+  if (file_exists($file)) {
+
+    global $db;
+    global $pia_lang;
+
+    $error = "";
+
+    // sql
+    $sql = 'DELETE FROM Devices';
+    // execute sql
+    $result = $db->query($sql);    
+
+    // Open the CSV file with read-only mode
+    $csvFile = fopen($file, 'r');
+
+    // Skip the first line
+    fgetcsv($csvFile);
+
+    $columns = getDevicesColumns();
+
+    // Parse data from CSV file line by line (max 10000 lines)
+    while (($row = fgetcsv($csvFile, 10000, ",")) !== FALSE)
+    {
+      $sql = 'INSERT INTO Devices ('.implode(',', $columns).') VALUES ("' .implode('","', $row).'")';
+
+      $result = $db->query($sql);
+
+      // check result
+      if ($result != TRUE) {
+        $error = $db->lastErrorMsg();
+        // break the while loop on error
+        break;
+      } 
+    }
+
+    // Close opened CSV file
+    fclose($csvFile);
+   
+    if($error == "")
+    {
+      // import succesful
+      echo $pia_lang['BackDevices_DBTools_ImportCSV'];
+
+    }
+    else{
+      // an error occurred while writing to the DB, display the last error message 
+      echo $pia_lang['BackDevices_DBTools_ImportCSVError']."\n\n$sql \n\n".$error;
+    }
+    
+   } else {
+    echo $pia_lang['BackDevices_DBTools_ImportCSVMissing'];    
+   }
+
+
+   $db->close();
+
 }
 
 //------------------------------------------------------------------------------
