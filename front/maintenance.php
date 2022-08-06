@@ -343,6 +343,12 @@ if (submit && isset($_POST['langselector_set'])) {
     </div>
 </div>
 
+<div class="box">
+    <div class="box-body">
+        
+    </div>
+</div>
+
 <div style="width: 100%; height: 20px;"></div>
     <!-- ----------------------------------------------------------------------- -->
 
