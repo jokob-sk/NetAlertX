@@ -256,7 +256,7 @@ def check_IP_format (pIP):
 
 
 #===============================================================================
-# INTERNET IP CHANGE
+# Cleanup Tasks
 #===============================================================================
 def cleanup_database ():
     # Header
@@ -264,8 +264,21 @@ def cleanup_database ():
     print ('    Timestamp:', startTime )
 
     openDB()
-    strdaystokeepOH = str(DAYS_TO_KEEP_ONLINEHISTORY)
-    strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
+
+    # keep 60 days if not specified how many days to keep
+    try:
+        strdaystokeepOH = str(DAYS_TO_KEEP_ONLINEHISTORY)
+    except NameError: # variable not defined, use a default
+        strdaystokeepOH = str(60) # 2 months
+
+    # keep 2 years if not specified how many days to keep
+    try:
+        strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
+    except NameError: # variable not defined, use a default
+        strdaystokeepEV = str(730) # 2 years
+
+    #strdaystokeepOH = str(DAYS_TO_KEEP_ONLINEHISTORY)
+    #strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
     # Cleanup Online History
     print ('\nCleanup Online_History, up to the lastest '+strdaystokeepOH+' days...')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-"+strdaystokeepOH+" day')")
