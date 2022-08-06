@@ -362,9 +362,14 @@ if (submit && isset($_POST['langselector_set'])) {
 </div>
 
 <div class="box">
-    <div class="box-body">
-        
-    </div>
+    <div class="box-body" style="text-align: center;">
+        <h5 class="text-aqua" style="font-size: 16px;"><?php echo $pia_lang['Maintenance_Github_package_a'];?>
+          <?php
+            echo "TODO";
+          ?>       
+          <?php echo $pia_lang['Maintenance_Github_package_b'];?>
+      </h5>
+  </div>
 </div>
 
 <div style="width: 100%; height: 20px;"></div>
