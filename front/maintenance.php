@@ -345,7 +345,7 @@ if (submit && isset($_POST['langselector_set'])) {
 
 <div class="box">
     <div class="box-body" style="text-align: center;">
-        <h5 class="text-aqua"><?php echo $pia_lang['Maintenance_Github_package_a'];?>
+        <h5 class="text-aqua" style="font-size: 16px;"><?php echo $pia_lang['Maintenance_Github_package_a'];?>
 <?php
 
 $curl_handle=curl_init();
