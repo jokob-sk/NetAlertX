@@ -267,13 +267,22 @@ def cleanup_database ():
     print ('    Timestamp:', startTime )
 
     openDB()    
-    strdaystokeepEV = str(365)  # str(DAYS_TO_KEEP_EVENTS)
+
+    # keep 10 years if not specified how many days to keep
+    try:
+        strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
+    except NameError: # variable not defined, use a default
+        strdaystokeepEV = str(3650) # 10 years
+   
     # Cleanup Online History
     print ('\nCleanup Online_History...')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
     print ('\nOptimize Database...')
+
+    # Cleanup Events
     print ('\nCleanup Events, up to the lastest '+strdaystokeepEV+' days...')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+strdaystokeepEV+" day')")
+
     # Shrink DB
     print ('\nShrink Database...')
     sql.execute ("VACUUM;")
