@@ -7,9 +7,11 @@ if [ -n "${TZ}" ]; then
   sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/config/pialert.conf   
   crontab < /home/pi/pialert/install/pialert.cron
 fi
+
 if [ -n "${PORT}" ]; then  
-  sed -ie 's/= 20211/= '${PORT}'/g' /etc/lighttpd/lighttpd.conf 
+  sed -ie 's/listen 20211/listen '${PORT}'/g' /etc/nginx/sites-available/default
 fi
 
-/etc/init.d/lighttpd start
+/etc/init.d/php7.4-fpm start
+/etc/init.d/nginx start
 cron -f
