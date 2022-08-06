@@ -69,24 +69,22 @@ A web frontend that allows:
     - ...
   - Manual Nmap scans
   - Speedtest for Device "Internet" in the details view
+  - Simple Network relationship display
+  - Maintenance tasks and Settings like:
+    - Status Infos (active scans, database size, backup counter)
+    - Theme Selection (blue, red, green, yellow, black, purple)
+    - Language Selection (english, german, spanish)
+    - Light/Dark-Mode Switch
+    - Pause arp-scan
+    - DB maintenance tools
+    - DB Backup and Restore
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
   | -------------------- | -------------------- |
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
 
-With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and own extensions, the new maintenance page was added with various possibilities for maintenance and settings:
-  - Status Infos (active scans, database size, backup counter)
-  - Theme Selection (blue, red, green, yellow, black, purple)
-  - Language Selection (english, german, spanish)
-  - Light/Dark-Mode Switch
-  - Pause arp-scan
-  - DB maintenance tools
-  - DB Backup and Restore
-
 ![Maintain screen dark][maintain_dark]
-
-In addition, the network page was created from this collaboration. Here you can map your network in a rudimentary way by assigning the devices to specific nodes (switches, routers).
 
 # Installation
 <!--- --------------------------------------------------------------------- --->
