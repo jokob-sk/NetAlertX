@@ -264,6 +264,8 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Löschen der Netzwerkaktivität'
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'Der Graph für die Netzwerkaktivität wird zurückgesetzt. Hierbei werden die Events nicht beeinflusst.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Netzwerkaktivität löschen';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Sind Sie sicher, dass Sie die Netzwerkaktivität zurücksetzen möchten?';
+$pia_lang['Maintenance_Github_package_a'] ='Das aktuellst Archiv von Pi.Alert (Fork leiweibau) wurde am ';
+$pia_lang['Maintenance_Github_package_b'] ='Uhr bereitgestellt';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page

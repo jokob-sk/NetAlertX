@@ -313,13 +313,13 @@ install_lighttpd() {
   print_header "Lighttpd & PHP"
 
   print_msg "- Installing apt-utils..."
-  sudo apt-get install apt-utils -y                               2>&1 >> "$LOG"
+  sudo apt-get install apt-utils -y                                   2>&1 >> "$LOG"
 
   print_msg "- Installing lighttpd..."
-  sudo apt-get install lighttpd -y                                2>&1 >> "$LOG"
+  sudo apt-get install lighttpd -y                                    2>&1 >> "$LOG"
   
   print_msg "- Installing PHP..."
-  sudo apt-get install php php-cgi php-fpm php-sqlite3 -y         2>&1 >> "$LOG"
+  sudo apt-get install php php-cgi php-fpm php-sqlite3 php-curl -y    2>&1 >> "$LOG"
 
   print_msg "- Activating PHP..."
   ERRNO=0
@@ -330,11 +330,11 @@ install_lighttpd() {
   fi
   
   print_msg "- Restarting lighttpd..."
-  sudo service lighttpd restart                                   2>&1 >> "$LOG"
+  sudo service lighttpd restart                                       2>&1 >> "$LOG"
   # sudo /etc/init.d/lighttpd restart                             2>&1 >> "$LOG"
 
   print_msg "- Installing sqlite3..."
-  sudo apt-get install sqlite3 -y                                 2>&1 >> "$LOG"
+  sudo apt-get install sqlite3 -y                                     2>&1 >> "$LOG"
 }
 
 

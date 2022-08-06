@@ -265,6 +265,7 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Deleting the network activity';
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'The network activity graph is reset. This does not affect the events.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Delete network activity';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Are you sure you want to reset the network activity?';
+$pia_lang['Maintenance_Github_package_a'] ='The latest Pi.Alert (Fork leiweibau) archive was posted on ';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
