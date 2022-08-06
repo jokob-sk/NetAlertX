@@ -913,35 +913,6 @@ function getLocations() {
 
 
 //------------------------------------------------------------------------------
-//  Query Device Data
-//------------------------------------------------------------------------------
-function getNetworkNodes() {
-  global $db;
-
-  // Device Data
-  $sql = 'SELECT * FROM network_infrastructure';
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-    // Push row data
-    $tableData[] = array('id'    => $row['device_id'], 
-                         'name'  => $row['net_device_name'].'/'.$row['net_device_typ'] );                        
-  }
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
-
-
-//------------------------------------------------------------------------------
 //  Status Where conditions
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {

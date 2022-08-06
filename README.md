@@ -100,8 +100,6 @@ With the work of [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert) and o
 
 ![Maintain screen dark][maintain_dark]
 
-In addition, the network page was created from this collaboration. Here you can map your network in a rudimentary way by assigning the devices to specific nodes (switches, routers).
-
 # Installation
 <!--- --------------------------------------------------------------------- --->
 Initially designed to run on a Raspberry Pi, probably it can run on many other
@@ -202,5 +200,6 @@ Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
 [screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
+[main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
 [maintain_dark]: /docs/img/5_maintain.jpg     "Maintain screen dark"
 
