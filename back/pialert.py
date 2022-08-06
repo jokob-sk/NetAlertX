@@ -172,14 +172,14 @@ def check_internet_IP ():
 def get_internet_IP ():
     # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
     # Using 'dig'
-    dig_args = ['dig', '+short', '-4', 'myip.opendns.com', '@resolver1.opendns.com']
-    cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
+    # dig_args = ['dig', '+short', '-4', 'myip.opendns.com', '@resolver1.opendns.com']
+    # cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
 
     ## BUGFIX #12 - Query IPv4 address (not IPv6)
     ## Using 'curl' instead of 'dig'
-    ## curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
-    #curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
-    #cmd_output = subprocess.check_output (curl_args, universal_newlines=True)
+    # curl_args = ['curl', '-s', 'https://myipv4.p1.opendns.com/get_my_ip']
+    curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
+    cmd_output = subprocess.check_output (curl_args, universal_newlines=True)
 
     # Check result is an IP
     IP = check_IP_format (cmd_output)
