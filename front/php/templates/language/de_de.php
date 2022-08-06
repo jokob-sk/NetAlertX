@@ -28,7 +28,7 @@ $pia_lang['Login_Toggle_Info_headline'] = 'Passwort Information';
 $pia_lang['Login_Toggle_Alert_headline'] = 'Passwort Warnung!';
 
 //////////////////////////////////////////////////////////////////
-// Device Page
+// Sidebar
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Navigation_Devices'] = 'Geräte';
@@ -36,6 +36,12 @@ $pia_lang['Navigation_Presence'] = 'Anwesenheit';
 $pia_lang['Navigation_Events'] = 'Ereignisse';
 $pia_lang['Navigation_Maintenance'] = 'Wartung';
 $pia_lang['Navigation_Network'] = 'Netzwerk';
+$pia_lang['Navigation_HelpFAQ'] = 'Hilfe / FAQ';
+
+//////////////////////////////////////////////////////////////////
+// Device Page
+//////////////////////////////////////////////////////////////////
+
 $pia_lang['Device_Title'] = 'Geräte';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Alle Geräte';
 $pia_lang['Device_Shortcut_Connected'] = 'Verbunden';
@@ -322,5 +328,58 @@ $pia_lang['Network_Table_IP'] = 'IP';
 // Help Page
 //////////////////////////////////////////////////////////////////
 
-$pia_lang['Navigation_HelpFAQ'] = 'Hilfe / FAQ';
+$pia_lang['HelpFAQ_Title'] = 'Hilfe / FAQ';
+$pia_lang['HelpFAQ_Cat_General'] = 'Allgemein';
+$pia_lang['HelpFAQ_Cat_Detail'] = 'Detailansicht';
+$pia_lang['HelpFAQ_Cat_General_100_head'] = 'Die Uhr oben rechts und die Zeiten der Events/Anwesenheit stimmen nicht (Zeitverschiebung).';
+$pia_lang['HelpFAQ_Cat_General_100_text_a'] = 'Auf deinem PC ist für die PHP Umgebung folgende Zeitzone voreingestellt:';
+$pia_lang['HelpFAQ_Cat_General_100_text_b'] = 'Sollte dies nicht die Zeitzone sein, in der du dich aufhältst, solltest du die Zeitzone in der PHP Konfigurationsdatei anpassen. Diese findest du in diesem Verzeichnis:';
+$pia_lang['HelpFAQ_Cat_General_100_text_c'] = 'Suche in dieser Datei nach dem Eintrag "date.timezone", entferne ggf. das führende ";" und trage die gewünschte Zeitzone ein. Eine Liste mit den unterstützten Zeitzonen findest du hier (<a href="https://www.php.net/manual/de/timezones.php" target="blank">Link</a>).';
+$pia_lang['HelpFAQ_Cat_General_101_head'] = 'Mein Netzwerk scheint langsamer zu werden, Streaming "ruckelt".';
+$pia_lang['HelpFAQ_Cat_General_101_text'] = 'Es kann durchaus sein, das leistungsschwache Geräte mit der Art und Weise, wie Pi.Alert neue Geräte im Netzwerk erkennt, an ihre Leistungsgrenzen kommen. Dies verstärkt sich noch einmal, 
+											 wenn diese Geräte per WLAN mit dem Netzwerk kommunizieren. Lösungen wären hier, wenn möglich ein Wechsel auf eine Kabelverbindung oder, falls das Geräte nur einen begrenzten Zeitraum genutzt 
+											 werden soll, den arp-Scan auf der Wartungsseite zu pausieren.';
+$pia_lang['HelpFAQ_Cat_General_102_head'] = 'Ich bekomme die Meldung, dass die Datenbank schreibgeschützt (read only) ist.';
+$pia_lang['HelpFAQ_Cat_General_102_text'] = 'Prüfe im Pi.Alert verzeichnis ob der Ordner der Datenbank (db) die richtigen Rechte zugewiesen bekommen hat:<br>
+              								 <span class="text-danger help_faq_code">drwxrwx---  2 (dein Username) www-data</span><br>
+              								 Sollte die Berechtigung nicht stimmen, kannst du sie mit folgenden Befehlen im Terminal oder der Konsole wieder setzen:<br>
+              								 <span class="text-danger help_faq_code">
+              								 sudo chgrp -R www-data ~/pialert/db<br>
+                							 chmod -R 770 ~/pialert/db
+              								 </span><br>
+              								 Wenn die Datenbank danach noch immer schreibgeschützt ist, versuche eine erneute Installation, oder das Zuückspielen eines Datenbank-Backups über die Wartungsseite.';
+$pia_lang['HelpFAQ_Cat_General_103_head'] = 'Die Login-Seite erscheint nicht, auch nicht nach der Passwortänderung.';
+$pia_lang['HelpFAQ_Cat_General_103_text'] = 'Neben dem Passwort, muss in der Konfigurationsdatei <span class="text-danger help_faq_code">~/pialert/config/pialert.conf</span> 
+              								 auch der Parameter <span class="text-danger help_faq_code">PIALERT_WEB_PROTECTION</span> auf <span class="text-danger help_faq_code">True</span> gesetzt sein.';
+$pia_lang['HelpFAQ_Cat_Device_200_head'] = 'Ich habe, mir nicht bekannte, Geräte in meiner Liste. Nach dem Löschen tauchen diese immer wieder auf.';
+$pia_lang['HelpFAQ_Cat_Device_200_text'] = 'Wenn du Pi-hole verwendest, beachte bitte, dass Pi.Alert Informationen von Pi-hole abruft. Pausiere Pi.Alert, gehe in Pi-hole auf die Settings-Seite und 
+         									lösche ggf. die betreffende DHCP-Lease. Anschließend schaue, ebenfalls in Pi-hole, unter Tools -> Network, ob sich dort die immer wiederkehrenden Hosts finden lassen. 
+         									Wenn ja, lösche diese dort ebenfalls. Nun kannst du Pi.Alert wieder starten. Jetzt sollte das Gerät/die Geräte nicht mehr auftauchen.';
+$pia_lang['HelpFAQ_Cat_Detail_300_head'] = 'Was bedeutet ';
+$pia_lang['HelpFAQ_Cat_Detail_300_text_a'] = 'meint ein Netzwerkgerät, welches über die Netzwerk-Seite erstellt wurde.';
+$pia_lang['HelpFAQ_Cat_Detail_300_text_b'] = 'bezeichnet die Anschlussnummer/Portnummer, an der das gerade bearbeitete Gerät mit diesem Netzwerkgerät verbunden ist.';
+$pia_lang['HelpFAQ_Cat_Detail_301_head_a'] = 'Wann wird nun gescannt? Bei ';
+$pia_lang['HelpFAQ_Cat_Detail_301_head_b'] = ' steht 1min aber der Graph zeigt 5min - Abstände an.';
+$pia_lang['HelpFAQ_Cat_Detail_301_text'] = 'Den zeitlichen Abstand zwischen den Scans legt der "Cronjob" fest, welcher standardmäßig auf 5min eingestellt ist. Die Benennung "1min" bezieht sich auf die zu erwartende Dauer des Scans. 
+        									Abhängig vor der Netzwerkkonfiguration kann diese Zeitangabe variieren. Um den Cronjob zu bearbeiten, kannst du im Terminal/der Konsole <span class="text-danger help_faq_code">crontab -e</span>
+        									eingeben und den Intervall ändern.';
+$pia_lang['HelpFAQ_Cat_Detail_302_head_a'] = 'Was bedeutet ';
+$pia_lang['HelpFAQ_Cat_Detail_302_head_b'] = ' und warum kann ich das nicht auswählen?';
+$pia_lang['HelpFAQ_Cat_Detail_302_text'] = 'Einige moderne Geräte generieren aus Datenschutzgründen zufällige MAC-Adressen, die keinem Hersteller mehr zugeordnet werden können und welche sich mit jeder neuen Verbindung wieder ändern. 
+        									Pi.Alert erkennt, ob es sich um eine solche zufällige MAC-Adresse handelt und aktiviert diese "Feld" automatisch. Um das Verhalten abzustellen, muss du in deinem Endgerät schauen, wie du die 
+        									MAC-Adressen-Generierung deaktivierst.';
+$pia_lang['HelpFAQ_Cat_Detail_303_head'] = 'Was ist Nmap und wozu dient es?';
+$pia_lang['HelpFAQ_Cat_Detail_303_text'] = 'Nmap ist ein Netzwerkscanner mit vielfältigen Möglichkeiten.<br>
+        									Wenn ein neues Gerät in deiner Liste auftaucht, hast du die Möglichkeit über den Nmap-Scan genauere Informationen über das Gerät zu erhalten.';
+$pia_lang['HelpFAQ_Cat_Presence_400_head'] = 'Geräte werden mit einer gelben Markierung und dem Hinweis "missing Event" angezeigt.';
+$pia_lang['HelpFAQ_Cat_Presence_400_text'] = 'Wenn dies geschieht hast du die Möglickeit, bei dem betreffenden Gerät (Detailsansicht) die Events zu löschen. Eine andere Möglichkeit wäre, das Gerät einzuschalten und zu warten, bis Pi.Alert mit dem nächsten 
+        									  Scan das Gerät als "Online" erkennt und anschließend das Gerät einfach wieder ausschalten. Nun sollte Pi.Alert mit dem nächsten Scan den Zustand des Gerätes ordentlich in der Datenbank vermerken.';
+$pia_lang['HelpFAQ_Cat_Presence_401_head'] = 'Ein Gerät wird als Anwesend angezeigt, obwohl es "Offline" ist.';
+$pia_lang['HelpFAQ_Cat_Presence_401_text'] = 'Wenn dies geschieht hast du die Möglickeit, bei dem betreffenden Gerät (Detailsansicht) die Events zu löschen. Eine andere Möglichkeit wäre, das Gerät einzuschalten und zu warten, bis Pi.Alert mit dem nächsten 
+        									  Scan das Gerät als "Online" erkennt und anschließend das Gerät einfach wieder ausschalten. Nun sollte Pi.Alert mit dem nächsten Scan den Zustand des Gerätes ordentlich in der Datenbank vermerken.';
+$pia_lang['HelpFAQ_Cat_Network_600_head'] = 'Was bringt mir diese Seite?';
+$pia_lang['HelpFAQ_Cat_Network_600_text'] = 'Diese Seite soll dir die Möglichkeit bieten, die Belegung deiner Netzwerkgeräte abzubilden. Dazu kannst du einen oder mehrere Switches, WLANs, Router, etc. erstellen,
+        									 sie ggf. mit einer Portanzahl versehen und bereits erkannte Geräte diesen zuordnen. Diese Zuordnung erfolgt in der Detailansicht, des zuzuordnenden Gerätes. So ist es dir möglich, schnell festzustellen 
+        									 an welchem Port ein Host angeschlossen und ob er online ist. Es ist möglich ein Gerät mehreren Ports (bei Portbündelung), als auch mehrere Geräte einem Port (virtuelle Maschinen), zuzuordnen.';
+
 ?>
