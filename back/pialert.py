@@ -288,7 +288,6 @@ def cleanup_database ():
     sql.execute ("VACUUM;")
 
     closeDB()
-
     # OK
     return 0
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 if ($_REQUEST['action'] == 'logout') {
@@ -30,6 +30,15 @@ $config_file_lines = file($config_file);
 
 
 // ###################################
+// ## Login language settings
+// ###################################
+  foreach (glob("../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+  }
+  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+  require 'php/templates/language/'.$pia_lang_selected.'.php';
+
+// ###################################
 // ## PIALERT_WEB_PROTECTION FALSE
 // ###################################
 
@@ -52,6 +61,7 @@ $config_file_lines = array_values(preg_grep('/^PIALERT_WEB_PASSWORD\s.*/', $conf
 $password_line = explode("'", $config_file_lines[0]);
 $Pia_Password = $password_line[1];
 
+// Password without Cookie check -> pass and set initial cookie
 if ($Pia_Password == hash('sha256',$_POST["loginpassword"]))
   {
       header('Location: devices.php');
@@ -63,6 +73,14 @@ if ($Pia_Password == hash('sha256',$_POST["loginpassword"]))
 if (($_SESSION["login"] == 1) || ($Pia_Password == $_COOKIE["PiAler_SaveLogin"]))
   {
       header('Location: devices.php');
+      $_SESSION["login"] = 1;
+      if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+  }
+
+// active Session or valid cookie (cookie not extends)
+if (($_SESSION["login"] == 1) || ($Pia_Password == $_COOKIE["PiAler_SaveLogin"]))
+  {
+      header('Location: /pialert/devices.php');
       $_SESSION["login"] = 1;
   }
 
@@ -163,7 +181,7 @@ if ($ENABLED_DARKMODE === True) {
 
   <div id="myDIV" class="box-body" style="margin-top: 50px; <?php echo $login_display_mode;?>">
       <div class="alert alert-<?php echo $login_mode;?> alert-dismissible">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">Ã—</button>
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
           <p><?php echo $pia_lang['Login_Psw_run'];?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?php echo $pia_lang['Login_Psw_new'];?></span><br><?php echo $pia_lang['Login_Psw_folder'];?></p>
