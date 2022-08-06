@@ -12,7 +12,7 @@ session_start();
 
 if ($_SESSION["login"] != 1)
   {
-      header('Location: /pialert/index.php');
+      header('Location: index.php');
       exit;
   }
 
@@ -114,7 +114,7 @@ if ($_SESSION["login"] != 1)
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart_a'];?>  <span class="maxlogage-interval">12</span> <?php echo $pia_lang['Device_Shortcut_OnlineChart_b'];?></h3>
+                <h3 class="box-title"><?php echo $pia_lang['Device_Shortcut_OnlineChart'];?></h3>
               </div>
               <div class="box-body">
                 <div class="chart">

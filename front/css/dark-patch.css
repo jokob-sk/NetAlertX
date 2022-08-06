@@ -594,7 +594,42 @@ input[type="password"]::-webkit-caps-lock-indicator {
 }
 
 /*** Additional fixes For Pi.Alert UI ***/
-
+.small-box {
+    border-radius: 10px;
+    border-top: 0px;
+}
+.pa-small-box-aqua .inner {
+  background-color: rgb(45,108,133);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-green .inner {
+  background-color: rgb(31,76,46);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-yellow .inner {
+  background-color: rgb(151,104,37);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-red .inner {
+  background-color: rgb(120,50,38);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-gray .inner {
+  background-color: #777;
+  /* color: rgba(20,20,20,30%); */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.pa-small-box-gray .inner h3 {
+  color:  #bbb;
+}
+.text-gray-20 {
+  color: rgba(220,220,220,30%);
+}
 .bg-gray {
   background-color: #888888 !important;
 }
@@ -670,4 +705,21 @@ input[type="password"]::-webkit-caps-lock-indicator {
 .login-box-body {
   color: #bec5cb;
   background-color: #272c30;
+}
+/* Add border radius to bottom of the status boxes*/
+.pa-small-box-footer {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.small-box > .inner h3, .small-box > .inner p {
+  margin-bottom: 0px;
+  margin-left: 0px;
+}
+.small-box:hover .icon {
+  font-size: 3.74em;
+}
+.small-box .icon { 
+  top: 0.01em;
+  font-size: 3.25em;
 }

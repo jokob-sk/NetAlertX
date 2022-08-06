@@ -4,13 +4,30 @@ session_start();
 if ($_REQUEST['action'] == 'logout') {
   session_destroy();
   setcookie("PiAler_SaveLogin", "", time() - 3600);
-  header('Location: /pialert/index.php');
+  header('Location: index.php');
 }
 // ##################################################
 // ## Login Processing start
 // ##################################################
 $config_file = "../config/pialert.conf";
 $config_file_lines = file($config_file);
+// ###################################
+// ## Login language settings
+// ###################################
+ if (file_exists('../db/setting_darkmode')) {
+    $ENABLED_DARKMODE = True;
+  }
+  foreach (glob("../db/setting_skin*") as $filename) {
+    $pia_skin_selected = str_replace('setting_','',basename($filename));
+  }
+  if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
+  
+  foreach (glob("../db/setting_language*") as $filename) {
+    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+  }
+  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+  require 'php/templates/language/'.$pia_lang_selected.'.php';
+
 
 // ###################################
 // ## Login language settings
@@ -31,7 +48,7 @@ $Pia_WebProtection = strtolower(trim($protection_line[1]));
 
 if ($Pia_WebProtection != 'true')
   {
-      header('Location: /pialert/devices.php');
+      header('Location: devices.php');
       $_SESSION["login"] = 1;
       exit;
   }
@@ -47,7 +64,15 @@ $Pia_Password = $password_line[1];
 // Password without Cookie check -> pass and set initial cookie
 if ($Pia_Password == hash('sha256',$_POST["loginpassword"]))
   {
-      header('Location: /pialert/devices.php');
+      header('Location: devices.php');
+      $_SESSION["login"] = 1;
+      if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+  }
+
+// active Session or valid cookie (cookie not extends)
+if (($_SESSION["login"] == 1) || ($Pia_Password == $_COOKIE["PiAler_SaveLogin"]))
+  {
+      header('Location: devices.php');
       $_SESSION["login"] = 1;
       if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
   }
@@ -116,12 +141,12 @@ if ($ENABLED_DARKMODE === True) {
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="/pialert/index.php">Pi.<b>Alert</b></a>
+    <a href="/index2.php">Pi.<b>Alert</b></a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg"><?php echo $pia_lang['Login_Box'];?></p>
-      <form action="/pialert/index.php" method="post">
+      <form action="index.php" method="post">
       <div class="form-group has-feedback">
         <input type="password" class="form-control" placeholder="<?php echo $pia_lang['Login_Psw-box'];?>" name="loginpassword">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>

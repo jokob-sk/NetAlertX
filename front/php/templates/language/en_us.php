@@ -251,11 +251,11 @@ $pia_lang['Maintenance_Tool_del_allevents30_noti_text'] = 'Are you sure you want
 $pia_lang['Maintenance_Tool_backup'] = 'DB Backup';
 $pia_lang['Maintenance_Tool_backup_text'] = 'The database backups are located in the database directory as a zip-archive, named with the creation date. There is no maximum number of backups.';
 $pia_lang['Maintenance_Tool_backup_noti'] = 'DB Backup';
-$pia_lang['Maintenance_Tool_backup_noti_text'] = 'Are you sure you want to exectute the the DB Backup? Be sure that no scan is currently running.';
+$pia_lang['Maintenance_Tool_backup_noti_text'] = 'Are you sure you want to execute the the DB Backup? Be sure that no scan is currently running.';
 $pia_lang['Maintenance_Tool_restore'] = 'DB Restore';
 $pia_lang['Maintenance_Tool_restore_text'] = 'The latest backup can be restored via the button, but older backups can only be restored manually. After the restore, make an integrity check on the database for safety, in case the db was currently in write access when the backup was created.';
 $pia_lang['Maintenance_Tool_restore_noti'] = 'DB Restore';
-$pia_lang['Maintenance_Tool_restore_noti_text'] = 'Are you sure you want to exectute the the DB Restore? Be sure that no scan is currently running.';
+$pia_lang['Maintenance_Tool_restore_noti_text'] = 'Are you sure you want to execute the the DB Restore? Be sure that no scan is currently running.';
 $pia_lang['Maintenance_Tool_purgebackup'] = 'Purge Backups';
 $pia_lang['Maintenance_Tool_purgebackup_text'] = 'All other backups will be deleted except for the last 3 backups.';
 $pia_lang['Maintenance_Tool_purgebackup_noti'] = 'Purge Backups';
@@ -264,6 +264,14 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Deleting the network activity';
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'The network activity graph is reset. This does not affect the events.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Delete network activity';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Are you sure you want to reset the network activity?';
+$pia_lang['Maintenance_Tool_ExportCSV'] = 'CSV Export';
+$pia_lang['Maintenance_Tool_ExportCSV_text'] = 'Generate a CSV (comma separated value) file containing the list of Devices including the Network relationships between Network Nodes and connected devices.';
+$pia_lang['Maintenance_Tool_ExportCSV_noti'] = 'CSV Export';
+$pia_lang['Maintenance_Tool_ExportCSV_noti_text'] = 'Are you sure you want to generate a CSV file?';
+$pia_lang['Maintenance_Tool_ImportCSV'] = 'CSV Import';
+$pia_lang['Maintenance_Tool_ImportCSV_text'] = 'Before using this function, please make a backup. Import a CSV (comma separated value) file containing the list of Devices including the Network relationships between Network Nodes and connected devices. To do that place the CSV file named <b>devices.csv</b> into your <b>/config</b> folder.';
+$pia_lang['Maintenance_Tool_ImportCSV_noti'] = 'CSV Import';
+$pia_lang['Maintenance_Tool_ImportCSV_noti_text'] = 'Are you sure you want to import the CSV file? This will completely overwrite the devices in your database.';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
@@ -290,6 +298,10 @@ $pia_lang['BackDevices_DBTools_UpdDevError'] = 'Error updating device';
 $pia_lang['BackDevices_DBTools_Upgrade'] = 'Database upgraded successfully';
 $pia_lang['BackDevices_DBTools_UpgradeError'] = 'Database upgrade failed';
 $pia_lang['BackDevices_DBTools_Purge'] = 'The oldest backups were deleted';
+$pia_lang['BackDevices_DBTools_ImportCSV'] = 'The devices from the CSV file were imported successfully.';
+$pia_lang['BackDevices_DBTools_ImportCSVError'] = 'The CSV file couldn\'t be imported. Make sure the format is correct.';
+$pia_lang['BackDevices_DBTools_ImportCSVMissing'] = 'The CSV file couldn\'t be found under <b>/config/devices.csv.</b>';
+
 
 //////////////////////////////////////////////////////////////////
 // Network Page
@@ -322,5 +334,6 @@ $pia_lang['Network_ManageDel_Submit'] = 'Delete';
 $pia_lang['Network_Table_State'] = 'State';
 $pia_lang['Network_Table_Hostname'] = 'Hostname';
 $pia_lang['Network_Table_IP'] = 'IP';
+$pia_lang['Network_UnassignedDevices'] = 'Unassigned devices';
 
 ?>

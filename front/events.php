@@ -1,6 +1,6 @@
 <!-- ---------------------------------------------------------------------------
 #  Pi.Alert
-#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#  Open Source Network Guard / WIFI & LAN intrusion detector
 #
 #  events.php - Front module. Events page
 #-------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ session_start();
 
 if ($_SESSION["login"] != 1)
   {
-      header('Location: /pialert/index.php');
+      header('Location: index.php');
       exit;
   }
 

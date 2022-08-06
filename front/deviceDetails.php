@@ -12,7 +12,7 @@ session_start();
 
 if ($_SESSION["login"] != 1)
   {
-      header('Location: /pialert/index.php');
+      header('Location: index.php');
       exit;
   }
 
@@ -263,7 +263,8 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
                       </div>
-
+                      <!-- Network -->
+                      <h4 class="bottom-border-aqua"><?php echo $pia_lang['DevDetail_MainInfo_Network_Title'];?></h4>                    
                       <div class="form-group">
                         <label class="col-sm-6 control-label"><?php echo $pia_lang['DevDetail_MainInfo_Network'];?></label>
                         <div class="col-sm-6">  
@@ -814,44 +815,85 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( $('#dropdownOwner')[0],                      'getOwners',       'txtOwner');
-  initializeCombo ( $('#dropdownDeviceType')[0],                 'getDeviceTypes',  'txtDeviceType');
-  initializeCombo ( $('#dropdownGroup')[0],                      'getGroups',       'txtGroup');
-  initializeCombo ( $('#dropdownLocation')[0],                   'getLocations',    'txtLocation');
-  initializeCombo ( $('#dropdownNetworkNodeMac')[0],             'getNetworkNodes', 'txtNetworkNodeMac');
+  initializeCombo ( '#dropdownOwner',                      'getOwners',       'txtOwner', true);
+  initializeCombo ( '#dropdownDeviceType',                 'getDeviceTypes',  'txtDeviceType', true);
+  initializeCombo ( '#dropdownGroup',                      'getGroups',       'txtGroup', true);
+  initializeCombo ( '#dropdownLocation',                   'getLocations',    'txtLocation', true);
+  initializeCombo ( '#dropdownNetworkNodeMac',             'getNetworkNodes', 'txtNetworkNodeMac', false);
 
   // Initialize static combos
   initializeComboSkipRepeated ();
 }
 
-function initializeCombo (HTMLelement, queryAction, txtDataField) {
-  // get data from server
-  $.get('php/server/devices.php?action='+queryAction, function(data) {
-    var listData = JSON.parse(data);
-    var order = 1;
+function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
 
-    HTMLelement.innerHTML = ''
-    // for each item
-    listData.forEach(function (item, index) {
-      // insert line divisor
-      if (order != item['order']) {
-        HTMLelement.innerHTML += '<li class="divider"></li>';
-        order = item['order'];
-      }
+  // check if we have the value cached already
+  var dropdownHtmlContent = useCache ? getCache(dropdownId) : ""; 
 
-      id = item['name'];
-      // use explicitly specified id (value) if avaliable
-      if(item['id'])
-      {
-        id = item['id'];
-      }
+  if(dropdownHtmlContent == "")
+  {
+    // get data from server
+    $.get('php/server/devices.php?action='+queryAction, function(data) {
+      var listData = JSON.parse(data);
+      var order = 1;
+      
 
-      // add dropdown item
-      HTMLelement.innerHTML +=
-        '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
-        txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
+      // for each item
+      listData.forEach(function (item, index) {
+        // insert line divisor
+        if (order != item['order']) {
+          dropdownHtmlContent += '<li class="divider"></li>';
+          order = item['order'];
+        }
+
+        id = item['name'];
+        // use explicitly specified id (value) if avaliable
+        if(item['id'])
+        {
+          id = item['id'];
+        }
+
+        // add dropdown item
+        dropdownHtmlContent +=
+          '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
+          txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
+      });
+
+      writeDropdownHtml(dropdownId, dropdownHtmlContent)
     });
-  });
+  } else
+  {
+    writeDropdownHtml(dropdownId, dropdownHtmlContent)
+  }
+}
+
+// write out the HTML for the dropdown
+function writeDropdownHtml(dropdownId, dropdownHtmlContent)
+{
+  // cache
+  setCache(dropdownId, dropdownHtmlContent);
+
+  // write HTML for the dropdown
+  var HTMLelement = $(dropdownId)[0];
+  HTMLelement.innerHTML = ''
+  HTMLelement.innerHTML += dropdownHtmlContent;
+}
+
+function getCache(key)
+{
+  // check cache
+  if(sessionStorage.getItem(key))
+  {
+    return sessionStorage.getItem(key);
+  } else
+  {
+    return "";
+  }
+}
+
+function setCache(key, data)
+{
+  sessionStorage.setItem(key, data); 
 }
 
 
@@ -1139,7 +1181,7 @@ function getDeviceData (readAllData=false) {
       $('#txtGroup').val               ('--');
       $('#txtLocation').val            ('--');
       $('#txtComments').val            ('--');
-      $('#txtNetworkNodeMac').val         ('--');
+      $('#txtNetworkNodeMac').val      ('--');
       $('#txtNetworkPort').val         ('--');
 
       $('#txtFirstConnection').val     ('--');
@@ -1228,7 +1270,7 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);
-        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC']);
+        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC_ADDR']);
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);

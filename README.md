@@ -10,11 +10,20 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 *(Apologies for my English and my limited knowledge of Python, php and
 JavaScript)*
 
-## Modifications within this Fork
-  - Only one scan cycle
-  - Modified scanmethod. If you want to go back to the original method comment line 488 and uncomment line 491 in ~/pialert/back/pialert.py
-  - Because of the modified scan, the extended scan parameters in the configuration file do not work. For this reason they were removed. 
-  - The Backend has the additional option "cleanup"
+# Docker image 🐳
+[![Docker](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
+[![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
+  <a href="https://hub.docker.com/r/jokobsk/pi.alert">
+    <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
+  </a>
+
+🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert). <br/>
+🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert). <br/>
+📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
+📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
+
+
+Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
 The system continuously scans the network for:
@@ -47,13 +56,16 @@ In charge of:
     described
   - Store the information in the DB
   - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
+  - Optional speedtest for Device "Internet"
   - DB cleanup tasks via cron
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
 
 ### Front
-There is a configurable login to prevent unauthorized use. The default password is "123456". By default, this is disabled. If you want to use password protection, enable it in the configuration file ~/pialert/config/pialert.conf.
+There is a configurable login to prevent unauthorized use. 
+
+> * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
@@ -67,7 +79,9 @@ A web frontend that allows:
     - Down alerts
     - IP's
     - Manual Nmap scans
-    - Speedtest for Device "Internet" in the details view
+    - Optional speedtest for Device "Internet"
+    - Simple Network relationship display
+    - CSV Export / Import (Experimental)
     - ...
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -93,11 +107,31 @@ In addition, the network page was created from this collaboration. Here you can 
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
+> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md)
+
+Instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+
+- One-step Automated Install:
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+  
+Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
+  
 - One-step Automated Install:
   #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
+  
+- One-step Automated Install without Webserver if another Webserver is already installed. (not recommended):
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
 
-- [Installation Guide (step by step)](docs/INSTALL.
+- [Installation Guide (step by step)](docs/INSTALL.md)
 
+
+# Update
+<!--- --------------------------------------------------------------------- --->
+- One-step Automated Update (pucherot):
+  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
+  
+- One-step Automated Update (leiweibau):
+  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
 
 # Uninstall process
 <!--- --------------------------------------------------------------------- --->
@@ -146,7 +180,7 @@ Linux distributions.
   pi.alert.application@gmail.com
   
   ***Suggestions and comments are welcome***
-
+  
 ### Special thanks 🥇
 
   This code is a collaborative body of work, with special thanks to: 
@@ -155,7 +189,8 @@ Linux distributions.
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation
-   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): Many more things
+   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+   - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
@@ -163,7 +198,7 @@ Linux distributions.
 [screen2]: ./docs/img/2_2_device_sessions.jpg "Screen 2"
 [screen3]: ./docs/img/2_3_device_presence.jpg "Screen 3"
 [screen4]: ./docs/img/3_presence.jpg          "Screen 4"
-[screen5]: ./docs/img/2_4_device_nmap.jpg     "Screen 5"
+[screen5]: ./docs/img/2_4_network.png         "Screen 5"
 [screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"

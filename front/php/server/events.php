@@ -7,7 +7,13 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
-
+// ## TimeZone processing
+$config_file = "../../../config/pialert.conf";
+$config_file_lines = file($config_file);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+$timezone_line = explode("'", $config_file_lines_timezone[0]);
+$Pia_TimeZone = $timezone_line[1];
+date_default_timezone_set($Pia_TimeZone);
 
 //------------------------------------------------------------------------------
   // External files
@@ -46,51 +52,57 @@ function getEventsTotals() {
   global $db;
 
   // Request Parameters
-  $periodDate = getDateFromPeriod();
+  $periodDate = $_REQUEST['period'];
 
-  // SQL 
-  $SQL1 = 'SELECT Count(*)
-           FROM Events 
-           WHERE eve_DateTime >= '. $periodDate;
- 
-  $SQL2 = 'SELECT Count(*)
-           FROM Sessions ';
+  $periodDateSQL = "";
+  $days = "";
 
-  // All
-  $result = $db->query($SQL1);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsAll = $row[0];
+  switch ($periodDate) {
+    case '7 days':
+      $days = "7";
+      break;
+    case '1 month':
+      $days = "30";
+      break;
+    case '1 year':
+      $days = "365";
+      break;
+    case '100 years':
+      $days = "3650"; //10 years
+      break;
+    default:
+    $days = "1";    
+  }  
 
-  // Sessions
-  $result = $db->query($SQL2. ' WHERE (  ses_DateTimeConnection >= '. $periodDate .'
-                                      OR ses_DateTimeDisconnection >= '. $periodDate .'
-                                      OR ses_StillConnected = 1 ) ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsSessions = $row[0];
+  $periodDateSQL = "-".$days." day"; 
 
-  // Missing
-  $result = $db->query($SQL2. ' WHERE    (ses_DateTimeConnection IS NULL    AND ses_DateTimeDisconnection >= '. $periodDate .' )
-                                      OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= '. $periodDate .' )' );
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsMissing = $row[0];
+  $resultJSON = "";
 
-  // Voided
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "VOIDED%" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsVoided = $row[0];
+  // check cache if JSON available in a cookie
+  if(getCache("getEventsTotals".$days) != "")
+  {
+    $resultJSON = getCache("getEventsTotals".$days);
+  } else
+  {
+    // one query to get all numbers, whcih is quicker than multiple queries
+    $sql = "select 
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >=  date('now', '".$periodDateSQL."')) as all_events, 
+              (SELECT Count(*) FROM Sessions as sessions WHERE (  ses_DateTimeConnection >= date('now', '".$periodDateSQL."') OR ses_DateTimeDisconnection >= date('now', '".$periodDateSQL."') OR ses_StillConnected = 1 ))  as sessions,
+              (SELECT Count(*) FROM Sessions WHERE ((ses_DateTimeConnection IS NULL    AND ses_DateTimeDisconnection >= date('now', '".$periodDateSQL."' )) OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= date('now', '".$periodDateSQL."' )))) as missing,
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'VOIDED%' ) as voided, 
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'New Device' ) as new,
+              (SELECT Count(*) FROM Events  WHERE eve_DateTime >= date('now', '".$periodDateSQL."') AND eve_EventType LIKE 'Device Down' ) as down";
 
-  // New
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "New Device" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsNew = $row[0];
+    $result = $db->query($sql);
+    $row = $result -> fetchArray (SQLITE3_NUM);
+    $resultJSON = json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]));
 
-  // Down
-  $result = $db->query($SQL1. ' AND eve_EventType LIKE "Device Down" ');
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $eventsDown = $row[0];
-
-  // Return json
-  echo (json_encode (array ($eventsAll, $eventsSessions, $eventsMissing, $eventsVoided, $eventsNew, $eventsDown)));
+    // save JSON result to cache
+    setCache("getEventsTotals".$days, $resultJSON );
+  }
+  
+  // Return json  
+  echo ($resultJSON);
 }
 
 
@@ -217,15 +229,15 @@ function getDeviceSessions() {
     
     // Disconnection DateTime
     if ($row['ses_StillConnected'] == true) {
-      $end = '...';
+      $end = '...'; 
     } elseif ($row['ses_EventTypeDisconnection'] == '<missing event>') {
-      $end = $row['ses_EventTypeDisconnection'];
+      $end = $row['ses_EventTypeDisconnection'];      
     } else {
       $end = formatDate ($row['ses_DateTimeDisconnection']);
     }
 
     // Duration
-    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeConnection'] == NULL || $row['ses_EventTypeDisconnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == NULL) {
       $dur = '...';
     } elseif ($row['ses_StillConnected'] == true) {
       $dur = formatDateDiff ($row['ses_DateTimeConnection'], '');  //***********
@@ -261,7 +273,6 @@ function getDevicePresence() {
 
   // Request Parameters
   $mac        = $_REQUEST['mac'];
-  $periodDate = getDateFromPeriod();
   $startDate  = '"'. formatDateISO ($_REQUEST ['start']) .'"';
   $endDate    = '"'. formatDateISO ($_REQUEST ['end'])   .'"';
 
@@ -276,7 +287,7 @@ function getDevicePresence() {
                  END AS ses_DateTimeConnectionCorrected,
 
                  CASE
-                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
+                   WHEN ses_EventTypeDisconnection = "<missing event>" OR ses_EventTypeDisconnection = NULL THEN
                         (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
                    ELSE ses_DateTimeDisconnection
                  END AS ses_DateTimeDisconnectionCorrected
@@ -290,13 +301,14 @@ function getDevicePresence() {
   // arrays of rows
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
-  if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-        $color = '#f39c12';
-      } elseif ($row['ses_StillConnected'] == 1 ) {
-        $color = '#00a659';
-      } else {
-        $color = '#0073b7';
-      }
+    if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
+      $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
+    } else {
+      $color = '#0073b7';
+    }
+
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .
@@ -333,7 +345,7 @@ function getEventsCalendar() {
   $startDate  = '"'. $_REQUEST ['start'] .'"';
   $endDate    = '"'. $_REQUEST ['end'] .'"';
 
-  // SQL
+  // SQL 
   $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
                  ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
             
@@ -358,12 +370,12 @@ function getEventsCalendar() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // Event color
     if ($row['ses_EventTypeConnection'] == '<missing event>' || $row['ses_EventTypeDisconnection'] == '<missing event>') {
-        $color = '#f39c12';
-      } elseif ($row['ses_StillConnected'] == 1 ) {
-        $color = '#00a659';
-      } else {
-        $color = '#0073b7';
-      }
+      $color = '#f39c12';
+    } elseif ($row['ses_StillConnected'] == 1 ) {
+      $color = '#00a659';
+    } else {
+      $color = '#0073b7';
+    }
 
     // tooltip
     $tooltip = 'Connection: '    . formatEventDate ($row['ses_DateTimeConnection'],    $row['ses_EventTypeConnection'])    . chr(13) .

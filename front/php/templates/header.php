@@ -88,6 +88,7 @@ if ($ENABLED_DARKMODE === True) {
 ?>
 <!-- Servertime to the right of the hostname -->
 <script>
+
 var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
 
 function show_pia_servertime() {
@@ -118,7 +119,7 @@ function show_pia_servertime() {
 
 <!-- ----------------------------------------------------------------------- -->
     <!-- Logo -->
-    <a href="." class="logo">
+    <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">P<b>a</b></span>
       <!-- logo for regular state and mobile devices -->
@@ -162,7 +163,7 @@ function show_pia_servertime() {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="/pialert/index.php?action=logout" class="btn btn-danger">Sign out</a>
+                  <a href="index.php?action=logout" class="btn btn-danger">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -218,11 +219,6 @@ function show_pia_servertime() {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
         </li>
-
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
-          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo $pia_lang['Navigation_HelpFAQ'];?></span></a>
-        </li>
-
 <!--
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Config</span>
