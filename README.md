@@ -196,7 +196,7 @@ Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
 [screen2]: ./docs/img/2_2_device_sessions.jpg "Screen 2"
 [screen3]: ./docs/img/2_3_device_presence.jpg "Screen 3"
 [screen4]: ./docs/img/3_presence.jpg          "Screen 4"
-[screen5]: ./docs/img/2_4_device_nmap.jpg     "Screen 5"
+[screen5]: ./docs/img/2_4_network.png         "Screen 5"
 [screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"

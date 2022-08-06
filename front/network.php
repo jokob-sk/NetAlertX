@@ -74,7 +74,7 @@
       }
 
       // Create pane content (displayed inside of the tabs)      
-      function createPane($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $activetab){
+      function createPane($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $node_parent_mac, $activetab){
         global $pia_lang; //language strings
 
         // online/offline status circle (red/green)
@@ -117,6 +117,16 @@
                                     .$node_badge.
                                   '</td>
                                 </tr>
+                                <tr> 
+                                  <td>
+                                    <b>'.$pia_lang['DevDetail_MainInfo_Network'].'</b> 
+                                  </td>
+                                  <td>  
+                                    <a href="./deviceDetails.php?mac='.$node_parent_mac.'">
+                                      <b>'.$node_parent_mac.'</b>
+                                    </a>                                 
+                                  </td>
+                              </tr>
                               </tbody>
                             </table>
                             <br>
@@ -217,7 +227,7 @@
         $str_table_close =    '</tbody>
                             </table>';
 
-        // no connected device - don't render table, just dispaly some info
+        // no connected device - don't render table, just display some info
         if($str_table_rows == "")
         {
           $str_table = "<div>
@@ -254,24 +264,25 @@
     //                          \
     //                          PC (leaf)
     
-    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count
-                  FROM 
-                  (
-                        SELECT  a.dev_Name as  node_name,        
-                              a.dev_MAC as node_mac,
-                              a.dev_PresentLastScan as online,
-                              a.dev_DeviceType as node_type 
-                        FROM Devices a 
-                        WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
-                  ) t1
-                  LEFT JOIN
-                  (
-                        SELECT  b.dev_Network_Node_MAC_ADDR as node_mac_2,
-                              count() as node_ports_count 
-                        FROM Devices b 
-                        WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
-                  ) t2
-                  ON (t1.node_mac = t2.node_mac_2);
+    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac
+            FROM 
+            (
+                  SELECT  a.dev_Name as  node_name,        
+                        a.dev_MAC as node_mac,
+                        a.dev_PresentLastScan as online,
+                        a.dev_DeviceType as node_type,
+                        a.dev_Network_Node_MAC_ADDR as parent_mac
+                  FROM Devices a 
+                  WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
+            ) t1
+            LEFT JOIN
+            (
+                  SELECT  b.dev_Network_Node_MAC_ADDR as node_mac_2,
+                        count() as node_ports_count 
+                  FROM Devices b 
+                  WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+            ) t2
+            ON (t1.node_mac = t2.node_mac_2);
           ";
 
     $result = $db->query($sql);    
@@ -284,6 +295,7 @@
                               'node_name'               => $row['node_name'],
                               'online'                  => $row['online'],
                               'node_type'               => $row['node_type'],
+                              'parent_mac'              => $row['parent_mac'],
                               'node_ports_count'        => $row['node_ports_count']); 
     }
 
@@ -317,6 +329,7 @@
                   $row['online'], 
                   $row['node_type'], 
                   $row['node_ports_count'],
+                  $row['parent_mac'],
                   $activetab);
 
                   $activetab = ""; // reset active tab indicator, only the first tab is active
@@ -326,10 +339,92 @@
     $db->close();
 
     ?>
-                  <!-- /.tab-pane -->
-          </div>
-         
+    <!-- /.tab-pane -->
+    </div>         
   </section>
+
+  <!-- Unassigned devices -->
+  <?php
+    global $pia_lang; //language strings
+    OpenDB();
+
+    // Get all Unassigned / unconnected nodes 
+    $func_sql = 'SELECT dev_MAC as mac,  
+                        dev_PresentLastScan as online, 
+                        dev_Name as name,                        
+                        dev_LastIP as last_ip,
+                        dev_Network_Node_MAC_ADDR
+                    FROM Devices WHERE (dev_Network_Node_MAC_ADDR is null or dev_Network_Node_MAC_ADDR = "" or dev_Network_Node_MAC_ADDR = " " ) and dev_MAC not like "%internet%" order by name asc'; 
+
+    global $db;
+    $func_result = $db->query($func_sql);  
+
+    // array 
+    $tableData = array();
+    while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
+      // Push row data      
+      $tableData[] = array( 'mac'             => $row['mac'],
+                            'online'          => $row['online'],
+                            'name'            => $row['name'],
+                            'last_ip'         => $row['last_ip']); 
+    }
+
+    // Don't do anything if empty
+    if (!(empty($tableData))) {
+      $str_table_header =  '
+                        <div class="content">
+                          <div class="box box-aqua box-body">
+                            <section> 
+                              <h4>
+                                '.$pia_lang['Network_UnnasignedDevices'].'
+                              </h4>
+                              <table class="table table-striped">
+                                <tbody>
+                                <tr>                              
+                                  <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
+                                  <th>'.$pia_lang['Network_Table_Hostname'].'</th>
+                                  <th>'.$pia_lang['Network_Table_IP'].'</th>
+                                </tr>';   
+
+      $str_table_rows = "";        
+
+      foreach ($tableData as $row) {  
+        
+        if ($row['online'] == 1) {
+          $state = badge_online;
+        } else {
+          $state = badge_offline;
+        }
+
+        $str_table_rows = $str_table_rows.
+                                          '<tr>                  
+                                            <td>'
+                                              .$state.
+                                            '</td>
+                                            <td style="padding-left: 10px;">
+                                              <a href="./deviceDetails.php?mac='.$row['mac'].'">
+                                                <b>'.$row['name'].'</b>
+                                              </a>
+                                            </td>
+                                            <td>'
+                                              .$row['last_ip'].
+                                            '</td>
+                                          </tr>';
+
+      }        
+
+      $str_table_close =    '</tbody>
+                          </table>
+                        </section>
+                      </div>
+                    </div>';
+
+      // write the html
+      echo $str_table_header.$str_table_rows.$str_table_close;     
+    }
+
+    $db->close();
+  ?>
 
     <!-- /.content -->
   </div>
