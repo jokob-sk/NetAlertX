@@ -376,7 +376,7 @@
                           <div class="box box-aqua box-body">
                             <section> 
                               <h4>
-                                '.$pia_lang['Network_UnnasignedDevices'].'
+                                '.$pia_lang['Network_UnassignedDevices'].'
                               </h4>
                               <table class="table table-striped">
                                 <tbody>

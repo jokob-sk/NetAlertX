@@ -334,6 +334,6 @@ $pia_lang['Network_ManageDel_Submit'] = 'Delete';
 $pia_lang['Network_Table_State'] = 'State';
 $pia_lang['Network_Table_Hostname'] = 'Hostname';
 $pia_lang['Network_Table_IP'] = 'IP';
-$pia_lang['Network_UnnasignedDevices'] = 'Unnasigned devices';
+$pia_lang['Network_UnassignedDevices'] = 'Unassigned devices';
 
 ?>
