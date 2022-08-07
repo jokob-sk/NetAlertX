@@ -98,7 +98,7 @@ def main ():
         return res
     
     # Reporting
-    if cycle != 'internet_IP':
+    if cycle != 'internet_IP' and cycle != 'cleanup':
         email_reporting()
 
     # Close SQL

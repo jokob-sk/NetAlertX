@@ -361,6 +361,19 @@ if (submit && isset($_POST['langselector_set'])) {
       </div>
 </div>
 
+<div class="box">
+    <div class="box-body" style="text-align: center;">
+        <h5 class="text-aqua" style="font-size: 16px;">
+          <span>
+            <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github&amp;style=plastic">
+          </span>
+          <span>
+            <img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">
+          </span>          
+      </h5>
+  </div>
+</div>
+
 <div style="width: 100%; height: 20px;"></div>
     <!-- ----------------------------------------------------------------------- -->
 
