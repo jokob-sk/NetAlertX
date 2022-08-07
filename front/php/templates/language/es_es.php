@@ -37,6 +37,7 @@ $pia_lang['Navigation_Presence'] = 'Historial';
 $pia_lang['Navigation_Events'] = 'Eventos';
 $pia_lang['Navigation_Maintenance'] = 'Mantenimiento';
 $pia_lang['Navigation_Network'] = 'Red';
+$pia_lang['Navigation_HelpFAQ'] = 'Ayuda / FAQ';
 $pia_lang['Device_Title'] = 'Dispositivos';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Todos';
 $pia_lang['Device_Shortcut_Connected'] = 'Conectado(s)';
