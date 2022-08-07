@@ -341,9 +341,9 @@ $pia_lang['Network_UnassignedDevices'] = 'Unassigned devices';
 // Help Page
 //////////////////////////////////////////////////////////////////
 
-$pia_lang['HelpFAQ_Title'] = 'Hilfe / FAQ';
-$pia_lang['HelpFAQ_Cat_General'] = 'Allgemein';
-$pia_lang['HelpFAQ_Cat_Detail'] = 'Detailsansicht';
+$pia_lang['HelpFAQ_Title'] = 'Help / FAQ';
+$pia_lang['HelpFAQ_Cat_General'] = 'General';
+$pia_lang['HelpFAQ_Cat_Detail'] = 'Details';
 $pia_lang['HelpFAQ_Cat_General_100_head'] = 'The clock on the top right and the times of the events/presence are not correct (time difference).';
 $pia_lang['HelpFAQ_Cat_General_100_text_a'] = 'On your PC the following time zone is set for the PHP environment:';
 $pia_lang['HelpFAQ_Cat_General_100_text_b'] = 'If this is not the timezone you are in, you should change the timezone in the PHP configuration file. You can find it in this directory:';
@@ -369,7 +369,7 @@ $pia_lang['HelpFAQ_Cat_Device_200_text'] = 'If you use Pi-hole, please note that
          									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there. 
          									If yes, delete them there as well. Now you can start Pi.Alert again. Now the device(s) should not show up anymore.';
 $pia_lang['HelpFAQ_Cat_Detail_300_head'] = 'What means ';
-$pia_lang['HelpFAQ_Cat_Detail_300_text_a'] = 'means a network device created from the network page.';
+$pia_lang['HelpFAQ_Cat_Detail_300_text_a'] = 'means a network device (a device of the type AP, Gateway, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet).';
 $pia_lang['HelpFAQ_Cat_Detail_300_text_b'] = 'designates the port number where the currently edited device is connected to this network device.';
 $pia_lang['HelpFAQ_Cat_Detail_301_head_a'] = 'When is scanning now? At ';
 $pia_lang['HelpFAQ_Cat_Detail_301_head_b'] = ' says 1min but the graph shows 5min intervals.';
@@ -392,7 +392,6 @@ $pia_lang['HelpFAQ_Cat_Presence_401_text'] = 'If this happens, you have the poss
 											  and then simply switch the device off again. Now Pi.Alert should properly note the state of the device in the database with the next scan.';
 $pia_lang['HelpFAQ_Cat_Network_600_head'] = 'What is this page for?';
 $pia_lang['HelpFAQ_Cat_Network_600_text'] = 'This page should offer you the possibility to map the assignment of your network devices. For this purpose, you can create one or more switches, WLANs, routers, etc., provide them with a port number if necessary and assign already detected 
-											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online. It is possible to assign a device to multiple 
-											 ports (port bundling), as well as multiple devices to one port (virtual machines).';
+											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online.';
 
 ?>
