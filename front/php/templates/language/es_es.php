@@ -17,16 +17,16 @@ $pia_lang['Gen_Switch'] = 'Cambiar';
 // TeroRERO Off $pia_lang['Login_Box'] = 'Inicie su sesión';
 $pia_lang['Login_Box'] = 'Ingrese su contraseña';
 $pia_lang['Login_Remember'] = 'Recordar';
-$pia_lang['Login_Remember_small'] = '(valid for 7 days)';
+$pia_lang['Login_Remember_small'] = '(válido por 7 días)';
 $pia_lang['Login_Submit'] = 'Ingresar';
 $pia_lang['Login_Psw_run'] = 'Para cambiar contraseña ejecute:';
 $pia_lang['Login_Psw_new'] = 'nueva_contraseña';
 $pia_lang['Login_Psw_folder'] = 'en la carpeta config.';
 $pia_lang['Login_Psw_alert'] = '¡Alerta de Contraseña!';
 $pia_lang['Login_Psw-box'] = 'Contraseña';
-$pia_lang['Login_Toggle_Info'] = 'Password Information';
-$pia_lang['Login_Toggle_Info_headline'] = 'Password Information';
-$pia_lang['Login_Toggle_Alert_headline'] = 'Password Alert!';
+$pia_lang['Login_Toggle_Info'] = 'Información sobre la contraseña';
+$pia_lang['Login_Toggle_Info_headline'] = 'Información sobre la contraseña';
+$pia_lang['Login_Toggle_Alert_headline'] = 'Alerta de Contraseña!';
 
 //////////////////////////////////////////////////////////////////
 // Device Page - Update by @TeroRERO 03ago2022
@@ -260,6 +260,14 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Eliminar la actividad de la red'
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'El gráfico de actividad de la red se resetea. Esto no afecta a los eventos.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Borrar la actividad de la red';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = '¿Está seguro de restablecer la actividad de la red?';
+$pia_lang['Maintenance_Tool_ExportCSV'] = 'Exportación CSV';
+$pia_lang['Maintenance_Tool_ExportCSV_text'] = 'Generar un archivo CSV (valores separados por comas) que contenga la lista de dispositivos incluyendo las relaciones de red entre los nodos de red y los dispositivos conectados.';
+$pia_lang['Maintenance_Tool_ExportCSV_noti'] = 'Exportación CSV';
+$pia_lang['Maintenance_Tool_ExportCSV_noti_text'] = '¿Está seguro de que quiere generar un archivo CSV?';
+$pia_lang['Maintenance_Tool_ImportCSV'] = 'Importación CSV';
+$pia_lang['Maintenance_Tool_ImportCSV_text'] = 'Antes de usar esta función, haga una copia de seguridad. Importe un archivo CSV (valor separado por comas) que contiene la lista de dispositivos, incluidas las relaciones de red entre nodos de red y dispositivos conectados. Para hacer eso, coloque el archivo CSV llamado <b> devices.csv </b> en su carpeta <b>/config </b>.';
+$pia_lang['Maintenance_Tool_ImportCSV_noti'] = 'Importación CSV';
+$pia_lang['Maintenance_Tool_ImportCSV_noti_text'] = '¿Está seguro de que quiere importar el archivo CSV? Esto sobrescribirá completamente los dispositivos de su base de datos.';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page - Update by @TeroRERO 25jul2022
