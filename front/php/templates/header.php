@@ -91,8 +91,7 @@ require 'php/templates/language/'.$pia_lang_selected.'.php';
   <link rel="icon" type="image/x-icon" href="img/pialertLogoOrange.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
-  <link rel="manifest" href="img/manifest.json">
-  <link rel="apple-touch-icon" href="https://net-dev.de/pialert_homescreen.png">
+  <link rel="manifest" href="img/manifest.json">  
   <!-- Dark-Mode Patch -->
 <?php
 if ($ENABLED_DARKMODE === True) {

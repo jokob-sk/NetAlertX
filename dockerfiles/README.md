@@ -1,8 +1,14 @@
 [![Docker](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
 [![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
-  <a href="https://hub.docker.com/r/jokobsk/pi.alert">
-    <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
-  </a>
+<a href="https://hub.docker.com/r/jokobsk/pi.alert">
+  <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
+</a>
+<span>
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github&amp;style=plastic">
+</span>
+<span>
+  <img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">
+</span> 
 
 # 🐳 A docker image for Pi.Alert 
 
