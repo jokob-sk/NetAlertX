@@ -6,17 +6,17 @@ case $1 in
 
   help)
     echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
-    echo "Usage: pialer-cli <command>"
+    echo "Usage: pialert-cli <command>"
     echo ""
     echo "The is a list of supported commands:"
     echo ""
-    echo " set_login                      - Set the parameter PIALERT_WEB_PROTECTION in the configfile to TRUE"
+    echo " set_login                      - Set the parameter PIALERT_WEB_PROTECTION in the config file to TRUE"
     echo "                                - If the parameter is not present, it will be created with the default password '123456'."
     echo ""
-    echo " unset_login                    - set the parameter PIALERT_WEB_PROTECTION in the configfile to FALSE"
+    echo " unset_login                    - set the parameter PIALERT_WEB_PROTECTION in the config file to FALSE"
     echo "                                - If the parameter is not present, it will be created with the default password '123456'."
     echo ""
-    echo " set_password <new_password>    - set the new password as a hased value"
+    echo " set_password <new_password>    - set the new password as a hashed value"
     echo ""
     echo " set_autopassword               - set the new random password as a hashed value and show it plaintext in the console"
     echo ""
@@ -73,7 +73,8 @@ case $1 in
     else
         sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_PASS_HASH'" $PIA_CONF_FILE
     fi
-    echo "   The new password is set"
+    echo ""
+    echo "The new password is set"
     ;;
 
   set_autopassword)
@@ -101,12 +102,12 @@ case $1 in
         ## Overwrite password parameter
         sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_AUTOPASS_HASH'" $PIA_CONF_FILE
     fi
-    echo "   The new password is set"
+    echo ""
+    echo "The new password is set"
     ;;
 
   *)
     echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
     echo "Use \"pialert-cli help\" for a list of supported commands."
-    echo ""
 esac
 
