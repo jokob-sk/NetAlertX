@@ -1,0 +1,112 @@
+#!/bin/bash
+PIA_CONF_FILE='../config/pialert.conf'
+PIA_PASS=$2
+
+case $1 in
+
+  help)
+    echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
+    echo "Usage: pialer-cli <command>"
+    echo ""
+    echo "The is a list of supported commands:"
+    echo ""
+    echo " set_login                      - Set the parameter PIALERT_WEB_PROTECTION in the configfile to TRUE"
+    echo "                                - If the parameter is not present, it will be created with the default password '123456'."
+    echo ""
+    echo " unset_login                    - set the parameter PIALERT_WEB_PROTECTION in the configfile to FALSE"
+    echo "                                - If the parameter is not present, it will be created with the default password '123456'."
+    echo ""
+    echo " set_password <new_password>    - set the new password as a hased value"
+    echo ""
+    echo " set_autopassword               - set the new random password as a hased value and show it plaintext in the console"
+    echo ""
+    echo ""
+    ;;
+
+  set_login)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'" $PIA_CONF_FILE
+    else
+        ## Switch PIALERT_WEB_PROTECTION to enable
+        sed -i "/PIALERT_WEB_PROTECTION/c\PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    echo "Login is now enabled"
+    ;;
+
+  unset_login)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and disable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = False" $PIA_CONF_FILE
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'" $PIA_CONF_FILE
+    else
+        ## Switch PIALERT_WEB_PROTECTION to disable
+        sed -i "/PIALERT_WEB_PROTECTION/c\PIALERT_WEB_PROTECTION = False" $PIA_CONF_FILE
+    fi
+    echo "Login is now disabled"
+    ;;
+
+  set_password)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    ## Prepare Hash
+    PIA_PASS_HASH=$(echo -n $PIA_PASS | sha256sum | awk '{print $1}')
+    echo "   The hashed password is:"
+    echo "   $PIA_PASS_HASH"
+    ## Check if the password parameter is set
+    CHECK_PWD=$(grep "PIALERT_WEB_PASSWORD" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PWD -eq 0 ]
+    then
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '$PIA_PASS_HASH'" $PIA_CONF_FILE
+    else
+        sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_PASS_HASH'" $PIA_CONF_FILE
+    fi
+    echo "   The new password is set"
+    ;;
+
+  set_autopassword)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    ## Create autopassword
+    PIA_AUTOPASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+    echo "   The password is: $PIA_AUTOPASS"
+    ## Prepare Hash
+    PIA_AUTOPASS_HASH=$(echo -n $PIA_AUTOPASS | sha256sum | awk '{print $1}')
+    echo "   The hashed password is:"
+    echo "   $PIA_AUTOPASS_HASH"
+    ## Check if the password parameter is set
+    CHECK_PWD=$(grep "PIALERT_WEB_PASSWORD" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PWD -eq 0 ]
+    then
+        ## Create password parameter
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '$PIA_AUTOPASS_HASH'" $PIA_CONF_FILE
+    else
+        ## Overwrite password parameter
+        sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_AUTOPASS_HASH'" $PIA_CONF_FILE
+    fi
+    echo "   The new password is set"
+    ;;
+
+  *)
+    echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
+    echo "Use \"pialert-cli help\" for a list of supported commands."
+    echo ""
+esac
+

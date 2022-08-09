@@ -531,7 +531,11 @@ test_pialert() {
 
   echo ""
   print_msg "- Enable optional Speedtest..."
-  chmod +x $PIALERT_HOME/back/speedtest-cli
+  chmod +x $PIALERT_HOME/back/speedtest-cli                                                      2>&1 | tee -ai "$LOG"
+
+  echo ""
+  print_msg "- Enable optional pialert-cli..."
+  chmod +x $PIALERT_HOME/back/pialert-cli                                                        2>&1 | tee -ai "$LOG"
 
   if $FIRST_SCAN_KNOWN ; then
     echo ""
