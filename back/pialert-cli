@@ -10,15 +10,28 @@ case $1 in
     echo ""
     echo "The is a list of supported commands:"
     echo ""
-    echo " set_login                      - Sets the parameter PIALERT_WEB_PROTECTION in the config file to TRUE"
-    echo "                                - If the parameter is not present, it will be created with the default password '123456'."
+    echo " set_login                - Sets the parameter PIALERT_WEB_PROTECTION in the config file to TRUE"
+    echo "                          - If the parameter is not present, it will be created. Additionally the" 
+    echo "                            default password '123456' is set."
     echo ""
-    echo " unset_login                    - Sets the parameter PIALERT_WEB_PROTECTION in the config file to FALSE"
-    echo "                                - If the parameter is not present, it will be created with the default password '123456'."
+    echo " unset_login              - Sets the parameter PIALERT_WEB_PROTECTION in the config file to FALSE"
+    echo "                          - If the parameter is not present, it will be created. Additionally the"
+    echo "                            default password '123456' is set."
     echo ""
-    echo " set_password <new_password>    - Sets the new password as a hashed value"
+    echo " set_password <password>  - Sets the new password as a hashed value."
+    echo "                          - If the PIALERT_WEB_PROTECTION parameter does not exist yet, it will be"
+    echo "                            created and set to 'True' (login enabled)"
     echo ""
-    echo " set_autopassword               - Sets a new random password as a hashed value and show it plaintext in the console"
+    echo " set_autopassword         - Sets a new random password as a hashed value and show it plaintext in"
+    echo "                            the console."
+    echo "                          - If the PIALERT_WEB_PROTECTION parameter does not exist yet, it will be"
+    echo "                            created and set to 'True' (login enabled)"
+    echo ""
+    echo " disable_scan             - Stops all active scans"
+    echo "                          - Prevents new scans from starting"
+    echo ""
+    echo " enable_scan              - Stops all active scans"
+    echo "                          - Prevents new scans from starting"
     echo ""
     echo ""
     ;;
@@ -104,6 +117,19 @@ case $1 in
     fi
     echo ""
     echo "The new password is set"
+    ;;
+
+  disable_scan)
+    ## stop active scans
+    sudo killall arp-scan
+    touch ../db/setting_stoparpscan
+    echo "The arp-scan is disabled"
+    ;;
+
+  enable_scan)
+    ## stop active scans
+    rm ../db/setting_stoparpscan
+    echo "The arp-scan is enable"
     ;;
 
   *)
