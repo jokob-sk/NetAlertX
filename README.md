@@ -64,7 +64,7 @@ In charge of:
   - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
   - Optional speedtest for Device "Internet"
   - DB cleanup tasks via cron
-  - a pialert-cli that helps to configure login and password
+  - a pialert-cli that helps to configure login and password  
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
