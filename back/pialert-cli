@@ -129,7 +129,7 @@ case $1 in
   enable_scan)
     ## stop active scans
     rm ../db/setting_stoparpscan
-    echo "The arp-scan is enable"
+    echo "The arp-scan is enabled"
     ;;
 
   *)
