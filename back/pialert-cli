@@ -1,6 +1,7 @@
 #!/bin/bash
-PIA_CONF_FILE='../config/pialert.conf'
-PIA_PASS=$2
+SCRIPT=$(readlink -f $0)
+SCRIPTPATH=`dirname $SCRIPT`
+PIA_CONF_FILE=${SCRIPTPATH}'/../config/pialert.conf'
 
 case $1 in
 
@@ -67,6 +68,7 @@ case $1 in
     ;;
 
   set_password)
+    PIA_PASS=$2
     ## Check if PIALERT_WEB_PROTECTION exists
     CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
     if [ $CHECK_PROT -eq 0 ]
@@ -122,13 +124,13 @@ case $1 in
   disable_scan)
     ## stop active scans
     sudo killall arp-scan
-    touch ../db/setting_stoparpscan
+    touch ${SCRIPTPATH}/../db/setting_stoparpscan
     echo "The arp-scan is disabled"
     ;;
 
   enable_scan)
     ## stop active scans
-    rm ../db/setting_stoparpscan
+    rm ${SCRIPTPATH}/../db/setting_stoparpscan
     echo "The arp-scan is enabled"
     ;;
 
