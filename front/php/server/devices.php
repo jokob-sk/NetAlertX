@@ -45,7 +45,7 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
-      case 'restoreBackupDB':         restoreBackupDB();                       break;
+      
       case 'deleteAllDevices':        deleteAllDevices();                      break;
       case 'runScan15min':            runScan15min();                          break;
       case 'runScan1min':             runScan1min();                           break;

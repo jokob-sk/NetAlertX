@@ -361,6 +361,13 @@ $pia_lang['HelpFAQ_Cat_General_102_text'] = 'Check in the Pi.Alert directory if 
                 							 chmod -R 770 ~/pialert/db
               								 </span><br>
               								 If the database is still read-only, try reinstalling or restoring a database backup from the maintenance page.';
+$pia_lang['HelpFAQ_Cat_General_102docker_head'] = '(Docker only 🐳) Database issues (AJAX errors, read-only, not found)';
+$pia_lang['HelpFAQ_Cat_General_102docker_text'] = 'Double-check you\'ve followed the <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles">dockerfile readme (most up-to-date info)</a>. <br/> <br/> <ul data-sourcepos="49:4-52:146" dir="auto">
+<li data-sourcepos="49:4-49:106">Download the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db">original DB from GitHub</a>.</li>
+<li data-sourcepos="50:4-50:195">Map the <code>pialert.db</code> file (<g-emoji class="g-emoji" alias="warning" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png">⚠</g-emoji> not folder) from above to <code>/home/pi/pialert/db/pialert.db</code> (see <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples">Examples</a> for details).</li>
+<li data-sourcepos="51:4-51:161">If facing issues (AJAX errors, can\'t write to DB, etc,) make sure permissions are set correctly, alternatively check the logs under <code>/home/pi/pialert/log</code>.</li>
+<li data-sourcepos="52:4-52:146">To solve permission issues you can also try to create a DB backup and then run a DB Restore via the <strong>Maintenance &gt; Backup/Restore</strong> section.</li>
+</ul>';
 $pia_lang['HelpFAQ_Cat_General_103_head'] = 'The login page does not appear, even after changing the password.';
 $pia_lang['HelpFAQ_Cat_General_103_text'] = 'In addition to the password, the configuration file must contain <span class="text-danger help_faq_code">~/pialert/config/pialert.conf</span> 
               								 also the parameter <span class="text-danger help_faq_code">PIALERT_WEB_PROTECTION</span> must set to <span class="text-danger help_faq_code">True</span>.';

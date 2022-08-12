@@ -45,7 +45,6 @@ else:
     execfile (PIALERT_PATH + "/config/version.conf")
     execfile (PIALERT_PATH + "/config/pialert.conf")
 
-
 #===============================================================================
 # MAIN
 #===============================================================================
@@ -55,6 +54,10 @@ def main ():
     global log_timestamp
     global sql_connection
     global sql
+
+    # Empty stdout and stderr .log files for debugging if needed
+    write_file (LOG_PATH + '/stderr.log', '')
+    write_file (LOG_PATH + '/stdout.log', '')
 
     # Header
     print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
@@ -1374,9 +1377,11 @@ def email_reporting ():
         'TABLE_EVENTS', mail_text_events, mail_html_events)
 
     # DEBUG - Write output emails for testing
-    if True :
-        write_file (LOG_PATH + '/report_output.txt', mail_text) 
-        write_file (LOG_PATH + '/report_output.html', mail_html) 
+    #if True :
+    #    write_file (LOG_PATH + '/report_output.txt', mail_text) 
+    #    write_file (LOG_PATH + '/report_output.html', mail_html) 
+
+
 
     # Send Mail
     if mail_section_Internet == True or mail_section_new_devices == True \
@@ -1493,6 +1498,12 @@ def write_file (pPath, pText):
         file.close() 
 
 #-------------------------------------------------------------------------------
+def append_file_binary (pPath, input):    
+    file = open (pPath, 'ab') 
+    file.write (input) 
+    file.close() 
+
+#-------------------------------------------------------------------------------
 def append_line_to_file (pPath, pText):
     # append the line depending using the correct python version
     if sys.version_info < (3, 0):
@@ -1553,7 +1564,16 @@ def send_webhook (_Text):
     else:
         _WEBHOOK_URL = WEBHOOK_URL
 
-    requests.post(_WEBHOOK_URL, json.dumps(_json_payload))
+    p = subprocess.Popen(["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    stdout, stderr = p.communicate()
+
+    # write stdout and stderr into .log files for debugging if needed
+    if stderr != None:
+        append_file_binary (LOG_PATH + '/stderr.log', stderr)
+    if stdout != None:
+        append_file_binary (LOG_PATH + '/stdout.log', stdout)   
+
     
 #===============================================================================
 # DB

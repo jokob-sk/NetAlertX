@@ -1,14 +1,14 @@
 [![Docker](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml/badge.svg)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
+<a href="https://github.com/jokob-sk/Pi.Alert">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github">
+</a>
 [![Docker Image Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?logo=Docker)](https://hub.docker.com/r/jokobsk/pi.alert)
 <a href="https://hub.docker.com/r/jokobsk/pi.alert">
   <img src="https://img.shields.io/docker/pulls/jokobsk/pi.alert?logo=docker&color=0aa8d2&logoColor=fff" alt="Docker Pulls">
 </a>
-<span>
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github&amp;style=plastic">
-</span>
-<span>
+<a href="https://hub.docker.com/r/jokobsk/pi.alert">
   <img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">
-</span> 
+</a>
 
 # 🐳 A docker image for Pi.Alert 
 
@@ -46,7 +46,10 @@ Default Port
    * ... or by mapping the files individually `pialert.conf:/home/pi/pialert/config/pialert.conf` and `version.conf:/home/pi/pialert/config/version.conf` 
 4. Set the `TZ` environment variable to your current time zone (e.g.`Europe/Paris`). Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 5. Database backup
-   * The DB is stored under `/home/pi/pialert/db/pialert.db`. Map this file to a persistent location (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#page_facing_up-examples) for details). If facing issues (AJAX errors, can't write to DB, etc, make sure permissions are set correctly, alternatively check the logs under `/home/pi/pialert/log`)
+   * Download the [original DB from GitHub](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db).
+   * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
+   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, alternatively check the logs under `/home/pi/pialert/log`. 
+   * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
 6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
 7. You can override the port by specifying the `PORT` env variable.
 
