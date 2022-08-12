@@ -1,5 +1,12 @@
 <?php
 //////////////////////////////////////////////////////////////////
+// About - Update by @TeroRERO 07ago2022
+//////////////////////////////////////////////////////////////////
+$pia_lang['About_Title'] = 'Guadián de Red <br>(Código Abierto)';
+$pia_lang['About_Design'] = 'Diseñado para:';
+$pia_lang['About_Exit'] = 'Salir';
+
+//////////////////////////////////////////////////////////////////
 // General - Update by @TeroRERO 01ago2022
 //////////////////////////////////////////////////////////////////
 $pia_lang['Gen_Delete'] = 'Eliminar';
@@ -37,6 +44,7 @@ $pia_lang['Navigation_Presence'] = 'Historial';
 $pia_lang['Navigation_Events'] = 'Eventos';
 $pia_lang['Navigation_Maintenance'] = 'Mantenimiento';
 $pia_lang['Navigation_Network'] = 'Red';
+$pia_lang['Navigation_HelpFAQ'] = 'Ayuda / FAQ';
 $pia_lang['Device_Title'] = 'Dispositivos';
 $pia_lang['Device_Shortcut_AllDevices'] = 'Todos';
 $pia_lang['Device_Shortcut_Connected'] = 'Conectado(s)';
@@ -186,7 +194,7 @@ $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP e
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
 
 //////////////////////////////////////////////////////////////////
-// Maintenance Page - Update by @TeroRERO 03ago2022
+// Maintenance Page - Update by @TeroRERO 07ago2022
 //////////////////////////////////////////////////////////////////
 
 $pia_lang['Maintenance_Title'] = 'Herramientas de mantenimiento';
@@ -268,6 +276,8 @@ $pia_lang['Maintenance_Tool_ImportCSV'] = 'Importación CSV';
 $pia_lang['Maintenance_Tool_ImportCSV_text'] = 'Antes de usar esta función, haga una copia de seguridad. Importe un archivo CSV (valor separado por comas) que contiene la lista de dispositivos, incluidas las relaciones de red entre nodos de red y dispositivos conectados. Para hacer eso, coloque el archivo CSV llamado <b> devices.csv </b> en su carpeta <b>/config </b>.';
 $pia_lang['Maintenance_Tool_ImportCSV_noti'] = 'Importación CSV';
 $pia_lang['Maintenance_Tool_ImportCSV_noti_text'] = '¿Está seguro de que quiere importar el archivo CSV? Esto sobrescribirá completamente los dispositivos de su base de datos.';
+$pia_lang['Maintenance_Github_package_a'] ='La última versión de Pi.Alert (Fork leiweibau) se publicó en ';
+$pia_lang['Maintenance_Github_package_b'] ='';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page - Update by @TeroRERO 25jul2022
@@ -328,61 +338,61 @@ $pia_lang['Network_Table_Hostname'] = 'Nombre de host';
 $pia_lang['Network_Table_IP'] = 'Dirección IP';
 
 //////////////////////////////////////////////////////////////////
-// Help Page
+// Help Page - Update by @TeroRERO 07ago2022
 //////////////////////////////////////////////////////////////////
 
-$pia_lang['HelpFAQ_Title'] = 'Hilfe / FAQ';
-$pia_lang['HelpFAQ_Cat_General'] = 'Allgemein';
-$pia_lang['HelpFAQ_Cat_Detail'] = 'Detailsansicht';
-$pia_lang['HelpFAQ_Cat_General_100_head'] = 'The clock on the top right and the times of the events/presence are not correct (time difference).';
-$pia_lang['HelpFAQ_Cat_General_100_text_a'] = 'On your PC the following time zone is set for the PHP environment:';
-$pia_lang['HelpFAQ_Cat_General_100_text_b'] = 'If this is not the timezone you are in, you should change the timezone in the PHP configuration file. You can find it in this directory:';
-$pia_lang['HelpFAQ_Cat_General_100_text_c'] = 'Search in this file for the entry "date.timezone", remove the leading ";" if necessary and enter the desired timezone. A list with the supported timezones can be found here (<a href="https://www.php.net/manual/en/timezones.php" target="blank">Link</a>)';
-$pia_lang['HelpFAQ_Cat_General_101_head'] = 'My network seems to slow down, streaming "freezes".';
-$pia_lang['HelpFAQ_Cat_General_101_text'] = 'It may well be that low-powered devices reach their performance limits with the way Pi.Alert detects new devices on the network. This is amplified even more, 
-											 if these devices communicate with the network via WLAN. Solutions here would be to switch to a wired connection if possible or, if the device is only to be used for a limited period of time, to use the arp scan. 
-											 pause the arp scan on the maintenance page.';
-$pia_lang['HelpFAQ_Cat_General_102_head'] = 'I get the message that the database is read only.';
-$pia_lang['HelpFAQ_Cat_General_102_text'] = 'Check in the Pi.Alert directory if the database folder (db) has been assigned the correct permissions:<br>
-              								 <span class="text-danger help_faq_code">drwxrwx---  2 (your username) www-data</span><br>
-              								 If the permission is not correct, you can set it again with the following commands in the terminal or the console:<br>
+$pia_lang['HelpFAQ_Title'] = 'Ayuda / FAQ';
+$pia_lang['HelpFAQ_Cat_General'] = 'General';
+$pia_lang['HelpFAQ_Cat_Detail'] = 'Detalles';
+$pia_lang['HelpFAQ_Cat_General_100_head'] = 'El reloj en la parte superior derecha y el tiempo de los eventos/presencia no son correctos (diferencia de tiempo).';
+$pia_lang['HelpFAQ_Cat_General_100_text_a'] = 'En su PC, la siguiente zona horaria está configurada para el entorno PHP:';
+$pia_lang['HelpFAQ_Cat_General_100_text_b'] = 'Si esta no es la zona horaria en la que se encuentra, debe cambiar la zona horaria en el archivo de configuración de PHP. Puedes encontrarlo en este directorio:';
+$pia_lang['HelpFAQ_Cat_General_100_text_c'] = 'Busque en este archivo la entrada "date.timezone", elimine el ";" inicial si es necesario e introduzca la zona horaria deseada. Puede encontrar una lista con las zonas horarias compatibles aquí (<a href="https://www.php.net/manual/en/timezones.php" target="blank">Link</a>)';
+$pia_lang['HelpFAQ_Cat_General_101_head'] = 'Mi red parece ralentizarse, el streaming se "congela".';
+$pia_lang['HelpFAQ_Cat_General_101_text'] = 'Es muy posible que los dispositivos de baja potencia alcancen sus límites de rendimiento con la forma en que Pi.Alert detecta nuevos dispositivos en la red. Esto se amplifica aún más, 
+											si estos dispositivos se comunican con la red a través de WLAN. Las soluciones aquí serían cambiar a una conexión por cable si es posible o, si el dispositivo sólo se va a utilizar durante un período de tiempo limitado, utilizar el arp scan. 
+											pausar el arp scan en la página de mantenimiento.';
+$pia_lang['HelpFAQ_Cat_General_102_head'] = 'Me aparece el mensaje de que la base de datos es de sólo de lectura.';
+$pia_lang['HelpFAQ_Cat_General_102_text'] = 'Compruebe en el directorio Pi.Alert si la carpeta de la base de datos (db) tiene asignados los permisos correctos:<br>
+              								 <span class="text-danger help_faq_code">drwxrwx---  2 (nombre de usuario) www-data</span><br>
+              								 Si el permiso no es correcto, puede establecerlo de nuevo con los siguientes comandos en la terminal o la consola:<br>
               								 <span class="text-danger help_faq_code">
               								 sudo chgrp -R www-data ~/pialert/db<br>
                 							 chmod -R 770 ~/pialert/db
               								 </span><br>
-              								 If the database is still read-only, try reinstalling or restoring a database backup from the maintenance page.';
-$pia_lang['HelpFAQ_Cat_General_103_head'] = 'The login page does not appear, even after changing the password.';
-$pia_lang['HelpFAQ_Cat_General_103_text'] = 'In addition to the password, the configuration file must contain <span class="text-danger help_faq_code">~/pialert/config/pialert.conf</span> 
-              								 also the parameter <span class="text-danger help_faq_code">PIALERT_WEB_PROTECTION</span> must set to <span class="text-danger help_faq_code">True</span>.';
-$pia_lang['HelpFAQ_Cat_Device_200_head'] = 'I have devices in my list that I do not know about. After deleting them, they always reappear.';
-$pia_lang['HelpFAQ_Cat_Device_200_text'] = 'If you use Pi-hole, please note that Pi.Alert retrieves information from Pi-hole. Pause Pi.Alert, go to the settings page in Pi-hole and 
-         									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there. 
-         									If yes, delete them there as well. Now you can start Pi.Alert again. Now the device(s) should not show up anymore.';
-$pia_lang['HelpFAQ_Cat_Detail_300_head'] = 'What means ';
-$pia_lang['HelpFAQ_Cat_Detail_300_text_a'] = 'means a network device created from the network page.';
-$pia_lang['HelpFAQ_Cat_Detail_300_text_b'] = 'designates the port number where the currently edited device is connected to this network device.';
-$pia_lang['HelpFAQ_Cat_Detail_301_head_a'] = 'When is scanning now? At ';
-$pia_lang['HelpFAQ_Cat_Detail_301_head_b'] = ' says 1min but the graph shows 5min intervals.';
-$pia_lang['HelpFAQ_Cat_Detail_301_text'] = 'The time interval between the scans is defined by the "Cronjob", which is set to 5min by default. The designation "1min" refers to the expected duration of the scan. 
-        									Depending on the network configuration, this time may vary. To edit the cronjob, you can use the following command in the terminal/console <span class="text-danger help_faq_code">crontab -e</span>
-        									and change the interval.';
-$pia_lang['HelpFAQ_Cat_Detail_302_head_a'] = 'What means ';
-$pia_lang['HelpFAQ_Cat_Detail_302_head_b'] = 'and why can\'t I select that?';
-$pia_lang['HelpFAQ_Cat_Detail_302_text'] = 'Some modern devices generate random MAC addresses for privacy reasons, which can no longer be associated with any manufacturer and which change again with each new connection. 
-        									Pi.Alert detects if it is such a random MAC address and activates this "field" automatically. To disable this behavior you have to look in your device how to disable 
-        									MAC address randomization.';
-$pia_lang['HelpFAQ_Cat_Detail_303_head'] = 'What is Nmap and what is it for?';
-$pia_lang['HelpFAQ_Cat_Detail_303_text'] = 'Nmap is a network scanner with multiple capabilities.<br>
-        									When a new device appears in your list, you have the possibility to get more detailed information about the device via the Nmap scan.';
-$pia_lang['HelpFAQ_Cat_Presence_400_head'] = 'Devices are displayed with a yellow marker and the note "missing event".';
-$pia_lang['HelpFAQ_Cat_Presence_400_text'] = 'If this happens, you have the option to delete the events on the device in question (details view). Another possibility would be to switch on the device and wait until Pi.Alert detects the device as "online" with the next 
-        									  scan and then simply turn the device off again. Now Pi.Alert should properly note the state of the device in the database with the next scan.';
-$pia_lang['HelpFAQ_Cat_Presence_401_head'] = 'A device is displayed as present although it is "Offline".';
-$pia_lang['HelpFAQ_Cat_Presence_401_text'] = 'If this happens, you have the possibility to delete the events for the device in question (details view). Another possibility would be to switch on the device and wait until Pi.Alert recognizes the device as "online" with the next scan 
-											  and then simply switch the device off again. Now Pi.Alert should properly note the state of the device in the database with the next scan.';
-$pia_lang['HelpFAQ_Cat_Network_600_head'] = 'What is this page for?';
-$pia_lang['HelpFAQ_Cat_Network_600_text'] = 'This page should offer you the possibility to map the assignment of your network devices. For this purpose, you can create one or more switches, WLANs, routers, etc., provide them with a port number if necessary and assign already detected 
-											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online. It is possible to assign a device to multiple 
-											 ports (port bundling), as well as multiple devices to one port (virtual machines).';
+              								 Si la base de datos sigue siendo de sólo lectura, intente reinstalar o restaurar una copia de seguridad de la base de datos desde la página de mantenimiento.';
+$pia_lang['HelpFAQ_Cat_General_103_head'] = 'La página de inicio de sesión no aparece, incluso después de cambiar la contraseña.';
+$pia_lang['HelpFAQ_Cat_General_103_text'] = 'Además de la contraseña, el archivo de configuración debe contener <span class="text-danger help_faq_code">~/pialert/config/pialert.conf</span> 
+              								 además el parámetro <span class="text-danger help_faq_code">PIALERT_WEB_PROTECTION</span> debe ajustarse a <span class="text-danger help_faq_code">True</span>.';
+$pia_lang['HelpFAQ_Cat_Device_200_head'] = 'Tengo dispositivos en mi lista que no conozco. Después de borrarlos, siempre vuelven a aparecer.';
+$pia_lang['HelpFAQ_Cat_Device_200_text'] = 'Si utiliza Pi-hole, tenga en cuenta que Pi.Alert recupera información de Pi-hole. Ponga en pausa Pi.Alert, vaya a la página de configuración de Pi-hole y 
+											elimine la concesión DHCP si es necesario. Luego, también en Pi-hole, revise en Herramientas -> Red para ver si puede encontrar los hosts recurrentes allí. 
+											Si es así, elimínelos también allí. Ahora puede volver a iniciar Pi.Alert. Ahora el dispositivo(s) no debería aparecer más.';
+$pia_lang['HelpFAQ_Cat_Detail_300_head'] = '¿Qué significa? ';
+$pia_lang['HelpFAQ_Cat_Detail_300_text_a'] = 'significa un dispositivo de red creado a partir de la página de red.';
+$pia_lang['HelpFAQ_Cat_Detail_300_text_b'] = 'designa el número de puerto en el que el dispositivo editado actualmente está conectado a este dispositivo de red.';
+$pia_lang['HelpFAQ_Cat_Detail_301_head_a'] = '¿Cuándo está escaneando ahora? En ';
+$pia_lang['HelpFAQ_Cat_Detail_301_head_b'] = ' dice 1min pero el gráfico muestra intervalos de 5min.';
+$pia_lang['HelpFAQ_Cat_Detail_301_text'] = 'El intervalo de tiempo entre los escaneos está definido por el "Cronjob", que está configurado en 5 minutos de forma predeterminada.  La designación "1min" se refiere a la duración esperada del escaneo. 
+											Dependiendo de la configuración de la red, este tiempo puede variar. Para editar el cronjob, puede utilizar el siguiente comando en la terminal/consola <span class="text-danger help_faq_code">crontab -e</span>
+        									y cambiar el intervalo.';
+$pia_lang['HelpFAQ_Cat_Detail_302_head_a'] = '¿Qué significa? ';
+$pia_lang['HelpFAQ_Cat_Detail_302_head_b'] = '¿y por qué no puedo seleccionarlo?';
+$pia_lang['HelpFAQ_Cat_Detail_302_text'] = 'Algunos dispositivos modernos generan direcciones MAC aleatorias por razones de privacidad, que ya no pueden asociarse a ningún fabricante y que vuelven a cambiar con cada nueva conexión. 
+											Pi.Alert detecta si se trata de una dirección MAC aleatoria y activa este "campo" automáticamente. Para deshabilitar este comportamiento, debe buscar en su dispositivo cómo deshabilitar la 
+        									aleatorización de direcciones MAC.';
+$pia_lang['HelpFAQ_Cat_Detail_303_head'] = '¿Qué es Nmap y para qué sirve?';
+$pia_lang['HelpFAQ_Cat_Detail_303_text'] = 'Nmap es un escáner de red con múltiples capacidades.<br>
+        									Cuando aparece un nuevo dispositivo en su lista, tiene la posibilidad de obtener información más detallada sobre el dispositivo a través del escaneo de Nmap.';
+$pia_lang['HelpFAQ_Cat_Presence_400_head'] = 'Los dispositivos se muestran con un marcador amarillo y la nota "evento faltante".';
+$pia_lang['HelpFAQ_Cat_Presence_400_text'] = 'Si esto sucede, tiene la opción de eliminar los eventos en el dispositivo en cuestión (vista de detalles).  Otra posibilidad sería encender el dispositivo y esperar hasta que Pi.Alert detecte el dispositivo como "online" con el siguiente 
+											escaneo y luego simplemente apagar el dispositivo nuevamente.  Ahora Pi.Alert debería anotar correctamente el estado del dispositivo en la base de datos con el próximo escaneo.';
+$pia_lang['HelpFAQ_Cat_Presence_401_head'] = 'Un dispositivo se muestra como presente aunque esté "Offline".';
+$pia_lang['HelpFAQ_Cat_Presence_401_text'] = 'Si esto sucede, tiene la posibilidad de eliminar los eventos del dispositivo en cuestión (vista de detalles).  Otra posibilidad sería encender el dispositivo y esperar hasta que Pi.Alert reconozca el dispositivo como "online" con el siguiente escaneo 
+											y luego simplemente apagar el dispositivo nuevamente.  Ahora Pi.Alert debería anotar correctamente el estado del dispositivo en la base de datos con el próximo escaneo.';
+$pia_lang['HelpFAQ_Cat_Network_600_head'] = '¿Para qué sirve esta sección?';
+$pia_lang['HelpFAQ_Cat_Network_600_text'] = 'Esta sección debería ofrecerle la posibilidad de mapear la asignación de sus dispositivos de red.  Para ello, puede crear uno o más conmutadores, WLAN, enrutadores, etc., proporcionarles un número de puerto si es necesario y asignarles dispositivos 
+											ya detectados. Esta asignación se realiza en la vista detallada del dispositivo a asignar.  Por lo tanto, es posible determinar rápidamente a qué puerto está conectado un host y si está en línea. Es posible asignar un dispositivo a múltiples 
+											 puertos (agrupación de puertos), así como múltiples dispositivos a un puerto (máquinas virtuales).';
 
 ?>

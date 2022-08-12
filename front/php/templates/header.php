@@ -167,8 +167,8 @@ function show_pia_servertime() {
               <li class="user-header" style=" height: 100px;">
                 <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
                 <p style="float: right; width: 200px">
-                  Open Source Network Guard
-                  <small>Designed for Raspberry Pi</small>
+                <?php echo $pia_lang['About_Title'];?>
+                  <small><?php echo $pia_lang['About_Design'];?> Raspberry Pi</small>
                 </p>
               </li>
 
@@ -176,7 +176,7 @@ function show_pia_servertime() {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="index.php?action=logout" class="btn btn-danger">Sign out</a>
+                  <a href="index.php?action=logout" class="btn btn-danger"><?php echo $pia_lang['About_Exit'];?></a>
                 </div>
               </li>
             </ul>

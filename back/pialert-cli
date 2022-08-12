@@ -1,0 +1,141 @@
+#!/bin/bash
+SCRIPT=$(readlink -f $0)
+SCRIPTPATH=`dirname $SCRIPT`
+PIA_CONF_FILE=${SCRIPTPATH}'/../config/pialert.conf'
+
+case $1 in
+
+  help)
+    echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
+    echo "Usage: pialert-cli <command>"
+    echo ""
+    echo "The is a list of supported commands:"
+    echo ""
+    echo " set_login                - Sets the parameter PIALERT_WEB_PROTECTION in the config file to TRUE"
+    echo "                          - If the parameter is not present, it will be created. Additionally the" 
+    echo "                            default password '123456' is set."
+    echo ""
+    echo " unset_login              - Sets the parameter PIALERT_WEB_PROTECTION in the config file to FALSE"
+    echo "                          - If the parameter is not present, it will be created. Additionally the"
+    echo "                            default password '123456' is set."
+    echo ""
+    echo " set_password <password>  - Sets the new password as a hashed value."
+    echo "                          - If the PIALERT_WEB_PROTECTION parameter does not exist yet, it will be"
+    echo "                            created and set to 'True' (login enabled)"
+    echo ""
+    echo " set_autopassword         - Sets a new random password as a hashed value and show it plaintext in"
+    echo "                            the console."
+    echo "                          - If the PIALERT_WEB_PROTECTION parameter does not exist yet, it will be"
+    echo "                            created and set to 'True' (login enabled)"
+    echo ""
+    echo " disable_scan             - Stops all active scans"
+    echo "                          - Prevents new scans from starting"
+    echo ""
+    echo " enable_scan              - Stops all active scans"
+    echo "                          - Prevents new scans from starting"
+    echo ""
+    echo ""
+    ;;
+
+  set_login)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'" $PIA_CONF_FILE
+    else
+        ## Switch PIALERT_WEB_PROTECTION to enable
+        sed -i "/PIALERT_WEB_PROTECTION/c\PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    echo "Login is now enabled"
+    ;;
+
+  unset_login)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and disable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = False" $PIA_CONF_FILE
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'" $PIA_CONF_FILE
+    else
+        ## Switch PIALERT_WEB_PROTECTION to disable
+        sed -i "/PIALERT_WEB_PROTECTION/c\PIALERT_WEB_PROTECTION = False" $PIA_CONF_FILE
+    fi
+    echo "Login is now disabled"
+    ;;
+
+  set_password)
+    PIA_PASS=$2
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    ## Prepare Hash
+    PIA_PASS_HASH=$(echo -n $PIA_PASS | sha256sum | awk '{print $1}')
+    echo "   The hashed password is:"
+    echo "   $PIA_PASS_HASH"
+    ## Check if the password parameter is set
+    CHECK_PWD=$(grep "PIALERT_WEB_PASSWORD" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PWD -eq 0 ]
+    then
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '$PIA_PASS_HASH'" $PIA_CONF_FILE
+    else
+        sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_PASS_HASH'" $PIA_CONF_FILE
+    fi
+    echo ""
+    echo "The new password is set"
+    ;;
+
+  set_autopassword)
+    ## Check if PIALERT_WEB_PROTECTION exists
+    CHECK_PROT=$(grep "PIALERT_WEB_PROTECTION" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PROT -eq 0 ]
+    then
+        ## Create PIALERT_WEB_PROTECTION and enable it
+        sed -i "/^VENDORS_DB.*/a PIALERT_WEB_PROTECTION = True" $PIA_CONF_FILE
+    fi
+    ## Create autopassword
+    PIA_AUTOPASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
+    echo "   The password is: $PIA_AUTOPASS"
+    ## Prepare Hash
+    PIA_AUTOPASS_HASH=$(echo -n $PIA_AUTOPASS | sha256sum | awk '{print $1}')
+    echo "   The hashed password is:"
+    echo "   $PIA_AUTOPASS_HASH"
+    ## Check if the password parameter is set
+    CHECK_PWD=$(grep "PIALERT_WEB_PASSWORD" $PIA_CONF_FILE | wc -l)
+    if [ $CHECK_PWD -eq 0 ]
+    then
+        ## Create password parameter
+        sed -i "/^PIALERT_WEB_PROTECTION.*/a PIALERT_WEB_PASSWORD = '$PIA_AUTOPASS_HASH'" $PIA_CONF_FILE
+    else
+        ## Overwrite password parameter
+        sed -i "/PIALERT_WEB_PASSWORD/c\PIALERT_WEB_PASSWORD = '$PIA_AUTOPASS_HASH'" $PIA_CONF_FILE
+    fi
+    echo ""
+    echo "The new password is set"
+    ;;
+
+  disable_scan)
+    ## stop active scans
+    sudo killall arp-scan
+    touch ${SCRIPTPATH}/../db/setting_stoparpscan
+    echo "The arp-scan is disabled"
+    ;;
+
+  enable_scan)
+    ## stop active scans
+    rm ${SCRIPTPATH}/../db/setting_stoparpscan
+    echo "The arp-scan is enabled"
+    ;;
+
+  *)
+    echo "pialert-cli v0.1 (https://github.com/leiweibau/Pi.Alert)"
+    echo "Use \"pialert-cli help\" for a list of supported commands."
+esac
+

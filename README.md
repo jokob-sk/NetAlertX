@@ -64,6 +64,7 @@ In charge of:
   - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
   - Optional speedtest for Device "Internet"
   - DB cleanup tasks via cron
+  - a pialert-cli that helps to configure login and password  
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
@@ -87,8 +88,16 @@ A web frontend that allows:
     - Manual Nmap scans
     - Optional speedtest for Device "Internet"
     - Simple Network relationship display
+  - Maintenance tasks and Settings like:
+    - Status Infos (active scans, database size, backup counter)
+    - Theme Selection (blue, red, green, yellow, black, purple)
+    - Language Selection (english, german, spanish)
+    - Light/Dark-Mode Switch
+    - Pause arp-scan
+    - DB maintenance tools
+    - DB Backup and Restore
     - CSV Export / Import (Experimental)
-    - ...
+  - Help/FAQ Section 
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
   | -------------------- | -------------------- |
