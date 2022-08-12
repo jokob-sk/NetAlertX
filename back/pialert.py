@@ -1219,6 +1219,14 @@ def email_reporting ():
     print ('\nReporting...')
     openDB()
 
+    # prepare variables for JSON construction
+    json_internet = []
+    json_new_devices = []
+    json_down_devices = []
+    json_events = []
+
+
+
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType != 'Device Down' AND eve_MAC IN
@@ -1279,6 +1287,9 @@ def email_reporting ():
     
     for eventAlert in sql :
         mail_section_Internet = True
+        # collect "internet" (IP changes) for the webhook json   
+        json_internet = add_json_list (eventAlert, json_internet)
+
         mail_text_Internet += text_line_template.format (
             'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
             'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
@@ -1290,6 +1301,7 @@ def email_reporting ():
 
     format_report_section (mail_section_Internet, 'SECTION_INTERNET',
         'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
+
 
     # Compose New Devices Section
     mail_section_new_devices = False
@@ -1307,6 +1319,9 @@ def email_reporting ():
 
     for eventAlert in sql :
         mail_section_new_devices = True
+        # collect "new_devices" for the webhook json  
+        json_new_devices = add_json_list (eventAlert, json_new_devices)
+
         mail_text_new_devices += text_line_template.format (
             'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
             'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
@@ -1317,6 +1332,7 @@ def email_reporting ():
  
     format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
         'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
+
 
     # Compose Devices Down Section
     mail_section_devices_down = False
@@ -1334,6 +1350,9 @@ def email_reporting ():
 
     for eventAlert in sql :
         mail_section_devices_down = True
+        # collect "down_devices" for the webhook json
+        json_down_devices = add_json_list (eventAlert, json_down_devices)
+
         mail_text_devices_down += text_line_template.format (
             'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
             'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
@@ -1344,6 +1363,7 @@ def email_reporting ():
 
     format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
         'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
+
 
     # Compose Events Section
     mail_section_events = False
@@ -1363,6 +1383,9 @@ def email_reporting ():
 
     for eventAlert in sql :
         mail_section_events = True
+        # collect "events" for the webhook json
+        json_events = add_json_list (eventAlert, json_events)
+          
         mail_text_events += text_line_template.format (
             'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
             'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
@@ -1376,11 +1399,21 @@ def email_reporting ():
     format_report_section (mail_section_events, 'SECTION_EVENTS',
         'TABLE_EVENTS', mail_text_events, mail_html_events)
 
+
+    # create a json for webhook notifications to provide further integration options  
+    json_final = []
+
+    json_final = {
+                    "internet": json_internet,                        
+                    "new_devices": json_new_devices,
+                    "down_devices": json_down_devices,                        
+                    "events": json_events
+                    }    
+
     # DEBUG - Write output emails for testing
     #if True :
     #    write_file (LOG_PATH + '/report_output.txt', mail_text) 
     #    write_file (LOG_PATH + '/report_output.html', mail_html) 
-
 
 
     # Send Mail
@@ -1393,7 +1426,7 @@ def email_reporting ():
             print ('    Skip mail...')
         if REPORT_WEBHOOK :
             print ('    Sending report by webhook...')
-            send_webhook (mail_text)
+            send_webhook (json_final)
         else :
             print ('    Skip webhook...')
         if REPORT_NTFY :
@@ -1546,7 +1579,7 @@ def SafeParseGlobalBool(boolVariable):
     return False
 
 #-------------------------------------------------------------------------------
-def send_webhook (_Text):
+def send_webhook (_json):
     #Define slack-compatible payload
     _json_payload={
     "username": "Pi.Alert",
@@ -1554,7 +1587,7 @@ def send_webhook (_Text):
     "attachments": [{
       "title": "Pi.Alert Notifications",
       "title_link": REPORT_DASHBOARD_URL,
-      "text": _Text
+      "text": _json
     }]
     }
 
@@ -1698,6 +1731,18 @@ def print_log (pText):
 
     # Save current time to calculate elapsed time until next log
     log_timestamp = log_timestamp2
+
+
+#-------------------------------------------------------------------------------
+
+def add_json_list (row, list):
+    new_row = []
+    for column in row :
+        new_row.append(column)
+
+    list.append(new_row)    
+
+    return list
 
 
 #===============================================================================

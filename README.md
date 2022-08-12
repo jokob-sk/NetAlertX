@@ -61,7 +61,7 @@ In charge of:
   - Scan the network searching connected devices using the scanning methods
     described
   - Store the information in the DB
-  - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify)
+  - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify, Webhooks ([sample JSON](docs/webhook_json_sample.json)))
   - Optional speedtest for Device "Internet"
   - DB cleanup tasks via cron
   - a pialert-cli that helps to configure login and password  

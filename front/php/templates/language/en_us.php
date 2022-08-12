@@ -368,7 +368,7 @@ $pia_lang['HelpFAQ_Cat_General_102_text'] = 'Check in the Pi.Alert directory if 
                 							 chmod -R 770 ~/pialert/db
               								 </span><br>
               								 If the database is still read-only, try reinstalling or restoring a database backup from the maintenance page.';
-$pia_lang['HelpFAQ_Cat_General_102docker_head'] = '(Docker only 🐳) Database issues (AJAX errors, read-only, not found)';
+$pia_lang['HelpFAQ_Cat_General_102docker_head'] = '(🐳 Docker only) Database issues (AJAX errors, read-only, not found)';
 $pia_lang['HelpFAQ_Cat_General_102docker_text'] = 'Double-check you\'ve followed the <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles">dockerfile readme (most up-to-date info)</a>. <br/> <br/> <ul data-sourcepos="49:4-52:146" dir="auto">
 <li data-sourcepos="49:4-49:106">Download the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db">original DB from GitHub</a>.</li>
 <li data-sourcepos="50:4-50:195">Map the <code>pialert.db</code> file (<g-emoji class="g-emoji" alias="warning" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png">⚠</g-emoji> not folder) from above to <code>/home/pi/pialert/db/pialert.db</code> (see <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples">Examples</a> for details).</li>

@@ -158,7 +158,7 @@
                             dev_DeviceType as type, 
                             dev_LastIP as last_ip,
                             (select dev_DeviceType from Devices a where dev_MAC = "'.$node_mac.'") as node_type
-                        FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port asc';
+                        FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port, name asc';
         
         global $db;
         $func_result = $db->query($func_sql);  
