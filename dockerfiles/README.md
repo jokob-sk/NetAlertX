@@ -50,6 +50,7 @@ Default Port
    * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
    * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, alternatively check the logs under `/home/pi/pialert/log`. 
    * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
+   * If the database is in read-only mode you can solve this by setting the owner and group by executing the following command on the host system: 'docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db' 
 6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
 7. You can override the port by specifying the `PORT` env variable.
 
