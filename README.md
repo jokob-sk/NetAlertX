@@ -23,13 +23,13 @@ JavaScript)*
   <img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">
 </a>
 
-🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert). <br/>
-🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert). <br/>
+🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) <br/>
+🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
-📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
+📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
 
-Dark mode (and Device presence over time) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
+Dark mode (and much more) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
 
 ## How it works
 The system continuously scans the network for:
@@ -61,7 +61,7 @@ In charge of:
   - Scan the network searching connected devices using the scanning methods
     described
   - Store the information in the DB
-  - Report the changes detected by e-mail and/or other services (Pushsafer, NTFY, Gotify, Webhooks ([sample JSON](docs/webhook_json_sample.json)))
+  - Report the changes detected by e-mail and/or other services ([Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/), Webhooks ([sample JSON](docs/webhook_json_sample.json)))
   - Optional speedtest for Device "Internet"
   - DB cleanup tasks via cron
   - a pialert-cli that helps to configure login and password  

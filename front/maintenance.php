@@ -573,7 +573,7 @@ function PiaToggleArpScan()
 // laod footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
-  $("#lastCommit").append('<img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github&amp;style=plastic">');
+  $("#lastCommit").append('<img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github">');
 
   $("#lastDockerUpdate").append(
     '<img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">');

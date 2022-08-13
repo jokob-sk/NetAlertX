@@ -1424,6 +1424,11 @@ def email_reporting ():
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
+        if REPORT_APPRISE :
+            print ('    Sending report by Apprise...')
+            send_apprise (mail_html)
+        else :
+            print ('    Skip Apprise...')
         if REPORT_WEBHOOK :
             print ('    Sending report by webhook...')
             send_webhook (json_final)
@@ -1602,10 +1607,24 @@ def send_webhook (_json):
     stdout, stderr = p.communicate()
 
     # write stdout and stderr into .log files for debugging if needed
-    if stderr != None:
-        append_file_binary (LOG_PATH + '/stderr.log', stderr)
-    if stdout != None:
-        append_file_binary (LOG_PATH + '/stdout.log', stdout)   
+    logResult (stdout, stderr)    
+
+#-------------------------------------------------------------------------------
+def send_apprise (html):
+    #Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
+    _json_payload={
+    "urls": APPRISE_URL,
+    "title": "Pi.Alert Notifications",
+    "format": "html",
+    "body": html
+    }
+
+    p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    stdout, stderr = p.communicate()
+
+    # write stdout and stderr into .log files for debugging if needed
+    logResult (stdout, stderr)  
 
     
 #===============================================================================
@@ -1743,6 +1762,14 @@ def add_json_list (row, list):
     list.append(new_row)    
 
     return list
+
+#-------------------------------------------------------------------------------
+
+def logResult (stdout, stderr):
+    if stderr != None:
+        append_file_binary (LOG_PATH + '/stderr.log', stderr)
+    if stdout != None:
+        append_file_binary (LOG_PATH + '/stdout.log', stdout)   
 
 
 #===============================================================================

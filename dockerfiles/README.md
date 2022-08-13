@@ -12,10 +12,10 @@
 
 # 🐳 A docker image for Pi.Alert 
 
-🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert). <br/>
-🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert). <br/>
+🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) <br/>
+🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
-📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md).
+📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
 Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
 
