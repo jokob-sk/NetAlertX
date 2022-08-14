@@ -361,6 +361,14 @@ $pia_lang['HelpFAQ_Cat_General_102_text'] = 'Compruebe en el directorio Pi.Alert
                 							 chmod -R 770 ~/pialert/db
               								 </span><br>
               								 Si la base de datos sigue siendo de sólo lectura, intente reinstalar o restaurar una copia de seguridad de la base de datos desde la página de mantenimiento.';
+$pia_lang['HelpFAQ_Cat_General_102docker_head'] = '(🐳 Docker only) Database issues (AJAX errors, read-only, not found)';
+$pia_lang['HelpFAQ_Cat_General_102docker_text'] = 'Double-check you\'ve followed the <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles">dockerfile readme (most up-to-date info)</a>. <br/> <br/> <ul data-sourcepos="49:4-52:146" dir="auto">
+												<li data-sourcepos="49:4-49:106">Download the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db">original DB from GitHub</a>.</li>
+												<li data-sourcepos="50:4-50:195">Map the <code>pialert.db</code> file (<g-emoji class="g-emoji" alias="warning" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png">⚠</g-emoji> not folder) from above to <code>/home/pi/pialert/db/pialert.db</code> (see <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples">Examples</a> for details).</li>
+												<li data-sourcepos="51:4-51:161">If facing issues (AJAX errors, can\'t write to DB, etc,) make sure permissions are set correctly, alternatively check the logs under <code>/home/pi/pialert/log</code>.</li>
+												<li data-sourcepos="52:4-52:146">To solve permission issues you can also try to create a DB backup and then run a DB Restore via the <strong>Maintenance &gt; Backup/Restore</strong> section.</li>
+												<li data-sourcepos="53:4-53:228">If the database is in read-only mode you can solve this by setting the owner and group by executing the following command on the host system: <code>docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db</code>.</li>
+												</ul>';
 $pia_lang['HelpFAQ_Cat_General_103_head'] = 'La página de inicio de sesión no aparece, incluso después de cambiar la contraseña.';
 $pia_lang['HelpFAQ_Cat_General_103_text'] = 'Además de la contraseña, el archivo de configuración debe contener <span class="text-danger help_faq_code">~/pialert/config/pialert.conf</span> 
               								 además el parámetro <span class="text-danger help_faq_code">PIALERT_WEB_PROTECTION</span> debe ajustarse a <span class="text-danger help_faq_code">True</span>.';
