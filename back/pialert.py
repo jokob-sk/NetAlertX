@@ -1447,7 +1447,7 @@ def email_reporting ():
             print ('    Skip Apprise...')
         if REPORT_WEBHOOK :
             print ('    Sending report by webhook...')
-            send_webhook (json_final)
+            send_webhook (mail_text)
         else :
             print ('    Skip webhook...')
         if REPORT_NTFY :
@@ -1600,7 +1600,7 @@ def SafeParseGlobalBool(boolVariable):
     return False
 
 #-------------------------------------------------------------------------------
-def send_webhook (_json):
+def send_webhook (pText):
     #Define slack-compatible payload
     _json_payload={
     "username": "Pi.Alert",
@@ -1608,7 +1608,7 @@ def send_webhook (_json):
     "attachments": [{
       "title": "Pi.Alert Notifications",
       "title_link": REPORT_DASHBOARD_URL,
-      "text": _json
+      "text": pText
     }]
     }
 
@@ -1618,7 +1618,7 @@ def send_webhook (_json):
     else:
         _WEBHOOK_URL = WEBHOOK_URL
 
-    p = subprocess.Popen(["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p = subprocess.Popen(["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     stdout, stderr = p.communicate()
 
