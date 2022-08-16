@@ -489,14 +489,19 @@ def query_ScanCycle_Data (pOpenCloseDB = False):
 
 #-------------------------------------------------------------------------------
 def execute_arpscan ():
-    # #101 - arp-scan subnet configuration
-    # Prepare command arguments
-    subnets = SCAN_SUBNETS.strip().split()
-    # Retry is 6 to avoid false offline devices
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
-   
-    # Execute command
-    arpscan_output = subprocess.check_output (arpscan_args, universal_newlines=True)
+
+    # output of possible multiple interfaces
+    arpscan_output = ""
+
+    # multiple interfaces
+    if type(SCAN_SUBNETS) is list:
+        print("    arp-scan: Multiple interfaces")
+        for interface in SCAN_SUBNETS :
+            arpscan_output += execute_arpscan_on_interface (interface)
+    # one interface only
+    else:
+        print("    arp-scan: One interface")
+        arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
 
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -527,6 +532,17 @@ def execute_arpscan ():
 
     # return list
     return unique_devices
+
+#-------------------------------------------------------------------------------
+def execute_arpscan_on_interface (SCAN_SUBNETS):
+    # #101 - arp-scan subnet configuration
+    # Prepare command arguments
+    subnets = SCAN_SUBNETS.strip().split()
+    # Retry is 6 to avoid false offline devices
+    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
+
+    # Execute command
+    return subprocess.check_output (arpscan_args, universal_newlines=True)
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network ():
