@@ -1447,7 +1447,7 @@ def email_reporting ():
             print ('    Skip Apprise...')
         if REPORT_WEBHOOK :
             print ('    Sending report by webhook...')
-            send_webhook (json_final)
+            send_webhook (json_final, mail_text)
         else :
             print ('    Skip webhook...')
         if REPORT_NTFY :
@@ -1600,7 +1600,20 @@ def SafeParseGlobalBool(boolVariable):
     return False
 
 #-------------------------------------------------------------------------------
-def send_webhook (_json):
+def send_webhook (_json, _html):
+
+    # payload type
+    try:
+        webhookPayload = WEBHOOK_PAYLOAD
+    except NameError: # variable not defined, use a default
+        webhookPayload = 'json'
+
+    # use data type based on specified payload type
+    if webhookPayload == 'json':
+        payloadData = _json        
+    if webhookPayload == 'html':
+        payloadData = _html
+
     #Define slack-compatible payload
     _json_payload={
     "username": "Pi.Alert",
@@ -1608,17 +1621,20 @@ def send_webhook (_json):
     "attachments": [{
       "title": "Pi.Alert Notifications",
       "title_link": REPORT_DASHBOARD_URL,
-      "text": _json
+      "text": payloadData
     }]
-    }
+    }    
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
         _WEBHOOK_URL = f"{WEBHOOK_URL}/slack"
+        curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
         _WEBHOOK_URL = WEBHOOK_URL
+        curlParams = ["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
-    p = subprocess.Popen(["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # execute CURL call
+    p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     stdout, stderr = p.communicate()
 
