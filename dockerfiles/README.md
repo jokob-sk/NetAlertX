@@ -73,7 +73,7 @@ services:
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      - ${LOGS_LOCATION}/tmp:/home/pi/pialert/log
+      - ${LOGS_LOCATION}/:/home/pi/pialert/log
     environment:
       - TZ=${TZ}
       - PORT=${PORT}
