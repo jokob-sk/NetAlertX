@@ -122,3 +122,4 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 > Disclaimer: This is my second container and I might have used unconventional hacks so if anyone is more experienced, feel free to fork/create pull requests. Also, please only donate if you don't have any debt yourself. Support yourself first, then others.
 
 <a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
+
