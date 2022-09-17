@@ -1631,7 +1631,7 @@ def send_webhook (_json, _html):
         curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
         _WEBHOOK_URL = WEBHOOK_URL
-        curlParams = ["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
+        curlParams = ["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
     # execute CURL call
     p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
