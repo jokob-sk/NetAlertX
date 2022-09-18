@@ -1,5 +1,9 @@
 <?php
   session_start();
+
+  // Turn off php errors
+  error_reporting(0);
+
   if ($_SESSION["login"] != 1)
   {
       header('Location: index.php');
