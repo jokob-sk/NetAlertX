@@ -73,6 +73,7 @@ In charge of:
 There is a configurable login to prevent unauthorized use. 
 
 > * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
+> To change password run `/home/pi/pialert/back/pialert-cli`
 
 A web frontend that allows:
   - Manage the devices inventory and the characteristics
