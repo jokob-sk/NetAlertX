@@ -775,8 +775,8 @@ function getDeviceTypes() {
           FROM Devices
           WHERE dev_DeviceType NOT IN ("",
                  "Smartphone", "Tablet",
-                 "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)",
-                 "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
+                 "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)", "NAS",
+                 "Domotic", "IP Camera", "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
                  "Clock", "House Appliance", "Phone", "Radio",
                  "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter" )
 
@@ -792,6 +792,7 @@ function getDeviceTypes() {
           UNION SELECT 2 as dev_Order, "NAS"
 
           UNION SELECT 3 as dev_Order, "Domotic"
+          UNION SELECT 3 as dev_Order, "IP Camera"
           UNION SELECT 3 as dev_Order, "Game Console"
           UNION SELECT 3 as dev_Order, "SmartTV"
           UNION SELECT 3 as dev_Order, "TV Decoder"
