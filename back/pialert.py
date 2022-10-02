@@ -1608,6 +1608,12 @@ def send_webhook (_json, _html):
     except NameError: # variable not defined, use a default
         webhookPayload = 'json'
 
+    # HTTP request method (GET, POST...)
+    try:
+        webhookRequestMethod = WEBHOOK_REQUEST_METHOD
+    except NameError: # variable not defined, use a default
+        webhookRequestMethod = 'GET'
+
     # use data type based on specified payload type
     if webhookPayload == 'json':
         payloadData = _json        
@@ -1631,7 +1637,7 @@ def send_webhook (_json, _html):
         curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
         _WEBHOOK_URL = WEBHOOK_URL
-        curlParams = ["curl","-i","-X", "GET" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
+        curlParams = ["curl","-i","-X", webhookRequestMethod ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
     # execute CURL call
     p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
