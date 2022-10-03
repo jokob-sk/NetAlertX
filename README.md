@@ -201,4 +201,3 @@ Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
 [main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
 [maintain_dark]: /docs/img/5_maintain.jpg     "Maintain screen dark"
-
