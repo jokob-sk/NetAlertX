@@ -67,7 +67,10 @@ services:
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      - ${LOGS_LOCATION}/:/home/pi/pialert/log
+      # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
+      - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
+      # (optional) useful for debugging if you have issues setting up the container
+      - ${LOGS_LOCATION}:/home/pi/pialert/log
     environment:
       - TZ=${TZ}
       - PORT=${PORT}
@@ -78,14 +81,22 @@ services:
 `.env` file
 
 ```yaml
-#GLOBAL
+#GLOBAL PATH VARIABLES
+
 APP_DATA_LOCATION=/path/to/docker_appdata
 APP_CONFIG_LOCATION=/path/to/docker_config
 LOGS_LOCATION=/path/to/docker_logs
+
+#ENVIRONMENT VARIABLES
+
 TZ=Europe/Paris
 HOST_USER_ID=1000
 HOST_USER_GID=1000
 PORT=20211
+
+#DEVELOPMENT VARIABLES
+
+DEV_LOCATION=/path/to/local/source/code
 ```
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
@@ -113,7 +124,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 ## ☕ Support 
 
-> Disclaimer: This is my second container and I might have used unconventional hacks so if anyone is more experienced, feel free to fork/create pull requests. Also, please only donate if you don't have any debt yourself. Support yourself first, then others.
+> Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
 
 <a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
 

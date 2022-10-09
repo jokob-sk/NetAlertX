@@ -1629,7 +1629,10 @@ def send_webhook (_json, _html):
       "title_link": REPORT_DASHBOARD_URL,
       "text": payloadData
     }]
-    }    
+    } 
+
+    # DEBUG - Write the json payload into a log file for debugging
+    write_file (LOG_PATH + '/webhook_payload.json', str(_json_payload))    
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
