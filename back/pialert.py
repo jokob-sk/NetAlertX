@@ -1632,7 +1632,7 @@ def send_webhook (_json, _html):
     } 
 
     # DEBUG - Write the json payload into a log file for debugging
-    write_file (LOG_PATH + '/webhook_payload.json', str(_json_payload))    
+    write_file (LOG_PATH + '/webhook_payload.json', json.dumps(_json_payload))    
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
@@ -1798,6 +1798,10 @@ def print_log (pText):
 def add_json_list (row, list):
     new_row = []
     for column in row :
+        # if variable is of type bytes, convert to string
+        if isinstance(column, bytes):
+            column = column.decode('utf-8')
+
         new_row.append(column)
 
     list.append(new_row)    
