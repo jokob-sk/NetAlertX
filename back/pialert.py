@@ -1618,7 +1618,7 @@ def send_webhook (_json, _html):
     try:
         eventLevel = EVENT_LEVEL
     except NameError: # variable not defined, use a default
-        eventLevel = 4 # report on everythin
+        eventLevel = 4 # report on everything
 
     # use data type based on specified payload type
     if webhookPayload == 'json':
@@ -1855,7 +1855,7 @@ def to_text(_json, eventLevel):
                 payloadData += event[8] + " on " + event[1] + " " + event[3] + " at " + event[2] + "\n"
 
     return payloadData
-    
+
 #===============================================================================
 # BEGIN
 #===============================================================================
