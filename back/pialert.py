@@ -54,6 +54,13 @@ def main ():
     global log_timestamp
     global sql_connection
     global sql
+    global includedSections 
+
+    # Which sections to include. Include everything by default
+    try:
+        includedSections = INCLUDED_SECTIONS
+    except NameError:
+        includedSections = ['internet', 'new_devices', 'down_devices', 'events']
 
     # Empty stdout and stderr .log files for debugging if needed
     write_file (LOG_PATH + '/stderr.log', '')
@@ -1302,7 +1309,7 @@ def email_reporting ():
 
     
     for eventAlert in sql :
-        mail_section_Internet = True
+        mail_section_Internet = 'internet' in includedSections
         # collect "internet" (IP changes) for the webhook json   
         json_internet = add_json_list (eventAlert, json_internet)
 
@@ -1334,7 +1341,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_new_devices = True
+        mail_section_new_devices = 'new_devices' in includedSections
         # collect "new_devices" for the webhook json  
         json_new_devices = add_json_list (eventAlert, json_new_devices)
 
@@ -1365,7 +1372,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_devices_down = True
+        mail_section_devices_down = 'down_devices' in includedSections
         # collect "down_devices" for the webhook json
         json_down_devices = add_json_list (eventAlert, json_down_devices)
 
@@ -1398,7 +1405,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_events = True
+        mail_section_events = 'events' in includedSections
         # collect "events" for the webhook json
         json_events = add_json_list (eventAlert, json_events)
           
@@ -1614,19 +1621,13 @@ def send_webhook (_json, _html):
     except NameError: # variable not defined, use a default
         webhookRequestMethod = 'GET'
 
-    # Event level reporting (int, 0=none, 1=internet only, 2=new devices & 1, 3=down devices & 2, 4= events & 3 i.e. everything)
-    try:
-        eventLevel = EVENT_LEVEL
-    except NameError: # variable not defined, use a default
-        eventLevel = 4 # report on everything
-
     # use data type based on specified payload type
     if webhookPayload == 'json':
         payloadData = _json        
     if webhookPayload == 'html':
         payloadData = _html
     if webhookPayload == 'text':
-        payloadData = to_text(_json, eventLevel)
+        payloadData = to_text(_json)
 
     #Define slack-compatible payload
     _json_payload = { "text": payloadData } if webhookPayload == 'text' else {
@@ -1826,21 +1827,21 @@ def logResult (stdout, stderr):
 
 #-------------------------------------------------------------------------------
 
-def to_text(_json, eventLevel):
+def to_text(_json):
     payloadData = ""
-    if len(_json['internet']) > 0 and eventLevel > 0:
+    if len(_json['internet']) > 0 and 'internet' in includedSections:
         payloadData += "INTERNET\n"
         for event in _json['internet']:
             payloadData += event[3] + ' on ' + event[2] + '. ' + event[4] + '. New address:' + event[1] + '\n'
 
-    if len(_json['new_devices']) > 0 and eventLevel > 1:
+    if len(_json['new_devices']) > 0 and 'new_devices' in includedSections:
         payloadData += "NEW DEVICES:\n"
         for event in _json['new_devices']:
             if event[4] is None:
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
 
-    if len(_json['down_devices']) > 0 and eventLevel > 2:
+    if len(_json['down_devices']) > 0 and 'down_devices' in includedSections:
         write_file (LOG_PATH + '/down_devices_example.log', _json['down_devices'])
         payloadData += 'DOWN DEVICES:\n'
         for event in _json['down_devices']:
@@ -1848,7 +1849,7 @@ def to_text(_json, eventLevel):
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
     
-    if len(_json['events']) > 0 and eventLevel > 3:
+    if len(_json['events']) > 0 and 'events' in includedSections:
         payloadData += "EVENTS:\n"
         for event in _json['events']:
             if event[8] != "Internet":
