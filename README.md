@@ -104,36 +104,9 @@ A web frontend that allows:
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md)
+> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to isntall Pi.Alert on teh server directly.
 
-Instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
-
-- One-step Automated Install:
-  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_install.sh | bash`
-  
-Instructions for [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/)
-  
-- One-step Automated Install:
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install.sh | bash`
-  
-- One-step Automated Install without Webserver if another Webserver is already installed. (not recommended):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_install_no_webserver.sh | bash`
-
-- [Installation Guide (step by step)](docs/INSTALL.md)
-
-
-# Update
-<!--- --------------------------------------------------------------------- --->
-- One-step Automated Update (pucherot):
-  #### `curl -sSL https://github.com/pucherot/Pi.Alert/raw/main/install/pialert_update.sh | bash`
-  
-- One-step Automated Update (leiweibau):
-  #### `curl -sSL https://github.com/leiweibau/Pi.Alert/raw/main/install/pialert_update.sh | bash`
-
-# Uninstall process
-<!--- --------------------------------------------------------------------- --->
-  - [Unistall process](docs/UNINSTALL.md)
-
+Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
 
 # Device Management
 <!--- --------------------------------------------------------------------- --->
