@@ -76,7 +76,8 @@ jobs:
 
       - name: Set up dynamic build ARGs
         id: getargs
-        run: echo "::set-output name=version::$(cat ./stable/VERSION)"
+       # run: echo "::set-output name=version::$(cat ./stable/VERSION)"
+        run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
 
       - name: Docker meta
         id: meta
