@@ -104,7 +104,7 @@ A web frontend that allows:
 Initially designed to run on a Raspberry Pi, probably it can run on many other
 Linux distributions.
 
-> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to isntall Pi.Alert on teh server directly.
+> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
 
 Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
 
