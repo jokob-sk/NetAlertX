@@ -1488,7 +1488,7 @@ def email_reporting ():
     closeDB()
 #-------------------------------------------------------------------------------
 def send_ntfy (_Text):
-    requests.post("https://ntfy.sh/{}".format(NTFY_TOPIC),
+    requests.post("{}/{}".format( NTFY_HOST,NTFY_TOPIC),
     data=_Text,
     headers={
         "Title": "Pi.Alert Notification",
