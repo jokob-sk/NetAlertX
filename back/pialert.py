@@ -29,6 +29,7 @@ import smtplib
 import csv
 import json
 import requests
+from base64 import b64encode
 
 
 #===============================================================================
@@ -1488,14 +1489,26 @@ def email_reporting ():
     closeDB()
 #-------------------------------------------------------------------------------
 def send_ntfy (_Text):
-    requests.post("{}/{}".format( NTFY_HOST,NTFY_TOPIC),
-    data=_Text,
-    headers={
+    headers = {
         "Title": "Pi.Alert Notification",
         "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
         "Priority": "urgent",
         "Tags": "warning"
-    })
+    }
+    # if username and password are set generate hash and update header
+    if NTFY_USER and NTFY_PASSWORD:
+	# Generate hash for basic auth
+        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
+        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
+
+	# add authorization header with hash
+        headers["Authorization"] = "Basic {}".format(basichash)
+
+    requests.post("{}/{}".format( NTFY_HOST,NTFY_TOPIC),
+    data=_Text,
+    headers=headers)
+
+send_ntfy("selfhosted ntfy test")
 
 def send_pushsafer (_Text):
     url = 'https://www.pushsafer.com/api'
