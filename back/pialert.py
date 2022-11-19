@@ -30,6 +30,7 @@ import csv
 import json
 import requests
 from base64 import b64encode
+from paho.mqtt import client as mqtt_client
 
 
 #===============================================================================
@@ -46,6 +47,97 @@ else:
     execfile (PIALERT_PATH + "/config/version.conf")
     execfile (PIALERT_PATH + "/config/pialert.conf")
 
+# INITIALIZE ALL CONSTANTS from pialert.conf
+
+# GENERAL
+# keep 90 days of network activity if not specified how many days to keep
+try:
+    strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
+except NameError: # variable not defined, use a default
+    strdaystokeepEV = str(90)
+
+# Which sections to include in the reports. Include everything by default
+try:
+    includedSections = INCLUDED_SECTIONS
+except NameError:
+    includedSections = ['internet', 'new_devices', 'down_devices', 'events']
+
+
+# WEBHOOKS
+# HTTP request method for the webhook (GET, POST...)
+try:
+    webhookRequestMethod = WEBHOOK_REQUEST_METHOD
+except NameError: 
+    webhookRequestMethod = 'GET'
+
+# payload type for the webhook request
+try:
+    webhookPayload = WEBHOOK_PAYLOAD
+except NameError: 
+    webhookPayload = 'json'
+
+
+# NTFY
+try:
+    ntfyUser = NTFY_USER
+except NameError: 
+    ntfyUser = ''
+
+try:
+    ntfyPassword = NTFY_PASSWORD
+except NameError:
+    ntfyPassword = ''
+
+try:
+    ntfyTopic = NTFY_TOPIC
+except NameError: 
+    ntfyTopic = ''
+
+try:
+    ntfyHost = NTFY_HOST
+except NameError: 
+    ntfyHost = 'https://ntfy.sh'
+
+
+
+# MQTT
+
+try:
+    reportMQTT = REPORT_MQTT
+except NameError: 
+    reportMQTT = False
+
+try:
+    mqttBroker = MQTT_BROKER
+except NameError: 
+    mqttBroker = ''
+
+try:
+    mqttPort = MQTT_PORT
+except NameError: 
+    mqttPort = ''
+
+try:
+    mqttTopic = MQTT_TOPIC
+except NameError: 
+    mqttTopic = ''
+
+try:
+    mqttClientId = MQTT_CLIENT_ID
+except NameError: 
+    mqttClientId = 'PiAlert'
+
+try:
+    mqttUser = MQTT_USER
+except NameError: 
+    mqttUser = ''
+
+try:
+    mqttPassword = MQTT_PASSWORD
+except NameError: 
+    mqttPassword = ''
+
+
 #===============================================================================
 # MAIN
 #===============================================================================
@@ -56,12 +148,6 @@ def main ():
     global sql_connection
     global sql
     global includedSections 
-
-    # Which sections to include. Include everything by default
-    try:
-        includedSections = INCLUDED_SECTIONS
-    except NameError:
-        includedSections = ['internet', 'new_devices', 'down_devices', 'events']
 
     # Empty stdout and stderr .log files for debugging if needed
     write_file (LOG_PATH + '/stderr.log', '')
@@ -280,12 +366,6 @@ def cleanup_database ():
     print ('    Timestamp:', startTime )
 
     openDB()    
-
-    # keep 10 years if not specified how many days to keep
-    try:
-        strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
-    except NameError: # variable not defined, use a default
-        strdaystokeepEV = str(365) # 1 year
    
     # Cleanup Online History
     print ('\nCleanup Online_History...')
@@ -1468,6 +1548,11 @@ def email_reporting ():
             send_pushsafer (mail_text)
         else :
             print ('    Skip PUSHSAFER...')
+        if reportMQTT :
+            print ('    Sending report by MQTT...')
+            send_mqtt (connect_mqtt(), json_final)
+        else :
+            print ('    Skip MQTT...')
     else :
         print ('    No changes to report...')
 
@@ -1496,19 +1581,17 @@ def send_ntfy (_Text):
         "Tags": "warning"
     }
     # if username and password are set generate hash and update header
-    if NTFY_USER and NTFY_PASSWORD:
+    if ntfyUser != "" and ntfyPassword != "":
 	# Generate hash for basic auth
-        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
-        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
+        usernamepassword = "{}:{}".format(ntfyUser,ntfyPassword)
+        basichash = b64encode(bytes(ntfyUser + ':' + ntfyPassword, "utf-8")).decode("ascii")
 
 	# add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
-    requests.post("{}/{}".format( NTFY_HOST,NTFY_TOPIC),
+    requests.post("{}/{}".format( ntfyHost, ntfyTopic),
     data=_Text,
     headers=headers)
-
-send_ntfy("selfhosted ntfy test")
 
 def send_pushsafer (_Text):
     url = 'https://www.pushsafer.com/api'
@@ -1622,18 +1705,6 @@ def SafeParseGlobalBool(boolVariable):
 #-------------------------------------------------------------------------------
 def send_webhook (_json, _html):
 
-    # payload type
-    try:
-        webhookPayload = WEBHOOK_PAYLOAD
-    except NameError: # variable not defined, use a default
-        webhookPayload = 'json'
-
-    # HTTP request method (GET, POST...)
-    try:
-        webhookRequestMethod = WEBHOOK_REQUEST_METHOD
-    except NameError: # variable not defined, use a default
-        webhookRequestMethod = 'GET'
-
     # use data type based on specified payload type
     if webhookPayload == 'json':
         payloadData = _json        
@@ -1689,7 +1760,79 @@ def send_apprise (html):
     # write stdout and stderr into .log files for debugging if needed
     logResult (stdout, stderr)  
 
+#-------------------------------------------------------------------------------
+ConnectedMQTT = False #global variable for the state of the connection
+
+def connect_mqtt():
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            ConnectedMQTT = True
+            print("        Connected to MQTT Broker!")
+        else:
+            ConnectedMQTT = False
+            print("        Failed to connect, return code %d\n", rc)
+    # Set Connecting Client ID
+    client = mqtt_client.Client(mqttClientId)
+    client.username_pw_set(mqttUser, mqttPassword)
+    client.on_connect = on_connect
+    client.connect(mqttBroker, mqttPort)
+    return client
+
+#-------------------------------------------------------------------------------
+def send_mqtt(client, json_final):
+    client.loop_start()        #start the loop
+
+    index = 0
+    for event in json_final['events']:
+        index = index + 1
+        
+        deviceMAC = event[index][0]
+        deviceIP = event[index][1]
+        eventType = event[index][3]
+        deviceName = event[index][8]      
+        deviceVendor = event[index][11] 
+        # deviceNetworkNode = event[index][23]        
+        
+
+        payload_str = (
+            '{'
+            + f'"device_mac": {deviceMAC},'
+            + f'"device_ip": {deviceIP},'
+            + f'"event_type": {eventType},'
+            + f'"device_name": {deviceName},'
+            + f'"device_vendor": {deviceVendor},'
+            # + f'"device_network_node": "{deviceNetworkNode}"'
+            + "}"
+            )        
+
+        client.publish(
+            # topic=f"system-sensors/sensor/{deviceName}/state",
+            topic=f"system-sensors/sensor/PiAlert/state",
+            payload=payload_str,
+            qos=1,
+            retain=True
+        )
+
+        client.publish(
+            # topic=f"system-sensors/sensor/{deviceName}/state",
+            topic=f"system-sensors/sensor/PiAlert2/state",
+            payload=payload_str,            
+            retain=True
+        )
+
+        client.publish(
+            # topic=f"system-sensors/sensor/{deviceName}/state",
+            topic=f"system-sensors/sensor/PiAlert3/state",         
+            payload='test message'
+        )
     
+        # if ConnectedMQTT:        
+        #     msg = f"PiAlert: {msg_count}"            
+        #     client.publish(mqttTopic, msg)
+    
+    # client.disconnect()
+    # client.loop_stop()
+
 #===============================================================================
 # DB
 #===============================================================================
