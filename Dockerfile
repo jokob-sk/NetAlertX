@@ -29,11 +29,10 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY . /home/pi/pialert
 
 # Pi.Alert 
-RUN python /home/pi/pialert/back/pialert.py update_vendors \
-    && rm /etc/nginx/sites-available/default \
+RUN rm /etc/nginx/sites-available/default \
 	&& ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
-    && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
-    && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
+    && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default 
+    # && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 
 # it's easy for permissions set in Git to be overridden, so doing it manually
 RUN chmod -R a+rxw /home/pi/pialert/

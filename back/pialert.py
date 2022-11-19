@@ -21,7 +21,9 @@ import sys
 import subprocess
 import os
 import re
+import time
 import datetime
+from datetime import timedelta
 import sqlite3
 import socket
 import io
@@ -32,6 +34,9 @@ import requests
 from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 
+
+# sys.stdout = open('pialert_new.log', 'w')
+# sys.stderr = sys.stdout
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -141,72 +146,117 @@ except NameError:
 #===============================================================================
 # MAIN
 #===============================================================================
+non_devices_scan_params = [ "internet_IP", "update_vendors", "cleanup", "update_vendors_silent"]
+cycle = 1
+
+# timestamps of last execution times
+time_now = datetime.datetime.now()
+now_minus_one_day = time_now - timedelta(hours = 24)
+
+last_network_scan = now_minus_one_day
+last_internet_IP_scan = now_minus_one_day
+last_run = now_minus_one_day
+last_cleanup = now_minus_one_day
+last_update_vendors = time_now - timedelta(days = 7)
+
 def main ():
-    global startTime
-    global cycle
-    global log_timestamp
-    global sql_connection
-    global sql
-    global includedSections 
-
-    # Empty stdout and stderr .log files for debugging if needed
-    write_file (LOG_PATH + '/stderr.log', '')
-    write_file (LOG_PATH + '/stdout.log', '')
-
-    # Header
-    print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
-    print ('---------------------------------------------------------')
-
-    # Initialize global variables
-    log_timestamp  = datetime.datetime.now()
-
-    # DB
-    sql_connection = None
-    sql            = None
-
-    # Timestamp
-    startTime = datetime.datetime.now()
-    startTime = startTime.replace (second=0, microsecond=0)
+    
+    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
+    # second set of global variables
+    global startTime, log_timestamp, sql_connection, includedSections, sql  
 
     # Check parameters
-    if len(sys.argv) != 2 :
-        print ('usage pialert [scan_cycle] | internet_IP | update_vendors | cleanup' )
-        return
-    cycle = str(sys.argv[1])
+    if len(sys.argv) == 2 :
+        #print ('usage pialert [scan_cycle] | internet_IP | update_vendors | cleanup' )
+        cycle = str(sys.argv[1])        
+        # return
 
-    ## Upgrade DB if needed
-    upgradeDB()
+    while True:
+        # update NOW time
+        time_now = datetime.datetime.now()
 
-    ## Main Commands
-    if cycle == 'internet_IP':
-        res = check_internet_IP()
-    elif cycle == 'cleanup':
-        res = cleanup_database()
-    elif cycle == 'update_vendors':
-        res = update_devices_MAC_vendors()
-    elif cycle == 'update_vendors_silent':
-        res = update_devices_MAC_vendors('-s')
-    elif os.path.exists(STOPARPSCAN) == False :
-        res = scan_network()
-    elif os.path.exists(STOPARPSCAN) == True :
-        res = 0
-    
-    # Check error
-    if res != 0 :
-        closeDB()
-        return res
-    
-    # Reporting
-    if cycle != 'internet_IP' and cycle != 'cleanup':
-        email_reporting()
+        # proceed if 1 minute passed
+        if last_run + timedelta(minutes=1) < time_now :
+            
+            # determine run/scan type based on passed time
+            if last_internet_IP_scan + timedelta(minutes=3) < time_now:
+                cycle = 'internet_IP'
+                last_internet_IP_scan = time_now
+            elif last_cleanup + timedelta(hours = 24) < time_now:
+                last_cleanup = time_now
+                cycle = 'cleanup'
+            # elif last_update_vendors + timedelta(days = 7) < time_now:
+            #     last_update_vendors = time_now
+            #     cycle = 'update_vendors'
+            elif last_network_scan + timedelta(minutes=5) < time_now:
+                last_network_scan = time_now
+                cycle = 1
+            else:
+                cycle = 0 # don't do anything
 
-    # Close SQL
-    closeDB()
-    closeDB()
+            print ("\n\nCYCLE:", cycle)
 
-    # Final menssage
-    print ('\nDONE!!!\n\n')
-    return 0    
+            # last time any scan or maintennace was run
+            last_run = time_now
+
+                
+
+
+            # Header
+            print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
+            print ('---------------------------------------------------------')
+
+            # Initialize global variables
+            log_timestamp  = time_now        
+
+            # DB
+            sql_connection = None
+            sql            = None
+
+            # Timestamp
+            startTime = time_now
+            startTime = startTime.replace (second=0, microsecond=0)
+
+            ## Upgrade DB if needed
+            upgradeDB()
+
+            ## Main Commands
+            if cycle == 'internet_IP':            
+                res = check_internet_IP()
+            elif cycle == 'cleanup':            
+                res = cleanup_database()
+            elif cycle == 'update_vendors':            
+                res = update_devices_MAC_vendors()
+            elif cycle == 'update_vendors_silent':
+                res = update_devices_MAC_vendors('-s')
+            elif os.path.exists(STOPARPSCAN) == False:            
+                res = scan_network()
+            elif os.path.exists(STOPARPSCAN) == True :
+                res = 0
+            
+            # # Check error
+            # if res != 0 :
+            #     closeDB()
+            #     return res
+            
+            # Reporting
+            if cycle != 'internet_IP' and cycle != 'cleanup':
+                email_reporting()
+
+            # Close SQL
+            closeDB()
+            #closeDB()
+
+            # Final menssage
+            print ('\nDONE\n\n')
+            #return 0
+        else:
+            # do something
+            print ('\n20s passed\n\n')
+
+        #loop  - recursion    
+        time.sleep(20) # wait for N seconds
+       
 
     
 #===============================================================================
@@ -268,7 +318,7 @@ def check_internet_IP ():
         print ('\nSkipping Dynamic DNS update...')
 
     # OK
-    return 0
+    # return 0
 
 #-------------------------------------------------------------------------------
 def get_internet_IP ():
@@ -382,7 +432,7 @@ def cleanup_database ():
 
     closeDB()
     # OK
-    return 0
+    # return 0
 
 
 #===============================================================================
@@ -554,7 +604,7 @@ def scan_network ():
     closeDB()
 
     # OK
-    return 0
+    # return 0
 
 #-------------------------------------------------------------------------------
 def query_ScanCycle_Data (pOpenCloseDB = False):
@@ -583,14 +633,16 @@ def execute_arpscan ():
 
     # multiple interfaces
     if type(SCAN_SUBNETS) is list:
-        print("    arp-scan: Multiple interfaces")
+        print("    arp-scan: Multiple interfaces")        
         for interface in SCAN_SUBNETS :
+            print("    DEBUG 1")
             arpscan_output += execute_arpscan_on_interface (interface)
     # one interface only
     else:
         print("    arp-scan: One interface")
         arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
 
+    print("    DEBUG 2")
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
     re_mac = r'(?P<mac>([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2}))'
@@ -601,6 +653,7 @@ def execute_arpscan ():
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
 
+    print("    DEBUG 3")
     # Delete duplicate MAC
     unique_mac = [] 
     unique_devices = [] 
@@ -609,6 +662,7 @@ def execute_arpscan ():
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
             unique_devices.append(device)
+    print("    DEBUG 4")
 
     # DEBUG
         # print (devices_list)
@@ -1316,6 +1370,9 @@ def skip_repeated_notifications ():
 #===============================================================================
 # REPORTING
 #===============================================================================
+# create a json for webhook and mqtt notifications to provide further integration options  
+json_final = []
+
 def email_reporting ():
     global mail_text
     global mail_html
@@ -1504,9 +1561,6 @@ def email_reporting ():
         'TABLE_EVENTS', mail_text_events, mail_html_events)
 
 
-    # create a json for webhook notifications to provide further integration options  
-    json_final = []
-
     json_final = {
                     "internet": json_internet,                        
                     "new_devices": json_new_devices,
@@ -1549,8 +1603,8 @@ def email_reporting ():
         else :
             print ('    Skip PUSHSAFER...')
         if reportMQTT :
-            print ('    Sending report by MQTT...')
-            send_mqtt (connect_mqtt(), json_final)
+            print ('    Establishing MQTT runtime...')
+            start_sending_mqtt (connect_mqtt(), json_final)
         else :
             print ('    Skip MQTT...')
     else :
@@ -1761,25 +1815,26 @@ def send_apprise (html):
     logResult (stdout, stderr)  
 
 #-------------------------------------------------------------------------------
-ConnectedMQTT = False #global variable for the state of the connection
+ConnectedMQTT = False                       #global variable for the state of the connection
+client = mqtt_client.Client(mqttClientId)   # Set Connecting Client ID
 
 def connect_mqtt():
-    def on_connect(client, userdata, flags, rc):
-        if rc == 0:
-            ConnectedMQTT = True
-            print("        Connected to MQTT Broker!")
-        else:
-            ConnectedMQTT = False
-            print("        Failed to connect, return code %d\n", rc)
-    # Set Connecting Client ID
-    client = mqtt_client.Client(mqttClientId)
-    client.username_pw_set(mqttUser, mqttPassword)
-    client.on_connect = on_connect
-    client.connect(mqttBroker, mqttPort)
+    if ConnectedMQTT == False:
+        def on_connect(client, userdata, flags, rc):
+            if rc == 0:
+                ConnectedMQTT = True
+                print("        Connected to MQTT Broker!")
+            else:
+                ConnectedMQTT = False
+                print("        Failed to connect, return code %d\n", rc)        
+        
+        client.username_pw_set(mqttUser, mqttPassword)
+        client.on_connect = on_connect
+        client.connect(mqttBroker, mqttPort)
     return client
 
 #-------------------------------------------------------------------------------
-def send_mqtt(client, json_final):
+def start_sending_mqtt(client, json_final):
     client.loop_start()        #start the loop
 
     index = 0

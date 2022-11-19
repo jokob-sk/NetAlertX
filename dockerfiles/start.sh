@@ -3,9 +3,9 @@
 
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then  
-  sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/install/pialert.cron   
+#  sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/install/pialert.cron   
   sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/config/pialert.conf   
-  crontab < /home/pi/pialert/install/pialert.cron
+ # crontab < /home/pi/pialert/install/pialert.cron
 fi
 
 if [ -n "${PORT}" ]; then  
@@ -17,4 +17,6 @@ chown -R www-data:www-data /home/pi/pialert/db/pialert.db
 
 /etc/init.d/php7.4-fpm start
 /etc/init.d/nginx start
-cron -f
+#cron -f
+
+python /home/pi/pialert/back/pialert.py  > /home/pi/pialert/log/pialert.log    2>&1
