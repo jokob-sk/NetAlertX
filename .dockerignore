@@ -12,6 +12,7 @@ install/pialert_install.sh
 install/pialert_install_no_webserver.sh
 install/pialert_uninstall.sh
 install/pialert_update.sh
+db/pialert.db
 LICENSE.txt
 README.md
 tar

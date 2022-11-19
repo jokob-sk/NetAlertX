@@ -252,7 +252,7 @@ def main ():
             #return 0
         else:
             # do something
-            print ('\n20s passed\n\n')
+            print ('\n20s passed')
 
         #loop  - recursion    
         time.sleep(20) # wait for N seconds
