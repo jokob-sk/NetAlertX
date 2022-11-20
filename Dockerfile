@@ -32,7 +32,6 @@ COPY . /home/pi/pialert
 RUN rm /etc/nginx/sites-available/default \
 	&& ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
     && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default 
-    # && (crontab -l 2>/dev/null; cat /home/pi/pialert/install/pialert.cron) | crontab -
 
 # it's easy for permissions set in Git to be overridden, so doing it manually
 RUN chmod -R a+rxw /home/pi/pialert/

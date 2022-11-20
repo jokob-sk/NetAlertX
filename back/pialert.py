@@ -104,9 +104,7 @@ except NameError:
     ntfyHost = 'https://ntfy.sh'
 
 
-
 # MQTT
-
 try:
     reportMQTT = REPORT_MQTT
 except NameError: 
@@ -146,8 +144,9 @@ except NameError:
 #===============================================================================
 # MAIN
 #===============================================================================
-non_devices_scan_params = [ "internet_IP", "update_vendors", "cleanup", "update_vendors_silent"]
-cycle = 1
+send_report_on_cycles = [1, "internet_IP", "update_vendors_silent"]
+cycle = ""
+network_scan_minutes = 5
 
 # timestamps of last execution times
 time_now = datetime.datetime.now()
@@ -160,16 +159,11 @@ last_cleanup = now_minus_one_day
 last_update_vendors = time_now - timedelta(days = 7)
 
 def main ():
-    
-    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
+
+    # Initialize global variables
+    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, network_scan_minutes
     # second set of global variables
     global startTime, log_timestamp, sql_connection, includedSections, sql  
-
-    # Check parameters
-    if len(sys.argv) == 2 :
-        #print ('usage pialert [scan_cycle] | internet_IP | update_vendors | cleanup' )
-        cycle = str(sys.argv[1])        
-        # return
 
     while True:
         # update NOW time
@@ -177,36 +171,14 @@ def main ():
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
-            
-            # determine run/scan type based on passed time
-            if last_internet_IP_scan + timedelta(minutes=3) < time_now:
-                cycle = 'internet_IP'
-                last_internet_IP_scan = time_now
-            elif last_cleanup + timedelta(hours = 24) < time_now:
-                last_cleanup = time_now
-                cycle = 'cleanup'
-            # elif last_update_vendors + timedelta(days = 7) < time_now:
-            #     last_update_vendors = time_now
-            #     cycle = 'update_vendors'
-            elif last_network_scan + timedelta(minutes=5) < time_now:
-                last_network_scan = time_now
-                cycle = 1
-            else:
-                cycle = 0 # don't do anything
-
-            print ("\n\nCYCLE:", cycle)
-
-            # last time any scan or maintennace was run
+             
+             # last time any scan or maintennace was run
             last_run = time_now
-
-                
-
 
             # Header
             print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
-            print ('---------------------------------------------------------')
-
-            # Initialize global variables
+            print ('---------------------------------------------------------')\
+            
             log_timestamp  = time_now        
 
             # DB
@@ -220,43 +192,44 @@ def main ():
             ## Upgrade DB if needed
             upgradeDB()
 
-            ## Main Commands
-            if cycle == 'internet_IP':            
-                res = check_internet_IP()
-            elif cycle == 'cleanup':            
-                res = cleanup_database()
-            elif cycle == 'update_vendors':            
-                res = update_devices_MAC_vendors()
-            elif cycle == 'update_vendors_silent':
-                res = update_devices_MAC_vendors('-s')
-            elif os.path.exists(STOPARPSCAN) == False:            
-                res = scan_network()
-            elif os.path.exists(STOPARPSCAN) == True :
-                res = 0
-            
-            # # Check error
-            # if res != 0 :
-            #     closeDB()
-            #     return res
+            # determine run/scan type based on passed time
+            if last_internet_IP_scan + timedelta(minutes=3) < time_now:
+                cycle = 'internet_IP'                
+                last_internet_IP_scan = time_now
+                check_internet_IP()
+
+            if last_update_vendors + timedelta(days = 7) < time_now:
+                last_update_vendors = time_now
+                cycle = 'update_vendors'
+                update_devices_MAC_vendors()
+
+            if last_network_scan + timedelta(minutes=network_scan_minutes) < time_now and os.path.exists(STOPARPSCAN) == False:
+                last_network_scan = time_now
+                cycle = 1 # network scan
+                scan_network()        
+
+            if last_cleanup + timedelta(hours = 24) < time_now:
+                last_cleanup = time_now
+                cycle = 'cleanup'  
+                cleanup_database()       
             
             # Reporting
-            if cycle != 'internet_IP' and cycle != 'cleanup':
+            if cycle in send_report_on_cycles:
                 email_reporting()
 
             # Close SQL
-            closeDB()
-            #closeDB()
+            closeDB()            
 
             # Final menssage
-            print ('\nDONE\n\n')
-            #return 0
+            if cycle != "":
+                print ('\nFinished cycle: ', cycle, '\n')            
         else:
             # do something
+            cycle = ""
             print ('\n20s passed')
 
         #loop  - recursion    
-        time.sleep(20) # wait for N seconds
-       
+        time.sleep(20) # wait for N seconds      
 
     
 #===============================================================================
@@ -268,7 +241,7 @@ def check_internet_IP ():
     print ('    Timestamp:', startTime )
 
     # Get Internet IP
-    print ('\nRetrieving Internet IP...')
+    print ('\n    Retrieving Internet IP...')
     internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
@@ -281,7 +254,7 @@ def check_internet_IP ():
     print ('   ', internet_IP)
 
     # Get previous stored IP
-    print ('\nRetrieving previous IP...')
+    print ('\n    Retrieving previous IP...')
     openDB()
     previous_IP = get_previous_internet_IP ()
     print ('   ', previous_IP)
@@ -297,7 +270,7 @@ def check_internet_IP ():
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
-        print ('\nRetrieving Dynamic DNS IP...')
+        print ('\n    Retrieving Dynamic DNS IP...')
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
@@ -315,10 +288,8 @@ def check_internet_IP ():
         else :
             print ('    No changes to perform')
     else :
-        print ('\nSkipping Dynamic DNS update...')
+        print ('\n    Skipping Dynamic DNS update...')
 
-    # OK
-    # return 0
 
 #-------------------------------------------------------------------------------
 def get_internet_IP ():
@@ -418,22 +389,19 @@ def cleanup_database ():
     openDB()    
    
     # Cleanup Online History
-    print ('\nCleanup Online_History...')
+    print ('    Cleanup Online_History...')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
-    print ('\nOptimize Database...')
+    print ('    Optimize Database...')
 
     # Cleanup Events
-    print ('\nCleanup Events, up to the lastest '+strdaystokeepEV+' days...')
+    print ('    Cleanup Events, up to the lastest '+strdaystokeepEV+' days...')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+strdaystokeepEV+" day')")
 
     # Shrink DB
-    print ('\nShrink Database...')
+    print ('    Shrink Database...')
     sql.execute ("VACUUM;")
 
     closeDB()
-    # OK
-    # return 0
-
 
 #===============================================================================
 # UPDATE DEVICE MAC VENDORS
@@ -524,7 +492,7 @@ def scan_network ():
     print ('    ScanCycle:', cycle)
     print ('    Timestamp:', startTime )
 
-    # Query ScanCycle properties
+    # # Query ScanCycle properties
     print_log ('Query ScanCycle confinguration...')
     scanCycle_data = query_ScanCycle_Data (True)
     if scanCycle_data is None:
@@ -558,7 +526,7 @@ def scan_network ():
     # Load current scan data
     print ('\nProcessing scan results...')
     print_log ('Save scanned devices')
-    save_scanned_devices (arpscan_devices, cycle_interval)
+    save_scanned_devices (arpscan_devices)
     
     # Print stats
     print_log ('Print Stats')
@@ -603,9 +571,6 @@ def scan_network ():
     sql_connection.commit()
     closeDB()
 
-    # OK
-    # return 0
-
 #-------------------------------------------------------------------------------
 def query_ScanCycle_Data (pOpenCloseDB = False):
     # Check if is necesary open DB
@@ -635,14 +600,14 @@ def execute_arpscan ():
     if type(SCAN_SUBNETS) is list:
         print("    arp-scan: Multiple interfaces")        
         for interface in SCAN_SUBNETS :
-            print("    DEBUG 1")
+            
             arpscan_output += execute_arpscan_on_interface (interface)
     # one interface only
     else:
         print("    arp-scan: One interface")
         arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
 
-    print("    DEBUG 2")
+    
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
     re_mac = r'(?P<mac>([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2}))'
@@ -653,7 +618,7 @@ def execute_arpscan ():
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
 
-    print("    DEBUG 3")
+    
     # Delete duplicate MAC
     unique_mac = [] 
     unique_devices = [] 
@@ -662,7 +627,7 @@ def execute_arpscan ():
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
             unique_devices.append(device)
-    print("    DEBUG 4")
+    
 
     # DEBUG
         # print (devices_list)
@@ -744,7 +709,7 @@ def read_DHCP_leases ():
         # print (sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
+def save_scanned_devices (p_arpscan_devices):
     # Delete previous scan data
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
                 (cycle,))
@@ -752,7 +717,7 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
     # Insert new arp-scan devices
     sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
                      "    cur_IP, cur_Vendor, cur_ScanMethod) "+
-                     "VALUES ("+ cycle + ", :mac, :ip, :hw, 'arp-scan')",
+                     "VALUES ("+ str(cycle) + ", :mac, :ip, :hw, 'arp-scan')",
                      p_arpscan_devices) 
 
     # Insert Pi-hole devices
@@ -765,7 +730,7 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
                                       WHERE cur_MAC = PH_MAC
                                         AND cur_ScanCycle = ? )""",
                     (cycle,
-                     (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
+                     (int(startTime.strftime('%s')) - 60 * cycle),
                      cycle) )
 
     # Check Internet connectivity
@@ -1963,7 +1928,7 @@ def openDB ():
         return
 
     # Log    
-    print_log ('Opening DB...')
+    print_log ('Opening DB...')    
 
     # Open DB and Cursor
     sql_connection = sqlite3.connect (DB_PATH, isolation_level=None)
