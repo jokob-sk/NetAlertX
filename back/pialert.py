@@ -608,8 +608,7 @@ def execute_arpscan ():
     # multiple interfaces
     if type(SCAN_SUBNETS) is list:
         print("    arp-scan: Multiple interfaces")        
-        for interface in SCAN_SUBNETS :
-            
+        for interface in SCAN_SUBNETS :            
             arpscan_output += execute_arpscan_on_interface (interface)
     # one interface only
     else:
@@ -1795,6 +1794,31 @@ def mqtt_start():
     client.username_pw_set(mqttUser, mqttPassword)    
     client.connect(mqttBroker, mqttPort)
 
+
+    # send config messages
+    devices = get_all_devices()
+
+    for device in devices:
+        deviceNameDisplay = device["dev_Name"]
+        deviceName = deviceNameDisplay.replace(" ", "").lower()
+
+        if deviceName != '(unknown)':
+
+            print ('    MQTT send config for ', deviceName)
+
+            payloadMy= "{\"name\":\""+ deviceNameDisplay +" Last Ip\",\"state_topic\":\"system-sensors/sensor/"+deviceName+"/state\",\"value_template\":\"{{value_json.last_ip}}\",\"unique_id\":\""+deviceName+"_sensor_last_ip\",\"availability_topic\":\"system-sensors/sensor/"+deviceName+"/availability\",\"device\":{\"identifiers\":[\""+deviceName+"_sensor\"],\"name\":\""+deviceNameDisplay+" Sensors\"},\"icon\":\"mdi:lan\"}"
+
+            print (payloadMy) 
+
+            client.publish(
+                topic=f"pialert/devices/{deviceName}/last_ip/config",
+                payload=payloadMy,
+                qos=1,
+                retain=True,
+            )
+
+            client.publish(f"system-sensors/sensor/{deviceName}/availability", device["dev_PresentLastScan"], retain=True)
+
     while True:         
     
         time.sleep(15) 
@@ -1803,16 +1827,38 @@ def mqtt_start():
         row = get_device_stats()
 
         client.publish("pialert/devices/online/number", 
-            payload=row[0], 
+            payload=row["Online_Devices"], 
+            qos=1,
+            retain=True)
+
+        client.publish("pialert/devices/down/number", 
+            payload=row["Down_Devices"], 
             qos=1,
             retain=True)
 
         client.publish("pialert/devices/number", 
-            payload=row[2], 
+            payload=row["All_Devices"], 
             qos=1,
             retain=True)
 
-        print ('MQTT published messages')
+        client.publish("pialert/devices/archived/number", 
+            payload=row["Archived_Devices"], 
+            qos=1,
+            retain=True)
+        
+        client.publish("pialert/devices/new/number", 
+            payload=row["New_Devices"], 
+            qos=1,
+            retain=True)
+
+        client.publish("pialert/devices/unknown/number", 
+            payload=row["Unknown_Devices"], 
+            qos=1,
+            retain=True)
+
+
+
+        print ('    MQTT published messages')
 
 
     client.loop()
@@ -2017,15 +2063,29 @@ def to_text(_json):
 
     return payloadData
 
+#-------------------------------------------------------------------------------
 def get_device_stats():
 
     openDB()
 
     sql.execute("""      
-      SELECT Online_Devices, Down_Devices, All_Devices, Archived_Devices from Online_History 
+      SELECT Online_Devices, Down_Devices, All_Devices, Archived_Devices, (select count(*) from Devices a where dev_NewDevice = 1 ) as New_Devices, (select count(*) from Devices a where dev_Name = '(unknown)' ) as Unknown_Devices from Online_History limit  1 
       """)
 
     row = sql.fetchone()
+
+    closeDB()
+    return row
+#-------------------------------------------------------------------------------
+def get_all_devices():
+
+    openDB()
+
+    sql.execute("""      
+        select dev_MAC, dev_Name, dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice, dev_Network_Node_MAC_ADDR from Devices 
+      """)
+
+    row = sql.fetchall()
 
     closeDB()
     return row
