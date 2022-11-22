@@ -1806,6 +1806,114 @@ def publish_mqtt(client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
+def mqtt_send_configs(client, device, deviceId):
+    deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
+
+    
+
+    # create device in home assistant             
+
+    # Last_IP
+
+    message = '{ \
+                "name":"'+ deviceNameDisplay +' Last Ip", \
+                "state_topic":"system-sensors/sensor/'+deviceId+'/state", \
+                "value_template":"{{value_json.last_ip}}", \
+                "unique_id":"'+deviceId+'_sensor_last_ip", \
+                "device": \
+                    { \
+                        "identifiers": ["'+deviceId+'_sensor"], \
+                        "manufacturer": "PiAlert", \
+                        "name":"'+deviceNameDisplay+'" \
+                    }, \
+                "icon":"mdi:ip-network" \
+                }'
+
+    topic="homeassistant/sensor/"+deviceId+"/last_ip/config"
+
+    publish_mqtt(client, topic, message)                        
+
+    # dev_PresentLastScan
+
+    message = '{\
+                "name":"'+ deviceNameDisplay +' Is present",\
+                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                "value_template":"{{value_json.is_present}}",\
+                "unique_id":"'+deviceId+'_sensor_is_present",\
+                "device":\
+                    {\
+                        "identifiers":["'+deviceId+'_sensor"],\
+                        "manufacturer": "PiAlert", \
+                        "name":"'+deviceNameDisplay+'"\
+                    },\
+                "icon":"mdi:wifi"\
+                }'
+
+    topic="homeassistant/sensor/"+deviceId+"/is_present/config"
+
+    publish_mqtt(client, topic, message)    
+
+    # dev_MAC
+
+    message = '{\
+                "name":"'+ deviceNameDisplay +' MAC address",\
+                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                "value_template":"{{value_json.mac_address}}",\
+                "unique_id":"'+deviceId+'_sensor_mac_address",\
+                "device":\
+                    {\
+                        "identifiers":["'+deviceId+'_sensor"],\
+                        "manufacturer": "PiAlert", \
+                        "name":"'+deviceNameDisplay+'"\
+                    },\
+                "icon":"mdi:folder-key-network"\
+                }'
+
+    topic="homeassistant/sensor/"+deviceId+"/mac_address/config"
+
+    publish_mqtt(client, topic, message) 
+
+    # dev_NewDevice
+
+    message = '{\
+                "name":"'+ deviceNameDisplay +' is new",\
+                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                "value_template":"{{value_json.is_new}}",\
+                "unique_id":"'+deviceId+'_sensor_is_new",\
+                "device":\
+                    {\
+                        "identifiers":["'+deviceId+'_sensor"],\
+                        "manufacturer": "PiAlert", \
+                        "name":"'+deviceNameDisplay+'"\
+                    },\
+                "icon":"mdi:bell-alert-outline"\
+                }'
+
+    topic="homeassistant/sensor/"+deviceId+"/is_new/config"
+
+    publish_mqtt(client, topic, message) 
+
+    # dev_Vendor
+
+    message = '{\
+                "name":"'+ deviceNameDisplay +' vendor",\
+                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                "value_template":"{{value_json.vendor}}",\
+                "unique_id":"'+deviceId+'_sensor_vendor",\
+                "device":\
+                    {\
+                        "identifiers":["'+deviceId+'_sensor"],\
+                        "manufacturer": "PiAlert", \
+                        "name":"'+deviceNameDisplay+'"\
+                    },\
+                "icon":"mdi:cog"\
+                }'
+
+    topic="homeassistant/sensor/"+deviceId+"/vendor/config"
+
+    publish_mqtt(client, topic, message)
+
+#-------------------------------------------------------------------------------
 def mqtt_start():
 
     def on_disconnect(client, userdata, rc):
@@ -1830,105 +1938,40 @@ def mqtt_start():
     client.connect(mqttBroker, mqttPort)
     client.loop_start()
 
+    # Create a devices for overall stats
 
-    # send config messages
+    # Get all devices
     devices = get_all_devices()
 
-    for device in devices:
-        deviceNameDisplay = device["dev_Name"].replace("\\", "")
+    for device in devices:        
 
-        if deviceNameDisplay != '(unknown)':
+        # Create devices in Home Assistant - send config messages
+        deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
 
-            deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
+        mqtt_send_configs(client, device, deviceId)
 
-            # create device in home assistant             
+        # update device sensors in home assistant              
+        
+        publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
+            '{ \
+                "last_ip": "' + device["dev_LastIP"] +'", \
+                "is_present": "' + str(device["dev_PresentLastScan"]) +'", \
+                "is_new": "' + str(device["dev_NewDevice"]) +'", \
+                "vendor": "' + re.sub('[^a-zA-Z0-9-_]', '', str(device["dev_Vendor"]).replace(" ", "_")) +'", \
+                "mac_address": "' + str(device["dev_MAC"]) +'" \
+            }'
+        ) 
 
-            # Last_IP
+        # delete device / topic
+        # client.publish(
+        #     topic="homeassistant/sensor/"+deviceId+"/status/config",
+        #     payload="",
+        #     qos=1,
+        #     retain=True,
+        # )
 
-            message = '{ \
-                        "name":"'+ deviceNameDisplay +' Last Ip", \
-                        "state_topic":"system-sensors/sensor/'+deviceId+'/state", \
-                        "value_template":"{{value_json.last_ip}}", \
-                        "unique_id":"'+deviceId+'_sensor_last_ip", \
-                        "device": \
-                            { \
-                                "identifiers": ["'+deviceId+'_sensor"], \
-                                "name":"'+deviceNameDisplay+' (from PiAlert)" \
-                            }, \
-                        "icon":"mdi:ip-network" \
-                        }'
+        time.sleep(0.3) 
 
-            topic="homeassistant/sensor/"+deviceId+"/last_ip/config"
-
-            publish_mqtt(client, topic, message)                        
-
-            # dev_PresentLastScan
-
-            message = '{\
-                        "name":"'+ deviceNameDisplay +' Is present",\
-                        "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
-                        "value_template":"{{value_json.is_present}}",\
-                        "unique_id":"'+deviceId+'_sensor_is_present",\
-                        "device":\
-                            {\
-                                "identifiers":["'+deviceId+'_sensor"],\
-                                "name":"'+deviceNameDisplay+' (from PiAlert)"\
-                            },\
-                        "icon":"mdi:wifi"\
-                        }'
-
-            topic="homeassistant/sensor/"+deviceId+"/is_present/config"
-
-            publish_mqtt(client, topic, message)    
-
-            # dev_MAC
-
-            message = '{\
-                        "name":"'+ deviceNameDisplay +' MAC address",\
-                        "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
-                        "value_template":"{{value_json.mac_address}}",\
-                        "unique_id":"'+deviceId+'_sensor_mac_address",\
-                        "device":\
-                            {\
-                                "identifiers":["'+deviceId+'_sensor"],\
-                                "name":"'+deviceNameDisplay+' (from PiAlert)"\
-                            },\
-                        "icon":"mdi:wifi"\
-                        }'
-
-            topic="homeassistant/sensor/"+deviceId+"/mac_address/config"
-
-            publish_mqtt(client, topic, message) 
-
-            # dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice                    #  
-
-            # update device sensors in home assistant              
-            
-            publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
-                '{ \
-                    "last_ip": "' + device["dev_LastIP"] +'", \
-                    "is_present": "' + str(device["dev_PresentLastScan"]) +'", \
-                    "mac_address": "' + str(device["dev_MAC"]) +'" \
-                }'
-            ) 
-
-
-
-
-
-            
-
-            # delete device / topic
-            # client.publish(
-            #     topic="homeassistant/sensor/"+deviceId+"/status/config",
-            #     payload="",
-            #     qos=1,
-            #     retain=True,
-            # )
-
-
-
-            time.sleep(0.3) 
 
     # while True:         
     
@@ -1969,7 +2012,7 @@ def mqtt_start():
 
 
 
-        print ('    MQTT published messages')
+        
 
 
     client.loop()
