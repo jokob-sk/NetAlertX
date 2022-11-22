@@ -163,7 +163,7 @@ last_update_vendors = time_now - timedelta(days = 7)
 def main ():
 
     # Initialize global variables
-    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, network_scan_minutes
+    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, network_scan_minutes, mqtt_thread_up
     # second set of global variables
     global startTime, log_timestamp, sql_connection, includedSections, sql  
 
@@ -195,11 +195,12 @@ def main ():
             upgradeDB()
 
             # Start MQTT thread if configured
-            # if reportMQTT and not mqtt_thread_up:
-            #     print ('Establishing MQTT thread...')
-            #     # start_mqtt_thread (connect_mqtt())
-            #     # connect_mqtt()
-            #     mqtt_start()
+            if reportMQTT and mqtt_thread_up == False:
+                print ('Establishing MQTT thread...')                
+                mqtt_thread_up = True # prevent this code to be run multiple times concurrently
+                # start_mqtt_thread (connect_mqtt())
+                # connect_mqtt()
+                mqtt_start()
 
             # determine run/scan type based on passed time
             if last_internet_IP_scan + timedelta(minutes=3) < time_now:
@@ -1783,78 +1784,188 @@ def send_apprise (html):
     logResult (stdout, stderr)  
 
 #-------------------------------------------------------------------------------
+mqtt_connected_to_broker = 0
 
+def publish_mqtt(client, topic, message):
+    status = 1
+    while status != 0:
+        result = client.publish(
+                topic=topic,
+                payload=message,
+                qos=1,
+                retain=True,
+            )
 
+        status = result[0]
+
+        if status == 0:
+            print("Sent MQTT message")
+        else:
+            print("Waiting to reconnect to MQTT broker")
+            time.sleep(0.1) 
+    return True
+
+#-------------------------------------------------------------------------------
 def mqtt_start():
-    global mqtt_thread_up 
 
-    mqtt_thread_up = True
+    def on_disconnect(client, userdata, rc):
+        global mqtt_connected_to_broker
+        mqtt_connected_to_broker = 0
+
+    def on_connect(client, userdata, flags, rc):
+        global mqtt_connected_to_broker
+         
+        if rc == 0: 
+            print("Connected to broker")         
+            mqtt_connected_to_broker = True                #Signal connection 
+    
+        else: 
+            print("Connection failed")
+
 
     client = mqtt_client.Client(mqttClientId)   # Set Connecting Client ID    
     client.username_pw_set(mqttUser, mqttPassword)    
+    client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
     client.connect(mqttBroker, mqttPort)
+    client.loop_start()
 
 
     # send config messages
     devices = get_all_devices()
 
     for device in devices:
-        deviceNameDisplay = device["dev_Name"]
-        deviceName = deviceNameDisplay.replace(" ", "").lower()
+        deviceNameDisplay = device["dev_Name"].replace("\\", "")
 
-        if deviceName != '(unknown)':
+        if deviceNameDisplay != '(unknown)':
 
-            print ('    MQTT send config for ', deviceName)
+            deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
 
-            payloadMy= "{\"name\":\""+ deviceNameDisplay +" Last Ip\",\"state_topic\":\"system-sensors/sensor/"+deviceName+"/state\",\"value_template\":\"{{value_json.last_ip}}\",\"unique_id\":\""+deviceName+"_sensor_last_ip\",\"availability_topic\":\"system-sensors/sensor/"+deviceName+"/availability\",\"device\":{\"identifiers\":[\""+deviceName+"_sensor\"],\"name\":\""+deviceNameDisplay+" Sensors\"},\"icon\":\"mdi:lan\"}"
+            # create device in home assistant             
 
-            print (payloadMy) 
+            # Last_IP
 
-            client.publish(
-                topic=f"pialert/devices/{deviceName}/last_ip/config",
-                payload=payloadMy,
-                qos=1,
-                retain=True,
-            )
+            message = '{ \
+                        "name":"'+ deviceNameDisplay +' Last Ip", \
+                        "state_topic":"system-sensors/sensor/'+deviceId+'/state", \
+                        "value_template":"{{value_json.last_ip}}", \
+                        "unique_id":"'+deviceId+'_sensor_last_ip", \
+                        "device": \
+                            { \
+                                "identifiers": ["'+deviceId+'_sensor"], \
+                                "name":"'+deviceNameDisplay+' (from PiAlert)" \
+                            }, \
+                        "icon":"mdi:ip-network" \
+                        }'
 
-            client.publish(f"system-sensors/sensor/{deviceName}/availability", device["dev_PresentLastScan"], retain=True)
+            topic="homeassistant/sensor/"+deviceId+"/last_ip/config"
 
-    while True:         
+            publish_mqtt(client, topic, message)                        
+
+            # dev_PresentLastScan
+
+            message = '{\
+                        "name":"'+ deviceNameDisplay +' Is present",\
+                        "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                        "value_template":"{{value_json.is_present}}",\
+                        "unique_id":"'+deviceId+'_sensor_is_present",\
+                        "device":\
+                            {\
+                                "identifiers":["'+deviceId+'_sensor"],\
+                                "name":"'+deviceNameDisplay+' (from PiAlert)"\
+                            },\
+                        "icon":"mdi:wifi"\
+                        }'
+
+            topic="homeassistant/sensor/"+deviceId+"/is_present/config"
+
+            publish_mqtt(client, topic, message)    
+
+            # dev_MAC
+
+            message = '{\
+                        "name":"'+ deviceNameDisplay +' MAC address",\
+                        "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                        "value_template":"{{value_json.mac_address}}",\
+                        "unique_id":"'+deviceId+'_sensor_mac_address",\
+                        "device":\
+                            {\
+                                "identifiers":["'+deviceId+'_sensor"],\
+                                "name":"'+deviceNameDisplay+' (from PiAlert)"\
+                            },\
+                        "icon":"mdi:wifi"\
+                        }'
+
+            topic="homeassistant/sensor/"+deviceId+"/mac_address/config"
+
+            publish_mqtt(client, topic, message) 
+
+            # dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice                    #  
+
+            # update device sensors in home assistant              
+            
+            publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
+                '{ \
+                    "last_ip": "' + device["dev_LastIP"] +'", \
+                    "is_present": "' + str(device["dev_PresentLastScan"]) +'", \
+                    "mac_address": "' + str(device["dev_MAC"]) +'" \
+                }'
+            ) 
+
+
+
+
+
+            
+
+            # delete device / topic
+            # client.publish(
+            #     topic="homeassistant/sensor/"+deviceId+"/status/config",
+            #     payload="",
+            #     qos=1,
+            #     retain=True,
+            # )
+
+
+
+            time.sleep(0.3) 
+
+    # while True:         
     
-        time.sleep(15) 
+    #     time.sleep(15) 
 
-        # Online_Devices, Down_Devices, All_Devices, Archived_Devices 
-        row = get_device_stats()
+    #     # Online_Devices, Down_Devices, All_Devices, Archived_Devices 
+    #     row = get_device_stats()
 
-        client.publish("pialert/devices/online/number", 
-            payload=row["Online_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/online/number", 
+    #         payload=row["Online_Devices"], 
+    #         qos=1,
+    #         retain=True)
 
-        client.publish("pialert/devices/down/number", 
-            payload=row["Down_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/down/number", 
+    #         payload=row["Down_Devices"], 
+    #         qos=1,
+    #         retain=True)
 
-        client.publish("pialert/devices/number", 
-            payload=row["All_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/number", 
+    #         payload=row["All_Devices"], 
+    #         qos=1,
+    #         retain=True)
 
-        client.publish("pialert/devices/archived/number", 
-            payload=row["Archived_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/archived/number", 
+    #         payload=row["Archived_Devices"], 
+    #         qos=1,
+    #         retain=True)
         
-        client.publish("pialert/devices/new/number", 
-            payload=row["New_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/new/number", 
+    #         payload=row["New_Devices"], 
+    #         qos=1,
+    #         retain=True)
 
-        client.publish("pialert/devices/unknown/number", 
-            payload=row["Unknown_Devices"], 
-            qos=1,
-            retain=True)
+    #     client.publish("pialert/devices/unknown/number", 
+    #         payload=row["Unknown_Devices"], 
+    #         qos=1,
+    #         retain=True)
 
 
 
