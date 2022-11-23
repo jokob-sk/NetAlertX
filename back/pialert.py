@@ -1798,9 +1798,7 @@ def publish_mqtt(client, topic, message):
 
         status = result[0]
 
-        if status == 0:
-            print("Sent MQTT message")
-        else:
+        if status != 0:            
             print("Waiting to reconnect to MQTT broker")
             time.sleep(0.1) 
     return True
@@ -1822,7 +1820,7 @@ def mqtt_send_configs(client, device, deviceId):
                 "unique_id":"'+deviceId+'_sensor_last_ip", \
                 "device": \
                     { \
-                        "identifiers": ["'+deviceId+'_sensor"], \
+                        "identifiers": ["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"], \
                         "manufacturer": "PiAlert", \
                         "name":"'+deviceNameDisplay+'" \
                     }, \
@@ -1837,19 +1835,19 @@ def mqtt_send_configs(client, device, deviceId):
 
     message = '{\
                 "name":"'+ deviceNameDisplay +' Is present",\
-                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
+                "state_topic":"system-sensors/binary_sensor/'+deviceId+'/state",\
                 "value_template":"{{value_json.is_present}}",\
                 "unique_id":"'+deviceId+'_sensor_is_present",\
                 "device":\
                     {\
-                        "identifiers":["'+deviceId+'_sensor"],\
+                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
                         "manufacturer": "PiAlert", \
                         "name":"'+deviceNameDisplay+'"\
                     },\
                 "icon":"mdi:wifi"\
                 }'
 
-    topic="homeassistant/sensor/"+deviceId+"/is_present/config"
+    topic="homeassistant/binary_sensor/"+deviceId+"/is_present/config"
 
     publish_mqtt(client, topic, message)    
 
@@ -1862,7 +1860,7 @@ def mqtt_send_configs(client, device, deviceId):
                 "unique_id":"'+deviceId+'_sensor_mac_address",\
                 "device":\
                     {\
-                        "identifiers":["'+deviceId+'_sensor"],\
+                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
                         "manufacturer": "PiAlert", \
                         "name":"'+deviceNameDisplay+'"\
                     },\
@@ -1882,7 +1880,7 @@ def mqtt_send_configs(client, device, deviceId):
                 "unique_id":"'+deviceId+'_sensor_is_new",\
                 "device":\
                     {\
-                        "identifiers":["'+deviceId+'_sensor"],\
+                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
                         "manufacturer": "PiAlert", \
                         "name":"'+deviceNameDisplay+'"\
                     },\
@@ -1902,7 +1900,7 @@ def mqtt_send_configs(client, device, deviceId):
                 "unique_id":"'+deviceId+'_sensor_vendor",\
                 "device":\
                     {\
-                        "identifiers":["'+deviceId+'_sensor"],\
+                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
                         "manufacturer": "PiAlert", \
                         "name":"'+deviceNameDisplay+'"\
                     },\
@@ -1924,7 +1922,7 @@ def mqtt_start():
         global mqtt_connected_to_broker
          
         if rc == 0: 
-            print("Connected to broker")         
+            # print("Connected to broker")         
             mqtt_connected_to_broker = True                #Signal connection 
     
         else: 
@@ -1936,7 +1934,8 @@ def mqtt_start():
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connect(mqttBroker, mqttPort)
-    client.loop_start()
+    client.loop_start()  
+
 
     # Create a devices for overall stats
 
@@ -1949,28 +1948,32 @@ def mqtt_start():
         deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
 
         mqtt_send_configs(client, device, deviceId)
-
+       
         # update device sensors in home assistant              
-        
+
         publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
             '{ \
                 "last_ip": "' + device["dev_LastIP"] +'", \
-                "is_present": "' + str(device["dev_PresentLastScan"]) +'", \
                 "is_new": "' + str(device["dev_NewDevice"]) +'", \
-                "vendor": "' + re.sub('[^a-zA-Z0-9-_]', '', str(device["dev_Vendor"]).replace(" ", "_")) +'", \
+                "vendor": "' + sanitize_string(device["dev_Vendor"]) +'", \
                 "mac_address": "' + str(device["dev_MAC"]) +'" \
             }'
         ) 
 
+        publish_mqtt(client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
+            '{ \
+                "is_present": "' + to_binary_sensor(str(device["dev_PresentLastScan"])) +'"\
+            }'
+        ) 
+
         # delete device / topic
+        #  homeassistant/sensor/mac_44_ef_bf_c4_b1_af/is_present/config
         # client.publish(
-        #     topic="homeassistant/sensor/"+deviceId+"/status/config",
+        #     topic="homeassistant/sensor/"+deviceId+"/is_present/config",
         #     payload="",
         #     qos=1,
         #     retain=True,
-        # )
-
-        time.sleep(0.3) 
+        # )        
 
 
     # while True:         
@@ -2009,11 +2012,6 @@ def mqtt_start():
     #         payload=row["Unknown_Devices"], 
     #         qos=1,
     #         retain=True)
-
-
-
-        
-
 
     client.loop()
 
@@ -2137,6 +2135,28 @@ def closeDB ():
     sql_connection.commit()
     sql_connection.close()
     sql_connection = None    
+#===============================================================================
+# Home Assistant UTILs
+#===============================================================================
+def to_binary_sensor(input):
+    # In HA a binary sensor returns ON or OFF    
+    result = "OFF"
+
+    # bytestring
+    if isinstance(input, str):
+        if input == "1":
+            result = "ON"
+    elif isinstance(input, int):
+        if input == 1:
+            result = "ON"
+    elif isinstance(input, bool):
+        if input == True:
+            result = "ON"
+    elif isinstance(input, bytes):
+        if bytes_to_string(input) == "1":
+            result = "ON"
+    return result
+        
 
 
 #===============================================================================
@@ -2161,15 +2181,28 @@ def print_log (pText):
     # Save current time to calculate elapsed time until next log
     log_timestamp = log_timestamp2
 
+#-------------------------------------------------------------------------------
+
+def sanitize_string(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+    value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return value
+
+#-------------------------------------------------------------------------------
+
+def bytes_to_string(value):
+    # if value is of type bytes, convert to string
+    if isinstance(value, bytes):
+        value = value.decode('utf-8')
+    return value
 
 #-------------------------------------------------------------------------------
 
 def add_json_list (row, list):
     new_row = []
-    for column in row :
-        # if variable is of type bytes, convert to string
-        if isinstance(column, bytes):
-            column = column.decode('utf-8')
+    for column in row :        
+        column = bytes_to_string(column)
 
         new_row.append(column)
 
