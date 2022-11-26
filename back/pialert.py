@@ -1804,112 +1804,45 @@ def publish_mqtt(client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
-def mqtt_send_configs(client, device, deviceId):
-    deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
-
+def create_generic_device(client):
     
+    deviceName = 'PiAlert'
+    deviceId = 'pialert'
 
-    # create device in home assistant             
+    device_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')
+    device_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')
+    device_sensor(client, deviceId, deviceName, 'sensor', 'all', 'wifi')
+    device_sensor(client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
+    device_sensor(client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
+    device_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')   
 
-    # Last_IP
 
-    message = '{ \
-                "name":"'+ deviceNameDisplay +' Last Ip", \
-                "state_topic":"system-sensors/sensor/'+deviceId+'/state", \
-                "value_template":"{{value_json.last_ip}}", \
-                "unique_id":"'+deviceId+'_sensor_last_ip", \
-                "device": \
-                    { \
-                        "identifiers": ["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"], \
-                        "manufacturer": "PiAlert", \
-                        "name":"'+deviceNameDisplay+'" \
-                    }, \
-                "icon":"mdi:ip-network" \
-                }'
+#-------------------------------------------------------------------------------
+class device_sensor:
+    def __init__(self, client, deviceId, deviceName, sensorType, sensorName, icon):
+        self.deviceId = deviceId
+        self.deviceName = deviceName
+        self.sensorType = sensorType
+        self.sensorName = sensorName
+        self.icon = icon
 
-    topic="homeassistant/sensor/"+deviceId+"/last_ip/config"
+        message = '{ \
+                    "name":"'+ deviceName +' '+sensorName+'", \
+                    "state_topic":"system-sensors/'+sensorType+'/'+deviceId+'/state", \
+                    "value_template":"{{value_json.'+sensorName+'}}", \
+                    "unique_id":"'+deviceId+'_sensor_'+sensorName+'", \
+                    "device": \
+                        { \
+                            "identifiers": ["'+deviceId+'_sensor"], \
+                            "manufacturer": "PiAlert", \
+                            "name":"'+deviceName+'" \
+                        }, \
+                    "icon":"mdi:'+icon+'" \
+                    }'
 
-    publish_mqtt(client, topic, message)                        
+        topic='homeassistant/'+sensorType+'/'+deviceId+'/'+sensorName+'/config'
 
-    # dev_PresentLastScan
-
-    message = '{\
-                "name":"'+ deviceNameDisplay +' Is present",\
-                "state_topic":"system-sensors/binary_sensor/'+deviceId+'/state",\
-                "value_template":"{{value_json.is_present}}",\
-                "unique_id":"'+deviceId+'_sensor_is_present",\
-                "device":\
-                    {\
-                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
-                        "manufacturer": "PiAlert", \
-                        "name":"'+deviceNameDisplay+'"\
-                    },\
-                "icon":"mdi:wifi"\
-                }'
-
-    topic="homeassistant/binary_sensor/"+deviceId+"/is_present/config"
-
-    publish_mqtt(client, topic, message)    
-
-    # dev_MAC
-
-    message = '{\
-                "name":"'+ deviceNameDisplay +' MAC address",\
-                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
-                "value_template":"{{value_json.mac_address}}",\
-                "unique_id":"'+deviceId+'_sensor_mac_address",\
-                "device":\
-                    {\
-                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
-                        "manufacturer": "PiAlert", \
-                        "name":"'+deviceNameDisplay+'"\
-                    },\
-                "icon":"mdi:folder-key-network"\
-                }'
-
-    topic="homeassistant/sensor/"+deviceId+"/mac_address/config"
-
-    publish_mqtt(client, topic, message) 
-
-    # dev_NewDevice
-
-    message = '{\
-                "name":"'+ deviceNameDisplay +' is new",\
-                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
-                "value_template":"{{value_json.is_new}}",\
-                "unique_id":"'+deviceId+'_sensor_is_new",\
-                "device":\
-                    {\
-                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
-                        "manufacturer": "PiAlert", \
-                        "name":"'+deviceNameDisplay+'"\
-                    },\
-                "icon":"mdi:bell-alert-outline"\
-                }'
-
-    topic="homeassistant/sensor/"+deviceId+"/is_new/config"
-
-    publish_mqtt(client, topic, message) 
-
-    # dev_Vendor
-
-    message = '{\
-                "name":"'+ deviceNameDisplay +' vendor",\
-                "state_topic":"system-sensors/sensor/'+deviceId+'/state",\
-                "value_template":"{{value_json.vendor}}",\
-                "unique_id":"'+deviceId+'_sensor_vendor",\
-                "device":\
-                    {\
-                        "identifiers":["'+deviceId+'_sensor", "'+device["dev_MAC"]+'"],\
-                        "manufacturer": "PiAlert", \
-                        "name":"'+deviceNameDisplay+'"\
-                    },\
-                "icon":"mdi:cog"\
-                }'
-
-    topic="homeassistant/sensor/"+deviceId+"/vendor/config"
-
-    publish_mqtt(client, topic, message)
+        publish_mqtt(client, topic, message)
 
 #-------------------------------------------------------------------------------
 def mqtt_start():
@@ -1935,9 +1868,31 @@ def mqtt_start():
     client.on_disconnect = on_disconnect
     client.connect(mqttBroker, mqttPort)
     client.loop_start()  
+    
+    # General stats    
+
+    # Create a generic device for overal stats
+    create_generic_device(client)
+
+    # Get the data
+    row = get_device_stats()   
+
+    columns = ["online","down","all","archived","new","unknown"]
+
+    payload = ""
+
+    # Update the values
+    for column in columns:       
+        payload += '"'+column+'": ' + str(row[column]) +','       
+
+    publish_mqtt(client, "system-sensors/sensor/pialert/state",              
+             '{ \
+                '+ payload[:-1] +'\
+            }'
+        )
 
 
-    # Create a devices for overall stats
+    # Specific devices
 
     # Get all devices
     devices = get_all_devices()
@@ -1946,8 +1901,14 @@ def mqtt_start():
 
         # Create devices in Home Assistant - send config messages
         deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
+        deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-        mqtt_send_configs(client, device, deviceId)
+        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network')
+        device_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi')
+        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network')
+        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
+        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
+        
        
         # update device sensors in home assistant              
 
@@ -1974,44 +1935,6 @@ def mqtt_start():
         #     qos=1,
         #     retain=True,
         # )        
-
-
-    # while True:         
-    
-    #     time.sleep(15) 
-
-    #     # Online_Devices, Down_Devices, All_Devices, Archived_Devices 
-    #     row = get_device_stats()
-
-    #     client.publish("pialert/devices/online/number", 
-    #         payload=row["Online_Devices"], 
-    #         qos=1,
-    #         retain=True)
-
-    #     client.publish("pialert/devices/down/number", 
-    #         payload=row["Down_Devices"], 
-    #         qos=1,
-    #         retain=True)
-
-    #     client.publish("pialert/devices/number", 
-    #         payload=row["All_Devices"], 
-    #         qos=1,
-    #         retain=True)
-
-    #     client.publish("pialert/devices/archived/number", 
-    #         payload=row["Archived_Devices"], 
-    #         qos=1,
-    #         retain=True)
-        
-    #     client.publish("pialert/devices/new/number", 
-    #         payload=row["New_Devices"], 
-    #         qos=1,
-    #         retain=True)
-
-    #     client.publish("pialert/devices/unknown/number", 
-    #         payload=row["Unknown_Devices"], 
-    #         qos=1,
-    #         retain=True)
 
     client.loop()
 
@@ -2255,8 +2178,9 @@ def get_device_stats():
 
     openDB()
 
+    # columns = ["online","down","all","archived","new","unknown"]
     sql.execute("""      
-      SELECT Online_Devices, Down_Devices, All_Devices, Archived_Devices, (select count(*) from Devices a where dev_NewDevice = 1 ) as New_Devices, (select count(*) from Devices a where dev_Name = '(unknown)' ) as Unknown_Devices from Online_History limit  1 
+      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' ) as unknown from Online_History limit  1 
       """)
 
     row = sql.fetchone()
