@@ -306,7 +306,12 @@ def get_internet_IP ():
     # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
     # Using 'dig'
     dig_args = ['dig', '+short', '-4', 'myip.opendns.com', '@resolver1.opendns.com']
-    cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
+    try:
+        cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        cmd_output = '' # no internet
+    
 
     ## BUGFIX #12 - Query IPv4 address (not IPv6)
     ## Using 'curl' instead of 'dig'
@@ -325,7 +330,14 @@ def get_dynamic_DNS_IP ():
 
     # Using default DNS server
     dig_args = ['dig', '+short', DDNS_DOMAIN]
-    dig_output = subprocess.check_output (dig_args, universal_newlines=True)
+
+    try:
+        # try runnning a subprocess
+        dig_output = subprocess.check_output (dig_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)
+        dig_output = '' # probably no internet
 
     # Check result is an IP
     IP = check_IP_format (dig_output)
@@ -333,13 +345,20 @@ def get_dynamic_DNS_IP ():
 
 #-------------------------------------------------------------------------------
 def set_dynamic_DNS_IP ():
-    # Update Dynamic IP
-    curl_output = subprocess.check_output (['curl', '-s',
-        DDNS_UPDATE_URL +
-        'username='  + DDNS_USER +
-        '&password=' + DDNS_PASSWORD +
-        '&hostname=' + DDNS_DOMAIN],
-        universal_newlines=True)
+    try:
+        # try runnning a subprocess
+        # Update Dynamic IP
+        curl_output = subprocess.check_output (['curl', '-s',
+            DDNS_UPDATE_URL +
+            'username='  + DDNS_USER +
+            '&password=' + DDNS_PASSWORD +
+            '&hostname=' + DDNS_DOMAIN],
+            universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)
+        curl_output = ""    
+    
     return curl_output
     
 #-------------------------------------------------------------------------------
@@ -424,7 +443,15 @@ def update_devices_MAC_vendors (pArg = ''):
     # Update vendors DB (iab oui)
     print ('\nUpdating vendors DB (iab & oui)...')
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
-    update_output = subprocess.check_output (update_args)
+
+    try:
+        # try runnning a subprocess
+        update_output = subprocess.check_output (update_args)
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)
+        update_output = ""
+    
     # DEBUG
         # update_args = ['./vendors_db_update.sh']
         # subprocess.call (update_args, shell=True)
@@ -482,7 +509,14 @@ def query_MAC_vendor (pMAC):
         # Search vendor in HW Vendors DB
         mac = mac[0:6]
         grep_args = ['grep', '-i', mac, VENDORS_DB]
-        grep_output = subprocess.check_output (grep_args)
+        # Execute command
+        try:
+            # try runnning a subprocess
+            grep_output = subprocess.check_output (grep_args)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            print(e.output)
+            grep_output = "       There was an error, check logs for details"
 
         # Return Vendor
         vendor = grep_output[7:]
@@ -658,7 +692,15 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
 
     # Execute command
-    return subprocess.check_output (arpscan_args, universal_newlines=True)
+    try:
+        # try runnning a subprocess
+        result = subprocess.check_output (arpscan_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)
+        result = ""
+
+    return result
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network ():
@@ -1175,7 +1217,15 @@ def resolve_device_name (pMAC, pIP):
 
         # Resolve name with DIG
         dig_args = ['dig', '+short', '-x', pIP]
-        newName = subprocess.check_output (dig_args, universal_newlines=True)
+
+        # Execute command
+        try:
+            # try runnning a subprocess
+            newName = subprocess.check_output (dig_args, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            print(e.output)
+            newName = "Error - check logs"
 
         # Check returns
         newName = newName.strip()
@@ -1759,12 +1809,17 @@ def send_webhook (_json, _html):
         curlParams = ["curl","-i","-X", webhookRequestMethod ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
     # execute CURL call
-    p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        # try runnning a subprocess
+        p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-    stdout, stderr = p.communicate()
+        stdout, stderr = p.communicate()
 
-    # write stdout and stderr into .log files for debugging if needed
-    logResult (stdout, stderr)    
+        # write stdout and stderr into .log files for debugging if needed
+        logResult (stdout, stderr)    
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)
 
 #-------------------------------------------------------------------------------
 def send_apprise (html):
@@ -1776,12 +1831,15 @@ def send_apprise (html):
     "body": html
     }
 
-    p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    stdout, stderr = p.communicate()
-
-    # write stdout and stderr into .log files for debugging if needed
-    logResult (stdout, stderr)  
+    try:
+        # try runnning a subprocess
+        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout, stderr = p.communicate()
+        # write stdout and stderr into .log files for debugging if needed
+        logResult (stdout, stderr)      
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        print(e.output)    
 
 #-------------------------------------------------------------------------------
 mqtt_connected_to_broker = 0
