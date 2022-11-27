@@ -194,14 +194,6 @@ def main ():
             # Upgrade DB if needed
             upgradeDB()
 
-            # Start MQTT thread if configured
-            if reportMQTT and mqtt_thread_up == False:
-                print ('Establishing MQTT thread...')                
-                mqtt_thread_up = True # prevent this code to be run multiple times concurrently
-                # start_mqtt_thread (connect_mqtt())
-                # connect_mqtt()
-                mqtt_start()
-
             # determine run/scan type based on passed time
             if last_internet_IP_scan + timedelta(minutes=3) < time_now:
                 cycle = 'internet_IP'                
@@ -216,7 +208,7 @@ def main ():
             if last_network_scan + timedelta(minutes=network_scan_minutes) < time_now and os.path.exists(STOPARPSCAN) == False:
                 last_network_scan = time_now
                 cycle = 1 # network scan
-                scan_network()        
+                scan_network()            
 
             if last_cleanup + timedelta(hours = 24) < time_now:
                 last_cleanup = time_now
@@ -1626,10 +1618,18 @@ def email_reporting ():
             send_pushsafer (mail_text)
         else :
             print ('    Skip PUSHSAFER...')
+        # Update MQTT entities
+        if reportMQTT:
+            print ('    Establishing MQTT thread...')                
+            # mqtt_thread_up = True # prevent this code to be run multiple times concurrently
+            # start_mqtt_thread ()                
+            mqtt_start()        
+        else :
+            print ('    Skip MQTT...')
     else :
         print ('    No changes to report...')
 
-    
+    openDB()
 
     # Clean Pending Alert Events
     sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
@@ -1903,15 +1903,14 @@ class device_sensor:
         publish_mqtt(client, topic, message)
 
 #-------------------------------------------------------------------------------
-def mqtt_start():
-
+def mqtt_start():    
     def on_disconnect(client, userdata, rc):
         global mqtt_connected_to_broker
         mqtt_connected_to_broker = 0
 
     def on_connect(client, userdata, flags, rc):
         global mqtt_connected_to_broker
-         
+        
         if rc == 0: 
             # print("Connected to broker")         
             mqtt_connected_to_broker = True                #Signal connection 
@@ -1944,7 +1943,7 @@ def mqtt_start():
         payload += '"'+column+'": ' + str(row[column]) +','       
 
     publish_mqtt(client, "system-sensors/sensor/pialert/state",              
-             '{ \
+            '{ \
                 '+ payload[:-1] +'\
             }'
         )
@@ -1967,7 +1966,7 @@ def mqtt_start():
         device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
         device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
         
-       
+    
         # update device sensors in home assistant              
 
         publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
@@ -1993,27 +1992,27 @@ def mqtt_start():
         #     qos=1,
         #     retain=True,
         # )        
-
+    time.sleep(10)
     client.loop()
 
 
 
 # #-------------------------------------------------------------------------------
-# def start_mqtt_thread (client):
-#     # start a MQTT thread loop which will continuously report on devices to the broker
-#         # daemon=True - makes sure the thread dies with the process if interrupted
-#     global mqtt_thread_up
+def start_mqtt_thread ():
+    # start a MQTT thread loop which will continuously report on devices to the broker
+        # daemon=True - makes sure the thread dies with the process if interrupted
+    global mqtt_thread_up
 
-#     # flag to check if thread is running
-#     mqtt_thread_up = True
+    # flag to check if thread is running
+    mqtt_thread_up = True
 
-#     print("    Starting MQTT sending")
-#     # x = threading.Thread(target=start_sending_mqtt, args=(client,), daemon=True) 
-#     start_sending_mqtt(client)
+    print("    Starting MQTT sending")
+    x = threading.Thread(target=mqtt_start, args=(1,), daemon=True) 
+    # start_sending_mqtt(client)
 
-#     print("    Threading: Starting MQTT thread")
+    print("    Threading: Starting MQTT thread")
 
-#     # x.start()
+    x.start()
 
 
 #===============================================================================
