@@ -7,8 +7,7 @@ Scan the devices connected to your WIFI / LAN and alert you the connection of
 unknown devices. It also warns if a "always connected" devices disconnects.
 
 ![Main screen][main]
-*(Apologies for my English and my limited knowledge of Python, php and
-JavaScript)*
+
 
 # Docker image 🐳
 [![Docker](https://img.shields.io/github/workflow/status/jokob-sk/Pi.Alert/docker?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
@@ -17,7 +16,6 @@ JavaScript)*
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-🥇 Pi.Alert credit goes to [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) <br/>
 🐳 Docker Image: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
 📚 [Dockerfile instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
@@ -47,41 +45,30 @@ Up to three scanning methods are used:
         examines the DHCP leases (addresses assigned) to find active devices
         that were not discovered by the other methods.
 
-## Components
-The system consists of two parts:
 
-### Back
-In charge of:
-  - Scan the network searching connected devices using the scanning methods
-    described
-  - Store the information in the DB
-  - Report the changes detected by e-mail and/or other services ([Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/), Webhooks ([sample JSON](docs/webhook_json_sample.json)))
-  - Optional speedtest for Device "Internet"
-  - DB cleanup tasks via cron
-  - a pialert-cli that helps to configure login and password  
+### Notification Service Support 
+   - [Apprise](https://hub.docker.com/r/caronc/apprise) 
+   - [Pushsafer](https://www.pushsafer.com/)
+   - [NTFY](https://ntfy.sh/)
+   - Webhooks ([sample JSON](docs/webhook_json_sample.json))
+   - (❗Experimental) Home Assistant (via [MQTT](https://www.home-assistant.io/integrations/mqtt/) (processing ~5s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now))  
 
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
 
-### Front
+### Security
 There is a configurable login to prevent unauthorized use. 
 
 > * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
 > To change password run `/home/pi/pialert/back/pialert-cli`
 
-A web frontend that allows:
-  - Manage the devices inventory and the characteristics
+## Features   
   - Display in a visual way all the information collected by the back
-    - Sessions
-    - Connected devices
-    - Favorites
-    - Events
-    - Presence
-    - Concurrent devices
+    - Sessions, Connected devices, Favorites
+    - Events, Presence, Concurrent devices
     - Down alerts
     - IP's
-    - Manual Nmap scans
-    - Optional speedtest for Device "Internet"
+    - Manual Nmap scans, Optional speedtest for Device "Internet"
     - Simple Network relationship display
   - Maintenance tasks and Settings like:
     - Status Infos (active scans, database size, backup counter)
@@ -89,9 +76,8 @@ A web frontend that allows:
     - Language Selection (english, german, spanish)
     - Light/Dark-Mode Switch
     - Pause arp-scan
-    - DB maintenance tools
-    - DB Backup and Restore
-    - CSV Export / Import (Experimental)
+    - DB maintenance, Backup, Restore tools
+    - CSV Export / Import
   - Help/FAQ Section 
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
@@ -118,24 +104,6 @@ Instructions for [pucherot's original code can be found here](https://github.com
 
 ### [Versions History](docs/VERSIONS_HISTORY.md)
 
-### Powered by:
-  | Product       | Objetive                                                |
-  | ------------- | ------------------------------------------------------- |
-  | Python        | Programming language for the Back                       |
-  | PHP           | Programming language for the Front-end                  |
-  | JavaScript    | Programming language for the Front-end                  |
-  | Bootstrap     | Front-end framework                                     |
-  | Admin.LTE     | Bootstrap template                                      |
-  | FullCalendar  | Calendar component                                      |
-  | Sqlite        | DB engine                                               |
-  | Lighttpd      | Webserver                                               |
-  | arp-scan      | Scan network using arp commands                         |
-  | Pi.hole       | DNS Server with Ad-block                                |
-  | dnsmasq       | DHCP Server                                             |
-  | nmap          | Network Scanner                                         |
-  | zip           | Filecompression Tool                                    |
-  | speedtest-cli | Python SpeedTest https://github.com/sivel/speedtest-cli |
-
 ### License
   GPL 3.0
   [Read more here](LICENSE.txt)
@@ -146,15 +114,12 @@ Instructions for [pucherot's original code can be found here](https://github.com
   Source of the selfhosted Fonts
   https://github.com/adobe-fonts/source-sans
 
-### Contact
-  pi.alert.application@gmail.com
-  
-  ***Suggestions and comments are welcome***
   
 ### Special thanks 🥇
 
   This code is a collaborative body of work, with special thanks to: 
 
+   - 🏆 [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) is the original creator od PiAlert
    - [leiweibau](https://github.com/leiweibau/Pi.Alert): Things
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes

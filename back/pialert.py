@@ -141,6 +141,12 @@ try:
 except NameError: 
     mqttPassword = ''
 
+try:
+    mqttQoS = MQTT_QOS
+except NameError: 
+    mqttQoS = 0
+
+
 
 #===============================================================================
 # MAIN
@@ -441,8 +447,7 @@ def update_devices_MAC_vendors (pArg = ''):
         update_output = subprocess.check_output (update_args)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)
-        update_output = ""
+        print(e.output)        
     
     # DEBUG
         # update_args = ['./vendors_db_update.sh']
@@ -562,7 +567,7 @@ def scan_network ():
     # Load current scan data
     print ('\nProcessing scan results...')
     print_log ('Save scanned devices')
-    save_scanned_devices (arpscan_devices)
+    save_scanned_devices (arpscan_devices, cycle_interval)
     
     # Print stats
     print_log ('Print Stats')
@@ -752,7 +757,8 @@ def read_DHCP_leases ():
         # print (sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def save_scanned_devices (p_arpscan_devices):
+def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
+    cycle = 1 # always 1, only one cycle supported
     # Delete previous scan data
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
                 (cycle,))
@@ -773,7 +779,7 @@ def save_scanned_devices (p_arpscan_devices):
                                       WHERE cur_MAC = PH_MAC
                                         AND cur_ScanCycle = ? )""",
                     (cycle,
-                     (int(startTime.strftime('%s')) - 60 * cycle),
+                     (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
                      cycle) )
 
     # Check Internet connectivity
@@ -1843,6 +1849,7 @@ def send_apprise (html):
 
 #-------------------------------------------------------------------------------
 mqtt_connected_to_broker = 0
+mqtt_sensors = []
 
 def publish_mqtt(client, topic, message):
     status = 1
@@ -1850,7 +1857,7 @@ def publish_mqtt(client, topic, message):
         result = client.publish(
                 topic=topic,
                 payload=message,
-                qos=1,
+                qos=mqttQoS,
                 retain=True,
             )
 
@@ -1862,17 +1869,38 @@ def publish_mqtt(client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
-def create_generic_device(client):
+def create_generic_device(client):  
     
     deviceName = 'PiAlert'
-    deviceId = 'pialert'
-
-    device_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')
-    device_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')
+    deviceId = 'pialert'    
+    
+    device_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
+    device_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
     device_sensor(client, deviceId, deviceName, 'sensor', 'all', 'wifi')
     device_sensor(client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
     device_sensor(client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
-    device_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')   
+    device_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
+        
+
+# #-------------------------------------------------------------------------------
+# def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
+#      global mqtt_sensors
+
+#      new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
+
+#      if new_sensor_config in mqtt_sensors
+
+#      mqtt_sensors
+
+# #-------------------------------------------------------------------------------
+# class sensor_config:
+#     def __init__(self, deviceId, deviceName, sensorType, sensorName, icon):
+#         self.deviceId = deviceId
+#         self.deviceName = deviceName
+#         self.sensorType = sensorType
+#         self.sensorName = sensorName
+#         self.icon = icon 
+
 
 
 #-------------------------------------------------------------------------------
@@ -1882,25 +1910,32 @@ class device_sensor:
         self.deviceName = deviceName
         self.sensorType = sensorType
         self.sensorName = sensorName
-        self.icon = icon
+        self.icon = icon        
 
-        message = '{ \
-                    "name":"'+ deviceName +' '+sensorName+'", \
-                    "state_topic":"system-sensors/'+sensorType+'/'+deviceId+'/state", \
-                    "value_template":"{{value_json.'+sensorName+'}}", \
-                    "unique_id":"'+deviceId+'_sensor_'+sensorName+'", \
-                    "device": \
-                        { \
-                            "identifiers": ["'+deviceId+'_sensor"], \
-                            "manufacturer": "PiAlert", \
-                            "name":"'+deviceName+'" \
-                        }, \
-                    "icon":"mdi:'+icon+'" \
-                    }'
+        global mqtt_sensors
 
-        topic='homeassistant/'+sensorType+'/'+deviceId+'/'+sensorName+'/config'
+        if (self in mqtt_sensors) == False:
 
-        publish_mqtt(client, topic, message)
+            mqtt_sensors.append(self)
+
+            message = '{ \
+                        "name":"'+ deviceName +' '+sensorName+'", \
+                        "state_topic":"system-sensors/'+sensorType+'/'+deviceId+'/state", \
+                        "value_template":"{{value_json.'+sensorName+'}}", \
+                        "unique_id":"'+deviceId+'_sensor_'+sensorName+'", \
+                        "device": \
+                            { \
+                                "identifiers": ["'+deviceId+'_sensor"], \
+                                "manufacturer": "PiAlert", \
+                                "name":"'+deviceName+'" \
+                            }, \
+                        "icon":"mdi:'+icon+'" \
+                        }'
+
+            topic='homeassistant/'+sensorType+'/'+deviceId+'/'+sensorName+'/config'
+
+            publish_mqtt(client, topic, message)
+
 
 #-------------------------------------------------------------------------------
 def mqtt_start():    
@@ -1965,7 +2000,6 @@ def mqtt_start():
         device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network')
         device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
         device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
-        
     
         # update device sensors in home assistant              
 
@@ -1992,8 +2026,8 @@ def mqtt_start():
         #     qos=1,
         #     retain=True,
         # )        
-    time.sleep(10)
-    client.loop()
+    # time.sleep(10)
+    # client.loop()    
 
 
 
