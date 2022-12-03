@@ -15,6 +15,7 @@ services:
       # comment out below 2 lines, they are only for development purposes
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
       - ${DEV_LOCATION}/front:/home/pi/pialert/front
+      - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
     environment:
       - TZ=${TZ}
       - PORT=${PORT}

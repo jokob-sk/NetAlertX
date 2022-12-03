@@ -151,8 +151,8 @@ except NameError:
 #===============================================================================
 # MAIN
 #===============================================================================
-send_report_on_cycles = [1, "internet_IP", "update_vendors_silent"]
 cycle = ""
+check_report = [1, "internet_IP", "update_vendors_silent"]
 network_scan_minutes = 5
 mqtt_thread_up = False
 
@@ -166,26 +166,29 @@ last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_now - timedelta(days = 7)
 
-def main ():
+debug_once = False
 
+def main ():
     # Initialize global variables
     global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, network_scan_minutes, mqtt_thread_up
     # second set of global variables
-    global startTime, log_timestamp, sql_connection, includedSections, sql  
-
+    global startTime, log_timestamp, sql_connection, includedSections, sql
+    
     while True:
         # update NOW time
         time_now = datetime.datetime.now()
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
-             
+
              # last time any scan or maintennace was run
             last_run = time_now
 
+            reporting = False
+
             # Header
-            print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
-            print ('---------------------------------------------------------')\
+            print ('\nLoop start')
+            print ('---------------------------------------------------------')
             
             log_timestamp  = time_now        
 
@@ -204,8 +207,9 @@ def main ():
             if last_internet_IP_scan + timedelta(minutes=3) < time_now:
                 cycle = 'internet_IP'                
                 last_internet_IP_scan = time_now
-                check_internet_IP()
+                reporting = check_internet_IP()
 
+            # Update vendors once a week
             if last_update_vendors + timedelta(days = 7) < time_now:
                 last_update_vendors = time_now
                 cycle = 'update_vendors'
@@ -214,15 +218,16 @@ def main ():
             if last_network_scan + timedelta(minutes=network_scan_minutes) < time_now and os.path.exists(STOPARPSCAN) == False:
                 last_network_scan = time_now
                 cycle = 1 # network scan
-                scan_network()            
+                scan_network() 
 
+            # clean up the DB once a day
             if last_cleanup + timedelta(hours = 24) < time_now:
                 last_cleanup = time_now
                 cycle = 'cleanup'  
                 cleanup_database()       
             
-            # Reporting
-            if cycle in send_report_on_cycles:
+            # Reporting   
+            if cycle in check_report:         
                 email_reporting()
 
             # Close SQL
@@ -230,11 +235,16 @@ def main ():
 
             # Final menssage
             if cycle != "":
-                print ('\nFinished cycle: ', cycle, '\n')            
+                print ('\nFinished cycle: ', cycle, '\n')
+                cycle = ""
+
+            # Footer
+            print ('\nLoop end')
+            print ('---------------------------------------------------------')     
         else:
             # do something
             cycle = ""
-            print ('\n20s passed')
+            print ('\n Wait 20s')
 
         #loop  - recursion    
         time.sleep(20) # wait for N seconds      
@@ -244,6 +254,8 @@ def main ():
 # INTERNET IP CHANGE
 #===============================================================================
 def check_internet_IP ():
+    reporting = False
+
     # Header
     print ('Check Internet IP')
     print ('    Timestamp:', startTime )
@@ -258,7 +270,7 @@ def check_internet_IP ():
     if internet_IP == "" :
         print ('    Error retrieving Internet IP')
         print ('    Exiting...\n')
-        return 1
+        return False
     print ('   ', internet_IP)
 
     # Get previous stored IP
@@ -272,6 +284,7 @@ def check_internet_IP ():
         print ('    Saving new IP')
         save_new_internet_IP (internet_IP)
         print ('        IP updated')
+        reporting = True
     else :
         print ('    No changes to perform')
     closeDB()
@@ -285,7 +298,7 @@ def check_internet_IP ():
         if dns_IP == "" :
             print ('    Error retrieving Dynamic DNS IP')
             print ('    Exiting...\n')
-            return 1
+            return False
         print ('   ', dns_IP)
 
         # Check DNS Change
@@ -293,10 +306,13 @@ def check_internet_IP ():
             print ('    Updating Dynamic DNS IP...')
             message = set_dynamic_DNS_IP ()
             print ('       ', message)
+            reporting = True
         else :
             print ('    No changes to perform')
     else :
         print ('\n    Skipping Dynamic DNS update...')
+    
+    return reporting
 
 
 #-------------------------------------------------------------------------------
@@ -440,6 +456,7 @@ def update_devices_MAC_vendors (pArg = ''):
 
     # Update vendors DB (iab oui)
     print ('\nUpdating vendors DB (iab & oui)...')
+    # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', LOG_PATH +  '/update_vendors.log',    '2>&1']
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
 
     try:
@@ -492,6 +509,11 @@ def update_devices_MAC_vendors (pArg = ''):
     # Close DB
     closeDB()
 
+    if len(recordsToUpdate) > 0:
+        return True
+    else:
+        return False
+
 #-------------------------------------------------------------------------------
 def query_MAC_vendor (pMAC):
     try :
@@ -528,6 +550,8 @@ def query_MAC_vendor (pMAC):
 # SCAN NETWORK
 #===============================================================================
 def scan_network ():
+    reporting = False
+
     # Header
     print ('Scan Devices')
     print ('    ScanCycle:', cycle)
@@ -540,7 +564,7 @@ def scan_network ():
         print ('\n*************** ERROR ***************')
         print ('ScanCycle %s not found' % cycle )
         print ('    Exiting...\n')
-        return 1
+        return False
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
@@ -551,18 +575,19 @@ def scan_network ():
     print_log ('arp-scan starts...')
     arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
-    # DEBUG - print number of rows updated
-        # print (arpscan_devices)
+    
+    # DEBUG - print number of rows updated    
+    # print ('aspr-scan result:', len(arpscan_devices))
 
     # Pi-hole method
     print ('    Pi-hole Method...')
     openDB()
     print_log ('Pi-hole copy starts...')
-    copy_pihole_network()
+    reporting = copy_pihole_network() or reporting
 
     # DHCP Leases method
     print ('    DHCP Leases Method...')
-    read_DHCP_leases ()
+    reporting = read_DHCP_leases () or reporting
 
     # Load current scan data
     print ('\nProcessing scan results...')
@@ -611,6 +636,8 @@ def scan_network ():
     # Commit changes
     sql_connection.commit()
     closeDB()
+
+    return reporting
 
 #-------------------------------------------------------------------------------
 def query_ScanCycle_Data (pOpenCloseDB = False):
@@ -722,23 +749,25 @@ def copy_pihole_network ():
                       AND hwaddr <> '00:00:00:00:00:00' """)
     sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
                     WHERE PH_Name IS NULL OR PH_Name = '' """)
-    # DEBUG
-        # print (sql.rowcount)
-
     # Close Pi-hole DB
     sql.execute ("DETACH PH")
 
+    return str(sql.rowcount) != "0"
+
 #-------------------------------------------------------------------------------
 def read_DHCP_leases ():
+    reporting = False
+
     # check DHCP Leases is active
     if not DHCP_ACTIVE :
-        return    
+        return False   
             
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
     data = []
     with open(DHCP_LEASES, 'r') as f:
         for line in f:
+            reporting = True
             row = line.rstrip().split()
             if len(row) == 5 :
                 data.append (row)
@@ -755,6 +784,7 @@ def read_DHCP_leases ():
                      """, data)
     # DEBUG
         # print (sql.rowcount)
+    return reporting
 
 #-------------------------------------------------------------------------------
 def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
@@ -1399,7 +1429,7 @@ def email_reporting ():
     global mail_text
     global mail_html
     # Reporting section
-    print ('\nReporting...')
+    print ('\nCheck if something to report...')
     openDB()
 
     # prepare variables for JSON construction
@@ -1453,7 +1483,7 @@ def email_reporting ():
     # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
 
     # Compose Internet Section
-    print ('    Formating report...')
+    
     mail_section_Internet = False
     mail_text_Internet = ''
     mail_html_Internet = ''
@@ -1599,6 +1629,8 @@ def email_reporting ():
     # Send Mail
     if mail_section_Internet == True or mail_section_new_devices == True \
     or mail_section_devices_down == True or mail_section_events == True :
+        print ('\nChanges detected, sending reports...')
+
         if REPORT_MAIL :
             print ('    Sending report by email...')
             send_email (mail_text, mail_html)
@@ -1874,67 +1906,65 @@ def create_generic_device(client):
     deviceName = 'PiAlert'
     deviceId = 'pialert'    
     
-    device_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
-    device_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
-    device_sensor(client, deviceId, deviceName, 'sensor', 'all', 'wifi')
-    device_sensor(client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
-    device_sensor(client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
-    device_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
+    create_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
+    create_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
+    create_sensor(client, deviceId, deviceName, 'sensor', 'all', 'wifi')
+    create_sensor(client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
+    create_sensor(client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
+    create_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
         
 
 # #-------------------------------------------------------------------------------
-# def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
-#      global mqtt_sensors
+def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):    
 
-#      new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
+    new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
 
-#      if new_sensor_config in mqtt_sensors
+    # check if config already in list and if not, add it, otherwise skip
+    global mqtt_sensors
 
-#      mqtt_sensors
+    is_unique = True
 
-# #-------------------------------------------------------------------------------
-# class sensor_config:
-#     def __init__(self, deviceId, deviceName, sensorType, sensorName, icon):
-#         self.deviceId = deviceId
-#         self.deviceName = deviceName
-#         self.sensorType = sensorType
-#         self.sensorName = sensorName
-#         self.icon = icon 
-
+    for sensor in mqtt_sensors:
+        if sensor.hash == new_sensor_config.hash:
+            is_unique = False
+            break
+           
+    # save if unique
+    if is_unique:
+        mqtt_sensors.append(new_sensor_config)
+        publish_sensor(client, new_sensor_config)        
 
 
 #-------------------------------------------------------------------------------
-class device_sensor:
-    def __init__(self, client, deviceId, deviceName, sensorType, sensorName, icon):
+class sensor_config:
+    def __init__(self, deviceId, deviceName, sensorType, sensorName, icon):
         self.deviceId = deviceId
         self.deviceName = deviceName
         self.sensorType = sensorType
         self.sensorName = sensorName
-        self.icon = icon        
+        self.icon = icon 
+        self.hash = str(hash(str(deviceId) + str(deviceName)+ str(sensorType)+ str(sensorName)+ str(icon)))
 
-        global mqtt_sensors
+#-------------------------------------------------------------------------------
+def publish_sensor(client, sensorConf):          
 
-        if (self in mqtt_sensors) == False:
+    message = '{ \
+                "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
+                "state_topic":"system-sensors/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/state", \
+                "value_template":"{{value_json.'+sensorConf.sensorName+'}}", \
+                "unique_id":"'+sensorConf.deviceId+'_sensor_'+sensorConf.sensorName+'", \
+                "device": \
+                    { \
+                        "identifiers": ["'+sensorConf.deviceId+'_sensor"], \
+                        "manufacturer": "PiAlert", \
+                        "name":"'+sensorConf.deviceName+'" \
+                    }, \
+                "icon":"mdi:'+sensorConf.icon+'" \
+                }'
 
-            mqtt_sensors.append(self)
+    topic='homeassistant/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/'+sensorConf.sensorName+'/config'
 
-            message = '{ \
-                        "name":"'+ deviceName +' '+sensorName+'", \
-                        "state_topic":"system-sensors/'+sensorType+'/'+deviceId+'/state", \
-                        "value_template":"{{value_json.'+sensorName+'}}", \
-                        "unique_id":"'+deviceId+'_sensor_'+sensorName+'", \
-                        "device": \
-                            { \
-                                "identifiers": ["'+deviceId+'_sensor"], \
-                                "manufacturer": "PiAlert", \
-                                "name":"'+deviceName+'" \
-                            }, \
-                        "icon":"mdi:'+icon+'" \
-                        }'
-
-            topic='homeassistant/'+sensorType+'/'+deviceId+'/'+sensorName+'/config'
-
-            publish_mqtt(client, topic, message)
+    publish_mqtt(client, topic, message)
 
 
 #-------------------------------------------------------------------------------
@@ -1973,10 +2003,11 @@ def mqtt_start():
 
     payload = ""
 
-    # Update the values
+    # Update the values 
     for column in columns:       
         payload += '"'+column+'": ' + str(row[column]) +','       
 
+    # Publish (warap into {} and remove last ',' from above)
     publish_mqtt(client, "system-sensors/sensor/pialert/state",              
             '{ \
                 '+ payload[:-1] +'\
@@ -1995,11 +2026,11 @@ def mqtt_start():
         deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
         deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network')
-        device_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi')
-        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network')
-        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
-        device_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network')
+        create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi')
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network')
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
     
         # update device sensors in home assistant              
 
