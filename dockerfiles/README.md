@@ -6,7 +6,7 @@
 
 # 🐳 A docker image for Pi.Alert 
 
-🐳 Docker hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 

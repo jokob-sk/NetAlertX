@@ -62,6 +62,11 @@ try:
 except NameError: # variable not defined, use a default
     strdaystokeepEV = str(90)
 
+try:
+    network_scan_minutes = SCAN_CYCLE_MINUTES
+except NameError: 
+    network_scan_minutes = 5
+
 # Which sections to include in the reports. Include everything by default
 try:
     includedSections = INCLUDED_SECTIONS
@@ -146,6 +151,11 @@ try:
 except NameError: 
     mqttQoS = 0
 
+try:
+    mqttDelay = MQTT_DELAY_SEC
+except NameError: 
+    mqttDelay = 2
+
 
 
 #===============================================================================
@@ -153,7 +163,6 @@ except NameError:
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
-network_scan_minutes = 5
 mqtt_thread_up = False
 
 # timestamps of last execution times
@@ -165,8 +174,6 @@ last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_now - timedelta(days = 7)
-
-debug_once = False
 
 def main ():
     # Initialize global variables
@@ -188,7 +195,7 @@ def main ():
 
             # Header
             print ('\nLoop start')
-            print ('---------------------------------------------------------')
+            print ('---------------------------')
             
             log_timestamp  = time_now        
 
@@ -219,16 +226,16 @@ def main ():
                 last_network_scan = time_now
                 cycle = 1 # network scan
                 scan_network() 
+            
+            # Reporting   
+            if cycle in check_report:         
+                email_reporting()
 
             # clean up the DB once a day
             if last_cleanup + timedelta(hours = 24) < time_now:
                 last_cleanup = time_now
                 cycle = 'cleanup'  
-                cleanup_database()       
-            
-            # Reporting   
-            if cycle in check_report:         
-                email_reporting()
+                cleanup_database()   
 
             # Close SQL
             closeDB()            
@@ -240,7 +247,7 @@ def main ():
 
             # Footer
             print ('\nLoop end')
-            print ('---------------------------------------------------------')     
+            print ('---------------------------')     
         else:
             # do something
             cycle = ""
@@ -1625,10 +1632,8 @@ def email_reporting ():
     #    write_file (LOG_PATH + '/report_output.txt', mail_text) 
     #    write_file (LOG_PATH + '/report_output.html', mail_html) 
 
-
     # Send Mail
-    if mail_section_Internet == True or mail_section_new_devices == True \
-    or mail_section_devices_down == True or mail_section_events == True :
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
         print ('\nChanges detected, sending reports...')
 
         if REPORT_MAIL :
@@ -1880,7 +1885,7 @@ def send_apprise (html):
         print(e.output)    
 
 #-------------------------------------------------------------------------------
-mqtt_connected_to_broker = 0
+mqtt_connected_to_broker = False
 mqtt_sensors = []
 
 def publish_mqtt(client, topic, message):
@@ -1930,8 +1935,7 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
             break
            
     # save if unique
-    if is_unique:
-        mqtt_sensors.append(new_sensor_config)
+    if is_unique:        
         publish_sensor(client, new_sensor_config)        
 
 
@@ -1946,7 +1950,9 @@ class sensor_config:
         self.hash = str(hash(str(deviceId) + str(deviceName)+ str(sensorType)+ str(sensorName)+ str(icon)))
 
 #-------------------------------------------------------------------------------
-def publish_sensor(client, sensorConf):          
+def publish_sensor(client, sensorConf): 
+
+    global mqtt_sensors         
 
     message = '{ \
                 "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
@@ -1964,24 +1970,32 @@ def publish_sensor(client, sensorConf):
 
     topic='homeassistant/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/'+sensorConf.sensorName+'/config'
 
-    publish_mqtt(client, topic, message)
-
+    # add the sensor to the global list to keep track of succesfully added sensors
+    if publish_mqtt(client, topic, message):
+                                # hack - delay adding to the queue in case the process is 
+        time.sleep(mqttDelay)   # restarted and previous publish processes aborted 
+                                # (it takes ~2s to update a sensor config on the broker)
+        mqtt_sensors.append(sensorConf)
+        # print(len(mqtt_sensors))
 
 #-------------------------------------------------------------------------------
-def mqtt_start():    
+def mqtt_create_client():
     def on_disconnect(client, userdata, rc):
         global mqtt_connected_to_broker
-        mqtt_connected_to_broker = 0
+        mqtt_connected_to_broker = False
+        
+        # not sure is below line is correct / necessary        
+        # client = mqtt_create_client() 
 
     def on_connect(client, userdata, flags, rc):
         global mqtt_connected_to_broker
         
         if rc == 0: 
-            # print("Connected to broker")         
-            mqtt_connected_to_broker = True                #Signal connection 
-    
+            print("Connected to broker")         
+            mqtt_connected_to_broker = True     # Signal connection 
         else: 
             print("Connection failed")
+            mqtt_connected_to_broker = False
 
 
     client = mqtt_client.Client(mqttClientId)   # Set Connecting Client ID    
@@ -1989,7 +2003,18 @@ def mqtt_start():
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connect(mqttBroker, mqttPort)
-    client.loop_start()  
+    client.loop_start() 
+
+    return client
+
+#-------------------------------------------------------------------------------
+def mqtt_start():    
+
+    global client, mqtt_connected_to_broker
+
+    if mqtt_connected_to_broker == False:
+        mqtt_connected_to_broker = True           
+        client = mqtt_create_client() 
     
     # General stats    
 

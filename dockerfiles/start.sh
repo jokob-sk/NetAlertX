@@ -16,4 +16,6 @@ chown -R www-data:www-data /home/pi/pialert/db/pialert.db
 /etc/init.d/php7.4-fpm start
 /etc/init.d/nginx start
 
+# cron -f
+
 python /home/pi/pialert/back/pialert.py  > /home/pi/pialert/log/pialert.log    2>&1

@@ -1,7 +1,7 @@
 # Pi.Alert
 <!--- --------------------------------------------------------------------- --->
 
-WIFI / LAN intruder detector.
+💻🔍 WIFI / LAN intruder detector.
 
 Scan the devices connected to your WIFI / LAN and alert you the connection of
 unknown devices. It also warns if a "always connected" devices disconnects.
@@ -9,14 +9,14 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 ![Main screen][main]
 
 
-# Docker image 🐳
+# 🐳 Docker image 
 [![Docker](https://img.shields.io/github/workflow/status/jokob-sk/Pi.Alert/docker?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-🐳 Docker hub: [jokobsk/Pi.Alert](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
@@ -32,7 +32,7 @@ The system continuously scans the network for:
   - Devices IP changes
   - Internet IP address changes
 
-## Scan Methods
+## 🔍 Scan Methods
 Up to three scanning methods are used:
   - **Method 1: arp-scan**. The arp-scan system utility is used to search
         for devices on the network using arp frames.
@@ -46,7 +46,7 @@ Up to three scanning methods are used:
         that were not discovered by the other methods.
 
 
-### Notification Service Support 
+### 🧩 Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise) 
    - [Pushsafer](https://www.pushsafer.com/)
    - [NTFY](https://ntfy.sh/)
@@ -56,13 +56,13 @@ Up to three scanning methods are used:
   | ![Report 1][report1] | ![Report 2][report2] |
   | -------------------- | -------------------- |
 
-### Security
+### 🔐 Security
 There is a configurable login to prevent unauthorized use. 
 
 > * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
 > To change password run `/home/pi/pialert/back/pialert-cli`
 
-## Features   
+## 📑 Features   
   - Display in a visual way all the information collected by the back
     - Sessions, Connected devices, Favorites
     - Events, Presence, Concurrent devices
@@ -85,12 +85,10 @@ There is a configurable login to prevent unauthorized use.
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
 
-# Installation
+# 📥 Installation
 <!--- --------------------------------------------------------------------- --->
-Initially designed to run on a Raspberry Pi, probably it can run on many other
-Linux distributions.
 
-> ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
+ ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
 
 Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
 
@@ -115,7 +113,7 @@ Instructions for [pucherot's original code can be found here](https://github.com
   https://github.com/adobe-fonts/source-sans
 
   
-### Special thanks 🥇
+### 🥇 Special thanks 
 
   This code is a collaborative body of work, with special thanks to: 
 
