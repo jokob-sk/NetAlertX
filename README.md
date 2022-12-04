@@ -32,14 +32,14 @@ The system continuously scans the network for, **New devices**, **New connection
         that were not discovered by the other methods.
 
 
-### 🧩 Notification Integrations 
+## 🧩 Notification Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
    - Webhooks ([sample JSON](docs/webhook_json_sample.json))
    - (❗Experimental) Home Assistant via [MQTT](https://www.home-assistant.io/integrations/mqtt/) 
      - discovery ~10s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now
 
 
-### 🔐 Security
+## 🔐 Security
 
 - Configurable login to prevent unauthorized use. 
 - Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. 
