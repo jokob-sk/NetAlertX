@@ -15,23 +15,23 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
   <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
 </a>
 
-## ℹ Usage 
+## ℹ Basic Usage 
 
-pialert.conf
+### pialert.conf
  - Everytime you rebuilt the container with a new image check if new settings have been added in [pialert.conf](https://github.com/jokob-sk/Pi.Alert/blob/main/config/pialert.conf).
 
-Network
+### Network
  - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
 
-Default Port 
+### Default Port 
  - The app is accessible on the port `:20211`.
 
-> Please note - the cronjob is executed every 3 and 5 minutes so wait that long for all of the scans to run.
+> Please note - the initial scan can take up-to 20min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ## 💾 Setup and Backups
 
 1. (**required**) Download `pialert.conf` and `version.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
-2. (**required**) In `pialert.conf` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range specify it the following way: 
+2. (**required**) In `pialert.conf` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range, specify it the following way: 
    * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
 3. (**required**) Use your configuration by: 
    * Mapping the container folder `/home/pi/pialert/config` to a persistent folder containing `pialert.conf` and `version.conf`,     
@@ -40,13 +40,13 @@ Default Port
 5. Database backup
    * Download the [original DB from GitHub](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db).
    * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
-   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, alternatively check the logs under `/home/pi/pialert/log`. 
+   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/log`. 
    * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
-   * If the database is in read-only mode you can solve this by setting the owner and group by executing the following command on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
+   * You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
 6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
 7. You can override the port by specifying the `PORT` env variable.
 
-Config examples can be found below.
+Docker-compose examples can be found below.
 
 ## 📄 Examples
 
