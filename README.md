@@ -16,12 +16,7 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
-📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
-📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
-
-
-Dark mode (and much more) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
 ## 🔍 Scan Methods
 The system continuously scans the network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Scanning methods are:
@@ -104,7 +99,7 @@ Instructions for [pucherot's original code can be found here](https://github.com
   This code is a collaborative body of work, with special thanks to: 
 
    - 🏆 [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) is the original creator od PiAlert
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Things
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation
