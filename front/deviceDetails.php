@@ -509,18 +509,21 @@ if ($_REQUEST['mac'] == 'Internet') {
                         document.getElementById('piamanualnmap_fast').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonFast'];?> (' + document.getElementById('txtLastIP').value +')';
                         document.getElementById('piamanualnmap_normal').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonDefault'];?> (' + document.getElementById('txtLastIP').value +')';
                         document.getElementById('piamanualnmap_detail').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonDetail'];?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?php echo $pia_lang['DevDetail_Nmap_buttonSkipDiscovery'];?> (' + document.getElementById('txtLastIP').value +')';
                       }, 2000);
                   </script>
 
                   <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
                   <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
                   <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
+                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')">Loading...</button>
                 
                   <div style="text-align: left;">
                     <ul style="padding:20px;">
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonFast_text'];?></li>
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonDefault_text'];?></li>
                       <li><?php echo $pia_lang['DevDetail_Nmap_buttonDetail_text'];?></li>
+                      <li><?php echo $pia_lang['DevDetail_Nmap_buttonSkipDiscovery_text'];?></li>
                     </ul>
                   </div>
                 </div>

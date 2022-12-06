@@ -9,6 +9,8 @@ if ($PIA_SCAN_MODE == 'fast') {
     exec('nmap '.$PIA_HOST_IP, $output);
 } elseif ($PIA_SCAN_MODE == 'detail') {
     exec('nmap -A '.$PIA_HOST_IP, $output);
+} elseif ($PIA_SCAN_MODE == 'skipdiscovery') {
+    exec('nmap -Pn '.$PIA_HOST_IP, $output);
 }
 
 echo '<h4>Scan ('.$PIA_SCAN_MODE.') Results of: '.$PIA_HOST_IP.'</h4>';

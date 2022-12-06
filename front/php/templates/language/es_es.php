@@ -192,6 +192,8 @@ $pia_lang['DevDetail_Nmap_buttonDetail'] = 'Escaneo detallado';
 $pia_lang['DevDetail_Nmap_buttonFast_text'] = 'Escaneo rápido: escanee menos puertos (100) que el escaneo predeterminado (unos pocos segundos)';
 $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP escanea los 1,000 puertos principales para cada protocolo de escaneo solicitado. Esto atrapa aproximadamente el 93% de los puertos TCP y el 49% de los puertos UDP. (aproximadamente 5 segundos)';
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
+$pia_lang['DevDetail_Nmap_buttonSkipDiscovery'] = 'Omitir detección de host';
+$pia_lang['DevDetail_Nmap_buttonSkipDiscovery_text'] = 'Omitir detección de host (-Pn opción): Escaneo predeterminado sin detección de host';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page - Update by @TeroRERO 07ago2022

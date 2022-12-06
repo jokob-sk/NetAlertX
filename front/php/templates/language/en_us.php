@@ -196,6 +196,8 @@ $pia_lang['DevDetail_Nmap_buttonDetail'] = 'Detailed Scan';
 $pia_lang['DevDetail_Nmap_buttonFast_text'] = 'Fast Scan: Scan fewer ports (100) than the default scan (a few seconds)';
 $pia_lang['DevDetail_Nmap_buttonDefault_text'] = 'Default Scan: Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 seconds)';
 $pia_lang['DevDetail_Nmap_buttonDetail_text'] = 'Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds or more)';
+$pia_lang['DevDetail_Nmap_buttonSkipDiscovery'] = 'Skip host discovery';
+$pia_lang['DevDetail_Nmap_buttonSkipDiscovery_text'] = 'Skip host discovery (-Pn option): Default scan without host discovery';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
