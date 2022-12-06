@@ -16,24 +16,10 @@ unknown devices. It also warns if a "always connected" devices disconnects.
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) <br/>
-📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) <br/>
-📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
-
-
-Dark mode (and much more) within this fork courtesy of [leiweibau](https://github.com/leiweibau/Pi.Alert)
-
-## How it works
-The system continuously scans the network for:
-  - New devices
-  - New connections (re-connections)
-  - Disconnections
-  - "Always Connected" devices down
-  - Devices IP changes
-  - Internet IP address changes
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
 ## 🔍 Scan Methods
-Up to three scanning methods are used:
+The system continuously scans the network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Scanning methods are:
   - **Method 1: arp-scan**. The arp-scan system utility is used to search
         for devices on the network using arp frames.
   - **Method 2: Pi-hole**. This method is optional and complementary to
@@ -46,49 +32,44 @@ Up to three scanning methods are used:
         that were not discovered by the other methods.
 
 
-### 🧩 Integrations 
-   - [Apprise](https://hub.docker.com/r/caronc/apprise) 
-   - [Pushsafer](https://www.pushsafer.com/)
-   - [NTFY](https://ntfy.sh/)
+## 🧩 Notification Integrations 
+   - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
    - Webhooks ([sample JSON](docs/webhook_json_sample.json))
-   - (❗Experimental) Home Assistant (via [MQTT](https://www.home-assistant.io/integrations/mqtt/) (processing ~5s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now))  
+   - (❗Experimental) Home Assistant via [MQTT](https://www.home-assistant.io/integrations/mqtt/) 
+     - discovery ~10s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now
 
-  | ![Report 1][report1] | ![Report 2][report2] |
-  | -------------------- | -------------------- |
 
-### 🔐 Security
-There is a configurable login to prevent unauthorized use. 
+## 🔐 Security
 
-> * Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. The default password is `123456`.
-> To change password run `/home/pi/pialert/back/pialert-cli`
+- Configurable login to prevent unauthorized use. 
+- Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. 
+- The default password is `123456`.
+- To change password run `/home/pi/pialert/back/pialert-cli`
 
 ## 📑 Features   
-  - Display in a visual way all the information collected by the back
-    - Sessions, Connected devices, Favorites
-    - Events, Presence, Concurrent devices
-    - Down alerts
-    - IP's
+  - Display:
+    - Sessions, Connected devices, Favorites, Events, Presence, Concurrent devices, Down alerts, IP's
     - Manual Nmap scans, Optional speedtest for Device "Internet"
     - Simple Network relationship display
   - Maintenance tasks and Settings like:
     - Status Infos (active scans, database size, backup counter)
-    - Theme Selection (blue, red, green, yellow, black, purple)
-    - Language Selection (english, german, spanish)
-    - Light/Dark-Mode Switch
+    - Theme Selection (blue, red, green, yellow, black, purple) and Light/Dark-Mode Switch
+    - Language Selection (English, German, Spanish)    
     - Pause arp-scan
-    - DB maintenance, Backup, Restore tools
-    - CSV Export / Import
+    - DB maintenance, Backup, Restore tools and CSV Export / Import
   - Help/FAQ Section 
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] |
   | -------------------- | -------------------- |
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
+  | ![Report 1][report1] | ![Report 2][report2] |
+ 
 
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
 
- ⚠ Please note, this [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
+ ⚠ This [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
 
 Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
 
@@ -118,7 +99,7 @@ Instructions for [pucherot's original code can be found here](https://github.com
   This code is a collaborative body of work, with special thanks to: 
 
    - 🏆 [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) is the original creator od PiAlert
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Things
+   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
    - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
    - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
    - [TeroRERO](https://github.com/terorero): Spanish translation
