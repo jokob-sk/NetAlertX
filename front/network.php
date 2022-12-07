@@ -198,7 +198,7 @@
           // prepare HTML for the port table column cell
           $port_content = "N/A";
   
-          if ($row['node_type'] == "WLAN" || $row['node_type'] == "AP" ) { 
+          if (($row['node_type'] == "WLAN" || $row['node_type'] == "AP" ) && ($row['port'] == NULL || $row['port'] == "") ){ 
             $port_content = '<i class="fa fa-wifi"></i>';
           } elseif ($row['node_type'] == "Powerline") 
           {
