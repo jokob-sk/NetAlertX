@@ -117,6 +117,13 @@ function show_pia_servertime() {
     if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
     if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
 }
+
+document.addEventListener("visibilitychange",()=>{
+   if(document.visibilityState==="visible"){
+       window.location.href = window.location.href.split('#')[0];
+   }
+})
+
 </script>
 
 </head>
