@@ -9,12 +9,6 @@
 
 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
-Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
-
-<a href="https://github.com/Macleykun">
-  <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
-</a>
-
 ## ℹ Basic Usage 
 
 ### pialert.conf
@@ -26,7 +20,7 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 ### Default Port 
  - The app is accessible on the port `:20211`.
 
-> Please note - the initial scan can take up-to 20min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
+> Please note - the initial scan can take up-to 40min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ## 💾 Setup and Backups
 
@@ -134,9 +128,17 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
       - ./pialert/pialert.conf:/home/pi/pialert/config/pialert.conf      
 ```
 
-## ☕ Support 
+## 🏅 Recognitions
 
-> Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
+
+<a href="https://github.com/Macleykun">
+  <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
+</a>
+
+## ☕ Support me
+
+Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
 
 <a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
 

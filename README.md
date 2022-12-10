@@ -3,8 +3,7 @@
 
 💻🔍 WIFI / LAN intruder detector.
 
-Scan the devices connected to your WIFI / LAN and alert you the connection of
-unknown devices. It also warns if a "always connected" devices disconnects.
+Scans for devices connected to your WIFI / LAN and alerts you if new and unknown devices are found.
 
 ![Main screen][main]
 
@@ -44,7 +43,7 @@ The system continuously scans the network for, **New devices**, **New connection
 - Configurable login to prevent unauthorized use. 
 - Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. 
 - The default password is `123456`.
-- To change password run `/home/pi/pialert/back/pialert-cli`
+- To change password run `/home/pi/pialert/back/pialert-cli` 
 
 ## 📑 Features   
   - Display:
@@ -69,42 +68,35 @@ The system continuously scans the network for, **New devices**, **New connection
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
 
- ⚠ This [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested via the [docker install method](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
+ ⚠ This [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested as a [docker container](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
 
 Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
 
-# Device Management
+
+## 🔗 Other
+<!--- --------------------------------------------------------------------- --->
+
 <!--- --------------------------------------------------------------------- --->
   - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
-
-
-## Other useful info
-<!--- --------------------------------------------------------------------- --->
-
-### [Versions History](docs/VERSIONS_HISTORY.md)
+  - [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### License
   GPL 3.0
-  [Read more here](LICENSE.txt)
-
-  Source of the animated GIF (Loading Animation)
-  https://commons.wikimedia.org/wiki/File:Loading_Animation.gif
-  
-  Source of the selfhosted Fonts
-  https://github.com/adobe-fonts/source-sans
-
+  - [Read more here](LICENSE.txt)
+  - Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif)  
+  - Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
   
 ### 🥇 Special thanks 
 
   This code is a collaborative body of work, with special thanks to: 
 
    - 🏆 [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) is the original creator od PiAlert
-   - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
-   - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
-   - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
-   - [TeroRERO](https://github.com/terorero): Spanish translation
-   - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
-   - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
+      - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
+      - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
+      - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
+      - [TeroRERO](https://github.com/terorero): Spanish translation
+      - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+      - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/1_devices.jpg           "Main screen"
