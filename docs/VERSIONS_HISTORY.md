@@ -67,6 +67,7 @@
   - Added compatibility with Python 3 (default version installed with Ubuntu)
   - Added compatibility in the Installation guide with Ubuntu server
   - Eliminated some unnecessary packages from the installation
+  
 
 
 ### License

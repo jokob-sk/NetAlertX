@@ -46,11 +46,10 @@ PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 PIALERT_PATH = PIALERT_BACK_PATH + "/.."
 STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
 
-if (sys.version_info > (3,0)):
-    exec(open(PIALERT_PATH + "/config/version.conf").read())
+
+if (sys.version_info > (3,0)):    
     exec(open(PIALERT_PATH + "/config/pialert.conf").read())
-else:
-    execfile (PIALERT_PATH + "/config/version.conf")
+else:    
     execfile (PIALERT_PATH + "/config/pialert.conf")
 
 # INITIALIZE ALL CONSTANTS from pialert.conf

@@ -30,21 +30,36 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 
 ## 💾 Setup and Backups
 
-1. (**required**) Download `pialert.conf` and `version.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
-2. (**required**) In `pialert.conf` specify your network adapter (will probably be `eth0` or `eth1`) and the network filter (which **significantly** speeds up the scan process), e.g. if your DHCP server assigns IPs in the 192.168.1.0 to 192.168.1.255 range, specify it the following way: 
-   * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
-3. (**required**) Use your configuration by: 
-   * Mapping the container folder `/home/pi/pialert/config` to a persistent folder containing `pialert.conf` and `version.conf`,     
-   * ... or by mapping the files individually `pialert.conf:/home/pi/pialert/config/pialert.conf` and `version.conf:/home/pi/pialert/config/version.conf` 
-4. Set the `TZ` environment variable to your current time zone (e.g.`Europe/Paris`). Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-5. Database backup
+### ❗ **Required** 
+
+1. Download `pialert.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
+2. In `pialert.conf` define your network adapter(s) with the `SCAN_SUBNETS` variable. 
+   * The adapter will probably be `eth0` or `eth1`.  
+   * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
+   * Examples for one and two subnets:
+     * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
+     * `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']`
+
+3. Use your configuration by: 
+   * Mapping the container folder to a persistent folder containing `pialert.conf`:
+     * `persistent/path/config:/home/pi/pialert/config`     
+   * ... or by mapping the file directly: 
+     * `pialert.conf:/home/pi/pialert/config/pialert.conf`
+
+### 👍 **Recommended** 
+
+1. Database backup
    * Download the [original DB from GitHub](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db).
    * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
    * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/log`. 
    * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
    * You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
-6. The container supports mapping to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
-7. You can override the port by specifying the `PORT` env variable.
+2. Map to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
+3. Set the `TZ` environment variable to your current time zone (e.g.`Europe/Paris`). Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+4. Use a custom port by specifying the `PORT` env variable.
+5. Map an empty file with the name `setting_darkmode` if you want to force the dark mode on container rebuilt
+   * `- persistent/path/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode`
+6. Check and enable notification service(s) in the `pialert.conf` file.
 
 Docker-compose examples can be found below.
 
@@ -61,7 +76,7 @@ services:
     container_name: pialert
     image: "jokobsk/pi.alert:latest"      
     network_mode: "host"        
-    restart: always
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
@@ -116,8 +131,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
     restart: unless-stopped
     volumes:
       - pialert_db:/home/pi/pialert/db
-      - ./pialert/pialert.conf:/home/pi/pialert/config/pialert.conf
-      - ./pialert/version.conf:/home/pi/pialert/config/version.conf
+      - ./pialert/pialert.conf:/home/pi/pialert/config/pialert.conf      
 ```
 
 ## ☕ Support 

@@ -13,18 +13,14 @@
 
     <!-- &copy; 2020 Puche -->
     <?php
-      $conf_file = '../config/version.conf';
-      $conf_data = parse_ini_file($conf_file);
-      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> '. $conf_data['VERSION_YEAR'] .' Puche';
+      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (+2022 jokob-sk)';
     ?>
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
 
     <!-- Pi.Alert  2.50  <small>(2019-12-30)</small> -->
     <?php
-      $conf_file = '../config/version.conf';
-      $conf_data = parse_ini_file($conf_file);
-      echo 'Pi.Alert&nbsp;&nbsp;'. $conf_data['VERSION'] .'&nbsp;&nbsp;<small>('. $conf_data['VERSION_DATE'] .')</small>';
+      echo 'Pi.Alert';
     ?>
     </div>
   </footer>
