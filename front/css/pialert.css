@@ -406,7 +406,7 @@
 ----------------------------------------------------------------------------- */
 .pa_semitransparent-panel {
     position: absolute;
-    width: 100%; //calc (100% -40px);
+    width: 100%; /*calc (100% -40px);*/
     height: 100%;
     left: 0;
     top: 0;

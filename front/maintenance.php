@@ -382,7 +382,7 @@ if ($_REQUEST['tab'] == '1') {
                             </div>
                             <div class="db_tools_table_cell_b">
                               <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
-                              </textarea>
+                              </textarea>                              
                             </div>
                         </div>     
                         <div class="db_info_table_row">

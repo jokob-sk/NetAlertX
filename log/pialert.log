@@ -1,4 +1,0 @@
-  File "/home/pi/pialert/back/pialert.py", line 1639
-    def check_config(service)
-                             ^
-SyntaxError: invalid syntax

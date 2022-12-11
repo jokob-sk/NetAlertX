@@ -1,49 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  3266    0     0  100  3266      0   2717  0:00:01  0:00:01 --:--:--  2719100  3287  100    21  100  3266     11   1769  0:00:01  0:00:01 --:--:--  1780100  3287  100    21  100  3266     11   1769  0:00:01  0:00:01 --:--:--  1780
-HTTP/1.1 200 OK
-Server: nginx/1.18.0
-Date: Sat, 10 Dec 2022 23:41:47 GMT
-Content-Type: text/html; charset=utf-8
-Content-Length: 21
-Connection: keep-alive
-Expires: Sat, 10 Dec 2022 23:41:47 GMT
-Cache-Control: max-age=0, no-cache, no-store, must-revalidate, private
-
-Notification(s) sent.  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   594  100    34  100   560    400   6588 --:--:-- --:--:-- --:--:--  7071
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-Content-Length: 34
-ETag: W/"22-6OS7cK0FzqnV2NeDHdOSGS1bVUs"
-Vary: Accept-Encoding
-Date: Sat, 10 Dec 2022 23:41:47 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-
-{"message":"Workflow was started"}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  3263    0     0  100  3263      0   2714  0:00:01  0:00:01 --:--:--  2716100  3284  100    21  100  3263     11   1859  0:00:01  0:00:01 --:--:--  1871
-HTTP/1.1 200 OK
-Server: nginx/1.18.0
-Date: Sun, 11 Dec 2022 00:52:29 GMT
-Content-Type: text/html; charset=utf-8
-Content-Length: 21
-Connection: keep-alive
-Expires: Sun, 11 Dec 2022 00:52:29 GMT
-Cache-Control: max-age=0, no-cache, no-store, must-revalidate, private
-
-Notification(s) sent.  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   590  100    34  100   556   1478  24173 --:--:-- --:--:-- --:--:-- 25652
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-Content-Length: 34
-ETag: W/"22-6OS7cK0FzqnV2NeDHdOSGS1bVUs"
-Vary: Accept-Encoding
-Date: Sun, 11 Dec 2022 00:52:29 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-
-{"message":"Workflow was started"}

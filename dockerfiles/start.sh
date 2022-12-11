@@ -13,6 +13,8 @@ fi
 # I hope this will fix DB permission issues going forward
 chown -R www-data:www-data /home/pi/pialert/db/pialert.db
 
+chmod -R a+rw /home/pi/pialert/front/log
+
 /etc/init.d/php7.4-fpm start
 /etc/init.d/nginx start
 
