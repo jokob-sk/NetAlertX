@@ -1396,8 +1396,6 @@ def email_reporting ():
     json_down_devices = []
     json_events = []
 
-
-
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType != 'Device Down' AND eve_MAC IN
@@ -1425,151 +1423,140 @@ def email_reporting ():
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
-    # mail_text = mail_text.replace ('<SCAN_CYCLE>', cycle )
-    # mail_html = mail_html.replace ('<SCAN_CYCLE>', cycle )
-
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
-    
-    # mail_text = mail_text.replace ('<PIALERT_VERSION>', VERSION )
-    # mail_html = mail_html.replace ('<PIALERT_VERSION>', VERSION )
 
-    # mail_text = mail_text.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-    # mail_html = mail_html.replace ('<PIALERT_VERSION_DATE>', VERSION_DATE )
-
-    # mail_text = mail_text.replace ('<PIALERT_YEAR>', VERSION_YEAR )
-    # mail_html = mail_html.replace ('<PIALERT_YEAR>', VERSION_YEAR )
-
-    # Compose Internet Section
-    
-    mail_section_Internet = False
-    mail_text_Internet = ''
-    mail_html_Internet = ''
-    text_line_template = '{} \t{}\t{}\t{}\n'
-    html_line_template = '<tr>\n'+ \
-        '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
-        '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
-        '  <td> {} </td>\n</tr>\n'
-
-    sql.execute ("""SELECT * FROM Events
-                    WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
-                    ORDER BY eve_DateTime""")
-
-    
-    for eventAlert in sql :
-        mail_section_Internet = 'internet' in INCLUDED_SECTIONS
-        # collect "internet" (IP changes) for the webhook json   
-        json_internet = add_json_list (eventAlert, json_internet)
-
-        mail_text_Internet += text_line_template.format (
-            'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
-            'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
-        mail_html_Internet += html_line_template.format (
-            REPORT_DEVICE_URL, eventAlert['eve_MAC'],
-            eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-            eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
-
-
-    format_report_section (mail_section_Internet, 'SECTION_INTERNET',
-        'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
-
-
-    # Compose New Devices Section
-    mail_section_new_devices = False
-    mail_text_new_devices = ''
-    mail_html_new_devices = ''
-    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-    html_line_template    = '<tr>\n'+ \
-        '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
-        '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
-    
-    sql.execute ("""SELECT * FROM Events_Devices
-                    WHERE eve_PendingAlertEmail = 1
-                      AND eve_EventType = 'New Device'
-                    ORDER BY eve_DateTime""")
-
-    for eventAlert in sql :
-        mail_section_new_devices = 'new_devices' in INCLUDED_SECTIONS
-        # collect "new_devices" for the webhook json  
-        json_new_devices = add_json_list (eventAlert, json_new_devices)
-
-        mail_text_new_devices += text_line_template.format (
-            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
-            'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
-        mail_html_new_devices += html_line_template.format (
-            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-            eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-            eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
- 
-    format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
-        'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
-
-
-    # Compose Devices Down Section
-    mail_section_devices_down = False
-    mail_text_devices_down = ''
-    mail_html_devices_down = ''
-    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-    html_line_template     = '<tr>\n'+ \
-        '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
-        '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
-
-    sql.execute ("""SELECT * FROM Events_Devices
-                    WHERE eve_PendingAlertEmail = 1
-                      AND eve_EventType = 'Device Down'
-                    ORDER BY eve_DateTime""")
-
-    for eventAlert in sql :
-        mail_section_devices_down = 'down_devices' in INCLUDED_SECTIONS
-        # collect "down_devices" for the webhook json
-        json_down_devices = add_json_list (eventAlert, json_down_devices)
-
-        mail_text_devices_down += text_line_template.format (
-            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
-            'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
-        mail_html_devices_down += html_line_template.format (
-            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-            eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-            eventAlert['dev_Name'])
-
-    format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
-        'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
-
-
-    # Compose Events Section
-    mail_section_events = False
-    mail_text_events   = ''
-    mail_html_events   = ''
-    text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-    html_line_template = '<tr>\n  <td>'+ \
-            ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
-            '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
+    if 'internet' in INCLUDED_SECTIONS:
+        # Compose Internet Section        
+        mail_section_Internet = False
+        mail_text_Internet = ''
+        mail_html_Internet = ''
+        text_line_template = '{} \t{}\t{}\t{}\n'
+        html_line_template = '<tr>\n'+ \
+            '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
+            '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
             '  <td> {} </td>\n</tr>\n'
 
-    sql.execute ("""SELECT * FROM Events_Devices
-                    WHERE eve_PendingAlertEmail = 1
-                      AND eve_EventType IN ('Connected','Disconnected',
-                          'IP Changed')
-                    ORDER BY eve_DateTime""")
+        sql.execute ("""SELECT * FROM Events
+                        WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
+                        ORDER BY eve_DateTime""")
 
-    for eventAlert in sql :
-        mail_section_events = 'events' in INCLUDED_SECTIONS
-        # collect "events" for the webhook json
-        json_events = add_json_list (eventAlert, json_events)
-          
-        mail_text_events += text_line_template.format (
-            'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
-            'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
-            'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
-        mail_html_events += html_line_template.format (
-            REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-            eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-            eventAlert['eve_EventType'], eventAlert['dev_Name'],
-            eventAlert['eve_AdditionalInfo'])
+        
+        for eventAlert in sql :
+            mail_section_Internet = 'internet' in INCLUDED_SECTIONS
+            # collect "internet" (IP changes) for the webhook json   
+            json_internet = add_json_list (eventAlert, json_internet)
 
-    format_report_section (mail_section_events, 'SECTION_EVENTS',
-        'TABLE_EVENTS', mail_text_events, mail_html_events)
+            mail_text_Internet += text_line_template.format (
+                'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
+                'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
+            mail_html_Internet += html_line_template.format (
+                REPORT_DEVICE_URL, eventAlert['eve_MAC'],
+                eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
+                eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
 
+
+        format_report_section (mail_section_Internet, 'SECTION_INTERNET',
+            'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
+
+    if 'new_devices' in INCLUDED_SECTIONS:
+        # Compose New Devices Section
+        mail_section_new_devices = False
+        mail_text_new_devices = ''
+        mail_html_new_devices = ''
+        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
+        html_line_template    = '<tr>\n'+ \
+            '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
+            '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
+        
+        sql.execute ("""SELECT * FROM Events_Devices
+                        WHERE eve_PendingAlertEmail = 1
+                        AND eve_EventType = 'New Device'
+                        ORDER BY eve_DateTime""")
+
+        for eventAlert in sql :
+            mail_section_new_devices = 'new_devices' in INCLUDED_SECTIONS
+            # collect "new_devices" for the webhook json  
+            json_new_devices = add_json_list (eventAlert, json_new_devices)
+
+            mail_text_new_devices += text_line_template.format (
+                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
+                'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
+            mail_html_new_devices += html_line_template.format (
+                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
+                eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
+    
+        format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
+            'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
+
+
+    if 'down_devices' in INCLUDED_SECTIONS:
+        # Compose Devices Down Section
+        mail_section_devices_down = False
+        mail_text_devices_down = ''
+        mail_html_devices_down = ''
+        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
+        html_line_template     = '<tr>\n'+ \
+            '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
+            '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
+
+        sql.execute ("""SELECT * FROM Events_Devices
+                        WHERE eve_PendingAlertEmail = 1
+                        AND eve_EventType = 'Device Down'
+                        ORDER BY eve_DateTime""")
+
+        for eventAlert in sql :
+            mail_section_devices_down = 'down_devices' in INCLUDED_SECTIONS
+            # collect "down_devices" for the webhook json
+            json_down_devices = add_json_list (eventAlert, json_down_devices)
+
+            mail_text_devices_down += text_line_template.format (
+                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
+                'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
+            mail_html_devices_down += html_line_template.format (
+                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
+                eventAlert['dev_Name'])
+
+        format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
+            'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
+
+
+    if 'events' in INCLUDED_SECTIONS:
+        # Compose Events Section
+        mail_section_events = False
+        mail_text_events   = ''
+        mail_html_events   = ''
+        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
+        html_line_template = '<tr>\n  <td>'+ \
+                ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
+                '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
+                '  <td> {} </td>\n</tr>\n'
+
+        sql.execute ("""SELECT * FROM Events_Devices
+                        WHERE eve_PendingAlertEmail = 1
+                        AND eve_EventType IN ('Connected','Disconnected',
+                            'IP Changed')
+                        ORDER BY eve_DateTime""")
+
+        for eventAlert in sql :
+            mail_section_events = 'events' in INCLUDED_SECTIONS
+            # collect "events" for the webhook json
+            json_events = add_json_list (eventAlert, json_events)
+            
+            mail_text_events += text_line_template.format (
+                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
+                'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
+                'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
+            mail_html_events += html_line_template.format (
+                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
+                eventAlert['eve_EventType'], eventAlert['dev_Name'],
+                eventAlert['eve_AdditionalInfo'])
+
+        format_report_section (mail_section_events, 'SECTION_EVENTS',
+            'TABLE_EVENTS', mail_text_events, mail_html_events)
 
     json_final = {
                     "internet": json_internet,                        
