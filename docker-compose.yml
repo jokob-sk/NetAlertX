@@ -4,7 +4,7 @@ services:
     build: .
     container_name: pialert
     network_mode: "host"
-    restart: always
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
@@ -12,10 +12,20 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
-      # comment out below 2 lines, they are only for development purposes
+      # comment out / delete below lines, they are only for development purposes
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
-      - ${DEV_LOCATION}/front:/home/pi/pialert/front
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
+      - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
+      - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
+      - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php
+      - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php
+      - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php
+      - ${DEV_LOCATION}/front/events.php:/home/pi/pialert/front/events.php
+      - ${DEV_LOCATION}/front/help_faq.php:/home/pi/pialert/front/help_faq.php
+      - ${DEV_LOCATION}/front/index.php:/home/pi/pialert/front/index.php
+      - ${DEV_LOCATION}/front/maintenance.php:/home/pi/pialert/front/maintenance.php
+      - ${DEV_LOCATION}/front/network.php:/home/pi/pialert/front/network.php
+      - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
     environment:
       - TZ=${TZ}
       - PORT=${PORT}

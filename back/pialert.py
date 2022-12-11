@@ -35,10 +35,6 @@ from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
 
-
-# sys.stdout = open('pialert_new.log', 'w')
-# sys.stderr = sys.stdout
-
 #===============================================================================
 # CONFIG VARIABLES
 #===============================================================================
@@ -127,6 +123,13 @@ def main ():
     global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, mqtt_thread_up
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
+
+    # create log files
+    write_file(LOG_PATH + 'IP_changes.log', '')
+    write_file(LOG_PATH + 'stdout.log', '')
+    write_file(LOG_PATH + 'stderr.log', '')
+    write_file(LOG_PATH + 'pialert.log', '')
+    write_file(LOG_PATH + 'pialert_file.log', '')
     
     while True:
         # update NOW time
@@ -148,8 +151,8 @@ def main ():
             reporting = False
 
             # Header
-            print ('\nLoop start')
-            print ('---------------------------')
+            file_print('\nLoop start')
+            file_print('---------------------------')
             
             log_timestamp  = time_now        
 
@@ -196,16 +199,16 @@ def main ():
 
             # Final menssage
             if cycle != "":
-                print ('\nFinished cycle: ', cycle, '\n')
+                file_print('\nFinished cycle: ', cycle, '\n')
                 cycle = ""
 
             # Footer
-            print ('\nLoop end')
-            print ('---------------------------')     
+            file_print('\nLoop end')
+            file_print('---------------------------')     
         else:
             # do something
             cycle = ""
-            print ('\n Wait 20s')
+            file_print('\n Wait 20s')
 
         #loop  - recursion    
         time.sleep(20) # wait for N seconds      
@@ -218,60 +221,60 @@ def check_internet_IP ():
     reporting = False
 
     # Header
-    print ('Check Internet IP')
-    print ('    Timestamp:', startTime )
+    file_print('Check Internet IP')
+    file_print('    Timestamp:', startTime )
 
     # Get Internet IP
-    print ('\n    Retrieving Internet IP...')
+    file_print('\n    Retrieving Internet IP...')
     internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
     # Check result = IP
     if internet_IP == "" :
-        print ('    Error retrieving Internet IP')
-        print ('    Exiting...\n')
+        file_print('    Error retrieving Internet IP')
+        file_print('    Exiting...\n')
         return False
-    print ('   ', internet_IP)
+    file_print('   ', internet_IP)
 
     # Get previous stored IP
-    print ('\n    Retrieving previous IP...')
+    file_print('\n    Retrieving previous IP...')
     openDB()
     previous_IP = get_previous_internet_IP ()
-    print ('   ', previous_IP)
+    file_print('   ', previous_IP)
 
     # Check IP Change
     if internet_IP != previous_IP :
-        print ('    Saving new IP')
+        file_print('    Saving new IP')
         save_new_internet_IP (internet_IP)
-        print ('        IP updated')
+        file_print('        IP updated')
         reporting = True
     else :
-        print ('    No changes to perform')
+        file_print('    No changes to perform')
     closeDB()
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
-        print ('\n    Retrieving Dynamic DNS IP...')
+        file_print('\n    Retrieving Dynamic DNS IP...')
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
         if dns_IP == "" :
-            print ('    Error retrieving Dynamic DNS IP')
-            print ('    Exiting...\n')
+            file_print('    Error retrieving Dynamic DNS IP')
+            file_print('    Exiting...\n')
             return False
-        print ('   ', dns_IP)
+        file_print('   ', dns_IP)
 
         # Check DNS Change
         if dns_IP != internet_IP :
-            print ('    Updating Dynamic DNS IP...')
+            file_print('    Updating Dynamic DNS IP...')
             message = set_dynamic_DNS_IP ()
-            print ('       ', message)
+            file_print('       ', message)
             reporting = True
         else :
-            print ('    No changes to perform')
+            file_print('    No changes to perform')
     else :
-        print ('\n    Skipping Dynamic DNS update...')
+        file_print('\n    Skipping Dynamic DNS update...')
     
     return reporting
 
@@ -284,7 +287,7 @@ def get_internet_IP ():
     try:
         cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
-        print(e.output)
+        file_print(e.output)
         cmd_output = '' # no internet
     
 
@@ -311,7 +314,7 @@ def get_dynamic_DNS_IP ():
         dig_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)
+        file_print(e.output)
         dig_output = '' # probably no internet
 
     # Check result is an IP
@@ -331,7 +334,7 @@ def set_dynamic_DNS_IP ():
             universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)
+        file_print(e.output)
         curl_output = ""    
     
     return curl_output
@@ -387,22 +390,22 @@ def check_IP_format (pIP):
 #===============================================================================
 def cleanup_database ():
     # Header
-    print ('Cleanup Database')
-    print ('    Timestamp:', startTime )
+    file_print('Cleanup Database')
+    file_print('    Timestamp:', startTime )
 
     openDB()    
    
     # Cleanup Online History
-    print ('    Cleanup Online_History...')
+    file_print('    Cleanup Online_History...')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
-    print ('    Optimize Database...')
+    file_print('    Optimize Database...')
 
     # Cleanup Events
-    print ('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days...')
+    file_print('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days...')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Shrink DB
-    print ('    Shrink Database...')
+    file_print('    Shrink Database...')
     sql.execute ("VACUUM;")
 
     closeDB()
@@ -412,11 +415,11 @@ def cleanup_database ():
 #===============================================================================
 def update_devices_MAC_vendors (pArg = ''):
     # Header
-    print ('Update HW Vendors')
-    print ('    Timestamp:', startTime )
+    file_print('Update HW Vendors')
+    file_print('    Timestamp:', startTime )
 
     # Update vendors DB (iab oui)
-    print ('\nUpdating vendors DB (iab & oui)...')
+    file_print('\nUpdating vendors DB (iab & oui)...')
     # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', LOG_PATH +  '/update_vendors.log',    '2>&1']
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
 
@@ -425,7 +428,7 @@ def update_devices_MAC_vendors (pArg = ''):
         update_output = subprocess.check_output (update_args)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)        
+        file_print(e.output)        
     
     # DEBUG
         # update_args = ['./vendors_db_update.sh']
@@ -437,7 +440,7 @@ def update_devices_MAC_vendors (pArg = ''):
     notFound = 0
 
     # All devices loop
-    print ('\nSearching devices vendor', end='')
+    file_print('\nSearching devices vendor')
     openDB()
     for device in sql.execute ("SELECT * FROM Devices") :
         # Search vendor in HW Vendors DB
@@ -448,24 +451,21 @@ def update_devices_MAC_vendors (pArg = ''):
             ignored += 1
         else :
             recordsToUpdate.append ([vendor, device['dev_MAC']])
-        # progress bar
-        print ('.', end='')
-        sys.stdout.flush()
             
     # Print log
-    print ('')
-    print ("    Devices Ignored:  ", ignored)
-    print ("    Vendors Not Found:", notFound)
-    print ("    Vendors updated:  ", len(recordsToUpdate) )
+    file_print('')
+    file_print("    Devices Ignored:  ", ignored)
+    file_print("    Vendors Not Found:", notFound)
+    file_print("    Vendors updated:  ", len(recordsToUpdate) )
     # DEBUG - print list of record to update
-        # print (recordsToUpdate)
+        # file_print(recordsToUpdate)
 
     # update devices
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
     # DEBUG - print number of rows updated
-        # print (sql.rowcount)
+        # file_print(sql.rowcount)
 
     # Close DB
     closeDB()
@@ -495,7 +495,7 @@ def query_MAC_vendor (pMAC):
             grep_output = subprocess.check_output (grep_args)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            print(e.output)
+            file_print(e.output)
             grep_output = "       There was an error, check logs for details"
 
         # Return Vendor
@@ -514,44 +514,44 @@ def scan_network ():
     reporting = False
 
     # Header
-    print ('Scan Devices')
-    print ('    ScanCycle:', cycle)
-    print ('    Timestamp:', startTime )
+    file_print('Scan Devices')
+    file_print('    ScanCycle:', cycle)
+    file_print('    Timestamp:', startTime )
 
     # # Query ScanCycle properties
     print_log ('Query ScanCycle confinguration...')
     scanCycle_data = query_ScanCycle_Data (True)
     if scanCycle_data is None:
-        print ('\n*************** ERROR ***************')
-        print ('ScanCycle %s not found' % cycle )
-        print ('    Exiting...\n')
+        file_print('\n*************** ERROR ***************')
+        file_print('ScanCycle %s not found' % cycle )
+        file_print('    Exiting...\n')
         return False
 
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
     
     # arp-scan command
-    print ('\nScanning...')
-    print ('    arp-scan Method...')
+    file_print('\nScanning...')
+    file_print('    arp-scan Method...')
     print_log ('arp-scan starts...')
     arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     
     # DEBUG - print number of rows updated    
-    # print ('aspr-scan result:', len(arpscan_devices))
+    # file_print('aspr-scan result:', len(arpscan_devices))
 
     # Pi-hole method
-    print ('    Pi-hole Method...')
+    file_print('    Pi-hole Method...')
     openDB()
     print_log ('Pi-hole copy starts...')
     reporting = copy_pihole_network() or reporting
 
     # DHCP Leases method
-    print ('    DHCP Leases Method...')
+    file_print('    DHCP Leases Method...')
     reporting = read_DHCP_leases () or reporting
 
     # Load current scan data
-    print ('\nProcessing scan results...')
+    file_print('\nProcessing scan results...')
     print_log ('Save scanned devices')
     save_scanned_devices (arpscan_devices, cycle_interval)
     
@@ -561,17 +561,17 @@ def scan_network ():
     print_log ('Stats end')
 
     # Create Events
-    print ('\nUpdating DB Info...')
-    print ('    Sessions Events (connect / discconnect) ...')
+    file_print('\nUpdating DB Info...')
+    file_print('    Sessions Events (connect / discconnect) ...')
     insert_events()
 
     # Create New Devices
     # after create events -> avoid 'connection' event
-    print ('    Creating new devices...')
+    file_print('    Creating new devices...')
     create_new_devices ()
 
     # Update devices info
-    print ('    Updating Devices Info...')
+    file_print('    Updating Devices Info...')
     update_devices_data_from_scan ()
 
     # Resolve devices names
@@ -579,19 +579,19 @@ def scan_network ():
     update_devices_names()
 
     # Void false connection - disconnections
-    print ('    Voiding false (ghost) disconnections...')
+    file_print('    Voiding false (ghost) disconnections...')
     void_ghost_disconnections ()
   
     # Pair session events (Connection / Disconnection)
-    print ('    Pairing session events (connection / disconnection) ...')
+    file_print('    Pairing session events (connection / disconnection) ...')
     pair_sessions_events()  
   
     # Sessions snapshot
-    print ('    Creating sessions snapshot...')
+    file_print('    Creating sessions snapshot...')
     create_sessions_snapshot ()
   
     # Skip repeated notifications
-    print ('    Skipping repeated notifications...')
+    file_print('    Skipping repeated notifications...')
     skip_repeated_notifications ()
   
     # Commit changes
@@ -627,12 +627,12 @@ def execute_arpscan ():
 
     # multiple interfaces
     if type(SCAN_SUBNETS) is list:
-        print("    arp-scan: Multiple interfaces")        
+        file_print("    arp-scan: Multiple interfaces")        
         for interface in SCAN_SUBNETS :            
             arpscan_output += execute_arpscan_on_interface (interface)
     # one interface only
     else:
-        print("    arp-scan: One interface")
+        file_print("    arp-scan: One interface")
         arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
 
     
@@ -658,12 +658,12 @@ def execute_arpscan ():
     
 
     # DEBUG
-        # print (devices_list)
-        # print (unique_mac)
-        # print (unique_devices)
-        # print (len(devices_list))
-        # print (len(unique_mac))
-        # print (len(unique_devices))
+        # file_print(devices_list)
+        # file_print(unique_mac)
+        # file_print(unique_devices)
+        # file_print(len(devices_list))
+        # file_print(len(unique_mac))
+        # file_print(len(unique_devices))
 
     # return list
     return unique_devices
@@ -682,7 +682,7 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
         result = subprocess.check_output (arpscan_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)
+        file_print(e.output)
         result = ""
 
     return result
@@ -744,7 +744,7 @@ def read_DHCP_leases ():
                         VALUES (?, ?, ?, ?, ?)
                      """, data)
     # DEBUG
-        # print (sql.rowcount)
+        # file_print(sql.rowcount)
     return reporting
 
 #-------------------------------------------------------------------------------
@@ -807,19 +807,19 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanCycle = ? """,
                     (cycle,))
-    print ('    Devices Detected.......:', str (sql.fetchone()[0]) )
+    file_print('    Devices Detected.......:', str (sql.fetchone()[0]) )
 
     # Devices arp-scan
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    print ('        arp-scan Method....:', str (sql.fetchone()[0]) )
+    file_print('        arp-scan Method....:', str (sql.fetchone()[0]) )
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
                     (cycle,))
-    print ('        Pi-hole Method.....: +' + str (sql.fetchone()[0]) )
+    file_print('        Pi-hole Method.....: +' + str (sql.fetchone()[0]) )
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
@@ -827,15 +827,15 @@ def print_scan_stats ():
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
                     (cycle,))
-    print ('        New Devices........: ' + str (sql.fetchone()[0]) )
+    file_print('        New Devices........: ' + str (sql.fetchone()[0]) )
 
     # Devices in this ScanCycle
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_ScanCycle = ? """,
                     (cycle,))
-    print ('')
-    print ('    Devices in this cycle..: ' + str (sql.fetchone()[0]) )
+    file_print('')
+    file_print('    Devices in this cycle..: ' + str (sql.fetchone()[0]) )
 
     # Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -845,7 +845,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    print ('        Down Alerts........: ' + str (sql.fetchone()[0]) )
+    file_print('        Down Alerts........: ' + str (sql.fetchone()[0]) )
 
     # New Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -856,7 +856,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    print ('        New Down Alerts....: ' + str (sql.fetchone()[0]) )
+    file_print('        New Down Alerts....: ' + str (sql.fetchone()[0]) )
 
     # New Connections
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -864,7 +864,7 @@ def print_scan_stats ():
                       AND dev_PresentLastScan = 0
                       AND dev_ScanCycle = ? """,
                     (cycle,))
-    print ('        New Connections....: ' + str ( sql.fetchone()[0]) )
+    file_print('        New Connections....: ' + str ( sql.fetchone()[0]) )
 
     # Disconnections
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -874,7 +874,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    print ('        Disconnections.....: ' + str ( sql.fetchone()[0]) )
+    file_print('        Disconnections.....: ' + str ( sql.fetchone()[0]) )
 
     # IP Changes
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -882,7 +882,7 @@ def print_scan_stats ():
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
                     (cycle,))
-    print ('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
+    file_print('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
 
     # Add to History
     sql.execute("SELECT * FROM Devices")
@@ -1148,7 +1148,7 @@ def update_devices_data_from_scan ():
             recordsToUpdate.append ([vendor, device['dev_MAC']])
 
     # DEBUG - print list of record to update
-        # print (recordsToUpdate)
+        # file_print(recordsToUpdate)
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
@@ -1163,7 +1163,7 @@ def update_devices_names ():
     notFound = 0
 
     # Devices without name
-    print ('        Trying to resolve devices without name...', end='')
+    file_print('        Trying to resolve devices without name...')
     # BUGFIX #97 - Updating name of Devices w/o IP
     for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'") :
         # Resolve device name
@@ -1174,22 +1174,19 @@ def update_devices_names ():
         elif newName == -2 :
             ignored += 1
         else :
-            recordsToUpdate.append ([newName, device['dev_MAC']])
-        # progress bar
-        print ('.', end='')
-        sys.stdout.flush()
+            recordsToUpdate.append ([newName, device['dev_MAC']])        
             
     # Print log
-    print ('')
-    print ("        Names updated:  ", len(recordsToUpdate) )
+    file_print('')
+    file_print("        Names updated:  ", len(recordsToUpdate) )
     # DEBUG - print list of record to update
-        # print (recordsToUpdate)
+        # file_print(recordsToUpdate)
 
     # update devices
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
 
     # DEBUG - print number of rows updated
-        # print (sql.rowcount)
+        # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
 def resolve_device_name (pMAC, pIP):
@@ -1202,7 +1199,7 @@ def resolve_device_name (pMAC, pIP):
             return -2
 
         # DEBUG
-        # print (pMAC, pIP)
+        # file_print(pMAC, pIP)
 
         # Resolve name with DIG
         dig_args = ['dig', '+short', '-x', pIP]
@@ -1213,7 +1210,7 @@ def resolve_device_name (pMAC, pIP):
             newName = subprocess.check_output (dig_args, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            print(e.output)
+            file_print(e.output)
             newName = "Error - check logs"
 
         # Check returns
@@ -1390,7 +1387,7 @@ def email_reporting ():
     global mail_text
     global mail_html
     # Reporting section
-    print ('\nCheck if something to report...')
+    file_print('\nCheck if something to report...')
     openDB()
 
     # prepare variables for JSON construction
@@ -1588,43 +1585,43 @@ def email_reporting ():
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
-        print ('\nChanges detected, sending reports...')
+        file_print('\nChanges detected, sending reports...')
 
         if REPORT_MAIL and check_config('email'):            
-            print ('    Sending report by email...')
+            file_print('    Sending report by email...')
             send_email (mail_text, mail_html)
         else :
-            print ('    Skip mail...')
+            file_print('    Skip mail...')
         if REPORT_APPRISE and check_config('apprise'):
-            print ('    Sending report by Apprise...')
+            file_print('    Sending report by Apprise...')
             send_apprise (mail_html)
         else :
-            print ('    Skip Apprise...')
+            file_print('    Skip Apprise...')
         if REPORT_WEBHOOK and check_config('webhook'):
-            print ('    Sending report by webhook...')
+            file_print('    Sending report by webhook...')
             send_webhook (json_final, mail_text)
         else :
-            print ('    Skip webhook...')
+            file_print('    Skip webhook...')
         if REPORT_NTFY and check_config('ntfy'):
-            print ('    Sending report by NTFY...')
+            file_print('    Sending report by NTFY...')
             send_ntfy (mail_text)
         else :
-            print ('    Skip NTFY...')
+            file_print('    Skip NTFY...')
         if REPORT_PUSHSAFER and check_config('pushsafer'):
-            print ('    Sending report by PUSHSAFER...')
+            file_print('    Sending report by PUSHSAFER...')
             send_pushsafer (mail_text)
         else :
-            print ('    Skip PUSHSAFER...')
+            file_print('    Skip PUSHSAFER...')
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
-            print ('    Establishing MQTT thread...')                
+            file_print('    Establishing MQTT thread...')                
             # mqtt_thread_up = True # prevent this code to be run multiple times concurrently
             # start_mqtt_thread ()                
             mqtt_start()        
         else :
-            print ('    Skip MQTT...')
+            file_print('    Skip MQTT...')
     else :
-        print ('    No changes to report...')
+        file_print('    No changes to report...')
 
     openDB()
 
@@ -1637,7 +1634,7 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1""")
 
     # DEBUG - print number of rows updated
-    print ('    Notifications:', sql.rowcount)
+    file_print('    Notifications:', sql.rowcount)
 
     # Commit changes
     sql_connection.commit()
@@ -1648,42 +1645,42 @@ def check_config(service):
 
     if service == 'email':
         if SMTP_PASS == '' or SMTP_SERVER == '' or SMTP_USER == '' or REPORT_FROM == '' or REPORT_TO == '':
-            print ('    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.')
+            file_print('    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.')
             return False
         else:
             return True   
 
     if service == 'apprise':
         if APPRISE_URL == '' or APPRISE_HOST == '':
-            print ('    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.')
+            file_print('    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.')
             return False
         else:
             return True  
 
     if service == 'webhook':
         if WEBHOOK_URL == '':
-            print ('    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.')
+            file_print('    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.')
             return False
         else:
             return True 
 
     if service == 'ntfy':
         if NTFY_HOST == '' or NTFY_TOPIC == '':
-            print ('    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.')
+            file_print('    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.')
             return False
         else:
             return True 
 
     if service == 'pushsafer':
         if PUSHSAFER_TOKEN == 'ApiKey':
-            print ('    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.')
+            file_print('    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.')
             return False
         else:
             return True 
 
     if service == 'mqtt':
         if MQTT_BROKER == '' or MQTT_PORT == '' or MQTT_USER == '' or MQTT_PASSWORD == '':
-            print ('    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.')
+            file_print('    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.')
             return False
         else:
             return True 
@@ -1862,7 +1859,7 @@ def send_webhook (_json, _html):
         logResult (stdout, stderr)    
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)
+        file_print(e.output)
 
 #-------------------------------------------------------------------------------
 def send_apprise (html):
@@ -1882,7 +1879,7 @@ def send_apprise (html):
         logResult (stdout, stderr)      
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        print(e.output)    
+        file_print(e.output)    
 
 #-------------------------------------------------------------------------------
 mqtt_connected_to_broker = False
@@ -1901,7 +1898,7 @@ def publish_mqtt(client, topic, message):
         status = result[0]
 
         if status != 0:            
-            print("Waiting to reconnect to MQTT broker")
+            file_print("Waiting to reconnect to MQTT broker")
             time.sleep(0.1) 
     return True
 
@@ -1991,10 +1988,10 @@ def mqtt_create_client():
         global mqtt_connected_to_broker
         
         if rc == 0: 
-            print("Connected to broker")         
+            file_print("Connected to broker")         
             mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            print("Connection failed")
+            file_print("Connection failed")
             mqtt_connected_to_broker = False
 
 
@@ -2096,11 +2093,11 @@ def start_mqtt_thread ():
     # flag to check if thread is running
     mqtt_thread_up = True
 
-    print("    Starting MQTT sending")
+    file_print("    Starting MQTT sending")
     x = threading.Thread(target=mqtt_start, args=(1,), daemon=True) 
     # start_sending_mqtt(client)
 
-    print("    Threading: Starting MQTT thread")
+    file_print("    Threading: Starting MQTT thread")
 
     x.start()
 
@@ -2232,6 +2229,17 @@ def to_binary_sensor(input):
 #===============================================================================
 # UTIL
 #===============================================================================
+def file_print(*args):
+
+    result = ''
+    
+    file = open(LOG_PATH + "/pialert_file.log", "a")    
+    for arg in args:                
+        result += str(arg)
+    print(result)
+    file.write(result + '\n')
+    file.close()
+#-------------------------------------------------------------------------------
 def print_log (pText):
     global log_timestamp
 
@@ -2243,7 +2251,7 @@ def print_log (pText):
     log_timestamp2 = datetime.datetime.now()
 
     # Print line + time + elapsed time + text
-    print ('--------------------> ',
+    file_print('--------------------> ',
         log_timestamp2, ' ',
         log_timestamp2 - log_timestamp, ' ',
         pText)

@@ -32,8 +32,6 @@ COPY . /home/pi/pialert
 RUN rm /etc/nginx/sites-available/default \
 	&& ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
     && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
-    # make the logs accessible in the old location
-    && ln -s /home/pi/pialert/front/log /home/pi/pialert/log \
     # run the hardware vendors update
     && /home/pi/pialert/back/update_vendors.sh 
 

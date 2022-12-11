@@ -376,15 +376,16 @@ if ($_REQUEST['tab'] == '1') {
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
                     <div class="db_info_table">
+    
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
-                            IP_changes.log
+                            pialert_file.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
-                              </textarea>                              
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert_file.log" ); ?>
+                              </textarea>
                             </div>
-                        </div>     
+                        </div>  
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
                             pialert.log
@@ -396,13 +397,13 @@ if ($_REQUEST['tab'] == '1') {
                         </div>   
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
-                            stderr.log
+                            IP_changes.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
-                              </textarea>
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
+                              </textarea>                              
                             </div>
-                        </div>      
+                        </div> 
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
                             stdout.log
@@ -411,7 +412,17 @@ if ($_REQUEST['tab'] == '1') {
                               <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stdout.log" ); ?>
                               </textarea>
                             </div>
-                        </div>         
+                        </div> 
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
+                            stderr.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>      
+                                
                     </div>
               </div>
           </div>
