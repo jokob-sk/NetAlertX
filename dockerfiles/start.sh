@@ -20,4 +20,4 @@ chmod -R a+rw /home/pi/pialert/front/log
 
 # cron -f
 
-python /home/pi/pialert/back/pialert.py  > /home/pi/pialert/front/log/pialert.log    2>&1
+python /home/pi/pialert/back/pialert.py

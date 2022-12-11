@@ -128,8 +128,7 @@ def main ():
     write_file(LOG_PATH + 'IP_changes.log', '')
     write_file(LOG_PATH + 'stdout.log', '')
     write_file(LOG_PATH + 'stderr.log', '')
-    write_file(LOG_PATH + 'pialert.log', '')
-    write_file(LOG_PATH + 'pialert_file.log', '')
+    write_file(LOG_PATH + 'pialert.log', '')    
     
     while True:
         # update NOW time
@@ -2220,7 +2219,7 @@ def file_print(*args):
 
     result = ''
     
-    file = open(LOG_PATH + "/pialert_file.log", "a")    
+    file = open(LOG_PATH + "/pialert.log", "a")    
     for arg in args:                
         result += str(arg)
     print(result)

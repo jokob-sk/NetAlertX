@@ -376,16 +376,6 @@ if ($_REQUEST['tab'] == '1') {
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
                     <div class="db_info_table">
-    
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            pialert_file.log
-                            </div>
-                            <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert_file.log" ); ?>
-                              </textarea>
-                            </div>
-                        </div>  
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
                             pialert.log
