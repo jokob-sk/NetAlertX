@@ -1,4 +1,4 @@
 .DS_Store
 config/pialert.conf
-db/
-front/log/
+db/*
+front/log/*
