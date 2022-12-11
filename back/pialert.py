@@ -40,122 +40,70 @@ import threading
 # sys.stderr = sys.stdout
 
 #===============================================================================
-# CONFIG CONSTANTS
+# CONFIG VARIABLES
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 PIALERT_PATH = PIALERT_BACK_PATH + "/.."
 STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
 
+# INITIALIZE VARIABLES from pialert.conf
+
+# GENERAL
+PRINT_LOG               = False
+LOG_PATH                = PIALERT_PATH + '/front/log'
+
+# keep 90 days of network activity if not specified how many days to keep
+DAYS_TO_KEEP_EVENTS = 90
+
+# Scan loop delay
+SCAN_CYCLE_MINUTES = 5
+
+# Email reporting defaults
+SMTP_SERVER             = ''
+SMTP_PORT               = 587
+SMTP_USER               = ''
+SMTP_PASS               = ''
+SMTP_SKIP_TLS           = False
+SMTP_SKIP_LOGIN	        = False
+
+# Which sections to include in the reports. Include everything by default
+INCLUDED_SECTIONS = ['internet', 'new_devices', 'down_devices', 'events']
+
+# WEBHOOKS
+WEBHOOK_REQUEST_METHOD = 'GET'
+
+# payload type for the webhook request
+WEBHOOK_PAYLOAD = 'json'
+
+# NTFY default values
+NTFY_USER = ''
+NTFY_PASSWORD = ''
+NTFY_TOPIC = ''
+NTFY_HOST = 'https://ntfy.sh'
+
+# MQTT default values
+REPORT_MQTT = False
+MQTT_BROKER = ''
+MQTT_PORT   = ''
+MQTT_CLIENT_ID = 'PiAlert'
+MQTT_USER = ''
+MQTT_PASSWORD = ''
+MQTT_QOS = 0
+MQTT_DELAY_SEC = 2
+
+# Apprise
+APPRISE_URL = ''
+APPRISE_HOST = ''
+
+# Pushsafer
+PUSHSAFER_TOKEN         = 'ApiKey'
+
+# load user configuration
 
 if (sys.version_info > (3,0)):    
     exec(open(PIALERT_PATH + "/config/pialert.conf").read())
 else:    
     execfile (PIALERT_PATH + "/config/pialert.conf")
-
-# INITIALIZE ALL CONSTANTS from pialert.conf
-
-# GENERAL
-# keep 90 days of network activity if not specified how many days to keep
-try:
-    strdaystokeepEV = str(DAYS_TO_KEEP_EVENTS)
-except NameError: # variable not defined, use a default
-    strdaystokeepEV = str(90)
-
-try:
-    network_scan_minutes = SCAN_CYCLE_MINUTES
-except NameError: 
-    network_scan_minutes = 5
-
-# Which sections to include in the reports. Include everything by default
-try:
-    includedSections = INCLUDED_SECTIONS
-except NameError:
-    includedSections = ['internet', 'new_devices', 'down_devices', 'events']
-
-
-# WEBHOOKS
-# HTTP request method for the webhook (GET, POST...)
-try:
-    webhookRequestMethod = WEBHOOK_REQUEST_METHOD
-except NameError: 
-    webhookRequestMethod = 'GET'
-
-# payload type for the webhook request
-try:
-    webhookPayload = WEBHOOK_PAYLOAD
-except NameError: 
-    webhookPayload = 'json'
-
-
-# NTFY
-try:
-    ntfyUser = NTFY_USER
-except NameError: 
-    ntfyUser = ''
-
-try:
-    ntfyPassword = NTFY_PASSWORD
-except NameError:
-    ntfyPassword = ''
-
-try:
-    ntfyTopic = NTFY_TOPIC
-except NameError: 
-    ntfyTopic = ''
-
-try:
-    ntfyHost = NTFY_HOST
-except NameError: 
-    ntfyHost = 'https://ntfy.sh'
-
-
-# MQTT
-try:
-    reportMQTT = REPORT_MQTT
-except NameError: 
-    reportMQTT = False
-
-try:
-    mqttBroker = MQTT_BROKER
-except NameError: 
-    mqttBroker = ''
-
-try:
-    mqttPort = MQTT_PORT
-except NameError: 
-    mqttPort = ''
-
-try:
-    mqttTopic = MQTT_TOPIC
-except NameError: 
-    mqttTopic = ''
-
-try:
-    mqttClientId = MQTT_CLIENT_ID
-except NameError: 
-    mqttClientId = 'PiAlert'
-
-try:
-    mqttUser = MQTT_USER
-except NameError: 
-    mqttUser = ''
-
-try:
-    mqttPassword = MQTT_PASSWORD
-except NameError: 
-    mqttPassword = ''
-
-try:
-    mqttQoS = MQTT_QOS
-except NameError: 
-    mqttQoS = 0
-
-try:
-    mqttDelay = MQTT_DELAY_SEC
-except NameError: 
-    mqttDelay = 2
-
-
 
 #===============================================================================
 # MAIN
@@ -172,17 +120,24 @@ last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_now - timedelta(days = 7)
+last_update_vendors = time_now - timedelta(days = 6) # update vendors 24h after first run
 
 def main ():
     # Initialize global variables
-    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, network_scan_minutes, mqtt_thread_up
+    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, mqtt_thread_up
     # second set of global variables
-    global startTime, log_timestamp, sql_connection, includedSections, sql
+    global startTime, log_timestamp, sql_connection, sql
     
     while True:
         # update NOW time
         time_now = datetime.datetime.now()
+
+        # re-load user configuration 
+
+        if (sys.version_info > (3,0)):    
+            exec(open(PIALERT_PATH + "/config/pialert.conf").read())
+        else:    
+            execfile (PIALERT_PATH + "/config/pialert.conf")
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
@@ -221,7 +176,7 @@ def main ():
                 cycle = 'update_vendors'
                 update_devices_MAC_vendors()
 
-            if last_network_scan + timedelta(minutes=network_scan_minutes) < time_now and os.path.exists(STOPARPSCAN) == False:
+            if last_network_scan + timedelta(minutes=SCAN_CYCLE_MINUTES) < time_now and os.path.exists(STOPARPSCAN) == False:
                 last_network_scan = time_now
                 cycle = 1 # network scan
                 scan_network() 
@@ -443,8 +398,8 @@ def cleanup_database ():
     print ('    Optimize Database...')
 
     # Cleanup Events
-    print ('    Cleanup Events, up to the lastest '+strdaystokeepEV+' days...')
-    sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+strdaystokeepEV+" day')")
+    print ('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days...')
+    sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Shrink DB
     print ('    Shrink Database...')
@@ -1505,7 +1460,7 @@ def email_reporting ():
 
     
     for eventAlert in sql :
-        mail_section_Internet = 'internet' in includedSections
+        mail_section_Internet = 'internet' in INCLUDED_SECTIONS
         # collect "internet" (IP changes) for the webhook json   
         json_internet = add_json_list (eventAlert, json_internet)
 
@@ -1537,7 +1492,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_new_devices = 'new_devices' in includedSections
+        mail_section_new_devices = 'new_devices' in INCLUDED_SECTIONS
         # collect "new_devices" for the webhook json  
         json_new_devices = add_json_list (eventAlert, json_new_devices)
 
@@ -1568,7 +1523,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_devices_down = 'down_devices' in includedSections
+        mail_section_devices_down = 'down_devices' in INCLUDED_SECTIONS
         # collect "down_devices" for the webhook json
         json_down_devices = add_json_list (eventAlert, json_down_devices)
 
@@ -1601,7 +1556,7 @@ def email_reporting ():
                     ORDER BY eve_DateTime""")
 
     for eventAlert in sql :
-        mail_section_events = 'events' in includedSections
+        mail_section_events = 'events' in INCLUDED_SECTIONS
         # collect "events" for the webhook json
         json_events = add_json_list (eventAlert, json_events)
           
@@ -1635,33 +1590,33 @@ def email_reporting ():
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
         print ('\nChanges detected, sending reports...')
 
-        if REPORT_MAIL :
+        if REPORT_MAIL and check_config('email'):            
             print ('    Sending report by email...')
             send_email (mail_text, mail_html)
         else :
             print ('    Skip mail...')
-        if REPORT_APPRISE :
+        if REPORT_APPRISE and check_config('apprise'):
             print ('    Sending report by Apprise...')
             send_apprise (mail_html)
         else :
             print ('    Skip Apprise...')
-        if REPORT_WEBHOOK :
+        if REPORT_WEBHOOK and check_config('webhook'):
             print ('    Sending report by webhook...')
             send_webhook (json_final, mail_text)
         else :
             print ('    Skip webhook...')
-        if REPORT_NTFY :
+        if REPORT_NTFY and check_config('ntfy'):
             print ('    Sending report by NTFY...')
             send_ntfy (mail_text)
         else :
             print ('    Skip NTFY...')
-        if REPORT_PUSHSAFER :
+        if REPORT_PUSHSAFER and check_config('pushsafer'):
             print ('    Sending report by PUSHSAFER...')
             send_pushsafer (mail_text)
         else :
             print ('    Skip PUSHSAFER...')
         # Update MQTT entities
-        if reportMQTT:
+        if REPORT_MQTT and check_config('mqtt'):
             print ('    Establishing MQTT thread...')                
             # mqtt_thread_up = True # prevent this code to be run multiple times concurrently
             # start_mqtt_thread ()                
@@ -1687,6 +1642,52 @@ def email_reporting ():
     # Commit changes
     sql_connection.commit()
     closeDB()
+
+#-------------------------------------------------------------------------------
+def check_config(service):
+
+    if service == 'email':
+        if SMTP_PASS == '' or SMTP_SERVER == '' or SMTP_USER == '' or REPORT_FROM == '' or REPORT_TO == '':
+            print ('    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.')
+            return False
+        else:
+            return True   
+
+    if service == 'apprise':
+        if APPRISE_URL == '' or APPRISE_HOST == '':
+            print ('    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.')
+            return False
+        else:
+            return True  
+
+    if service == 'webhook':
+        if WEBHOOK_URL == '':
+            print ('    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.')
+            return False
+        else:
+            return True 
+
+    if service == 'ntfy':
+        if NTFY_HOST == '' or NTFY_TOPIC == '':
+            print ('    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.')
+            return False
+        else:
+            return True 
+
+    if service == 'pushsafer':
+        if PUSHSAFER_TOKEN == 'ApiKey':
+            print ('    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.')
+            return False
+        else:
+            return True 
+
+    if service == 'mqtt':
+        if MQTT_BROKER == '' or MQTT_PORT == '' or MQTT_USER == '' or MQTT_PASSWORD == '':
+            print ('    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.')
+            return False
+        else:
+            return True 
+
 #-------------------------------------------------------------------------------
 def send_ntfy (_Text):
     headers = {
@@ -1696,15 +1697,15 @@ def send_ntfy (_Text):
         "Tags": "warning"
     }
     # if username and password are set generate hash and update header
-    if ntfyUser != "" and ntfyPassword != "":
+    if NTFY_USER != "" and NTFY_PASSWORD != "":
 	# Generate hash for basic auth
-        usernamepassword = "{}:{}".format(ntfyUser,ntfyPassword)
-        basichash = b64encode(bytes(ntfyUser + ':' + ntfyPassword, "utf-8")).decode("ascii")
+        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
+        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
 
 	# add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
-    requests.post("{}/{}".format( ntfyHost, ntfyTopic),
+    requests.post("{}/{}".format( NTFY_HOST, NTFY_TOPIC),
     data=_Text,
     headers=headers)
 
@@ -1821,15 +1822,15 @@ def SafeParseGlobalBool(boolVariable):
 def send_webhook (_json, _html):
 
     # use data type based on specified payload type
-    if webhookPayload == 'json':
+    if WEBHOOK_PAYLOAD == 'json':
         payloadData = _json        
-    if webhookPayload == 'html':
+    if WEBHOOK_PAYLOAD == 'html':
         payloadData = _html
-    if webhookPayload == 'text':
+    if WEBHOOK_PAYLOAD == 'text':
         payloadData = to_text(_json)
 
     #Define slack-compatible payload
-    _json_payload = { "text": payloadData } if webhookPayload == 'text' else {
+    _json_payload = { "text": payloadData } if WEBHOOK_PAYLOAD == 'text' else {
     "username": "Pi.Alert",
     "text": "There are new notifications",
     "attachments": [{
@@ -1848,7 +1849,7 @@ def send_webhook (_json, _html):
         curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
         _WEBHOOK_URL = WEBHOOK_URL
-        curlParams = ["curl","-i","-X", webhookRequestMethod ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
+        curlParams = ["curl","-i","-X", WEBHOOK_REQUEST_METHOD ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
     # execute CURL call
     try:
@@ -1893,7 +1894,7 @@ def publish_mqtt(client, topic, message):
         result = client.publish(
                 topic=topic,
                 payload=message,
-                qos=mqttQoS,
+                qos=MQTT_QOS,
                 retain=True,
             )
 
@@ -1972,7 +1973,7 @@ def publish_sensor(client, sensorConf):
     # add the sensor to the global list to keep track of succesfully added sensors
     if publish_mqtt(client, topic, message):
                                 # hack - delay adding to the queue in case the process is 
-        time.sleep(mqttDelay)   # restarted and previous publish processes aborted 
+        time.sleep(MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
                                 # (it takes ~2s to update a sensor config on the broker)
         mqtt_sensors.append(sensorConf)
         # print(len(mqtt_sensors))
@@ -1997,11 +1998,11 @@ def mqtt_create_client():
             mqtt_connected_to_broker = False
 
 
-    client = mqtt_client.Client(mqttClientId)   # Set Connecting Client ID    
-    client.username_pw_set(mqttUser, mqttPassword)    
+    client = mqtt_client.Client(MQTT_CLIENT_ID)   # Set Connecting Client ID    
+    client.username_pw_set(MQTT_USER, MQTT_PASSWORD)    
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
-    client.connect(mqttBroker, mqttPort)
+    client.connect(MQTT_BROKER, MQTT_PORT)
     client.loop_start() 
 
     return client
@@ -2291,19 +2292,19 @@ def logResult (stdout, stderr):
 
 def to_text(_json):
     payloadData = ""
-    if len(_json['internet']) > 0 and 'internet' in includedSections:
+    if len(_json['internet']) > 0 and 'internet' in INCLUDED_SECTIONS:
         payloadData += "INTERNET\n"
         for event in _json['internet']:
             payloadData += event[3] + ' on ' + event[2] + '. ' + event[4] + '. New address:' + event[1] + '\n'
 
-    if len(_json['new_devices']) > 0 and 'new_devices' in includedSections:
+    if len(_json['new_devices']) > 0 and 'new_devices' in INCLUDED_SECTIONS:
         payloadData += "NEW DEVICES:\n"
         for event in _json['new_devices']:
             if event[4] is None:
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
 
-    if len(_json['down_devices']) > 0 and 'down_devices' in includedSections:
+    if len(_json['down_devices']) > 0 and 'down_devices' in INCLUDED_SECTIONS:
         write_file (LOG_PATH + '/down_devices_example.log', _json['down_devices'])
         payloadData += 'DOWN DEVICES:\n'
         for event in _json['down_devices']:
@@ -2311,7 +2312,7 @@ def to_text(_json):
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
     
-    if len(_json['events']) > 0 and 'events' in includedSections:
+    if len(_json['events']) > 0 and 'events' in INCLUDED_SECTIONS:
         payloadData += "EVENTS:\n"
         for event in _json['events']:
             if event[8] != "Internet":

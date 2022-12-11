@@ -23,19 +23,21 @@ cd /usr/share/ieee-data/
 sudo mkdir -p 2_backup
 sudo cp *.txt 2_backup
 sudo cp *.csv 2_backup
-
-sudo curl $1 -# -O https://standards-oui.ieee.org/iab/iab.csv
-sudo curl $1 -# -O https://standards-oui.ieee.org/iab/iab.txt
-
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui28/mam.csv
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui28/mam.txt
-
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui36/oui36.csv
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui36/oui36.txt
-
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui/oui.csv
-sudo curl $1 -# -O https://standards-oui.ieee.org/oui/oui.txt
-
+echo ""
+echo Download Start
+echo ""
+sudo curl $1  -O https://standards-oui.ieee.org/iab/iab.csv \
+              -O https://standards-oui.ieee.org/iab/iab.txt \
+              -O https://standards-oui.ieee.org/oui28/mam.csv \
+              -O https://standards-oui.ieee.org/iab/iab.txt \
+              -O https://standards-oui.ieee.org/oui28/mam.csv \
+              -O https://standards-oui.ieee.org/oui28/mam.txt \
+              -O https://standards-oui.ieee.org/oui36/oui36.csv \
+              -O https://standards-oui.ieee.org/oui36/oui36.txt \
+              -O https://standards-oui.ieee.org/oui/oui.csv \
+              -O https://standards-oui.ieee.org/oui/oui.txt
+echo ""
+echo Download Finished
 
 # ----------------------------------------------------------------------
 echo ""

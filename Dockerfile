@@ -14,7 +14,7 @@ RUN apt-get update \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
-    && ln -s /home/pi/pialert/front /var/www/html
+    && ln -s /home/pi/pialert/front /var/www/html 
  
    
 # now creating user
@@ -31,7 +31,11 @@ COPY . /home/pi/pialert
 # Pi.Alert 
 RUN rm /etc/nginx/sites-available/default \
 	&& ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
-    && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default 
+    && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
+    # make the logs accessible in the old location
+    && ln -s /home/pi/pialert/front/log /home/pi/pialert/log \
+    # run the hardware vendors update
+    && /home/pi/pialert/back/update_vendors.sh 
 
 # it's easy for permissions set in Git to be overridden, so doing it manually
 RUN chmod -R a+rxw /home/pi/pialert/

@@ -1,0 +1,441 @@
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:09:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+Scan Devices
+    ScanCycle: 1
+    Timestamp: 2022-12-11 13:09:00
+
+Scanning...
+    arp-scan Method...
+    arp-scan: Multiple interfaces
+    Pi-hole Method...
+    DHCP Leases Method...
+
+Processing scan results...
+    Devices Detected.......: 27
+        arp-scan Method....: 25
+        Pi-hole Method.....: +0
+        New Devices........: 0
+
+    Devices in this cycle..: 27
+        Down Alerts........: 0
+        New Down Alerts....: 0
+        New Connections....: 0
+        Disconnections.....: 1
+        IP Changes.........: 0
+
+Updating DB Info...
+    Sessions Events (connect / discconnect) ...
+    Creating new devices...
+    Updating Devices Info...
+        Trying to resolve devices without name...
+        Names updated:   0
+    Voiding false (ghost) disconnections...
+    Pairing session events (connection / disconnection) ...
+    Creating sessions snapshot...
+    Skipping repeated notifications...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+Cleanup Database
+    Timestamp: 2022-12-11 13:09:00
+    Cleanup Online_History...
+    Optimize Database...
+    Cleanup Events, up to the lastest 90 days...
+    Shrink Database...
+
+Finished cycle:  cleanup 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:13:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+
+Finished cycle:  internet_IP 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Scan Devices
+    ScanCycle: 1
+    Timestamp: 2022-12-11 13:15:00
+
+Scanning...
+    arp-scan Method...
+    arp-scan: Multiple interfaces
+    Pi-hole Method...
+    DHCP Leases Method...
+
+Processing scan results...
+    Devices Detected.......: 26
+        arp-scan Method....: 24
+        Pi-hole Method.....: +0
+        New Devices........: 0
+
+    Devices in this cycle..: 26
+        Down Alerts........: 0
+        New Down Alerts....: 0
+        New Connections....: 0
+        Disconnections.....: 1
+        IP Changes.........: 0
+
+Updating DB Info...
+    Sessions Events (connect / discconnect) ...
+    Creating new devices...
+    Updating Devices Info...
+        Trying to resolve devices without name...
+        Names updated:   0
+    Voiding false (ghost) disconnections...
+    Pairing session events (connection / disconnection) ...
+    Creating sessions snapshot...
+    Skipping repeated notifications...
+
+Check if something to report...
+
+Changes detected, sending reports...
+    Sending report by email...
+    Sending report by Apprise...
+    Sending report by webhook...
+    Sending report by NTFY...
+    Skip PUSHSAFER...
+    Establishing MQTT thread...
+Connected to broker
+    Notifications: 1
+
+Finished cycle:  1 
+
+
+Loop end
+---------------------------
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:24:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+Scan Devices
+    ScanCycle: 1
+    Timestamp: 2022-12-11 13:24:00
+
+Scanning...
+    arp-scan Method...
+    arp-scan: Multiple interfaces
+    Pi-hole Method...
+    DHCP Leases Method...
+
+Processing scan results...
+    Devices Detected.......: 26
+        arp-scan Method....: 24
+        Pi-hole Method.....: +0
+        New Devices........: 0
+
+    Devices in this cycle..: 26
+        Down Alerts........: 0
+        New Down Alerts....: 0
+        New Connections....: 0
+        Disconnections.....: 0
+        IP Changes.........: 0
+
+Updating DB Info...
+    Sessions Events (connect / discconnect) ...
+    Creating new devices...
+    Updating Devices Info...
+        Trying to resolve devices without name...
+        Names updated:   0
+    Voiding false (ghost) disconnections...
+    Pairing session events (connection / disconnection) ...
+    Creating sessions snapshot...
+    Skipping repeated notifications...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+
+Finished cycle:  1 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:27:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+
+Finished cycle:  internet_IP 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Scan Devices
+    ScanCycle: 1
+    Timestamp: 2022-12-11 13:29:00
+
+Scanning...
+    arp-scan Method...
+    arp-scan: Multiple interfaces
+    Pi-hole Method...
+    DHCP Leases Method...
+
+Processing scan results...
+    Devices Detected.......: 27
+        arp-scan Method....: 25
+        Pi-hole Method.....: +0
+        New Devices........: 0
+
+    Devices in this cycle..: 27
+        Down Alerts........: 0
+        New Down Alerts....: 0
+        New Connections....: 1
+        Disconnections.....: 0
+        IP Changes.........: 0
+
+Updating DB Info...
+    Sessions Events (connect / discconnect) ...
+    Creating new devices...
+    Updating Devices Info...
+        Trying to resolve devices without name...
+        Names updated:   0
+    Voiding false (ghost) disconnections...
+    Pairing session events (connection / disconnection) ...
+    Creating sessions snapshot...
+    Skipping repeated notifications...
+
+Check if something to report...
+
+Changes detected, sending reports...
+    Sending report by email...
+    Sending report by Apprise...
+    Sending report by webhook...
+    Sending report by NTFY...
+    Skip PUSHSAFER...
+    Establishing MQTT thread...
+    Notifications: 1
+
+Finished cycle:  1 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:30:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+
+Finished cycle:  internet_IP 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Check Internet IP
+    Timestamp: 2022-12-11 13:33:00
+
+    Retrieving Internet IP...
+    103.210.27.85
+
+    Retrieving previous IP...
+    103.210.27.85
+    No changes to perform
+
+    Skipping Dynamic DNS update...
+
+Check if something to report...
+    No changes to report...
+    Notifications: 0
+
+Finished cycle:  internet_IP 
+
+
+Loop end
+---------------------------
+
+ Wait 20s
+
+ Wait 20s
+
+Loop start
+---------------------------
+Scan Devices
+    ScanCycle: 1
+    Timestamp: 2022-12-11 13:34:00
+
+Scanning...
+    arp-scan Method...
+    arp-scan: Multiple interfaces
+    Pi-hole Method...
+    DHCP Leases Method...
+
+Processing scan results...
+    Devices Detected.......: 27
+        arp-scan Method....:

@@ -18,4 +18,4 @@ chown -R www-data:www-data /home/pi/pialert/db/pialert.db
 
 # cron -f
 
-python /home/pi/pialert/back/pialert.py  > /home/pi/pialert/log/pialert.log    2>&1
+python /home/pi/pialert/back/pialert.py  > /home/pi/pialert/front/log/pialert.log    2>&1

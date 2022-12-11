@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  Pi.Alert
+#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#
+#  IP_changes.log - Back module. Logfile for Internet IP changes
+#-------------------------------------------------------------------------------
+#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#-------------------------------------------------------------------------------
+
+2021-01-01 00:00:00	0.0.0.0

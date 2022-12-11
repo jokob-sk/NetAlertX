@@ -45,7 +45,7 @@
 1. Database backup
    * Download the [original DB from GitHub](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db).
    * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
-   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/log`. 
+   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
    * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
    * You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
 2. Map to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
@@ -77,7 +77,7 @@ services:
       # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
       - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container
-      - ${LOGS_LOCATION}:/home/pi/pialert/log
+      - ${LOGS_LOCATION}:/home/pi/pialert/front/log
     environment:
       - TZ=${TZ}
       - PORT=${PORT}

@@ -233,6 +233,7 @@ if ($_REQUEST['tab'] == '1') {
         <li class="active"><a href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a></li>
         <li><a href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a></li>
         <li><a href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a></li>
+        <li><a href="#tab_Logging" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Logging'];?></a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_Settings">
@@ -371,8 +372,52 @@ if ($_REQUEST['tab'] == '1') {
                         <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_ImportCSV_text'];?></div>
                     </div>
                  </div>
+        </div>
+        <!-- ---------------------------Logging-------------------------------------------- -->
+        <div class="tab-pane" id="tab_Logging">
+                    <div class="db_info_table">
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
+                            IP_changes.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>     
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
+                            pialert.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>   
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
+                            stderr.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>      
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
+                            stdout.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stdout.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>         
+                    </div>
+              </div>
           </div>
+          <!-- ------------------------------------------------------------------------------ -->
       </div>
+      
 </div>
 
 <div class="box">
@@ -474,7 +519,7 @@ function deleteEvents30()
   });
 }
 
-// delete Hostory 
+// delete History 
 function askDeleteActHistory () {
   // Ask 
   showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'];?>',
