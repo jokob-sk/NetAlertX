@@ -39,14 +39,10 @@ import threading
 # CONFIG VARIABLES
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
-PIALERT_PATH = PIALERT_BACK_PATH + "/.."
-STOPARPSCAN = PIALERT_PATH + "/db/setting_stoparpscan"
+pialertPath = PIALERT_BACK_PATH + "/.."
+STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
 # INITIALIZE VARIABLES from pialert.conf
-
-# GENERAL
-PRINT_LOG               = False
-LOG_PATH                = PIALERT_PATH + '/front/log'
 
 # keep 90 days of network activity if not specified how many days to keep
 DAYS_TO_KEEP_EVENTS = 90
@@ -94,12 +90,19 @@ APPRISE_HOST = ''
 # Pushsafer
 PUSHSAFER_TOKEN         = 'ApiKey'
 
+# GENERAL
+PRINT_LOG              = False
+pialertPath            = '/home/pi/pialert'
+dbPath                 = pialertPath + '/db/pialert.db'
+vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
+logPath                = pialertPath + '/front/log'
+
 # load user configuration
 
 if (sys.version_info > (3,0)):    
-    exec(open(PIALERT_PATH + "/config/pialert.conf").read())
+    exec(open(pialertPath + "/config/pialert.conf").read())
 else:    
-    execfile (PIALERT_PATH + "/config/pialert.conf")
+    execfile (pialertPath + "/config/pialert.conf")
 
 #===============================================================================
 # MAIN
@@ -125,10 +128,10 @@ def main ():
     global startTime, log_timestamp, sql_connection, sql
 
     # create log files
-    write_file(LOG_PATH + 'IP_changes.log', '')
-    write_file(LOG_PATH + 'stdout.log', '')
-    write_file(LOG_PATH + 'stderr.log', '')
-    write_file(LOG_PATH + 'pialert.log', '')    
+    write_file(logPath + 'IP_changes.log', '')
+    write_file(logPath + 'stdout.log', '')
+    write_file(logPath + 'stderr.log', '')
+    write_file(logPath + 'pialert.log', '')    
     
     while True:
         # update NOW time
@@ -137,9 +140,9 @@ def main ():
         # re-load user configuration 
 
         if (sys.version_info > (3,0)):    
-            exec(open(PIALERT_PATH + "/config/pialert.conf").read())
+            exec(open(pialertPath + "/config/pialert.conf").read())
         else:    
-            execfile (PIALERT_PATH + "/config/pialert.conf")
+            execfile (pialertPath + "/config/pialert.conf")
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
@@ -350,7 +353,7 @@ def get_previous_internet_IP ():
 #-------------------------------------------------------------------------------
 def save_new_internet_IP (pNewIP):
     # Log new IP into logfile
-    append_line_to_file (LOG_PATH + '/IP_changes.log',
+    append_line_to_file (logPath + '/IP_changes.log',
         str(startTime) +'\t'+ pNewIP +'\n')
 
     # Save event
@@ -419,7 +422,7 @@ def update_devices_MAC_vendors (pArg = ''):
 
     # Update vendors DB (iab oui)
     file_print('\nUpdating vendors DB (iab & oui)...')
-    # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', LOG_PATH +  '/update_vendors.log',    '2>&1']
+    # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', logPath +  '/update_vendors.log',    '2>&1']
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
 
     try:
@@ -487,7 +490,7 @@ def query_MAC_vendor (pMAC):
 
         # Search vendor in HW Vendors DB
         mac = mac[0:6]
-        grep_args = ['grep', '-i', mac, VENDORS_DB]
+        grep_args = ['grep', '-i', mac, vendorsDB]
         # Execute command
         try:
             # try runnning a subprocess
@@ -1566,8 +1569,8 @@ def email_reporting ():
 
     # DEBUG - Write output emails for testing
     #if True :
-    #    write_file (LOG_PATH + '/report_output.txt', mail_text) 
-    #    write_file (LOG_PATH + '/report_output.html', mail_html) 
+    #    write_file (logPath + '/report_output.txt', mail_text) 
+    #    write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
@@ -1824,7 +1827,7 @@ def send_webhook (_json, _html):
     } 
 
     # DEBUG - Write the json payload into a log file for debugging
-    write_file (LOG_PATH + '/webhook_payload.json', json.dumps(_json_payload))    
+    write_file (logPath + '/webhook_payload.json', json.dumps(_json_payload))    
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
     if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
@@ -2166,7 +2169,7 @@ def openDB ():
     print_log ('Opening DB...')    
 
     # Open DB and Cursor
-    sql_connection = sqlite3.connect (DB_PATH, isolation_level=None)
+    sql_connection = sqlite3.connect (dbPath, isolation_level=None)
     sql_connection.execute('pragma journal_mode=wal') #
     sql_connection.text_factory = str
     sql_connection.row_factory = sqlite3.Row
@@ -2219,7 +2222,7 @@ def file_print(*args):
 
     result = ''
     
-    file = open(LOG_PATH + "/pialert.log", "a")    
+    file = open(logPath + "/pialert.log", "a")    
     for arg in args:                
         result += str(arg)
     print(result)
@@ -2278,9 +2281,9 @@ def add_json_list (row, list):
 
 def logResult (stdout, stderr):
     if stderr != None:
-        append_file_binary (LOG_PATH + '/stderr.log', stderr)
+        append_file_binary (logPath + '/stderr.log', stderr)
     if stdout != None:
-        append_file_binary (LOG_PATH + '/stdout.log', stdout)   
+        append_file_binary (logPath + '/stdout.log', stdout)   
 
 #-------------------------------------------------------------------------------
 
@@ -2299,7 +2302,7 @@ def to_text(_json):
             payloadData += event[1] + ' - ' + event[4] + '\n'
 
     if len(_json['down_devices']) > 0 and 'down_devices' in INCLUDED_SECTIONS:
-        write_file (LOG_PATH + '/down_devices_example.log', _json['down_devices'])
+        write_file (logPath + '/down_devices_example.log', _json['down_devices'])
         payloadData += 'DOWN DEVICES:\n'
         for event in _json['down_devices']:
             if event[4] is None:
