@@ -20,7 +20,7 @@
 ### Default Port 
  - The app is accessible on the port `:20211`.
 
-> Please note - the initial scan can take up-to 40min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
+> Please note - the initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ## 💾 Setup and Backups
 
