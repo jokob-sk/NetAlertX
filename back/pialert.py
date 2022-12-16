@@ -44,13 +44,18 @@ STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
 # INITIALIZE VARIABLES from pialert.conf
 
-# keep 90 days of network activity if not specified how many days to keep
-DAYS_TO_KEEP_EVENTS = 90
+# GENERAL settings
+# ----------------------
+PRINT_LOG              = False
+TIMEZONE               = 'Europe/Berlin'
+PIALERT_WEB_PROTECTION  = False
+INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']   # Specifies which events trigger notifications. 
+                                                                                  # Remove the event type(s) you don't want to get notified on 
+                                                                                  # Overrides device-specific settings in the UI.
+SCAN_CYCLE_MINUTES      = 5            # delay between scans
 
-# Scan loop delay
-SCAN_CYCLE_MINUTES = 5
-
-# Email reporting defaults
+# EMAIL settings
+# ----------------------
 SMTP_SERVER             = ''
 SMTP_PORT               = 587
 SMTP_USER               = ''
@@ -58,22 +63,43 @@ SMTP_PASS               = ''
 SMTP_SKIP_TLS           = False
 SMTP_SKIP_LOGIN	        = False
 
-# Which sections to include in the reports. Include everything by default
-INCLUDED_SECTIONS = ['internet', 'new_devices', 'down_devices', 'events']
+REPORT_MAIL             = False
+REPORT_FROM             = 'Pi.Alert <' + SMTP_USER +'>'
+REPORT_TO               = 'user@gmail.com'
+REPORT_DEVICE_URL       = 'http://pi.alert/deviceDetails.php?mac='
+REPORT_DASHBOARD_URL    = 'http://pi.alert/'
 
-# WEBHOOKS
-WEBHOOK_REQUEST_METHOD = 'GET'
+# Webhook settings
+# ----------------------
+REPORT_WEBHOOK          = False
+WEBHOOK_URL             = ''
+WEBHOOK_PAYLOAD         = 'json'       # webhook payload data format for the "body > attachements > text" attribute 
+                                       # in https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json 
+                                       #   supported values: 'json', 'html' or 'text'
+                                       #   e.g.: for discord use 'html'
+WEBHOOK_REQUEST_METHOD  = 'GET'        # POST, GET...
 
-# payload type for the webhook request
-WEBHOOK_PAYLOAD = 'json'
+# Apprise settings
+#-----------------------
+REPORT_APPRISE          = False
+APPRISE_URL = ''
+APPRISE_HOST = ''
 
-# NTFY default values
+# NTFY (https://ntfy.sh/) settings
+# ----------------------
+REPORT_NTFY             = False
 NTFY_USER = ''
 NTFY_PASSWORD = ''
 NTFY_TOPIC = ''
 NTFY_HOST = 'https://ntfy.sh'
 
-# MQTT default values
+# PUSHSAFER (https://www.pushsafer.com/) settings
+# ----------------------
+REPORT_PUSHSAFER        = False
+PUSHSAFER_TOKEN         = 'ApiKey'
+
+# MQTT settings
+# ----------------------
 REPORT_MQTT = False
 MQTT_BROKER = ''
 MQTT_PORT   = ''
@@ -83,15 +109,17 @@ MQTT_PASSWORD = ''
 MQTT_QOS = 0
 MQTT_DELAY_SEC = 2
 
-# Apprise
-APPRISE_URL = ''
-APPRISE_HOST = ''
+# DynDNS
+# ----------------------
+DDNS_ACTIVE             = False
 
-# Pushsafer
-PUSHSAFER_TOKEN         = 'ApiKey'
+# PIHOLE settings
+# ----------------------
+PIHOLE_ACTIVE           = False
 
-# GENERAL
-PRINT_LOG              = False
+# keep 90 days of network activity if not specified how many days to keep
+DAYS_TO_KEEP_EVENTS = 90
+
 pialertPath            = '/home/pi/pialert'
 dbPath                 = pialertPath + '/db/pialert.db'
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
@@ -119,7 +147,7 @@ last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_now - timedelta(days = 6) # update vendors 24h after first run
+last_update_vendors = time_now - timedelta(days = 6) # update vendors 24h after first run and than once a week
 
 def main ():
     # Initialize global variables
