@@ -83,6 +83,32 @@ Docker-compose examples can be found below.
 
 ### Example 1
 
+```yaml
+version: "3"
+services:
+  pialert:
+    container_name: pialert
+    image: "jokobsk/pi.alert:latest"      
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - local/path/pialert/config:/home/pi/pialert/config
+      - local/path/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
+      # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
+      - local/path/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
+      # (optional) useful for debugging if you have issues setting up the container
+      - local/path/logs:/home/pi/pialert/front/log
+    environment:
+      - TZ=Europe/Berlin      
+      - HOST_USER_ID=1000
+      - HOST_USER_GID=1000
+      - PORT=20211
+```
+
+To run the container execute: `sudo docker-compose up -d`
+
+### Example 2
+
 `docker-compose.yml` 
 
 ```yaml
@@ -101,10 +127,10 @@ services:
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
     environment:
-      - TZ=${TZ}
-      - PORT=${PORT}
+      - TZ=${TZ}      
       - HOST_USER_ID=${HOST_USER_ID}
       - HOST_USER_GID=${HOST_USER_GID}
+      - PORT=${PORT}
 ```
 
 `.env` file
@@ -130,7 +156,7 @@ DEV_LOCATION=/path/to/local/source/code
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
 
-### Example 2
+### Example 3
 
 Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
 
