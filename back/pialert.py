@@ -115,7 +115,8 @@ DDNS_ACTIVE             = False
 
 # PIHOLE settings
 # ----------------------
-PIHOLE_ACTIVE           = False
+PIHOLE_ACTIVE           = False                         # if enabled you need to map '/etc/pihole/pihole-FTL.db' in docker-compose.yml
+DHCP_ACTIVE             = False                         # if enabled you need to map '/etc/pihole/dhcp.leases' in docker-compose.yml
 
 # keep 90 days of network activity if not specified how many days to keep
 DAYS_TO_KEEP_EVENTS     = 90
@@ -124,6 +125,8 @@ pialertPath            = '/home/pi/pialert'
 dbPath                 = pialertPath + '/db/pialert.db'
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
 logPath                = pialertPath + '/front/log'
+piholeDB               = '/etc/pihole/pihole-FTL.db'
+piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
 # load user configuration
 
@@ -723,7 +726,7 @@ def copy_pihole_network ():
         return    
 
     # Open Pi-hole DB
-    sql.execute ("ATTACH DATABASE '"+ PIHOLE_DB +"' AS PH")
+    sql.execute ("ATTACH DATABASE '"+ piholeDB +"' AS PH")
 
     # Copy Pi-hole Network table
     sql.execute ("DELETE FROM PiHole_Network")
@@ -755,16 +758,12 @@ def read_DHCP_leases ():
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
     data = []
-    with open(DHCP_LEASES, 'r') as f:
+    with open(piholeDhcpleases, 'r') as f:
         for line in f:
             reporting = True
             row = line.rstrip().split()
             if len(row) == 5 :
                 data.append (row)
-    # with open(DHCP_LEASES) as f:
-    #    reader = csv.reader(f, delimiter=' ')
-    #    data = [(col1, col2, col3, col4, col5)
-    #            for col1, col2, col3, col4, col5 in reader]
 
     # Insert into PiAlert table
     sql.execute ("DELETE FROM DHCP_Leases")
