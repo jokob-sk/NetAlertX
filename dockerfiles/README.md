@@ -1,4 +1,4 @@
-[![Docker](https://img.shields.io/github/workflow/status/jokob-sk/Pi.Alert/docker?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
+[![Docker](https://img.shields.io/github/actions/workflow/status/jokob-sk/Pi.Alert/docker.yml?branch=main&label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker.yml)
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
@@ -6,54 +6,73 @@
 
 # 🐳 A docker image for Pi.Alert 
 
-
 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
-## ℹ Basic Usage 
+<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/1_devices.jpg" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/1_devices.jpg" width="300px" />
+</a>
+<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/2_4_network.png" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/2_4_network.png" width="320px" />
+</a>
 
-### pialert.conf
- - Everytime you rebuilt the container with a new image check if new settings have been added in [pialert.conf](https://github.com/jokob-sk/Pi.Alert/blob/main/config/pialert.conf).
 
-### Network
- - You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
+## 📕 Basic Usage 
 
-### Default Port 
- - The app is accessible on the port `:20211`.
+- You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
+- The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
-> Please note - the initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
+### Docker environment variables
 
-## 💾 Setup and Backups
+| Variable | Description | Default |
+| :------------- |:-------------| -----:|
+| `PORT`      |Port of the web interface  |  `20211` |
+|`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
+|`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
+|`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
 
-### ❗ **Required** 
+### Docker paths
 
-1. Download `pialert.conf` from [here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).     
-2. In `pialert.conf` define your network adapter(s) with the `SCAN_SUBNETS` variable. 
-   * The adapter will probably be `eth0` or `eth1`.  
+| | Path | Description |
+| :------------- | :------------- |:-------------| 
+| **Required** | `:/home/pi/pialert/config` | Folder which needs to contain the `pialert.conf` file (see below for details)  | 
+| **Required** | `:/home/pi/pialert/db/pialert.db` | Map an empty [pialert.db file which can be downloaded from here](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db)  | 
+|Optional| `:/home/pi/pialert/db/setting_darkmode` |  Map an empty file with the name `setting_darkmode` if you want to force the dark mode on container rebuilt  | 
+|Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+
+
+### Config (`pialert.conf`)
+
+- Download [pialert.conf from here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).  
+- ❗ Set the `SCAN_SUBNETS` variable. 
+   * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
    * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
-   * Examples for one and two subnets:
-     * `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
-     * `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']`
+   * Examples for one and two subnets  (❗ Note the `['...', '...']` format for two or more subnets):
+     * One subnet: `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
+     * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']` 
+- Set your reporting preferences.
+- I recommend to check for new settings every time you rebuilt the container.
 
-3. Use your configuration by: 
-   * Mapping the container folder to a persistent folder containing `pialert.conf`:
-     * `persistent/path/config:/home/pi/pialert/config`     
-   * ... or by mapping the file directly: 
-     * `pialert.conf:/home/pi/pialert/config/pialert.conf`
 
-### 👍 **Recommended** 
+### 🛑 **Common issues** 
 
-1. Database backup
-   * Download the [original DB from GitHub](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db).
-   * Map the `pialert.db` file (⚠ not folder) from above to `/home/pi/pialert/db/pialert.db` (see [Examples](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples) for details). 
-   * If facing issues (AJAX errors, can't write to DB, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
-   * To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
-   * You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
-2. Map to local User nad Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
-3. Set the `TZ` environment variable to your current time zone (e.g.`Europe/Paris`). Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-4. Use a custom port by specifying the `PORT` env variable.
-5. Map an empty file with the name `setting_darkmode` if you want to force the dark mode on container rebuilt
-   * `- persistent/path/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode`
-6. Check and enable notification service(s) in the `pialert.conf` file.
+💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed). 
+
+**Permissions**
+
+* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
+* To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
+* You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
+* Map to local User and Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
+* Map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
+
+**Container restarts / crashes**
+
+* Check the logs for details. Often a required setting for a notification method is missing. 
+
+**unable to resolve host**
+
+* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface` as outlined in the instructions above. 
+ 
 
 Docker-compose examples can be found below.
 

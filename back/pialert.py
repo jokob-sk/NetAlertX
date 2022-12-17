@@ -46,8 +46,8 @@ STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
 # GENERAL settings
 # ----------------------
-PRINT_LOG              = False
-TIMEZONE               = 'Europe/Berlin'
+PRINT_LOG               = False
+TIMEZONE                = 'Europe/Berlin'
 PIALERT_WEB_PROTECTION  = False
 INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']   # Specifies which events trigger notifications. 
                                                                                   # Remove the event type(s) you don't want to get notified on 
@@ -118,7 +118,7 @@ DDNS_ACTIVE             = False
 PIHOLE_ACTIVE           = False
 
 # keep 90 days of network activity if not specified how many days to keep
-DAYS_TO_KEEP_EVENTS = 90
+DAYS_TO_KEEP_EVENTS     = 90
 
 pialertPath            = '/home/pi/pialert'
 dbPath                 = pialertPath + '/db/pialert.db'
@@ -165,8 +165,7 @@ def main ():
         # update NOW time
         time_now = datetime.datetime.now()
 
-        # re-load user configuration 
-
+        # re-load user configuration
         if (sys.version_info > (3,0)):    
             exec(open(pialertPath + "/config/pialert.conf").read())
         else:    
