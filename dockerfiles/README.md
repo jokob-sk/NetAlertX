@@ -38,6 +38,9 @@
 | **Required** | `:/home/pi/pialert/db/pialert.db` | Map an empty [pialert.db file which can be downloaded from here](https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db)  | 
 |Optional| `:/home/pi/pialert/db/setting_darkmode` |  Map an empty file with the name `setting_darkmode` if you want to force the dark mode on container rebuilt  | 
 |Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+|Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
+|Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole  | 
+
 
 
 ### Config (`pialert.conf`)
