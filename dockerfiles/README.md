@@ -160,4 +160,7 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
 
 <a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
+<a href="https://www.patreon.com/user?u=84385063" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Patreon_logo_with_wordmark.svg/512px-Patreon_logo_with_wordmark.svg.png" alt="Support me on patreon" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
+
+
 
