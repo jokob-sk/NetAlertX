@@ -7,7 +7,7 @@ ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip -y \
+    && apt-get install --no-install-recommends tini ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip -y \
     && pip3 install requests paho-mqtt  \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     && apt-get clean autoclean \
@@ -36,5 +36,7 @@ RUN rm /etc/nginx/sites-available/default \
     && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
     # run the hardware vendors update
     && /home/pi/pialert/back/update_vendors.sh 
+
+ENTRYPOINT ["tini", "--"]
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
