@@ -15,27 +15,26 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
     && ln -s /home/pi/pialert/front /var/www/html 
- 
-   
-# now creating user
+
+# create pi user and group
+# add root and www-data to pi group so they can r/w files and db
 RUN groupadd --gid "${USER_GID}" "${USER}" && \
     useradd \
-      --uid ${USER_ID} \
-      --gid ${USER_GID} \
-      --create-home \
-      --shell /bin/bash \
-      ${USER}
+        --uid ${USER_ID} \
+        --gid ${USER_GID} \
+        --create-home \
+        --shell /bin/bash \
+        ${USER} && \
+    usermod -a -G ${USER_GID} root && \
+    usermod -a -G ${USER_GID} www-data
 
-COPY . /home/pi/pialert
+COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . /home/pi/pialert/
 
-# Pi.Alert 
+# Pi.Alert
 RUN rm /etc/nginx/sites-available/default \
-	&& ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
+    && ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
     && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
     # run the hardware vendors update
     && /home/pi/pialert/back/update_vendors.sh 
-
-# it's easy for permissions set in Git to be overridden, so doing it manually
-RUN chmod -R a+rxw /home/pi/pialert/
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]

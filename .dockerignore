@@ -8,10 +8,6 @@ Dockerfile
 dockerfiles/LICENSE
 dockerfiles/README.md
 docs
-install/pialert_install.sh
-install/pialert_install_no_webserver.sh
-install/pialert_uninstall.sh
-install/pialert_update.sh
 LICENSE.txt
 README.md
-tar
+CONTRIBUTING
