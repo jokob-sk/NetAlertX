@@ -150,7 +150,7 @@ last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_now - timedelta(days = 6) # update vendors 24h after first run and than once a week
+last_update_vendors = time_now - timedelta(days = 8) # update vendors on first run and than once a week
 
 def main ():
     # Initialize global variables
