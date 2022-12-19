@@ -42,6 +42,7 @@ $pia_lang['Navigation_Devices'] = 'Devices';
 $pia_lang['Navigation_Presence'] = 'Presence';
 $pia_lang['Navigation_Events'] = 'Events';
 $pia_lang['Navigation_Maintenance'] = 'Maintenance';
+$pia_lang['Navigation_Settings'] = 'Settings';
 $pia_lang['Navigation_Network'] = 'Network';
 $pia_lang['Navigation_HelpFAQ'] = 'Help / FAQ';
 $pia_lang['Device_Title'] = 'Devices';
@@ -411,5 +412,130 @@ $pia_lang['HelpFAQ_Cat_Presence_401_text'] = 'If this happens, you have the poss
 $pia_lang['HelpFAQ_Cat_Network_600_head'] = 'What is this page for?';
 $pia_lang['HelpFAQ_Cat_Network_600_text'] = 'This page should offer you the possibility to map the assignment of your network devices. For this purpose, you can create one or more switches, WLANs, routers, etc., provide them with a port number if necessary and assign already detected 
 											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online.';
+
+//////////////////////////////////////////////////////////////////
+// Settings
+//////////////////////////////////////////////////////////////////
+
+//General
+$pia_lang['SCAN_SUBNETS_name'] = 'Subnets to scan';
+$pia_lang['SCAN_SUBNETS_description'] = '
+<ol>
+<li>Specify the network mask. For example, the filter <code>192.168.1.0/24</code> covers IP ranges 192.168.1.0 to 192.168.1.255.</li>
+<li>Run <code>iwconfig</code> to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
+<li>Examples (<g-emoji class="g-emoji" alias="exclamation" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png">❗</g-emoji> Note the <code>[\'...\', \'...\']</code> format for two and more subnets):
+</ol>
+<ul dir="auto">
+<li>One subnet: <code>\'192.168.1.0/24 --interface=eth0\'</code></li>
+<li>Two subnets:  <code>[\'192.168.1.0/24 --interface=eth0\', \'192.168.1.0/24 --interface=eth1\']</code></li>
+</ul>';
+$pia_lang['PRINT_LOG_name'] = 'Print additional logging';
+$pia_lang['PRINT_LOG_description'] = 'This setting will enable more verbose logging. Useful for debugging events writing into the database.';
+$pia_lang['TIMEZONE_name'] = 'Time zone';
+$pia_lang['TIMEZONE_description'] = 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.';
+$pia_lang['PIALERT_WEB_PROTECTION_name'] = 'Enable login';
+$pia_lang['PIALERT_WEB_PROTECTION_description'] = 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.';
+$pia_lang['PIALERT_WEB_PASSWORD_name'] = 'Login password';
+$pia_lang['PIALERT_WEB_PASSWORD_description'] = 'The default password is <code>123456</code>. To change password run <code>/home/pi/pialert/back/pialert-cli</code>';
+$pia_lang['INCLUDED_SECTIONS_name'] = 'Notify on';
+$pia_lang['INCLUDED_SECTIONS_description'] = 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (CTRL + Click to select / deselect).';
+$pia_lang['SCAN_CYCLE_MINUTES_name'] = 'Scan cycle delay';
+$pia_lang['SCAN_CYCLE_MINUTES_description'] = 'The delay between scans. The shortest tested interval between scans was 3 minutes. A 5 minutes loop works reliably on a <code>/24</code> network mask. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This number depends on the network mask set in the "Subnets to scan" setting at the top. For example, a <code>/24</code> mask results in 256 IPs to check, where as a <code>/16</code> mask checks around 65000. Every IP takes a couple seconds to scan.';
+$pia_lang['DAYS_TO_KEEP_EVENTS_name'] = 'Delete events older than';
+$pia_lang['DAYS_TO_KEEP_EVENTS_description'] = 'This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically.';
+$pia_lang['REPORT_DASHBOARD_URL_name'] = 'Pi.Alert URL';
+$pia_lang['REPORT_DASHBOARD_URL_description'] = 'This URL is used as the base for generating links in the emails. Enter full URL starting with <code>http://</code> including the port number (no trailig slash <code>/</code>).';
+
+//Email
+$pia_lang['REPORT_MAIL_name'] = 'Enable email';
+$pia_lang['REPORT_MAIL_description'] = 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below.';
+$pia_lang['SMTP_SERVER_name'] = 'SMTP server URL';
+$pia_lang['SMTP_SERVER_description'] = 'The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>.';
+$pia_lang['SMTP_PORT_name'] = 'SMTP server PORT';
+$pia_lang['SMTP_PORT_description'] = 'Port number used for the SMTP connection.';
+$pia_lang['SMTP_SKIP_LOGIN_name'] = 'Skip authentication';
+$pia_lang['SMTP_SKIP_LOGIN_description'] = 'Don\'t use authentication when connecting to the  SMTP server.';
+$pia_lang['SMTP_USER_name'] = 'SMTP user';
+$pia_lang['SMTP_USER_description'] = 'The user name used to login into the SMTP server (sometimes a full email address).';
+$pia_lang['SMTP_PASS_name'] = 'SMTP password';
+$pia_lang['SMTP_PASS_description'] = 'The SMTP server password. ';
+$pia_lang['SMTP_SKIP_TLS_name'] = 'Don\'t use TLS';
+$pia_lang['SMTP_SKIP_TLS_description'] = 'Disable TLS when connecting to your SMTP server.';
+$pia_lang['REPORT_TO_name'] = 'Send email to';
+$pia_lang['REPORT_TO_description'] = 'Email address to which the notification will be send to.';
+$pia_lang['REPORT_FROM_name'] = 'Email subject';
+$pia_lang['REPORT_FROM_description'] = 'Notification email subject line.';
+
+//Webhooks
+$pia_lang['REPORT_WEBHOOK_name'] = 'Enable Webhooks';
+$pia_lang['REPORT_WEBHOOK_description'] = 'Enable webhooks for notifications. If enabled, configure related settings below.';
+$pia_lang['WEBHOOK_URL_name'] = 'Target URL';
+$pia_lang['WEBHOOK_URL_description'] = 'Target URL starting with <code>http://</code> or <code>https://</code>.';
+$pia_lang['WEBHOOK_PAYLOAD_name'] = 'Payload type';
+$pia_lang['WEBHOOK_PAYLOAD_description'] = 'The Webhook payload data format for the "body > attachements > text" attribute in the payload json. See an examnple of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>\'html\'</code>)';
+$pia_lang['WEBHOOK_REQUEST_METHOD_name'] = 'Request method';
+$pia_lang['WEBHOOK_REQUEST_METHOD_description'] = 'The HTTP request method to be used for the webhook call.';
+
+// Apprise
+$pia_lang['REPORT_APPRISE_name'] = 'Enable Apprise';
+$pia_lang['REPORT_APPRISE_description'] = 'Enable sending notifications via <a target="_blank" href="https://hub.docker.com/r/caronc/apprise">Apprise</a>.';
+$pia_lang['APPRISE_HOST_name'] = 'Apprise host URL';
+$pia_lang['APPRISE_HOST_description'] = 'Apprise host URL starting with <code>http://</code> or <code>https://</code>. (don\'t forget to include <code>/notify</code> at the end)';
+$pia_lang['APPRISE_URL_name'] = 'Apprise notification URL';
+$pia_lang['APPRISE_URL_description'] = 'Apprise notification target URL.';
+
+// NTFY
+$pia_lang['REPORT_NTFY_name'] = 'Enable NTFY';
+$pia_lang['REPORT_NTFY_description'] = 'Enable sending notifications via <a target="_blank" href="https://ntfy.sh/">NTFY</a>.';
+$pia_lang['NTFY_HOST_name'] = 'NTFY host URL';
+$pia_lang['NTFY_HOST_description'] = 'NTFY host URL starting with <code>http://</code> or <code>https://</code>. You can use the hosted instance on <a target="_blank" href="https://ntfy.sh/">https://ntfy.sh</a> by simply entering <code>https://ntfy.sh</code>.';
+$pia_lang['NTFY_TOPIC_name'] = 'NTFY topic';
+$pia_lang['NTFY_TOPIC_description'] = 'Your secret topic.';
+$pia_lang['NTFY_USER_name'] = 'NTFY user';
+$pia_lang['NTFY_USER_description'] = 'Enter user if you need (host) an instance with enabled authetication.';
+$pia_lang['NTFY_PASSWORD_name'] = 'NTFY password';
+$pia_lang['NTFY_PASSWORD_description'] = 'Enter password if you need (host) an instance with enabled authetication.';
+
+// Pushsafer
+$pia_lang['REPORT_PUSHSAFER_name'] = 'Enable Pushsafer';
+$pia_lang['REPORT_PUSHSAFER_description'] = 'Enable sending notifications via <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.';
+$pia_lang['PUSHSAFER_TOKEN_name'] = 'Pushsafer token';
+$pia_lang['PUSHSAFER_TOKEN_description'] = 'Your secret Pushsafer API key (token).';
+
+
+// MQTT
+$pia_lang['REPORT_MQTT_name'] = 'Enable MQTT';
+$pia_lang['REPORT_MQTT_description'] = 'Enable sending notifications via <a target="_blank" href="https://www.home-assistant.io/integrations/mqtt/">MQTT</a> to your Home Assistance instance.';
+$pia_lang['MQTT_BROKER_name'] = 'MQTT broker URL';
+$pia_lang['MQTT_BROKER_description'] = 'MQTT host URL (don\'t include <code>http://</code> or <code>https://</code>).';
+$pia_lang['MQTT_PORT_name'] = 'MQTT broker port';
+$pia_lang['MQTT_PORT_description'] = 'Port number where the broker is listening. Usually <code>1883</code>.';
+$pia_lang['MQTT_USER_name'] = 'MQTT user';
+$pia_lang['MQTT_USER_description'] = 'User name used to login into your MQTT broker instance.';
+$pia_lang['MQTT_PASSWORD_name'] = 'MQTT password';
+$pia_lang['MQTT_PASSWORD_description'] = 'Password used to login into your MQTT broker instance.';
+$pia_lang['MQTT_QOS_name'] = 'MQTT Quality of Service';
+$pia_lang['MQTT_QOS_description'] = 'Quality of service setting for MQTT message sending. 0 - Low quality to 2 - High quality. The higher the quality the longer the delay.';
+$pia_lang['MQTT_DELAY_SEC_name'] = 'MQTT delay per device';
+$pia_lang['MQTT_DELAY_SEC_description'] = 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~2s to update a sensor config on the broker). Tested with 2-3 seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.';
+
+//DynDNS
+$pia_lang['DDNS_ACTIVE_name'] = 'Enable DynDNS';
+$pia_lang['DDNS_ACTIVE_description'] = '';
+$pia_lang['DDNS_DOMAIN_name'] = 'DynDNS domain URL';
+$pia_lang['DDNS_DOMAIN_description'] = '';
+$pia_lang['DDNS_USER_name'] = 'DynDNS user';
+$pia_lang['DDNS_USER_description'] = '';
+$pia_lang['DDNS_PASSWORD_name'] = 'DynDNS password';
+$pia_lang['DDNS_PASSWORD_description'] = '';
+$pia_lang['DDNS_UPDATE_URL_name'] = 'DynDNS update URL';
+$pia_lang['DDNS_UPDATE_URL_description'] = 'Update URL starting with <code>http://</code> or <code>https://</code>.';
+
+// PiHole
+$pia_lang['PIHOLE_ACTIVE_name'] = 'Enable PiHole mapping';
+$pia_lang['PIHOLE_ACTIVE_description'] = 'If enabled you need to map <code>:/etc/pihole/pihole-FTL.db</code> in your <code>docker-compose.yml</code>  file.';
+$pia_lang['DHCP_ACTIVE_name'] = 'Enable PiHole DHCP';
+$pia_lang['DHCP_ACTIVE_description'] = 'If enabled you need to map <code>:/etc/pihole/dhcp.leases</code> in your <code>docker-compose.yml</code>  file.';
+
 
 ?>

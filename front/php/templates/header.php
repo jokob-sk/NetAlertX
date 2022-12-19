@@ -237,7 +237,10 @@ document.addEventListener("visibilitychange",()=>{
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <a href="maintenance.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
+          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
+        </li>
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
+          <a href="settings.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Settings'];?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">

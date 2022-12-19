@@ -49,10 +49,13 @@ STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 PRINT_LOG               = False
 TIMEZONE                = 'Europe/Berlin'
 PIALERT_WEB_PROTECTION  = False
+PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
 INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']   # Specifies which events trigger notifications. 
                                                                                   # Remove the event type(s) you don't want to get notified on 
                                                                                   # Overrides device-specific settings in the UI.
 SCAN_CYCLE_MINUTES      = 5            # delay between scans
+
+SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
 
 # EMAIL settings
 # ----------------------
@@ -66,7 +69,6 @@ SMTP_SKIP_LOGIN	        = False
 REPORT_MAIL             = False
 REPORT_FROM             = 'Pi.Alert <' + SMTP_USER +'>'
 REPORT_TO               = 'user@gmail.com'
-REPORT_DEVICE_URL       = 'http://pi.alert/deviceDetails.php?mac='
 REPORT_DASHBOARD_URL    = 'http://pi.alert/'
 
 # Webhook settings
@@ -112,6 +114,10 @@ MQTT_DELAY_SEC = 2
 # DynDNS
 # ----------------------
 DDNS_ACTIVE             = False
+DDNS_DOMAIN             = 'your_domain.freeddns.org'
+DDNS_USER               = 'dynu_user'
+DDNS_PASSWORD           = 'A0000000B0000000C0000000D0000000'
+DDNS_UPDATE_URL         = 'https://api.dynu.com/nic/update?'
 
 # PIHOLE settings
 # ----------------------
@@ -121,6 +127,13 @@ DHCP_ACTIVE             = False                         # if enabled you need to
 # keep 90 days of network activity if not specified how many days to keep
 DAYS_TO_KEEP_EVENTS     = 90
 
+# load the variables from  pialert.conf
+if (sys.version_info > (3,0)):    
+        exec(open(pialertPath + "/config/pialert.conf").read())
+else:    
+    execfile (pialertPath + "/config/pialert.conf")
+
+deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
 pialertPath            = '/home/pi/pialert'
 dbPath                 = pialertPath + '/db/pialert.db'
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
@@ -128,12 +141,12 @@ logPath                = pialertPath + '/front/log'
 piholeDB               = '/etc/pihole/pihole-FTL.db'
 piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
-# load user configuration
+# # load user configuration
 
-if (sys.version_info > (3,0)):    
-    exec(open(pialertPath + "/config/pialert.conf").read())
-else:    
-    execfile (pialertPath + "/config/pialert.conf")
+# if (sys.version_info > (3,0)):    
+#     exec(open(pialertPath + "/config/pialert.conf").read())
+# else:    
+#     execfile (pialertPath + "/config/pialert.conf")
 
 #===============================================================================
 # MAIN
@@ -158,6 +171,14 @@ def main ():
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
 
+
+    # DB
+    sql_connection = None
+    sql            = None
+
+    # Upgrade DB if needed
+    upgradeDB()
+
     # create log files
     write_file(logPath + 'IP_changes.log', '')
     write_file(logPath + 'stdout.log', '')
@@ -167,12 +188,6 @@ def main ():
     while True:
         # update NOW time
         time_now = datetime.datetime.now()
-
-        # re-load user configuration
-        if (sys.version_info > (3,0)):    
-            exec(open(pialertPath + "/config/pialert.conf").read())
-        else:    
-            execfile (pialertPath + "/config/pialert.conf")
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
@@ -188,16 +203,12 @@ def main ():
             
             log_timestamp  = time_now        
 
-            # DB
-            sql_connection = None
-            sql            = None
-
             # Timestamp
             startTime = time_now
             startTime = startTime.replace (second=0, microsecond=0)
 
-            # Upgrade DB if needed
-            upgradeDB()
+            # re-load user configuration
+            importConfig()  
 
             # determine run/scan type based on passed time
             if last_internet_IP_scan + timedelta(minutes=3) < time_now:
@@ -1479,7 +1490,7 @@ def email_reporting ():
                 'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
                 'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
             mail_html_Internet += html_line_template.format (
-                REPORT_DEVICE_URL, eventAlert['eve_MAC'],
+                deviceUrl, eventAlert['eve_MAC'],
                 eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
                 eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
 
@@ -1511,7 +1522,7 @@ def email_reporting ():
                 'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
                 'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
             mail_html_new_devices += html_line_template.format (
-                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
                 eventAlert['eve_DateTime'], eventAlert['eve_IP'],
                 eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
     
@@ -1543,7 +1554,7 @@ def email_reporting ():
                 'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
                 'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
             mail_html_devices_down += html_line_template.format (
-                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
                 eventAlert['eve_DateTime'], eventAlert['eve_IP'],
                 eventAlert['dev_Name'])
 
@@ -1578,7 +1589,7 @@ def email_reporting ():
                 'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
                 'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
             mail_html_events += html_line_template.format (
-                REPORT_DEVICE_URL, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
+                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
                 eventAlert['eve_DateTime'], eventAlert['eve_IP'],
                 eventAlert['eve_EventType'], eventAlert['dev_Name'],
                 eventAlert['eve_AdditionalInfo'])
@@ -2095,8 +2106,6 @@ def mqtt_start():
         #     retain=True,
         # )        
     # time.sleep(10)
-    # client.loop()    
-
 
 
 # #-------------------------------------------------------------------------------
@@ -2120,9 +2129,98 @@ def start_mqtt_thread ():
 #===============================================================================
 # DB
 #===============================================================================
+def importConfig (): 
+    openDB()
+
+    # file_print('pialertPath:', pialertPath)
+
+    #  Code_Name, Display_Name, Description, Type, Options, Value, Group
+    settings = [
+
+        # General
+        ('SCAN_SUBNETS', 'Subnets to scan', '',  'text', '', '' , str(SCAN_SUBNETS) , 'General'),
+        ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
+        ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
+        ('PIALERT_WEB_PROTECTION', 'Enable logon', '', 'boolean', '', '' , str(PIALERT_WEB_PROTECTION) , 'General'),
+        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'password', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
+        ('INCLUDED_SECTIONS', 'Notify on changes in', '', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", '' , str(INCLUDED_SECTIONS) , 'General'),
+        ('SCAN_CYCLE_MINUTES', 'Scan cycle delay (m)', '', 'integer', '', '' , str(SCAN_CYCLE_MINUTES) , 'General'),
+        ('DAYS_TO_KEEP_EVENTS', 'Delete events older than (days)', '', 'integer', '', '' , str(DAYS_TO_KEEP_EVENTS) , 'General'),
+        ('REPORT_DASHBOARD_URL', 'PiAlert URL', '',  'text', '', '' , str(REPORT_DASHBOARD_URL) , 'General'),        
+
+        # Email
+        ('REPORT_MAIL', 'Enable email', '',  'boolean', '', '' , str(REPORT_MAIL) , 'Email'),
+        ('SMTP_SERVER', 'SMTP server URL', '',  'text', '', '' , str(SMTP_SERVER) , 'Email'),
+        ('SMTP_PORT', 'SMTP port', '',  'text', '', '' , str(SMTP_PORT) , 'Email'),
+        ('REPORT_TO', 'Email to', '',  'text', '', '' , str(REPORT_TO) , 'Email'),
+        ('REPORT_FROM', 'Email Subject', '',  'text', '', '' , str(REPORT_FROM) , 'Email'),
+        ('SMTP_SKIP_LOGIN', 'SMTP skip login', '',  'boolean', '', '' , str(SMTP_SKIP_LOGIN) , 'Email'),
+        ('SMTP_USER', 'SMTP user', '',  'text', '', '' , str(SMTP_USER) , 'Email'),
+        ('SMTP_PASS', 'SMTP password', '',  'password', '', '' , str(SMTP_PASS) , 'Email'),
+        ('SMTP_SKIP_TLS', 'SMTP skip TLS', '',  'boolean', '', '' , str(SMTP_SKIP_TLS) , 'Email'), 
+
+        # Webhooks
+        ('REPORT_WEBHOOK', 'Enable Webhooks', '',  'boolean', '', '' , str(REPORT_WEBHOOK) , 'Webhooks'),
+        ('WEBHOOK_URL', 'Target URL', '',  'text', '', '' , str(WEBHOOK_URL) , 'Webhooks'),
+        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'select', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
+        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'select', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
+
+        # Apprise
+        ('REPORT_APPRISE', 'Enable Apprise', '',  'boolean', '', '' , str(REPORT_APPRISE) , 'Apprise'),
+        ('APPRISE_HOST', 'Apprise host URL', '',  'text', '', '' , str(APPRISE_HOST) , 'Apprise'),
+        ('APPRISE_URL', 'Apprise notification URL', '',  'text', '', '' , str(APPRISE_URL) , 'Apprise'),
+
+        # NTFY
+        ('REPORT_NTFY', 'Enable NTFY', '',  'boolean', '', '' , str(REPORT_NTFY) , 'NTFY'),
+        ('NTFY_HOST', 'NTFY host URL', '',  'text', '', '' , str(NTFY_HOST) , 'NTFY'),
+        ('NTFY_TOPIC', 'NTFY topic', '',  'text', '', '' , str(NTFY_TOPIC) , 'NTFY'),
+        ('NTFY_USER', 'NTFY user', '',  'text', '', '' , str(NTFY_USER) , 'NTFY'),
+        ('NTFY_PASSWORD', 'NTFY password', '',  'password', '', '' , str(NTFY_PASSWORD) , 'NTFY'),
+
+        # PUSHSAFER
+        ('REPORT_PUSHSAFER', 'Enable PUSHSAFER', '',  'boolean', '', '' , str(REPORT_PUSHSAFER) , 'PUSHSAFER'),
+        ('PUSHSAFER_TOKEN', 'PUSHSAFER token', '',  'text', '', '' , str(PUSHSAFER_TOKEN) , 'PUSHSAFER'),
+
+        # MQTT
+        ('REPORT_MQTT', 'Enable MQTT', '',  'boolean', '', '' , str(REPORT_MQTT) , 'MQTT'),
+        ('MQTT_BROKER', 'MQTT broker host URL', '',  'text', '', '' , str(MQTT_BROKER) , 'MQTT'),
+        ('MQTT_PORT', 'MQTT broker port', '',  'text', '', '' , str(MQTT_PORT) , 'MQTT'),
+        ('MQTT_USER', 'MQTT user', '',  'text', '', '' , str(MQTT_USER) , 'MQTT'),
+        ('MQTT_PASSWORD', 'MQTT password', '',  'password', '', '' , str(MQTT_PASSWORD) , 'MQTT'),
+        ('MQTT_QOS', 'MQTT Quality of Service', '',  'select', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
+        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'select', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
+
+        #DynDNS
+        ('DDNS_ACTIVE', 'Enable DynDNS', '',  'boolean', '', '' , str(DDNS_ACTIVE) , 'DynDNS'),
+        # ('QUERY_MYIP_SERVER', 'Query MY IP Server URL', '',  'text', '', '' , QUERY_MYIP_SERVER , 'DynDNS'),
+        ('DDNS_DOMAIN', 'DynDNS domain URL', '',  'text', '', '' , str(DDNS_DOMAIN) , 'DynDNS'),
+        ('DDNS_USER', 'DynDNS user', '',  'text', '', '' , str(DDNS_USER) , 'DynDNS'),
+        ('DDNS_PASSWORD', 'DynDNS password', '',  'password', '', '' , str(DDNS_PASSWORD) , 'DynDNS'),
+        ('DDNS_UPDATE_URL', 'DynDNS update URL', '',  'text', '', '' , str(DDNS_UPDATE_URL) , 'DynDNS'),
+
+        # PiHole
+        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', 'If enabled you need to map /etc/pihole/pihole-FTL.db in your docker-compose.yml',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
+        ('DHCP_ACTIVE', 'Enable PiHole DHCP', 'If enabled you need to map /etc/pihole/dhcp.leases in your docker-compose.yml',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole')
+
+    ]
+    # Insert into DB    
+    sql.execute ("DELETE FROM Settings")
+    
+    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
+         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", settings)
+    
+    closeDB()
+
+
 def upgradeDB (): 
 
     openDB()
+
+    # indicates, if Settings table is available 
+    settingsMissing = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Settings'; 
+    """).fetchone() == None
 
     # indicates, if Online_History table is available 
     onlineHistoryAvailable = sql.execute("""
@@ -2153,6 +2251,23 @@ def upgradeDB ():
         "Down_Devices"	INTEGER,
         "All_Devices"	INTEGER,
         "Archived_Devices" INTEGER,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+      );      
+      """)
+
+    # Settings table
+    if settingsMissing:      
+      sql.execute("""      
+      CREATE TABLE "Settings" (
+        "Index"	INTEGER,
+        "Code_Name"	TEXT,
+        "Display_Name"	TEXT,
+        "Description"	TEXT,        
+        "Type" TEXT,
+        "Options" TEXT,
+        "RegEx"   TEXT,
+        "Value"	TEXT,
+        "Group"	TEXT,
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)

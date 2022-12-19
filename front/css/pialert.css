@@ -547,3 +547,56 @@ height: 50px;
 .infobox_label {
     font-size: 16px !important;
 }
+
+/*settings*/
+
+.table_row {    
+    padding: 3px;    
+    width:100%;
+    display: flex;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #606060;
+}
+
+.table_cell {
+    float:left;
+    padding: 3px;
+    padding-left: 10px;
+}
+
+
+
+.setting_name
+{
+    width:20%;
+    font-weight: 300;    
+}
+
+.setting_description
+{
+    width:50%;
+}
+
+.setting_input
+{
+    width:30%;
+}
+
+.setting_input input
+{
+    width:300px;
+}
+
+.settings_content {
+    padding: 10px;
+    background-color: #272c30;
+    margin: 10px;
+    
+}
+
+.settings_content input[type=checkbox] 
+{ 
+    width: auto 
+}
+

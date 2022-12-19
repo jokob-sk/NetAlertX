@@ -19,6 +19,14 @@ date_default_timezone_set($Pia_TimeZone);
 //------------------------------------------------------------------------------
 // Formatting data functions
 //------------------------------------------------------------------------------
+function createArray($input){
+  $pattern = '/(^\s*\[)|(\]\s*$)/';
+  $replacement = '';
+  $noBrackets = preg_replace($pattern, $replacement, $input); 
+  
+  return $options = explode(",", $noBrackets);
+}
+
 function formatDate ($date1) {
   return date_format (new DateTime ($date1) , 'Y-m-d   H:i');
 }
@@ -51,6 +59,18 @@ function formatIPlong ($IP) {
 //------------------------------------------------------------------------------
 // Others functions
 //------------------------------------------------------------------------------
+function getString ($codeName, $default, $pia_lang) {
+
+  $result = $pia_lang[$codeName];
+
+  if ($result )
+  {
+    return $result;
+  }   
+
+  return $default;
+}
+
 function getDateFromPeriod () {
   $period = $_REQUEST['period'];    
   return '"'. date ('Y-m-d', strtotime ('+1 day -'. $period) ) .'"';

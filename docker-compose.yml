@@ -26,6 +26,7 @@ services:
       - ${DEV_LOCATION}/front/maintenance.php:/home/pi/pialert/front/maintenance.php
       - ${DEV_LOCATION}/front/network.php:/home/pi/pialert/front/network.php
       - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
+      - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php
     environment:
       - TZ=${TZ}
       - PORT=${PORT}
