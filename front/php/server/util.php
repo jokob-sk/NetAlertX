@@ -16,6 +16,15 @@ $timezone_line = explode("'", $config_file_lines_timezone[0]);
 $Pia_TimeZone = $timezone_line[1];
 date_default_timezone_set($Pia_TimeZone);
 
+$FUNCTION = $_REQUEST['function'];
+
+
+if ($FUNCTION  == 'savesettings') {
+  saveSettings();
+} elseif ($PIA_SCAN_MODE == 'test') {
+    // other function
+}
+
 //------------------------------------------------------------------------------
 // Formatting data functions
 //------------------------------------------------------------------------------
@@ -59,6 +68,49 @@ function formatIPlong ($IP) {
 //------------------------------------------------------------------------------
 // Others functions
 //------------------------------------------------------------------------------
+function checkPermissions($files)
+{
+  foreach ($files as $file)
+  {
+    // check access to database
+    if(file_exists($file) != 1)
+    {
+      displayMessage("File ".$file." not found or inaccessible. Grant read & write permissions to the file to the correct user.");
+    }
+  }
+ 
+}
+
+
+function displayMessage($message)
+{
+  echo '<script>alert("'.$message.'")</script>';
+}
+
+
+function saveSettings()
+{
+  $config_file = "../../../config/pialert.conf";
+  // save in the file
+  $new_location = $config_file.'_'.strtotime("now").'.backup';
+
+  if(file_exists( $config_file) == 1)
+  {
+    // create a backup copy    
+    if (!copy($config_file, $new_location))
+    {      
+      echo "Failed to copy file ".$config_file." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.";
+    }
+    {
+      echo "Backup of pialert.conf created: <code>".$new_location."</code>";
+    }
+  } else {
+    echo 'File "'.$config_file.'" not found or missing read permissions.';
+  }
+
+  // save in the DB
+}
+
 function getString ($codeName, $default, $pia_lang) {
 
   $result = $pia_lang[$codeName];

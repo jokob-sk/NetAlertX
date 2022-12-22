@@ -21,14 +21,22 @@ require 'php/server/db.php';
 require 'php/server/util.php';
 require 'php/templates/language/'.$pia_lang_selected.'.php';
 
+
+
 //------------------------------------------------------------------------------
 //  Action selector
 //------------------------------------------------------------------------------
 // Set maximum execution time to 15 seconds
 ini_set ('max_execution_time','30');
 
+// check permissions
+$dbPath = "../db/pialert.db";
+$confPath = "../config/pialert.conf";
+
+checkPermissions([$dbPath, $confPath]);
+
 // Open DB
-OpenDB('../db/pialert.db');
+OpenDB($dbPath);
 
 global $db;
 global $pia_lang;
@@ -171,7 +179,8 @@ $db->close();
    
     <!-- /.content -->
     <div class="table_row" >
-          <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="save" onclick="alert('Not yet implemented.')"><?php echo $pia_lang['DevDetail_button_Save'];?></button>
+          <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo $pia_lang['DevDetail_button_Save'];?></button>
+          <div id="result"></div>
       </div>
 </div>
 
@@ -180,5 +189,18 @@ $db->close();
 
 <!-- ----------------------------------------------------------------------- -->
 <?php
-  require 'php/templates/footer.php';
+  require 'php/templates/footer.php';  
 ?>
+
+<script>
+  function saveSettings() {    
+    $.ajax({
+      method: "POST",
+      url: "../php/server/util.php",
+      data: { function: 'savesettings' },
+      success: function(data, textStatus) {
+          $("#result").html(data);    
+      }
+    })
+  }
+</script>

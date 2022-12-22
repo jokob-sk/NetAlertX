@@ -18,6 +18,13 @@ if ($_SESSION["login"] != 1)
 
   require 'php/templates/header.php';
   require 'php/templates/graph.php';
+  require 'php/server/util.php';
+
+  // check permissions
+  $dbPath = "../db/pialert.db";
+  $confPath = "../config/pialert.conf";
+
+  checkPermissions([$dbPath, $confPath]);
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
