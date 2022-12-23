@@ -13,7 +13,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
 
-      <div class="modal-header" style="background-color: #d0d0d0;">
+      <div class="modal-header" >
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 id="modal-default-title" class="modal-title"> Modal Default Title </h4>
       </div>

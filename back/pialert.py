@@ -35,12 +35,52 @@ from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
 
+
+
 #===============================================================================
-# CONFIG VARIABLES
+# PATHS
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
 pialertPath = PIALERT_BACK_PATH + "/.."
+logPath     = pialertPath + '/front/log'
+confPath = "/config/pialert.conf"
+dbPath = '/db/pialert.db'
+fullConfPath = pialertPath + confPath
+fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
+
+#-------------------------------------------------------------------------------
+def file_print(*args):
+
+    result = ''
+    
+    file = open(logPath + "/pialert.log", "a")    
+    for arg in args:                
+        result += str(arg)
+    print(result)
+    file.write(result + '\n')
+    file.close()
+
+
+#===============================================================================
+# USER CONFIG VARIABLES - START
+#===============================================================================
+
+# check RW access of DB and config file
+file_print('\n Permissions check (All should be True)')
+file_print('------------------------------------------------')
+file_print( "  " + confPath +     " | " + " READ  | " + str(os.access(fullConfPath, os.R_OK)))
+file_print( "  " + confPath +     " | " + " WRITE | " + str(os.access(fullConfPath, os.W_OK)))
+
+file_print( "  " + dbPath + "       | " + " READ  | " + str(os.access(fullDbPath, os.R_OK)))
+file_print( "  " + dbPath + "       | " + " WRITE | " + str(os.access(fullDbPath, os.W_OK)))
+file_print('------------------------------------------------')
+
+pialertPath            = '/home/pi/pialert'
+vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
+
+piholeDB               = '/etc/pihole/pihole-FTL.db'
+piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
 # INITIALIZE VARIABLES from pialert.conf
 
@@ -129,24 +169,16 @@ DAYS_TO_KEEP_EVENTS     = 90
 
 # load the variables from  pialert.conf
 if (sys.version_info > (3,0)):    
-        exec(open(pialertPath + "/config/pialert.conf").read())
+        exec(open(fullConfPath).read())
 else:    
-    execfile (pialertPath + "/config/pialert.conf")
+    execfile (fullConfPath)
+
 
 deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
-pialertPath            = '/home/pi/pialert'
-dbPath                 = pialertPath + '/db/pialert.db'
-vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
-logPath                = pialertPath + '/front/log'
-piholeDB               = '/etc/pihole/pihole-FTL.db'
-piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
-# # load user configuration
-
-# if (sys.version_info > (3,0)):    
-#     exec(open(pialertPath + "/config/pialert.conf").read())
-# else:    
-#     execfile (pialertPath + "/config/pialert.conf")
+#===============================================================================
+# USER CONFIG VARIABLES - END
+#===============================================================================
 
 #===============================================================================
 # MAIN
@@ -2138,11 +2170,11 @@ def importConfig ():
     settings = [
 
         # General
-        ('SCAN_SUBNETS', 'Subnets to scan', '',  'text', '', '' , str(SCAN_SUBNETS) , 'General'),
+        ('SCAN_SUBNETS', 'Subnets to scan', '',  'subnets', '', '' , str(SCAN_SUBNETS) , 'General'),
         ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
         ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
         ('PIALERT_WEB_PROTECTION', 'Enable logon', '', 'boolean', '', '' , str(PIALERT_WEB_PROTECTION) , 'General'),
-        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'password', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
+        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'readonly', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
         ('INCLUDED_SECTIONS', 'Notify on changes in', '', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", '' , str(INCLUDED_SECTIONS) , 'General'),
         ('SCAN_CYCLE_MINUTES', 'Scan cycle delay (m)', '', 'integer', '', '' , str(SCAN_CYCLE_MINUTES) , 'General'),
         ('DAYS_TO_KEEP_EVENTS', 'Delete events older than (days)', '', 'integer', '', '' , str(DAYS_TO_KEEP_EVENTS) , 'General'),
@@ -2151,7 +2183,7 @@ def importConfig ():
         # Email
         ('REPORT_MAIL', 'Enable email', '',  'boolean', '', '' , str(REPORT_MAIL) , 'Email'),
         ('SMTP_SERVER', 'SMTP server URL', '',  'text', '', '' , str(SMTP_SERVER) , 'Email'),
-        ('SMTP_PORT', 'SMTP port', '',  'text', '', '' , str(SMTP_PORT) , 'Email'),
+        ('SMTP_PORT', 'SMTP port', '',  'integer', '', '' , str(SMTP_PORT) , 'Email'),
         ('REPORT_TO', 'Email to', '',  'text', '', '' , str(REPORT_TO) , 'Email'),
         ('REPORT_FROM', 'Email Subject', '',  'text', '', '' , str(REPORT_FROM) , 'Email'),
         ('SMTP_SKIP_LOGIN', 'SMTP skip login', '',  'boolean', '', '' , str(SMTP_SKIP_LOGIN) , 'Email'),
@@ -2162,8 +2194,8 @@ def importConfig ():
         # Webhooks
         ('REPORT_WEBHOOK', 'Enable Webhooks', '',  'boolean', '', '' , str(REPORT_WEBHOOK) , 'Webhooks'),
         ('WEBHOOK_URL', 'Target URL', '',  'text', '', '' , str(WEBHOOK_URL) , 'Webhooks'),
-        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'select', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
-        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'select', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
+        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'selecttext', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
+        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'selecttext', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
 
         # Apprise
         ('REPORT_APPRISE', 'Enable Apprise', '',  'boolean', '', '' , str(REPORT_APPRISE) , 'Apprise'),
@@ -2184,11 +2216,11 @@ def importConfig ():
         # MQTT
         ('REPORT_MQTT', 'Enable MQTT', '',  'boolean', '', '' , str(REPORT_MQTT) , 'MQTT'),
         ('MQTT_BROKER', 'MQTT broker host URL', '',  'text', '', '' , str(MQTT_BROKER) , 'MQTT'),
-        ('MQTT_PORT', 'MQTT broker port', '',  'text', '', '' , str(MQTT_PORT) , 'MQTT'),
+        ('MQTT_PORT', 'MQTT broker port', '',  'integer', '', '' , str(MQTT_PORT) , 'MQTT'),
         ('MQTT_USER', 'MQTT user', '',  'text', '', '' , str(MQTT_USER) , 'MQTT'),
         ('MQTT_PASSWORD', 'MQTT password', '',  'password', '', '' , str(MQTT_PASSWORD) , 'MQTT'),
-        ('MQTT_QOS', 'MQTT Quality of Service', '',  'select', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
-        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'select', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
+        ('MQTT_QOS', 'MQTT Quality of Service', '',  'selectinteger', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
+        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'selectinteger', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
 
         #DynDNS
         ('DDNS_ACTIVE', 'Enable DynDNS', '',  'boolean', '', '' , str(DDNS_ACTIVE) , 'DynDNS'),
@@ -2310,7 +2342,7 @@ def openDB ():
     print_log ('Opening DB...')    
 
     # Open DB and Cursor
-    sql_connection = sqlite3.connect (dbPath, isolation_level=None)
+    sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
     sql_connection.execute('pragma journal_mode=wal') #
     sql_connection.text_factory = str
     sql_connection.row_factory = sqlite3.Row
@@ -2359,16 +2391,7 @@ def to_binary_sensor(input):
 #===============================================================================
 # UTIL
 #===============================================================================
-def file_print(*args):
 
-    result = ''
-    
-    file = open(logPath + "/pialert.log", "a")    
-    for arg in args:                
-        result += str(arg)
-    print(result)
-    file.write(result + '\n')
-    file.close()
 #-------------------------------------------------------------------------------
 def print_log (pText):
     global log_timestamp

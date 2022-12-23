@@ -381,7 +381,7 @@ if ($_REQUEST['tab'] == '1') {
                             pialert.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert.log" ); ?>
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert.log" ); ?>
                               </textarea>
                             </div>
                         </div>   
@@ -390,7 +390,7 @@ if ($_REQUEST['tab'] == '1') {
                             IP_changes.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
+                              <textarea id="IP_changes_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
                               </textarea>                              
                             </div>
                         </div> 
@@ -399,7 +399,7 @@ if ($_REQUEST['tab'] == '1') {
                             stdout.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stdout.log" ); ?>
+                              <textarea id="stdout_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stdout.log" ); ?>
                               </textarea>
                             </div>
                         </div> 
@@ -408,7 +408,7 @@ if ($_REQUEST['tab'] == '1') {
                             stderr.log
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
+                              <textarea id="stderr_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
                               </textarea>
                             </div>
                         </div>      
@@ -449,6 +449,21 @@ if ($_REQUEST['tab'] == '1') {
 ?>
 
 <script>
+
+function scrollDown()
+{
+  temp = $('#pialert_log');
+  $temp.scrollTop($text[0].scrollHeight);
+
+  temp = $('#IP_changes_log');
+  $temp.scrollTop($text[0].scrollHeight);
+
+  temp = $('#stdout_log');
+  $temp.scrollTop($text[0].scrollHeight);
+
+  temp = $('#stderr_log');
+  $temp.scrollTop($text[0].scrollHeight);
+}
 
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {
@@ -630,9 +645,12 @@ function PiaToggleArpScan()
   });
 }
 
-// laod footer asynchronously not to block the page load/other sections
+// load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
+
+  // scrollDown();
+
   $("#lastCommit").append('<img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github">');
 
   $("#lastDockerUpdate").append(

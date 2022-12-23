@@ -583,9 +583,18 @@ height: 50px;
     width:30%;
 }
 
-.setting_input input
+.center 
 {
-    width:300px;
+    margin: 0;
+    position: relative;    
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.top-margin 
+{
+    margin-top: 50px;
 }
 
 .settings_content {

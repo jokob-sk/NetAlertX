@@ -408,15 +408,17 @@ $pia_lang['HelpFAQ_Cat_Network_600_text'] = 'Diese Seite soll dir die Möglichke
 //General
 $pia_lang['SCAN_SUBNETS_name'] = 'Subnets to scan';
 $pia_lang['SCAN_SUBNETS_description'] = '
+
+The scan time itself depends on the number of IP addresses to check. 
+The number of Ips to check depends on the <a target="_blank" href="https://www.calculator.net/ip-subnet-calculator.html">network mask</a> you set here. 
+For example, a <code>/24</code> mask results in 256 IPs to check, where as a <code>/16</code> 
+mask checks around 65,536. Every IP takes a couple seconds to scan. This means that with an incorrect configuration 
+the scan will take hours to complete instead of seconds.
 <ol>
 <li>Specify the network mask. For example, the filter <code>192.168.1.0/24</code> covers IP ranges 192.168.1.0 to 192.168.1.255.</li>
-<li>Run <code>iwconfig</code> to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
-<li>Examples (<g-emoji class="g-emoji" alias="exclamation" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png">❗</g-emoji> Note the <code>[\'...\', \'...\']</code> format for two and more subnets):
+<li>Run <code>iwconfig</code> in your ocntainer to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
 </ol>
-<ul dir="auto">
-<li>One subnet: <code>\'192.168.1.0/24 --interface=eth0\'</code></li>
-<li>Two subnets:  <code>[\'192.168.1.0/24 --interface=eth0\', \'192.168.1.0/24 --interface=eth1\']</code></li>
-</ul>';
+';
 $pia_lang['PRINT_LOG_name'] = 'Print additional logging';
 $pia_lang['PRINT_LOG_description'] = 'This setting will enable more verbose logging. Useful for debugging events writing into the database.';
 $pia_lang['TIMEZONE_name'] = 'Time zone';
@@ -424,7 +426,7 @@ $pia_lang['TIMEZONE_description'] = 'Time zone to display stats correctly. Find 
 $pia_lang['PIALERT_WEB_PROTECTION_name'] = 'Enable login';
 $pia_lang['PIALERT_WEB_PROTECTION_description'] = 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.';
 $pia_lang['PIALERT_WEB_PASSWORD_name'] = 'Login password';
-$pia_lang['PIALERT_WEB_PASSWORD_description'] = 'The default password is <code>123456</code>. To change password run <code>/home/pi/pialert/back/pialert-cli</code>';
+$pia_lang['PIALERT_WEB_PASSWORD_description'] = 'The default password is <code>123456</code>. To change password run <code>/home/pi/pialert/back/pialert-cli</code> in the container';
 $pia_lang['INCLUDED_SECTIONS_name'] = 'Notify on';
 $pia_lang['INCLUDED_SECTIONS_description'] = 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (CTRL + Click to select / deselect).';
 $pia_lang['SCAN_CYCLE_MINUTES_name'] = 'Scan cycle delay';

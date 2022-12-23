@@ -75,7 +75,7 @@ $db->close();
 
    <?php
 
-      $resultHTML = "";
+      $html = "";
       $groups = [];
 
       // collect all groups
@@ -87,70 +87,85 @@ $db->close();
 
       // create settings groups
       foreach ($groups as $group) { 
-        $resultHTML = $resultHTML.'<section class="settings_content">
+        $html = $html.'<section class="settings_content">
           <h4>'.$group.'</h4>';
           
           // populate settings for each group
-          foreach ($settings as $setting) { 
-            if($setting["Group"] == $group)
+          foreach ($settings as $set) { 
+            if($set["Group"] == $group)
             {
-              $resultHTML = $resultHTML.
+              $html = $html.
               '<div class="table_row" >
                 <div class="table_cell setting_name" >';
 
-              $resultHTML = $resultHTML.getString ($setting['Code_Name'].'_name', $setting['Display_Name'], $pia_lang);
+              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name'], $pia_lang);
 
-              $resultHTML = $resultHTML.
+              $html = $html.
               '</div>       
                <div class="table_cell setting_description" >';
 
-              $resultHTML = $resultHTML.getString ($setting['Code_Name'].'_description', $setting['Description'], $pia_lang);
+              $html = $html.getString ($set['Code_Name'].'_description', $set['Description'], $pia_lang);
 
-              $resultHTML = $resultHTML.
+              $html = $html.
                 '</div>       
               <div class="table_cell setting_input" >';
 
-              // render different input types based on the setting type
-              $inputType = "";
+              // render different input types based on the set type
+              $input = "";
+
               // text - textbox
-              if($setting['Type'] == 'text') 
+              if($set['Type'] == 'text' ) 
               {
-                $inputType = '<input  value="'.$setting['Value'].'"/>';                
+                $input = '<input class="form-control input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
               } 
               // password - hidden text
-              elseif ($setting['Type'] == 'password')
+              elseif ($set['Type'] == 'password')
               {
-                $inputType = '<input  type="password" value="'.$setting['Value'].'"/>';
+                $input = '<input class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
+              }
+              // readonly 
+              elseif ($set['Type'] == 'readonly')
+              {
+                $input = '<input class="form-control input" id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
               }
               // boolean - checkbox
-              elseif ($setting['Type'] == 'boolean')
+              elseif ($set['Type'] == 'boolean')
               {
                 $checked = "";
-                if ($setting['Value'] == "True") { $checked = "checked";};
-                $inputType = '<input  type="checkbox" value="'.$setting['Value'].'" '.$checked.' />';                
+                if ($set['Value'] == "True") { $checked = "checked";};
+                $input = '<input class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
               }
               // integer - number input
-              elseif ($setting['Type'] == 'integer')
+              elseif ($set['Type'] == 'integer')
               {
-                $inputType = '<input  type="number" value="'.$setting['Value'].'"/>';                
+                $input = '<input class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
               }
-              // select - dropdown
-              elseif ($setting['Type'] == 'select')
+              // selecttext - dropdown
+              elseif ($set['Type'] == 'selecttext')
               {
-                $inputType = '<select name="'.$setting['Code_Name'].'" id="'.$setting['Code_Name'].'">';                 
-                $options = createArray($setting['Options']);
+                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+                $options = createArray($set['Options']);
                 foreach ($options as $option) {                   
-                  $inputType = $inputType.'<option value="'.$option.'">'.$option.'</option>';
-
+                  $input = $input.'<option value="'.$option.'">'.$option.'</option>';
                 }                
-                $inputType = $inputType.'</select>';
+                $input = $input.'</select>';
+              }
+              // selectinteger - dropdown
+              elseif ($set['Type'] == 'selectinteger')
+              {
+                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+                $options = createArray($set['Options']);
+                foreach ($options as $option) {                   
+                  $input = $input.'<option value="'.$option.'">'.$option.'</option>';
+                }                
+                $input = $input.'</select>';
               }
               // multiselect
-              elseif ($setting['Type'] == 'multiselect')
+              elseif ($set['Type'] == 'multiselect')
               {
-                $inputType = '<select name="'.$setting['Code_Name'].'" id="'.$setting['Code_Name'].'" multiple>';                 
-                $values = createArray($setting['Value']);
-                $options = createArray($setting['Options']);
+                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';                 
+                $values = createArray($set['Value']);
+                $options = createArray($set['Options']);
 
                 foreach ($options as $option) {                     
                   $selected = "";
@@ -159,27 +174,57 @@ $db->close();
                     $selected = "selected";
                   }
 
-                  $inputType = $inputType.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
                 }                
-                $inputType = $inputType.'</select>';
-              }              
+                $input = $input.'</select>';
+              }
+              // multiselect
+              elseif ($set['Type'] == 'subnets')
+              {
+                $input = $input.
+                '<div class="row form-group">
+                  <div class="col-xs-6">
+                    <input class="form-control " id="ipMask" type="text" placeholder="192.168.1.0/24"/>
+                  </div>';
+                $input = $input.
+                  '<div class="col-xs-3">
+                    <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
+                  </div>
+                  <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>
+                 </div>';
+                
+                $input = $input.'<div class="form-group">
+                  <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';                 
+                $options = createArray($set['Value']);
+                
 
-              $resultHTML = $resultHTML.$inputType;
+                foreach ($options as $option) {                                       
 
-              $resultHTML = $resultHTML.'</div>  
+                  $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
+                }                
+                $input = $input.'</select></div>';               
+                $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
+                
+              }               
+
+              $html = $html.$input;
+
+              $html = $html.'</div>  
               </div>';
             }
           }
 
-        $resultHTML = $resultHTML.'</section>';
+        $html = $html.'</section>';
       }
 
-      echo $resultHTML;
+      echo $html;
    ?>
    
     <!-- /.content -->
-    <div class="table_row" >
-          <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo $pia_lang['DevDetail_button_Save'];?></button>
+    <div class="row" >
+          <div class="row">
+            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo $pia_lang['DevDetail_button_Save'];?></button>
+          </div>
           <div id="result"></div>
       </div>
 </div>
@@ -193,13 +238,77 @@ $db->close();
 ?>
 
 <script>
+  function addInterface()
+  {
+    ipMask = $('#ipMask').val();
+    ipInterface = $('#ipInterface').val();
+
+    full = ipMask + " --interface=" + ipInterface;
+
+    if(ipMask == "" || ipInterface == "")
+    {
+      showModalDefault ('Validation error', 'Specify both, the network mask and the interface');
+    } else {
+      $('#SCAN_SUBNETS').append($('<option disabled></option>').attr('value', full).text(full));
+
+      $('#ipMask').val('');
+      $('#ipInterface').val('');
+    }
+  }
+
+  function removeInterfaces()
+  {
+    $('#SCAN_SUBNETS').empty();
+  }
+
+  function collectSettings()
+  {
+    var settingsArray = [];
+
+    // generate javascript to collect values
+    // multiselect, select, password
+    <?php 
+
+    $noConversion = array('text', 'integer', 'password', 'readonly', 'selecttext', 'selectinteger', "multiselect"); 
+
+    foreach ($settings as $set) { 
+      if(in_array($set['Type'] , $noConversion))
+      {         
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", $("#'.$set["Code_Name"].'").val(), "'.$set["Type"].'" ]);';      
+      } 
+      elseif ($set['Type'] == "boolean")
+      {
+        echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", temp, "'.$set["Type"].'" ]);';  
+      }
+      elseif ($set["Code_Name"] == "SCAN_SUBNETS")
+      {        
+        echo "var temps = [];
+
+        $( '#SCAN_SUBNETS option' ).each( function( i, selected ) {
+          temps.push($( selected ).val());
+        });       
+        
+        ";
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", temps, "'.$set["Type"].'" ]);';
+      }
+    }
+    
+    ?>
+    console.log(settingsArray);
+    return settingsArray;
+  }
+
+
   function saveSettings() {    
     $.ajax({
       method: "POST",
       url: "../php/server/util.php",
-      data: { function: 'savesettings' },
+      data: { function: 'savesettings', settings: collectSettings() },
       success: function(data, textStatus) {
-          $("#result").html(data);    
+          // $("#result").html(data);    
+          console.log(data);
+          showModalDefault ('Result', data + "<br/><b>Restart the container for the chanegs to take effect.</b>");
       }
     })
   }
