@@ -308,7 +308,7 @@ $db->close();
       success: function(data, textStatus) {
           // $("#result").html(data);    
           console.log(data);
-          showModalDefault ('Result', data + "<br/><b>Restart the container for the chanegs to take effect.</b>");
+          showModalDefault ('Result', data );
       }
     })
   }
