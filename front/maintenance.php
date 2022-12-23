@@ -387,6 +387,15 @@ if ($_REQUEST['tab'] == '1') {
                         </div>   
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
+                            pialert_front.log
+                            </div>
+                            <div class="db_tools_table_cell_b">
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
+                              </textarea>
+                            </div>
+                        </div>   
+                        <div class="db_info_table_row">
+                            <div class="db_tools_table_cell_a" style="">
                             IP_changes.log
                             </div>
                             <div class="db_tools_table_cell_b">

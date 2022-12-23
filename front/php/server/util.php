@@ -8,20 +8,50 @@
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
 
-## TimeZone processing
-$basePath = "../../../config/";
+// ###################################
+// ## TimeZone processing start
+// ###################################
+$configFolderPath = "/home/pi/pialert/config/";
 $config_file = "pialert.conf";
+$logFolderPath = "/home/pi/pialert/front/log/";
+$log_file = "pialert_front.log";
 
-$fullConfPath = $basePath.$config_file;
+
+$fullConfPath = $configFolderPath.$config_file;
 
 chmod($fullConfPath, 0777);
-
-
 
 $config_file_lines = file($fullConfPath);
 $config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
 $timezone_line = explode("'", $config_file_lines_timezone[0]);
 $Pia_TimeZone = $timezone_line[1];
+
+$timeZone = "";
+
+foreach ($config_file_lines as $line)
+{    
+  if( preg_match('/TIMEZONE(.*?)/', $line, $match) == 1 )
+  {        
+      if (preg_match('/\'(.*?)\'/', $line, $match) == 1) {          
+        $timeZone = $match[1];
+      }
+  }
+}
+
+if($timeZone == "")
+{
+  $timeZone = "Europe/Berlin";
+}
+
+date_default_timezone_set($timeZone);
+
+$date = new DateTime("now", new DateTimeZone($timeZone) );
+$timestamp = $date->format('Y-m-d_H-i-s');
+
+
+// ###################################
+// ## TimeZone processing end
+// ###################################
 
 
 $FUNCTION = $_REQUEST['function'];
@@ -99,60 +129,81 @@ function checkPermissions($files)
     // check access to database
     if(file_exists($file) != 1)
     {
-      $message = "File ".$file." not found or inaccessible. Grant read & write permissions to the file to the correct user.";
-      displayMessage($message);
+      $message = "File '".$file."' not found or inaccessible. Correct file permissions, create one yourself or generate a new one in 'Settings' by clicking the 'Save' button.";
+      displayMessage($message, TRUE);      
     }
-  }
- 
+  } 
 }
 
 
-function displayMessage($message)
+function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFile = TRUE, $logEcho = FALSE)
 {
-  echo '<script>alert("'.$message.'")</script>';
+  global $logFolderPath, $log_file, $timestamp;
+
+  // sanitize
+  $message = str_replace(array("\n", "\r", PHP_EOL), '', $message);
+
+  echo "<script>function escape(html, encode) {
+    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')  
+      .replace(/\t/g, '')    
+  }</script>";
+
+  // Javascript Alert pop-up
+  if($logAlert)
+  {
+    echo '<script>alert(escape("'.$message.'"));</script>';
+  }
+
+  // F12 Browser console
+  if($logConsole)
+  {
+    echo '<script>console.log(escape("'.$message.'"));</script>';
+  }
+
+  //File
+  if($logFile)
+  {
+    if(file_exists($logFolderPath.$log_file) != 1) // file doesn't exist, create one
+    {
+      $log = fopen($logFolderPath.$log_file, "w") or die("Unable to open file!");
+    }else // file exists, append
+    {
+      $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file!");
+    }
+
+    fwrite($log, "[".$timestamp. "] " . $message.PHP_EOL."" );
+    fclose($log);
+  }
+
+  //echo
+  if($logEcho)
+  {
+    echo $message;
+  }
+
 }
 
 
 function saveSettings()
 {
-  global $SETTINGS, $FUNCTION, $fullConfPath, $basePath, $config_file_lines_timezone, $config_file_lines;  
+  global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;  
 
-  $timeZone = "";
 
-  foreach ($config_file_lines as $line)
-  {    
-    if( preg_match('/TIMEZONE(.*?)/', $line, $match) == 1 )
-    {        
-        if (preg_match('/\'(.*?)\'/', $line, $match) == 1) {          
-          $timeZone = $match[1];
-        }
-    }
-  }
-
-  if($timeZone == "")
-  {
-    $timeZone = "Europe/Berlin";
-  }
-
-  date_default_timezone_set($timeZone);
-
-  $date = new DateTime("now", new DateTimeZone($timeZone) );
-  $timestamp = $date->format('Y-m-d_H-i-s');
 
   // save in the file
-  $new_name = "pialert.conf".'_'.$timestamp.'.backup';
-  $new_location = $basePath.$new_name;
+  $new_name = $config_file.'_'.$timestamp.'.backup';
+  $new_location = $configFolderPath.$new_name;
 
   // chmod($fullConfPath, 0755);
 
   if(file_exists( $fullConfPath) != 1)
   {    
-      echo 'File "'.$fullConfPath.'" not found or missing read permissions. Creating a new <code>pialert.conf</code> file.';
+    displayMessage('File "'.$fullConfPath.'" not found or missing read permissions. Creating a new <code>'.$config_file.'</code> file.', FALSE, TRUE, TRUE, TRUE);      
   }
   // create a backup copy    
   elseif (!copy($fullConfPath, $new_location))
   {      
-    echo "Failed to copy file ".$fullConfPath." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.";
+    displayMessage("Failed to copy file ".$fullConfPath." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.", FALSE, TRUE, TRUE, TRUE);      
   }
   
        
@@ -219,12 +270,14 @@ function saveSettings()
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
   // open new file and write the new configuration      
-  $newConfig = fopen($basePath."pialert.conf", "w") or die("Unable to open file!");
+  $newConfig = fopen($fullConfPath, "w") or die("Unable to open file!");
   fwrite($newConfig, $txt);
   fclose($newConfig);
 
-  echo "<br/>Settings saved to the <code>pialert.conf</code> file. Backup of pialert.conf created: <code>".$new_name."</code>.
-  <br/><b>Restart the container for the chanegs to take effect.</b>";
+  displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file. 
+    Backup of ".$config_file." created: <code>".$new_name."</code>.<br/>
+    <b>Restart the container for the chanegs to take effect.</b>", 
+    FALSE, TRUE, TRUE, TRUE);    
 
 }
 
@@ -312,3 +365,5 @@ function setCache($key, $value) {
 
 
 ?>
+
+

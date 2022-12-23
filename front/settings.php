@@ -307,7 +307,7 @@ $db->close();
       data: { function: 'savesettings', settings: collectSettings() },
       success: function(data, textStatus) {
           // $("#result").html(data);    
-          console.log(data);
+          // console.log(data);
           showModalDefault ('Result', data );
       }
     })

@@ -71,7 +71,6 @@ file_print('\n Permissions check (All should be True)')
 file_print('------------------------------------------------')
 file_print( "  " + confPath +     " | " + " READ  | " + str(os.access(fullConfPath, os.R_OK)))
 file_print( "  " + confPath +     " | " + " WRITE | " + str(os.access(fullConfPath, os.W_OK)))
-
 file_print( "  " + dbPath + "       | " + " READ  | " + str(os.access(fullDbPath, os.R_OK)))
 file_print( "  " + dbPath + "       | " + " WRITE | " + str(os.access(fullDbPath, os.W_OK)))
 file_print('------------------------------------------------')
@@ -208,14 +207,14 @@ def main ():
     sql_connection = None
     sql            = None
 
-    # Upgrade DB if needed
-    upgradeDB()
-
     # create log files
     write_file(logPath + 'IP_changes.log', '')
     write_file(logPath + 'stdout.log', '')
     write_file(logPath + 'stderr.log', '')
     write_file(logPath + 'pialert.log', '')    
+
+    # Upgrade DB if needed
+    upgradeDB()
     
     while True:
         # update NOW time
@@ -2269,8 +2268,8 @@ def upgradeDB ():
       """).fetchone()[0] == 0
     
     # Drop table if available, but incompatible
-    if onlineHistoryAvailable and isIncompatible:
-      print_log ('Table is incompatible, Dropping the Online_History table)')
+    if onlineHistoryAvailable and isIncompatible:      
+      file_print ('[upgradeDB] Table is incompatible, Dropping the Online_History table)')
       sql.execute("DROP TABLE Online_History;")
       onlineHistoryAvailable = False
 
@@ -2288,7 +2287,8 @@ def upgradeDB ():
       """)
 
     # Settings table
-    if settingsMissing:      
+    if settingsMissing:   
+      file_print("[upgradeDB] Adding Settings table")   
       sql.execute("""      
       CREATE TABLE "Settings" (
         "Index"	INTEGER,
@@ -2311,6 +2311,7 @@ def upgradeDB ():
       """).fetchone()[0] == 0
 
     if dev_Network_Node_MAC_ADDR_missing :
+      file_print("[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table")   
       sql.execute("""      
       ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
       """)
@@ -2321,6 +2322,7 @@ def upgradeDB ():
       """).fetchone()[0] == 0
 
     if dev_Network_Node_port_missing :
+      file_print("[upgradeDB] Adding dev_Network_Node_port to the Devices table")     
       sql.execute("""      
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
