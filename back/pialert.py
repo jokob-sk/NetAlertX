@@ -34,8 +34,8 @@ import requests
 from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
-
-
+from ssdpy import SSDPClient
+import upnpclient
 
 #===============================================================================
 # PATHS
@@ -631,6 +631,28 @@ def query_MAC_vendor (pMAC):
 #===============================================================================
 def scan_network ():
     reporting = False
+    
+    # # devtest start
+
+    # file_print("---------------------------------------------")
+
+    # client = SSDPClient()
+    # devices = client.m_search("ssdp:all")
+    # for device in devices:
+    #    file_print(device.get("usn"))
+
+    # file_print("---------------------------------------------")
+
+    # devices = upnpclient.discover()
+
+    # file_print("---------------------------------------------")
+
+    # for device in devices:
+    #    file_print(device)
+
+    # file_print("---------------------------------------------")
+
+    # # devtest end
 
     # Header
     file_print('Scan Devices')
@@ -2366,6 +2388,27 @@ def upgradeDB ():
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
 
+    # Missing parameters in the Parameters table
+    missingSettings = len(sql.execute ("""
+      SELECT * FROM Parameters WHERE par_ID='Front_Events_Period'
+      """).fetchall())  == 0
+
+    if missingSettings:
+      file_print("[upgradeDB] Adding missing values into the Parameters table")
+
+      params = [
+        # General
+        ('Front_Events_Period', 'Subnets to scan'),
+        ('Front_Details_Sessions_Rows', '50'),
+        ('Front_Details_Events_Rows', '50'),
+        ('Front_Details_Events_Hide', 'True'),
+        ('Front_Events_Rows', '50'),
+        ('Front_Details_Period', '1 day')
+      ] 
+
+      sql.executemany ("""INSERT INTO Parameters ("Par_ID", "Par_Value") VALUES (?, ?)""", params)
+
+      
     # don't hog DB access  
     closeDB ()
 

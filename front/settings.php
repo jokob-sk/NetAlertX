@@ -186,6 +186,7 @@ $db->close();
                   <div class="col-xs-6">
                     <input class="form-control " id="ipMask" type="text" placeholder="192.168.1.0/24"/>
                   </div>';
+                // Add interface button
                 $input = $input.
                   '<div class="col-xs-3">
                     <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
@@ -193,16 +194,18 @@ $db->close();
                   <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>
                  </div>';
                 
+                // list all interfaces as options
                 $input = $input.'<div class="form-group">
-                  <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';                 
-                $options = createArray($set['Value']);
-                
+                  <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
+                  
+                $options = createArray($set['Value']);                
 
                 foreach ($options as $option) {                                       
 
                   $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
                 }                
-                $input = $input.'</select></div>';               
+                $input = $input.'</select></div>';
+                // Remove all interfaces button               
                 $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
                 
               }               

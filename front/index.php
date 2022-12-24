@@ -1,36 +1,39 @@
 <?php
 session_start();
 
-if ($_REQUEST['action'] == 'logout') {
-  session_destroy();
-  setcookie("PiAler_SaveLogin", "", time() - 3600);
-  header('Location: index.php');
+if(array_search('action', $_REQUEST) != FALSE)
+{
+  if ($_REQUEST['action'] == 'logout') {
+    session_destroy();
+    setcookie("PiAler_SaveLogin", "", time() - 3600);
+    header('Location: index.php');
+  }    
 }
+
+
 // ##################################################
 // ## Login Processing start
 // ##################################################
 $config_file = "../config/pialert.conf";
 $config_file_lines = file($config_file);
 // ###################################
-// ## Login language settings
+// ## GUI settings processing start
 // ###################################
- if (file_exists('../db/setting_darkmode')) {
-    $ENABLED_DARKMODE = True;
-  }
-  foreach (glob("../db/setting_skin*") as $filename) {
-    $pia_skin_selected = str_replace('setting_','',basename($filename));
-  }
-  if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
-  
-  foreach (glob("../db/setting_language*") as $filename) {
-    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-  }
-  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
-  require 'php/templates/language/'.$pia_lang_selected.'.php';
+if (file_exists('../db/setting_darkmode')) {
+  $ENABLED_DARKMODE = True;
+}
+foreach (glob("../db/setting_skin*") as $filename) {
+  $pia_skin_selected = str_replace('setting_','',basename($filename));
+}
+if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
 
-
+foreach (glob("../db/setting_language*") as $filename) {
+  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+}
+if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
+require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.php';
 // ###################################
-// ## Login language settings
+// ## GUI settings processing end
 // ###################################
   foreach (glob("../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));

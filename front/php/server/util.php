@@ -19,12 +19,8 @@ $log_file = "pialert_front.log";
 
 $fullConfPath = $configFolderPath.$config_file;
 
-chmod($fullConfPath, 0777);
-
 $config_file_lines = file($fullConfPath);
 $config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
-$timezone_line = explode("'", $config_file_lines_timezone[0]);
-$Pia_TimeZone = $timezone_line[1];
 
 $timeZone = "";
 
@@ -52,11 +48,38 @@ $timestamp = $date->format('Y-m-d_H-i-s');
 // ###################################
 // ## TimeZone processing end
 // ###################################
+// ###################################
+// ## GUI settings processing start
+// ###################################
+if (file_exists('../db/setting_darkmode')) {
+  $ENABLED_DARKMODE = True;
+}
+foreach (glob("../db/setting_skin*") as $filename) {
+  $pia_skin_selected = str_replace('setting_','',basename($filename));
+}
+if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
+
+foreach (glob("../db/setting_language*") as $filename) {
+  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+}
+if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
+require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.php';
+// ###################################
+// ## GUI settings processing end
+// ###################################
+$FUNCTION = [];
+$SETTINGS = [];
 
 
-$FUNCTION = $_REQUEST['function'];
-$SETTINGS = $_REQUEST['settings'];
+if(array_search('function', $FUNCTION) != FALSE)
+{
+  $FUNCTION = $_REQUEST['function'];
+}
 
+if(array_search('function', $SETTINGS) != FALSE)
+{
+  $SETTINGS = $_REQUEST['settings'];
+}
 
 if ($FUNCTION  == 'savesettings') {
   saveSettings();
@@ -120,7 +143,7 @@ function formatIPlong ($IP) {
 
 
 //------------------------------------------------------------------------------
-// Others functions
+// Other functions
 //------------------------------------------------------------------------------
 function checkPermissions($files)
 {

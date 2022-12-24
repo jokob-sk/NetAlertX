@@ -74,9 +74,18 @@ Instructions for [pucherot's original code can be found here](https://github.com
 
 
 ## 🔗 Other
+
+
 <!--- --------------------------------------------------------------------- --->
 
 <!--- --------------------------------------------------------------------- --->
+### Alternatives
+
+  - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
+  - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
+
+### Old docs
+
   - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
   - [Versions History](docs/VERSIONS_HISTORY.md)
 

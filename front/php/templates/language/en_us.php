@@ -474,7 +474,7 @@ $pia_lang['REPORT_WEBHOOK_description'] = 'Enable webhooks for notifications. If
 $pia_lang['WEBHOOK_URL_name'] = 'Target URL';
 $pia_lang['WEBHOOK_URL_description'] = 'Target URL starting with <code>http://</code> or <code>https://</code>.';
 $pia_lang['WEBHOOK_PAYLOAD_name'] = 'Payload type';
-$pia_lang['WEBHOOK_PAYLOAD_description'] = 'The Webhook payload data format for the "body > attachements > text" attribute in the payload json. See an examnple of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>\'html\'</code>)';
+$pia_lang['WEBHOOK_PAYLOAD_description'] = 'The Webhook payload data format for the "body > attachements > text" attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>\'html\'</code>)';
 $pia_lang['WEBHOOK_REQUEST_METHOD_name'] = 'Request method';
 $pia_lang['WEBHOOK_REQUEST_METHOD_description'] = 'The HTTP request method to be used for the webhook call.';
 

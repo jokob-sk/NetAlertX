@@ -7,24 +7,54 @@
 //------------------------------------------------------------------------------
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
-// ## TimeZone processing
-$config_file = "../../../config/pialert.conf";
-$config_file_lines = file($config_file);
-$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
-$timezone_line = explode("'", $config_file_lines_timezone[0]);
-$Pia_TimeZone = $timezone_line[1];
-date_default_timezone_set($Pia_TimeZone);
+// ###################################
+// ## TimeZone processing start
+// ###################################
 
-foreach (glob("../../../db/setting_language*") as $filename) {
-    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+$configFolderPath = "/home/pi/pialert/config/";
+$config_file = "pialert.conf";
+$logFolderPath = "/home/pi/pialert/front/log/";
+$log_file = "pialert_front.log";
+
+
+$fullConfPath = $configFolderPath.$config_file;
+
+$config_file_lines = file($fullConfPath);
+$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
+
+$timeZone = "";
+
+foreach ($config_file_lines as $line)
+{    
+  if( preg_match('/TIMEZONE(.*?)/', $line, $match) == 1 )
+  {        
+      if (preg_match('/\'(.*?)\'/', $line, $match) == 1) {          
+        $timeZone = $match[1];
+      }
+  }
 }
-if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
+
+if($timeZone == "")
+{
+  $timeZone = "Europe/Berlin";
+}
+
+date_default_timezone_set($timeZone);
+
+$date = new DateTime("now", new DateTimeZone($timeZone) );
+$timestamp = $date->format('Y-m-d_H-i-s');
+
+// ###################################
+// ## TimeZone processing end
+// ###################################
+
+
+
 
 //------------------------------------------------------------------------------
   // External files
   require 'db.php';
-  require 'util.php';
-  require '../templates/language/'.$pia_lang_selected.'.php';
+  require 'util.php';  
 
 //------------------------------------------------------------------------------
 //  Action selector

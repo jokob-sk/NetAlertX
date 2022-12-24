@@ -44,6 +44,7 @@ function getParameter() {
   $parameter = $_REQUEST['parameter'];
   $sql = 'SELECT par_Value FROM Parameters
           WHERE par_ID="'. quotes($_REQUEST['parameter']) .'"';
+  
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
   $value = $row[0];

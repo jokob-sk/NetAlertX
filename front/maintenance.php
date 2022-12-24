@@ -427,11 +427,8 @@ if ($_REQUEST['tab'] == '1') {
           </div>
           <!-- ------------------------------------------------------------------------------ -->
       </div>
-      
-</div>
 
-<div class="box">
-    <div class="box-body" style="text-align: center;">
+      <div class="box-body" style="text-align: center;">
         <h5 class="text-aqua" style="font-size: 16px;">
           <span id="lastCommit">
            
@@ -441,7 +438,13 @@ if ($_REQUEST['tab'] == '1') {
           </span>          
       </h5>
   </div>
+      
+      
 </div>
+
+
+
+
 
 <div style="width: 100%; height: 20px;"></div>
     <!-- ----------------------------------------------------------------------- -->
@@ -449,13 +452,14 @@ if ($_REQUEST['tab'] == '1') {
 </section>
 
     <!-- /.content -->
+    <?php
+      require 'php/templates/footer.php';
+    ?>
   </div>
   <!-- /.content-wrapper -->
 
 <!-- ----------------------------------------------------------------------- -->
-<?php
-  require 'php/templates/footer.php';
-?>
+
 
 <script>
 

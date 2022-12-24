@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
     volumes:
       - local/path/pialert/config:/home/pi/pialert/config
-      - local/path/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
+      - local/path/pialert/db:/home/pi/pialert/db
       # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
       - local/path/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container

@@ -8,12 +8,15 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
-session_start();
+  session_start();
 
-if ($_SESSION["login"] != 1)
+  if(array_search('login', $_SESSION) != FALSE)
   {
-      header('Location: index.php');
-      exit;
+    if ($_SESSION["login"] != 1)
+    {
+        header('Location: index.php');
+        exit;
+    }    
   }
 
   require 'php/templates/header.php';

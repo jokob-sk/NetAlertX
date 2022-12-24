@@ -13,7 +13,7 @@
 
     <!-- &copy; 2020 Puche -->
     <?php
-      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (+2022 jokob-sk)';
+      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (2022+ jokob-sk)';
     ?>
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
