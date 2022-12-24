@@ -35,7 +35,11 @@ RUN rm /etc/nginx/sites-available/default \
     && ln -s /home/pi/pialert/install/default /etc/nginx/sites-available/default \
     && sed -ie 's/listen 80/listen '${PORT}'/g' /etc/nginx/sites-available/default \
     # run the hardware vendors update
-    && /home/pi/pialert/back/update_vendors.sh 
+    && /home/pi/pialert/back/update_vendors.sh \
+    # Create a backup of the pialert.conf to be used if the user didn't supply a configuration file
+    && cp /home/pi/pialert/config/pialert.conf /home/pi/pialert/back/pialert.conf_bak \
+    # Create a backup of the pialert.db to be used if the user didn't supply a database
+    && cp /home/pi/pialert/db/pialert.db /home/pi/pialert/back/pialert.db_bak 
 
 ENTRYPOINT ["tini", "--"]
 

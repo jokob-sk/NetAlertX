@@ -41,13 +41,15 @@ import threading
 # PATHS
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
-pialertPath = PIALERT_BACK_PATH + "/.."
+pialertPath = PIALERT_BACK_PATH + "/.."  #to fix - remove references and use pialertPath instead
 logPath     = pialertPath + '/front/log'
+pialertPath = '/home/pi/pialert'
 confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
+
 
 #-------------------------------------------------------------------------------
 def file_print(*args):
@@ -61,11 +63,6 @@ def file_print(*args):
     file.write(result + '\n')
     file.close()
 
-
-#===============================================================================
-# USER CONFIG VARIABLES - START
-#===============================================================================
-
 # check RW access of DB and config file
 file_print('\n Permissions check (All should be True)')
 file_print('------------------------------------------------')
@@ -75,7 +72,55 @@ file_print( "  " + dbPath + "       | " + " READ  | " + str(os.access(fullDbPath
 file_print( "  " + dbPath + "       | " + " WRITE | " + str(os.access(fullDbPath, os.W_OK)))
 file_print('------------------------------------------------')
 
-pialertPath            = '/home/pi/pialert'
+#-------------------------------------------------------------------------------
+def append_file_binary (pPath, input):    
+    file = open (pPath, 'ab') 
+    file.write (input) 
+    file.close() 
+
+#-------------------------------------------------------------------------------
+def logResult (stdout, stderr):
+    if stderr != None:
+        append_file_binary (logPath + '/stderr.log', stderr)
+    if stdout != None:
+        append_file_binary (logPath + '/stdout.log', stdout)   
+
+def initialiseFile(pathToCheck, defaultFile):
+    # if file not readable (missing?) try to copy over the backed-up (default) one
+    if str(os.access(pathToCheck, os.R_OK)) == "False":
+        file_print("[Setup] The "+ pathToCheck +" file is not readable (missing?). Trying to copy over the backed-up (default) one.")      
+        try:
+            # try runnning a subprocess
+            p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = p.communicate()
+
+            if str(os.access(pathToCheck, os.R_OK)) == "False":
+                file_print("[Setup] Error copying the default file ("+defaultFile+") to it's destination ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory.")
+            else:
+                file_print("[Setup] Default file ("+defaultFile+") copied over successfully to ("+pathToCheck+").")
+
+            # write stdout and stderr into .log files for debugging if needed
+            logResult (stdout, stderr)
+            
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            file_print("[Setup] Error copying the default file ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck)
+            file_print(e.output)
+
+#===============================================================================
+# Basic checks and Setup
+#===============================================================================
+
+# check and initialize pialert.conf
+initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
+
+# check and initialize pialert.db
+initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
+
+#===============================================================================
+# USER CONFIG VARIABLES - START
+#===============================================================================
+
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
 
 piholeDB               = '/etc/pihole/pihole-FTL.db'
@@ -1825,12 +1870,6 @@ def write_file (pPath, pText):
         file.close() 
 
 #-------------------------------------------------------------------------------
-def append_file_binary (pPath, input):    
-    file = open (pPath, 'ab') 
-    file.write (input) 
-    file.close() 
-
-#-------------------------------------------------------------------------------
 def append_line_to_file (pPath, pText):
     # append the line depending using the correct python version
     if sys.version_info < (3, 0):
@@ -2341,7 +2380,8 @@ def openDB ():
         return
 
     # Log    
-    print_log ('Opening DB...')    
+    print_log ('Opening DB...')   
+     
 
     # Open DB and Cursor
     sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
@@ -2442,14 +2482,6 @@ def add_json_list (row, list):
     list.append(new_row)    
 
     return list
-
-#-------------------------------------------------------------------------------
-
-def logResult (stdout, stderr):
-    if stderr != None:
-        append_file_binary (logPath + '/stderr.log', stderr)
-    if stdout != None:
-        append_file_binary (logPath + '/stdout.log', stdout)   
 
 #-------------------------------------------------------------------------------
 
