@@ -34,8 +34,8 @@ import requests
 from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
-from ssdpy import SSDPClient
-import upnpclient
+# from ssdpy import SSDPClient
+# import upnpclient
 
 #===============================================================================
 # PATHS
@@ -233,6 +233,7 @@ mqtt_thread_up = False
 
 # timestamps of last execution times
 time_now = datetime.datetime.now()
+log_timestamp = time_now
 now_minus_24h = time_now - timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
@@ -275,9 +276,7 @@ def main ():
 
             # Header
             file_print('\nLoop start')
-            file_print('---------------------------')
-            
-            log_timestamp  = time_now        
+            file_print('---------------------------')            
 
             # Timestamp
             startTime = time_now
@@ -2388,25 +2387,31 @@ def upgradeDB ():
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
 
-    # Missing parameters in the Parameters table
-    missingSettings = len(sql.execute ("""
-      SELECT * FROM Parameters WHERE par_ID='Front_Events_Period'
-      """).fetchall())  == 0
+    # Re-creating Parameters table
+    file_print("[upgradeDB] Re-creating Parameters table")
+    sql.execute("DROP TABLE Parameters;")
 
-    if missingSettings:
-      file_print("[upgradeDB] Adding missing values into the Parameters table")
+    sql.execute("""      
+      CREATE TABLE "Parameters" (
+        "par_ID"	INTEGER,
+        "par_Value"	TEXT
+      );      
+      """)    
 
-      params = [
-        # General
-        ('Front_Events_Period', 'Subnets to scan'),
-        ('Front_Details_Sessions_Rows', '50'),
-        ('Front_Details_Events_Rows', '50'),
-        ('Front_Details_Events_Hide', 'True'),
-        ('Front_Events_Rows', '50'),
-        ('Front_Details_Period', '1 day')
-      ] 
+    params = [
+    # General
+    ('Front_Events_Period', '1 day'),
+    ('Front_Details_Sessions_Rows', '50'),
+    ('Front_Details_Events_Rows', '50'),
+    ('Front_Details_Events_Hide', 'True'),
+    ('Front_Events_Rows', '50'),
+    ('Front_Details_Period', '1 day'),
+    ('Front_Devices_Order', '[[3,"desc"],[0,"asc"]]'),
+    ('Front_Devices_Rows', '100'),
+    ('Front_Details_Tab', 'tabDetails')
+    ] 
 
-      sql.executemany ("""INSERT INTO Parameters ("Par_ID", "Par_Value") VALUES (?, ?)""", params)
+    sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)
 
       
     # don't hog DB access  
@@ -2489,7 +2494,7 @@ def print_log (pText):
     log_timestamp2 = datetime.datetime.now()
 
     # Print line + time + elapsed time + text
-    file_print('--------------------> ',
+    file_print('[LOG_PRINT] > ',
         log_timestamp2, ' ',
         log_timestamp2 - log_timestamp, ' ',
         pText)

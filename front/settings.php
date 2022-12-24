@@ -96,15 +96,19 @@ $db->close();
             {
               $html = $html.
               '<div class="table_row" >
-                <div class="table_cell setting_name" >';
+                <div class="table_cell setting_name bold" ><label>';
 
-              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name'], $pia_lang);
+              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name'], $pia_lang).'</label>';
+
+              $html = $html.'<div class="small" ><code>'.$set['Code_Name'].'</code></div>';
 
               $html = $html.
               '</div>       
-               <div class="table_cell setting_description" >';
+               <div class="table_cell setting_description" >';               
 
               $html = $html.getString ($set['Code_Name'].'_description', $set['Description'], $pia_lang);
+
+              
 
               $html = $html.
                 '</div>       

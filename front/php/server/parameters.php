@@ -46,7 +46,7 @@ function getParameter() {
           WHERE par_ID="'. quotes($_REQUEST['parameter']) .'"';
   
   $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
+  $row = $result -> fetchArray (SQLITE3_NUM);  
   $value = $row[0];
 
   echo (json_encode ($value));
