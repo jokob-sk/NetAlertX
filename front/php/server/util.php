@@ -51,14 +51,6 @@ $timestamp = $date->format('Y-m-d_H-i-s');
 // ###################################
 // ## GUI settings processing start
 // ###################################
-if (file_exists('../db/setting_darkmode')) {
-  $ENABLED_DARKMODE = True;
-}
-foreach (glob("../db/setting_skin*") as $filename) {
-  $pia_skin_selected = str_replace('setting_','',basename($filename));
-}
-if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
-
 foreach (glob("../db/setting_language*") as $filename) {
   $pia_lang_selected = str_replace('setting_language_','',basename($filename));
 }

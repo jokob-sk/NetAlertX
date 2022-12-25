@@ -72,7 +72,7 @@ $db->close();
          <?php echo $pia_lang['Navigation_Settings'];?>
       </h1>
     </section>
-
+    <div class="content">
    <?php
 
       $html = "";
@@ -87,7 +87,7 @@ $db->close();
 
       // create settings groups
       foreach ($groups as $group) { 
-        $html = $html.'<section class="settings_content">
+        $html = $html.'<section class="content box">
           <h4>'.$group.'</h4>';
           
           // populate settings for each group
@@ -95,7 +95,7 @@ $db->close();
             if($set["Group"] == $group)
             {
               $html = $html.
-              '<div class="table_row" >
+              '<div class=" row table_row" >
                 <div class="table_cell setting_name bold" ><label>';
 
               $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name'], $pia_lang).'</label>';
@@ -224,6 +224,7 @@ $db->close();
 
       echo $html;
    ?>
+   </div>
    
     <!-- /.content -->
     <div class="row" >

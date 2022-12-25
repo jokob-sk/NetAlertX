@@ -217,9 +217,6 @@ if (sys.version_info > (3,0)):
 else:    
     execfile (fullConfPath)
 
-
-deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
-
 #===============================================================================
 # USER CONFIG VARIABLES - END
 #===============================================================================
@@ -264,8 +261,12 @@ def main ():
     upgradeDB()
     
     while True:
+
         # update NOW time
         time_now = datetime.datetime.now()
+
+        # re-load user configuration
+        importConfig() 
 
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
@@ -280,10 +281,7 @@ def main ():
 
             # Timestamp
             startTime = time_now
-            startTime = startTime.replace (microsecond=0)
-
-            # re-load user configuration
-            importConfig()  
+            startTime = startTime.replace (microsecond=0)             
 
             # determine run/scan type based on passed time
             if last_internet_IP_scan + timedelta(minutes=3) < time_now:
@@ -315,9 +313,12 @@ def main ():
             # Close SQL
             closeDB()            
 
-            # Final menssage
+            # Final message
             if cycle != "":
-                file_print('[', time_now.replace (microsecond=0), '] Last action: ', cycle)
+                action = str(cycle)
+                if cycle == "1":
+                    action = "network_scan"
+                file_print('[', time_now.replace (microsecond=0), '] Last action: ', action)
                 cycle = ""
 
             # Footer
@@ -565,8 +566,7 @@ def update_devices_MAC_vendors (pArg = ''):
         else :
             recordsToUpdate.append ([vendor, device['dev_MAC']])
             
-    # Print log
-    file_print('')
+    # Print log    
     file_print("    Devices Ignored:  ", ignored)
     file_print("    Vendors Not Found:", notFound)
     file_print("    Vendors updated:  ", len(recordsToUpdate) )
@@ -934,19 +934,19 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('    Devices Detected.......:', str (sql.fetchone()[0]) )
+    file_print('    Devices Detected.......: ', str (sql.fetchone()[0]) )
 
     # Devices arp-scan
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        arp-scan detected....: ', str (sql.fetchone()[0]) )
+    file_print('        arp-scan detected..: ', str (sql.fetchone()[0]) )
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        Pi-hole detected.....: +' + str (sql.fetchone()[0]) )
+    file_print('        Pi-hole detected...: +' + str (sql.fetchone()[0]) )
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
@@ -961,7 +961,7 @@ def print_scan_stats ():
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_ScanCycle = ? """,
                     (cycle,))
-    file_print('')
+    
     file_print('    Devices in this cycle..: ' + str (sql.fetchone()[0]) )
 
     # Down Alerts
@@ -1512,8 +1512,11 @@ json_final = []
 def email_reporting ():
     global mail_text
     global mail_html
+
+    deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
+
     # Reporting section
-    file_print('\nCheck if something to report')
+    file_print('Check if something to report')
     openDB()
 
     # prepare variables for JSON construction
@@ -2211,9 +2214,20 @@ def start_mqtt_thread ():
 # DB
 #===============================================================================
 def importConfig (): 
-    openDB()
 
-    # file_print('pialertPath:', pialertPath)
+    # global SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
+
+    # load the variables from  pialert.conf
+    if (sys.version_info > (3,0)):    
+            # file_print(">>>>>oooooo>>>>", PRINT_LOG)
+            d = {}
+            exec(open(fullConfPath).read(), d )  #here
+    else:
+        execfile (fullConfPath, globals())
+
+    # file_print(">>>>>>>>>", PRINT_LOG)
+
+    openDB()    
 
     #  Code_Name, Display_Name, Description, Type, Options, Value, Group
     settings = [
@@ -2484,7 +2498,7 @@ def print_log (pText):
     log_timestamp2 = datetime.datetime.now()
 
     # Print line + time + elapsed time + text
-    file_print('[LOG_PRINT] > ',
+    file_print('[LOG_PRINT] ',
         log_timestamp2, ' ',
         log_timestamp2 - log_timestamp, ' ',
         pText)

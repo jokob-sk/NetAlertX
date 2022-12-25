@@ -390,7 +390,7 @@ if (submit && isset($_POST['langselector_set'])) {
                             <div><button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
+                              <textarea id="pialert_front_log" class="logs" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
                               </textarea>
                             </div>
                         </div>   
@@ -684,6 +684,9 @@ function scrollDown()
   var tempArea = $('#pialert_log');
   $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
 
+  tempArea = $('#pialert_front_log');
+  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+
   tempArea = $('#IP_changes_log');
   $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
 
@@ -741,6 +744,7 @@ function setCache(key, data)
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
+  scrollDown();
 
   $("#lastCommit").append('<img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github">');
 

@@ -579,18 +579,18 @@ height: 50px;
 
 .setting_name
 {
-    width:20%;
+    width:19%;
     font-weight: 300;    
 }
 
 .setting_description
 {
-    width:50%;
+    width:46%;
 }
 
 .setting_input
 {
-    width:30%;
+    width:35%;
 }
 
 .center 
@@ -609,7 +609,7 @@ height: 50px;
 
 .settings_content {
     padding: 10px;
-    background-color: #272c30;
+    /* background-color: #272c30; */
     margin: 10px;
     
 }
