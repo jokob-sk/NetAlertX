@@ -24,6 +24,16 @@
 {
   color:white;
   background-color: black;
+  font-family: 'Courier New', monospace;
+  
+}
+.logs-small
+{
+    height: 100px;
+}
+.span-padding
+{
+    padding:10px;
 }
 .text-center {
     text-align: center;

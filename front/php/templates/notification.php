@@ -7,6 +7,26 @@
 #  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
+<!-- Modal Ok -->
+<div class="modal fade" id="modal-ok" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="modal-ok-title" class="modal-title"> Modal Default Title </h4>
+      </div>
+
+      <div id="modal-ok-message" class="modal-body"> Modal Default message </div>
+
+      <div class="modal-footer">        
+        <button id="modal-ok-OK"     type="button" class="btn btn-primary"           style="min-width: 80px;" data-dismiss="modal"> OK     </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 
 <!-- Modal Default -->
 <div class="modal fade" id="modal-default" style="display: none;">

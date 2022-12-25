@@ -16,6 +16,7 @@ $pia_lang['Gen_Purge'] = 'Aufräumen';
 $pia_lang['Gen_Backup'] = 'Sichern';
 $pia_lang['Gen_Restore'] = 'Wiederherstellen';
 $pia_lang['Gen_Switch'] = 'Umschalten';
+$pia_lang['Gen_AreYouSure'] = 'Sind Sie sich sicher?';
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022

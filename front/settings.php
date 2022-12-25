@@ -108,8 +108,6 @@ $db->close();
 
               $html = $html.getString ($set['Code_Name'].'_description', $set['Description'], $pia_lang);
 
-              
-
               $html = $html.
                 '</div>       
               <div class="table_cell setting_input" >';
@@ -254,7 +252,7 @@ $db->close();
 
     if(ipMask == "" || ipInterface == "")
     {
-      showModalDefault ('Validation error', 'Specify both, the network mask and the interface');
+      modalDefaultOK ('Validation error', 'Specify both, the network mask and the interface');
     } else {
       $('#SCAN_SUBNETS').append($('<option disabled></option>').attr('value', full).text(full));
 
@@ -315,7 +313,7 @@ $db->close();
       success: function(data, textStatus) {
           // $("#result").html(data);    
           // console.log(data);
-          showModalDefault ('Result', data );
+          showModalOk ('Result', data );
       }
     })
   }

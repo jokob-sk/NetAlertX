@@ -16,6 +16,7 @@ $pia_lang['Gen_Purge'] = 'Purgar';
 $pia_lang['Gen_Backup'] = 'Ejecutar copia de seguridad';
 $pia_lang['Gen_Restore'] = 'Ejecutar restauración';
 $pia_lang['Gen_Switch'] = 'Cambiar';
+$pia_lang['Gen_AreYouSure'] = '¿Estás seguro de';
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022

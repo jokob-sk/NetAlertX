@@ -234,6 +234,7 @@ mqtt_thread_up = False
 # timestamps of last execution times
 time_now = datetime.datetime.now()
 log_timestamp = time_now
+startTime = time_now
 now_minus_24h = time_now - timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
@@ -275,12 +276,11 @@ def main ():
             reporting = False
 
             # Header
-            file_print('\nLoop start')
-            file_print('---------------------------')            
+            file_print('[', time_now.replace (microsecond=0), '] Loop start ')                
 
             # Timestamp
             startTime = time_now
-            startTime = startTime.replace (second=0, microsecond=0)
+            startTime = startTime.replace (microsecond=0)
 
             # re-load user configuration
             importConfig()  
@@ -317,16 +317,14 @@ def main ():
 
             # Final menssage
             if cycle != "":
-                file_print('\nFinished cycle: ', cycle, '\n')
+                file_print('[', time_now.replace (microsecond=0), '] Last action: ', cycle)
                 cycle = ""
 
             # Footer
-            file_print('\nLoop end')
-            file_print('---------------------------')     
+            file_print('[', time_now.replace (microsecond=0), '] Loop end')            
         else:
             # do something
-            cycle = ""
-            file_print('\n Wait 20s')
+            cycle = ""           
 
         #loop  - recursion    
         time.sleep(20) # wait for N seconds      
@@ -339,11 +337,10 @@ def check_internet_IP ():
     reporting = False
 
     # Header
-    file_print('Check Internet IP')
-    file_print('    Timestamp:', startTime )
+    file_print('[', startTime, '] Check Internet IP:')    
 
     # Get Internet IP
-    file_print('\n    Retrieving Internet IP...')
+    file_print('    Retrieving Internet IP:')
     internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
@@ -351,15 +348,15 @@ def check_internet_IP ():
     # Check result = IP
     if internet_IP == "" :
         file_print('    Error retrieving Internet IP')
-        file_print('    Exiting...\n')
+        file_print('    Exiting...')
         return False
-    file_print('   ', internet_IP)
+    file_print('      ', internet_IP)
 
     # Get previous stored IP
-    file_print('\n    Retrieving previous IP...')
+    file_print('    Retrieving previous IP:')
     openDB()
     previous_IP = get_previous_internet_IP ()
-    file_print('   ', previous_IP)
+    file_print('      ', previous_IP)
 
     # Check IP Change
     if internet_IP != previous_IP :
@@ -373,26 +370,26 @@ def check_internet_IP ():
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
-        file_print('\n    Retrieving Dynamic DNS IP...')
+        file_print('    Retrieving Dynamic DNS IP')
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
         if dns_IP == "" :
             file_print('    Error retrieving Dynamic DNS IP')
-            file_print('    Exiting...\n')
+            file_print('    Exiting...')
             return False
         file_print('   ', dns_IP)
 
         # Check DNS Change
         if dns_IP != internet_IP :
-            file_print('    Updating Dynamic DNS IP...')
+            file_print('    Updating Dynamic DNS IP')
             message = set_dynamic_DNS_IP ()
             file_print('       ', message)
             reporting = True
         else :
             file_print('    No changes to perform')
     else :
-        file_print('\n    Skipping Dynamic DNS update...')
+        file_print('    Skipping Dynamic DNS update')
     
     return reporting
 
@@ -470,7 +467,7 @@ def get_previous_internet_IP ():
 def save_new_internet_IP (pNewIP):
     # Log new IP into logfile
     append_line_to_file (logPath + '/IP_changes.log',
-        str(startTime) +'\t'+ pNewIP +'\n')
+        '['+str(startTime) +']\t'+ pNewIP +'\n')
 
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
@@ -507,23 +504,22 @@ def check_IP_format (pIP):
 # Cleanup Online History chart
 #===============================================================================
 def cleanup_database ():
-    # Header
-    file_print('Cleanup Database')
-    file_print('    Timestamp:', startTime )
+    # Header    
+    file_print('[', startTime, '] Cleanup Database:' )
 
     openDB()    
    
     # Cleanup Online History
-    file_print('    Cleanup Online_History...')
+    file_print('    Cleanup Online_History')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
-    file_print('    Optimize Database...')
+    file_print('    Optimize Database')
 
     # Cleanup Events
-    file_print('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days...')
+    file_print('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Shrink DB
-    file_print('    Shrink Database...')
+    file_print('    Shrink Database')
     sql.execute ("VACUUM;")
 
     closeDB()
@@ -532,12 +528,11 @@ def cleanup_database ():
 # UPDATE DEVICE MAC VENDORS
 #===============================================================================
 def update_devices_MAC_vendors (pArg = ''):
-    # Header
-    file_print('Update HW Vendors')
-    file_print('    Timestamp:', startTime )
+    # Header    
+    file_print('[', startTime, '] Update HW Vendors:' )
 
     # Update vendors DB (iab oui)
-    file_print('\nUpdating vendors DB (iab & oui)...')
+    file_print('\nUpdating vendors DB (iab & oui)')
     # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', logPath +  '/update_vendors.log',    '2>&1']
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
 
@@ -654,12 +649,12 @@ def scan_network ():
     # # devtest end
 
     # Header
-    file_print('Scan Devices')
+    file_print('[', startTime, '] Scan Devices:' )    
     file_print('    ScanCycle:', cycle)
-    file_print('    Timestamp:', startTime )
+    
 
     # # Query ScanCycle properties
-    print_log ('Query ScanCycle confinguration...')
+    print_log ('Query ScanCycle confinguration')
     scanCycle_data = query_ScanCycle_Data (True)
     if scanCycle_data is None:
         file_print('\n*************** ERROR ***************')
@@ -670,10 +665,8 @@ def scan_network ():
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
     
-    # arp-scan command
-    file_print('\nScanning...')
-    file_print('    arp-scan Method...')
-    print_log ('arp-scan starts...')
+    # arp-scan command    
+    file_print('    arp-scan start')    
     arpscan_devices = execute_arpscan ()
     print_log ('arp-scan ends')
     
@@ -681,18 +674,16 @@ def scan_network ():
     # file_print('aspr-scan result:', len(arpscan_devices))
 
     # Pi-hole method
-    file_print('    Pi-hole Method...')
-    openDB()
-    print_log ('Pi-hole copy starts...')
+    file_print('    Pi-hole start')
+    openDB()    
     reporting = copy_pihole_network() or reporting
 
     # DHCP Leases method
-    file_print('    DHCP Leases Method...')
+    file_print('    DHCP Leases start')
     reporting = read_DHCP_leases () or reporting
 
     # Load current scan data
-    file_print('\nProcessing scan results...')
-    print_log ('Save scanned devices')
+    file_print('Processing scan results')    
     save_scanned_devices (arpscan_devices, cycle_interval)
     
     # Print stats
@@ -701,37 +692,37 @@ def scan_network ():
     print_log ('Stats end')
 
     # Create Events
-    file_print('\nUpdating DB Info...')
-    file_print('    Sessions Events (connect / discconnect) ...')
+    file_print('Updating DB Info')
+    file_print('    Sessions Events (connect / discconnect)')
     insert_events()
 
     # Create New Devices
     # after create events -> avoid 'connection' event
-    file_print('    Creating new devices...')
+    file_print('    Creating new devices')
     create_new_devices ()
 
     # Update devices info
-    file_print('    Updating Devices Info...')
+    file_print('    Updating Devices Info')
     update_devices_data_from_scan ()
 
     # Resolve devices names
-    print_log ('   Resolve devices names...')
+    print_log ('    Resolve devices names')
     update_devices_names()
 
     # Void false connection - disconnections
-    file_print('    Voiding false (ghost) disconnections...')
+    file_print('    Voiding false (ghost) disconnections')
     void_ghost_disconnections ()
   
     # Pair session events (Connection / Disconnection)
-    file_print('    Pairing session events (connection / disconnection) ...')
+    file_print('    Pairing session events (connection / disconnection) ')
     pair_sessions_events()  
   
     # Sessions snapshot
-    file_print('    Creating sessions snapshot...')
+    file_print('    Creating sessions snapshot')
     create_sessions_snapshot ()
   
     # Skip repeated notifications
-    file_print('    Skipping repeated notifications...')
+    file_print('    Skipping repeated notifications')
     skip_repeated_notifications ()
   
     # Commit changes
@@ -949,13 +940,13 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        arp-scan Method....:', str (sql.fetchone()[0]) )
+    file_print('        arp-scan detected....: ', str (sql.fetchone()[0]) )
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        Pi-hole Method.....: +' + str (sql.fetchone()[0]) )
+    file_print('        Pi-hole detected.....: +' + str (sql.fetchone()[0]) )
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
@@ -1299,7 +1290,7 @@ def update_devices_names ():
     notFound = 0
 
     # Devices without name
-    file_print('        Trying to resolve devices without name...')
+    file_print('        Trying to resolve devices without name')
     # BUGFIX #97 - Updating name of Devices w/o IP
     for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'") :
         # Resolve device name
@@ -1312,8 +1303,7 @@ def update_devices_names ():
         else :
             recordsToUpdate.append ([newName, device['dev_MAC']])        
             
-    # Print log
-    file_print('')
+    # Print log    
     file_print("        Names updated:  ", len(recordsToUpdate) )
     # DEBUG - print list of record to update
         # file_print(recordsToUpdate)
@@ -1523,7 +1513,7 @@ def email_reporting ():
     global mail_text
     global mail_html
     # Reporting section
-    file_print('\nCheck if something to report...')
+    file_print('\nCheck if something to report')
     openDB()
 
     # prepare variables for JSON construction
@@ -1708,43 +1698,43 @@ def email_reporting ():
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
-        file_print('\nChanges detected, sending reports...')
+        file_print('\nChanges detected, sending reports')
 
         if REPORT_MAIL and check_config('email'):            
-            file_print('    Sending report by email...')
+            file_print('    Sending report by email')
             send_email (mail_text, mail_html)
         else :
-            file_print('    Skip mail...')
+            file_print('    Skip mail')
         if REPORT_APPRISE and check_config('apprise'):
-            file_print('    Sending report by Apprise...')
+            file_print('    Sending report by Apprise')
             send_apprise (mail_html)
         else :
-            file_print('    Skip Apprise...')
+            file_print('    Skip Apprise')
         if REPORT_WEBHOOK and check_config('webhook'):
-            file_print('    Sending report by webhook...')
+            file_print('    Sending report by webhook')
             send_webhook (json_final, mail_text)
         else :
-            file_print('    Skip webhook...')
+            file_print('    Skip webhook')
         if REPORT_NTFY and check_config('ntfy'):
-            file_print('    Sending report by NTFY...')
+            file_print('    Sending report by NTFY')
             send_ntfy (mail_text)
         else :
-            file_print('    Skip NTFY...')
+            file_print('    Skip NTFY')
         if REPORT_PUSHSAFER and check_config('pushsafer'):
-            file_print('    Sending report by PUSHSAFER...')
+            file_print('    Sending report by PUSHSAFER')
             send_pushsafer (mail_text)
         else :
-            file_print('    Skip PUSHSAFER...')
+            file_print('    Skip PUSHSAFER')
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
-            file_print('    Establishing MQTT thread...')                
+            file_print('    Establishing MQTT thread')                
             # mqtt_thread_up = True # prevent this code to be run multiple times concurrently
             # start_mqtt_thread ()                
             mqtt_start()        
         else :
-            file_print('    Skip MQTT...')
+            file_print('    Skip MQTT')
     else :
-        file_print('    No changes to report...')
+        file_print('    No changes to report')
 
     openDB()
 
@@ -1757,7 +1747,7 @@ def email_reporting ():
                     WHERE eve_PendingAlertEmail = 1""")
 
     # DEBUG - print number of rows updated
-    file_print('    Notifications:', sql.rowcount)
+    file_print('    Notifications: ', sql.rowcount)
 
     # Commit changes
     sql_connection.commit()
@@ -2428,7 +2418,7 @@ def openDB ():
         return
 
     # Log    
-    print_log ('Opening DB...')   
+    print_log ('Opening DB')   
      
 
     # Open DB and Cursor
@@ -2448,7 +2438,7 @@ def closeDB ():
         return
 
     # Log    
-    print_log ('Closing DB...')
+    print_log ('Closing DB')
 
     # Close DB
     sql_connection.commit()

@@ -172,16 +172,6 @@ if (submit && isset($_POST['langselector_set'])) {
   }
 }
 
-// Set Tab ----------------------------------------------------------------------------
-
-if ($_REQUEST['tab'] == '1') {
-    $pia_tab_setting = 'active'; $pia_tab_tool = ''; $pia_tab_backup = '';
-} elseif ($_REQUEST['tab'] == '2') {
-    $pia_tab_setting = ''; $pia_tab_tool = 'active'; $pia_tab_backup = '';
-} elseif ($_REQUEST['tab'] == '3') {
-    $pia_tab_setting = ''; $pia_tab_tool = ''; $pia_tab_backup = 'active';
-} else { $pia_tab_setting = 'active'; $pia_tab_tool = ''; $pia_tab_backup = '';}
-
 ?>
 
       <div class="row">
@@ -230,10 +220,18 @@ if ($_REQUEST['tab'] == '1') {
 
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a></li>
-        <li><a href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a></li>
-        <li><a href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a></li>
-        <li><a href="#tab_Logging" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Logging'];?></a></li>
+        <li class="active">
+          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a>
+        </li>
+        <li>
+          <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a>
+        </li>
+        <li>
+          <a id="tab_BackupRestore_id" href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a>
+        </li>
+        <li>
+          <a id="tab_Logging_id" href="#tab_Logging" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Logging'];?></a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_Settings">
@@ -378,46 +376,51 @@ if ($_REQUEST['tab'] == '1') {
                     <div class="db_info_table">
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
-                            pialert.log
+                            <div><label>pialert.log</label><span class="span-padding"><a href="./log/pialert.log"><i class="fa fa-download"></i> </a></span></div>
+                            <div><button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert.log" ); ?>
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
                               </textarea>
                             </div>
                         </div>   
                         <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            pialert_front.log
+                            <div class="db_tools_table_cell_a" style="">                            
+                            <div><label>pialert_front.log</label><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span></div>
+                            <div><button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
                               </textarea>
                             </div>
                         </div>   
                         <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            IP_changes.log
+                            <div class="db_tools_table_cell_a" style="">                            
+                            <div><label>IP_changes.log</label><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span></div>
+                            <div><button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="IP_changes_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
+                              <textarea id="IP_changes_log" class="logs logs-small" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
                               </textarea>                              
                             </div>
                         </div> 
                         <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            stdout.log
+                            <div class="db_tools_table_cell_a" style="">                            
+                            <div><label>stdout.log</label><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span></div>
+                            <div><button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="stdout_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stdout.log" ); ?>
+                              <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
                               </textarea>
                             </div>
                         </div> 
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
-                            stderr.log
+                            <div><label>stderr.log</label><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span></div>
+                            <div><button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>                            
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="stderr_log" class="logs" cols="70" rows="10" ><?php echo file_get_contents( "./log/stderr.log" ); ?>
+                              <textarea id="stderr_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stderr.log" ); ?>
                               </textarea>
                             </div>
                         </div>      
@@ -463,20 +466,10 @@ if ($_REQUEST['tab'] == '1') {
 
 <script>
 
-function scrollDown()
-{
-  temp = $('#pialert_log');
-  $temp.scrollTop($text[0].scrollHeight);
+var emptyArr = ['undefined', "", undefined, null];
+var selectedTab                 = 'tab_Settings_id';
 
-  temp = $('#IP_changes_log');
-  $temp.scrollTop($text[0].scrollHeight);
-
-  temp = $('#stdout_log');
-  $temp.scrollTop($text[0].scrollHeight);
-
-  temp = $('#stderr_log');
-  $temp.scrollTop($text[0].scrollHeight);
-}
+initializeTabs();
 
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {
@@ -658,11 +651,96 @@ function PiaToggleArpScan()
   });
 }
 
+
+// Clean log file 
+var targetLogFile = "";
+var logFileAction = "";
+
+function logManage(callback) {
+  targetLogFile = arguments[0];  // target
+  logFileAction = arguments[1];  // action
+  // Ask 
+  showModalWarning('<?php echo $pia_lang['Gen_Purge'];?>' + ' ' + arguments[1], '<?php echo $pia_lang['Gen_AreYouSure'];?>',
+    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', "performLogManage");
+}
+
+function performLogManage() { 
+  // Execute
+  console.log("targetLogFile:" + targetLogFile)
+  console.log("logFileAction:" + logFileAction)
+  
+  $.ajax({
+    method: "POST",
+    url: "php/server/util.php",
+    data: { function: logFileAction, settings: targetLogFile  },
+    success: function(data, textStatus) {
+        showModalOk ('Result', data );
+    }
+  })
+  }
+
+function scrollDown()
+{
+  var tempArea = $('#pialert_log');
+  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+
+  tempArea = $('#IP_changes_log');
+  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+
+  tempArea = $('#stdout_log');
+  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+
+  tempArea = $('#stderr_log');
+  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+
+}
+
+function initializeTabs () {  
+  // Activate panel
+  if(!emptyArr.includes(getCache("activeMaintenanceTab")))
+  {
+    selectedTab = getCache("activeMaintenanceTab");
+  }
+  $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+
+  // When changed save new current tab
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    setCache("activeMaintenanceTab", $(e.target).attr('id'))
+  });
+
+  // events on tab change
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var target = $(e.target).attr("href") // activated tab
+    //alert(target);
+    if(target == "#tab_Logging")
+    {
+      scrollDown();
+    }
+  });
+}
+
+
+function getCache(key)
+{
+  // check cache
+  if(sessionStorage.getItem(key))
+  {
+    return sessionStorage.getItem(key);
+  } else
+  {
+    return "";
+  }
+}
+
+function setCache(key, data)
+{
+  sessionStorage.setItem(key, data); 
+}
+
+
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
-
-  // scrollDown();
 
   $("#lastCommit").append('<img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github">');
 
@@ -670,8 +748,6 @@ window.onload = function asyncFooter()
     '<img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert">');
 
 }
-
-          
 
 </script>
 

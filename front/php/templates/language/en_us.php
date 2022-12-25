@@ -16,6 +16,7 @@ $pia_lang['Gen_Purge'] = 'Purge';
 $pia_lang['Gen_Backup'] = 'Run Backup';
 $pia_lang['Gen_Restore'] = 'Run Restore';
 $pia_lang['Gen_Switch'] = 'Switch';
+$pia_lang['Gen_AreYouSure'] = 'Are you sure?';
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022

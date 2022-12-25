@@ -70,8 +70,9 @@ require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.ph
 $FUNCTION = [];
 $SETTINGS = [];
 
+// init request params
 if(array_key_exists('function', $_REQUEST) != FALSE)
-{echo 'here'.$timestamp ;
+{
   $FUNCTION = $_REQUEST['function'];
 }
 
@@ -80,8 +81,14 @@ if(array_key_exists('settings', $_REQUEST) != FALSE)
   $SETTINGS = $_REQUEST['settings'];
 }
 
-if ($FUNCTION  == 'savesettings') {
+// call functions based on requested params
+if ($FUNCTION  == 'savesettings') 
+{
   saveSettings();
+} 
+elseif ($FUNCTION  == 'cleanLog')
+{
+  cleanLog($SETTINGS);
 }
 
 //------------------------------------------------------------------------------
@@ -157,6 +164,7 @@ function checkPermissions($files)
   } 
 }
 
+// ----------------------------------------------------------------------------------------
 
 function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFile = TRUE, $logEcho = FALSE)
 {
@@ -205,18 +213,38 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
 
 }
 
+// ----------------------------------------------------------------------------------------
+function cleanLog($logFile)
+{  
+  global $logFolderPath, $timestamp;
 
+  $path = "";
+
+  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log'];
+  
+  if(in_array($logFile, $allowedFiles))
+  {
+    $path = $logFolderPath.$logFile;
+  }
+
+  if($path != "")
+  {
+    // purge content
+    $file = fopen($path, "w") or die("Unable to open file!");
+    fwrite($file, "[".$timestamp. "] Log file manually purged" .PHP_EOL."");
+    fclose($file);
+    displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);      
+  }  
+}
+
+// ----------------------------------------------------------------------------------------
 function saveSettings()
 {
-  global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;  
-
-  echo 'here'.$timestamp ;
+  global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;   
 
   // save in the file
   $new_name = $config_file.'_'.$timestamp.'.backup';
   $new_location = $configFolderPath.$new_name;
-
-  // chmod($fullConfPath, 0755);
 
   if(file_exists( $fullConfPath) != 1)
   {    
@@ -298,8 +326,8 @@ function saveSettings()
   fwrite($newConfig, $txt);
   fclose($newConfig);
 
-  displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file. 
-    Backup of ".$config_file." created: <code>".$new_name."</code>.<br/>
+  displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file.  
+    <br/><br/>Backup of the previous ".$config_file." created here: <br/><br/><code>".$new_name."</code><br/><br/>
     <b>Restart the container for the changes to take effect.</b>", 
     FALSE, TRUE, TRUE, TRUE);    
 
