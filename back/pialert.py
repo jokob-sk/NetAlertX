@@ -2574,7 +2574,7 @@ def get_device_stats():
 
     # columns = ["online","down","all","archived","new","unknown"]
     sql.execute("""      
-      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' ) as unknown from Online_History limit  1 
+      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' ) as unknown from Online_History order by Scan_Date desc limit  1 
       """)
 
     row = sql.fetchone()
