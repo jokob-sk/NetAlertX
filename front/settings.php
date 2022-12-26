@@ -112,7 +112,7 @@ $db->close();
                 '</div>       
               <div class="table_cell setting_input" >';
 
-              // render different input types based on the set type
+              // render different input types based on the settings type
               $input = "";
 
               // text - textbox
@@ -271,8 +271,7 @@ $db->close();
   {
     var settingsArray = [];
 
-    // generate javascript to collect values
-    // multiselect, select, password
+    // generate javascript to collect values    
     <?php 
 
     $noConversion = array('text', 'integer', 'password', 'readonly', 'selecttext', 'selectinteger', "multiselect"); 

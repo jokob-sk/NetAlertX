@@ -224,12 +224,11 @@ function main () {
   // get parameter value
   $.get('php/server/parameters.php?action=get&parameter='+ parTableRows, function(data) {
     var result = JSON.parse(data);
-    
+
     result = parseInt(result, 10)
 
     if (Number.isInteger (result) ) {
-        tableRows = result;
-  
+        tableRows = result;  
     }
 
     // get parameter value

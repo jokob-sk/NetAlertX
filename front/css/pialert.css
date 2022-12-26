@@ -560,6 +560,35 @@ height: 50px;
 
 /*settings*/
 
+@media (max-width: 767px) {
+    .setting_description {
+      /* color: red; */
+      display: none;
+    }
+    .setting_input{
+        width:70%;
+        /* background-color: red; */
+    }
+    .setting_name
+    {
+        width:30%;         
+    }
+  }
+  @media (min-width: 768px) {
+    .setting_description {
+        /* color: rgb(0, 255, 106); */
+        display: block;
+    }
+    .setting_input{
+        width:35%;
+        /* background-color: rgb(0, 255, 106); */
+    }
+    .setting_name
+    {
+        width:19%;         
+    }
+  }
+
 .table_row {    
     padding: 3px;    
     width:100%;
@@ -579,7 +608,7 @@ height: 50px;
 
 .setting_name
 {
-    width:19%;
+   /* width:19%; */
     font-weight: 300;    
 }
 
@@ -588,10 +617,10 @@ height: 50px;
     width:46%;
 }
 
-.setting_input
+/* .setting_input
 {
     width:35%;
-}
+} */
 
 .center 
 {

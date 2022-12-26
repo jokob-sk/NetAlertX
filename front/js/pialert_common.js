@@ -11,6 +11,23 @@
 var timerRefreshData = ''
 var modalCallbackFunction = '';
 
+function getCache(key)
+{
+  // check cache
+  if(sessionStorage.getItem(key))
+  {
+    return sessionStorage.getItem(key);
+  } else
+  {
+    return "";
+  }
+}
+
+function setCache(key, data)
+{
+  sessionStorage.setItem(key, data); 
+}
+
 
 // -----------------------------------------------------------------------------
 function setCookie (cookie, value, expirationHours='') {

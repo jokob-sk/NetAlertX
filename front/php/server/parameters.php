@@ -49,6 +49,8 @@ function getParameter() {
   $row = $result -> fetchArray (SQLITE3_NUM);  
   $value = $row[0];
 
+  // displayMessage ($value);
+
   echo (json_encode ($value));
 }
 

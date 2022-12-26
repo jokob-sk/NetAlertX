@@ -517,7 +517,8 @@ def main ():
             reporting = False
 
             # Header
-            file_print('[', time_now.replace (microsecond=0), '] Loop start ')                
+            updateState("Process: Start")
+            file_print('[', time_now.replace (microsecond=0), '] Process: Start')                
 
             # Timestamp
             startTime = time_now
@@ -562,7 +563,8 @@ def main ():
                 cycle = ""
 
             # Footer
-            file_print('[', time_now.replace (microsecond=0), '] Loop end')            
+            updateState("Process: Wait")
+            file_print('[', time_now.replace (microsecond=0), '] Process: Wait')            
         else:
             # do something
             cycle = ""           
@@ -578,6 +580,7 @@ def check_internet_IP ():
     reporting = False
 
     # Header
+    updateState("Scanning: Internet IP")
     file_print('[', startTime, '] Check Internet IP:')    
 
     # Get Internet IP
@@ -746,6 +749,7 @@ def check_IP_format (pIP):
 #===============================================================================
 def cleanup_database ():
     # Header    
+    updateState("Maintenance: DB cleanup")
     file_print('[', startTime, '] Cleanup Database:' )
 
     openDB()    
@@ -770,6 +774,7 @@ def cleanup_database ():
 #===============================================================================
 def update_devices_MAC_vendors (pArg = ''):
     # Header    
+    updateState("Maintenance: Update HW Vendors")
     file_print('[', startTime, '] Update HW Vendors:' )
 
     # Update vendors DB (iab oui)
@@ -889,6 +894,7 @@ def scan_network ():
     # # devtest end
 
     # Header
+    updateState("Scanning: Network")
     file_print('[', startTime, '] Scan Devices:' )    
     file_print('    ScanCycle:', cycle)
     
@@ -923,7 +929,7 @@ def scan_network ():
     reporting = read_DHCP_leases () or reporting
 
     # Load current scan data
-    file_print('Processing scan results')    
+    file_print('  Processing scan results')    
     save_scanned_devices (arpscan_devices, cycle_interval)
     
     # Print stats
@@ -932,7 +938,7 @@ def scan_network ():
     print_log ('Stats end')
 
     # Create Events
-    file_print('Updating DB Info')
+    file_print('  Updating DB Info')
     file_print('    Sessions Events (connect / discconnect)')
     insert_events()
 
@@ -1756,7 +1762,7 @@ def email_reporting ():
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
 
     # Reporting section
-    file_print('Check if something to report')
+    file_print('  Check if something to report')
     openDB()
 
     # prepare variables for JSON construction
@@ -1941,38 +1947,42 @@ def email_reporting ():
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
-        file_print('\nChanges detected, sending reports')
+        file_print('Changes detected, sending reports')
 
-        if REPORT_MAIL and check_config('email'):            
-            file_print('    Sending report by email')
+        if REPORT_MAIL and check_config('email'):  
+            updateState("Sending: Email")
+            file_print('    Sending report by Email')
             send_email (mail_text, mail_html)
         else :
             file_print('    Skip mail')
         if REPORT_APPRISE and check_config('apprise'):
+            updateState("Sending: Apprise")
             file_print('    Sending report by Apprise')
             send_apprise (mail_html)
         else :
             file_print('    Skip Apprise')
         if REPORT_WEBHOOK and check_config('webhook'):
-            file_print('    Sending report by webhook')
+            updateState("Sending: Webhook")
+            file_print('    Sending report by Webhook')
             send_webhook (json_final, mail_text)
         else :
             file_print('    Skip webhook')
         if REPORT_NTFY and check_config('ntfy'):
+            updateState("Sending: NTFY")
             file_print('    Sending report by NTFY')
             send_ntfy (mail_text)
         else :
             file_print('    Skip NTFY')
         if REPORT_PUSHSAFER and check_config('pushsafer'):
+            updateState("Sending: PUSHSAFER")
             file_print('    Sending report by PUSHSAFER')
             send_pushsafer (mail_text)
         else :
             file_print('    Skip PUSHSAFER')
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
-            file_print('    Establishing MQTT thread')                
-            # mqtt_thread_up = True # prevent this code to be run multiple times concurrently
-            # start_mqtt_thread ()                
+            updateState("Sending: MQTT")
+            file_print('    Establishing MQTT thread')                          
             mqtt_start()        
         else :
             file_print('    Skip MQTT')
@@ -2338,10 +2348,10 @@ def mqtt_create_client():
         global mqtt_connected_to_broker
         
         if rc == 0: 
-            file_print("Connected to broker")         
+            file_print("        Connected to broker")            
             mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            file_print("Connection failed")
+            file_print("        Connection failed")
             mqtt_connected_to_broker = False
 
 
@@ -2546,7 +2556,7 @@ def upgradeDB ():
 
     sql.execute("""      
       CREATE TABLE "Parameters" (
-        "par_ID"	INTEGER,
+        "par_ID"	TEXT,
         "par_Value"	TEXT
       );      
       """)    
@@ -2561,14 +2571,25 @@ def upgradeDB ():
     ('Front_Details_Period', '1 day'),
     ('Front_Devices_Order', '[[3,"desc"],[0,"asc"]]'),
     ('Front_Devices_Rows', '100'),
-    ('Front_Details_Tab', 'tabDetails')
+    ('Front_Details_Tab', 'tabDetails'),
+    ('Back_App_State', 'Initializing')
     ] 
 
-    sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)
+    sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
 
       
     # don't hog DB access  
     closeDB ()
+
+#-------------------------------------------------------------------------------
+def updateState(newState):
+    openDB()
+
+    sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
+
+    # don't hog DB access  
+    closeDB ()
+
  
 #===============================================================================
 # Home Assistant UTILs
@@ -2597,7 +2618,7 @@ def to_binary_sensor(input):
 #===============================================================================
 # UTIL
 #===============================================================================
-#-------------------------------------------------------------------------------
+
 
 def sanitize_string(input):
     if isinstance(input, bytes):

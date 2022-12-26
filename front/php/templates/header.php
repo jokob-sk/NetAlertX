@@ -84,6 +84,11 @@ require 'php/templates/language/'.$pia_lang_selected.'.php';
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- ----------------------------------------------------------------------- -->
+  <!-- REQUIRED JS SCRIPTS -->
+
+  <!-- jQuery 3 -->
+  <script src="lib/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -127,30 +132,33 @@ if ($ENABLED_DARKMODE === True) {
    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
 } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
+
+
 <!-- Servertime to the right of the hostname -->
 <script>
 
-var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
+  function updateState(){
+    getParam("state","Back_App_State")
+    setTimeout("updateState()", 5000);
+  }
 
-function show_pia_servertime() {
-    if (!document.getElementById) {
-        return;
+  function show_pia_servertime() {
+
+    // datetime in timeZone in the "en-UK" locale
+    let time = new Date().toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+
+    if (document.getElementById) { 
+      document.getElementById("PIA_Servertime_place").innerHTML = '('+time+')'; 
+    } 
+    
+    setTimeout("show_pia_servertime()", 1000);
+  }
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+        window.location.href = window.location.href.split('#')[0];
     }
-    var pia_hour = pia_servertime.getHours();
-    var pia_minute = pia_servertime.getMinutes();
-    var pia_second = pia_servertime.getSeconds();
-    pia_servertime.setSeconds(pia_second + 1);
-    if (pia_hour <= 9) { pia_hour = "0" + pia_hour; }
-    if (pia_minute <= 9) { pia_minute = "0" + pia_minute; }
-    if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
-    if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
-}
-
-document.addEventListener("visibilitychange",()=>{
-   if(document.visibilityState==="visible"){
-       window.location.href = window.location.href.split('#')[0];
-   }
-})
+  })
 
 </script>
 
@@ -180,11 +188,12 @@ document.addEventListener("visibilitychange",()=>{
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <span class="sr-only">Toggle navigation</span>
-      </a>
+      </a>      
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-
+        <ul class="nav navbar-nav">          
+          <!-- Server Status -->
+          <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><code id="state"></code></a></li>
           <!-- Server Name -->
           <li><a style="pointer-events:none;"><?php echo gethostname();?> <span id="PIA_Servertime_place"></span></a></li>
 
@@ -297,3 +306,24 @@ document.addEventListener("visibilitychange",()=>{
     </section>
     <!-- /.sidebar -->
   </aside>
+
+<script defer>
+
+function getParam(targetId, key) {  
+  // get parameter value
+  $.get('php/server/parameters.php?action=get&parameter='+ key, function(data) {
+    var result = data;
+
+    document.getElementById(targetId).innerHTML = result;    
+
+  });
+}
+
+// Update server time in the header
+show_pia_servertime()
+
+// Update server state in the header
+updateState()
+
+</script>
+

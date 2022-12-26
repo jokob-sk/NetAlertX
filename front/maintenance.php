@@ -723,24 +723,6 @@ function initializeTabs () {
 }
 
 
-function getCache(key)
-{
-  // check cache
-  if(sessionStorage.getItem(key))
-  {
-    return sessionStorage.getItem(key);
-  } else
-  {
-    return "";
-  }
-}
-
-function setCache(key, data)
-{
-  sessionStorage.setItem(key, data); 
-}
-
-
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
