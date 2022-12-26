@@ -19,9 +19,6 @@ if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
 // External files
 require 'php/server/db.php';
 require 'php/server/util.php';
-require 'php/templates/language/'.$pia_lang_selected.'.php';
-
-
 
 //------------------------------------------------------------------------------
 //  Action selector
@@ -47,8 +44,7 @@ $result = $db->query("SELECT * FROM Settings");
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      
-  $settings[] = array( 'Index'        => $row['Index'], 
-                        'Code_Name'    => $row['Code_Name'],
+  $settings[] = array(  'Code_Name'    => $row['Code_Name'],
                         'Display_Name' => $row['Display_Name'],
                         'Description'  => $row['Description'],
                         'Type'         => $row['Type'],
@@ -60,6 +56,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 }
 
 $db->close();
+
+echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."')</script>";
 
 ?>
 <!-- Page ------------------------------------------------------------------ -->

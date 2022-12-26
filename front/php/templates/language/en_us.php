@@ -203,7 +203,7 @@ $lang['en_us'] = array(
 'DevDetail_Nmap_buttonDetail_text' => 'Detailed Scan: Default scan with enabled OS detection, version detection, script scanning and traceroute (up to 30 seconds or more)',
 'DevDetail_Nmap_buttonSkipDiscovery' => 'Skip host discovery',
 'DevDetail_Nmap_buttonSkipDiscovery_text' => 'Skip host discovery (-Pn option): Default scan without host discovery',
-'DevDetail_Nmap_resultsLink' => 'Results will be also available in the <code>pialert_front.log</code> file.',
+'DevDetail_Nmap_resultsLink' => 'You can leave this page after starting a scan. Results will be also available in the <code>pialert_front.log</code> file.',
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
@@ -212,7 +212,7 @@ $lang['en_us'] = array(
 'Maintenance_Title' => 'Maintenance tools',
 'Maintenance_database_path' => 'Database-Path',
 'Maintenance_database_size' => 'Database-Size',
-'Maintenance_database_lastmod' => 'last Modification',
+'Maintenance_database_lastmod' => 'Last Modification',
 'Maintenance_database_backup' => 'DB Backups',
 'Maintenance_database_backup_found' => 'backups were found',
 'Maintenance_database_backup_total' => 'total disk usage',
@@ -228,7 +228,7 @@ $lang['en_us'] = array(
 'Maintenance_lang_en_us' => 'English (US)',
 'Maintenance_lang_de_de' => 'German (DE)',
 'Maintenance_lang_es_es' => 'Spanish (ES)',
-'Maintenance_lang_selector_text' => 'The change takes place on the server side, so it affects all devices in use.',
+'Maintenance_lang_selector_text' => 'The change takes place on the client side, so it affects only the current browser.',
 'Maintenance_lang_selector_apply' => 'Apply',
 'Maintenance_Tools_Tab_Settings' => 'Settings',
 'Maintenance_Tools_Tab_Tools' => 'Tools',
@@ -421,6 +421,9 @@ $lang['en_us'] = array(
 //////////////////////////////////////////////////////////////////
 // Settings
 //////////////////////////////////////////////////////////////////
+
+
+'settings_missing' => 'Not all settings loaded, refresh the page!',
 
 //General
 'SCAN_SUBNETS_name' => 'Subnets to scan',

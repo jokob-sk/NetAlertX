@@ -8,101 +8,11 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
-// ###################################
-// ## TimeZone processing start
-// ###################################
 
-$configFolderPath = "/home/pi/pialert/config/";
-$config_file = "pialert.conf";
-$logFolderPath = "/home/pi/pialert/front/log/";
-$log_file = "pialert_front.log";
+require '/home/pi/pialert/front/php/templates/timezone.php';
+require '/home/pi/pialert/front/php/templates/skinUI.php';
+require '/home/pi/pialert/front/php/templates/language/lang.php';
 
-
-$fullConfPath = $configFolderPath.$config_file;
-
-$config_file_lines = file($fullConfPath);
-$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
-
-$timeZone = "";
-
-foreach ($config_file_lines as $line)
-{    
-  if( preg_match('/TIMEZONE(.*?)/', $line, $match) == 1 )
-  {        
-      if (preg_match('/\'(.*?)\'/', $line, $match) == 1) {          
-        $timeZone = $match[1];
-      }
-  }
-}
-
-if($timeZone == "")
-{
-  $timeZone = "Europe/Berlin";
-}
-
-date_default_timezone_set($timeZone);
-
-$date = new DateTime("now", new DateTimeZone($timeZone) );
-$timestamp = $date->format('Y-m-d_H-i-s');
-
-// ###################################
-// ## TimeZone processing end
-// ###################################
-
-
-// ###################################
-// ## GUI settings processing start
-// ###################################
-if (file_exists('../db/setting_darkmode')) {
-    $ENABLED_DARKMODE = True;
-}
-foreach (glob("../db/setting_skin*") as $filename) {
-    $pia_skin_selected = str_replace('setting_','',basename($filename));
-}
-if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
-
-// ###################################
-// ## Languages
-// ###################################
-
-foreach (glob("../db/setting_language*") as $filename) {
-    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-}
-
-if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
-
-require 'php/templates/language/en_us.php';
-require 'php/templates/language/de_de.php';
-require 'php/templates/language/es_es.php';
-
-function lang($key)
-{
-  global $pia_lang_selected, $lang ;
-
-  // try to get the selected language translation
-  $temp = $lang[$pia_lang_selected][$key];
-
-  if(isset($temp) == FALSE)
-  {    
-    // if not found, use English
-    $temp = $lang[$pia_lang_selected]["en_us"];
-
-    // echo $temp;
-    if(isset($temp) == FALSE)
-    {
-      // if not found, in English, use placeholder
-      $temp = "String not found";
-    }
-  }
-
-  // echo $temp;
-  
-  return $temp;
-}
-
-// ###################################
-// ## GUI settings processing end
-// ###################################
 ?>
 
 <!DOCTYPE html> 

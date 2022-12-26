@@ -51,6 +51,8 @@ fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
+time_now = datetime.datetime.now()
+log_timestamp = time_now
 sql_connection = None
 
 
@@ -101,7 +103,7 @@ def print_log (pText):
     log_timestamp2 = datetime.datetime.now()
 
     # Print line + time + elapsed time + text
-    file_print('[LOG_PRINT] ',
+    file_print('[PRINT_LOG] ',
         log_timestamp2, ' ',
         log_timestamp2 - log_timestamp, ' ',
         pText)
@@ -469,8 +471,6 @@ check_report = [1, "internet_IP", "update_vendors_silent"]
 mqtt_thread_up = False
 
 # timestamps of last execution times
-time_now = datetime.datetime.now()
-log_timestamp = time_now
 startTime = time_now
 now_minus_24h = time_now - timedelta(hours = 24)
 
@@ -2560,7 +2560,7 @@ def upgradeDB ():
     """).fetchone() == None
 
     # Re-creating Settings table
-    if settingsMissing:   
+    # if settingsMissing:   
     file_print("[upgradeDB] Re-creating Settings table")
 
     sql.execute("DROP TABLE Settings;")       

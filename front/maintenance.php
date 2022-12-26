@@ -146,32 +146,6 @@ if (submit && isset($_POST['skinselector_set'])) {
 
 // Language selector -----------------------------------------------------------------
 
-if (submit && isset($_POST['langselector_set'])) {
-  $pia_lang_set_dir = '../db/';
-  $pia_lang_selector = htmlspecialchars($_POST['langselector']);
-  if (in_array($pia_lang_selector, $pia_installed_langs)) {
-    foreach ($pia_installed_langs as $file) {
-      unlink ($pia_lang_set_dir.'/setting_language_'.$file);
-    }
-    foreach ($pia_installed_langs as $file) {
-      if (file_exists($pia_lang_set_dir.'/setting_language_'.$file)) {
-          $pia_lang_error = True;
-          break;
-      } else {
-          $pia_lang_error = False;
-      }
-    }
-    if ($pia_lang_error == False) {
-      $testlang = fopen($pia_lang_set_dir.'setting_language_'.$pia_lang_selector, 'w');
-      //$pia_lang_test = '';
-      echo("<meta http-equiv='refresh' content='1'>"); 
-    } else {
-      //$pia_lang_test = '';
-      echo("<meta http-equiv='refresh' content='1'>");
-    }    
-  }
-}
-
 ?>
 
       <div class="row">
@@ -239,21 +213,19 @@ if (submit && isset($_POST['langselector_set'])) {
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="text-align:center;">
                             <form method="post" action="maintenance.php">
-                            <div style="display: inline-block;">
-                                <select name="langselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
-                                    <option value=""><?php echo lang('Maintenance_lang_selector_empty');?></option>
-                                    <option value="en_us"><?php echo lang('Maintenance_lang_en_us');?></option>
-                                    <option value="de_de"><?php echo lang('Maintenance_lang_de_de');?></option>
-                                    <option value="es_es"><?php echo lang('Maintenance_lang_es_es');?></option>
-                                </select></div>
-                            <div style="display: block;"><input type="submit" name="langselector_set" value="<?php echo lang('Maintenance_lang_selector_apply');?>" class="btn bg-green" style="width:160px;">
-                                <?php // echo $pia_lang_test; ?>
-                            </div>
+                              <div style="display: inline-block;">
+                                  <select name="langselector" id="langselector" class="form-control bg-green"  style="width:160px; margin-bottom:5px;">
+                                      <option value=""><?php echo lang('Maintenance_lang_selector_empty');?></option>
+                                      <option value="en_us"><?php echo lang('Maintenance_lang_en_us');?></option>
+                                      <option value="de_de"><?php echo lang('Maintenance_lang_de_de');?></option>
+                                      <option value="es_es"><?php echo lang('Maintenance_lang_es_es');?></option>
+                                  </select>
+                              </div>                            
                             </form>
                         </div>
                         <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
                             <?php echo lang('Maintenance_lang_selector_text');?>
-                        </div>
+                        </div>                    
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="text-align: center;">
@@ -721,6 +693,14 @@ function initializeTabs () {
     }
   });
 }
+
+// save language in a cookie
+$('#langselector').on('change', function (e) {
+    var optionSelected = $("option:selected", this);
+    var valueSelected = this.value;    
+    setCookie("language",valueSelected )
+    location.reload();
+  });
 
 
 // load footer asynchronously not to block the page load/other sections

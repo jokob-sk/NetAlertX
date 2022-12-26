@@ -47,7 +47,7 @@ $lang['es_es'] = array(
 'Navigation_Presence' => 'Historial',
 'Navigation_Events' => 'Eventos',
 'Navigation_Maintenance' => 'Cantenimiento',
-'Navigation_Settings' => 'configuración',
+'Navigation_Settings' => 'Configuración',
 'Navigation_Network' => 'Red',
 'Navigation_HelpFAQ' => 'Ayuda / FAQ',
 'Device_Title' => 'Dispositivos',
@@ -199,7 +199,6 @@ $lang['es_es'] = array(
 'DevDetail_Nmap_buttonDetail_text' => 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)',
 'DevDetail_Nmap_buttonSkipDiscovery' => 'Omitir detección de host',
 'DevDetail_Nmap_buttonSkipDiscovery_text' => 'Omitir detección de host (-Pn opción): Escaneo predeterminado sin detección de host',
-'DevDetail_Nmap_resultsLink' => 'Results will be also available in the <code>pialert_front.log</code> file.',
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page - Update by @TeroRERO 07ago2022

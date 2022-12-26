@@ -205,7 +205,7 @@ $lang['de_de'] = array(
 'DevDetail_Nmap_buttonDetail_text' => 'Detailierter Scan: Standardscan mit aktivierter Betriebssystemerkennung, Versionserkennung, Skript-Scan und Traceroute (bis zu 30 oder mehr Sekunden)',
 'DevDetail_Nmap_buttonSkipDiscovery' => 'Ohne Erreichbarkeitsprüfung',
 'DevDetail_Nmap_buttonSkipDiscovery_text' => 'Ohne Erreichbarkeitsprüfung (-Pn Parameter): Standard Scan bei dem nmap annimmt, dass der Host erreichbar ist.',
-'DevDetail_Nmap_resultsLink' => 'Results will be also available in the <code>pialert_front.log</code> file.',
+
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page

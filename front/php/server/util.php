@@ -8,57 +8,10 @@
 //  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
 //------------------------------------------------------------------------------
 
-// ###################################
-// ## TimeZone processing start
-// ###################################
-$configFolderPath = "/home/pi/pialert/config/";
-$config_file = "pialert.conf";
-$logFolderPath = "/home/pi/pialert/front/log/";
-$log_file = "pialert_front.log";
+require '/home/pi/pialert/front/php/templates/timezone.php';
+require '/home/pi/pialert/front/php/templates/skinUI.php';
 
 
-$fullConfPath = $configFolderPath.$config_file;
-
-$config_file_lines = file($fullConfPath);
-$config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
-
-$timeZone = "";
-
-foreach ($config_file_lines as $line)
-{    
-  if( preg_match('/TIMEZONE(.*?)/', $line, $match) == 1 )
-  {        
-      if (preg_match('/\'(.*?)\'/', $line, $match) == 1) {          
-        $timeZone = $match[1];
-      }
-  }
-}
-
-if($timeZone == "")
-{
-  $timeZone = "Europe/Berlin";
-}
-
-date_default_timezone_set($timeZone);
-
-$date = new DateTime("now", new DateTimeZone($timeZone) );
-$timestamp = $date->format('Y-m-d_H-i-s');
-
-
-// ###################################
-// ## TimeZone processing end
-// ###################################
-// ###################################
-// ## GUI settings processing start
-// ###################################
-foreach (glob("../db/setting_language*") as $filename) {
-  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-}
-if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
-require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.php';
-// ###################################
-// ## GUI settings processing end
-// ###################################
 $FUNCTION = [];
 $SETTINGS = [];
 

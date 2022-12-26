@@ -10,69 +10,17 @@ if(array_search('action', $_REQUEST) != FALSE)
   }    
 }
 
+require 'php/templates/language/lang.php';
+require 'php/templates/skinUI.php';
+
 
 // ##################################################
 // ## Login Processing start
 // ##################################################
 $config_file = "../config/pialert.conf";
 $config_file_lines = file($config_file);
-// ###################################
-// ## GUI settings processing start
-// ###################################
-if (file_exists('../db/setting_darkmode')) {
-  $ENABLED_DARKMODE = True;
-}
-foreach (glob("../db/setting_skin*") as $filename) {
-  $pia_skin_selected = str_replace('setting_','',basename($filename));
-}
-if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
 
-foreach (glob("../db/setting_language*") as $filename) {
-  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-}
-if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
-require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.php';
-// ###################################
-// ## GUI settings processing end
-// ###################################
-// ###################################
-// ## Languages
-// ###################################
 
-foreach (glob("../db/setting_language*") as $filename) {
-  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-}
-
-if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
-
-require 'php/templates/language/en_us.php';
-require 'php/templates/language/de_de.php';
-require 'php/templates/language/es_es.php';
-
-function lang($key)
-{
-global $pia_lang_selected, $lang ;
-
-// try to get the selected language translation
-$temp = $lang[$pia_lang_selected][$key];
-
-if(isset($temp) == FALSE)
-{    
-  // if not found, use English
-  $temp = $lang[$pia_lang_selected]["en_us"];
-
-  // echo $temp;
-  if(isset($temp) == FALSE)
-  {
-    // if not found, in English, use placeholder
-    $temp = "String not found";
-  }
-}
-
-// echo $temp;
-
-return $temp;
-}
 // ###################################
 // ## PIALERT_WEB_PROTECTION FALSE
 // ###################################
