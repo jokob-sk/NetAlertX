@@ -34,6 +34,7 @@ import requests
 from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
+from pathlib import Path
 # from ssdpy import SSDPClient
 # import upnpclient
 
@@ -50,6 +51,8 @@ fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
+sql_connection = None
+
 
 #-------------------------------------------------------------------------------
 def file_print(*args):
@@ -62,6 +65,7 @@ def file_print(*args):
     print(result)
     file.write(result + '\n')
     file.close()
+
 
 # check RW access of DB and config file
 file_print('\n Permissions check (All should be True)')
@@ -83,7 +87,29 @@ def logResult (stdout, stderr):
     if stderr != None:
         append_file_binary (logPath + '/stderr.log', stderr)
     if stdout != None:
-        append_file_binary (logPath + '/stdout.log', stdout)   
+        append_file_binary (logPath + '/stdout.log', stdout)  
+
+#-------------------------------------------------------------------------------
+def print_log (pText):
+    global log_timestamp
+
+    # Check LOG actived
+    if not PRINT_LOG :
+        return
+
+    # Current Time    
+    log_timestamp2 = datetime.datetime.now()
+
+    # Print line + time + elapsed time + text
+    file_print('[LOG_PRINT] ',
+        log_timestamp2, ' ',
+        log_timestamp2 - log_timestamp, ' ',
+        pText)
+
+    # Save current time to calculate elapsed time until next log
+    log_timestamp = log_timestamp2 
+    
+#-------------------------------------------------------------------------------
 
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
@@ -117,8 +143,9 @@ initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
 # check and initialize pialert.db
 initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 
+
 #===============================================================================
-# USER CONFIG VARIABLES - START
+# USER CONFIG VARIABLES - DEFAULTS
 #===============================================================================
 
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
@@ -211,11 +238,224 @@ DHCP_ACTIVE             = False                         # if enabled you need to
 # keep 90 days of network activity if not specified how many days to keep
 DAYS_TO_KEEP_EVENTS     = 90
 
-# load the variables from  pialert.conf
-if (sys.version_info > (3,0)):    
-        exec(open(fullConfPath).read())
-else:    
-    execfile (fullConfPath)
+
+#===============================================================================
+# Initialise user defined values
+#===============================================================================
+# We need access to the DB to save new values so need to define DB access methods first
+#-------------------------------------------------------------------------------
+
+def openDB ():
+    global sql_connection
+    global sql
+
+    # Check if DB is open
+    if sql_connection != None :
+        return
+
+    # Log    
+    print_log ('Opening DB')   
+     
+
+    # Open DB and Cursor
+    sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
+    sql_connection.execute('pragma journal_mode=wal') #
+    sql_connection.text_factory = str
+    sql_connection.row_factory = sqlite3.Row
+    sql = sql_connection.cursor()
+
+#-------------------------------------------------------------------------------
+def closeDB ():
+    global sql_connection
+    global sql
+
+    # Check if DB is open
+    if sql_connection == None :
+        return
+
+    # Log    
+    print_log ('Closing DB')
+
+    # Close DB
+    sql_connection.commit()
+    sql_connection.close()
+    sql_connection = None   
+
+#-------------------------------------------------------------------------------
+# Import user values
+
+def importConfig (): 
+
+    # Specify globals so they can be overwritten with the new config
+    # General
+    global SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
+    # Email
+    global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS
+    # Webhooks
+    global REPORT_WEBHOOK, WEBHOOK_URL, WEBHOOK_PAYLOAD, WEBHOOK_REQUEST_METHOD
+    # Apprise
+    global REPORT_APPRISE, APPRISE_HOST, APPRISE_URL
+    # NTFY
+    global REPORT_NTFY, NTFY_HOST, NTFY_TOPIC, NTFY_USER, NTFY_PASSWORD
+    # PUSHSAFER
+    global REPORT_PUSHSAFER, PUSHSAFER_TOKEN
+    # MQTT
+    global REPORT_MQTT,  MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASSWORD, MQTT_QOS, MQTT_DELAY_SEC
+    # DynDNS
+    global DDNS_ACTIVE, DDNS_DOMAIN, DDNS_USER, DDNS_PASSWORD, DDNS_UPDATE_URL
+    # PiHole
+    global PIHOLE_ACTIVE, DHCP_ACTIVE
+
+    # load the variables from  pialert.conf
+    config_file = Path(fullConfPath)
+    code = compile(config_file.read_text(), config_file.name, "exec")
+    config_dict = {}
+    exec(code, {"__builtins__": {}}, config_dict)        
+    
+    SCAN_SUBNETS = config_dict['SCAN_SUBNETS']
+    PRINT_LOG = config_dict['PRINT_LOG']
+    TIMEZONE = config_dict['TIMEZONE']
+    PIALERT_WEB_PROTECTION = config_dict['PIALERT_WEB_PROTECTION']
+    PIALERT_WEB_PASSWORD = config_dict['PIALERT_WEB_PASSWORD']
+    INCLUDED_SECTIONS = config_dict['INCLUDED_SECTIONS']
+    SCAN_CYCLE_MINUTES = config_dict['SCAN_CYCLE_MINUTES']
+    DAYS_TO_KEEP_EVENTS = config_dict['DAYS_TO_KEEP_EVENTS']
+    REPORT_DASHBOARD_URL = config_dict['REPORT_DASHBOARD_URL']
+
+    # Email
+    REPORT_MAIL = config_dict['REPORT_MAIL']
+    SMTP_SERVER = config_dict['SMTP_SERVER']
+    SMTP_PORT = config_dict['SMTP_PORT']
+    REPORT_TO = config_dict['REPORT_TO']
+    REPORT_FROM = config_dict['REPORT_FROM']
+    SMTP_SKIP_LOGIN = config_dict['SMTP_SKIP_LOGIN']
+    SMTP_USER = config_dict['SMTP_USER']
+    SMTP_PASS = config_dict['SMTP_PASS']
+    SMTP_SKIP_TLS = config_dict['SMTP_SKIP_TLS']
+
+    # Webhooks
+    REPORT_WEBHOOK = config_dict['REPORT_WEBHOOK']
+    WEBHOOK_URL = config_dict['WEBHOOK_URL']
+    WEBHOOK_PAYLOAD = config_dict['WEBHOOK_PAYLOAD']
+    WEBHOOK_REQUEST_METHOD = config_dict['WEBHOOK_REQUEST_METHOD']
+
+    # Apprise
+    REPORT_APPRISE = config_dict['REPORT_APPRISE']
+    APPRISE_HOST = config_dict['APPRISE_HOST']
+    APPRISE_URL = config_dict['APPRISE_URL']
+
+    # NTFY
+    REPORT_NTFY = config_dict['REPORT_NTFY']
+    NTFY_HOST = config_dict['NTFY_HOST']
+    NTFY_TOPIC = config_dict['NTFY_TOPIC']
+    NTFY_USER = config_dict['NTFY_USER']
+    NTFY_PASSWORD = config_dict['NTFY_PASSWORD']
+
+    # PUSHSAFER
+    REPORT_PUSHSAFER = config_dict['REPORT_PUSHSAFER']
+    PUSHSAFER_TOKEN = config_dict['PUSHSAFER_TOKEN']
+
+    # MQTT
+    REPORT_MQTT = config_dict['REPORT_MQTT']
+    MQTT_BROKER = config_dict['MQTT_BROKER']
+    MQTT_PORT = config_dict['MQTT_PORT']
+    MQTT_USER = config_dict['MQTT_USER']
+    MQTT_PASSWORD = config_dict['MQTT_PASSWORD']
+    MQTT_QOS = config_dict['MQTT_QOS']
+    MQTT_DELAY_SEC = config_dict['MQTT_DELAY_SEC']
+
+    # DynDNS
+    DDNS_ACTIVE = config_dict['DDNS_ACTIVE']
+    DDNS_DOMAIN = config_dict['DDNS_DOMAIN']
+    DDNS_USER = config_dict['DDNS_USER']
+    DDNS_PASSWORD = config_dict['DDNS_PASSWORD']
+    DDNS_UPDATE_URL = config_dict['DDNS_UPDATE_URL']
+
+    # PiHole
+    PIHOLE_ACTIVE = config_dict['PIHOLE_ACTIVE']
+    DHCP_ACTIVE = config_dict['DHCP_ACTIVE']
+
+    openDB()    
+
+    #  Code_Name, Display_Name, Description, Type, Options, Value, Group
+    settings = [
+
+        # General
+        ('SCAN_SUBNETS', 'Subnets to scan', '',  'subnets', '', '' , str(SCAN_SUBNETS) , 'General'),
+        ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
+        ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
+        ('PIALERT_WEB_PROTECTION', 'Enable logon', '', 'boolean', '', '' , str(PIALERT_WEB_PROTECTION) , 'General'),
+        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'readonly', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
+        ('INCLUDED_SECTIONS', 'Notify on changes in', '', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", '' , str(INCLUDED_SECTIONS) , 'General'),
+        ('SCAN_CYCLE_MINUTES', 'Scan cycle delay (m)', '', 'integer', '', '' , str(SCAN_CYCLE_MINUTES) , 'General'),
+        ('DAYS_TO_KEEP_EVENTS', 'Delete events older than (days)', '', 'integer', '', '' , str(DAYS_TO_KEEP_EVENTS) , 'General'),
+        ('REPORT_DASHBOARD_URL', 'PiAlert URL', '',  'text', '', '' , str(REPORT_DASHBOARD_URL) , 'General'),        
+
+        # Email
+        ('REPORT_MAIL', 'Enable email', '',  'boolean', '', '' , str(REPORT_MAIL) , 'Email'),
+        ('SMTP_SERVER', 'SMTP server URL', '',  'text', '', '' , str(SMTP_SERVER) , 'Email'),
+        ('SMTP_PORT', 'SMTP port', '',  'integer', '', '' , str(SMTP_PORT) , 'Email'),
+        ('REPORT_TO', 'Email to', '',  'text', '', '' , str(REPORT_TO) , 'Email'),
+        ('REPORT_FROM', 'Email Subject', '',  'text', '', '' , str(REPORT_FROM) , 'Email'),
+        ('SMTP_SKIP_LOGIN', 'SMTP skip login', '',  'boolean', '', '' , str(SMTP_SKIP_LOGIN) , 'Email'),
+        ('SMTP_USER', 'SMTP user', '',  'text', '', '' , str(SMTP_USER) , 'Email'),
+        ('SMTP_PASS', 'SMTP password', '',  'password', '', '' , str(SMTP_PASS) , 'Email'),
+        ('SMTP_SKIP_TLS', 'SMTP skip TLS', '',  'boolean', '', '' , str(SMTP_SKIP_TLS) , 'Email'), 
+
+        # Webhooks
+        ('REPORT_WEBHOOK', 'Enable Webhooks', '',  'boolean', '', '' , str(REPORT_WEBHOOK) , 'Webhooks'),
+        ('WEBHOOK_URL', 'Target URL', '',  'text', '', '' , str(WEBHOOK_URL) , 'Webhooks'),
+        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'selecttext', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
+        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'selecttext', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
+
+        # Apprise
+        ('REPORT_APPRISE', 'Enable Apprise', '',  'boolean', '', '' , str(REPORT_APPRISE) , 'Apprise'),
+        ('APPRISE_HOST', 'Apprise host URL', '',  'text', '', '' , str(APPRISE_HOST) , 'Apprise'),
+        ('APPRISE_URL', 'Apprise notification URL', '',  'text', '', '' , str(APPRISE_URL) , 'Apprise'),
+
+        # NTFY
+        ('REPORT_NTFY', 'Enable NTFY', '',  'boolean', '', '' , str(REPORT_NTFY) , 'NTFY'),
+        ('NTFY_HOST', 'NTFY host URL', '',  'text', '', '' , str(NTFY_HOST) , 'NTFY'),
+        ('NTFY_TOPIC', 'NTFY topic', '',  'text', '', '' , str(NTFY_TOPIC) , 'NTFY'),
+        ('NTFY_USER', 'NTFY user', '',  'text', '', '' , str(NTFY_USER) , 'NTFY'),
+        ('NTFY_PASSWORD', 'NTFY password', '',  'password', '', '' , str(NTFY_PASSWORD) , 'NTFY'),
+
+        # PUSHSAFER
+        ('REPORT_PUSHSAFER', 'Enable PUSHSAFER', '',  'boolean', '', '' , str(REPORT_PUSHSAFER) , 'PUSHSAFER'),
+        ('PUSHSAFER_TOKEN', 'PUSHSAFER token', '',  'text', '', '' , str(PUSHSAFER_TOKEN) , 'PUSHSAFER'),
+
+        # MQTT
+        ('REPORT_MQTT', 'Enable MQTT', '',  'boolean', '', '' , str(REPORT_MQTT) , 'MQTT'),
+        ('MQTT_BROKER', 'MQTT broker host URL', '',  'text', '', '' , str(MQTT_BROKER) , 'MQTT'),
+        ('MQTT_PORT', 'MQTT broker port', '',  'integer', '', '' , str(MQTT_PORT) , 'MQTT'),
+        ('MQTT_USER', 'MQTT user', '',  'text', '', '' , str(MQTT_USER) , 'MQTT'),
+        ('MQTT_PASSWORD', 'MQTT password', '',  'password', '', '' , str(MQTT_PASSWORD) , 'MQTT'),
+        ('MQTT_QOS', 'MQTT Quality of Service', '',  'selectinteger', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
+        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'selectinteger', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
+
+        #DynDNS
+        ('DDNS_ACTIVE', 'Enable DynDNS', '',  'boolean', '', '' , str(DDNS_ACTIVE) , 'DynDNS'),
+        # ('QUERY_MYIP_SERVER', 'Query MY IP Server URL', '',  'text', '', '' , QUERY_MYIP_SERVER , 'DynDNS'),
+        ('DDNS_DOMAIN', 'DynDNS domain URL', '',  'text', '', '' , str(DDNS_DOMAIN) , 'DynDNS'),
+        ('DDNS_USER', 'DynDNS user', '',  'text', '', '' , str(DDNS_USER) , 'DynDNS'),
+        ('DDNS_PASSWORD', 'DynDNS password', '',  'password', '', '' , str(DDNS_PASSWORD) , 'DynDNS'),
+        ('DDNS_UPDATE_URL', 'DynDNS update URL', '',  'text', '', '' , str(DDNS_UPDATE_URL) , 'DynDNS'),
+
+        # PiHole
+        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', 'If enabled you need to map /etc/pihole/pihole-FTL.db in your docker-compose.yml',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
+        ('DHCP_ACTIVE', 'Enable PiHole DHCP', 'If enabled you need to map /etc/pihole/dhcp.leases in your docker-compose.yml',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole')
+
+    ]
+    # Insert into DB    
+    sql.execute ("DELETE FROM Settings")
+    
+    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
+         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", settings)
+    
+    closeDB()
+#-------------------------------------------------------------------------------
+
+importConfig()
 
 #===============================================================================
 # USER CONFIG VARIABLES - END
@@ -2213,100 +2453,9 @@ def start_mqtt_thread ():
 #===============================================================================
 # DB
 #===============================================================================
-def importConfig (): 
-
-    # global SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
-
-    # load the variables from  pialert.conf
-    if (sys.version_info > (3,0)):    
-            # file_print(">>>>>oooooo>>>>", PRINT_LOG)
-            d = {}
-            exec(open(fullConfPath).read(), d )  #here
-    else:
-        execfile (fullConfPath, globals())
-
-    # file_print(">>>>>>>>>", PRINT_LOG)
-
-    openDB()    
-
-    #  Code_Name, Display_Name, Description, Type, Options, Value, Group
-    settings = [
-
-        # General
-        ('SCAN_SUBNETS', 'Subnets to scan', '',  'subnets', '', '' , str(SCAN_SUBNETS) , 'General'),
-        ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
-        ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
-        ('PIALERT_WEB_PROTECTION', 'Enable logon', '', 'boolean', '', '' , str(PIALERT_WEB_PROTECTION) , 'General'),
-        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'readonly', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
-        ('INCLUDED_SECTIONS', 'Notify on changes in', '', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", '' , str(INCLUDED_SECTIONS) , 'General'),
-        ('SCAN_CYCLE_MINUTES', 'Scan cycle delay (m)', '', 'integer', '', '' , str(SCAN_CYCLE_MINUTES) , 'General'),
-        ('DAYS_TO_KEEP_EVENTS', 'Delete events older than (days)', '', 'integer', '', '' , str(DAYS_TO_KEEP_EVENTS) , 'General'),
-        ('REPORT_DASHBOARD_URL', 'PiAlert URL', '',  'text', '', '' , str(REPORT_DASHBOARD_URL) , 'General'),        
-
-        # Email
-        ('REPORT_MAIL', 'Enable email', '',  'boolean', '', '' , str(REPORT_MAIL) , 'Email'),
-        ('SMTP_SERVER', 'SMTP server URL', '',  'text', '', '' , str(SMTP_SERVER) , 'Email'),
-        ('SMTP_PORT', 'SMTP port', '',  'integer', '', '' , str(SMTP_PORT) , 'Email'),
-        ('REPORT_TO', 'Email to', '',  'text', '', '' , str(REPORT_TO) , 'Email'),
-        ('REPORT_FROM', 'Email Subject', '',  'text', '', '' , str(REPORT_FROM) , 'Email'),
-        ('SMTP_SKIP_LOGIN', 'SMTP skip login', '',  'boolean', '', '' , str(SMTP_SKIP_LOGIN) , 'Email'),
-        ('SMTP_USER', 'SMTP user', '',  'text', '', '' , str(SMTP_USER) , 'Email'),
-        ('SMTP_PASS', 'SMTP password', '',  'password', '', '' , str(SMTP_PASS) , 'Email'),
-        ('SMTP_SKIP_TLS', 'SMTP skip TLS', '',  'boolean', '', '' , str(SMTP_SKIP_TLS) , 'Email'), 
-
-        # Webhooks
-        ('REPORT_WEBHOOK', 'Enable Webhooks', '',  'boolean', '', '' , str(REPORT_WEBHOOK) , 'Webhooks'),
-        ('WEBHOOK_URL', 'Target URL', '',  'text', '', '' , str(WEBHOOK_URL) , 'Webhooks'),
-        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'selecttext', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
-        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'selecttext', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
-
-        # Apprise
-        ('REPORT_APPRISE', 'Enable Apprise', '',  'boolean', '', '' , str(REPORT_APPRISE) , 'Apprise'),
-        ('APPRISE_HOST', 'Apprise host URL', '',  'text', '', '' , str(APPRISE_HOST) , 'Apprise'),
-        ('APPRISE_URL', 'Apprise notification URL', '',  'text', '', '' , str(APPRISE_URL) , 'Apprise'),
-
-        # NTFY
-        ('REPORT_NTFY', 'Enable NTFY', '',  'boolean', '', '' , str(REPORT_NTFY) , 'NTFY'),
-        ('NTFY_HOST', 'NTFY host URL', '',  'text', '', '' , str(NTFY_HOST) , 'NTFY'),
-        ('NTFY_TOPIC', 'NTFY topic', '',  'text', '', '' , str(NTFY_TOPIC) , 'NTFY'),
-        ('NTFY_USER', 'NTFY user', '',  'text', '', '' , str(NTFY_USER) , 'NTFY'),
-        ('NTFY_PASSWORD', 'NTFY password', '',  'password', '', '' , str(NTFY_PASSWORD) , 'NTFY'),
-
-        # PUSHSAFER
-        ('REPORT_PUSHSAFER', 'Enable PUSHSAFER', '',  'boolean', '', '' , str(REPORT_PUSHSAFER) , 'PUSHSAFER'),
-        ('PUSHSAFER_TOKEN', 'PUSHSAFER token', '',  'text', '', '' , str(PUSHSAFER_TOKEN) , 'PUSHSAFER'),
-
-        # MQTT
-        ('REPORT_MQTT', 'Enable MQTT', '',  'boolean', '', '' , str(REPORT_MQTT) , 'MQTT'),
-        ('MQTT_BROKER', 'MQTT broker host URL', '',  'text', '', '' , str(MQTT_BROKER) , 'MQTT'),
-        ('MQTT_PORT', 'MQTT broker port', '',  'integer', '', '' , str(MQTT_PORT) , 'MQTT'),
-        ('MQTT_USER', 'MQTT user', '',  'text', '', '' , str(MQTT_USER) , 'MQTT'),
-        ('MQTT_PASSWORD', 'MQTT password', '',  'password', '', '' , str(MQTT_PASSWORD) , 'MQTT'),
-        ('MQTT_QOS', 'MQTT Quality of Service', '',  'selectinteger', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
-        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'selectinteger', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
-
-        #DynDNS
-        ('DDNS_ACTIVE', 'Enable DynDNS', '',  'boolean', '', '' , str(DDNS_ACTIVE) , 'DynDNS'),
-        # ('QUERY_MYIP_SERVER', 'Query MY IP Server URL', '',  'text', '', '' , QUERY_MYIP_SERVER , 'DynDNS'),
-        ('DDNS_DOMAIN', 'DynDNS domain URL', '',  'text', '', '' , str(DDNS_DOMAIN) , 'DynDNS'),
-        ('DDNS_USER', 'DynDNS user', '',  'text', '', '' , str(DDNS_USER) , 'DynDNS'),
-        ('DDNS_PASSWORD', 'DynDNS password', '',  'password', '', '' , str(DDNS_PASSWORD) , 'DynDNS'),
-        ('DDNS_UPDATE_URL', 'DynDNS update URL', '',  'text', '', '' , str(DDNS_UPDATE_URL) , 'DynDNS'),
-
-        # PiHole
-        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', 'If enabled you need to map /etc/pihole/pihole-FTL.db in your docker-compose.yml',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
-        ('DHCP_ACTIVE', 'Enable PiHole DHCP', 'If enabled you need to map /etc/pihole/dhcp.leases in your docker-compose.yml',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole')
-
-    ]
-    # Insert into DB    
-    sql.execute ("DELETE FROM Settings")
-    
-    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", settings)
-    
-    closeDB()
 
 
+#-------------------------------------------------------------------------------
 def upgradeDB (): 
 
     openDB()
@@ -2420,44 +2569,7 @@ def upgradeDB ():
       
     # don't hog DB access  
     closeDB ()
-
-#-------------------------------------------------------------------------------
-
-def openDB ():
-    global sql_connection
-    global sql
-
-    # Check if DB is open
-    if sql_connection != None :
-        return
-
-    # Log    
-    print_log ('Opening DB')   
-     
-
-    # Open DB and Cursor
-    sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
-    sql_connection.execute('pragma journal_mode=wal') #
-    sql_connection.text_factory = str
-    sql_connection.row_factory = sqlite3.Row
-    sql = sql_connection.cursor()
-
-#-------------------------------------------------------------------------------
-def closeDB ():
-    global sql_connection
-    global sql
-
-    # Check if DB is open
-    if sql_connection == None :
-        return
-
-    # Log    
-    print_log ('Closing DB')
-
-    # Close DB
-    sql_connection.commit()
-    sql_connection.close()
-    sql_connection = None    
+ 
 #===============================================================================
 # Home Assistant UTILs
 #===============================================================================
@@ -2485,27 +2597,6 @@ def to_binary_sensor(input):
 #===============================================================================
 # UTIL
 #===============================================================================
-
-#-------------------------------------------------------------------------------
-def print_log (pText):
-    global log_timestamp
-
-    # Check LOG actived
-    if not PRINT_LOG :
-        return
-
-    # Current Time    
-    log_timestamp2 = datetime.datetime.now()
-
-    # Print line + time + elapsed time + text
-    file_print('[LOG_PRINT] ',
-        log_timestamp2, ' ',
-        log_timestamp2 - log_timestamp, ' ',
-        pText)
-
-    # Save current time to calculate elapsed time until next log
-    log_timestamp = log_timestamp2
-
 #-------------------------------------------------------------------------------
 
 def sanitize_string(input):

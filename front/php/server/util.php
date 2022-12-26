@@ -320,7 +320,7 @@ function saveSettings()
 
   displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file.  
     <br/><br/>Backup of the previous ".$config_file." created here: <br/><br/><code>".$new_name."</code><br/><br/>
-    <b>Restart the container for the changes to take effect.</b>", 
+    <b>Note:</b> Wait <b>20s</b> for the changes to reflect in the UI.", 
     FALSE, TRUE, TRUE, TRUE);    
 
 }
