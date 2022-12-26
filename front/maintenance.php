@@ -67,7 +67,7 @@ $pia_installed_skins = array('skin-black-light',
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?php echo $pia_lang['Maintenance_Title'];?>
+         <?php echo lang('Maintenance_Title');?>
       </h1>
     </section>
 
@@ -89,9 +89,9 @@ if (!file_exists('../db/setting_stoparpscan')) {
   $execstring = 'ps -f -u root | grep "sudo arp-scan" 2>&1';
   $pia_arpscans = "";
   exec($execstring, $pia_arpscans);
-  $pia_arpscans_result = sizeof($pia_arpscans).' '.$pia_lang['Maintenance_arp_status_on'];
+  $pia_arpscans_result = sizeof($pia_arpscans).' '.lang('Maintenance_arp_status_on');
 } else {
-  $pia_arpscans_result = '<span style="color:red;">arp-Scan '.$pia_lang['Maintenance_arp_status_off'] .'</span>';
+  $pia_arpscans_result = '<span style="color:red;">arp-Scan '.lang('Maintenance_arp_status_off') .'</span>';
 }
 
 // Count and Calc Backups -------------------------------------------------------
@@ -183,31 +183,31 @@ if (submit && isset($_POST['langselector_set'])) {
               <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="min-width: 140px"><?php echo $pia_lang['Maintenance_database_path'];?></div>
+                        <div class="db_info_table_cell" style="min-width: 140px"><?php echo lang('Maintenance_database_path');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db;?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?php echo $pia_lang['Maintenance_database_size'];?></div>
+                        <div class="db_info_table_cell"><?php echo lang('Maintenance_database_size');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db_size;?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?php echo $pia_lang['Maintenance_database_lastmod'];?></div>
+                        <div class="db_info_table_cell"><?php echo lang('Maintenance_database_lastmod');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db_mod;?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?php echo $pia_lang['Maintenance_database_backup'];?></div>
+                        <div class="db_info_table_cell"><?php echo lang('Maintenance_database_backup');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $Pia_Archive_count.' '.$pia_lang['Maintenance_database_backup_found'].' / '.$pia_lang['Maintenance_database_backup_total'].': '.$Pia_Archive_diskusage;?>
+                            <?php echo $Pia_Archive_count.' '.lang('Maintenance_database_backup_found').' / '.lang('Maintenance_database_backup_total').': '.$Pia_Archive_diskusage;?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?php echo $pia_lang['Maintenance_arp_status'];?></div>
+                        <div class="db_info_table_cell"><?php echo lang('Maintenance_arp_status');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_arpscans_result;?></div>
                     </div>
@@ -221,16 +221,16 @@ if (submit && isset($_POST['langselector_set'])) {
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         <li class="active">
-          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Settings'];?></a>
+          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_Settings');?></a>
         </li>
         <li>
-          <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Tools'];?></a>
+          <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_Tools');?></a>
         </li>
         <li>
-          <a id="tab_BackupRestore_id" href="#tab_BackupRestore" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_BackupRestore'];?></a>
+          <a id="tab_BackupRestore_id" href="#tab_BackupRestore" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_BackupRestore');?></a>
         </li>
         <li>
-          <a id="tab_Logging_id" href="#tab_Logging" data-toggle="tab"><?php echo $pia_lang['Maintenance_Tools_Tab_Logging'];?></a>
+          <a id="tab_Logging_id" href="#tab_Logging" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_Logging');?></a>
         </li>
     </ul>
     <div class="tab-content">
@@ -241,18 +241,18 @@ if (submit && isset($_POST['langselector_set'])) {
                             <form method="post" action="maintenance.php">
                             <div style="display: inline-block;">
                                 <select name="langselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
-                                    <option value=""><?php echo $pia_lang['Maintenance_lang_selector_empty'];?></option>
-                                    <option value="en_us"><?php echo $pia_lang['Maintenance_lang_en_us'];?></option>
-                                    <option value="de_de"><?php echo $pia_lang['Maintenance_lang_de_de'];?></option>
-                                    <option value="es_es"><?php echo $pia_lang['Maintenance_lang_es_es'];?></option>
+                                    <option value=""><?php echo lang('Maintenance_lang_selector_empty');?></option>
+                                    <option value="en_us"><?php echo lang('Maintenance_lang_en_us');?></option>
+                                    <option value="de_de"><?php echo lang('Maintenance_lang_de_de');?></option>
+                                    <option value="es_es"><?php echo lang('Maintenance_lang_es_es');?></option>
                                 </select></div>
-                            <div style="display: block;"><input type="submit" name="langselector_set" value="<?php echo $pia_lang['Maintenance_lang_selector_apply'];?>" class="btn bg-green" style="width:160px;">
+                            <div style="display: block;"><input type="submit" name="langselector_set" value="<?php echo lang('Maintenance_lang_selector_apply');?>" class="btn bg-green" style="width:160px;">
                                 <?php // echo $pia_lang_test; ?>
                             </div>
                             </form>
                         </div>
                         <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
-                            <?php echo $pia_lang['Maintenance_lang_selector_text'];?>
+                            <?php echo lang('Maintenance_lang_selector_text');?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
@@ -260,7 +260,7 @@ if (submit && isset($_POST['langselector_set'])) {
                             <form method="post" action="maintenance.php">
                             <div style="display: inline-block; text-align: center;">
                                 <select name="skinselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
-                                    <option value=""><?php echo $pia_lang['Maintenance_themeselector_empty'];?></option>
+                                    <option value=""><?php echo lang('Maintenance_themeselector_empty');?></option>
                                     <option value="skin-black-light">black light</option>
                                     <option value="skin-black">black</option>
                                     <option value="skin-blue-light">blue light</option>
@@ -274,26 +274,26 @@ if (submit && isset($_POST['langselector_set'])) {
                                     <option value="skin-yellow-light">yellow light</option>
                                     <option value="skin-yellow">yellow</option>
                                 </select></div>
-                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?php echo $pia_lang['Maintenance_themeselector_apply'];?>" class="btn bg-green" style="width:160px;">
+                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?php echo lang('Maintenance_themeselector_apply');?>" class="btn bg-green" style="width:160px;">
                                 <?php // echo $pia_skin_test; ?>
                             </div>
                             </form>
                         </div>
                         <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
-                            <?php echo $pia_lang['Maintenance_themeselector_text']; ?>
+                            <?php echo lang('Maintenance_themeselector_text'); ?>
                         </div>    
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-green dbtools-button" id="btnPiaEnableDarkmode" onclick="askPiaEnableDarkmode()"><?php echo $pia_lang['Maintenance_Tool_darkmode'];?></button>
+                            <button type="button" class="btn bg-green dbtools-button" id="btnPiaEnableDarkmode" onclick="askPiaEnableDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_darkmode_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_darkmode_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-yellow dbtools-button" id="btnPiaToggleArpScan" onclick="askPiaToggleArpScan()"><?php echo $pia_lang['Maintenance_Tool_arpscansw'];?></button>
+                            <button type="button" class="btn bg-yellow dbtools-button" id="btnPiaToggleArpScan" onclick="askPiaToggleArpScan()"><?php echo lang('Maintenance_Tool_arpscansw');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_arpscansw_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_arpscansw_text');?></div>
                     </div>
                 </div>
         </div>
@@ -301,39 +301,39 @@ if (submit && isset($_POST['langselector_set'])) {
                 <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?php echo $pia_lang['Maintenance_Tool_del_empty_macs'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?php echo lang('Maintenance_Tool_del_empty_macs');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_empty_macs_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_empty_macs_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?php echo $pia_lang['Maintenance_Tool_del_alldev'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?php echo lang('Maintenance_Tool_del_alldev');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_alldev_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_alldev_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?php echo $pia_lang['Maintenance_Tool_del_unknowndev'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?php echo lang('Maintenance_Tool_del_unknowndev');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_unknowndev_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_unknowndev_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?php echo $pia_lang['Maintenance_Tool_del_allevents'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?php echo lang('Maintenance_Tool_del_allevents');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_allevents_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?php echo $pia_lang['Maintenance_Tool_del_allevents30'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?php echo lang('Maintenance_Tool_del_allevents30');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_allevents30_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_allevents30_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?php echo lang('Maintenance_Tool_del_ActHistory');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_del_ActHistory_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_del_ActHistory_text');?></div>
                     </div>
                 </div>
         </div>
@@ -341,33 +341,33 @@ if (submit && isset($_POST['langselector_set'])) {
                 <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?php echo $pia_lang['Maintenance_Tool_backup'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?php echo lang('Maintenance_Tool_backup');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_backup_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_backup_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" onclick="askPiaRestoreDBfromArchive()"><?php echo $pia_lang['Maintenance_Tool_restore'];?><br><?php echo $latestbackup_date;?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" onclick="askPiaRestoreDBfromArchive()"><?php echo lang('Maintenance_Tool_restore');?><br><?php echo $latestbackup_date;?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_restore_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_restore_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?php echo $pia_lang['Maintenance_Tool_purgebackup'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?php echo lang('Maintenance_Tool_purgebackup');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_purgebackup_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_purgebackup_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="askExportCSV()"><?php echo $pia_lang['Maintenance_Tool_ExportCSV'];?></button>
+                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="askExportCSV()"><?php echo lang('Maintenance_Tool_ExportCSV');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_ExportCSV_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_ExportCSV_text');?></div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="">
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?php echo $pia_lang['Maintenance_Tool_ImportCSV'];?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?php echo lang('Maintenance_Tool_ImportCSV');?></button>
                         </div>
-                        <div class="db_tools_table_cell_b"><?php echo $pia_lang['Maintenance_Tool_ImportCSV_text'];?></div>
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_ImportCSV_text');?></div>
                     </div>
                  </div>
         </div>
@@ -377,7 +377,7 @@ if (submit && isset($_POST['langselector_set'])) {
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
                             <div><label>pialert.log</label><span class="span-padding"><a href="./log/pialert.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
+                            <div><button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
                               <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
@@ -387,17 +387,17 @@ if (submit && isset($_POST['langselector_set'])) {
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">                            
                             <div><label>pialert_front.log</label><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
+                            <div><button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
-                              <textarea id="pialert_front_log" class="logs" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
+                              <textarea id="pialert_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
                               </textarea>
                             </div>
                         </div>   
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">                            
                             <div><label>IP_changes.log</label><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
+                            <div><button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
                               <textarea id="IP_changes_log" class="logs logs-small" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
@@ -407,7 +407,7 @@ if (submit && isset($_POST['langselector_set'])) {
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">                            
                             <div><label>stdout.log</label><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>
+                            <div><button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
                             </div>
                             <div class="db_tools_table_cell_b">
                               <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
@@ -417,7 +417,7 @@ if (submit && isset($_POST['langselector_set'])) {
                         <div class="db_info_table_row">
                             <div class="db_tools_table_cell_a" style="">
                             <div><label>stderr.log</label><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo $pia_lang['Gen_Purge'];?></button></div>                            
+                            <div><button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>                            
                             </div>
                             <div class="db_tools_table_cell_b">
                               <textarea id="stderr_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stderr.log" ); ?>
@@ -474,7 +474,7 @@ initializeTabs();
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_empty_macs_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_empty_macs_noti_text'];?>',
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_empty_macs_noti');?>', '<?php echo lang('Maintenance_Tool_del_empty_macs_noti_text');?>',
     'Cancel', 'Delete', 'deleteDevicesWithEmptyMACs');
 }
 function deleteDevicesWithEmptyMACs()
@@ -488,8 +488,8 @@ function deleteDevicesWithEmptyMACs()
 // delete all devices 
 function askDeleteAllDevices () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_alldev_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_alldev_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteAllDevices');
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_alldev_noti');?>', '<?php echo lang('Maintenance_Tool_del_alldev_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteAllDevices');
 }
 function deleteAllDevices()
 { 
@@ -502,8 +502,8 @@ function deleteAllDevices()
 // delete all (unknown) devices 
 function askDeleteUnknown () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_unknowndev_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_unknowndev_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteUnknownDevices');
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_unknowndev_noti');?>', '<?php echo lang('Maintenance_Tool_del_unknowndev_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteUnknownDevices');
 }
 function deleteUnknownDevices()
 { 
@@ -516,8 +516,8 @@ function deleteUnknownDevices()
 // delete all Events 
 function askDeleteEvents () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_allevents_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_allevents_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteEvents');
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_allevents_noti');?>', '<?php echo lang('Maintenance_Tool_del_allevents_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteEvents');
 }
 function deleteEvents()
 { 
@@ -530,8 +530,8 @@ function deleteEvents()
 // delete all Events older than 30 days
 function askDeleteEvents30 () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_allevents30_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_allevents30_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteEvents30');
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_allevents30_noti');?>', '<?php echo lang('Maintenance_Tool_del_allevents30_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteEvents30');
 }
 function deleteEvents30()
 { 
@@ -544,8 +544,8 @@ function deleteEvents30()
 // delete History 
 function askDeleteActHistory () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Delete'];?>', 'deleteActHistory');
+  showModalWarning('<?php echo lang('Maintenance_Tool_del_ActHistory_noti');?>', '<?php echo lang('Maintenance_Tool_del_ActHistory_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteActHistory');
 }
 function deleteActHistory()
 { 
@@ -558,8 +558,8 @@ function deleteActHistory()
 // Backup DB to Archive 
 function askPiaBackupDBtoArchive () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_backup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_backup_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Backup'];?>', 'PiaBackupDBtoArchive');
+  showModalWarning('<?php echo lang('Maintenance_Tool_backup_noti');?>', '<?php echo lang('Maintenance_Tool_backup_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Backup');?>', 'PiaBackupDBtoArchive');
 }
 function PiaBackupDBtoArchive()
 { 
@@ -572,8 +572,8 @@ function PiaBackupDBtoArchive()
 // Restore DB from Archive 
 function askPiaRestoreDBfromArchive () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_restore_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_restore_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Restore'];?>', 'PiaRestoreDBfromArchive');
+  showModalWarning('<?php echo lang('Maintenance_Tool_restore_noti');?>', '<?php echo lang('Maintenance_Tool_restore_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Restore');?>', 'PiaRestoreDBfromArchive');
 }
 function PiaRestoreDBfromArchive()
 { 
@@ -586,8 +586,8 @@ function PiaRestoreDBfromArchive()
 // Purge Backups 
 function askPiaPurgeDBBackups() {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_purgebackup_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Purge'];?>', 'PiaPurgeDBBackups');
+  showModalWarning('<?php echo lang('Maintenance_Tool_purgebackup_noti');?>', '<?php echo lang('Maintenance_Tool_purgebackup_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Purge');?>', 'PiaPurgeDBBackups');
 }
 function PiaPurgeDBBackups()
 { 
@@ -600,8 +600,8 @@ function PiaPurgeDBBackups()
 // Export CSV
 function askExportCSV() {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_ExportCSV_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_ExportCSV_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'ExportCSV');
+  showModalWarning('<?php echo lang('Maintenance_Tool_ExportCSV_noti');?>', '<?php echo lang('Maintenance_Tool_ExportCSV_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'ExportCSV');
 }
 function ExportCSV()
 { 
@@ -612,8 +612,8 @@ function ExportCSV()
 // Import CSV
 function askImportCSV() {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_ImportCSV_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_ImportCSV_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', 'ImportCSV');
+  showModalWarning('<?php echo lang('Maintenance_Tool_ImportCSV_noti');?>', '<?php echo lang('Maintenance_Tool_ImportCSV_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'ImportCSV');
 }
 function ImportCSV()
 {   
@@ -626,8 +626,8 @@ function ImportCSV()
 // Switch Darkmode 
 function askPiaEnableDarkmode() {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_darkmode_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_darkmode_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Switch'];?>', 'PiaEnableDarkmode');
+  showModalWarning('<?php echo lang('Maintenance_Tool_darkmode_noti');?>', '<?php echo lang('Maintenance_Tool_darkmode_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Switch');?>', 'PiaEnableDarkmode');
 }
 function PiaEnableDarkmode()
 { 
@@ -640,8 +640,8 @@ function PiaEnableDarkmode()
 // Toggle the Arp-Scans 
 function askPiaToggleArpScan () {
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Maintenance_Tool_arpscansw_noti'];?>', '<?php echo $pia_lang['Maintenance_Tool_arpscansw_noti_text'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Switch'];?>', 'PiaToggleArpScan');
+  showModalWarning('<?php echo lang('Maintenance_Tool_arpscansw_noti');?>', '<?php echo lang('Maintenance_Tool_arpscansw_noti_text');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Switch');?>', 'PiaToggleArpScan');
 }
 function PiaToggleArpScan()
 { 
@@ -660,8 +660,8 @@ function logManage(callback) {
   targetLogFile = arguments[0];  // target
   logFileAction = arguments[1];  // action
   // Ask 
-  showModalWarning('<?php echo $pia_lang['Gen_Purge'];?>' + ' ' + arguments[1], '<?php echo $pia_lang['Gen_AreYouSure'];?>',
-    '<?php echo $pia_lang['Gen_Cancel'];?>', '<?php echo $pia_lang['Gen_Okay'];?>', "performLogManage");
+  showModalWarning('<?php echo lang('Gen_Purge');?>' + ' ' + arguments[1], '<?php echo lang('Gen_AreYouSure');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', "performLogManage");
 }
 
 function performLogManage() { 

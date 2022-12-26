@@ -61,11 +61,45 @@ foreach (glob("../db/setting_skin*") as $filename) {
 }
 if (isset($pia_skin_selected) == FALSE or (strlen($pia_skin_selected) == 0)) {$pia_skin_selected = 'skin-blue';}
 
+// ###################################
+// ## Languages
+// ###################################
+
 foreach (glob("../db/setting_language*") as $filename) {
     $pia_lang_selected = str_replace('setting_language_','',basename($filename));
 }
+
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
-require 'php/templates/language/'.$pia_lang_selected.'.php';
+
+require 'php/templates/language/en_us.php';
+require 'php/templates/language/de_de.php';
+require 'php/templates/language/es_es.php';
+
+function lang($key)
+{
+  global $pia_lang_selected, $lang ;
+
+  // try to get the selected language translation
+  $temp = $lang[$pia_lang_selected][$key];
+
+  if(isset($temp) == FALSE)
+  {    
+    // if not found, use English
+    $temp = $lang[$pia_lang_selected]["en_us"];
+
+    // echo $temp;
+    if(isset($temp) == FALSE)
+    {
+      // if not found, in English, use placeholder
+      $temp = "String not found";
+    }
+  }
+
+  // echo $temp;
+  
+  return $temp;
+}
+
 // ###################################
 // ## GUI settings processing end
 // ###################################
@@ -211,8 +245,8 @@ if ($ENABLED_DARKMODE === True) {
               <li class="user-header" style=" height: 100px;">
                 <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
                 <p style="float: right; width: 200px">
-                <?php echo $pia_lang['About_Title'];?>
-                  <small><?php echo $pia_lang['About_Design'];?> Raspberry Pi</small>
+                <?php echo lang('About_Title');?>
+                  <small><?php echo lang('About_Design');?> Raspberry Pi</small>
                 </p>
               </li>
 
@@ -220,7 +254,7 @@ if ($ENABLED_DARKMODE === True) {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="index.php?action=logout" class="btn btn-danger"><?php echo $pia_lang['About_Exit'];?></a>
+                  <a href="index.php?action=logout" class="btn btn-danger"><?php echo lang('About_Exit');?></a>
                 </div>
               </li>
             </ul>
@@ -254,7 +288,7 @@ if ($ENABLED_DARKMODE === True) {
 -->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
-          <a href="devices.php"><i class="fa fa-laptop"></i> <span><?php echo $pia_lang['Navigation_Devices'];?></span></a>
+          <a href="devices.php"><i class="fa fa-laptop"></i> <span><?php echo lang('Navigation_Devices');?></span></a>
         </li>
 
 <!--
@@ -262,26 +296,26 @@ if ($ENABLED_DARKMODE === True) {
 -->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
-          <a href="presence.php"><i class="fa fa-calendar"></i> <span><?php echo $pia_lang['Navigation_Presence'];?></span></a>
+          <a href="presence.php"><i class="fa fa-calendar"></i> <span><?php echo lang('Navigation_Presence');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
-          <a href="events.php"><i class="fa fa-bolt"></i> <span><?php echo $pia_lang['Navigation_Events'];?></span></a>
+          <a href="events.php"><i class="fa fa-bolt"></i> <span><?php echo lang('Navigation_Events');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><i class="fa fa-server"></i> <span><?php echo $pia_lang['Navigation_Network'];?></span></a>
+          <a href="network.php"><i class="fa fa-server"></i> <span><?php echo lang('Navigation_Network');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?php echo $pia_lang['Navigation_Maintenance'];?></span></a>
+          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?php echo lang('Navigation_Maintenance');?></span></a>
         </li>
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
-          <a href="settings.php"><i class="fa fa-cog"></i> <span><?php echo $pia_lang['Navigation_Settings'];?></span></a>
+          <a href="settings.php"><i class="fa fa-cog"></i> <span><?php echo lang('Navigation_Settings');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
-          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo $pia_lang['Navigation_HelpFAQ'];?></span></a>
+          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo lang('Navigation_HelpFAQ');?></span></a>
         </li>
 <!--
         <li class="treeview">

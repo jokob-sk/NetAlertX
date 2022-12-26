@@ -214,9 +214,9 @@ function setDeviceData() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_UpdDev'];
+    echo lang('BackDevices_DBTools_UpdDev');
   } else {
-    echo $pia_lang['BackDevices_DBTools_UpdDevError']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_UpdDevError')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -235,9 +235,9 @@ function deleteDevice() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelDev_a'];
+    echo lang('BackDevices_DBTools_DelDev_a');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelDevError_a']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelDevError_a')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -255,9 +255,9 @@ function deleteAllWithEmptyMACs() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+    echo lang('BackDevices_DBTools_DelDev_b');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelDevError_b')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -275,9 +275,9 @@ function deleteUnknownDevices() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+    echo lang('BackDevices_DBTools_DelDev_b');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelDevError_b')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -295,9 +295,9 @@ function deleteDeviceEvents() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+    echo lang('BackDevices_DBTools_DelEvents');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelEventsError')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -315,9 +315,9 @@ function deleteAllDevices() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelDev_b'];
+    echo lang('BackDevices_DBTools_DelDev_b');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelDevError_b']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelDevError_b')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -335,9 +335,9 @@ function deleteEvents() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+    echo lang('BackDevices_DBTools_DelEvents');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelEventsError')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -355,9 +355,9 @@ function deleteEvents30() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelEvents'];
+    echo lang('BackDevices_DBTools_DelEvents');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelEventsError']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelEventsError')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -375,9 +375,9 @@ function deleteActHistory() {
 
   // check result
   if ($result == TRUE) {
-    echo $pia_lang['BackDevices_DBTools_DelActHistory'];
+    echo lang('BackDevices_DBTools_DelActHistory');
   } else {
-    echo $pia_lang['BackDevices_DBTools_DelActHistoryError']."\n\n$sql \n\n". $db->lastErrorMsg();
+    echo lang('BackDevices_DBTools_DelActHistoryError')."\n\n$sql \n\n". $db->lastErrorMsg();
   }
 }
 
@@ -392,7 +392,7 @@ function PiaBackupDBtoArchive() {
 
   // copy files as a fast Backup
   if (!copy($file, $newfile)) {
-      echo $pia_lang['BackDevices_Backup_CopError'];
+      echo lang('BackDevices_Backup_CopError');
   } else {
     // Create archive with actual date
     $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
@@ -400,11 +400,11 @@ function PiaBackupDBtoArchive() {
     exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/pialert.db', $output);
     // chheck if archive exists
     if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
-      echo $pia_lang['BackDevices_Backup_okay'].': ('.$Pia_Archive_Name.')';
+      echo lang('BackDevices_Backup_okay').': ('.$Pia_Archive_Name.')';
       unlink($newfile);
       echo("<meta http-equiv='refresh' content='1'>");
     } else {
-      echo $pia_lang['BackDevices_Backup_Failed'].' (pialert.db.latestbackup)';
+      echo lang('BackDevices_Backup_Failed').' (pialert.db.latestbackup)';
     }
   }
 
@@ -421,18 +421,18 @@ function PiaRestoreDBfromArchive() {
 
   // copy files as a fast Backup
   if (!copy($file, $oldfile)) {
-      echo $pia_lang['BackDevices_Restore_CopError'];
+      echo lang('BackDevices_Restore_CopError');
   } else {
     // extract latest archive and overwrite the actual pialert.db
     $Pia_Archive_Path = '../../../db/';
     exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
     // check if the pialert.db exists
     if (file_exists($file)) {
-       echo $pia_lang['BackDevices_Restore_okay'];
+       echo lang('BackDevices_Restore_okay');
        unlink($oldfile);
        echo("<meta http-equiv='refresh' content='1'>");
      } else {
-       echo $pia_lang['BackDevices_Restore_Failed'];
+       echo lang('BackDevices_Restore_Failed');
      }
   }
 
@@ -464,7 +464,7 @@ function PiaPurgeDBBackups() {
           unlink($Pia_Backupfiles_Purge[$i]);
         }
   }
-  echo $pia_lang['BackDevices_DBTools_Purge'];
+  echo lang('BackDevices_DBTools_Purge');
   echo("<meta http-equiv='refresh' content='1'>");
     
 }
@@ -566,16 +566,16 @@ function ImportCSV() {
     if($error == "")
     {
       // import succesful
-      echo $pia_lang['BackDevices_DBTools_ImportCSV'];
+      echo lang('BackDevices_DBTools_ImportCSV');
 
     }
     else{
       // an error occurred while writing to the DB, display the last error message 
-      echo $pia_lang['BackDevices_DBTools_ImportCSVError']."\n\n$sql \n\n".$error;
+      echo lang('BackDevices_DBTools_ImportCSVError')."\n\n$sql \n\n".$error;
     }
     
    } else {
-    echo $pia_lang['BackDevices_DBTools_ImportCSVMissing'];    
+    echo lang('BackDevices_DBTools_ImportCSVMissing');    
    }
 
 
@@ -591,11 +591,11 @@ function PiaEnableDarkmode() {
   global $pia_lang;
 
   if (file_exists($file)) {
-      echo $pia_lang['BackDevices_darkmode_disabled'];
+      echo lang('BackDevices_darkmode_disabled');
       unlink($file);
       echo("<meta http-equiv='refresh' content='1'>");
      } else {
-      echo $pia_lang['BackDevices_darkmode_enabled'];
+      echo lang('BackDevices_darkmode_enabled');
       $darkmode = fopen($file, 'w');
       echo("<meta http-equiv='refresh' content='1'>");
      }
@@ -610,11 +610,11 @@ function PiaToggleArpScan() {
   global $pia_lang;
 
   if (file_exists($file)) {
-      echo $pia_lang['BackDevices_Arpscan_enabled'];
+      echo lang('BackDevices_Arpscan_enabled');
       unlink($file);
       echo("<meta http-equiv='refresh' content='1'>");
      } else {
-      echo $pia_lang['BackDevices_Arpscan_disabled'];
+      echo lang('BackDevices_Arpscan_disabled');
       $startarpscan = fopen($file, 'w');
       echo("<meta http-equiv='refresh' content='1'>");
      }

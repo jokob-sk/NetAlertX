@@ -1,5 +1,7 @@
 <?php
 
+require 'util.php';
+
 $PIA_HOST_IP = $_REQUEST['scan'];
 $PIA_SCAN_MODE = $_REQUEST['mode'];
 
@@ -15,12 +17,18 @@ if(filter_var($PIA_HOST_IP, FILTER_VALIDATE_IP))  // Vulnerability fix v22.12.20
         exec('nmap -Pn '.$PIA_HOST_IP, $output);
     }
 
-    echo '<h4>Scan ('.$PIA_SCAN_MODE.') Results of: '.$PIA_HOST_IP.'</h4>';
-    echo '<pre style="border: none;">'; 
+    $message = '<h4>Scan ('.$PIA_SCAN_MODE.') Results of: '.$PIA_HOST_IP.'</h4><br/>'
+    .'<pre style="border: none;">';
+
     foreach($output as $line){
-        echo $line . "\n";
+        $message = $message .$line . "<br/>";
     }
-    echo '</pre>';
+
+    $message = $message .'</pre>';
+
+    displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFile = TRUE, $logEcho = TRUE);
+
+   
 } else
 {
     echo '<h4>Internal error.</h4>';

@@ -69,7 +69,7 @@ $db->close();
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?php echo $pia_lang['Navigation_Settings'];?>
+         <?php echo lang('Navigation_Settings');?>
       </h1>
     </section>
     <div class="content">
@@ -98,7 +98,7 @@ $db->close();
               '<div class=" row table_row" >
                 <div class="table_cell setting_name bold" ><label>';
 
-              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name'], $pia_lang).'</label>';
+              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name']).'</label>';
 
               $html = $html.'<div class="small" ><code>'.$set['Code_Name'].'</code></div>';
 
@@ -106,7 +106,7 @@ $db->close();
               '</div>       
                <div class="table_cell setting_description" >';               
 
-              $html = $html.getString ($set['Code_Name'].'_description', $set['Description'], $pia_lang);
+              $html = $html.getString ($set['Code_Name'].'_description', $set['Description']);
 
               $html = $html.
                 '</div>       
@@ -229,7 +229,7 @@ $db->close();
     <!-- /.content -->
     <div class="row" >
           <div class="row">
-            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo $pia_lang['DevDetail_button_Save'];?></button>
+            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo lang('DevDetail_button_Save');?></button>
           </div>
           <div id="result"></div>
       </div>

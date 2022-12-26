@@ -179,7 +179,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
   // F12 Browser console
   if($logConsole)
   {
-    echo '<script>console.log(escape("'.$message.'"));</script>';
+    echo '<script>console.log(escape("'.str_replace('"',"'",$message).'"));</script>';
   }
 
   //File
@@ -193,7 +193,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
       $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file!");
     }
 
-    fwrite($log, "[".$timestamp. "] " . $message.PHP_EOL."" );
+    fwrite($log, "[".$timestamp. "] " . str_replace('<br>',"\n   ",str_replace('<br/>',"\n   ",$message)).PHP_EOL."" );
     fclose($log);
   }
 
@@ -325,9 +325,9 @@ function saveSettings()
 
 }
 
-function getString ($codeName, $default, $pia_lang) {
+function getString ($codeName, $default) {
 
-  $result = $pia_lang[$codeName];
+  $result = lang($codeName);
 
   if ($result )
   {

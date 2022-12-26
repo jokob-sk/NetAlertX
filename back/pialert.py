@@ -2470,12 +2470,6 @@ def upgradeDB ():
 
     openDB()
 
-    # indicates, if Settings table is available 
-    settingsMissing = sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Settings'; 
-    """).fetchone() == None
-
     # indicates, if Online_History table is available 
     onlineHistoryAvailable = sql.execute("""
     SELECT name FROM sqlite_master WHERE type='table'
@@ -2505,24 +2499,6 @@ def upgradeDB ():
         "Down_Devices"	INTEGER,
         "All_Devices"	INTEGER,
         "Archived_Devices" INTEGER,
-        PRIMARY KEY("Index" AUTOINCREMENT)
-      );      
-      """)
-
-    # Settings table
-    if settingsMissing:   
-      file_print("[upgradeDB] Adding Settings table")   
-      sql.execute("""      
-      CREATE TABLE "Settings" (
-        "Index"	INTEGER,
-        "Code_Name"	TEXT,
-        "Display_Name"	TEXT,
-        "Description"	TEXT,        
-        "Type" TEXT,
-        "Options" TEXT,
-        "RegEx"   TEXT,
-        "Value"	TEXT,
-        "Group"	TEXT,
         PRIMARY KEY("Index" AUTOINCREMENT)
       );      
       """)
@@ -2577,6 +2553,29 @@ def upgradeDB ():
 
     sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
 
+    # indicates, if Settings table is available 
+    settingsMissing = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Settings'; 
+    """).fetchone() == None
+
+    # Re-creating Settings table
+    if settingsMissing:   
+    file_print("[upgradeDB] Re-creating Settings table")
+
+    sql.execute("DROP TABLE Settings;")       
+    sql.execute("""      
+    CREATE TABLE "Settings" (        
+    "Code_Name"	TEXT,
+    "Display_Name"	TEXT,
+    "Description"	TEXT,        
+    "Type" TEXT,
+    "Options" TEXT,
+    "RegEx"   TEXT,
+    "Value"	TEXT,
+    "Group"	TEXT
+    );      
+    """)
       
     # don't hog DB access  
     closeDB ()

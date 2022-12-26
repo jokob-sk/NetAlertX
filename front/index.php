@@ -35,12 +35,44 @@ require '/home/pi/pialert/front/php/templates/language/'.$pia_lang_selected.'.ph
 // ###################################
 // ## GUI settings processing end
 // ###################################
-  foreach (glob("../db/setting_language*") as $filename) {
-    $pia_lang_selected = str_replace('setting_language_','',basename($filename));
-  }
-  if (strlen($pia_lang_selected) == 0) {$pia_lang_selected = 'en_us';}
-  require 'php/templates/language/'.$pia_lang_selected.'.php';
+// ###################################
+// ## Languages
+// ###################################
 
+foreach (glob("../db/setting_language*") as $filename) {
+  $pia_lang_selected = str_replace('setting_language_','',basename($filename));
+}
+
+if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = 'en_us';}
+
+require 'php/templates/language/en_us.php';
+require 'php/templates/language/de_de.php';
+require 'php/templates/language/es_es.php';
+
+function lang($key)
+{
+global $pia_lang_selected, $lang ;
+
+// try to get the selected language translation
+$temp = $lang[$pia_lang_selected][$key];
+
+if(isset($temp) == FALSE)
+{    
+  // if not found, use English
+  $temp = $lang[$pia_lang_selected]["en_us"];
+
+  // echo $temp;
+  if(isset($temp) == FALSE)
+  {
+    // if not found, in English, use placeholder
+    $temp = "String not found";
+  }
+}
+
+// echo $temp;
+
+return $temp;
+}
 // ###################################
 // ## PIALERT_WEB_PROTECTION FALSE
 // ###################################
@@ -88,12 +120,12 @@ if ($_SESSION["login"] != 1)
         $login_info = 'Defaultpassword "123456" is still active';
         $login_mode = 'danger';
         $login_display_mode = 'display: block;';
-        $login_headline = $pia_lang['Login_Toggle_Alert_headline'];
+        $login_headline = lang('Login_Toggle_Alert_headline');
         $login_icon = 'fa-ban';
   } else {
     $login_mode = 'info';
     $login_display_mode = 'display: none;';
-    $login_headline = $pia_lang['Login_Toggle_Info_headline'];
+    $login_headline = lang('Login_Toggle_Info_headline');
     $login_icon = 'fa-info';
   }
 
@@ -141,10 +173,10 @@ if ($ENABLED_DARKMODE === True) {
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
-    <p class="login-box-msg"><?php echo $pia_lang['Login_Box'];?></p>
+    <p class="login-box-msg"><?php echo lang('Login_Box');?></p>
       <form action="index.php" method="post">
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="<?php echo $pia_lang['Login_Psw-box'];?>" name="loginpassword">
+        <input type="password" class="form-control" placeholder="<?php echo lang('Login_Psw-box');?>" name="loginpassword">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -153,21 +185,21 @@ if ($ENABLED_DARKMODE === True) {
             <label>
               <input type="checkbox" name="PWRemember">
                 <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
-                  <?php echo $pia_lang['Login_Remember'];?><br><span style="font-size: smaller"><?php echo $pia_lang['Login_Remember_small'];?></span>
+                  <?php echo lang('Login_Remember');?><br><span style="font-size: smaller"><?php echo lang('Login_Remember_small');?></span>
                 </div>
             </label>
           </div>
         </div>
         <!-- /.col -->
         <div class="col-xs-4" style="padding-top: 10px;">
-          <button type="submit" class="btn btn-primary btn-block btn-flat"><?php echo $pia_lang['Login_Submit'];?></button>
+          <button type="submit" class="btn btn-primary btn-block btn-flat"><?php echo lang('Login_Submit');?></button>
         </div>
         <!-- /.col --> 
       </div>
     </form>
 
     <div style="padding-top: 10px;">
-      <button class="btn btn-xs btn-primary btn-block btn-flat" onclick="Passwordhinfo()"><?php echo $pia_lang['Login_Toggle_Info'];?></button>
+      <button class="btn btn-xs btn-primary btn-block btn-flat" onclick="Passwordhinfo()"><?php echo lang('Login_Toggle_Info');?></button>
     </div>
 
   </div>
@@ -180,7 +212,7 @@ if ($ENABLED_DARKMODE === True) {
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">�</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
-          <p><?php echo $pia_lang['Login_Psw_run'];?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?php echo $pia_lang['Login_Psw_new'];?></span><br><?php echo $pia_lang['Login_Psw_folder'];?></p>
+          <p><?php echo lang('Login_Psw_run');?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?php echo lang('Login_Psw_new');?></span><br><?php echo lang('Login_Psw_folder');?></p>
       </div>
   </div>
 

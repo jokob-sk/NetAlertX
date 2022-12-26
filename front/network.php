@@ -34,7 +34,7 @@
   <section class="content-header">
   <?php require 'php/templates/notification.php'; ?>
     <h1 id="pageTitle">
-        <?php echo $pia_lang['Network_Title'];?>
+        <?php echo lang('Network_Title');?>
     </h1>
   </section>
 
@@ -107,7 +107,7 @@
                                 </tr>
                                 <tr>
                                   <td>
-                                    <b>'.$pia_lang['Device_TableHead_Type'].'</b>
+                                    <b>'.lang('Device_TableHead_Type').'</b>
                                   </td>
                                   <td>
                                   ' .$node_type. '
@@ -115,7 +115,7 @@
                                 </tr>
                                 <tr> 
                                   <td>
-                                    <b>'.$pia_lang['Network_Table_State'].':</b> 
+                                    <b>'.lang('Network_Table_State').':</b> 
                                   </td>
                                   <td>  '
                                     .$node_badge.
@@ -123,7 +123,7 @@
                                 </tr>
                                 <tr> 
                                   <td>
-                                    <b>'.$pia_lang['DevDetail_MainInfo_Network'].'</b> 
+                                    <b>'.lang('DevDetail_MainInfo_Network').'</b> 
                                   </td>
                                   <td>  
                                     <a href="./deviceDetails.php?mac='.$node_parent_mac.'">
@@ -137,15 +137,15 @@
                              <div class="box-body no-padding">';
 
         $str_table =      '   <h4>
-                              '.$pia_lang['Device_Title'].'
+                              '.lang('Device_Title').'
                               </h4>
                               <table class="table table-striped">
                                 <tbody>
                                 <tr>
                                   <th style="width: 40px">Port</th>
-                                  <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
-                                  <th>'.$pia_lang['Network_Table_Hostname'].'</th>
-                                  <th>'.$pia_lang['Network_Table_IP'].'</th>
+                                  <th style="width: 100px">'.lang('Network_Table_State').'</th>
+                                  <th>'.lang('Network_Table_Hostname').'</th>
+                                  <th>'.lang('Network_Table_IP').'</th>
                                 </tr>';
         
         // Prepare Array for Devices with Port value
@@ -236,11 +236,11 @@
         {
           $str_table = "<div>
                           <h4>
-                            ".$pia_lang['Device_Title']."
+                            ".lang('Device_Title')."
                           </h4>
                           <div>
                             This network device (node) doesn't have any assigned devices (leaf nodes).                             
-                            Go to <a href='devices.php'><b>".$pia_lang['Device_Title']."</b></a>, select a device you want to attach to this node and assign it in the <b>Details</b> tab by selecting it in the <b>".$pia_lang['DevDetail_MainInfo_Network'] ."</b> dropdown.
+                            Go to <a href='devices.php'><b>".lang('Device_Title')."</b></a>, select a device you want to attach to this node and assign it in the <b>Details</b> tab by selecting it in the <b>".lang('DevDetail_MainInfo_Network') ."</b> dropdown.
                           </div>
                         </div>";
           $str_table_close = "";
@@ -380,14 +380,14 @@
                           <div class="box box-aqua box-body">
                             <section> 
                               <h4>
-                                '.$pia_lang['Network_UnassignedDevices'].'
+                                '.lang('Network_UnassignedDevices').'
                               </h4>
                               <table class="table table-striped">
                                 <tbody>
                                 <tr>                              
-                                  <th style="width: 100px">'.$pia_lang['Network_Table_State'].'</th>
-                                  <th>'.$pia_lang['Network_Table_Hostname'].'</th>
-                                  <th>'.$pia_lang['Network_Table_IP'].'</th>
+                                  <th style="width: 100px">'.lang('Network_Table_State').'</th>
+                                  <th>'.lang('Network_Table_Hostname').'</th>
+                                  <th>'.lang('Network_Table_IP').'</th>
                                 </tr>';   
 
       $str_table_rows = "";        
