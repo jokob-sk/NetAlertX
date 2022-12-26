@@ -517,7 +517,7 @@ the scan will take hours to complete instead of seconds.
 'MQTT_QOS_name' => 'MQTT Quality of Service',
 'MQTT_QOS_description' => 'Quality of service setting for MQTT message sending. 0 - Low quality to 2 - High quality. The higher the quality the longer the delay.',
 'MQTT_DELAY_SEC_name' => 'MQTT delay per device',
-'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~2s to update a sensor config on the broker). Tested with 2-3 seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
+'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
 
 //DynDNS
 'DDNS_ACTIVE_name' => 'Enable DynDNS',

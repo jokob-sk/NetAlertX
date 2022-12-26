@@ -163,10 +163,8 @@ PRINT_LOG               = False
 TIMEZONE                = 'Europe/Berlin'
 PIALERT_WEB_PROTECTION  = False
 PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
-INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']   # Specifies which events trigger notifications. 
-                                                                                  # Remove the event type(s) you don't want to get notified on 
-                                                                                  # Overrides device-specific settings in the UI.
-SCAN_CYCLE_MINUTES      = 5            # delay between scans
+INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']  
+SCAN_CYCLE_MINUTES      = 5            
 
 SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
 
@@ -188,11 +186,8 @@ REPORT_DASHBOARD_URL    = 'http://pi.alert/'
 # ----------------------
 REPORT_WEBHOOK          = False
 WEBHOOK_URL             = ''
-WEBHOOK_PAYLOAD         = 'json'       # webhook payload data format for the "body > attachements > text" attribute 
-                                       # in https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json 
-                                       #   supported values: 'json', 'html' or 'text'
-                                       #   e.g.: for discord use 'html'
-WEBHOOK_REQUEST_METHOD  = 'GET'        # POST, GET...
+WEBHOOK_PAYLOAD         = 'json'       
+WEBHOOK_REQUEST_METHOD  = 'GET'        
 
 # Apprise settings
 #-----------------------
@@ -234,8 +229,8 @@ DDNS_UPDATE_URL         = 'https://api.dynu.com/nic/update?'
 
 # PIHOLE settings
 # ----------------------
-PIHOLE_ACTIVE           = False                         # if enabled you need to map '/etc/pihole/pihole-FTL.db' in docker-compose.yml
-DHCP_ACTIVE             = False                         # if enabled you need to map '/etc/pihole/dhcp.leases' in docker-compose.yml
+PIHOLE_ACTIVE           = False                         
+DHCP_ACTIVE             = False                         
 
 # keep 90 days of network activity if not specified how many days to keep
 DAYS_TO_KEEP_EVENTS     = 90

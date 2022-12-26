@@ -84,10 +84,18 @@ function deleteAllCookies() {
 
 
 // -----------------------------------------------------------------------------
-function showModalOk (title, message) {
+function showModalOk (title, message, callbackFunction = null) {
   // set captions
   $('#modal-ok-title').html   (title);
-  $('#modal-ok-message').html (message);   
+  $('#modal-ok-message').html (message); 
+  
+  if(callbackFunction!= null)
+  {   
+    $("#modal-ok-OK").click(function()
+    { 
+      callbackFunction()      
+    });
+  }
 
   // Show modal
   $('#modal-ok').modal('show');

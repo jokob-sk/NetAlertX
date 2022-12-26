@@ -57,8 +57,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 $db->close();
 
-echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."')</script>";
-
 ?>
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
@@ -71,7 +69,7 @@ echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."'
       </h1>
     </section>
     <div class="content">
-   <?php
+   <?php      
 
       $html = "";
       $groups = [];
@@ -242,6 +240,15 @@ echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."'
 ?>
 
 <script>
+
+  // number of settings has to be equal to
+  var settingsNumber = 46;
+  
+  if(<?php echo count($settings)?> != settingsNumber) 
+  {
+    showModalOk('WARNING', '<?php echo lang("settings_missing")?>');    
+  }
+
   function addInterface()
   {
     ipMask = $('#ipMask').val();
@@ -249,9 +256,11 @@ echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."'
 
     full = ipMask + " --interface=" + ipInterface;
 
+    console.log(full)
+
     if(ipMask == "" || ipInterface == "")
     {
-      modalDefaultOK ('Validation error', 'Specify both, the network mask and the interface');
+      showModalOk ('Validation error', 'Specify both, the network mask and the interface');
     } else {
       $('#SCAN_SUBNETS').append($('<option disabled></option>').attr('value', full).text(full));
 
@@ -300,11 +309,15 @@ echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."'
     ?>
     console.log(settingsArray);
     return settingsArray;
-  }
+  }  
 
-
-  function saveSettings() {    
-    $.ajax({
+  function saveSettings() {
+    if(<?php echo count($settings)?> != settingsNumber) 
+    {
+      showModalOk('WARNING', '<?php echo lang("settings_missing")?>');    
+    } else
+    {
+      $.ajax({
       method: "POST",
       url: "../php/server/util.php",
       data: { function: 'savesettings', settings: collectSettings() },
@@ -312,7 +325,9 @@ echo "<script>if(".count($settings)." != 46)alert('".lang("settings_missing")."'
           // $("#result").html(data);    
           // console.log(data);
           showModalOk ('Result', data );
-      }
-    })
+        }
+      });
+    }  
+    
   }
 </script>

@@ -29,7 +29,7 @@ $lang['en_us'] = array(
 'Login_Remember' => 'Remember',
 'Login_Remember_small' => '(valid for 7 days)',
 'Login_Submit' => 'Log in',
-'Login_Psw_run' => 'To change password run:',
+'Login_Psw_run' => 'To change the password run:',
 'Login_Psw_new' => 'new_password',
 'Login_Psw_folder' => 'in the config folder.',
 'Login_Psw_alert' => 'Password Alert!',
@@ -446,7 +446,7 @@ the scan will take hours to complete instead of seconds.
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',
 'PIALERT_WEB_PROTECTION_description' => 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.',
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
-'PIALERT_WEB_PASSWORD_description' => 'The default password is <code>123456</code>. To change password run <code>/home/pi/pialert/back/pialert-cli</code> in the container',
+'PIALERT_WEB_PASSWORD_description' => 'The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli</code> in the container',
 'INCLUDED_SECTIONS_name' => 'Notify on',
 'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (CTRL + Click to select / deselect).',
 'SCAN_CYCLE_MINUTES_name' => 'Scan cycle delay',
@@ -482,7 +482,7 @@ the scan will take hours to complete instead of seconds.
 'WEBHOOK_URL_name' => 'Target URL',
 'WEBHOOK_URL_description' => 'Target URL starting with <code>http://</code> or <code>https://</code>.',
 'WEBHOOK_PAYLOAD_name' => 'Payload type',
-'WEBHOOK_PAYLOAD_description' => 'The Webhook payload data format for the "body > attachements > text" attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>\'html\'</code>)',
+'WEBHOOK_PAYLOAD_description' => 'The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>html</code>)',
 'WEBHOOK_REQUEST_METHOD_name' => 'Request method',
 'WEBHOOK_REQUEST_METHOD_description' => 'The HTTP request method to be used for the webhook call.',
 
@@ -525,9 +525,9 @@ the scan will take hours to complete instead of seconds.
 'MQTT_PASSWORD_name' => 'MQTT password',
 'MQTT_PASSWORD_description' => 'Password used to login into your MQTT broker instance.',
 'MQTT_QOS_name' => 'MQTT Quality of Service',
-'MQTT_QOS_description' => 'Quality of service setting for MQTT message sending. 0 - Low quality to 2 - High quality. The higher the quality the longer the delay.',
+'MQTT_QOS_description' => 'Quality of service setting for MQTT message sending. <code>0</code> - Low quality to <code>2</code> - High quality. The higher the quality the longer the delay.',
 'MQTT_DELAY_SEC_name' => 'MQTT delay per device',
-'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~2s to update a sensor config on the broker). Tested with 2-3 seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
+'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
 
 //DynDNS
 'DDNS_ACTIVE_name' => 'Enable DynDNS',
