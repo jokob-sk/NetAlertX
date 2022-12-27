@@ -44,15 +44,13 @@
 
 ### Config (`pialert.conf`)
 
-- Download [pialert.conf from here](https://github.com/jokob-sk/Pi.Alert/tree/main/config).  
+- Modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) or manage the configuration via Settings.  
 - ❗ Set the `SCAN_SUBNETS` variable. 
    * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
    * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
    * Examples for one and two subnets  (❗ Note the `['...', '...']` format for two or more subnets):
-     * One subnet: `SCAN_SUBNETS    = '192.168.1.0/24 --interface=eth0'`
+     * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
      * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']` 
-- Set your reporting preferences.
-- I recommend to check for new settings every time you rebuilt the container.
 
 
 ### 🛑 **Common issues** 

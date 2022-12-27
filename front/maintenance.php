@@ -417,13 +417,6 @@ if (submit && isset($_POST['skinselector_set'])) {
       
 </div>
 
-
-
-
-
-<div style="width: 100%; height: 20px;"></div>
-    <!-- ----------------------------------------------------------------------- -->
-
 </section>
 
     <!-- /.content -->

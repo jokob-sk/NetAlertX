@@ -10,6 +10,7 @@
 
   // External files
   require '/home/pi/pialert/front/php/templates/timezone.php';
+  require '/home/pi/pialert/front/php/templates/language/lang.php';
   require '/home/pi/pialert/front/php/server/db.php';
   require '/home/pi/pialert/front/php/server/util.php';  
 

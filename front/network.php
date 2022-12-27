@@ -68,7 +68,7 @@
         
 
         $str_tab_header = '<li class="'.$activetab.'">
-                              <a href="#'.str_replace(":", "_", $node_mac).'" data-toggle="tab">'
+                              <a href="#'.str_replace(":", "_", $node_mac).'" data-toggle="tab" >'
                                   .$node_name.' ' .$str_port.$node_badge.
                               '</a>
                           </li>';
@@ -98,10 +98,10 @@
                             <table class="table table-striped" style="width:200px;"> 
                               <tbody>
                                 <tr> 
-                                  <td>
+                                  <td >
                                     <b>MAC:</b>
                                   </td>
-                                  <td>'
+                                  <td class="anonymize">'
                                     .$node_mac.
                                   '</td>
                                 </tr>
@@ -127,7 +127,7 @@
                                   </td>
                                   <td>  
                                     <a href="./deviceDetails.php?mac='.$node_parent_mac.'">
-                                      <b>'.$node_parent_mac.'</b>
+                                      <b class="anonymize">'.$node_parent_mac.'</b>
                                     </a>                                 
                                   </td>
                               </tr>
@@ -218,10 +218,10 @@
                               '</td>
                               <td style="padding-left: 10px;">
                                 <a href="./deviceDetails.php?mac='.$row['mac'].'">
-                                  <b>'.$row['name'].'</b>
+                                  <b class="anonymize">'.$row['name'].'</b>
                                 </a>
                               </td>
-                              <td>'
+                              <td class="anonymize">'
                                 .$row['last_ip'].
                               '</td>
                             </tr>';
@@ -407,7 +407,7 @@
                                             '</td>
                                             <td style="padding-left: 10px;">
                                               <a href="./deviceDetails.php?mac='.$row['mac'].'">
-                                                <b>'.$row['name'].'</b>
+                                                <b class="anonymize">'.$row['name'].'</b>
                                               </a>
                                             </td>
                                             <td>'

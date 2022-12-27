@@ -215,8 +215,6 @@ if ($_SESSION["login"] != 1)
   </div>
 </div> 
 
-
-  <div style="width: 100%; height: 20px;"></div>
     </section>
     <!-- /.content -->
 </div>

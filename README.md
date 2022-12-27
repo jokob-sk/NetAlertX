@@ -34,16 +34,13 @@ The system continuously scans the network for, **New devices**, **New connection
 ## 🧩 Notification Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
    - Webhooks ([sample JSON](docs/webhook_json_sample.json))
-   - (❗Experimental) Home Assistant via [MQTT](https://www.home-assistant.io/integrations/mqtt/) 
+   - Home Assistant via [MQTT](https://www.home-assistant.io/integrations/mqtt/) 
      - discovery ~10s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now
 
 
 ## 🔐 Security
 
 - Configurable login to prevent unauthorized use. 
-- Set `PIALERT_WEB_PROTECTION = True` in `pialert.conf` to enable. 
-- The default password is `123456`.
-- To change password run `/home/pi/pialert/back/pialert-cli` 
 
 ## 📑 Features   
   - Display:
@@ -108,13 +105,14 @@ Instructions for [pucherot's original code can be found here](https://github.com
       - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
 <!--- --------------------------------------------------------------------- --->
-[main]:    ./docs/img/1_devices.jpg           "Main screen"
-[screen1]: ./docs/img/2_1_device_details.jpg  "Screen 1"
-[screen2]: ./docs/img/2_2_device_sessions.jpg "Screen 2"
-[screen3]: ./docs/img/2_3_device_presence.jpg "Screen 3"
-[screen4]: ./docs/img/3_presence.jpg          "Screen 4"
-[screen5]: ./docs/img/2_4_network.png         "Screen 5"
-[screen6]: ./docs/img/2_5_device_nmap_ready.jpg "Screen 6"
+[main]:    ./docs/img/devices_split.png       "Main screen"
+[screen1]: ./docs/img/devices_details.png     "Screen 1"
+[screen2]: ./docs/img/events.png              "Screen 2"
+[screen3]: ./docs/img/presence.png            "Screen 3"
+[screen4]: ./docs/img/maintenance.png         "Screen 4"
+[screen5]: ./docs/img/network.png             "Screen 5"
+[screen6]: ./docs/img/settings.png            "Screen 6"
+[screen7]: ./docs/img/help_faq.png            "Screen 6"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
 [main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"

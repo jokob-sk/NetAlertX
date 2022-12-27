@@ -137,9 +137,19 @@ if ($ENABLED_DARKMODE === True) {
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">          
           <!-- Server Status -->
-          <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><code id="state"></code></a></li>
+          <li>
+            <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
+              <div class="header-status">
+                <code id="state"></code>
+              </div>
+            </a>
+          </li>
           <!-- Server Name -->
-          <li><a style="pointer-events:none;"><?php echo gethostname();?> <span id="PIA_Servertime_place"></span></a></li>
+          <li>
+            <div class="header-server-time small">
+              <div><?php echo gethostname();?></div> <div><span id="PIA_Servertime_place"></span></div>
+            </div>
+          </li>
 
           <!-- Header right info -->
           <li class="dropdown user user-menu">

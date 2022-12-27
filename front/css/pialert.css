@@ -100,6 +100,24 @@
     color: gray;
 }
 
+.header-server-time
+{
+    padding:8px;
+    color: white;
+} 
+
+.header-status
+{
+    padding:0px;
+}
+.header-status:hover
+{
+    background-color: rgba(0, 0, 0, 0);
+}
+.navbar-nav > li > a
+{
+    line-height: 30px;
+}
 /* -----------------------------------------------------------------------------
    Customized Main Menu
 ----------------------------------------------------------------------------- */
