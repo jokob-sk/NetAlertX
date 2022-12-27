@@ -27,9 +27,35 @@
   font-family: 'Courier New', monospace;
   
 }
+.logs-row
+{
+    align-content: center;
+    width: 100%;
+    display: grid;
+    margin: 5px;
+}
+.log-area
+{
+    padding: 3px;    
+    width:100%;    
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #606060;
+}
 .logs-small
 {
     height: 100px;
+}
+.log-file
+{
+    width: 145px;
+    display: inline-grid;
+    font-size: 20px;
+}
+.log-purge
+{
+    width: 90px;
+    float:right;
 }
 .span-padding
 {

@@ -346,55 +346,79 @@ if (submit && isset($_POST['skinselector_set'])) {
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
                     <div class="db_info_table">
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            <div><label>pialert.log</label><span class="span-padding"><a href="./log/pialert.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
-                            </div>
-                            <div class="db_tools_table_cell_b">
+                        <div class="log-area">
+                            <div class="row logs-row">
                               <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
                               </textarea>
                             </div>
-                        </div>   
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">                            
-                            <div><label>pialert_front.log</label><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
+                            <div class="row logs-row" >
+                              <div>
+                                <div class="log-file">pialert.log</div><span class="span-padding"><a href="./log/pialert.log" target="_blank"><i class="fa fa-download"></i> </a></span>             
+                                <div class="log-purge">
+                                  <button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                                </div>
+                              </div>
                             </div>
-                            <div class="db_tools_table_cell_b">
+                        </div>   
+                        <div class="log-area">
+                            <div class="row logs-row">
                               <textarea id="pialert_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
                               </textarea>
                             </div>
-                        </div>   
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">                            
-                            <div><label>IP_changes.log</label><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
+                            <div class="row logs-row" >                            
+                              <div>
+                                <div class="log-file">pialert_front.log</div><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-purge">
+                                  <button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                                </div>
+                              </div>
                             </div>
-                            <div class="db_tools_table_cell_b">
+                        </div>   
+                        <div class="log-area">
+                             
+                            <div class="row logs-row">
                               <textarea id="IP_changes_log" class="logs logs-small" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
                               </textarea>                              
-                            </div>
+                            </div>                          
+                            <div class="row logs-row" >
+                              <div> 
+                                <div class="log-file">IP_changes.log</div><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span>                          
+                                <div class="log-purge">
+                                  <button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                                </div>                            
+                              </div>                            
+                            </div>                            
+
                         </div> 
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">                            
-                            <div><label>stdout.log</label><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>
-                            </div>
-                            <div class="db_tools_table_cell_b">
+                        <div class="log-area">
+                            <div class="row logs-row">
                               <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
                               </textarea>
                             </div>
+                            <div class="row logs-row" >                            
+                              <div>
+                                <div class="log-file">stdout.log</div><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-purge">
+                                  <button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                                </div>
+                              </div>
+                          </div>
+
                         </div> 
-                        <div class="db_info_table_row">
-                            <div class="db_tools_table_cell_a" style="">
-                            <div><label>stderr.log</label><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span></div>
-                            <div><button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo lang('Gen_Purge');?></button></div>                            
-                            </div>
-                            <div class="db_tools_table_cell_b">
+                        <div class="log-area">
+                            <div class="row logs-row">
                               <textarea id="stderr_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stderr.log" ); ?>
                               </textarea>
                             </div>
+                            <div class="row logs-row" >
+                              <div>
+                              <div class="log-file">stderr.log</div><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span>
+                              <div class="log-purge">
+                                <button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                              </div>                            
+                              </div>                            
+                            </div>
+
                         </div>      
                                 
                     </div>

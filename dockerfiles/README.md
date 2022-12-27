@@ -8,11 +8,11 @@
 
 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
 
-<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/1_devices.jpg" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/1_devices.jpg" width="300px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" width="300px" />
 </a>
-<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/2_4_network.png" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/2_4_network.png" width="320px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" width="300px" />
 </a>
 
 

@@ -106,7 +106,7 @@ Instructions for [pucherot's original code can be found here](https://github.com
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/devices_split.png       "Main screen"
-[screen1]: ./docs/img/devices_details.png     "Screen 1"
+[screen1]: ./docs/img/device_details.png      "Screen 1"
 [screen2]: ./docs/img/events.png              "Screen 2"
 [screen3]: ./docs/img/presence.png            "Screen 3"
 [screen4]: ./docs/img/maintenance.png         "Screen 4"

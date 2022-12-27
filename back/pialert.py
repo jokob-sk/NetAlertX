@@ -506,7 +506,7 @@ def main ():
         # proceed if 1 minute passed
         if last_run + timedelta(minutes=1) < time_now :
 
-             # last time any scan or maintennace was run
+             # last time any scan or maintennace/Upkeep was run
             last_run = time_now
 
             reporting = False
@@ -552,7 +552,7 @@ def main ():
             # Final message
             if cycle != "":
                 action = str(cycle)
-                if cycle == "1":
+                if action == "1":
                     action = "network_scan"
                 file_print('[', time_now.replace (microsecond=0), '] Last action: ', action)
                 cycle = ""
@@ -575,7 +575,7 @@ def check_internet_IP ():
     reporting = False
 
     # Header
-    updateState("Scanning: Internet IP")
+    updateState("Scan: Internet IP")
     file_print('[', startTime, '] Check Internet IP:')    
 
     # Get Internet IP
@@ -744,18 +744,18 @@ def check_IP_format (pIP):
 #===============================================================================
 def cleanup_database ():
     # Header    
-    updateState("Maintenance: DB cleanup")
-    file_print('[', startTime, '] Cleanup Database:' )
+    updateState("Upkeep: Clean DB") 
+    file_print('[', startTime, '] Upkeep Database:' )
 
     openDB()    
    
     # Cleanup Online History
-    file_print('    Cleanup Online_History')
+    file_print('    Upkeep Online_History')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
     file_print('    Optimize Database')
 
     # Cleanup Events
-    file_print('    Cleanup Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days')
+    file_print('    Upkeep Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Shrink DB
@@ -769,11 +769,11 @@ def cleanup_database ():
 #===============================================================================
 def update_devices_MAC_vendors (pArg = ''):
     # Header    
-    updateState("Maintenance: Update HW Vendors")
-    file_print('[', startTime, '] Update HW Vendors:' )
+    updateState("Upkeep: Vendors")
+    file_print('[', startTime, '] Upkeep - Update HW Vendors:' )
 
     # Update vendors DB (iab oui)
-    file_print('\nUpdating vendors DB (iab & oui)')
+    file_print('    Updating vendors DB (iab & oui)')
     # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', logPath +  '/update_vendors.log',    '2>&1']
     update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
 
@@ -794,7 +794,7 @@ def update_devices_MAC_vendors (pArg = ''):
     notFound = 0
 
     # All devices loop
-    file_print('\nSearching devices vendor')
+    file_print('    Searching devices vendor')
     openDB()
     for device in sql.execute ("SELECT * FROM Devices") :
         # Search vendor in HW Vendors DB
@@ -889,7 +889,7 @@ def scan_network ():
     # # devtest end
 
     # Header
-    updateState("Scanning: Network")
+    updateState("Scan: Network")
     file_print('[', startTime, '] Scan Devices:' )    
     file_print('    ScanCycle:', cycle)
     
@@ -1942,45 +1942,45 @@ def email_reporting ():
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
-        file_print('Changes detected, sending reports')
+        file_print('    Changes detected, sending reports')
 
         if REPORT_MAIL and check_config('email'):  
-            updateState("Sending: Email")
-            file_print('    Sending report by Email')
+            updateState("Send: Email")
+            file_print('      Sending report by Email')
             send_email (mail_text, mail_html)
         else :
             file_print('    Skip mail')
         if REPORT_APPRISE and check_config('apprise'):
-            updateState("Sending: Apprise")
-            file_print('    Sending report by Apprise')
+            updateState("Send: Apprise")
+            file_print('      Sending report by Apprise')
             send_apprise (mail_html)
         else :
-            file_print('    Skip Apprise')
+            file_print('      Skip Apprise')
         if REPORT_WEBHOOK and check_config('webhook'):
-            updateState("Sending: Webhook")
-            file_print('    Sending report by Webhook')
+            updateState("Send: Webhook")
+            file_print('      Sending report by Webhook')
             send_webhook (json_final, mail_text)
         else :
-            file_print('    Skip webhook')
+            file_print('      Skip webhook')
         if REPORT_NTFY and check_config('ntfy'):
-            updateState("Sending: NTFY")
-            file_print('    Sending report by NTFY')
+            updateState("Send: NTFY")
+            file_print('      Sending report by NTFY')
             send_ntfy (mail_text)
         else :
-            file_print('    Skip NTFY')
+            file_print('      Skip NTFY')
         if REPORT_PUSHSAFER and check_config('pushsafer'):
-            updateState("Sending: PUSHSAFER")
-            file_print('    Sending report by PUSHSAFER')
+            updateState("Send: PUSHSAFER")
+            file_print('      Sending report by PUSHSAFER')
             send_pushsafer (mail_text)
         else :
-            file_print('    Skip PUSHSAFER')
+            file_print('      Skip PUSHSAFER')
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
-            updateState("Sending: MQTT")
-            file_print('    Establishing MQTT thread')                          
+            updateState("Send: MQTT")
+            file_print('      Establishing MQTT thread')                          
             mqtt_start()        
         else :
-            file_print('    Skip MQTT')
+            file_print('      Skip MQTT')
     else :
         file_print('    No changes to report')
 

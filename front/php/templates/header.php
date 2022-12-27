@@ -268,7 +268,7 @@ function getParam(targetId, key) {
   $.get('php/server/parameters.php?action=get&parameter='+ key, function(data) {
     var result = data;
 
-    document.getElementById(targetId).innerHTML = result;    
+    document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
 
   });
 }
