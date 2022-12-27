@@ -16,6 +16,7 @@ services:
       # comment out / delete below lines, they are only for development purposes
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
+      - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      
       - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
       - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
