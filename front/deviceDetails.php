@@ -4,7 +4,7 @@
 #
 #  deviceDetails.php - Front module. Device management page
 #-------------------------------------------------------------------------------
-#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
 <?php
@@ -1556,11 +1556,6 @@ function deactivateSaveRestoreData () {
 function setTextValue (textElement, textValue) {
   $('#'+textElement).val (textValue);
   activateSaveRestoreData ();
-}
-
-function addNewDrpItem(textElement)
-{
-  showModalDefault("Add new item","Enter new item: <input><input>","Cancel","OK", "alert");
 }
 
 </script>

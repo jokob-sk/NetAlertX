@@ -5,7 +5,7 @@
 //
 //  util.php - Front module. Server side. Common generic functions
 //------------------------------------------------------------------------------
-//  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 require '/home/pi/pialert/front/php/templates/timezone.php';

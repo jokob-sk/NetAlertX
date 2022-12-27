@@ -6,7 +6,7 @@
 #
 #  pialert.py - Back module. Network scanner
 #-------------------------------------------------------------------------------
-#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 #-------------------------------------------------------------------------------
 
 
@@ -870,29 +870,45 @@ def scan_network ():
 
     # file_print("---------------------------------------------")
 
-    # client = SSDPClient()
-    # devices = client.m_search("ssdp:all")
-    # for device in devices:
-    #    file_print(device.get("usn"))
+    #     client = SSDPClient()
 
-    # file_print("---------------------------------------------")
+    # devices = client.m_search("ssdp:all")
+
+    # for device in devices:
+    #     print(device.get("usn"))
+    #     print("000000000000000000000000000000000000000000000000000000000000\n")
+    #     print(device)
+
+    # print("---------------------------------------------")
 
     # devices = upnpclient.discover()
 
-    # file_print("---------------------------------------------")
+    # print("---------------------------------------------")
 
     # for device in devices:
-    #    file_print(device)
+    #     print(device)
 
-    # file_print("---------------------------------------------")
+    # print("---------------------------------------------")
+
+
+    # sockAddr = ("192.168.1.14", 443);
+
+    # sockInfo = socket.getnameinfo(sockAddr, socket.NI_NAMEREQD);
+
+    # # find an example using NI_MAXHOST
+
+    # print(sockInfo);
+
+
+    # nmap > vendor > espressifg > ESP32 type
+    # UDP ports
+    #  nmap -sU 192.168.1.14 
 
     # # devtest end
 
     # Header
     updateState("Scan: Network")
-    file_print('[', startTime, '] Scan Devices:' )    
-    file_print('    ScanCycle:', cycle)
-    
+    file_print('[', startTime, '] Scan Devices:' )       
 
     # # Query ScanCycle properties
     print_log ('Query ScanCycle confinguration')
@@ -914,14 +930,16 @@ def scan_network ():
     # DEBUG - print number of rows updated    
     # file_print('aspr-scan result:', len(arpscan_devices))
 
-    # Pi-hole method
-    file_print('    Pi-hole start')
-    openDB()    
-    reporting = copy_pihole_network() or reporting
+    # Pi-hole method    
+    if PIHOLE_ACTIVE :       
+        file_print('    Pi-hole start')
+        openDB()    
+        reporting = copy_pihole_network() or reporting
 
-    # DHCP Leases method
-    file_print('    DHCP Leases start')
-    reporting = read_DHCP_leases () or reporting
+    # DHCP Leases method    
+    if DHCP_ACTIVE :        
+        file_print('    DHCP Leases start')
+        reporting = read_DHCP_leases () or reporting
 
     # Load current scan data
     file_print('  Processing scan results')    
@@ -998,15 +1016,12 @@ def execute_arpscan ():
     arpscan_output = ""
 
     # multiple interfaces
-    if type(SCAN_SUBNETS) is list:
-        file_print("    arp-scan: Multiple interfaces")        
+    if type(SCAN_SUBNETS) is list:        
         for interface in SCAN_SUBNETS :            
             arpscan_output += execute_arpscan_on_interface (interface)
     # one interface only
-    else:
-        file_print("    arp-scan: One interface")
+    else:        
         arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
-
     
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -1017,7 +1032,6 @@ def execute_arpscan ():
     # Create Userdict of devices
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
-
     
     # Delete duplicate MAC
     unique_mac = [] 
@@ -1026,8 +1040,7 @@ def execute_arpscan ():
     for device in devices_list :
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
-            unique_devices.append(device)
-    
+            unique_devices.append(device)    
 
     # DEBUG
         # file_print(devices_list)
@@ -1061,9 +1074,6 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network ():
-    # check if Pi-hole is active
-    if not PIHOLE_ACTIVE :
-        return    
 
     # Open Pi-hole DB
     sql.execute ("ATTACH DATABASE '"+ piholeDB +"' AS PH")
@@ -1090,10 +1100,6 @@ def copy_pihole_network ():
 #-------------------------------------------------------------------------------
 def read_DHCP_leases ():
     reporting = False
-
-    # check DHCP Leases is active
-    if not DHCP_ACTIVE :
-        return False   
             
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)

@@ -5,7 +5,7 @@
 //
 //  db.php - Front module. Server side. DB common file
 //------------------------------------------------------------------------------
-//  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 // ## TimeZone processing

@@ -4,7 +4,7 @@
 #
 #  footer.php - Front module. Common footer to all the web pages 
 #-------------------------------------------------------------------------------
-#  Puche 2021        pi.alert.application@gmail.com        GNU GPLv3
+#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
   <!-- Main Footer -->
@@ -13,7 +13,7 @@
 
     <!-- &copy; 2020 Puche -->
     <?php
-      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (2022+ jokob-sk)';
+      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>)';
     ?>
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
