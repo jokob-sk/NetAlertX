@@ -452,7 +452,7 @@ def importConfig ():
     closeDB()
 #-------------------------------------------------------------------------------
 
-importConfig()
+# importConfig()
 
 #===============================================================================
 # USER CONFIG VARIABLES - END
@@ -1562,6 +1562,7 @@ def resolve_device_name (pMAC, pIP):
         
         # Check MAC parameter
         mac = pMACstr.replace (':','')
+        # file_print( ">>>>>> DIG >>>>>")
         if len(pMACstr) != 17 or len(mac) != 12 :
             return -2
 
@@ -1569,6 +1570,7 @@ def resolve_device_name (pMAC, pIP):
         # file_print(pMAC, pIP)
 
         # Resolve name with DIG
+        # file_print( ">>>>>> DIG1 >>>>>")
         dig_args = ['dig', '+short', '-x', pIP]
 
         # Execute command
@@ -1579,6 +1581,8 @@ def resolve_device_name (pMAC, pIP):
             # An error occured, handle it
             file_print(e.output)
             newName = "Error - check logs"
+
+        # file_print( ">>>>>> DIG2 >>>>> Name", newName)
 
         # Check returns
         newName = newName.strip()
@@ -2554,11 +2558,12 @@ def upgradeDB ():
     AND name='Settings'; 
     """).fetchone() == None
 
-    # Re-creating Settings table
-    # if settingsMissing:   
+    # Re-creating Settings table    
     file_print("[upgradeDB] Re-creating Settings table")
 
-    sql.execute("DROP TABLE Settings;")       
+    if settingsMissing == False:   
+        sql.execute("DROP TABLE Settings;")       
+
     sql.execute("""      
     CREATE TABLE "Settings" (        
     "Code_Name"	TEXT,

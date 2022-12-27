@@ -692,3 +692,9 @@ height: 50px;
     width: auto 
 }
 
+
+/* Devices */
+.drp-edit
+{
+    cursor: pointer;
+}

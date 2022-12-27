@@ -166,9 +166,10 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtOwner');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-caret-down"></span></button>
+                                <span class="fa fa-caret-down "></span></button>                                
                               <ul id="dropdownOwner" class="dropdown-menu dropdown-menu-right">
                               </ul>
                             </div>
@@ -182,14 +183,12 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtDeviceType');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownDeviceType" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtDeviceType','Smartphone')"> Smartphone </a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtDeviceType','Laptop')">     Laptop     </a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtDeviceType','PC')">         PC         </a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtDeviceType','Others')">     Others     </a></li>
+                                
                               </ul>
                             </div>
                           </div>
@@ -218,16 +217,12 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtGroup');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
                               </button>
                               <ul id="dropdownGroup" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtGroup','Always On')"> Always On </a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtGroup','Friends')">   Friends   </a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtGroup','Personal')">  Personal  </a></li>
-                                <li class="divider"></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtGroup','Others')">    Others    </a></li>
                               </ul>
                             </div>
                           </div>
@@ -240,17 +235,12 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtLocation');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownLocation" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Bathroom')">    Bathroom</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Bedroom')">     Bedroom</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Hall')">        Hall</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Kitchen')">     Kitchen</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Living room')"> Living room</a></li>
-                                <li class="divider"></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtLocation','Others')">      Others</a></li>
+
                               </ul>
                             </div>
                           </div>
@@ -357,9 +347,8 @@ if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $D
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','1 min')"><?php echo lang('DevDetail_EveandAl_ScanCycle_a');?></a></li>
-                                <!-- <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','15 min');"> Scan 12 min every 15 min</a></li> -->
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','0 min');"><?php echo lang('DevDetail_EveandAl_ScanCycle_z');?></a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','yes')"><?php echo lang('DevDetail_EveandAl_ScanCycle_a');?></a></li>                                
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','no');"><?php echo lang('DevDetail_EveandAl_ScanCycle_z');?></a></li>
                               </ul>
                             </div>
                           </div>
@@ -831,7 +820,7 @@ function initializeCombos () {
   // Initialize static combos
   initializeComboSkipRepeated ();
 }
-
+// -----------------------------------------------------------------------------
 function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
 
   // check if we have the value cached already
@@ -873,7 +862,15 @@ function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
     writeDropdownHtml(dropdownId, dropdownHtmlContent)
   }
 }
+// -----------------------------------------------------------------------------
 
+// Edit dropdown value
+function editDrp(dropdownId)
+{
+  $('#'+dropdownId).focus();
+}
+
+// -----------------------------------------------------------------------------
 // write out the HTML for the dropdown
 function writeDropdownHtml(dropdownId, dropdownHtmlContent)
 {
@@ -885,7 +882,7 @@ function writeDropdownHtml(dropdownId, dropdownHtmlContent)
   HTMLelement.innerHTML = ''
   HTMLelement.innerHTML += dropdownHtmlContent;
 }
-
+// -----------------------------------------------------------------------------
 function getCache(key)
 {
   // check cache
@@ -897,12 +894,12 @@ function getCache(key)
     return "";
   }
 }
-
+// -----------------------------------------------------------------------------
 function setCache(key, data)
 {
   sessionStorage.setItem(key, data); 
 }
-
+// -----------------------------------------------------------------------------
 
 function initializeComboSkipRepeated () {
   // find dropdown menu element
@@ -917,6 +914,8 @@ function initializeComboSkipRepeated () {
       item +'</a></li>';
   });
 }
+
+// -----------------------------------------------------------------------------
 
 function findSkipRepeated (value='0') {
   var itemSelected = skipRepeatedItems[0];
@@ -1286,7 +1285,7 @@ function getDeviceData (readAllData=false) {
         $('#txtStatus').val                          (deviceData['dev_Status'].replace('-', ''));
         if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
     
-        $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] +' min');
+        $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] == "1" ? "yes" : "no");
         if (deviceData['dev_AlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} else {$('#chkAlertEvents').iCheck('uncheck');}
         if (deviceData['dev_AlertDeviceDown'] == 1)  {$('#chkAlertDown').iCheck('check');}   else {$('#chkAlertDown').iCheck('uncheck');}
         $('#txtSkipRepeated').val                    (findSkipRepeated (deviceData['dev_SkipRepeated']));
@@ -1390,7 +1389,7 @@ function setDeviceData (refreshCallback='') {
     + '&networknode='    + $('#txtNetworkNodeMac').val()
     + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
-    + '&scancycle='      + $('#txtScanCycle').val().split(' ')[0]
+    + '&scancycle='      + ($('#txtScanCycle').val() == "yes" ? "1" : "0")
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
     + '&alertdown='      + ($('#chkAlertDown')[0].checked * 1)
     + '&skiprepeated='   + $('#txtSkipRepeated').val().split(' ')[0]
@@ -1401,6 +1400,13 @@ function setDeviceData (refreshCallback='') {
     // deactivate button 
     deactivateSaveRestoreData ();
     showMessage (msg);
+
+    // clear session storage 
+    setCache("#dropdownOwner","");
+    setCache("#dropdownDeviceType","");
+    setCache("#dropdownGroup","");
+    setCache("#dropdownLocation","");
+    setCache("#dropdownNetworkNodeMac","");
 
     // Callback fuction
     if (typeof refreshCallback == 'function') {
@@ -1419,7 +1425,7 @@ function askSkipNotifications () {
   }
 
   // When Archived
-  if ($('#chkArchived')[0].checked && $('#txtScanCycle').val().split(' ')[0] != "0") {
+  if ($('#chkArchived')[0].checked && $('#txtScanCycle').val() != "no") {
     // Ask skip notifications
     showModalDefault ('Device Archived', 'Do you want to skip all notifications for this device?',
       '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'skipNotifications');
@@ -1434,7 +1440,7 @@ function skipNotifications () {
   }
 
   // Set cycle 0
-  $('#txtScanCycle').val ('0 min');
+  $('#txtScanCycle').val ('no');
   activateSaveRestoreData();
 }
 
@@ -1550,6 +1556,11 @@ function deactivateSaveRestoreData () {
 function setTextValue (textElement, textValue) {
   $('#'+textElement).val (textValue);
   activateSaveRestoreData ();
+}
+
+function addNewDrpItem(textElement)
+{
+  showModalDefault("Add new item","Enter new item: <input><input>","Cancel","OK", "alert");
 }
 
 </script>

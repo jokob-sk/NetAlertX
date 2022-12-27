@@ -237,23 +237,6 @@ if ($ENABLED_DARKMODE === True) {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
           <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo lang('Navigation_HelpFAQ');?></span></a>
         </li>
-<!--
-        <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>Config</span>
-            <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-          </a>
-
-          <ul class="treeview-menu">
-            <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('scancycles.php', 'scancyclesDetails.php') ) ){ echo 'active'; } ?>">
-              <a href="scancycles.php"><i class="fa fa-link"></i> <span>Scan Cycles</span></a>
-            </li>
-            <li><a href="#">Cron Status</a></li>
-            <li><a href="#">Current IP</a></li>
-          </ul>
-        </li>
--->
       </ul>
 
       <!-- /.sidebar-menu -->
