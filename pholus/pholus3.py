@@ -11,8 +11,55 @@ import codecs
 import ipaddress
 from scapy.utils import PcapWriter
 
+
 sys.setrecursionlimit(30000)
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#supress Scapy warnings`
+
+
+
+#===============================================================================
+# UTIL
+#===============================================================================
+
+
+def sanitize_string(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+    value = b_to_str(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return value
+
+#-------------------------------------------------------------------------------
+NoneType = type(None)
+
+def b_to_str(value):
+    # if value is of type bytes, convert to string
+    if value is None:  
+        print("00>>>>> ")      
+        return str("")
+    elif isinstance(value, type(None)):
+        print("01>>>>> ")
+        return str("")
+    elif isinstance(value, NoneType):
+        print("02>>>>> ")
+        return str("")
+    elif isinstance(value, str):
+        # print("11>>>>> ",type(value))
+        return str(value+"")
+    elif isinstance(value, int):
+        b_to_str(str(value))
+    elif isinstance(value, bool):
+        b_to_str(str(value))
+    elif isinstance(value, bytes):        
+        b_to_str(value.decode('utf-8'))
+    elif isinstance(value, list):
+        for one in value:            
+            b_to_str(one)
+    else:
+        print("21>>>>> ",type(value))
+        return str(value)
+    # return ">>Couldn't determine type<<"
+ 
+ #-------------------------------------------------------------------------------
 
 ######################################
 ### OBTAIN THE SYSTEM IPV6 ADDRESS ###
@@ -113,7 +160,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
         IP_src=packets.getlayer(IPv6).src
     elif packets.haslayer(IP):
         IP_src=packets.getlayer(IP).src
-    res0= Ether_src + " " + IP_src
+    res0= Ether_src + " | " + IP_src.ljust(27)
     if packets.haslayer(DNS):
         dns=packets.getlayer(DNS)
         if (conflict or dos_ttl) and dns.ancount>0:
@@ -174,7 +221,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
         elif auto_fake_responses or (not (dos_ttl or conflict)):
             ## IF THIS IS A QUERY ##
             if dns.opcode==0:
-                res0 = res0 + " QUERY"
+                res0 = res0 + ""
                 if dns.qdcount>0:
                     DNSBlocks = [ ]
                     DNSBlocks.append(dns.qd)
@@ -384,11 +431,11 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             ### END "IF WE NEED TO AUTO RESPOND WITH A FAKE RESPONSE
                             ### NEXT LINES ARE ONLY USED TO PRINT RESULTS ###
                             if dnsqr.qclass==32769:
-                                res = res0 + " Question: "+dnsqr.qname.decode("utf-8") + " " + dns_type[dnsqr.qtype] +" QU Class:IN"
+                                res = res0 + " | Question            | "+dnsqr.qname.decode("utf-8") + " " + dns_type[dnsqr.qtype] +" QU Class:IN"
                             elif dnsqr.qclass==1:
-                                res = res0 + " Question: "+dnsqr.qname.decode("utf-8") + " "+ dns_type[dnsqr.qtype] + " QM Class:IN"
+                                res = res0 + " | Question            | "+dnsqr.qname.decode("utf-8") + " "+ dns_type[dnsqr.qtype] + " QM Class:IN"
                             elif dnsqr.qclass==255:
-                                res = res0 + " Question: "+dnsqr.qname.decode("utf-8") + " "+ dns_type[dnsqr.qtype] + " QM Class:ANY"
+                                res = res0 + " | Question            | "+dnsqr.qname.decode("utf-8") + " "+ dns_type[dnsqr.qtype] + " QM Class:ANY"
                             else:
                                 print("DNSQR:")
                                 print("-----")
@@ -415,7 +462,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     ARtype="OPT"
                                 else:
                                     ARtype=str(dnsrropt.type)
-                                res = res0 + " Additional_Record: " + rrname.decode("utf-8")  + " " + ARtype 
+                                res = res0 + " | Additional_Record   | " + rrname.decode("utf-8")  + " " + ARtype 
                                 if dnsrropt.haslayer(EDNS0TLV):
                                     edns0tlv=dnsrropt.getlayer(EDNS0TLV)
                                     if edns0tlv.optcode==4:
@@ -431,11 +478,28 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             while isinstance(block,DNSRR):#Somewhat equivalent: while not isinstance(an, NoPayload):
                                 dnsrr=block.getlayer(DNSRR)
                                 if dnsrr.rclass==32769:
-                                    res = res0 + " DNS Resource Record: "+ dnsrr.rrname + " " + dns_type[dnsrr.type] +" QU Class:IN "+dnsrr.rdata
+
+                                    str_res0   = str(b_to_str(res0)) + ""
+                                    str_rrname = str(b_to_str(dnsrr.rrname)) + ""
+                                    str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""
+                                    str_rdata  = str(b_to_str(dnsrr.rdata)) + ""
+
+                                    res = str_res0       + " | DNS Resource Record | " + str_rrname + " " + str_type + " QU Class:IN " + str_rdata
                                 elif dnsrr.rclass==1:
-                                    res = res0 + " DNS Resource Record: "+dnsrr.rrname + " "+ dns_type[dnsrr.type] + " QM Class:IN "+dnsrr.rdata
+
+                                    str_res0   = str(b_to_str(res0)) + ""
+                                    str_rrname = str(b_to_str(dnsrr.rrname)) + ""
+                                    str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""
+                                    str_rdata  = str(b_to_str(dnsrr.rdata)) + ""
+
+                                    res = str_res0 + " | DNS Resource Record | " + str_rrname + " " + str_type + " QM Class:IN " + str_rdata
                                 elif dnsrr.qclass==255:
-                                    res = res0 + " Question: "+dnsrr.qname + " "+ dns_type[dnsrr.qtype] + " QM Class:ANY"
+
+                                    str_res0   = str(b_to_str(res0)) + ""
+                                    str_qname  = str(b_to_str(dnsrr.qname)) + ""
+                                    str_qtype  = str(b_to_str(dns_type[dnsrr.qtype])) + ""
+
+                                    res = str_res0 + " | Question            | " + str_qname + " " + str_qtype + " QM Class:ANY"
                                 else:
                                     print("DNSRR:")
                                     print("-----")
@@ -443,10 +507,17 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     print("DEBUGGING IS NEEDED HERE")
                                     exit(0)
                                 if dnsrr.type==33:#SRV Record
+
+                                    str_res0   = str(b_to_str(res0)) + ""
+                                    str_rrname = str(b_to_str(dnsrr.rrname)) + ""
+                                    str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""                                    
+                                    str_rclass = str(b_to_str(dnsrr.rclass)) + ""
+
                                     priority=str(dnsrr.rdata)[0].encode("HEX")+str(dnsrr.rdata)[1].encode("HEX")
                                     weight=str(dnsrr.rdata)[2].encode("HEX")+str(dnsrr.rdata)[3].encode("HEX")
                                     port_number=str(dnsrr.rdata)[4].encode("HEX")+str(dnsrr.rdata)[5].encode("HEX")
-                                    res = res0 + " Additional_Record: "+dnsrr.rrname + " " + dns_type[dnsrr.type]+" " + str(dnsrr.rclass) + " priority="+str(int(priority,16))+" weight="+str(int(weight,16))+" port="+str(int(port_number,16))+" target="+str(dnsrr.rdata)[6::]
+
+                                    res = str_res0 + " | Additional_Record   | "+ str_rrname + " " + str_type+" " + str_rclass + " priority="+str(int(priority,16))+" weight="+str(int(weight,16))+" port="+str(int(port_number,16))+" target="+str(dnsrr.rdata)[6::]
                                 else:
                                     rdata=dnsrr.rdata
                                     if isinstance(rdata,bytes):
@@ -454,7 +525,14 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     if "._tcp." not in rdata and "._udp." not in rdata:
                                         if rdata == "_dhnap.":
                                             rdata=rdata+"_tcp."
-                                    res = res0 + " Additional_Record: "+dnsrr.rrname + " " + dns_type[dnsrr.type]+" " + str(dnsrr.rclass) + ' "' +rdata+'"'
+
+                                    str_res0   = str(b_to_str(res0)) + ""
+                                    str_rrname = str(b_to_str(dnsrr.rrname)) + ""
+                                    str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""
+                                    str_rdata  = str(b_to_str(dnsrr.rdata)) + ""
+                                    str_rclass = str(b_to_str(dnsrr.rclass)) + ""
+
+                                    res = str_res0 + " | Additional_Record   | "+str_rrname + " " + str_type+" " + str_rclass + ' "' +str_rdata+'"'
                                 if show_ttl:
                                     res = res + " TTL:"+str(dnsrr.ttl)
                                 if print_res==1:
@@ -478,14 +556,14 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 priority=str(dnsrr.rdata)[0].encode("HEX")+str(dnsrr.rdata)[1].encode("HEX")
                                 weight=str(dnsrr.rdata)[2].encode("HEX")+str(dnsrr.rdata)[3].encode("HEX")
                                 port_number=str(dnsrr.rdata)[4].encode("HEX")+str(dnsrr.rdata)[5].encode("HEX")
-                                res = res0 + " Answer: "+dnsrr.rrname + " " + dns_type[dnsrr.type]+" " + rclass + " priority="+str(int(priority,16))+" weight="+str(int(weight,16))+" port="+str(int(port_number,16))+" target="+str(dnsrr.rdata)[6::]
+                                res = res0 + " | Answer              | "+dnsrr.rrname + " " + dns_type[dnsrr.type]+" " + rclass + " priority="+str(int(priority,16))+" weight="+str(int(weight,16))+" port="+str(int(port_number,16))+" target="+str(dnsrr.rdata)[6::]
                             else:
                                 if "._tcp." not in rdata and "._udp." not in rdata:
                                     if rdata  == "_dhnap.":
                                         rdata=dnsrr.rdata+"_tcp."
                                 if isinstance(rdata,list):
                                     rdata = b" ".join(rdata).decode("utf-8")
-                                res = res0 + " Answer: "+dnsrr.rrname.decode("utf-8") + " " + dns_type[dnsrr.type]+" " + rclass + ' "' +rdata+'"'
+                                res = res0 + " | Answer              | "+dnsrr.rrname.decode("utf-8") + " " + dns_type[dnsrr.type]+" " + rclass + ' "' +rdata+'"'
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:

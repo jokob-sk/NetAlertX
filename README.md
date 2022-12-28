@@ -55,8 +55,7 @@ The system continuously scans the network for, **New devices**, **New connection
     - DB maintenance, Backup, Restore tools and CSV Export / Import
   - Help/FAQ Section 
 
-  | ![Screen 1][screen1] | ![Screen 2][screen2] |
-  | -------------------- | -------------------- |
+  | ![Screen 1][screen1] | ![Screen 2][screen2] |  
   | ![Screen 3][screen3] | ![Screen 4][screen4] |
   | ![Screen 5][screen5] | ![Screen 6][screen6] |
   | ![Report 1][report1] | ![Report 2][report2] |

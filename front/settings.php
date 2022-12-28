@@ -242,7 +242,7 @@ $db->close();
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 46;
+  var settingsNumber = 48;
   
   if(<?php echo count($settings)?> != settingsNumber) 
   {

@@ -348,12 +348,12 @@ if (submit && isset($_POST['skinselector_set'])) {
                     <div class="db_info_table">
                         <div class="log-area">
                             <div class="row logs-row">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
                               </textarea>
                             </div>
                             <div class="row logs-row" >
                               <div>
-                                <div class="log-file">pialert.log</div><span class="span-padding"><a href="./log/pialert.log" target="_blank"><i class="fa fa-download"></i> </a></span>             
+                                <div class="log-file">pialert.log <div class="logs-size"><?php echo number_format((filesize("./log/pialert.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/pialert.log" target="_blank"><i class="fa fa-download"></i> </a></span>             
                                 <div class="log-purge">
                                   <button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
                                 </div>
@@ -367,13 +367,29 @@ if (submit && isset($_POST['skinselector_set'])) {
                             </div>
                             <div class="row logs-row" >                            
                               <div>
-                                <div class="log-file">pialert_front.log</div><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-file">pialert_front.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_front.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span>
                                 <div class="log-purge">
                                   <button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
                                 </div>
                               </div>
                             </div>
-                        </div>   
+                        </div>
+                        <div class="log-area">
+                             
+                             <div class="row logs-row">
+                               <textarea id="pialert_pholus_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus.log" ); ?>
+                               </textarea>                              
+                             </div>                          
+                             <div class="row logs-row" >
+                               <div> 
+                                 <div class="log-file">pialert_pholus.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_pholus.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/pialert_pholus.log"><i class="fa fa-download"></i> </a></span>                          
+                                 <div class="log-purge">
+                                   <button class="btn btn-primary" onclick="logManage('pialert_pholus.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
+                                 </div>                            
+                               </div>                            
+                             </div>                            
+ 
+                         </div>    
                         <div class="log-area">
                              
                             <div class="row logs-row">
@@ -382,7 +398,7 @@ if (submit && isset($_POST['skinselector_set'])) {
                             </div>                          
                             <div class="row logs-row" >
                               <div> 
-                                <div class="log-file">IP_changes.log</div><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span>                          
+                                <div class="log-file">IP_changes.log<div class="logs-size"><?php echo number_format((filesize("./log/IP_changes.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span>                          
                                 <div class="log-purge">
                                   <button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
                                 </div>                            
@@ -397,7 +413,7 @@ if (submit && isset($_POST['skinselector_set'])) {
                             </div>
                             <div class="row logs-row" >                            
                               <div>
-                                <div class="log-file">stdout.log</div><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-file">stdout.log<div class="logs-size"><?php echo number_format((filesize("./log/stdout.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span>
                                 <div class="log-purge">
                                   <button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
                                 </div>
@@ -412,7 +428,7 @@ if (submit && isset($_POST['skinselector_set'])) {
                             </div>
                             <div class="row logs-row" >
                               <div>
-                              <div class="log-file">stderr.log</div><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span>
+                              <div class="log-file">stderr.log<div class="logs-size"><?php echo number_format((filesize("./log/stderr.log") / 1000000),2,",",".") . ' MB';?> </div></div><span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span>
                               <div class="log-purge">
                                 <button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?php echo lang('Gen_Purge');?></button>
                               </div>                            

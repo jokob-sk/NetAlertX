@@ -51,11 +51,14 @@ fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
-time_now = datetime.datetime.now()
-log_timestamp = time_now
+time_started = datetime.datetime.now()
+log_timestamp = time_started
 sql_connection = None
 
 
+#-------------------------------------------------------------------------------
+def timeNow():
+    return datetime.datetime.now().replace(microsecond=0)
 #-------------------------------------------------------------------------------
 def file_print(*args):
 
@@ -227,6 +230,11 @@ DDNS_USER               = 'dynu_user'
 DDNS_PASSWORD           = 'A0000000B0000000C0000000D0000000'
 DDNS_UPDATE_URL         = 'https://api.dynu.com/nic/update?'
 
+# Pholus settings
+# ----------------------
+PHOLUS_ACTIVE           = False                         
+PHOLUS_TIMEOUT          = 60   
+
 # PIHOLE settings
 # ----------------------
 PIHOLE_ACTIVE           = False                         
@@ -281,6 +289,14 @@ def closeDB ():
 #-------------------------------------------------------------------------------
 # Import user values
 
+def check_config_dict(key, default, config):
+    if key in config:
+        return config[key]
+    else: 
+        return default
+
+#-------------------------------------------------------------------------------
+
 def importConfig (): 
 
     # Specify globals so they can be overwritten with the new config
@@ -302,6 +318,8 @@ def importConfig ():
     global DDNS_ACTIVE, DDNS_DOMAIN, DDNS_USER, DDNS_PASSWORD, DDNS_UPDATE_URL
     # PiHole
     global PIHOLE_ACTIVE, DHCP_ACTIVE
+    # Pholus
+    global PHOLUS_ACTIVE, PHOLUS_TIMEOUT  
 
     # load the variables from  pialert.conf
     config_file = Path(fullConfPath)
@@ -309,68 +327,72 @@ def importConfig ():
     config_dict = {}
     exec(code, {"__builtins__": {}}, config_dict)        
     
-    SCAN_SUBNETS = config_dict['SCAN_SUBNETS']
-    PRINT_LOG = config_dict['PRINT_LOG']
-    TIMEZONE = config_dict['TIMEZONE']
-    PIALERT_WEB_PROTECTION = config_dict['PIALERT_WEB_PROTECTION']
-    PIALERT_WEB_PASSWORD = config_dict['PIALERT_WEB_PASSWORD']
-    INCLUDED_SECTIONS = config_dict['INCLUDED_SECTIONS']
-    SCAN_CYCLE_MINUTES = config_dict['SCAN_CYCLE_MINUTES']
-    DAYS_TO_KEEP_EVENTS = config_dict['DAYS_TO_KEEP_EVENTS']
-    REPORT_DASHBOARD_URL = config_dict['REPORT_DASHBOARD_URL']
+    SCAN_SUBNETS = check_config_dict('SCAN_SUBNETS', SCAN_SUBNETS , config_dict)
+    PRINT_LOG = check_config_dict('PRINT_LOG', PRINT_LOG , config_dict)
+    TIMEZONE = check_config_dict('TIMEZONE', TIMEZONE , config_dict)
+    PIALERT_WEB_PROTECTION = check_config_dict('PIALERT_WEB_PROTECTION', PIALERT_WEB_PROTECTION , config_dict)
+    PIALERT_WEB_PASSWORD = check_config_dict('PIALERT_WEB_PASSWORD', PIALERT_WEB_PASSWORD , config_dict)
+    INCLUDED_SECTIONS = check_config_dict('INCLUDED_SECTIONS', INCLUDED_SECTIONS , config_dict)
+    SCAN_CYCLE_MINUTES = check_config_dict('SCAN_CYCLE_MINUTES', SCAN_CYCLE_MINUTES , config_dict)
+    DAYS_TO_KEEP_EVENTS = check_config_dict('DAYS_TO_KEEP_EVENTS', DAYS_TO_KEEP_EVENTS , config_dict)
+    REPORT_DASHBOARD_URL = check_config_dict('REPORT_DASHBOARD_URL', REPORT_DASHBOARD_URL , config_dict)
 
     # Email
-    REPORT_MAIL = config_dict['REPORT_MAIL']
-    SMTP_SERVER = config_dict['SMTP_SERVER']
-    SMTP_PORT = config_dict['SMTP_PORT']
-    REPORT_TO = config_dict['REPORT_TO']
-    REPORT_FROM = config_dict['REPORT_FROM']
-    SMTP_SKIP_LOGIN = config_dict['SMTP_SKIP_LOGIN']
-    SMTP_USER = config_dict['SMTP_USER']
-    SMTP_PASS = config_dict['SMTP_PASS']
-    SMTP_SKIP_TLS = config_dict['SMTP_SKIP_TLS']
+    REPORT_MAIL = check_config_dict('REPORT_MAIL', REPORT_MAIL , config_dict)
+    SMTP_SERVER = check_config_dict('SMTP_SERVER', SMTP_SERVER , config_dict)
+    SMTP_PORT = check_config_dict('SMTP_PORT', SMTP_PORT , config_dict)
+    REPORT_TO = check_config_dict('REPORT_TO', REPORT_TO , config_dict)
+    REPORT_FROM = check_config_dict('REPORT_FROM', REPORT_FROM , config_dict)
+    SMTP_SKIP_LOGIN = check_config_dict('SMTP_SKIP_LOGIN', SMTP_SKIP_LOGIN , config_dict)
+    SMTP_USER = check_config_dict('SMTP_USER', SMTP_USER , config_dict)
+    SMTP_PASS = check_config_dict('SMTP_PASS', SMTP_PASS , config_dict)
+    SMTP_SKIP_TLS = check_config_dict('SMTP_SKIP_TLS', SMTP_SKIP_TLS , config_dict)
 
     # Webhooks
-    REPORT_WEBHOOK = config_dict['REPORT_WEBHOOK']
-    WEBHOOK_URL = config_dict['WEBHOOK_URL']
-    WEBHOOK_PAYLOAD = config_dict['WEBHOOK_PAYLOAD']
-    WEBHOOK_REQUEST_METHOD = config_dict['WEBHOOK_REQUEST_METHOD']
+    REPORT_WEBHOOK = check_config_dict('REPORT_WEBHOOK', REPORT_WEBHOOK , config_dict)
+    WEBHOOK_URL = check_config_dict('WEBHOOK_URL', WEBHOOK_URL , config_dict)
+    WEBHOOK_PAYLOAD = check_config_dict('WEBHOOK_PAYLOAD', WEBHOOK_PAYLOAD , config_dict)
+    WEBHOOK_REQUEST_METHOD = check_config_dict('WEBHOOK_REQUEST_METHOD', WEBHOOK_REQUEST_METHOD , config_dict)
 
     # Apprise
-    REPORT_APPRISE = config_dict['REPORT_APPRISE']
-    APPRISE_HOST = config_dict['APPRISE_HOST']
-    APPRISE_URL = config_dict['APPRISE_URL']
+    REPORT_APPRISE = check_config_dict('REPORT_APPRISE', REPORT_APPRISE , config_dict)
+    APPRISE_HOST = check_config_dict('APPRISE_HOST', APPRISE_HOST , config_dict)
+    APPRISE_URL = check_config_dict('APPRISE_URL', APPRISE_URL , config_dict)
 
     # NTFY
-    REPORT_NTFY = config_dict['REPORT_NTFY']
-    NTFY_HOST = config_dict['NTFY_HOST']
-    NTFY_TOPIC = config_dict['NTFY_TOPIC']
-    NTFY_USER = config_dict['NTFY_USER']
-    NTFY_PASSWORD = config_dict['NTFY_PASSWORD']
+    REPORT_NTFY = check_config_dict('REPORT_NTFY', REPORT_NTFY , config_dict)
+    NTFY_HOST = check_config_dict('NTFY_HOST', NTFY_HOST , config_dict)
+    NTFY_TOPIC = check_config_dict('NTFY_TOPIC', NTFY_TOPIC , config_dict)
+    NTFY_USER = check_config_dict('NTFY_USER', NTFY_USER , config_dict)
+    NTFY_PASSWORD = check_config_dict('NTFY_PASSWORD', NTFY_PASSWORD , config_dict)
 
     # PUSHSAFER
-    REPORT_PUSHSAFER = config_dict['REPORT_PUSHSAFER']
-    PUSHSAFER_TOKEN = config_dict['PUSHSAFER_TOKEN']
+    REPORT_PUSHSAFER = check_config_dict('REPORT_PUSHSAFER', REPORT_PUSHSAFER , config_dict)
+    PUSHSAFER_TOKEN = check_config_dict('PUSHSAFER_TOKEN', PUSHSAFER_TOKEN , config_dict)
 
     # MQTT
-    REPORT_MQTT = config_dict['REPORT_MQTT']
-    MQTT_BROKER = config_dict['MQTT_BROKER']
-    MQTT_PORT = config_dict['MQTT_PORT']
-    MQTT_USER = config_dict['MQTT_USER']
-    MQTT_PASSWORD = config_dict['MQTT_PASSWORD']
-    MQTT_QOS = config_dict['MQTT_QOS']
-    MQTT_DELAY_SEC = config_dict['MQTT_DELAY_SEC']
+    REPORT_MQTT = check_config_dict('REPORT_MQTT', REPORT_MQTT , config_dict)
+    MQTT_BROKER = check_config_dict('MQTT_BROKER', MQTT_BROKER , config_dict)
+    MQTT_PORT = check_config_dict('MQTT_PORT', MQTT_PORT , config_dict)
+    MQTT_USER = check_config_dict('MQTT_USER', MQTT_USER , config_dict)
+    MQTT_PASSWORD = check_config_dict('MQTT_PASSWORD', MQTT_PASSWORD , config_dict)
+    MQTT_QOS = check_config_dict('MQTT_QOS', MQTT_QOS , config_dict)
+    MQTT_DELAY_SEC = check_config_dict('MQTT_DELAY_SEC', MQTT_DELAY_SEC , config_dict)
 
     # DynDNS
-    DDNS_ACTIVE = config_dict['DDNS_ACTIVE']
-    DDNS_DOMAIN = config_dict['DDNS_DOMAIN']
-    DDNS_USER = config_dict['DDNS_USER']
-    DDNS_PASSWORD = config_dict['DDNS_PASSWORD']
-    DDNS_UPDATE_URL = config_dict['DDNS_UPDATE_URL']
+    DDNS_ACTIVE = check_config_dict('DDNS_ACTIVE', DDNS_ACTIVE , config_dict)
+    DDNS_DOMAIN = check_config_dict('DDNS_DOMAIN', DDNS_DOMAIN , config_dict)
+    DDNS_USER = check_config_dict('DDNS_USER', DDNS_USER , config_dict)
+    DDNS_PASSWORD = check_config_dict('DDNS_PASSWORD', DDNS_PASSWORD , config_dict)
+    DDNS_UPDATE_URL = check_config_dict('DDNS_UPDATE_URL', DDNS_UPDATE_URL , config_dict)
 
     # PiHole
-    PIHOLE_ACTIVE = config_dict['PIHOLE_ACTIVE']
-    DHCP_ACTIVE = config_dict['DHCP_ACTIVE']
+    PIHOLE_ACTIVE = check_config_dict('PIHOLE_ACTIVE',  PIHOLE_ACTIVE, config_dict)
+    DHCP_ACTIVE = check_config_dict('DHCP_ACTIVE', DHCP_ACTIVE , config_dict)
+
+    # PHOLUS
+    PHOLUS_ACTIVE = check_config_dict('PHOLUS_ACTIVE', PHOLUS_ACTIVE , config_dict)
+    PHOLUS_TIMEOUT = check_config_dict('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , config_dict)
 
     openDB()    
 
@@ -439,8 +461,12 @@ def importConfig ():
         ('DDNS_UPDATE_URL', 'DynDNS update URL', '',  'text', '', '' , str(DDNS_UPDATE_URL) , 'DynDNS'),
 
         # PiHole
-        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', 'If enabled you need to map /etc/pihole/pihole-FTL.db in your docker-compose.yml',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
-        ('DHCP_ACTIVE', 'Enable PiHole DHCP', 'If enabled you need to map /etc/pihole/dhcp.leases in your docker-compose.yml',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole')
+        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', '',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
+        ('DHCP_ACTIVE', 'Enable PiHole DHCP', '',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole'),
+
+        # Pholus
+        ('PHOLUS_ACTIVE', 'Enable Pholus scans', '',  'boolean', '', '' , str(PHOLUS_ACTIVE) , 'Pholus'),
+        ('PHOLUS_TIMEOUT', 'Pholus timeout', '',  'integer', '', '' , str(PHOLUS_TIMEOUT) , 'Pholus')
 
     ]
     # Insert into DB    
@@ -451,8 +477,6 @@ def importConfig ():
     
     closeDB()
 #-------------------------------------------------------------------------------
-
-# importConfig()
 
 #===============================================================================
 # USER CONFIG VARIABLES - END
@@ -466,18 +490,18 @@ check_report = [1, "internet_IP", "update_vendors_silent"]
 mqtt_thread_up = False
 
 # timestamps of last execution times
-startTime = time_now
-now_minus_24h = time_now - timedelta(hours = 24)
+startTime = time_started
+now_minus_24h = time_started - timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_now - timedelta(days = 6) # update vendors 24h after first run and than once a week
+last_update_vendors = time_started - timedelta(days = 6) # update vendors 24h after first run and than once a week
 
 def main ():
     # Initialize global variables
-    global time_now, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, mqtt_thread_up
+    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, mqtt_thread_up
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
 
@@ -498,41 +522,41 @@ def main ():
     while True:
 
         # update NOW time
-        time_now = datetime.datetime.now()
+        time_started = datetime.datetime.now()
 
         # re-load user configuration
         importConfig() 
 
         # proceed if 1 minute passed
-        if last_run + timedelta(minutes=1) < time_now :
+        if last_run + timedelta(minutes=1) < time_started :
 
              # last time any scan or maintennace/Upkeep was run
-            last_run = time_now
+            last_run = time_started
 
             reporting = False
 
             # Header
             updateState("Process: Start")
-            file_print('[', time_now.replace (microsecond=0), '] Process: Start')                
+            file_print('[', timeNow(), '] Process: Start')                
 
             # Timestamp
-            startTime = time_now
-            startTime = startTime.replace (microsecond=0)             
+            startTime = time_started
+            startTime = startTime.replace (microsecond=0)      
 
             # determine run/scan type based on passed time
-            if last_internet_IP_scan + timedelta(minutes=3) < time_now:
+            if last_internet_IP_scan + timedelta(minutes=3) < time_started:
                 cycle = 'internet_IP'                
-                last_internet_IP_scan = time_now
+                last_internet_IP_scan = time_started
                 reporting = check_internet_IP()
 
             # Update vendors once a week
-            if last_update_vendors + timedelta(days = 7) < time_now:
-                last_update_vendors = time_now
+            if last_update_vendors + timedelta(days = 7) < time_started:
+                last_update_vendors = time_started
                 cycle = 'update_vendors'
                 update_devices_MAC_vendors()
 
-            if last_network_scan + timedelta(minutes=SCAN_CYCLE_MINUTES) < time_now and os.path.exists(STOPARPSCAN) == False:
-                last_network_scan = time_now
+            if last_network_scan + timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
+                last_network_scan = time_started
                 cycle = 1 # network scan
                 scan_network() 
             
@@ -541,8 +565,8 @@ def main ():
                 email_reporting()
 
             # clean up the DB once a day
-            if last_cleanup + timedelta(hours = 24) < time_now:
-                last_cleanup = time_now
+            if last_cleanup + timedelta(hours = 24) < time_started:
+                last_cleanup = time_started
                 cycle = 'cleanup'  
                 cleanup_database()   
 
@@ -554,12 +578,12 @@ def main ():
                 action = str(cycle)
                 if action == "1":
                     action = "network_scan"
-                file_print('[', time_now.replace (microsecond=0), '] Last action: ', action)
+                file_print('[', timeNow(), '] Last action: ', action)
                 cycle = ""
 
             # Footer
             updateState("Process: Wait")
-            file_print('[', time_now.replace (microsecond=0), '] Process: Wait')            
+            file_print('[', timeNow(), '] Process: Wait')            
         else:
             # do something
             cycle = ""           
@@ -755,8 +779,12 @@ def cleanup_database ():
     file_print('    Optimize Database')
 
     # Cleanup Events
-    file_print('    Upkeep Events, up to the lastest '+str(DAYS_TO_KEEP_EVENTS)+' days')
+    file_print('    Upkeep Events, delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
+
+    # Cleanup Pholus_Scan
+    file_print('    Upkeep Pholus_Scan, delete all older than 7 days')
+    sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-7 day')")
 
     # Shrink DB
     file_print('    Shrink Database')
@@ -1061,6 +1089,10 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
     # Retry is 6 to avoid false offline devices
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
 
+
+    mask = subnets[0]
+    interface = subnets[1].split('=')[1]
+
     # Execute command
     try:
         # try runnning a subprocess
@@ -1069,6 +1101,9 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
         # An error occured, handle it
         file_print(e.output)
         result = ""
+
+    if PHOLUS_ACTIVE:
+        performPholusScan(interface, mask)    
 
     return result
 
@@ -1124,6 +1159,9 @@ def read_DHCP_leases ():
 #-------------------------------------------------------------------------------
 def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
     cycle = 1 # always 1, only one cycle supported
+
+    openDB()    
+
     # Delete previous scan data
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
                 (cycle,))
@@ -1541,7 +1579,7 @@ def update_devices_names ():
     # BUGFIX #97 - Updating name of Devices w/o IP
     for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'") :
         # Resolve device name
-        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP'])
+        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP']) #<<<< continue here TODO DEV > get >latest< Pholus scan results and match
        
         if newName == -1 :
             notFound += 1
@@ -1560,6 +1598,42 @@ def update_devices_names ():
 
     # DEBUG - print number of rows updated
         # file_print(sql.rowcount)
+
+#-------------------------------------------------------------------------------
+def performPholusScan (interface, mask):
+    updateState("Scan: Pholus")
+    file_print('[', timeNow(), '] Scan: Pholus')  
+    
+    pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(PHOLUS_TIMEOUT)]
+
+    # Execute command
+    try:
+        # try runnning a subprocess
+        output = subprocess.check_output (pholus_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        file_print(e.output)
+        file_print("Error - PholusScan - check logs")
+        output = ""
+
+    if output != "":
+        file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
+        write_file (logPath + '/pialert_pholus.log', output)
+
+        params = []
+
+        for line in output.split("\n"):
+            columns = line.split("|")
+            if len(columns) == 4:
+                params.append(( interface + " " + mask, timeNow() , columns[0], columns[1], columns[2], columns[3], ''))
+
+        if len(params) > 0:
+            openDB ()
+            sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
+
+    else:
+        file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
+
 
 #-------------------------------------------------------------------------------
 def resolve_device_name (pMAC, pIP):
@@ -2582,6 +2656,33 @@ def upgradeDB ():
     "Group"	TEXT
     );      
     """)
+
+    # indicates, if Pholus_Scan table is available 
+    pholusScanMissing = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Pholus_Scan'; 
+    """).fetchone() == None
+
+    # Re-creating Pholus_Scan table    
+    file_print("[upgradeDB] Re-creating Pholus_Scan table")
+
+    # if pholusScanMissing == False:   
+    #      sql.execute("DROP TABLE Pholus_Scan;")       
+
+    if pholusScanMissing:
+        sql.execute("""      
+        CREATE TABLE "Pholus_Scan" (        
+        "Index"	          INTEGER,
+        "Info"	          TEXT,
+        "Time"	          TEXT,
+        "MAC"	          TEXT,
+        "IP_v4_or_v6"	  TEXT,
+        "Record_Type"	  TEXT,
+        "Value"           TEXT,
+        "Extra"           TEXT,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+        );      
+        """)
       
     # don't hog DB access  
     closeDB ()

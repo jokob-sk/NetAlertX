@@ -1,3 +1,6 @@
+# INFO
+For anyone reading, `pholus.py` is not actively developed as this project only uses `pholus3.py`. 
+
 # Pholus
 A multicast DNS and DNS Service Discovery Security Assessment Tool
 It can perform recconnaisance, Denial of Service, Man in the Middle attacks
