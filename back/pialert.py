@@ -510,11 +510,12 @@ def main ():
     sql_connection = None
     sql            = None
 
-    # create log files
-    write_file(logPath + 'IP_changes.log', '')
-    write_file(logPath + 'stdout.log', '')
-    write_file(logPath + 'stderr.log', '')
-    write_file(logPath + 'pialert.log', '')    
+    # # create log files
+    # write_file(logPath + 'IP_changes.log', '')
+    # write_file(logPath + 'stdout.log', '')
+    # write_file(logPath + 'stderr.log', '')
+    # write_file(logPath + 'pialert.log', '')    
+    # write_file(logPath + 'pialert_pholus.log', '')
 
     # Upgrade DB if needed
     upgradeDB()
@@ -1102,9 +1103,6 @@ def execute_arpscan_on_interface (SCAN_SUBNETS):
         file_print(e.output)
         result = ""
 
-    if PHOLUS_ACTIVE:
-        performPholusScan(interface, mask)    
-
     return result
 
 #-------------------------------------------------------------------------------
@@ -1577,16 +1575,53 @@ def update_devices_names ():
     # Devices without name
     file_print('        Trying to resolve devices without name')
     # BUGFIX #97 - Updating name of Devices w/o IP
-    for device in sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'") :
-        # Resolve device name
-        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP']) #<<<< continue here TODO DEV > get >latest< Pholus scan results and match
+    sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'")
+
+    unknownDevices = sql.fetchall() 
+
+    # perform Pholus scan if (unknown) devices found
+    if len(unknownDevices) > 0 and PHOLUS_ACTIVE:
+
+        subnetList = []
+
+        # handle old strin setting  
+        if type(SCAN_SUBNETS) is not list:                      
+            subnetList.append(SCAN_SUBNETS)
+        else:
+            subnetList = SCAN_SUBNETS
+
+        # scan every interface
+        for subnet in subnetList:
+
+            temp = subnet.strip().split()
+
+            mask = temp[0]
+            interface = temp[1].split('=')[1]
+
+            file_print(">>> Pholus scan on: ", interface,mask)
+
+            performPholusScan(interface, mask)
+
+    # get names from Pholus scan 
+    sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
+    pholusResults = sql.fetchall()
+
+    file_print("pholusResults: ", len(pholusResults))
+
+    for device in unknownDevices:
+        # Resolve device name OLD
+        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP'])
+        # Resolve with Pholus scan results
+        if newName == -1:
+            newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults)
        
         if newName == -1 :
             notFound += 1
         elif newName == -2 :
             ignored += 1
-        else :
-            recordsToUpdate.append ([newName, device['dev_MAC']])        
+        # else :
+        #     recordsToUpdate.append ([newName, device['dev_MAC']])        
+        recordsToUpdate.append (["(name not found)", device['dev_MAC']])                
             
     # Print log    
     file_print("        Names updated:  ", len(recordsToUpdate) )
@@ -1618,14 +1653,18 @@ def performPholusScan (interface, mask):
 
     if output != "":
         file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
-        write_file (logPath + '/pialert_pholus.log', output)
+        write_file (logPath + '/pialert_pholus_old.log', output)
+        for line in output.split("\n"):
+            append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')
+        
+       
 
         params = []
 
         for line in output.split("\n"):
             columns = line.split("|")
             if len(columns) == 4:
-                params.append(( interface + " " + mask, timeNow() , columns[0], columns[1], columns[2], columns[3], ''))
+                params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
 
         if len(params) > 0:
             openDB ()
@@ -1636,6 +1675,17 @@ def performPholusScan (interface, mask):
 
 
 #-------------------------------------------------------------------------------
+def resolve_device_name_pholus (pMAC, pIP, pholusResults):
+    newName = -1
+
+    for result in pholusResults:
+        if pholusResults["MAC"] == pMAC:
+            return pholusResults["Value"]
+
+    return newName
+    
+#-------------------------------------------------------------------------------
+
 def resolve_device_name (pMAC, pIP):
     try :
         pMACstr = str(pMAC)
@@ -2663,11 +2713,11 @@ def upgradeDB ():
     AND name='Pholus_Scan'; 
     """).fetchone() == None
 
-    # Re-creating Pholus_Scan table    
-    file_print("[upgradeDB] Re-creating Pholus_Scan table")
-
-    # if pholusScanMissing == False:   
-    #      sql.execute("DROP TABLE Pholus_Scan;")       
+    # if pholusScanMissing == False:
+    #     # Re-creating Pholus_Scan table    
+    #     file_print("[upgradeDB] Re-creating Pholus_Scan table")
+    #     sql.execute("DROP TABLE Pholus_Scan;")       
+    #     pholusScanMissing = True  
 
     if pholusScanMissing:
         sql.execute("""      
@@ -2792,7 +2842,7 @@ def get_device_stats():
 
     # columns = ["online","down","all","archived","new","unknown"]
     sql.execute("""      
-      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' ) as unknown from Online_History order by Scan_Date desc limit  1 
+      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(unresolved)' ) as unknown from Online_History order by Scan_Date desc limit  1 
       """)
 
     row = sql.fetchone()

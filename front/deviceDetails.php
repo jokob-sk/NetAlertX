@@ -108,13 +108,14 @@ if ($_SESSION["login"] != 1)
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?php echo lang('DevDetail_Tab_Details');?>  </a></li>
-<?php
-if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
-?>
+                <?php
+                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
+                ?>
               <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?php echo lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?php echo lang('DevDetail_Tab_Presence');?> </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?php echo lang('DevDetail_Tab_Events');?>   </a></li>
+              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?php echo lang('DevDetail_Tab_Pholus');?>   </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -586,6 +587,26 @@ if ($_REQUEST['mac'] == 'Internet') {
                   </thead>
                 </table>
               </div>
+<!-- tab page 6 ------------------------------------------------------------ -->
+              <div class="tab-pane fade table-responsive" id="panPholus">
+              <!-- Datatable Events -->
+              <table id="tablePholus" class="table table-bordered table-hover table-striped ">
+                <thead>
+                <tr>
+                  <th>Index</th>
+                  <th>Info</th>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Entry Type</th>
+                  <th>Value</th>
+                  <th>Extra</th>
+                </tr>
+                </thead>
+                <tbody id="tablePholusBody">
+                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span>Nothing sniffed out with Polus for this device.</span></td></tr>
+                </tbody>
+              </table>
+              </div>
 
             </div>
             <!-- /.tab-content -->
@@ -637,7 +658,15 @@ if ($ENABLED_DARKMODE === True) {
 <!-- page script ----------------------------------------------------------- -->
 <script>
 
-  var mac                 = '';
+  function getMac(){
+    params = new Proxy(new URLSearchParams(window.location.search), {
+      get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    return params.mac
+  }  
+
+  mac                     = getMac()
   var devicesList         = [];
   var pos                 = -1;
   var parPeriod           = 'Front_Details_Period';
@@ -651,6 +680,8 @@ if ($ENABLED_DARKMODE === True) {
   var eventsRows          = 10;
   var eventsHide          = true;
   var skipRepeatedItems   = ['0 h (notify all events)', '1 h', '8 h', '24 h', '168 h (one week)'];
+  var selectedTab         = 'tabDetails';
+  var emptyArr            = ['undefined', "", undefined, null];
 
   // Read parameters & Initialize components
   main();
@@ -666,6 +697,16 @@ function main () {
     $('#pageTitle').html ('Device not found');
   }
 
+  key ="activeDevicesTab"
+
+  // Activate panel
+  if(!emptyArr.includes(getCache(key)))
+  {
+    selectedTab = getCache(key);
+  }
+
+  tab = selectedTab;
+
   // get parameter value
   $.get('php/server/parameters.php?action=get&parameter='+ parPeriod, function(data) {
     var result = JSON.parse(data);
@@ -675,72 +716,65 @@ function main () {
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ parTab, function(data) {
+    $.get('php/server/parameters.php?action=get&parameter='+ parSessionsRows, function(data) {
       var result = JSON.parse(data);
-      if (result) {
-        tab = result;
+      if (Number.isInteger (result) ) {
+          sessionsRows = result;
       }
-  
+
       // get parameter value
-      $.get('php/server/parameters.php?action=get&parameter='+ parSessionsRows, function(data) {
+      $.get('php/server/parameters.php?action=get&parameter='+ parEventsRows, function(data) {
         var result = JSON.parse(data);
         if (Number.isInteger (result) ) {
-            sessionsRows = result;
+            eventsRows = result;
         }
   
         // get parameter value
-        $.get('php/server/parameters.php?action=get&parameter='+ parEventsRows, function(data) {
+        $.get('php/server/parameters.php?action=get&parameter='+ parEventsHide, function(data) {
           var result = JSON.parse(data);
-          if (Number.isInteger (result) ) {
-              eventsRows = result;
+          if (result) {
+              eventsHide = result;
+              $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');
           }
+
+          // Initialize components with parameters
+          initializeTabs();
+          initializeiCheck();
+          initializeCombos();
+          initializeDatatables();
+          initializeCalendar();
     
-          // get parameter value
-          $.get('php/server/parameters.php?action=get&parameter='+ parEventsHide, function(data) {
-            var result = JSON.parse(data);
-            if (result) {
-                eventsHide = result;
-                $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');
+          // Read Cookies
+          devicesList = getCookie('devicesList');
+          if (devicesList != '') {
+              devicesList = JSON.parse (devicesList);
+          } else {
+              devicesList = [];
+          }
+
+
+          // query data
+          getDeviceData(true);
+          getSessionsPresenceEvents();
+
+          // Force re-render calendar on tab change
+          // (bugfix for render error at left panel)
+          $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (nav) {
+            if ($(nav.target).attr('href') == '#panPresence') {
+              $('#calendar').fullCalendar('rerenderEvents');
             }
-  
-            // Initialize components with parameters
-            initializeTabs();
-            initializeiCheck();
-            initializeCombos();
-            initializeDatatables();
-            initializeCalendar();
-      
-            // Read Cookies
-            devicesList = getCookie('devicesList');
-            if (devicesList != '') {
-                devicesList = JSON.parse (devicesList);
-            } else {
-                devicesList = [];
-            }
-
-
-            // query data
-            getDeviceData(true);
-            getSessionsPresenceEvents();
-
-            // Force re-render calendar on tab change
-            // (bugfix for render error at left panel)
-            $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (nav) {
-              if ($(nav.target).attr('href') == '#panPresence') {
-                $('#calendar').fullCalendar('rerenderEvents');
-              }
-            });
-  
-            // Ask before exit without saving data
-            window.onbeforeunload = function(){
-              if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-                return 'Are you sure you want to discard unsaved changes?';
-              }
-            };
-
           });
+
+          // Ask before exit without saving data
+          window.onbeforeunload = function(){
+            if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
+              return 'Are you sure you want to discard unsaved changes?';
+            }
+          };
+
         });
       });
+
     });
   });
 }
@@ -751,14 +785,6 @@ function main () {
 function initializeTabs () {
   // Activate panel
   $('.nav-tabs a[id='+ tab +']').tab('show');
-
-  //   Not necessary if first panel is not active
-  //   // Force show first panel
-  //   var panel = $('.nav-tabs a[id='+ tab +']').attr('href');
-  //   panel = panel.substring(1);
-  //   var element = $('#'+panel)[0];
-  //   element.classList.add('in');
-  //   element.classList.add('active');
 
   // When changed save new current tab
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -1360,6 +1386,11 @@ function nextRecord () {
     return;
   }
 
+  // get new mac
+  mac = params.mac;
+  // reload current tab
+  reloadTab()
+
   // Next Record
   if (pos < (devicesList.length-1) ) {
     pos++;
@@ -1556,6 +1587,102 @@ function deactivateSaveRestoreData () {
 function setTextValue (textElement, textValue) {
   $('#'+textElement).val (textValue);
   activateSaveRestoreData ();
+}
+
+// -----------------------------------------------------------------------------
+
+function initializeTabsNew () {  
+
+  key ="activeDevicesTab"
+
+  // Activate panel
+  if(!emptyArr.includes(getCache(key)))
+  {
+    selectedTab = getCache(key);
+  }
+  $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+
+  // When changed save new current tab
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    setCache(key, $(e.target).attr('id'))
+  });
+
+  // events on tab change
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var target = $(e.target).attr("href") // activated tab
+    
+    // load tab data only when needed (tab change)
+    if(target == "#panPholus")
+    {
+      loadPholus();
+    }
+  });
+}
+
+function loadPholus()
+{
+    console.log(mac)
+    console.log('php/server/devices.php?action=getPholus&mac='+ mac)
+    $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
+      
+      data = sanitize(data);      
+
+      if(data != "false" && $.trim(data) != [])
+      {
+        var listData = JSON.parse(data);
+        var order = 1;
+        
+        // console.log(listData)
+
+        // console.log(listData[0].MAC)
+
+        tableRows = "";
+
+        // for each item
+        listData.forEach(function (item, index) {                    
+          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+item.Extra+'</td></tr>'; 
+        });        
+        
+        $("#tablePholusBody").html($("#tablePholusBody").html()+tableRows);
+        // $("#tablePholusPlc").attr("style", "display:none");
+        $("#tablePholusPlc").hide();
+      }
+      else
+      {
+        console.log("else")
+        $("#tablePholusPlc").show();
+        $(".deviceSpecific").remove();
+      }        
+    });
+}
+
+window.onload = function async()
+{
+  initializeTabsNew();
+
+  reloadTab();
+}
+
+function reloadTab()
+{
+  // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+  mac = getMac(); // "some_value"
+
+  // console.log("aaAAAAAAAAAaa:"+my_mac)
+  // load tab data only when needed (tab change)
+  if(getCache("activeDevicesTab") == "tabPholus")
+  {
+    console.log("herea")
+    loadPholus();
+  }
+}
+
+
+
+
+function sanitize(data)
+{
+  return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
 }
 
 </script>

@@ -152,6 +152,7 @@ $lang['en_us'] = array(
 'DevDetail_Tab_Sessions' => 'Sessions',
 'DevDetail_Tab_Presence' => 'Presence',
 'DevDetail_Tab_Events' => 'Events',
+'DevDetail_Tab_Pholus' => 'Pholus',
 'DevDetail_MainInfo_Title' => 'Main Info',
 'DevDetail_MainInfo_mac' => 'MAC',
 'DevDetail_MainInfo_Name' => 'Name',
@@ -551,7 +552,7 @@ the scan will take hours to complete instead of seconds.
 'PHOLUS_ACTIVE_name' => 'Enable Pholus scan',
 'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. Please be aware it can spam the network with unnecessary traffic.',
 'PHOLUS_TIMEOUT_name' => 'Pholus timeout',
-'PHOLUS_TIMEOUT_description' => 'How long (s) should Pholus be sniffing the network. Tested with <code>60</code>s on a network with 50 devices.',
+'PHOLUS_TIMEOUT_description' => 'How long (s) should Pholus be sniffing the network. Only used if an <code>(unknown)</code> device is found. The longer you leave it on, the more likely devices would broadcast more info.',
 
 );
 

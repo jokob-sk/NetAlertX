@@ -58,6 +58,7 @@
       case 'getDeviceTypes':          getDeviceTypes();                        break;
       case 'getGroups':               getGroups();                             break;
       case 'getLocations':            getLocations();                          break;
+      case 'getPholus':               getPholus();                             break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -900,6 +901,49 @@ function getLocations() {
   echo (json_encode ($tableData));
 }
 
+//------------------------------------------------------------------------------
+//  Query the List of locations
+//------------------------------------------------------------------------------
+function getPholus() {
+  global $db;
+
+  // SQL
+  $mac = $_REQUEST['mac'];
+
+  if (false === filter_var($mac , FILTER_VALIDATE_MAC)) {
+    throw new Exception('Invalid mac address');
+  }
+  else{
+    $sql = 'SELECT * from Pholus_Scan where MAC ="'.$mac.'"';
+
+    // array 
+    $tableData = array();
+
+    // execute query
+    $result = $db->query($sql);
+    while ($row = $result -> fetchArray (SQLITE3_ASSOC)){   
+      // Push row data      
+      $tableData[] = array( 'Index'         => $row['Index'],
+                            'Info'          => $row['Info'],
+                            'Time'          => $row['Time'],
+                            'MAC'           => $row['MAC'],
+                            'IP_v4_or_v6'   => $row['IP_v4_or_v6'],
+                            'Record_Type'   => $row['Record_Type'],
+                            'Value'         => $row['Value'],
+                            'Extra'         => $row['Extra']);
+    }
+
+    $db->close();
+
+    if(count($tableData) == 0)
+    {
+      echo "false";
+    } else{
+      // Return json
+      echo (json_encode ($tableData));
+    }
+  }
+}
 
 //------------------------------------------------------------------------------
 //  Status Where conditions

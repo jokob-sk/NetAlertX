@@ -98,11 +98,12 @@ if ($ENABLED_DARKMODE === True) {
     setTimeout("show_pia_servertime()", 1000);
   }
 
-  document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible"){
-        window.location.href = window.location.href.split('#')[0];
-    }
-  })
+  // refresh page on focus - adds a lot of SQL queries overhead onto the DB - disabling for now
+  // document.addEventListener("visibilitychange",()=>{
+  //   if(document.visibilityState==="visible"){
+  //       window.location.href = window.location.href.split('#')[0];
+  //   }
+  // })
 
 </script>
 
