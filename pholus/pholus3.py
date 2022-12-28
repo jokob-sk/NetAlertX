@@ -32,18 +32,14 @@ def sanitize_string(input):
 NoneType = type(None)
 
 def b_to_str(value):
-    # if value is of type bytes, convert to string
+    # if value is of other type than string, convert to string
     if value is None:  
-        print("00>>>>> ")      
         return str("")
     elif isinstance(value, type(None)):
-        print("01>>>>> ")
         return str("")
     elif isinstance(value, NoneType):
-        print("02>>>>> ")
         return str("")
     elif isinstance(value, str):
-        # print("11>>>>> ",type(value))
         return str(value+"")
     elif isinstance(value, int):
         b_to_str(str(value))
@@ -55,9 +51,8 @@ def b_to_str(value):
         for one in value:            
             b_to_str(one)
     else:
-        print("21>>>>> ",type(value))
         return str(value)
-    # return ">>Couldn't determine type<<"
+   
  
  #-------------------------------------------------------------------------------
 
