@@ -350,15 +350,34 @@ function initializeDatatable () {
     
   $('#tableDevices').on( 'order.dt', function () {
     setParameter (parTableOrder, JSON.stringify (table.order()) );
-    setCookie ('devicesList',JSON.stringify (table.column(12, { 'search': 'applied' }).data().toArray()) );
+    setCookie ('devicesList', getDevicesFromTable(table) );
   } );
 
   $('#tableDevices').on( 'search.dt', function () {
-    setCookie ('devicesList', JSON.stringify (table.column(12, { 'search': 'applied' }).data().toArray()) );
+    setCookie ('devicesList', getDevicesFromTable(table) ); 
   } );
 
 };
 
+
+// -----------------------------------------------------------------------------
+// Gets a JSON list of rowID and mac from the displayed table in the UI
+function getDevicesFromTable(table)
+{
+  rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
+  rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+
+  result = []
+
+  rowIDs.map(function(rowID, index){
+    result.push({"rowid": rowID, "mac":rowMACs[index]})
+  })
+  
+  // console.log(rowIDs)
+  // console.log(result)  
+
+  return JSON.stringify (result)
+}
 
 // -----------------------------------------------------------------------------
 function getDevicesTotals () {

@@ -119,13 +119,13 @@ if ($_SESSION["login"] != 1)
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
-                  id="btnPrevious" onclick="previousRecord()"> <i class="fa fa-chevron-left"></i> </button>
+                  id="btnPrevious" onclick="recordSwitch('prev')"> <i class="fa fa-chevron-left"></i> </button>
 
                 <div class="btn pa-btn-records"  style="padding: 10px; min-width: 30px; margin-left: 1px;"
                   id="txtRecord"     > 0 / 0 </div>
 
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px; margin-left: 1px;"
-                  id="btnNext"     onclick="nextRecord()"> <i class="fa fa-chevron-right"></i> </button>
+                  id="btnNext"     onclick="recordSwitch('next')"> <i class="fa fa-chevron-right"></i> </button>
               </div>
             </ul>
 
@@ -666,8 +666,8 @@ if ($ENABLED_DARKMODE === True) {
     return params.mac
   }  
 
-  mac                     = getMac()
-  var devicesList         = [];
+  mac                     = getMac()  // can also be rowID!! not only mac 
+  var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
   var pos                 = -1;
   var parPeriod           = 'Front_Details_Period';
   var parTab              = 'Front_Details_Tab';
@@ -1173,8 +1173,11 @@ function getDeviceData (readAllData=false) {
   // stop timer
   stopTimerRefreshData();
 
+  // console.log("getDeviceData mac: ", mac)
+
   // Check MAC
   if (mac == '') {
+    console.log("getDeviceData mac AA: ", mac)
     return;
   }
 
@@ -1325,10 +1328,10 @@ function getDeviceData (readAllData=false) {
         deactivateSaveRestoreData ();
       }
 
-      // Check if device is part of the devicesList
-      pos = devicesList.indexOf (deviceData['rowid']);
+      // Check if device is part of the devicesList      
+      pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);      
       if (pos == -1) {
-        devicesList =[deviceData['rowid']];
+        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['dev_MAC']});
         pos=0;
       }
     }
@@ -1363,45 +1366,44 @@ function getDeviceData (readAllData=false) {
 
 
 // -----------------------------------------------------------------------------
-function previousRecord () {
+// Left (prev) < > (next) Right toggles at the top right of device details to 
+// cycle between devices
+function recordSwitch(direction) {
+
+  var recordToSave = null;
+
+  // update the global position in the devices list variable 'pos'
+  if(direction == "next")
+  {
+    // Next Record
+    if (pos < (devicesList.length-1) ) {
+      pos++;
+    }
+  }else if (direction == "prev")
+  {
+    if (pos > 0) {
+      pos--;
+    }
+  }
+
+  // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
+  // mac = params.mac;
+  mac = devicesList[pos].mac.toString();
+  
   // Save Changes
   if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-    setDeviceData (previousRecord);
-    return;
+    setDeviceData (direction, recordSwitch);    
   }
+  
+  getDeviceData (true); 
 
-  // Previous Record
-  if (pos > 0) {
-    pos--;
-    mac = devicesList[pos].toString();
-    getDeviceData (true);
-  }
-}
-
-// -----------------------------------------------------------------------------
-function nextRecord () {
-  // Save Changes
-  if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-    setDeviceData (nextRecord);
-    return;
-  }
-
-  // get new mac
-  mac = params.mac;
   // reload current tab
   reloadTab()
 
-  // Next Record
-  if (pos < (devicesList.length-1) ) {
-    pos++;
-    mac = devicesList[pos].toString();
-    getDeviceData (true);
-  }
 }
 
-
 // -----------------------------------------------------------------------------
-function setDeviceData (refreshCallback='') {
+function setDeviceData (direction='', refreshCallback='') {
   // Check MAC
   if (mac == '') {
     return;
@@ -1441,7 +1443,7 @@ function setDeviceData (refreshCallback='') {
 
     // Callback fuction
     if (typeof refreshCallback == 'function') {
-      refreshCallback();
+      refreshCallback(direction);
     }
   });
 }
@@ -1621,8 +1623,8 @@ function initializeTabsNew () {
 
 function loadPholus()
 {
-    console.log(mac)
-    console.log('php/server/devices.php?action=getPholus&mac='+ mac)
+    // console.log(mac)
+    // console.log('php/server/devices.php?action=getPholus&mac='+ mac)
     $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
       
       data = sanitize(data);      
@@ -1649,7 +1651,7 @@ function loadPholus()
       }
       else
       {
-        console.log("else")
+        // console.log("else")
         $("#tablePholusPlc").show();
         $(".deviceSpecific").remove();
       }        
@@ -1665,14 +1667,9 @@ window.onload = function async()
 
 function reloadTab()
 {
-  // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
-  mac = getMac(); // "some_value"
-
-  // console.log("aaAAAAAAAAAaa:"+my_mac)
   // load tab data only when needed (tab change)
   if(getCache("activeDevicesTab") == "tabPholus")
   {
-    console.log("herea")
     loadPholus();
   }
 }

@@ -430,11 +430,11 @@ $lang['en_us'] = array(
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
 
-The scan time itself depends on the number of IP addresses to check. 
+The arp-scan time itself depends on the number of IP addresses to check. 
 The number of IPs to check depends on the <a target="_blank" href="https://www.calculator.net/ip-subnet-calculator.html">network mask</a> you set here. 
 For example, a <code>/24</code> mask results in 256 IPs to check, where as a <code>/16</code> 
 mask checks around 65,536. Every IP takes a couple seconds. This means that with an incorrect configuration 
-the scan will take hours to complete instead of seconds.
+the arp-scan will take hours to complete instead of seconds.
 <ol>
 <li>Specify the network mask. For example, the filter <code>192.168.1.0/24</code> covers IP ranges 192.168.1.0 to 192.168.1.255.</li>
 <li>Run <code>iwconfig</code> in your container to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
@@ -451,7 +451,7 @@ the scan will take hours to complete instead of seconds.
 'INCLUDED_SECTIONS_name' => 'Notify on',
 'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (CTRL + Click to select / deselect).',
 'SCAN_CYCLE_MINUTES_name' => 'Scan cycle delay',
-'SCAN_CYCLE_MINUTES_description' => 'The delay between scans. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This is influenced by the network mask set in the <code>SCAN_SUBNETS</code> setting at the top. Every IP takes a couple seconds to scan.',
+'SCAN_CYCLE_MINUTES_description' => 'The delay between scans. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This is influenced by the network mask set in the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a> at the top. Every IP takes a couple seconds to scan.',
 'DAYS_TO_KEEP_EVENTS_name' => 'Delete events older than',
 'DAYS_TO_KEEP_EVENTS_description' => 'This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically.',
 'REPORT_DASHBOARD_URL_name' => 'Pi.Alert URL',
@@ -550,9 +550,19 @@ the scan will take hours to complete instead of seconds.
 
 // Pholus
 'PHOLUS_ACTIVE_name' => 'Enable Pholus scan',
-'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. Please be aware it can spam the network with unnecessary traffic.',
+'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. Please be aware it can spam the network with unnecessary traffic. Depends on the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>.',
 'PHOLUS_TIMEOUT_name' => 'Pholus timeout',
-'PHOLUS_TIMEOUT_description' => 'How long (s) should Pholus be sniffing the network. Only used if an <code>(unknown)</code> device is found. The longer you leave it on, the more likely devices would broadcast more info.',
+'PHOLUS_TIMEOUT_description' => 'How long (s) should Pholus be sniffing the network. Only used if an <code>(unknown)</code> device is found. The longer you leave it on, the more likely devices would broadcast more info. This timeout adds to the time it takes to perform an arp-scan on your network',
+'PHOLUS_FORCE_name' => 'Force scan',
+'PHOLUS_FORCE_description' => 'Force scan every network scan, even if there are no <code>(unknown)</code> devices. Be careful enabling this as the sniffing can easily flood your network.',
+'PHOLUS_DAYS_DATA_name' => 'Data retention',
+'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (gloablly, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched.',
+'PHOLUS_RUN_name' => 'Run on schedule',
+'PHOLUS_RUN_description' => 'Enable a regular Pholus scan / sniff on your network.',
+'PHOLUS_RUN_TIMEOUT_name' => 'Scheduled run timeout',
+'PHOLUS_RUN_TIMEOUT_description' => 'The timeout (s) for the scheduled Pholus scan.',
+'PHOLUS_RUN_SCHD_name' => 'Schedule',
+'PHOLUS_RUN_SCHD_description' => 'Schedule in cron format. Make sure you enter the schedule in the correct format (e.g. validate your format on <a href="#" onlick="window.open("https://crontab.guru/#" + $(\'#PHOLUS_RUN_SCHD\').val(),replace(\' \', \'_\') , "_blank")" target="_blank">crontab.guru</a>). Will be run NEXT time the time passes.',
 
 );
 

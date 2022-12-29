@@ -142,9 +142,18 @@ $db->close();
               elseif ($set['Type'] == 'selecttext')
               {
                 $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+                
+                $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
-                foreach ($options as $option) {                   
-                  $input = $input.'<option value="'.$option.'">'.$option.'</option>';
+
+                foreach ($options as $option) {              
+                  $selected = "";
+
+                  if( in_array( $option , $values) == true) {
+                    $selected = "selected";
+                  }
+
+                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
                 }                
                 $input = $input.'</select>';
               }
@@ -152,16 +161,27 @@ $db->close();
               elseif ($set['Type'] == 'selectinteger')
               {
                 $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+
+                $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
-                foreach ($options as $option) {                   
-                  $input = $input.'<option value="'.$option.'">'.$option.'</option>';
+
+                foreach ($options as $option) {   
+                  
+                  $selected = "";
+
+                  if( in_array( $option , $values) == true) {
+                    $selected = "selected";
+                  }
+
+                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
                 }                
                 $input = $input.'</select>';
               }
               // multiselect
               elseif ($set['Type'] == 'multiselect')
               {
-                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';                 
+                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
+
                 $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
 
@@ -242,7 +262,7 @@ $db->close();
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 48;
+  var settingsNumber = 53;
   
   if(<?php echo count($settings)?> != settingsNumber) 
   {

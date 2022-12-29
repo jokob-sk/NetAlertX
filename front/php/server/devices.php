@@ -908,13 +908,19 @@ function getPholus() {
   global $db;
 
   // SQL
-  $mac = $_REQUEST['mac'];
+  $mac = $_REQUEST['mac']; 
+
+  if ($mac == "Internet") // Not performing data lookup for router (improvement idea for later maybe)
+  {
+    echo "false";
+    return;
+  }
 
   if (false === filter_var($mac , FILTER_VALIDATE_MAC)) {
     throw new Exception('Invalid mac address');
   }
   else{
-    $sql = 'SELECT * from Pholus_Scan where MAC ="'.$mac.'"';
+    $sql = 'SELECT * from Pholus_Scan where MAC ="'.$mac.'" and Record_Type not in ("Question")';
 
     // array 
     $tableData = array();

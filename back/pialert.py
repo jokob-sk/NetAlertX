@@ -24,6 +24,8 @@ import re
 import time
 import datetime
 from datetime import timedelta
+# from datetime import datetime
+# from datetime import date
 import sqlite3
 import socket
 import io
@@ -35,6 +37,9 @@ from base64 import b64encode
 from paho.mqtt import client as mqtt_client
 import threading
 from pathlib import Path
+from cron_converter import Cron
+from pytz import timezone
+
 # from ssdpy import SSDPClient
 # import upnpclient
 
@@ -52,8 +57,12 @@ fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
 time_started = datetime.datetime.now()
+cron_instance = Cron()
 log_timestamp = time_started
+lastTimeImported = 0
 sql_connection = None
+
+next_schedule_timestamp = 0
 
 
 #-------------------------------------------------------------------------------
@@ -154,7 +163,6 @@ initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 #===============================================================================
 
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
-
 piholeDB               = '/etc/pihole/pihole-FTL.db'
 piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
@@ -170,6 +178,8 @@ INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']
 SCAN_CYCLE_MINUTES      = 5            
 
 SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
+
+DAYS_TO_KEEP_EVENTS     = 90
 
 # EMAIL settings
 # ----------------------
@@ -230,18 +240,22 @@ DDNS_USER               = 'dynu_user'
 DDNS_PASSWORD           = 'A0000000B0000000C0000000D0000000'
 DDNS_UPDATE_URL         = 'https://api.dynu.com/nic/update?'
 
-# Pholus settings
-# ----------------------
-PHOLUS_ACTIVE           = False                         
-PHOLUS_TIMEOUT          = 60   
-
 # PIHOLE settings
 # ----------------------
 PIHOLE_ACTIVE           = False                         
 DHCP_ACTIVE             = False                         
 
-# keep 90 days of network activity if not specified how many days to keep
-DAYS_TO_KEEP_EVENTS     = 90
+
+# Pholus settings
+# ----------------------
+PHOLUS_ACTIVE           = False
+PHOLUS_TIMEOUT          = 60   
+PHOLUS_FORCE            = False
+PHOLUS_DAYS_DATA        = 7
+
+PHOLUS_RUN              = 'none'
+PHOLUS_RUN_SCHD         = '0 4 * * *'
+PHOLUS_RUN_TIMEOUT      = 600
 
 
 #===============================================================================
@@ -300,6 +314,7 @@ def check_config_dict(key, default, config):
 def importConfig (): 
 
     # Specify globals so they can be overwritten with the new config
+    global lastTimeImported
     # General
     global SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
     # Email
@@ -319,14 +334,22 @@ def importConfig ():
     # PiHole
     global PIHOLE_ACTIVE, DHCP_ACTIVE
     # Pholus
-    global PHOLUS_ACTIVE, PHOLUS_TIMEOUT  
+    global PHOLUS_ACTIVE, PHOLUS_TIMEOUT, PHOLUS_FORCE, PHOLUS_DAYS_DATA, PHOLUS_RUN, PHOLUS_RUN_SCHD, PHOLUS_RUN_TIMEOUT
 
-    # load the variables from  pialert.conf
+    # get config file
     config_file = Path(fullConfPath)
+
+    # Skip import if last time of import is NEWER than file age 
+    if (os.path.getmtime(config_file) < lastTimeImported) :
+        return
+    
+    # load the variables from  pialert.conf
     code = compile(config_file.read_text(), config_file.name, "exec")
     config_dict = {}
-    exec(code, {"__builtins__": {}}, config_dict)        
-    
+    exec(code, {"__builtins__": {}}, config_dict)
+
+    # Import setting if found in the dictionary
+    # General
     SCAN_SUBNETS = check_config_dict('SCAN_SUBNETS', SCAN_SUBNETS , config_dict)
     PRINT_LOG = check_config_dict('PRINT_LOG', PRINT_LOG , config_dict)
     TIMEZONE = check_config_dict('TIMEZONE', TIMEZONE , config_dict)
@@ -393,6 +416,12 @@ def importConfig ():
     # PHOLUS
     PHOLUS_ACTIVE = check_config_dict('PHOLUS_ACTIVE', PHOLUS_ACTIVE , config_dict)
     PHOLUS_TIMEOUT = check_config_dict('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , config_dict)
+    PHOLUS_FORCE = check_config_dict('PHOLUS_FORCE', PHOLUS_FORCE , config_dict)
+    PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
+    PHOLUS_RUN = check_config_dict('PHOLUS_RUN', PHOLUS_RUN , config_dict)
+    PHOLUS_RUN_TIMEOUT = check_config_dict('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , config_dict)   
+    PHOLUS_RUN_SCHD = check_config_dict('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , config_dict)
+ 
 
     openDB()    
 
@@ -466,7 +495,12 @@ def importConfig ():
 
         # Pholus
         ('PHOLUS_ACTIVE', 'Enable Pholus scans', '',  'boolean', '', '' , str(PHOLUS_ACTIVE) , 'Pholus'),
-        ('PHOLUS_TIMEOUT', 'Pholus timeout', '',  'integer', '', '' , str(PHOLUS_TIMEOUT) , 'Pholus')
+        ('PHOLUS_TIMEOUT', 'Pholus timeout', '',  'integer', '', '' , str(PHOLUS_TIMEOUT) , 'Pholus'),
+        ('PHOLUS_FORCE', 'Pholus force check', '',  'boolean', '', '' , str(PHOLUS_FORCE) , 'Pholus'),
+        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus'),
+        ('PHOLUS_RUN', 'Pholus enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(PHOLUS_RUN) , 'Pholus'),
+        ('PHOLUS_RUN_TIMEOUT', 'Pholus timeout schedule', '',  'integer', '', '' , str(PHOLUS_RUN_TIMEOUT) , 'Pholus'),
+        ('PHOLUS_RUN_SCHD', 'Pholus schedule', '',  'text', '', '' , str(PHOLUS_RUN_SCHD) , 'Pholus')        
 
     ]
     # Insert into DB    
@@ -474,8 +508,24 @@ def importConfig ():
     
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", settings)
+
+
+    # Used to determine the next import
+    lastTimeImported = time.time()
     
     closeDB()
+
+    # Update scheduler
+    global schedule, tz, last_next_pholus_schedule, last_next_pholus_schedule_used
+
+    tz       = timezone(TIMEZONE)    
+    cron     = Cron(PHOLUS_RUN_SCHD)
+    schedule = cron.schedule(start_date=datetime.datetime.now(tz))
+
+    last_next_pholus_schedule = schedule.next()
+    last_next_pholus_schedule_used = False
+
+    file_print('[', timeNow(), '] Config: Imported new config')  
 #-------------------------------------------------------------------------------
 
 #===============================================================================
@@ -487,30 +537,30 @@ def importConfig ():
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
-mqtt_thread_up = False
+last_pholus_scheduled_run = 0
 
 # timestamps of last execution times
 startTime = time_started
-now_minus_24h = time_started - timedelta(hours = 24)
+now_minus_24h = time_started - datetime.timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_started - timedelta(days = 6) # update vendors 24h after first run and than once a week
+last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and than once a week
 
 def main ():
     # Initialize global variables
-    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, mqtt_thread_up
+    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_pholus_scheduled_run
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
-
 
     # DB
     sql_connection = None
     sql            = None
 
-    # # create log files
+    # # create log files > I don't think this is necessary (e.g. the path was incorrect 
+    # # (missing / at the beginning of teh file name) and there were no issues reported)
     # write_file(logPath + 'IP_changes.log', '')
     # write_file(logPath + 'stdout.log', '')
     # write_file(logPath + 'stderr.log', '')
@@ -529,7 +579,7 @@ def main ():
         importConfig() 
 
         # proceed if 1 minute passed
-        if last_run + timedelta(minutes=1) < time_started :
+        if last_run + datetime.timedelta(minutes=1) < time_started :
 
              # last time any scan or maintennace/Upkeep was run
             last_run = time_started
@@ -545,18 +595,37 @@ def main ():
             startTime = startTime.replace (microsecond=0)      
 
             # determine run/scan type based on passed time
-            if last_internet_IP_scan + timedelta(minutes=3) < time_started:
+            if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
                 cycle = 'internet_IP'                
                 last_internet_IP_scan = time_started
                 reporting = check_internet_IP()
 
             # Update vendors once a week
-            if last_update_vendors + timedelta(days = 7) < time_started:
+            if last_update_vendors + datetime.timedelta(days = 7) < time_started:
                 last_update_vendors = time_started
                 cycle = 'update_vendors'
                 update_devices_MAC_vendors()
 
-            if last_network_scan + timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
+            # Execute Pholus scheduled scan if enabled and run conditions fulfilled
+            if PHOLUS_RUN == "schedule" or PHOLUS_RUN == "once":
+
+                runPholus = False
+
+                # run once after application starts
+                if PHOLUS_RUN == "once" and last_pholus_scheduled_run == 0:
+                    runPholus = True
+
+                # run if overdue scheduled time
+                if (not runPholus) and (PHOLUS_RUN == "schedule"):
+                    # cron_instance.from_string(PHOLUS_RUN_SCHD)
+                    runPholus = runSchedule()
+
+                if runPholus:
+                    last_pholus_scheduled_run = datetime.datetime.now(tz).replace(microsecond=0)
+                    performPholusScan()
+
+            # Perform an arp-scan if not disable with a file
+            if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
                 last_network_scan = time_started
                 cycle = 1 # network scan
                 scan_network() 
@@ -566,7 +635,7 @@ def main ():
                 email_reporting()
 
             # clean up the DB once a day
-            if last_cleanup + timedelta(hours = 24) < time_started:
+            if last_cleanup + datetime.timedelta(hours = 24) < time_started:
                 last_cleanup = time_started
                 cycle = 'cleanup'  
                 cleanup_database()   
@@ -589,8 +658,8 @@ def main ():
             # do something
             cycle = ""           
 
-        #loop  - recursion    
-        time.sleep(20) # wait for N seconds      
+        #loop     
+        time.sleep(5) # wait for N seconds      
 
     
 #===============================================================================
@@ -784,8 +853,8 @@ def cleanup_database ():
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Cleanup Pholus_Scan
-    file_print('    Upkeep Pholus_Scan, delete all older than 7 days')
-    sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-7 day')")
+    file_print('    Upkeep Pholus_Scan, delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days')
+    sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
 
     # Shrink DB
     file_print('    Shrink Database')
@@ -1580,27 +1649,8 @@ def update_devices_names ():
     unknownDevices = sql.fetchall() 
 
     # perform Pholus scan if (unknown) devices found
-    if len(unknownDevices) > 0 and PHOLUS_ACTIVE:
-
-        subnetList = []
-
-        # handle old strin setting  
-        if type(SCAN_SUBNETS) is not list:                      
-            subnetList.append(SCAN_SUBNETS)
-        else:
-            subnetList = SCAN_SUBNETS
-
-        # scan every interface
-        for subnet in subnetList:
-
-            temp = subnet.strip().split()
-
-            mask = temp[0]
-            interface = temp[1].split('=')[1]
-
-            file_print(">>> Pholus scan on: ", interface,mask)
-
-            performPholusScan(interface, mask)
+    if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
+        performPholusScan()
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
@@ -1635,43 +1685,60 @@ def update_devices_names ():
         # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def performPholusScan (interface, mask):
-    updateState("Scan: Pholus")
-    file_print('[', timeNow(), '] Scan: Pholus')  
-    
-    pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(PHOLUS_TIMEOUT)]
+def performPholusScan ():
 
-    # Execute command
-    try:
-        # try runnning a subprocess
-        output = subprocess.check_output (pholus_args, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        file_print(e.output)
-        file_print("Error - PholusScan - check logs")
-        output = ""
+    subnetList = []
 
-    if output != "":
-        file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
-        write_file (logPath + '/pialert_pholus_old.log', output)
-        for line in output.split("\n"):
-            append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')
-        
-       
-
-        params = []
-
-        for line in output.split("\n"):
-            columns = line.split("|")
-            if len(columns) == 4:
-                params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
-
-        if len(params) > 0:
-            openDB ()
-            sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
-
+    # handle old string setting  
+    if type(SCAN_SUBNETS) is not list:                      
+        subnetList.append(SCAN_SUBNETS)
     else:
-        file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
+        subnetList = SCAN_SUBNETS
+
+    # scan every interface
+    for subnet in subnetList:
+
+        temp = subnet.strip().split()
+
+        mask = temp[0]
+        interface = temp[1].split('=')[1]
+
+        file_print("        Pholus scan on interface: ", interface, " mask: " , mask)
+
+        updateState("Scan: Pholus")        
+        file_print('[', timeNow(), '] Scan: Pholus')  
+        
+        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(PHOLUS_TIMEOUT)]
+
+        # Execute command
+        try:
+            # try runnning a subprocess
+            output = subprocess.check_output (pholus_args, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            file_print(e.output)
+            file_print("Error - PholusScan - check logs")
+            output = ""
+
+        if output != "":
+            file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
+            write_file (logPath + '/pialert_pholus_old.log', output)
+            for line in output.split("\n"):
+                append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')        
+
+            params = []
+
+            for line in output.split("\n"):
+                columns = line.split("|")
+                if len(columns) == 4:
+                    params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
+
+            if len(params) > 0:
+                openDB ()
+                sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
+
+        else:
+            file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
 
 
 #-------------------------------------------------------------------------------
@@ -2276,6 +2343,10 @@ def append_line_to_file (pPath, pText):
 
 #-------------------------------------------------------------------------------
 def send_email (pText, pHTML):
+
+    # Print more info for debugging if PRINT_LOG enabled
+    print_log ('REPORT_TO: ' + hide_email(str(REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(SMTP_USER))) 
+
     # Compose email
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'Pi.Alert Report'
@@ -2287,14 +2358,13 @@ def send_email (pText, pHTML):
     # Send mail
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
-#    smtp_connection.starttls()
-#    smtp_connection.ehlo()
-#    smtp_connection.login (SMTP_USER, SMTP_PASS)
+
     if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
         smtp_connection.starttls()
         smtp_connection.ehlo()
     if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
         smtp_connection.login (SMTP_USER, SMTP_PASS)
+
     smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
     smtp_connection.quit()
 
@@ -2440,6 +2510,8 @@ def publish_sensor(client, sensorConf):
 
     global mqtt_sensors         
 
+    file_print("        Estimated delay:", (len(mqtt_sensors) * int(MQTT_DELAY_SEC)))
+
     message = '{ \
                 "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
                 "state_topic":"system-sensors/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/state", \
@@ -2458,11 +2530,10 @@ def publish_sensor(client, sensorConf):
 
     # add the sensor to the global list to keep track of succesfully added sensors
     if publish_mqtt(client, topic, message):
-                                # hack - delay adding to the queue in case the process is 
+                                     # hack - delay adding to the queue in case the process is 
         time.sleep(MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
-                                # (it takes ~2s to update a sensor config on the broker)
+                                     # (it takes ~2s to update a sensor config on the broker)
         mqtt_sensors.append(sensorConf)
-        # print(len(mqtt_sensors))
 
 #-------------------------------------------------------------------------------
 def mqtt_create_client():
@@ -2569,24 +2640,6 @@ def mqtt_start():
         #     retain=True,
         # )        
     # time.sleep(10)
-
-
-# #-------------------------------------------------------------------------------
-def start_mqtt_thread ():
-    # start a MQTT thread loop which will continuously report on devices to the broker
-        # daemon=True - makes sure the thread dies with the process if interrupted
-    global mqtt_thread_up
-
-    # flag to check if thread is running
-    mqtt_thread_up = True
-
-    file_print("    Starting MQTT sending")
-    x = threading.Thread(target=mqtt_start, args=(1,), daemon=True) 
-    # start_sending_mqtt(client)
-
-    file_print("    Threading: Starting MQTT thread")
-
-    x.start()
 
 
 #===============================================================================
@@ -2862,6 +2915,65 @@ def get_all_devices():
 
     closeDB()
     return row
+
+
+#-------------------------------------------------------------------------------
+def hide_email(email):
+    m = email.split('@')
+    return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+
+# Test
+print(hide_email('emailsecreto@gmail.com'))
+
+#-------------------------------------------------------------------------------
+def runSchedule():
+
+    global last_next_pholus_schedule
+    global last_pholus_scheduled_run
+    global last_next_pholus_schedule_used
+
+    result = False 
+
+    # datetime.now() - timedelta(days=1)
+    if last_pholus_scheduled_run == 0:
+        # last_pholus_scheduled_run =  datetime.datetime.fromtimestamp(pd.Timestamp(year = 2000, month = 1, day = 1, hour = 1, second = 1, tz = TIMEZONE))
+        last_pholus_scheduled_run =  (datetime.datetime.now(tz) - timedelta(days=365)).replace(microsecond=0)
+
+    nowTime = datetime.datetime.now(tz).replace(microsecond=0)
+
+
+    file_print("now                      : ", nowTime.isoformat(), "Type: ", type(nowTime))
+    file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat(), "Type: ", type(last_pholus_scheduled_run))
+    file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat(), "Type: ", type(last_next_pholus_schedule))
+
+
+    file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
+    file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
+
+
+    if nowTime > last_next_pholus_schedule and last_pholus_scheduled_run < last_next_pholus_schedule:
+        file_print("run: YES")
+        last_next_pholus_schedule_used = True
+        result = True
+    else:
+        file_print("run: NO")
+
+
+
+    
+
+    # file_print("last_next_pholus_schedule lastRunDateTime: ",   
+    
+    #  Debug
+
+    
+    if last_next_pholus_schedule_used:
+        last_next_pholus_schedule_used = False
+        last_next_pholus_schedule = schedule.next()    
+
+    file_print("runSchedule  n   : ", last_next_pholus_schedule.isoformat())    
+
+    return result
 
 #===============================================================================
 # BEGIN
