@@ -552,17 +552,18 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_ACTIVE_name' => 'Enable Pholus scan',
 'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. Please be aware it can spam the network with unnecessary traffic. Depends on the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>.',
 'PHOLUS_TIMEOUT_name' => 'Pholus timeout',
-'PHOLUS_TIMEOUT_description' => 'How long (s) should Pholus be sniffing the network. Only used if an <code>(unknown)</code> device is found. The longer you leave it on, the more likely devices would broadcast more info. This timeout adds to the time it takes to perform an arp-scan on your network',
+'PHOLUS_TIMEOUT_description' => 'How long in seconds should Pholus be sniffing on each interface. Only used if an <code>(unknown)</code> device is found. The longer you leave it on, the more likely devices would broadcast more info. This timeout adds to the time it takes to perform an arp-scan on your network.',
 'PHOLUS_FORCE_name' => 'Force scan',
 'PHOLUS_FORCE_description' => 'Force scan every network scan, even if there are no <code>(unknown)</code> devices. Be careful enabling this as the sniffing can easily flood your network.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
-'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (gloablly, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched.',
-'PHOLUS_RUN_name' => 'Run on schedule',
-'PHOLUS_RUN_description' => 'Enable a regular Pholus scan / sniff on your network.',
+'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging_id">pialert_pholus.log</a> file is not touched.',
+'PHOLUS_RUN_name' => 'Scheduled scan',
+'PHOLUS_RUN_description' => 'Enable a regular Pholus scan / sniff on your network. The scheduling settings can be found below.',
 'PHOLUS_RUN_TIMEOUT_name' => 'Scheduled run timeout',
-'PHOLUS_RUN_TIMEOUT_description' => 'The timeout (s) for the scheduled Pholus scan.',
+'PHOLUS_RUN_TIMEOUT_description' => 'The timeout in seconds for the scheduled Pholus scan. Same notes regarding the duration apply as on the <a href="#PHOLUS_TIMEOUT"><code>PHOLUS_TIMEOUT</code> setting</a>. A scheduled scan doesn\'t check if there are <code>(unknown)</code> devices, the scan is executed either way.',
 'PHOLUS_RUN_SCHD_name' => 'Schedule',
-'PHOLUS_RUN_SCHD_description' => 'Schedule in cron format. Make sure you enter the schedule in the correct format (e.g. validate your format on <a href="#" onlick="window.open("https://crontab.guru/#" + $(\'#PHOLUS_RUN_SCHD\').val(),replace(\' \', \'_\') , "_blank")" target="_blank">crontab.guru</a>). Will be run NEXT time the time passes.',
+'PHOLUS_RUN_SCHD_description' => 'Schedule in cron format. Make sure you enter the schedule in the correct format 
+(e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). Will be run NEXT time the time passes. For example <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>.',
 
 );
 

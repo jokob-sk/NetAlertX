@@ -273,7 +273,7 @@ function saveSettings()
 
   displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file.  
     <br/><br/>Backup of the previous ".$config_file." created here: <br/><br/><code>".$new_name."</code><br/><br/>
-    <b>Note:</b> Wait <b>5s</b> for the changes to reflect in the UI.", 
+    <b>Note:</b> Wait at least <b>5s</b> for the changes to reflect in the UI. (longer if for example a <a href='#state'>Scan is running</a>)", 
     FALSE, TRUE, TRUE, TRUE);    
 
 }

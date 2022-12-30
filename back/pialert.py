@@ -22,6 +22,7 @@ import subprocess
 import os
 import re
 import time
+import decimal
 import datetime
 from datetime import timedelta
 # from datetime import datetime
@@ -622,7 +623,7 @@ def main ():
 
                 if runPholus:
                     last_pholus_scheduled_run = datetime.datetime.now(tz).replace(microsecond=0)
-                    performPholusScan()
+                    performPholusScan(PHOLUS_RUN_TIMEOUT)
 
             # Perform an arp-scan if not disable with a file
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
@@ -1650,13 +1651,14 @@ def update_devices_names ():
 
     # perform Pholus scan if (unknown) devices found
     if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
-        performPholusScan()
+        performPholusScan(PHOLUS_TIMEOUT)
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
     pholusResults = sql.fetchall()
 
-    file_print("pholusResults: ", len(pholusResults))
+    # Number of entries for unknown MACs from the Pholus scan
+    file_print("        Pholus entries: ", len(pholusResults))
 
     for device in unknownDevices:
         # Resolve device name OLD
@@ -1685,7 +1687,7 @@ def update_devices_names ():
         # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def performPholusScan ():
+def performPholusScan (timeout):
 
     subnetList = []
 
@@ -1706,9 +1708,9 @@ def performPholusScan ():
         file_print("        Pholus scan on interface: ", interface, " mask: " , mask)
 
         updateState("Scan: Pholus")        
-        file_print('[', timeNow(), '] Scan: Pholus')  
+        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeout), 's ('+ str(round(int(timeout) / 60), 2) +'min)')  
         
-        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(PHOLUS_TIMEOUT)]
+        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(timeout)]
 
         # Execute command
         try:
@@ -1722,7 +1724,7 @@ def performPholusScan ():
 
         if output != "":
             file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
-            write_file (logPath + '/pialert_pholus_old.log', output)
+            write_file (logPath + '/pialert_pholus_lastrun.log', output)
             for line in output.split("\n"):
                 append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')        
 
@@ -2922,9 +2924,6 @@ def hide_email(email):
     m = email.split('@')
     return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
 
-# Test
-print(hide_email('emailsecreto@gmail.com'))
-
 #-------------------------------------------------------------------------------
 def runSchedule():
 
@@ -2934,44 +2933,33 @@ def runSchedule():
 
     result = False 
 
-    # datetime.now() - timedelta(days=1)
+    # Initialize the last run time if never run before
     if last_pholus_scheduled_run == 0:
-        # last_pholus_scheduled_run =  datetime.datetime.fromtimestamp(pd.Timestamp(year = 2000, month = 1, day = 1, hour = 1, second = 1, tz = TIMEZONE))
         last_pholus_scheduled_run =  (datetime.datetime.now(tz) - timedelta(days=365)).replace(microsecond=0)
 
+    # get the current time with the currently specified timezone
     nowTime = datetime.datetime.now(tz).replace(microsecond=0)
 
+    # #  DEBUG
+    # file_print("now                      : ", nowTime.isoformat())
+    # file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat())
+    # file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat())
+    # file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
+    # file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
 
-    file_print("now                      : ", nowTime.isoformat(), "Type: ", type(nowTime))
-    file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat(), "Type: ", type(last_pholus_scheduled_run))
-    file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat(), "Type: ", type(last_next_pholus_schedule))
-
-
-    file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
-    file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
-
-
+    # Run the schedule if the current time is past the schedule time we saved last time and 
+    #               (maybe the following check is unnecessary:)
+    # if the last run is past the last time we run a scheduled Pholus scan
     if nowTime > last_next_pholus_schedule and last_pholus_scheduled_run < last_next_pholus_schedule:
-        file_print("run: YES")
+        print_log("Scheduler run: YES")
         last_next_pholus_schedule_used = True
         result = True
     else:
-        file_print("run: NO")
-
-
-
-    
-
-    # file_print("last_next_pholus_schedule lastRunDateTime: ",   
-    
-    #  Debug
-
+        print_log("Scheduler run: NO")
     
     if last_next_pholus_schedule_used:
         last_next_pholus_schedule_used = False
-        last_next_pholus_schedule = schedule.next()    
-
-    file_print("runSchedule  n   : ", last_next_pholus_schedule.isoformat())    
+        last_next_pholus_schedule = schedule.next()            
 
     return result
 

@@ -9,17 +9,44 @@ import logging
 import itertools
 import codecs
 import ipaddress
+import os
+import sys
 from scapy.utils import PcapWriter
 
 
 sys.setrecursionlimit(30000)
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#supress Scapy warnings`
 
+runPath = os.path.dirname(os.path.abspath(__file__))
+runPathTmp  = runPath + "/.."  
+logPath     = runPathTmp + '/front/log'
 
 
 #===============================================================================
 # UTIL
 #===============================================================================
+
+def write_file (pPath, pText):
+    # Write the text depending using the correct python version
+    if sys.version_info < (3, 0):
+        file = io.open (pPath , mode='w', encoding='utf-8')
+        file.write ( pText.decode('unicode_escape') ) 
+        file.close() 
+    else:
+        file = open (pPath, 'w', encoding='utf-8') 
+        file.write (pText) 
+        file.close() 
+
+def file_print(*args):
+
+    result = ''
+    
+    file = open(logPath + "/pialert_pholus_subp.log", "a")    
+    for arg in args:                
+        result += str(arg)
+    print(result)
+    file.write(result + '\n')
+    file.close()
 
 
 def sanitize_string(input):
@@ -70,7 +97,7 @@ def get_my_ipv6_addr(interface):
                     myip=ifaces[0]
         return myip
     except:
-        print("The interface",interface,"does not exist. Please, try again.")
+        file_print("The interface",interface,"does not exist. Please, try again.")
         exit(0)
 
 ######################################
@@ -82,7 +109,7 @@ def get_my_ipv4_addr(interface):
         myip=scapy.arch.get_if_addr(interface)
         return myip
     except:
-        print("The interface",interface,"does not exist. Please, try again.")
+        file_print("The interface",interface,"does not exist. Please, try again.")
         exit(0)
 
 ##########################
@@ -271,7 +298,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     srv_rrname=data+label_data
                                     txt_record=""
                                     rdata=['txtvers=1','qtotal=1','pdl=application/vnd.hp-PCL','ty=MyOfficejet100000','product=(Trexa gureue)','priority=0','adminur=http://'+source_IPv4]
-                                    #print(type(rdata))
+                                    #file_print(type(rdata))
                                     for r in rdata:
                                         length=hex(len(r))[2:]
                                         #check http://code.activestate.com/recipes/576617-converting-arbitrary-size-python-integers-to-packe/
@@ -417,7 +444,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                         qname=dnsqr.qname
                                     if qname.endswith('.'):
                                         qname=qname[:-1]
-                                    #print("Query Name = ",qname," Type=",dnsqr.qtype)
+                                    #file_print("Query Name = ",qname," Type=",dnsqr.qtype)
                                     if unidns:
                                         dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0,ancount=1)/DNSRR(rrname=qname,ttl=myttl,rdata=source_IPv4,type="A")
                                     else:
@@ -432,13 +459,13 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             elif dnsqr.qclass==255:
                                 res = res0 + " | Question            | "+dnsqr.qname.decode("utf-8") + " "+ dns_type[dnsqr.qtype] + " QM Class:ANY"
                             else:
-                                print("DNSQR:")
-                                print("-----")
-                                print(dnsqr.show())
-                                print("DEBUGGING IS NEEDED")
+                                file_print("DNSQR:")
+                                file_print("-----")
+                                file_print(dnsqr.show())
+                                file_print("DEBUGGING IS NEEDED")
                                 exit(0)
                             if print_res==1:
-                                print(res)
+                                file_print(res)
                             queue.put(res)
                             block = block.payload
                 if dns.arcount>0:
@@ -466,7 +493,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                         optcode=str(edns0tlv.optcode)
                                     res = res + " EDNS0TLV: " + optcode + " " + codecs.encode(edns0tlv.optdata, 'hex_codec').decode("utf-8")
                                 if print_res==1:
-                                    print(res)
+                                    file_print(res)
                                 queue.put(res)
                                 block = block.payload
                         elif block.haslayer(DNSRR):
@@ -496,10 +523,10 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
 
                                     res = str_res0 + " | Question            | " + str_qname + " " + str_qtype + " QM Class:ANY"
                                 else:
-                                    print("DNSRR:")
-                                    print("-----")
-                                    print(dnsrr.show())
-                                    print("DEBUGGING IS NEEDED HERE")
+                                    file_print("DNSRR:")
+                                    file_print("-----")
+                                    file_print(dnsrr.show())
+                                    file_print("DEBUGGING IS NEEDED HERE")
                                     exit(0)
                                 if dnsrr.type==33:#SRV Record
 
@@ -531,7 +558,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 if show_ttl:
                                     res = res + " TTL:"+str(dnsrr.ttl)
                                 if print_res==1:
-                                    print(res)
+                                    file_print(res)
                                 queue.put(res)
                                 block = block.payload
                 if dns.ancount>0:
@@ -562,7 +589,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
-                                print(res)
+                                file_print(res)
                             queue.put(res)
                             block = block.payload
                 if dns.nscount>0:
@@ -579,18 +606,18 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
-                                print(res)
+                                file_print(res)
                             queue.put(res)
                             block = block.payload
             else:
-                print("not a DNS Query", dns.summary())
+                file_print("not a DNS Query", dns.summary())
 
 ########################################
 ########### REQUEST FUNCTION ###########
 ########################################
 def requests(interface,v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,d4,d6,hlimit,unidns,domain,query,types_of_queries,add_domain,query_class,flood,flooding_interval,flooding_timeout):
     if add_domain:
-        print("Sending mdns requests")
+        file_print("Sending mdns requests")
     domain_list = domain.split(",")
     query_list = query.split(",")
     if add_domain:
@@ -630,7 +657,7 @@ def send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,dst_ipv4,s
                 packets.append(pkt1)
             if flood:
                 counter=0.0
-                print("Stop flooding after ",flooding_timeout," sec.")
+                file_print("Stop flooding after ",flooding_timeout," sec.")
                 while(counter<float(flooding_timeout)):
                     for packt in packets:
                         sendp(pakt,iface=interface)
@@ -643,7 +670,7 @@ def send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,dst_ipv4,s
             pkt1=Ether(src=source_mac,dst=target_mac1)/packet
             if flood:
                 counter=0.0
-                print("Stop flooding after ",flooding_timeout," sec.")
+                file_print("Stop flooding after ",flooding_timeout," sec.")
                 while(counter<float(flooding_timeout)):
                     sendp(pkt1,iface=interface)
                     counter+=float(flooding_interval)
@@ -660,7 +687,7 @@ def send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,dst_ipv4,s
                 packets.append(pkt2)
             if flood:
                 counter=0.0
-                print("Stop flooding after ",flooding_timeout," sec.")
+                file_print("Stop flooding after ",flooding_timeout," sec.")
                 while(counter<float(flooding_timeout)):
                     for packt in packets:
                         sendp(pakt,iface=interface)
@@ -673,7 +700,7 @@ def send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,dst_ipv4,s
             pkt2=Ether(src=source_mac,dst=target_mac2)/packet
             if flood:
                 counter=0.0
-                print("Stop flooding after ",flooding_timeout," sec.")
+                file_print("Stop flooding after ",flooding_timeout," sec.")
                 while(counter<float(flooding_timeout)):
                     sendp(pkt2,iface=interface)
                     counter+=float(flooding_interval)
@@ -748,14 +775,14 @@ def main():
     values = parser.parse_args()
 
     if values.rpcap:
-        print("Read packets from a pcap file")
+        file_print("Read packets from a pcap file")
         if not os.path.isfile(values.interface):
-            print('[-] ' + values.interface + ' does not exist')
+            file_print('[-] ' + values.interface + ' does not exist')
             exit(0)
         elif not os.access(values.interface, os.R_OK):
-            print('[-] ' + values.interface + ' access is denied')
+            file_print('[-] ' + values.interface + ' access is denied')
             exit(0)
-        print("Press Ctrl-C to exit and print the results")
+        file_print("Press Ctrl-C to exit and print the results")
         q = multiprocessing.Queue()
         pr = multiprocessing.Process(target=Sniffer_Offline, args=(values.interface,q,values.show_ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,values.source6,values.source4,values.target_mac,values.target_mac,values.source_mac,values.hlimit))
         pr.start()
@@ -766,14 +793,14 @@ def main():
         myset=set(results)
         results=list(myset)
         results.sort()
-        print("\n*********************************************RESULTS*********************************************")
+        file_print("\n*********************************************RESULTS*********************************************")
         for r in results:
-            print(r)
+            file_print(r)
         exit(0)
     else:
         #####################################LETS DO SOME CHECKS FIRST TO SEE IF WE CAN WORK####################
         if os.geteuid() != 0:
-            print("You must be root to run this script.")
+            file_print("You must be root to run this script.")
             exit(1)
         conf.verb=0
         #########################################DEFINE SOURCE ADDRESSES########################################
@@ -786,7 +813,7 @@ def main():
             try:
                 source_mac=get_if_hwaddr(values.interface)
             except:
-                print("interface ",values.interface," does not exist")
+                file_print("interface ",values.interface," does not exist")
                 exit(0)
 
         if values.qu:
@@ -804,7 +831,7 @@ def main():
             source_IPv4=get_my_ipv4_addr(values.interface)
         else:
             source_IPv4=values.source4
-        print("source MAC address:",source_mac,"source IPv4 Address:",source_IPv4,"source IPv6 address:",source_IPv6)
+        file_print("source MAC address:",source_mac,"source IPv4 Address:",source_IPv4,"source IPv6 address:",source_IPv6)
         #########################################################################################################
         if values.target_mac:
             target_mac1=values.target_mac
@@ -816,33 +843,33 @@ def main():
         q = multiprocessing.Queue()
         if values.dos_ttl or values.auto_fake_responses:
             if values.auto_fake_responses:
-                print("Send fake responses to requests" )
+                file_print("Send fake responses to requests" )
                 if values.target_mac:
                     myfilter = "not ether src " + source_mac + " and not ether dst " + values.target_mac +" and udp and port 5353"
                 else:
                     myfilter = "not ether src " + source_mac + " and udp and port 5353"
             elif values.target_mac:
-                print("Performing implicit DoS by sending automated spoofed DNS Answers with TTL=0" )
+                file_print("Performing implicit DoS by sending automated spoofed DNS Answers with TTL=0" )
                 myfilter = "not ether dst " + values.target_mac + " and udp and port 5353"
             else:
-                print("Performing implicit DoS by sending automated spoofed DNS Answers with TTL=0" )
+                file_print("Performing implicit DoS by sending automated spoofed DNS Answers with TTL=0" )
                 myfilter = "udp and port 5353"
-            print("Sniffer filter is:",myfilter)
-            print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
-            print("Press Ctrl-C to exit")
+            file_print("Sniffer filter is:",myfilter)
+            file_print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
+            file_print("Press Ctrl-C to exit")
             try:
                 Sniffer(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6)
             except KeyboardInterrupt:
-                print("Exiting on user's request")
+                file_print("Exiting on user's request")
                 exit(0)
             exit(0)
         myfilter = "not ether src " + source_mac + " and udp and port 5353"
-        print("Sniffer filter is:",myfilter)
-        print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
+        file_print("Sniffer filter is:",myfilter)
+        file_print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
         pr = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4,values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2, source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
         pr.daemon = True
         pr.start()
-        print("------------------------------------------------------------------------")
+        file_print("------------------------------------------------------------------------")
         time.sleep(1)#to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
         ##########################################################################################################
         if values.request:
@@ -961,7 +988,7 @@ def main():
             try:
                 pr.join()
             except KeyboardInterrupt:
-                print("Exiting on user's request")
+                file_print("Exiting on user's request")
                 exit(0)
 
             #### AFTER EXITING, PRINT THE RESULTS ####
@@ -989,7 +1016,7 @@ def main():
                     try:
                         pr2.join()
                     except KeyboardInterrupt:
-                        print("Exiting on user's request")
+                        file_print("Exiting on user's request")
                     while not q2.empty():
                         results.append(q2.get())
             elif values.service_scan:
@@ -1003,14 +1030,14 @@ def main():
                     r2=r.split(" ")
                     service=r2[7].strip('"')[:-1]
                     if (r2[1],service) not in targets:
-                        print((r2[1],service))
+                        file_print((r2[1],service))
                         targets.append((r2[1],service))
                         requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,service,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
                 if pr2:
                     try:
                         pr2.join()
                     except KeyboardInterrupt:
-                        print("Exiting on user's request")
+                        file_print("Exiting on user's request")
                     while not q2.empty():
                         results.append(q2.get())
                     targets2=[]
@@ -1033,12 +1060,12 @@ def main():
                     try:
                         pr3.join()
                     except KeyboardInterrupt:
-                        print("Exiting on user's request")
+                        file_print("Exiting on user's request")
                 while not q3.empty():
                     results.append(q3.get())
-            print("\n*********************************************RESULTS*********************************************")
+            file_print("\n*********************************************RESULTS*********************************************")
             for r in results:
-                print(r)
+                file_print(r)
 
 if __name__ == '__main__':
     main()

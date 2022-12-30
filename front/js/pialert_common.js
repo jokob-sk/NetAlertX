@@ -11,6 +11,10 @@
 var timerRefreshData = ''
 var modalCallbackFunction = '';
 
+// urlParams = new Proxy(new URLSearchParams(window.location.search), {
+//   get: (searchParams, prop) => searchParams.get(prop.toString()),
+// });
+
 function getCache(key)
 {
   // check cache
