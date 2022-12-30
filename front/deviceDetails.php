@@ -1625,6 +1625,9 @@ function loadPholus()
 {
     // console.log(mac)
     // console.log('php/server/devices.php?action=getPholus&mac='+ mac)
+
+    $(".deviceSpecific").remove();
+    
     $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
       
       data = sanitize(data);      

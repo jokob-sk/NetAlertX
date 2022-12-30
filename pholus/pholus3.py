@@ -601,8 +601,15 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                             if dnsrr.rclass==1:
                                 rclass="Class:IN"
                             else:
-                                rclass="Class:"+str(dnsrr.rclass)
-                            res = res0 + " Auth_NS: "+dnsrr.rrname + " " + dns_type[dnsrr.type]+" " + rclass + ' "' +dnsrr.rdata+'"'
+                                rclass="Class:"+str(dnsrr.rclass) 
+
+                            str_res0   = str(b_to_str(res0)) + ""
+                            str_rrname = str(b_to_str(dnsrr.rrname)) + ""
+                            str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""
+                            str_rdata  = str(b_to_str(dnsrr.rdata)) + ""
+                            str_rclass = str(b_to_str(rclass)) + ""
+
+                            res = str_res0 + " Auth_NS: "+str_rrname + " " +str_type+" " + str_rclass + ' "' +str_rdata+'"'
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:

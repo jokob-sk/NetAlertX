@@ -733,10 +733,30 @@ function scrollDown()
 
 }
 
-
 function initializeTabs () {  
 
   key = "activeMaintenanceTab"
+
+  // --------------------------------------------------------
+
+  // default selection
+  selectedTab = "tab_Settings"
+
+  // the #target from the url
+  target = window.location.hash.substr(1)  
+
+  // update cookie if target specified
+  if(target != "")
+  {
+    // console.log(target)
+    setCache(key, target+'_id')
+  }
+
+  // get the tab id from the cookie (already overriden by the target)
+  if(!emptyArr.includes(getCache(key)))
+  {
+    selectedTab = getCache(key);
+  }
 
   // Activate panel
   if(!emptyArr.includes(getCache(key)))

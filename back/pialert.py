@@ -57,14 +57,14 @@ fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
+# Global variables
+
+userSubnets = []
 time_started = datetime.datetime.now()
 cron_instance = Cron()
 log_timestamp = time_started
 lastTimeImported = 0
 sql_connection = None
-
-next_schedule_timestamp = 0
-
 
 #-------------------------------------------------------------------------------
 def timeNow():
@@ -81,15 +81,6 @@ def file_print(*args):
     file.write(result + '\n')
     file.close()
 
-
-# check RW access of DB and config file
-file_print('\n Permissions check (All should be True)')
-file_print('------------------------------------------------')
-file_print( "  " + confPath +     " | " + " READ  | " + str(os.access(fullConfPath, os.R_OK)))
-file_print( "  " + confPath +     " | " + " WRITE | " + str(os.access(fullConfPath, os.W_OK)))
-file_print( "  " + dbPath + "       | " + " READ  | " + str(os.access(fullDbPath, os.R_OK)))
-file_print( "  " + dbPath + "       | " + " WRITE | " + str(os.access(fullDbPath, os.W_OK)))
-file_print('------------------------------------------------')
 
 #-------------------------------------------------------------------------------
 def append_file_binary (pPath, input):    
@@ -125,6 +116,48 @@ def print_log (pText):
     log_timestamp = log_timestamp2 
     
 #-------------------------------------------------------------------------------
+# check RW access of DB and config file
+def checkPermissionsOK():
+    global confR_access, confW_access, dbR_access, dbW_access
+    
+    confR_access = (os.access(fullConfPath, os.R_OK))
+    confW_access = (os.access(fullConfPath, os.W_OK))
+    dbR_access = (os.access(fullDbPath, os.R_OK))
+    dbW_access = (os.access(fullDbPath, os.W_OK))
+
+
+    file_print('\n Permissions check (All should be True)')
+    file_print('------------------------------------------------')
+    file_print( "  " , confPath ,     " | " , " READ  | " , confR_access)
+    file_print( "  " , confPath ,     " | " , " WRITE | " , confW_access)
+    file_print( "  " , dbPath , "       | " , " READ  | " , dbR_access)
+    file_print( "  " , dbPath , "       | " , " WRITE | " , dbW_access)
+    file_print('------------------------------------------------')
+
+    return dbR_access and dbW_access and confR_access and confW_access 
+
+def fixPermissions():
+    # Try fixing access rights if needed
+    chmodCommands = []
+
+    if dbR_access == False or dbW_access == False:
+        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', dbPath])
+    if confR_access == False or confW_access == False:
+        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', confPath])
+
+    for com in chmodCommands:
+        # Execute command
+        file_print("[Setup] Attempting to fix permissions.")
+        try:
+            # try runnning a subprocess
+            result = subprocess.check_output (com, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            file_print("[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)) 
+            file_print(e.output)
+
+
+checkPermissionsOK()
 
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
@@ -153,10 +186,16 @@ def initialiseFile(pathToCheck, defaultFile):
 #===============================================================================
 
 # check and initialize pialert.conf
-initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
+if confR_access == False:
+    initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
 
 # check and initialize pialert.db
-initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
+if dbR_access == False:
+    initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
+
+if dbR_access == False or confR_access == False:
+    if checkPermissionsOK() == False:
+        fixPermissions()
 
 
 #===============================================================================
@@ -249,8 +288,8 @@ DHCP_ACTIVE             = False
 
 # Pholus settings
 # ----------------------
-PHOLUS_ACTIVE           = False
-PHOLUS_TIMEOUT          = 60   
+PHOLUS_ACTIVE           = True
+PHOLUS_TIMEOUT          = 180  
 PHOLUS_FORCE            = False
 PHOLUS_DAYS_DATA        = 7
 
@@ -418,10 +457,10 @@ def importConfig ():
     PHOLUS_ACTIVE = check_config_dict('PHOLUS_ACTIVE', PHOLUS_ACTIVE , config_dict)
     PHOLUS_TIMEOUT = check_config_dict('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , config_dict)
     PHOLUS_FORCE = check_config_dict('PHOLUS_FORCE', PHOLUS_FORCE , config_dict)
-    PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
     PHOLUS_RUN = check_config_dict('PHOLUS_RUN', PHOLUS_RUN , config_dict)
     PHOLUS_RUN_TIMEOUT = check_config_dict('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , config_dict)   
     PHOLUS_RUN_SCHD = check_config_dict('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , config_dict)
+    PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
  
 
     openDB()    
@@ -497,11 +536,11 @@ def importConfig ():
         # Pholus
         ('PHOLUS_ACTIVE', 'Enable Pholus scans', '',  'boolean', '', '' , str(PHOLUS_ACTIVE) , 'Pholus'),
         ('PHOLUS_TIMEOUT', 'Pholus timeout', '',  'integer', '', '' , str(PHOLUS_TIMEOUT) , 'Pholus'),
-        ('PHOLUS_FORCE', 'Pholus force check', '',  'boolean', '', '' , str(PHOLUS_FORCE) , 'Pholus'),
-        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus'),
+        ('PHOLUS_FORCE', 'Pholus force check', '',  'boolean', '', '' , str(PHOLUS_FORCE) , 'Pholus'),        
         ('PHOLUS_RUN', 'Pholus enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(PHOLUS_RUN) , 'Pholus'),
         ('PHOLUS_RUN_TIMEOUT', 'Pholus timeout schedule', '',  'integer', '', '' , str(PHOLUS_RUN_TIMEOUT) , 'Pholus'),
-        ('PHOLUS_RUN_SCHD', 'Pholus schedule', '',  'text', '', '' , str(PHOLUS_RUN_SCHD) , 'Pholus')        
+        ('PHOLUS_RUN_SCHD', 'Pholus schedule', '',  'text', '', '' , str(PHOLUS_RUN_SCHD) , 'Pholus'),
+        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus')        
 
     ]
     # Insert into DB    
@@ -525,6 +564,9 @@ def importConfig ():
 
     last_next_pholus_schedule = schedule.next()
     last_next_pholus_schedule_used = False
+
+    # Format and prepare the list of subnets
+    updateSubnets()
 
     file_print('[', timeNow(), '] Config: Imported new config')  
 #-------------------------------------------------------------------------------
@@ -550,6 +592,7 @@ last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and than once a week
 
+
 def main ():
     # Initialize global variables
     global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_pholus_scheduled_run
@@ -559,14 +602,6 @@ def main ():
     # DB
     sql_connection = None
     sql            = None
-
-    # # create log files > I don't think this is necessary (e.g. the path was incorrect 
-    # # (missing / at the beginning of teh file name) and there were no issues reported)
-    # write_file(logPath + 'IP_changes.log', '')
-    # write_file(logPath + 'stdout.log', '')
-    # write_file(logPath + 'stderr.log', '')
-    # write_file(logPath + 'pialert.log', '')    
-    # write_file(logPath + 'pialert_pholus.log', '')
 
     # Upgrade DB if needed
     upgradeDB()
@@ -582,10 +617,8 @@ def main ():
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
 
-             # last time any scan or maintennace/Upkeep was run
+             # last time any scan or maintenance/Upkeep was run
             last_run = time_started
-
-            reporting = False
 
             # Header
             updateState("Process: Start")
@@ -599,7 +632,7 @@ def main ():
             if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
                 cycle = 'internet_IP'                
                 last_internet_IP_scan = time_started
-                reporting = check_internet_IP()
+                check_internet_IP()
 
             # Update vendors once a week
             if last_update_vendors + datetime.timedelta(days = 7) < time_started:
@@ -666,8 +699,7 @@ def main ():
 #===============================================================================
 # INTERNET IP CHANGE
 #===============================================================================
-def check_internet_IP ():
-    reporting = False
+def check_internet_IP ():   
 
     # Header
     updateState("Scan: Internet IP")
@@ -687,8 +719,7 @@ def check_internet_IP ():
     file_print('      ', internet_IP)
 
     # Get previous stored IP
-    file_print('    Retrieving previous IP:')
-    openDB()
+    file_print('    Retrieving previous IP:')    
     previous_IP = get_previous_internet_IP ()
     file_print('      ', previous_IP)
 
@@ -696,11 +727,9 @@ def check_internet_IP ():
     if internet_IP != previous_IP :
         file_print('    Saving new IP')
         save_new_internet_IP (internet_IP)
-        file_print('        IP updated')
-        reporting = True
+        file_print('        IP updated')        
     else :
-        file_print('    No changes to perform')
-    closeDB()
+        file_print('    No changes to perform')    
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
@@ -711,21 +740,18 @@ def check_internet_IP ():
         if dns_IP == "" :
             file_print('    Error retrieving Dynamic DNS IP')
             file_print('    Exiting...')
-            return False
         file_print('   ', dns_IP)
 
         # Check DNS Change
         if dns_IP != internet_IP :
             file_print('    Updating Dynamic DNS IP')
             message = set_dynamic_DNS_IP ()
-            file_print('       ', message)
-            reporting = True
+            file_print('       ', message)            
         else :
             file_print('    No changes to perform')
     else :
         file_print('    Skipping Dynamic DNS update')
-    
-    return reporting
+
 
 
 #-------------------------------------------------------------------------------
@@ -791,8 +817,10 @@ def set_dynamic_DNS_IP ():
 #-------------------------------------------------------------------------------
 def get_previous_internet_IP ():
     # get previos internet IP stored in DB
+    openDB()
     sql.execute ("SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' ")
     previous_IP = sql.fetchone()[0]
+    closeDB()
 
     # return previous IP
     return previous_IP
@@ -803,13 +831,16 @@ def save_new_internet_IP (pNewIP):
     append_line_to_file (logPath + '/IP_changes.log',
         '['+str(startTime) +']\t'+ pNewIP +'\n')
 
+    prevIp = get_previous_internet_IP() 
+
+    openDB()
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
                     VALUES ('Internet', ?, ?, 'Internet IP Changed',
                         'Previous Internet IP: '|| ?, 1) """,
-                    (pNewIP, startTime, get_previous_internet_IP() ) )
+                    (pNewIP, startTime, prevIp) )
 
     # Save new IP
     sql.execute ("""UPDATE Devices SET dev_LastIP = ?
@@ -818,6 +849,7 @@ def save_new_internet_IP (pNewIP):
 
     # commit changes
     sql_connection.commit()
+    closeDB()
     
 #-------------------------------------------------------------------------------
 def check_IP_format (pIP):
@@ -1033,16 +1065,20 @@ def scan_network ():
     if PIHOLE_ACTIVE :       
         file_print('    Pi-hole start')
         openDB()    
-        reporting = copy_pihole_network() or reporting
+        copy_pihole_network() 
+        closeDB() 
 
     # DHCP Leases method    
     if DHCP_ACTIVE :        
         file_print('    DHCP Leases start')
-        reporting = read_DHCP_leases () or reporting
+        openDB()
+        read_DHCP_leases () 
+        closeDB()
 
     # Load current scan data
-    file_print('  Processing scan results')    
-    save_scanned_devices (arpscan_devices, cycle_interval)
+    file_print('  Processing scan results') 
+    openDB()   
+    save_scanned_devices (arpscan_devices, cycle_interval)    
     
     # Print stats
     print_log ('Print Stats')
@@ -1084,6 +1120,7 @@ def scan_network ():
     skip_repeated_notifications ()
   
     # Commit changes
+    openDB()
     sql_connection.commit()
     closeDB()
 
@@ -1114,13 +1151,9 @@ def execute_arpscan ():
     # output of possible multiple interfaces
     arpscan_output = ""
 
-    # multiple interfaces
-    if type(SCAN_SUBNETS) is list:        
-        for interface in SCAN_SUBNETS :            
-            arpscan_output += execute_arpscan_on_interface (interface)
-    # one interface only
-    else:        
-        arpscan_output += execute_arpscan_on_interface (SCAN_SUBNETS)
+    # scan each interface
+    for interface in userSubnets :            
+        arpscan_output += execute_arpscan_on_interface (interface)    
     
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -1153,16 +1186,11 @@ def execute_arpscan ():
     return unique_devices
 
 #-------------------------------------------------------------------------------
-def execute_arpscan_on_interface (SCAN_SUBNETS):
-    # #101 - arp-scan subnet configuration
+def execute_arpscan_on_interface (interface):    
     # Prepare command arguments
-    subnets = SCAN_SUBNETS.strip().split()
+    subnets = interface.strip().split()
     # Retry is 6 to avoid false offline devices
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
-
-
-    mask = subnets[0]
-    interface = subnets[1].split('=')[1]
 
     # Execute command
     try:
@@ -1635,82 +1663,98 @@ def update_devices_data_from_scan ():
     print_log ('Update devices end')
 
 #-------------------------------------------------------------------------------
-# Feature #43 - Resolve name for unknown devices
 def update_devices_names ():
     # Initialize variables
     recordsToUpdate = []
+    recordsNotFound = []
+
     ignored = 0
     notFound = 0
+
+    foundDig = 0
+    foundPholus = 0
 
     # Devices without name
     file_print('        Trying to resolve devices without name')
     # BUGFIX #97 - Updating name of Devices w/o IP
-    sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','') AND dev_LastIP <> '-'")
-
+    openDB()    
+    sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','', '(name not found)') AND dev_LastIP <> '-'")
     unknownDevices = sql.fetchall() 
+    closeDB()
 
     # perform Pholus scan if (unknown) devices found
     if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
         performPholusScan(PHOLUS_TIMEOUT)
 
     # get names from Pholus scan 
-    sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
-    pholusResults = sql.fetchall()
+    # sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
+    openDB()    
+    sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
+    pholusResults = list(sql.fetchall())        
+    closeDB()
 
-    # Number of entries for unknown MACs from the Pholus scan
-    file_print("        Pholus entries: ", len(pholusResults))
+    # Number of entries from previous Pholus scans
+    file_print("          Pholus entries from prev scans: ", len(pholusResults))
 
     for device in unknownDevices:
-        # Resolve device name OLD
-        newName = resolve_device_name (device['dev_MAC'], device['dev_LastIP'])
-        # Resolve with Pholus scan results
+        newName = -1
+        
+        # Resolve device name with DiG
+        newName = resolve_device_name_dig (device['dev_MAC'], device['dev_LastIP'])
+        
+        # count
+        if newName != -1:
+            foundDig += 1
+
+        # Resolve with Pholus 
         if newName == -1:
             newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults)
-       
+            # count
+            if newName != -1:
+                foundPholus += 1
+        
+        # isf still not found update name so we can distinguish the devices where we tried already
         if newName == -1 :
-            notFound += 1
-        elif newName == -2 :
-            ignored += 1
-        # else :
-        #     recordsToUpdate.append ([newName, device['dev_MAC']])        
-        recordsToUpdate.append (["(name not found)", device['dev_MAC']])                
-            
-    # Print log    
-    file_print("        Names updated:  ", len(recordsToUpdate) )
-    # DEBUG - print list of record to update
-        # file_print(recordsToUpdate)
+            recordsNotFound.append (["(name not found)", device['dev_MAC']])          
+        else:
+            # name wa sfound with DiG or Pholus
+            recordsToUpdate.append ([newName, device['dev_MAC']])
 
-    # update devices
+    # Print log            
+    file_print("        Names Found (DiG/Pholus): ", len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" )                 
+    file_print("        Names Not Found         : ", len(recordsNotFound) )
+    
+    openDB()    
+    # update not found devices with (name not found) 
+    sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )
+    # update names of devices which we were bale to resolve
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
-
+    closeDB()
     # DEBUG - print number of rows updated
-        # file_print(sql.rowcount)
+    # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
 def performPholusScan (timeout):
 
-    subnetList = []
-
-    # handle old string setting  
-    if type(SCAN_SUBNETS) is not list:                      
-        subnetList.append(SCAN_SUBNETS)
-    else:
-        subnetList = SCAN_SUBNETS
-
     # scan every interface
-    for subnet in subnetList:
+    for subnet in userSubnets:
 
-        temp = subnet.strip().split()
+        temp = subnet.split("--interface=")
 
-        mask = temp[0]
-        interface = temp[1].split('=')[1]
+        if len(temp) != 2:
+            file_print("        Skip interface (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet)
+            return
 
-        file_print("        Pholus scan on interface: ", interface, " mask: " , mask)
+        mask = temp[0].strip()
+        interface = temp[1].strip()
+
+        file_print("        Pholus scan on [interface] ", interface, " [mask] " , mask)
 
         updateState("Scan: Pholus")        
-        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeout), 's ('+ str(round(int(timeout) / 60), 2) +'min)')  
+        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeout), 's ('+ str(round(int(timeout) / 60, 1)) +'min)')  
         
-        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", str(timeout)]
+        adjustedTimeout = str(round(int(timeout) / 2, 0)) # the scan alwasy lasts 2x as long, so the desired user time from settings needs to be halved
+        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
 
         # Execute command
         try:
@@ -1738,32 +1782,125 @@ def performPholusScan (timeout):
             if len(params) > 0:
                 openDB ()
                 sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
+                closeDB ()
 
         else:
             file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
 
 
 #-------------------------------------------------------------------------------
-def resolve_device_name_pholus (pMAC, pIP, pholusResults):
-    newName = -1
+def cleanResult(str):
+    # alternative str.split('.')[0]
+    str = str.replace("._airplay", "")
+    str = str.replace("._tcp", "")
+    str = str.replace(".local", "")
+    str = str.replace("._esphomelib", "")
+    str = str.replace("._googlecast", "")
+    str = str.replace(".lan", "")
+    str = str.replace(".home", "")
+    # Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77 (remove 32 chars at the end matching a regex?)
 
-    for result in pholusResults:
-        if pholusResults["MAC"] == pMAC:
-            return pholusResults["Value"]
+    str = str.replace(".", "")
 
-    return newName
+    return str
+
+
+# Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
+# it's also possible the pholus3.py script can be adjusted to provide a better output to interface with it
+# Hit me with a PR if you know how! :)
+def resolve_device_name_pholus (pMAC, pIP, allRes):
+    
+    pholusMatchesIndexes = []
+
+    index = 0
+    for result in allRes:
+        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and '._googlezone' not in result["Value"]:
+            # found entries with a matching MAC address, let's collect indexes 
+            # pholusMatchesAll.append([list(item) for item in result]) 
+            pholusMatchesIndexes.append(index)
+
+        index += 1
+
+    # file_print('pholusMatchesIndexes:', len(pholusMatchesIndexes))       
+
+    # return if nothing found
+    if len(pholusMatchesIndexes) == 0:
+        return -1
+
+    # we have some entries let's try to select the most useful one
+
+    # airplay matches contain a lot of information
+    # Matches for example: 
+    # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
+            return allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0]
+
+    
+    # second best - contains airplay
+    # Matches for example: 
+    # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+    
+
+    # Contains PTR Class:32769
+    # Matches for example: 
+    # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+
+
+    # Contains AAAA Class:IN
+    # Matches for example: 
+    # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('.local.')[0])
+
+
+    # Contains _googlecast._tcp.local. PTR Class:IN
+    # Matches for example: 
+    # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+
+
+    # Contains A Class:32769
+    # Matches for example: 
+    # Android.local. A Class:32769 "192.168.1.6"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split(' A Class:32769')[0])
+
+
+    # # Contains PTR Class:IN
+    # Matches for example: 
+    # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+
+
+    return -1
     
 #-------------------------------------------------------------------------------
 
-def resolve_device_name (pMAC, pIP):
+def resolve_device_name_dig (pMAC, pIP):
+    
+    newName = ""
+
     try :
-        pMACstr = str(pMAC)
+        # pMACstr = str(pMAC)
         
-        # Check MAC parameter
-        mac = pMACstr.replace (':','')
-        # file_print( ">>>>>> DIG >>>>>")
-        if len(pMACstr) != 17 or len(mac) != 12 :
-            return -2
+        # # Check MAC parameter
+        # mac = pMACstr.replace (':','')
+        # # file_print( ">>>>>> DIG >>>>>")
+        # if len(pMACstr) != 17 or len(mac) != 12 :
+        #     return -2
 
         # DEBUG
         # file_print(pMAC, pIP)
@@ -1778,25 +1915,23 @@ def resolve_device_name (pMAC, pIP):
             newName = subprocess.check_output (dig_args, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print(e.output)
-            newName = "Error - check logs"
+            file_print(e.output)            
+            # newName = "Error - check logs"
+            return -1
 
         # file_print( ">>>>>> DIG2 >>>>> Name", newName)
 
         # Check returns
         newName = newName.strip()
+
         if len(newName) == 0 :
-            return -2
+            return -1
             
-        # Eliminate local domain
-        if newName.endswith('.') :
-            newName = newName[:-1]
-        if newName.endswith('.lan') :
-            newName = newName[:-4]
-        if newName.endswith('.local') :
-            newName = newName[:-6]
-        if newName.endswith('.home') :
-            newName = newName[:-5]
+        # Cleanup
+        newName = cleanResult(newName)
+
+        if newName == "" or  len(newName) == 0: 
+            return -1
 
         # Return newName
         return newName
@@ -1807,6 +1942,7 @@ def resolve_device_name (pMAC, pIP):
 
 #-------------------------------------------------------------------------------
 def void_ghost_disconnections ():
+    openDB()
     # Void connect ghost events (disconnect event exists in last X min.) 
     print_log ('Void - 1 Connect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
@@ -1865,6 +2001,7 @@ def void_ghost_disconnections ():
                           ) """,
                     (cycle, startTime)   )
     print_log ('Void end')
+    closeDB()
 
 #-------------------------------------------------------------------------------
 def pair_sessions_events ():
@@ -1874,6 +2011,8 @@ def pair_sessions_events ():
     #                 SET eve_PairEventRowid = NULL
     #                 WHERE eve_EventType IN ('New Device', 'Connected')
     #              """ )
+
+    openDB()
 
     # Pair Connection / New Device events
     print_log ('Pair session - 1 Connections / New Devices')
@@ -1902,8 +2041,12 @@ def pair_sessions_events ():
                  """ )
     print_log ('Pair session end')
 
+    closeDB()
+
 #-------------------------------------------------------------------------------
 def create_sessions_snapshot ():
+
+    openDB()
     # Clean sessions snapshot
     print_log ('Sessions Snapshot - 1 Clean')
     sql.execute ("DELETE FROM SESSIONS" )
@@ -1927,9 +2070,15 @@ def create_sessions_snapshot ():
 #                    SELECT * FROM Convert_Events_to_Sessions_Phase2""" )
 
     print_log ('Sessions end')
+    closeDB()
+
+
 
 #-------------------------------------------------------------------------------
 def skip_repeated_notifications ():
+    
+    openDB()
+
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"
     print_log ('Skip Repeated')
@@ -1945,6 +2094,8 @@ def skip_repeated_notifications ():
                         )
                  """ )
     print_log ('Skip Repeated end')
+
+    closeDB()
 
 
 #===============================================================================
@@ -2477,13 +2628,13 @@ def create_generic_device(client):
     create_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
         
 
-# #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):    
 
     new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
 
     # check if config already in list and if not, add it, otherwise skip
-    global mqtt_sensors
+    global mqtt_sensors, uniqueSensorCount
 
     is_unique = True
 
@@ -2493,7 +2644,7 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
             break
            
     # save if unique
-    if is_unique:        
+    if is_unique:             
         publish_sensor(client, new_sensor_config)        
 
 
@@ -2510,9 +2661,7 @@ class sensor_config:
 #-------------------------------------------------------------------------------
 def publish_sensor(client, sensorConf): 
 
-    global mqtt_sensors         
-
-    file_print("        Estimated delay:", (len(mqtt_sensors) * int(MQTT_DELAY_SEC)))
+    global mqtt_sensors             
 
     message = '{ \
                 "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
@@ -2531,7 +2680,7 @@ def publish_sensor(client, sensorConf):
     topic='homeassistant/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/'+sensorConf.sensorName+'/config'
 
     # add the sensor to the global list to keep track of succesfully added sensors
-    if publish_mqtt(client, topic, message):
+    if publish_mqtt(client, topic, message):        
                                      # hack - delay adding to the queue in case the process is 
         time.sleep(MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
@@ -2603,6 +2752,8 @@ def mqtt_start():
 
     # Get all devices
     devices = get_all_devices()
+
+    file_print("        Estimated delay: ", (len(devices) * int(MQTT_DELAY_SEC)), 's ', '(', round((len(devices) * int(MQTT_DELAY_SEC))/60,1) , 'min)' )
 
     for device in devices:        
 
@@ -2829,7 +2980,39 @@ def to_binary_sensor(input):
 #===============================================================================
 # UTIL
 #===============================================================================
+#-------------------------------------------------------------------------------
+# Make a regular expression
+# for validating an Ip-address
+ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 
+# Define a function to
+# validate an Ip address
+def checkIPV4(ip):
+    # pass the regular expression
+    # and the string in search() method
+    if(re.search(ipRegex, ip)):
+        return True
+    else:
+        return False
+
+#-------------------------------------------------------------------------------
+
+def updateSubnets():
+    global userSubnets
+    
+    #  remove old list
+    userSubnets = []  
+
+    # multiple interfaces
+    if type(SCAN_SUBNETS) is list:        
+        for interface in SCAN_SUBNETS :            
+            userSubnets.append(interface)
+    # one interface only
+    else:        
+        userSubnets.append(SCAN_SUBNETS)
+    
+
+#-------------------------------------------------------------------------------
 
 def sanitize_string(input):
     if isinstance(input, bytes):
@@ -2897,7 +3080,7 @@ def get_device_stats():
 
     # columns = ["online","down","all","archived","new","unknown"]
     sql.execute("""      
-      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(unresolved)' ) as unknown from Online_History order by Scan_Date desc limit  1 
+      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown from Online_History order by Scan_Date desc limit  1 
       """)
 
     row = sql.fetchone()

@@ -8,7 +8,7 @@ services:
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
       # - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db
+      - ${APP_DATA_LOCATION}/pialert/db2:/home/pi/pialert/db
       # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
       - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container
@@ -17,6 +17,7 @@ services:
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
       - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
+      - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      
       - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
       - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
