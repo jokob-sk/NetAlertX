@@ -28,10 +28,6 @@
     </h1>
   </section>
 
-  <?php
-    echo $_REQUEST['net_MAC'];
-  ?>
-
   <!-- Main content ---------------------------------------------------------- -->
   <section class="content">
     <?php
@@ -240,12 +236,11 @@
           </div>';  
 
         // write the HTML
-        echo  ''.$str_tab_header.
-              $str_tab_pane.
-              $str_table.
-              $str_table_rows.
-              $str_table_close.
-              $str_close_pane;
+        echo  ''.$str_tab_pane.
+                  $str_table.
+                  $str_table_rows.
+                  $str_table_close.
+                  $str_close_pane;
       }     
 
     
