@@ -825,8 +825,8 @@ def get_previous_internet_IP ():
     sql.execute ("SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' ")
     result = sql.fetchone()
 
-    if len(result) > 0:
-        previous_IP = sql.fetchone()[0]
+    if len(result) > 0 and type(result) is not None:
+        previous_IP = result[0]
 
     closeDB()
 
