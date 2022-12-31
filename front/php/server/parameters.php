@@ -20,9 +20,6 @@
 //------------------------------------------------------------------------------
   // Set maximum execution time to 15 seconds
   ini_set ('max_execution_time','15');
-  
-  // Open DB
-  OpenDB();
 
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
@@ -39,19 +36,41 @@
 //  Get Parameter Value
 //------------------------------------------------------------------------------
 function getParameter() {
-  global $db;
 
   $parameter = $_REQUEST['parameter'];
-  $sql = 'SELECT par_Value FROM Parameters
-          WHERE par_ID="'. quotes($_REQUEST['parameter']) .'"';
-  
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);  
-  $value = $row[0];
+  $value = "";
+
+  // get the value from the cookie if available
+  if(getCache($parameter) != "")
+  {
+    $value  = getCache($parameter);
+  }
+
+  // query the database if no cache entry found
+  if($parameter == "Back_App_State" || $value == "" )
+  {
+    // Open DB
+    OpenDB();
+
+    global $db;
+    
+    $sql = 'SELECT par_Value FROM Parameters
+            WHERE par_ID="'. quotes($parameter) .'"';
+    
+    $result = $db->query($sql);
+    $row = $result -> fetchArray (SQLITE3_NUM);  
+    $value = $row[0];
+
+    // Close DB
+    $db->close();
+
+    // update cookie cache  
+    setCache($parameter, $value);
+  }
 
   // displayMessage ($value);
-
   echo (json_encode ($value));
+  
 }
 
 
@@ -59,11 +78,18 @@ function getParameter() {
 //  Set Parameter Value
 //------------------------------------------------------------------------------
 function setParameter() {
+
+  $parameter = $_REQUEST['parameter'];
+  $value = $_REQUEST['value'];
+
+  // Open DB
+  OpenDB();
+    
   global $db;
  
   // Update value
-  $sql = 'UPDATE Parameters SET par_Value="'. quotes ($_REQUEST['value']) .'"
-          WHERE par_ID="'. quotes($_REQUEST['parameter']) .'"';
+  $sql = 'UPDATE Parameters SET par_Value="'. quotes ($value) .'"
+          WHERE par_ID="'. quotes($parameter) .'"';
   $result = $db->query($sql);
 
   if (! $result == TRUE) {
@@ -75,8 +101,8 @@ function setParameter() {
   if ($changes == 0) {
     // Insert new value
     $sql = 'INSERT INTO Parameters (par_ID, par_Value)
-            VALUES ("'. quotes($_REQUEST['parameter']) .'",
-                    "'. quotes($_REQUEST['value'])     .'")';
+            VALUES ("'. quotes($parameter) .'",
+                    "'. quotes($value)     .'")';
     $result = $db->query($sql);
 
     if (! $result == TRUE) {
@@ -84,6 +110,12 @@ function setParameter() {
       return;
     }
   }
+
+  // Close DB
+  $db->close();  
+
+  // update cookie cache  
+  setCache($parameter, $value);
 
   echo 'OK';
 }

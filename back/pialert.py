@@ -1742,7 +1742,7 @@ def performPholusScan (timeout):
         temp = subnet.split("--interface=")
 
         if len(temp) != 2:
-            file_print("        Skip interface (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet)
+            file_print("        Skip scan (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet)
             return
 
         mask = temp[0].strip()
