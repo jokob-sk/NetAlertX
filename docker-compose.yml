@@ -13,7 +13,7 @@ services:
       - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
-      # comment out / delete below lines, they are only for development purposes
+      # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
       - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
@@ -31,6 +31,7 @@ services:
       - ${DEV_LOCATION}/front/network.php:/home/pi/pialert/front/network.php
       - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
       - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php
+      # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
     environment:
       - TZ=${TZ}
       - PORT=${PORT}

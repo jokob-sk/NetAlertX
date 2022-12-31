@@ -816,10 +816,18 @@ def set_dynamic_DNS_IP ():
     
 #-------------------------------------------------------------------------------
 def get_previous_internet_IP ():
-    # get previos internet IP stored in DB
+    
+    previous_IP = '0.0.0.0'
+
+    # get previous internet IP stored in DB
     openDB()
+
     sql.execute ("SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' ")
-    previous_IP = sql.fetchone()[0]
+    result = sql.fetchone()
+
+    if len(result) > 0:
+        previous_IP = sql.fetchone()[0]
+
     closeDB()
 
     # return previous IP
