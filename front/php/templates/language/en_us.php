@@ -37,6 +37,7 @@ $lang['en_us'] = array(
 'Login_Toggle_Info' => 'Password Information',
 'Login_Toggle_Info_headline' => 'Password Information',
 'Login_Toggle_Alert_headline' => 'Password Alert!',
+'Login_Default_PWD' => 'Default password "123456" is still active.',
 
 //////////////////////////////////////////////////////////////////
 // Device Page

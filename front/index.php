@@ -1,33 +1,9 @@
 <?php
-session_start();
 
-if(array_search('action', $_REQUEST) != FALSE)
-{
-  if ($_REQUEST['action'] == 'logout') {
-    session_destroy();
-    setcookie("PiAler_SaveLogin", "", time() - 3600);
-    header('Location: index.php');
-  }    
-}
 
 require 'php/templates/language/lang.php';
 require 'php/templates/skinUI.php';
-
-
-// ##################################################
-// ## Login Processing start
-// ##################################################
-$config_file = "../config/pialert.conf";
-$config_file_lines = file($config_file);
-
-
-// ###################################
-// ## PIALERT_WEB_PROTECTION FALSE
-// ###################################
-
-$config_file_lines_bypass = array_values(preg_grep('/^PIALERT_WEB_PROTECTION\s.*/', $config_file_lines));
-$protection_line = explode("=", $config_file_lines_bypass[0]);
-$Pia_WebProtection = strtolower(trim($protection_line[1]));
+require 'php/templates/security.php';
 
 if ($Pia_WebProtection != 'true')
   {
@@ -36,46 +12,44 @@ if ($Pia_WebProtection != 'true')
       exit;
   }
 
-// ###################################
-// ## PIALERT_WEB_PROTECTION TRUE
-// ###################################
-
-$config_file_lines = array_values(preg_grep('/^PIALERT_WEB_PASSWORD\s.*/', $config_file_lines));
-$password_line = explode("'", $config_file_lines[0]);
-$Pia_Password = $password_line[1];
-
 // Password without Cookie check -> pass and set initial cookie
-if ($Pia_Password == hash('sha256',$_POST["loginpassword"]))
+if (isset ($_POST["loginpassword"]) && $Pia_Password == hash('sha256',$_POST["loginpassword"]))
   {
       header('Location: devices.php');
       $_SESSION["login"] = 1;
-      if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+      if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
   }
 
 // active Session or valid cookie (cookie not extends)
-if (($_SESSION["login"] == 1) || ($Pia_Password == $_COOKIE["PiAler_SaveLogin"]))
+if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE["PiAlert_SaveLogin"]) && $Pia_Password == $_COOKIE["PiAlert_SaveLogin"]))
   {
       header('Location: devices.php');
       $_SESSION["login"] = 1;
-      if (isset($_POST['PWRemember'])) {setcookie("PiAler_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+      if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
   }
 
+$login_headline = lang('Login_Toggle_Info_headline');
+$login_info = "";
+
 // no active session, cookie not checked
-if ($_SESSION["login"] != 1)
+if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   {
-      if (file_exists('../db/setting_darkmode')) {$ENABLED_DARKMODE = True;}
-      if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') {
-        $login_info = 'Defaultpassword "123456" is still active';
-        $login_mode = 'danger';
-        $login_display_mode = 'display: block;';
-        $login_headline = lang('Login_Toggle_Alert_headline');
-        $login_icon = 'fa-ban';
-  } else {
-    $login_mode = 'info';
-    $login_display_mode = 'display: none;';
-    $login_headline = lang('Login_Toggle_Info_headline');
-    $login_icon = 'fa-info';
-  }
+    if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
+    {
+      $login_info = lang('Login_Default_PWD');
+      $login_mode = 'danger';
+      $login_display_mode = 'display: block;';
+      $login_headline = lang('Login_Toggle_Alert_headline');
+      $login_icon = 'fa-ban';
+    } 
+    else 
+    {
+      $login_mode = 'info';
+      $login_display_mode = 'display: none;';
+      $login_headline = lang('Login_Toggle_Info_headline');
+      $login_icon = 'fa-info';
+    }
+}
 
 // ##################################################
 // ## Login Processing end
@@ -196,8 +170,3 @@ function Passwordhinfo() {
 </script>
 </body>
 </html>
-
-<?php
-
-  }
-?>

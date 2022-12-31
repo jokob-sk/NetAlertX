@@ -8,20 +8,11 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
-  session_start();
-
-  if(array_search('login', $_SESSION) != FALSE)
-  {
-    if ($_SESSION["login"] != 1)
-    {
-        header('Location: index.php');
-        exit;
-    }    
-  }
 
   require 'php/templates/header.php';
   require 'php/templates/graph.php';
   require 'php/server/util.php';
+  
 
   // check permissions
   $dbPath = "../db/pialert.db";

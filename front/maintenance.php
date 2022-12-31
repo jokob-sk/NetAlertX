@@ -1,14 +1,4 @@
 <?php
-session_start();
-
-// Turn off php errors
-error_reporting(0);
-
-if ($_SESSION["login"] != 1)
-  {
-      header('Location: index.php');
-      exit;
-  }
 
 //------------------------------------------------------------------------------
 //  Pi.Alert
@@ -113,12 +103,20 @@ $Pia_Archive_diskusage = number_format(($Pia_Archive_diskusage / 1000000),2,",",
 $latestfiles = glob($Pia_Archive_Path."pialertdb_*.zip");
 natsort($latestfiles);
 $latestfiles = array_reverse($latestfiles,False);
-$latestbackup = $latestfiles[0];
-$latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
+
+$latestbackup = 'none';
+$latestbackup_date = 'no backup';
+
+if (count($latestfiles) > 0)
+{
+  $latestbackup = $latestfiles[0];
+  $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
+}
+
 
 // Skin selector -----------------------------------------------------------------
 
-if (submit && isset($_POST['skinselector_set'])) {
+if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
   $pia_skin_set_dir = '../db/';
   $pia_skin_selector = htmlspecialchars($_POST['skinselector']);
   if (in_array($pia_skin_selector, $pia_installed_skins)) {
