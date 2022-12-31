@@ -26,7 +26,7 @@ docker run -d --rm --network=host \
   -v local/path/pialert/db:/home/pi/pialert/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \ 
-  jokobsk/pi.alert:latest \
+  jokobsk/pi.alert:latest 
   ```
 - The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
