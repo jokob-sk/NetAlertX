@@ -46,7 +46,7 @@ function getParameter() {
     $value  = getCache($parameter);
   }
 
-  // query the database if no cache entry found
+  // query the database if no cache entry found or requesting live data for the Back_App_State in the header
   if($parameter == "Back_App_State" || $value == "" )
   {
     // Open DB
@@ -67,10 +67,8 @@ function getParameter() {
     // update cookie cache  
     setCache($parameter, $value);
   }
-
-  // displayMessage ($value);
-  echo (json_encode ($value));
-  
+  // return value
+  echo (json_encode ($value));  
 }
 
 

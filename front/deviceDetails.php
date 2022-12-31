@@ -594,6 +594,7 @@ if ($_REQUEST['mac'] == 'Internet') {
                   <th>Extra</th>
                 </tr>
                 </thead>
+                <!-- Comment out tbody when trying to implement better table with datatables here -->
                 <tbody id="tablePholusBody">
                   <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span>Nothing sniffed out with Polus for this device.</span></td></tr>
                 </tbody>
@@ -1651,6 +1652,119 @@ function loadPholus()
         $(".deviceSpecific").remove();
       }        
     });
+}
+
+// function loadPholus()
+// {
+//   tableId = "tablePholus";
+  
+  
+//   $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
+    
+
+//     console.log("here URL mac:" + mac)
+//     console.log("here table mac:" + $("#"+tableId).attr("data-mac"))
+//     console.log("here")
+
+//     // check if already initialized
+//     if($("#"+tableId).attr("data-mac") == mac)
+//     {
+//       console.log("return")
+//       return;
+//     }
+
+
+
+//   initTable(tableId, mac);
+
+//     data = sanitize(data);      
+
+//     if(data != "false" && $.trim(data) != [])
+//     {
+//       var listData = JSON.parse(data);
+//       var order = 1;
+
+//       tableRows = "";
+
+//       // for each item
+//       listData.forEach(function (item, index) {                    
+//         tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+item.Extra+'</td></tr>'; 
+//       });        
+      
+//       $("#tablePholus tbody").first().html(tableRows);
+//       // $("#tablePholusPlc").attr("style", "display:none");
+//       // $("#tablePholusPlc").hide();
+//     }
+//     else
+//     {
+//       // console.log("else")
+//       // $("#tablePholusPlc").show();
+//       // $(".deviceSpecific").remove();
+//     } 
+
+
+    
+    
+//   });
+// }
+
+
+function initTable(tableId, mac){
+
+  // clear table
+  $("#"+tableId+" tbody").remove();
+
+  // Events datatable
+  $('#'+tableId).DataTable({
+  'paging'      : true,
+  'lengthChange': true,
+  'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
+  'searching'   : true,
+  'ordering'    : true,
+  'info'        : true,
+  'autoWidth'   : false,
+  'order'       : [[0,'desc']],
+
+  // Parameters
+  'pageLength'  : 50,
+
+  'columnDefs'  : [
+      // Replace HTML codes
+      {targets: [0],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          $(td).html (translateHTMLcodes (cellData));
+      } }
+  ],
+
+  // Processing
+  'processing'  : true,
+  'language'    : {
+    processing: '<table><td width="130px" align="middle">Loading...</td>'+
+                '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
+                '</td></table>',
+    emptyTable: 'No data',
+    "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
+    "search":     "<?php echo lang('Events_Searchbox');?>: ",
+    "paginate": {
+        "next":       "<?php echo lang('Events_Table_nav_next');?>",
+        "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+    },
+    "info":           "<?php echo lang('Events_Table_info');?>",
+  }
+});
+
+$("#"+tableId).attr("data-mac", mac)
+
+// Save Parameters rows & order when changed
+$('#'+tableId).on( 'length.dt', function ( e, settings, len ) {
+  setParameter (parSessionsRows, len);
+
+  // Sync Rows in both datatables
+  // if ( $('#tableEvents').DataTable().page.len() != len) {
+  //   $('#tableEvents').DataTable().page.len( len ).draw();
+  // }
+} );
+
 }
 
 window.onload = function async()
