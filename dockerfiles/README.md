@@ -18,7 +18,16 @@
 
 ## 📕 Basic Usage 
 
-- You will have to run the container on the host network, e.g: `sudo docker run --rm --net=host jokobsk/pi.alert`
+- You will have to run the container on the host network, e.g: 
+
+```yaml
+docker run -d --rm --network=host \
+  -v local/path/pialert/config:/home/pi/pialert/config \
+  -v local/path/pialert/db:/home/pi/pialert/db \
+  -e TZ=Europe/Berlin
+  -e PORT=20211
+  jokobsk/pi.alert:latest
+  ```
 - The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ### Docker environment variables
@@ -185,8 +194,6 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
 
 Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
 
-<a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
-<a href="https://www.patreon.com/user?u=84385063" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Patreon_logo_with_wordmark.svg/512px-Patreon_logo_with_wordmark.svg.png" alt="Support me on patreon" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
-
-
-
+<a href="https://github.com/sponsors/jokob-sk" target="_blank"><img src="https://i.imgur.com/X6p5ACK.png" alt="Sponsor Me on GitHub" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
+<a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="117px" height="30px" ></a>
+<a href="https://www.patreon.com/user?u=84385063" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Patreon_logo_with_wordmark.svg/512px-Patreon_logo_with_wordmark.svg.png" alt="Support me on patreon" style="height: 30px !important;width: 117px !important;" width="117px" ></a>

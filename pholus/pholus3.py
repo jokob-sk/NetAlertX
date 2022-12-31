@@ -11,6 +11,7 @@ import codecs
 import ipaddress
 import os
 import sys
+import datetime
 from scapy.utils import PcapWriter
 
 
@@ -25,6 +26,11 @@ logPath     = runPathTmp + '/front/log'
 #===============================================================================
 # UTIL
 #===============================================================================
+
+#-------------------------------------------------------------------------------
+def timeNow():
+    return datetime.datetime.now().replace(microsecond=0)
+
 
 def write_file (pPath, pText):
     # Write the text depending using the correct python version
@@ -119,6 +125,7 @@ class Sniffer():
     def __init__ (self,filter,interface,sniffer_timeout,queue,dns,show_ttl,dos_ttl, conflict, ttl,d4, d6, target_mac, auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flooding_interval, v4, v6):
         self.filter = filter
         self.interface = interface
+        file_print(">>>>>>> sniffer_timeout: ", sniffer_timeout)
         self.sniffer_timeout=sniffer_timeout
         self.queue=queue
         self.dns=dns
@@ -861,18 +868,18 @@ def main():
             else:
                 file_print("Performing implicit DoS by sending automated spoofed DNS Answers with TTL=0" )
                 myfilter = "udp and port 5353"
-            file_print("Sniffer filter is:",myfilter)
-            file_print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
+            file_print("Sniffer filter is: ",myfilter)
+            file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
             file_print("Press Ctrl-C to exit")
             try:
                 Sniffer(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6)
             except KeyboardInterrupt:
-                file_print("Exiting on user's request")
+                file_print("Exiting on user's request 1")
                 exit(0)
             exit(0)
         myfilter = "not ether src " + source_mac + " and udp and port 5353"
-        file_print("Sniffer filter is:",myfilter)
-        file_print("I will sniff for",values.sniffer_timeout,"seconds, unless interrupted by Ctrl-C")
+        file_print("Sniffer filter is: ",myfilter)
+        file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
         pr = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4,values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2, source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
         pr.daemon = True
         pr.start()
@@ -880,13 +887,17 @@ def main():
         time.sleep(1)#to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
         ##########################################################################################################
         if values.request:
+            file_print(">>>>>>> Timestamp 1: ", timeNow())
             requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,values.query,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
+            file_print(">>>>>>> Timestamp 2: ", timeNow())
         elif values.response:
             #qr=1=>Response, aa=1=>Server is an authority for the domain, rd=0=> Do not query recursively
+            file_print(">>>>>>> Timestamp 3: ", timeNow())
             if values.dns:
                 dns_packet=UDP(dport=53)/DNS(qr=1,aa=1,rd=0)
             else:
                 dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0)
+            file_print(">>>>>>> Timestamp 4: ", timeNow())
             responses = values.dns_response.split(",")
             no_of_answers=0
             no_of_additional_records=0
@@ -974,6 +985,7 @@ def main():
             dns_packet[DNS].arcount=no_of_additional_records
             send_packets(values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,values.d4,source_IPv6,values.d6,values.interface,values.hlimit,dns_packet,values.flood,values.flooding_timeout,values.flooding_interval)
         elif values.rdns_scanning:
+            file_print(">>>>>>> Timestamp 5: ", timeNow())
             dns_query=None
             ipn = ipaddress.ip_network(values.rdns_scanning)
             for ip in ipn.hosts():
@@ -987,15 +999,18 @@ def main():
             else:
                 dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=0,qd=dns_query)
             send_packets(values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,values.d4,source_IPv6,values.d6,values.interface,values.hlimit,dns_packet,values.flood,values.flooding_timeout,values.flooding_interval)
+            file_print(">>>>>>> Timestamp 6: ", timeNow())
         elif values.service_scan:
+            file_print(">>>>>>> Timestamp 7: ", timeNow())
             requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,values.query,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
+            file_print(">>>>>>> Timestamp 8: ", timeNow())
         ############################################################################################
         ############################################################################################
         if pr:
             try:
                 pr.join()
             except KeyboardInterrupt:
-                file_print("Exiting on user's request")
+                file_print("Exiting on user's request 2")
                 exit(0)
 
             #### AFTER EXITING, PRINT THE RESULTS ####
@@ -1023,7 +1038,7 @@ def main():
                     try:
                         pr2.join()
                     except KeyboardInterrupt:
-                        file_print("Exiting on user's request")
+                        file_print("Exiting on user's request 3")
                     while not q2.empty():
                         results.append(q2.get())
             elif values.service_scan:
@@ -1044,7 +1059,7 @@ def main():
                     try:
                         pr2.join()
                     except KeyboardInterrupt:
-                        file_print("Exiting on user's request")
+                        file_print("Exiting on user's request 4")
                     while not q2.empty():
                         results.append(q2.get())
                     targets2=[]
@@ -1067,7 +1082,7 @@ def main():
                     try:
                         pr3.join()
                     except KeyboardInterrupt:
-                        file_print("Exiting on user's request")
+                        file_print("Exiting on user's request 5")
                 while not q3.empty():
                     results.append(q3.get())
             file_print("\n*********************************************RESULTS*********************************************")
