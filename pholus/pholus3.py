@@ -798,9 +798,11 @@ def main():
             exit(0)
         file_print("Press Ctrl-C to exit and print the results")
         q = multiprocessing.Queue()
+        file_print(">>>>>>> Timestamp 0.1: ", timeNow())
         pr = multiprocessing.Process(target=Sniffer_Offline, args=(values.interface,q,values.show_ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,values.source6,values.source4,values.target_mac,values.target_mac,values.source_mac,values.hlimit))
         pr.start()
         pr.join()
+        file_print(">>>>>>> Timestamp 0.2: ", timeNow())
         results=[]
         while not q.empty():
             results.append(q.get())
@@ -1020,10 +1022,12 @@ def main():
             if values.rdns_scanning:
                 targets=[]
                 q2 = multiprocessing.Queue()
-                pr2 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q2,values.dns,values.show_ttl, values.dos_ttl,values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
+                file_print(">>>>>>> Timestamp 9: ", timeNow())
+                pr2 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q2,values.dns,values.show_ttl, values.dos_ttl,values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))                
                 pr2.daemon = True
                 pr2.start()
                 time.sleep(1)       #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
+                file_print(">>>>>>> Timestamp 10: ", timeNow())
                 for r in results:
                     r2=r.split(" ")
                     service=r2[7].strip('"')
@@ -1044,10 +1048,12 @@ def main():
             elif values.service_scan:
                 targets=[]
                 q2 = multiprocessing.Queue()
+                file_print(">>>>>>> Timestamp 11: ", timeNow())
                 pr2 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q2,values.dns,values.show_ttl, values.dos_ttl,values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
                 pr2.daemon = True
                 pr2.start()
                 time.sleep(1)       #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
+                file_print(">>>>>>> Timestamp 12: ", timeNow())
                 for r in results:
                     r2=r.split(" ")
                     service=r2[7].strip('"')[:-1]
@@ -1064,10 +1070,12 @@ def main():
                         results.append(q2.get())
                     targets2=[]
                     q3 = multiprocessing.Queue()
+                    file_print(">>>>>>> Timestamp 13: ", timeNow())
                     pr3 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q3,values.dns,values.show_ttl, values.dos_ttl, values.conflict,values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
                     pr3.daemon = True
                     pr3.start()
                     time.sleep(1)   #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
+                    file_print(">>>>>>> Timestamp 14: ", timeNow())
                     for r in results:
                         r2=r.split(" ")
                         service=r2[4]
