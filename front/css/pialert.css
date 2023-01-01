@@ -609,6 +609,7 @@ height: 50px;
 /*settings*/
 
 @media (max-width: 767px) {
+    /* hide on mobile */
     .setting_description {
       /* color: red; */
       display: none;
@@ -623,13 +624,13 @@ height: 50px;
     }
   }
   @media (min-width: 768px) {
-    .setting_description {
-        /* color: rgb(0, 255, 106); */
+    .setting_description {        
+        /* color: green; */
         display: block;
     }
     .setting_input{
-        width:35%;
-        /* background-color: rgb(0, 255, 106); */
+        width:35%;        
+        /* background-color: green; */
     }
     .setting_name
     {

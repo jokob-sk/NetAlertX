@@ -884,7 +884,9 @@ def main():
         file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
         pr = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4,values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2, source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
         pr.daemon = True
+        file_print(">>>>>>> Timestamp 0.01: ", timeNow())
         pr.start()
+        file_print(">>>>>>> Timestamp 0.02: ", timeNow())
         file_print("------------------------------------------------------------------------")
         time.sleep(1)#to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
         ##########################################################################################################
@@ -1010,7 +1012,9 @@ def main():
         ############################################################################################
         if pr:
             try:
+                file_print(">>>>>>> Timestamp 6.1: ", timeNow())
                 pr.join()
+                file_print(">>>>>>> Timestamp 6.2: ", timeNow())
             except KeyboardInterrupt:
                 file_print("Exiting on user's request 2")
                 exit(0)

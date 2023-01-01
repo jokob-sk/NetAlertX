@@ -51,6 +51,7 @@ CommitDB();
       <h1 id="pageTitle">
          <?php echo lang('Navigation_Settings');?>
       </h1>
+      <span id="lastImportedTime"></span>
     </section>
     <div class="content">
    <?php      
@@ -247,12 +248,34 @@ CommitDB();
 
   // number of settings has to be equal to
   var settingsNumber = 53;
-  
+
+  // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
   {
     showModalOk('WARNING', '<?php echo lang("settings_missing")?>');    
   }
 
+
+  // ---------------------------------------------------------
+  function getParam(targetId, key, skipCache = false) {  
+
+    skipCacheQuery = "";
+
+    if(skipCache)
+    {
+      skipCacheQuery = "&skipcache";
+    }
+
+    // get parameter value
+    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
+      var result = data;
+
+      document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
+
+    });
+  }
+  
+  // ---------------------------------------------------------
   function addInterface()
   {
     ipMask = $('#ipMask').val();
@@ -273,11 +296,13 @@ CommitDB();
     }
   }
 
+  // ---------------------------------------------------------
   function removeInterfaces()
   {
     $('#SCAN_SUBNETS').empty();
   }
 
+  // ---------------------------------------------------------
   function collectSettings()
   {
     var settingsArray = [];
@@ -315,6 +340,7 @@ CommitDB();
     return settingsArray;
   }  
 
+  // ---------------------------------------------------------
   function saveSettings() {
     if(<?php echo count($settings)?> != settingsNumber) 
     {
@@ -331,7 +357,16 @@ CommitDB();
           showModalOk ('Result', data );
         }
       });
-    }  
-    
+    }
   }
+</script>
+
+<script defer>
+
+  // ---------------------------------------------------------
+  // Show last time settings have been imported
+  getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
+
+
+
 </script>
