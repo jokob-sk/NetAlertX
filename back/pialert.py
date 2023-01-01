@@ -1741,7 +1741,7 @@ def update_devices_names ():
     # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def performPholusScan (timeout):
+def performPholusScan (timeoutSec):
 
     # scan every interface
     for subnet in userSubnets:
@@ -1755,44 +1755,59 @@ def performPholusScan (timeout):
         mask = temp[0].strip()
         interface = temp[1].strip()
 
-        file_print("        Pholus scan on [interface] ", interface, " [mask] " , mask)
-
+        # logging & updating app state        
         updateState("Scan: Pholus")        
-        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeout), 's ('+ str(round(int(timeout) / 60, 1)) +'min)')  
+        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)')  
+        file_print("        Pholus scan on [interface] ", interface, " [mask] " , mask)
         
-        adjustedTimeout = str(round(int(timeout) / 2, 0)) # the scan alwasy lasts 2x as long, so the desired user time from settings needs to be halved
+        # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
+        adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
+
         pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
 
         # Execute command
+        output = ""
+
         try:
-            # try runnning a subprocess
-            output = subprocess.check_output (pholus_args, universal_newlines=True)
+            # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
+            output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
             file_print(e.output)
-            file_print("Error - PholusScan - check logs")
-            output = ""
+            file_print("        Error - PholusScan - check logs")            
+        except subprocess.TimeoutExpired as timeErr:
+            file_print('        Pholus TIMEOUT - the process forcefully terminated as timeout reached') 
 
-        if output != "":
-            file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
-            write_file (logPath + '/pialert_pholus_lastrun.log', output)
-            for line in output.split("\n"):
-                append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')        
-
-            # build SQL query parameters to insert into the DB
-            params = []
-
-            for line in output.split("\n"):
-                columns = line.split("|")
-                if len(columns) == 4:
-                    params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
-
-            if len(params) > 0:                
-                sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
-                commitDB ()
-
-        else:
+        if output == "": # check if the subprocess failed                    
             file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
+        else: 
+            file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
+        
+        #  check the last run output
+        f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')
+        newLines = f.read().split('\n')
+        f.close()        
+
+        # cleanup - select only lines containing a separator to filter out unnecessary data
+        newLines = list(filter(lambda x: '|' in x, newLines))        
+
+        # regular logging
+        for line in newLines:
+            append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')         
+        
+        # build SQL query parameters to insert into the DB
+        params = []
+
+        for line in newLines:
+            columns = line.split("|")
+            if len(columns) == 4:
+                params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
+
+        if len(params) > 0:                
+            sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
+            commitDB ()
+
+
 
 
 #-------------------------------------------------------------------------------

@@ -31,7 +31,6 @@ logPath     = runPathTmp + '/front/log'
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
-
 def write_file (pPath, pText):
     # Write the text depending using the correct python version
     if sys.version_info < (3, 0):
@@ -43,18 +42,24 @@ def write_file (pPath, pText):
         file.write (pText) 
         file.close() 
 
+# Empty the last run log file
+write_file(logPath + "/pialert_pholus_lastrun.log", "")
+
 def file_print(*args):
 
     result = ''
     
-    file = open(logPath + "/pialert_pholus_subp.log", "a")    
+    file = open(logPath + "/pialert_pholus_lastrun.log", "a")    
     for arg in args:                
         result += str(arg)
     print(result)
     file.write(result + '\n')
     file.close()
 
+# Empty the last run log file
+write_file(logPath + "/pialert_pholus_subp_pr.log", "")
 
+# For separate logging of the multiprocess subprocess
 def file_print_pr(*args):
 
     result = ''
@@ -134,6 +139,7 @@ def get_my_ipv4_addr(interface):
 ##########################
 class Sniffer():
     def __init__ (self,filter,interface,sniffer_timeout,queue,dns,show_ttl,dos_ttl, conflict, ttl,d4, d6, target_mac, auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flooding_interval, v4, v6):
+        file_print(">>>>>>> sniffer_args: ", filter," ",interface," ",sniffer_timeout," ",queue," ",dns," ",show_ttl," ",dos_ttl," ", conflict," ", ttl," ",d4," ", d6," ", target_mac," ", auto_fake_responses," ",source_IPv6," ", source_IPv4," ", target_mac1," ", target_mac2," ",source_mac," ",hlimit," ",workstation," ",printer," ",googlecast," ",airtv," ",flood," ",flooding_timeout," ",flooding_interval," ", v4," ", v6)
         self.filter = filter
         self.interface = interface
         file_print(">>>>>>> sniffer_timeout: ", sniffer_timeout)
@@ -172,6 +178,7 @@ class Sniffer():
 ##################################
 class Sniffer_Offline():
     def __init__ (self,interface,queue,show_ttl,d4, d6, target_mac,auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,hlimit):
+        file_print(">>>>>>> Timestamp 0.0210aa: ", timeNow())
         self.interface = interface
         self.queue=queue
         self.show_ttl=show_ttl
@@ -194,7 +201,7 @@ class Sniffer_Offline():
 ########################################################################
 def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,interface,d4,d6,target_mac,auto_fake_responses,source_IPv6,source_IPv4,target_mac1,target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flodding_interval,v4,v6):
 
-    file_print(">>>>>>> Timestamp 0.0210: ", timeNow())
+    # file_print(">>>>>>> Timestamp 0.0210: ", timeNow())
     file_print_pr(">>>>>>> Timestamp 0.0210: ", timeNow())
     file_print_pr(">>>>>>> Test ")
 
@@ -270,6 +277,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                 file_print_pr(">>>>>>> Test 6")
                 sendp(new_packet,iface=interface)
                 file_print_pr(">>>>>>> Test 6.1")
+            
         elif auto_fake_responses or (not (dos_ttl or conflict)):
             ## IF THIS IS A QUERY ##
             file_print_pr(">>>>>>> Test 6.2")
@@ -668,6 +676,8 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
             file_print_pr(">>>>>>> Test 6.2720055")
     else:
         file_print_pr(">>>>>>> Test 3")
+
+    file_print_pr(">>>>>>> Test 6.272005599")
         
 
 ########################################
@@ -918,7 +928,9 @@ def main():
             file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
             file_print("Press Ctrl-C to exit")
             try:
+                file_print(">>>>>>> Timestamp 0.0210ab: ", timeNow())
                 Sniffer(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6)
+                file_print(">>>>>>> Timestamp 0.0210abc: ", timeNow())
             except KeyboardInterrupt:
                 file_print("Exiting on user's request 1")
                 exit(0)
@@ -1057,7 +1069,7 @@ def main():
         ############################################################################################
         if pr:
             try:
-                file_print(">>>>>>> Timestamp 6.1: ", timeNow())
+                file_print(">>>>>>> Timestamp 6.1000: ", timeNow())
                 pr.join()
                 file_print(">>>>>>> Timestamp 6.2: ", timeNow())
             except KeyboardInterrupt:

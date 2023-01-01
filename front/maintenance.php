@@ -397,16 +397,16 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                          <div class="log-area">
                              
                              <div class="row logs-row">
-                               <textarea id="pialert_pholus_subp_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus_subp.log" ); ?>
+                               <textarea id="pialert_pholus_lastrun_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus_lastrun.log" ); ?>
                                </textarea>                              
                              </div>                          
                              <div class="row logs-row" >
                                <div> 
-                                 <div class="log-file">pialert_pholus_subp.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_pholus_subp.log") / 1000000),2,",",".") . ' MB';?> 
-                                 <span class="span-padding"><a href="./log/pialert_pholus_subp.log"><i class="fa fa-download"></i> </a></span>
+                                 <div class="log-file">pialert_pholus_lastrun.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_pholus_lastrun.log") / 1000000),2,",",".") . ' MB';?> 
+                                 <span class="span-padding"><a href="./log/pialert_pholus_lastrun.log"><i class="fa fa-download"></i> </a></span>
                                 </div></div>                          
                                  <div class="log-purge">                                 
-                                   <button class="btn btn-primary" onclick="logManage('pialert_pholus_subp.log','cleanLog')"><?php echo lang('Gen_Purge');?></button> 
+                                   <button class="btn btn-primary" onclick="logManage('pialert_pholus_lastrun.log','cleanLog')"><?php echo lang('Gen_Purge');?></button> 
                                  </div>                            
                                </div>                            
                              </div>                            
@@ -732,7 +732,7 @@ function scrollDown()
   tempArea = $('#pialert_pholus_log');
   $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
 
-  tempArea = $('#pialert_pholus_subp_log');
+  tempArea = $('#pialert_pholus_lastrun_log');
   $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
 
 }

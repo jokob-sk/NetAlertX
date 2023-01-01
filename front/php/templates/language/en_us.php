@@ -427,7 +427,7 @@ $lang['en_us'] = array(
 
 'settings_missing' => 'Not all settings loaded, refresh the page! This is probably caused by a high load on the database.',
 'settings_missing_block' => 'You can\'t save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.',
-'settings_old' => 'The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved, but the background process didn\'t have time to import it yet. You can wait until the settings get refreshed so you don\'t overwrite your old values. Feel free to save your settings either way if you don\'t mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.',
+'settings_old' => 'The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved in the <code>pialert.conf</code> file, but the background process didn\'t have time to import it yet to the DB. You can wait until the settings get refreshed so you don\'t overwrite your old values. Feel free to save your settings either way if you don\'t mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.',
 
 //General
 'SCAN_SUBNETS_name' => 'Subnets to scan',
