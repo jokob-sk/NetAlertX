@@ -10,7 +10,6 @@ $Pia_Graph_Device_Online = array();
 $Pia_Graph_Device_Down = array();
 $Pia_Graph_Device_Arch = array();
 
-//$db = new SQLite3('../db/pialert.db');
 $results = $db->query('SELECT * FROM Online_History ORDER BY Scan_Date DESC LIMIT 144');
 while ($row = $results->fetchArray()) {
    $time_raw = explode(' ', $row['Scan_Date']);

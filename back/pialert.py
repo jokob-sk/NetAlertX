@@ -1125,6 +1125,10 @@ def scan_network ():
     # Sessions snapshot
     file_print('    Creating sessions snapshot')
     create_sessions_snapshot ()
+
+    # Sessions snapshot
+    file_print('    Inserting scan results into Online_History')
+    insertOnlineHistory()
   
     # Skip repeated notifications
     file_print('    Skipping repeated notifications')
@@ -1391,6 +1395,8 @@ def print_scan_stats ():
                     (cycle,))
     file_print('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
 
+#-------------------------------------------------------------------------------
+def insertOnlineHistory():
     # Add to History
     sql.execute("SELECT * FROM Devices")
     History_All = sql.fetchall()
