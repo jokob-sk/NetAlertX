@@ -55,6 +55,17 @@ def file_print(*args):
     file.close()
 
 
+def file_print_pr(*args):
+
+    result = ''
+    
+    file = open(logPath + "/pialert_pholus_subp_pr.log", "a")    
+    for arg in args:                
+        result += str(arg)
+    print(result)
+    file.write(result + '\n')
+    file.close()
+
 def sanitize_string(input):
     if isinstance(input, bytes):
         input = input.decode('utf-8')
@@ -182,6 +193,11 @@ class Sniffer_Offline():
 ### THE HANDLER THAT THE TWO SNIFFERS CALL - THIS MAKES THE MAIN JOB ###
 ########################################################################
 def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,interface,d4,d6,target_mac,auto_fake_responses,source_IPv6,source_IPv4,target_mac1,target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flodding_interval,v4,v6):
+
+    file_print(">>>>>>> Timestamp 0.0210: ", timeNow())
+    file_print_pr(">>>>>>> Timestamp 0.0210: ", timeNow())
+    file_print_pr(">>>>>>> Test ")
+
     dns_type = {12: "PTR", 28: "AAAA", 13: "HINFO",33: "SRV", 1: "A", 255: "* (ANY)", 16: "TXT", 15: "MX", 6: "SOA", 256: "URI", 5: "CNAME",39: "DNAME"}
     Ether_src=packets.getlayer(Ether).src
     IP_src=None
@@ -189,8 +205,13 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
         IP_src=packets.getlayer(IPv6).src
     elif packets.haslayer(IP):
         IP_src=packets.getlayer(IP).src
+    else:
+        file_print(">>>>>>> Timestamp 0.021: ", timeNow())
+        file_print_pr(">>>>>>> Test 2")
+        
     res0= Ether_src + " | " + IP_src.ljust(27)
     if packets.haslayer(DNS):
+        file_print_pr(">>>>>>> Test 4")
         dns=packets.getlayer(DNS)
         if (conflict or dos_ttl) and dns.ancount>0:
             DNSBlocks = [ ]
@@ -240,15 +261,18 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                         new_p.rclass=p.rclass
                         new_p.rdlen=p.rdlen
                         new_p.rdata=p.rdata
-                        new_DNS_packet=new_DNS_packet/new_p
+                        new_DNS_packet=new_DNS_packet/new_p            
             if unidns:
                 new_packet=new_packet/UDP(dport=53)/new_DNS_packet
             else:
                 new_packet=new_packet/UDP(dport=5353,sport=5353)/new_DNS_packet
             for x in range(0,2):#Send each packet twice
+                file_print_pr(">>>>>>> Test 6")
                 sendp(new_packet,iface=interface)
+                file_print_pr(">>>>>>> Test 6.1")
         elif auto_fake_responses or (not (dos_ttl or conflict)):
             ## IF THIS IS A QUERY ##
+            file_print_pr(">>>>>>> Test 6.2")
             if dns.opcode==0:
                 res0 = res0 + ""
                 if dns.qdcount>0:
@@ -456,7 +480,9 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                         dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0,ancount=1)/DNSRR(rrname=qname,ttl=myttl,rdata=source_IPv4,type="A")
                                     else:
                                         dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0,ancount=1)/DNSRR(rrname=qname,ttl=myttl,rdata=source_IPv4,type="A")
+                                file_print_pr(">>>>>>> Test 6.23")        
                                 send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,d4,source_IPv6,d6,interface,hlimit,dns_packet,False,10.0,0.1)#CHANGE DEFAULT VALUES
+                                file_print_pr(">>>>>>> Test 6.24")
                             ### END "IF WE NEED TO AUTO RESPOND WITH A FAKE RESPONSE
                             ### NEXT LINES ARE ONLY USED TO PRINT RESULTS ###
                             if dnsqr.qclass==32769:
@@ -492,6 +518,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 else:
                                     ARtype=str(dnsrropt.type)
                                 res = res0 + " | Additional_Record   | " + rrname.decode("utf-8")  + " " + ARtype 
+                                file_print_pr(">>>>>>> Test 6.24")
                                 if dnsrropt.haslayer(EDNS0TLV):
                                     edns0tlv=dnsrropt.getlayer(EDNS0TLV)
                                     if edns0tlv.optcode==4:
@@ -566,12 +593,16 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     res = res + " TTL:"+str(dnsrr.ttl)
                                 if print_res==1:
                                     file_print(res)
+                                file_print_pr(">>>>>>> Test 6.27")
                                 queue.put(res)
                                 block = block.payload
+                                file_print_pr(">>>>>>> Test 6.270")
+
                 if dns.ancount>0:
                     DNSBlocks = [ ]
                     DNSBlocks.append(dns.an)
                     for block in DNSBlocks:
+                        file_print_pr(">>>>>>> Test 6.271")
                         while isinstance(block,DNSRR):
                             dnsrr=block.getlayer(DNSRR)
                             if dnsrr.rclass==1:
@@ -593,16 +624,20 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 if isinstance(rdata,list):
                                     rdata = b" ".join(rdata).decode("utf-8")
                                 res = res0 + " | Answer              | "+dnsrr.rrname.decode("utf-8") + " " + dns_type[dnsrr.type]+" " + rclass + ' "' +rdata+'"'
+                                file_print_pr(">>>>>>> Test 6.272004")
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
                                 file_print(res)
                             queue.put(res)
                             block = block.payload
+                            file_print_pr(">>>>>>> Test 6.272")
                 if dns.nscount>0:
+                    file_print_pr(">>>>>>> Test 6.273")
                     DNSBlocks = [ ]
                     DNSBlocks.append(dns.ns)
                     for block in DNSBlocks:
+                        file_print_pr(">>>>>>> Test 6.28")
                         while isinstance(block,DNSRR):
                             dnsrr=block.getlayer(DNSRR)
                             if dnsrr.rclass==1:
@@ -621,10 +656,19 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
                                 file_print(res)
+                            file_print_pr(">>>>>>> Test 6.274")
                             queue.put(res)
-                            block = block.payload
+                            block = block.payload                            
+                else:
+                    file_print_pr(">>>>>>> Test 6.27200")
             else:
                 file_print("not a DNS Query", dns.summary())
+                file_print_pr(">>>>>>> Test 6.272001")
+        else:
+            file_print_pr(">>>>>>> Test 6.2720055")
+    else:
+        file_print_pr(">>>>>>> Test 3")
+        
 
 ########################################
 ########### REQUEST FUNCTION ###########
@@ -889,6 +933,7 @@ def main():
         file_print(">>>>>>> Timestamp 0.02: ", timeNow())
         file_print("------------------------------------------------------------------------")
         time.sleep(1)#to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
+        file_print(">>>>>>> Timestamp 0.03: ", timeNow())
         ##########################################################################################################
         if values.request:
             file_print(">>>>>>> Timestamp 1: ", timeNow())

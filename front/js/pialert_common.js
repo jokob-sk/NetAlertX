@@ -152,6 +152,13 @@ function modalWarningOK () {
 }
 
 // -----------------------------------------------------------------------------
+
+function sanitize(data)
+{
+  return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
+}
+
+// -----------------------------------------------------------------------------
 function showMessage (textMessage="") {
   if (textMessage.toLowerCase().includes("error")  ) {
     // show error

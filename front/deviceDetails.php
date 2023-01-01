@@ -1785,11 +1785,4 @@ function reloadTab()
 }
 
 
-
-
-function sanitize(data)
-{
-  return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
-}
-
 </script>

@@ -30,6 +30,9 @@ if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOK
 
 $login_headline = lang('Login_Toggle_Info_headline');
 $login_info = "";
+$login_mode = 'danger';
+$login_display_mode = 'display: block;';
+$login_icon = 'fa-info';
 
 // no active session, cookie not checked
 if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)

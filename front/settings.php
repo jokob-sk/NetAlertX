@@ -51,7 +51,7 @@ CommitDB();
       <h1 id="pageTitle">
          <?php echo lang('Navigation_Settings');?>
       </h1>
-      <span id="lastImportedTime"></span>
+      Last time imported from the pialert.conf file: <span id="lastImportedTime"></span>
     </section>
     <div class="content">
    <?php      
@@ -252,28 +252,10 @@ CommitDB();
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
   {
-    showModalOk('WARNING', '<?php echo lang("settings_missing")?>');    
+    showModalOk('WARNING', "<?php echo lang("settings_missing")?>");    
   }
 
 
-  // ---------------------------------------------------------
-  function getParam(targetId, key, skipCache = false) {  
-
-    skipCacheQuery = "";
-
-    if(skipCache)
-    {
-      skipCacheQuery = "&skipcache";
-    }
-
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
-      var result = data;
-
-      document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
-
-    });
-  }
   
   // ---------------------------------------------------------
   function addInterface()
@@ -344,7 +326,7 @@ CommitDB();
   function saveSettings() {
     if(<?php echo count($settings)?> != settingsNumber) 
     {
-      showModalOk('WARNING', '<?php echo lang("settings_missing")?>');    
+      showModalOk('WARNING', "<?php echo lang("settings_missing_block")?>");    
     } else
     {
       $.ajax({
@@ -359,6 +341,47 @@ CommitDB();
       });
     }
   }
+
+  // ---------------------------------------------------------
+  function getParam(targetId, key, skipCache = false, callback) {  
+
+    skipCacheQuery = "";
+
+    if(skipCache)
+    {
+      skipCacheQuery = "&skipcache";
+    }
+
+    // get parameter value
+    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data, callback) {
+
+      var result = data;        
+      
+      if(key == "Back_Settings_Imported")
+      {
+        fileModificationTime = <?php echo filemtime($confPath)*1000;?>;        
+        importedMiliseconds = parseInt(result.match(  /\d+/g ).join('')); // sanitize the string and get only the numbers
+        
+        result = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" }); //.toDateString("");
+
+        // check if displayed settings are outdated
+        if(fileModificationTime > importedMiliseconds)
+        {
+          showModalOk('WARNING: Outdated settings displayed', "<?php echo lang("settings_old")?>");
+        }
+      } else{
+        result = result.replaceAll('"', '');
+      }
+
+      document.getElementById(targetId).innerHTML = result;      
+
+    });
+  }
+
+  // ---------------------------------------------------------
+
+
+
 </script>
 
 <script defer>
@@ -366,6 +389,7 @@ CommitDB();
   // ---------------------------------------------------------
   // Show last time settings have been imported
   getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
+
 
 
 

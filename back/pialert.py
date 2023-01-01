@@ -551,7 +551,8 @@ def importConfig ():
     lastTimeImported = time.time()
 
     # Used to display a message in the UI
-    sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (timeNow(),))  
+    # sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (timeNow(),))  
+    sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (round(time.time() * 1000),))  
     
     commitDB()
 
@@ -2878,7 +2879,7 @@ def upgradeDB ():
     ('Front_Devices_Order', '[[3,"desc"],[0,"asc"]]'),
     ('Front_Devices_Rows', '100'),
     ('Front_Details_Tab', 'tabDetails'),
-    ('Back_Settings_Imported', timeNow()),
+    ('Back_Settings_Imported', round(time.time() * 1000)),
     ('Back_App_State', 'Initializing')
     ] 
 
