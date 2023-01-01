@@ -21,11 +21,17 @@
   // Set maximum execution time to 15 seconds
   ini_set ('max_execution_time','15');
 
+  $skipCache = FALSE;
+
+  if (isset ($_REQUEST['skipcache'])) {
+    $skipCache = TRUE;    
+  }
+
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'get':  getParameter();                          break;
+      case 'get':  getParameter($skipCache);                break;
       case 'set':  setParameter();                          break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
@@ -35,7 +41,7 @@
 //------------------------------------------------------------------------------
 //  Get Parameter Value
 //------------------------------------------------------------------------------
-function getParameter() {
+function getParameter($skipCache) {
 
   $parameter = $_REQUEST['parameter'];
   $value = "";
@@ -47,7 +53,7 @@ function getParameter() {
   }
 
   // query the database if no cache entry found or requesting live data for the Back_App_State in the header
-  if($parameter == "Back_App_State" || $value == "" )
+  if($skipCache || $value == "" )
   {
     global $db;
     

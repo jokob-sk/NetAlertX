@@ -83,7 +83,7 @@ if ($ENABLED_DARKMODE === True) {
 <script>
 
   function updateState(){
-    getParam("state","Back_App_State")
+    getParam("state","Back_App_State", true)
     setTimeout("updateState()", 5000);
   }
 
@@ -205,17 +205,10 @@ if ($ENABLED_DARKMODE === True) {
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
-<!--
-        <li class="header">MAIN MENU</li>
--->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
           <a href="devices.php"><i class="fa fa-laptop"></i> <span><?php echo lang('Navigation_Devices');?></span></a>
         </li>
-
-<!--
-         <li><a href="devices.php?status=favorites"><i class="fa fa-star"></i> <span>Favorites Devices</span></a></li>
--->
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
           <a href="presence.php"><i class="fa fa-calendar"></i> <span><?php echo lang('Navigation_Presence');?></span></a>
@@ -248,9 +241,17 @@ if ($ENABLED_DARKMODE === True) {
 
 <script defer>
 
-function getParam(targetId, key) {  
+function getParam(targetId, key, skipCache = false) {  
+
+  skipCacheQuery = "";
+
+  if(skipCache)
+  {
+    skipCacheQuery = "&skipcache";
+  }
+
   // get parameter value
-  $.get('php/server/parameters.php?action=get&parameter='+ key, function(data) {
+  $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
     var result = data;
 
     document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    

@@ -561,8 +561,8 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_RUN_TIMEOUT_name' => 'Scheduled run timeout',
 'PHOLUS_RUN_TIMEOUT_description' => 'The timeout in seconds for the scheduled Pholus scan. Same notes regarding the duration apply as on the <a href="#PHOLUS_TIMEOUT"><code>PHOLUS_TIMEOUT</code> setting</a>. A scheduled scan doesn\'t check if there are <code>(unknown)</code> or <code>(name not found)</code> devices, the scan is executed either way.',
 'PHOLUS_RUN_SCHD_name' => 'Schedule',
-'PHOLUS_RUN_SCHD_description' => 'Make sure you enter the schedule in the correct cron-like format 
-(e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). Will be run NEXT time the time passes. For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>.',
+'PHOLUS_RUN_SCHD_description' => 'Only run if you select <code>schedule</code> in the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format 
+(e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
 
