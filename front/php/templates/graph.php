@@ -2,6 +2,8 @@
 
 require 'php/server/db.php';
 
+global $db;
+
 $Pia_Graph_Device_Time = array();
 $Pia_Graph_Device_All = array();
 $Pia_Graph_Device_Online = array();
