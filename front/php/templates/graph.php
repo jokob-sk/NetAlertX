@@ -1,8 +1,6 @@
 <?php
 
 require 'php/server/db.php';
-$DBFILE = '../db/pialert.db';
-OpenDB();
 
 $Pia_Graph_Device_Time = array();
 $Pia_Graph_Device_All = array();
@@ -28,6 +26,6 @@ function pia_graph_devices_data($Pia_Graph_Array) {
       echo ",";
   }
 }
-$db->close();
+
 
 ?>

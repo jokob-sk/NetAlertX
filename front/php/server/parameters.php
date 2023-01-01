@@ -49,9 +49,6 @@ function getParameter() {
   // query the database if no cache entry found or requesting live data for the Back_App_State in the header
   if($parameter == "Back_App_State" || $value == "" )
   {
-    // Open DB
-    OpenDB();
-
     global $db;
     
     $sql = 'SELECT par_Value FROM Parameters
@@ -61,8 +58,8 @@ function getParameter() {
     $row = $result -> fetchArray (SQLITE3_NUM);  
     $value = $row[0];
 
-    // Close DB
-    $db->close();
+    // Commit DB
+    CommitDB();
 
     // update cookie cache  
     setCache($parameter, $value);
@@ -79,9 +76,6 @@ function setParameter() {
 
   $parameter = $_REQUEST['parameter'];
   $value = $_REQUEST['value'];
-
-  // Open DB
-  OpenDB();
     
   global $db;
  
@@ -109,8 +103,8 @@ function setParameter() {
     }
   }
 
-  // Close DB
-  $db->close();  
+  // Commit DB
+  CommitDB();
 
   // update cookie cache  
   setCache($parameter, $value);

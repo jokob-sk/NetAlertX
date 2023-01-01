@@ -20,11 +20,7 @@ $confPath = "../config/pialert.conf";
 
 checkPermissions([$dbPath, $confPath]);
 
-// Open DB
-OpenDB($dbPath);
-
 global $db;
-global $pia_lang;
 
 $result = $db->query("SELECT * FROM Settings");  
 
@@ -43,7 +39,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       ); 
 }
 
-$db->close();
+CommitDB();
 
 ?>
 <!-- Page ------------------------------------------------------------------ -->

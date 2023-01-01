@@ -288,14 +288,13 @@ DHCP_ACTIVE             = False
 
 # Pholus settings
 # ----------------------
-PHOLUS_ACTIVE           = True
-PHOLUS_TIMEOUT          = 180  
+PHOLUS_ACTIVE           = False
+PHOLUS_TIMEOUT          = 20
 PHOLUS_FORCE            = False
-PHOLUS_DAYS_DATA        = 7
-
-PHOLUS_RUN              = 'none'
+PHOLUS_DAYS_DATA        = 0
+PHOLUS_RUN              = 'once'
+PHOLUS_RUN_TIMEOUT      = 300
 PHOLUS_RUN_SCHD         = '0 4 * * *'
-PHOLUS_RUN_TIMEOUT      = 600
 
 
 #===============================================================================
@@ -324,7 +323,7 @@ def openDB ():
     sql = sql_connection.cursor()
 
 #-------------------------------------------------------------------------------
-def closeDB ():
+def commitDB ():
     global sql_connection
     global sql
 
@@ -333,12 +332,12 @@ def closeDB ():
         return
 
     # Log    
-    print_log ('Closing DB')
+    print_log ('Commiting DB changes')
 
     # Close DB
     sql_connection.commit()
-    sql_connection.close()
-    sql_connection = None   
+    # sql_connection.close()
+    # sql_connection = None   
 
 #-------------------------------------------------------------------------------
 # Import user values
@@ -461,9 +460,7 @@ def importConfig ():
     PHOLUS_RUN_TIMEOUT = check_config_dict('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , config_dict)   
     PHOLUS_RUN_SCHD = check_config_dict('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , config_dict)
     PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
- 
-
-    openDB()    
+        
 
     #  Code_Name, Display_Name, Description, Type, Options, Value, Group
     settings = [
@@ -553,7 +550,7 @@ def importConfig ():
     # Used to determine the next import
     lastTimeImported = time.time()
     
-    closeDB()
+    commitDB()
 
     # Update scheduler
     global schedule, tz, last_next_pholus_schedule, last_next_pholus_schedule_used
@@ -602,6 +599,10 @@ def main ():
     # DB
     sql_connection = None
     sql            = None
+
+    # Open DB once and keep open
+    # Opening / closing DB frequently actually casues more issues
+    openDB() # main
 
     # Upgrade DB if needed
     upgradeDB()
@@ -674,8 +675,8 @@ def main ():
                 cycle = 'cleanup'  
                 cleanup_database()   
 
-            # Close SQL
-            closeDB()            
+            # Commit SQL
+            commitDB()            
 
             # Final message
             if cycle != "":
@@ -820,15 +821,13 @@ def get_previous_internet_IP ():
     previous_IP = '0.0.0.0'
 
     # get previous internet IP stored in DB
-    openDB()
-
     sql.execute ("SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' ")
     result = sql.fetchone()
 
     if len(result) > 0 and type(result) is not None:
         previous_IP = result[0]
 
-    closeDB()
+    commitDB()
 
     # return previous IP
     return previous_IP
@@ -839,9 +838,7 @@ def save_new_internet_IP (pNewIP):
     append_line_to_file (logPath + '/IP_changes.log',
         '['+str(startTime) +']\t'+ pNewIP +'\n')
 
-    prevIp = get_previous_internet_IP() 
-
-    openDB()
+    prevIp = get_previous_internet_IP()     
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
@@ -855,9 +852,8 @@ def save_new_internet_IP (pNewIP):
                     WHERE dev_MAC = 'Internet' """,
                     (pNewIP,) )
 
-    # commit changes
-    sql_connection.commit()
-    closeDB()
+    # commit changes    
+    commitDB()
     
 #-------------------------------------------------------------------------------
 def check_IP_format (pIP):
@@ -882,26 +878,35 @@ def cleanup_database ():
     updateState("Upkeep: Clean DB") 
     file_print('[', startTime, '] Upkeep Database:' )
 
-    openDB()    
-   
     # Cleanup Online History
-    file_print('    Upkeep Online_History')
+    file_print('    Online_History: Delete all older than 1 day')
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
     file_print('    Optimize Database')
 
     # Cleanup Events
-    file_print('    Upkeep Events, delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days')
+    file_print('    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days')
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Cleanup Pholus_Scan
-    file_print('    Upkeep Pholus_Scan, delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days')
-    sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
-
+    if PHOLUS_DAYS_DATA != 0:
+        file_print('    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days')
+        sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
+    
+    # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table    
+    file_print('    Pholus_Scan: Delete all duplicates')
+    sql.execute ("""DELETE  FROM Pholus_Scan
+                    WHERE rowid > (
+                    SELECT MIN(rowid) FROM Pholus_Scan p2  
+                    WHERE Pholus_Scan.MAC = p2.MAC
+                    AND Pholus_Scan.Value = p2.Value
+                    AND Pholus_Scan.Record_Type = p2.Record_Type
+                    );""") 
+    
     # Shrink DB
     file_print('    Shrink Database')
     sql.execute ("VACUUM;")
 
-    closeDB()
+    commitDB()
 
 #===============================================================================
 # UPDATE DEVICE MAC VENDORS
@@ -933,8 +938,7 @@ def update_devices_MAC_vendors (pArg = ''):
     notFound = 0
 
     # All devices loop
-    file_print('    Searching devices vendor')
-    openDB()
+    file_print('    Searching devices vendor')    
     for device in sql.execute ("SELECT * FROM Devices") :
         # Search vendor in HW Vendors DB
         vendor = query_MAC_vendor (device['dev_MAC'])
@@ -959,8 +963,8 @@ def update_devices_MAC_vendors (pArg = ''):
     # DEBUG - print number of rows updated
         # file_print(sql.rowcount)
 
-    # Close DB
-    closeDB()
+    # Commit DB
+    commitDB()
 
     if len(recordsToUpdate) > 0:
         return True
@@ -1058,6 +1062,8 @@ def scan_network ():
         file_print('    Exiting...\n')
         return False
 
+    commitDB()
+
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
     
@@ -1071,21 +1077,18 @@ def scan_network ():
 
     # Pi-hole method    
     if PIHOLE_ACTIVE :       
-        file_print('    Pi-hole start')
-        openDB()    
+        file_print('    Pi-hole start')        
         copy_pihole_network() 
-        closeDB() 
+        commitDB() 
 
     # DHCP Leases method    
     if DHCP_ACTIVE :        
-        file_print('    DHCP Leases start')
-        openDB()
+        file_print('    DHCP Leases start')        
         read_DHCP_leases () 
-        closeDB()
+        commitDB()
 
     # Load current scan data
-    file_print('  Processing scan results') 
-    openDB()   
+    file_print('  Processing scan results')     
     save_scanned_devices (arpscan_devices, cycle_interval)    
     
     # Print stats
@@ -1127,28 +1130,18 @@ def scan_network ():
     file_print('    Skipping repeated notifications')
     skip_repeated_notifications ()
   
-    # Commit changes
-    openDB()
-    sql_connection.commit()
-    closeDB()
+    # Commit changes    
+    commitDB()
 
     return reporting
 
 #-------------------------------------------------------------------------------
 def query_ScanCycle_Data (pOpenCloseDB = False):
-    # Check if is necesary open DB
-    if pOpenCloseDB :
-        openDB()
-
     # Query Data
     sql.execute ("""SELECT cic_arpscanCycles, cic_EveryXmin
                     FROM ScanCycles
                     WHERE cic_ID = ? """, (cycle,))
     sqlRow = sql.fetchone()
-
-    # Check if is necesary close DB
-    if pOpenCloseDB :
-        closeDB()
 
     # Return Row
     return sqlRow
@@ -1263,8 +1256,6 @@ def read_DHCP_leases ():
 #-------------------------------------------------------------------------------
 def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
     cycle = 1 # always 1, only one cycle supported
-
-    openDB()    
 
     # Delete previous scan data
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
@@ -1684,11 +1675,10 @@ def update_devices_names ():
 
     # Devices without name
     file_print('        Trying to resolve devices without name')
-    # BUGFIX #97 - Updating name of Devices w/o IP
-    openDB()    
+    # BUGFIX #97 - Updating name of Devices w/o IP    
     sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','', '(name not found)') AND dev_LastIP <> '-'")
     unknownDevices = sql.fetchall() 
-    closeDB()
+    commitDB()
 
     # perform Pholus scan if (unknown) devices found
     if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
@@ -1696,10 +1686,9 @@ def update_devices_names ():
 
     # get names from Pholus scan 
     # sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
-    openDB()    
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
     pholusResults = list(sql.fetchall())        
-    closeDB()
+    commitDB()
 
     # Number of entries from previous Pholus scans
     file_print("          Pholus entries from prev scans: ", len(pholusResults))
@@ -1730,14 +1719,14 @@ def update_devices_names ():
 
     # Print log            
     file_print("        Names Found (DiG/Pholus): ", len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" )                 
-    file_print("        Names Not Found         : ", len(recordsNotFound) )
-    
-    openDB()    
+    file_print("        Names Not Found         : ", len(recordsNotFound) )    
+     
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )
     # update names of devices which we were bale to resolve
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
-    closeDB()
+    commitDB()
+
     # DEBUG - print number of rows updated
     # file_print(sql.rowcount)
 
@@ -1780,6 +1769,7 @@ def performPholusScan (timeout):
             for line in output.split("\n"):
                 append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')        
 
+            # build SQL query parameters to insert into the DB
             params = []
 
             for line in output.split("\n"):
@@ -1787,10 +1777,9 @@ def performPholusScan (timeout):
                 if len(columns) == 4:
                     params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
 
-            if len(params) > 0:
-                openDB ()
+            if len(params) > 0:                
                 sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
-                closeDB ()
+                commitDB ()
 
         else:
             file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
@@ -1950,7 +1939,6 @@ def resolve_device_name_dig (pMAC, pIP):
 
 #-------------------------------------------------------------------------------
 def void_ghost_disconnections ():
-    openDB()
     # Void connect ghost events (disconnect event exists in last X min.) 
     print_log ('Void - 1 Connect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
@@ -2009,7 +1997,7 @@ def void_ghost_disconnections ():
                           ) """,
                     (cycle, startTime)   )
     print_log ('Void end')
-    closeDB()
+    commitDB()
 
 #-------------------------------------------------------------------------------
 def pair_sessions_events ():
@@ -2019,8 +2007,7 @@ def pair_sessions_events ():
     #                 SET eve_PairEventRowid = NULL
     #                 WHERE eve_EventType IN ('New Device', 'Connected')
     #              """ )
-
-    openDB()
+    
 
     # Pair Connection / New Device events
     print_log ('Pair session - 1 Connections / New Devices')
@@ -2049,12 +2036,11 @@ def pair_sessions_events ():
                  """ )
     print_log ('Pair session end')
 
-    closeDB()
+    commitDB()
 
 #-------------------------------------------------------------------------------
 def create_sessions_snapshot ():
-
-    openDB()
+    
     # Clean sessions snapshot
     print_log ('Sessions Snapshot - 1 Clean')
     sql.execute ("DELETE FROM SESSIONS" )
@@ -2078,14 +2064,12 @@ def create_sessions_snapshot ():
 #                    SELECT * FROM Convert_Events_to_Sessions_Phase2""" )
 
     print_log ('Sessions end')
-    closeDB()
+    commitDB()
 
 
 
 #-------------------------------------------------------------------------------
-def skip_repeated_notifications ():
-    
-    openDB()
+def skip_repeated_notifications ():    
 
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"
@@ -2103,7 +2087,7 @@ def skip_repeated_notifications ():
                  """ )
     print_log ('Skip Repeated end')
 
-    closeDB()
+    commitDB()
 
 
 #===============================================================================
@@ -2119,8 +2103,7 @@ def email_reporting ():
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
 
     # Reporting section
-    file_print('  Check if something to report')
-    openDB()
+    file_print('  Check if something to report')    
 
     # prepare variables for JSON construction
     json_internet = []
@@ -2346,8 +2329,6 @@ def email_reporting ():
     else :
         file_print('    No changes to report')
 
-    openDB()
-
     # Clean Pending Alert Events
     sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
                     WHERE dev_MAC IN (SELECT eve_MAC FROM Events
@@ -2359,9 +2340,8 @@ def email_reporting ():
     # DEBUG - print number of rows updated
     file_print('    Notifications: ', sql.rowcount)
 
-    # Commit changes
-    sql_connection.commit()
-    closeDB()
+    # Commit changes    
+    commitDB()
 
 #-------------------------------------------------------------------------------
 def check_config(service):
@@ -2811,8 +2791,6 @@ def mqtt_start():
 #-------------------------------------------------------------------------------
 def upgradeDB (): 
 
-    openDB()
-
     # indicates, if Online_History table is available 
     onlineHistoryAvailable = sql.execute("""
     SELECT name FROM sqlite_master WHERE type='table'
@@ -2949,16 +2927,15 @@ def upgradeDB ():
         """)
       
     # don't hog DB access  
-    closeDB ()
+    commitDB ()
 
 #-------------------------------------------------------------------------------
-def updateState(newState):
-    openDB()
+def updateState(newState):    
 
     sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
 
     # don't hog DB access  
-    closeDB ()
+    commitDB ()
 
  
 #===============================================================================
@@ -3084,8 +3061,6 @@ def to_text(_json):
 #-------------------------------------------------------------------------------
 def get_device_stats():
 
-    openDB()
-
     # columns = ["online","down","all","archived","new","unknown"]
     sql.execute("""      
       SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown from Online_History order by Scan_Date desc limit  1 
@@ -3093,12 +3068,11 @@ def get_device_stats():
 
     row = sql.fetchone()
 
-    closeDB()
+    commitDB()
+
     return row
 #-------------------------------------------------------------------------------
-def get_all_devices():
-
-    openDB()
+def get_all_devices():    
 
     sql.execute("""      
         select dev_MAC, dev_Name, dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice, dev_Network_Node_MAC_ADDR from Devices 
@@ -3106,7 +3080,7 @@ def get_all_devices():
 
     row = sql.fetchall()
 
-    closeDB()
+    commitDB()
     return row
 
 

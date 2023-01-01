@@ -10,11 +10,7 @@
   define('circle_online', '<div class="badge bg-green text-white" style="width: 10px; height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
   define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
   
-
-  $DBFILE = '../db/pialert.db';
-  $NETWORKTYPES = getNetworkTypes();
-
-  OpenDB();
+  $NETWORKTYPES = getNetworkTypes();  
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -33,8 +29,7 @@
     <?php
 
       // Create top-level node (network devices) tabs 
-      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $activetab) {
-        global $pia_lang; //language strings
+      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $activetab) {        
 
         // prepare string with port number in brackets if available
         $str_port = "";
@@ -64,8 +59,7 @@
       }
 
       // Create pane content (displayed inside of the tabs)      
-      function createPane($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $node_parent_mac, $activetab){
-        global $pia_lang; //language strings
+      function createPane($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $node_parent_mac, $activetab){        
 
         // online/offline status circle (red/green)
         $node_badge = "";
@@ -325,7 +319,7 @@
     
     }
                               
-    $db->close();
+    commitDB ();
 
     ?>
     <!-- /.tab-pane -->
@@ -333,9 +327,7 @@
   </section>
 
   <!-- Unassigned devices -->
-  <?php
-    global $pia_lang; //language strings
-    OpenDB();
+  <?php   
 
     // Get all Unassigned / unconnected nodes 
     $func_sql = 'SELECT dev_MAC as mac,  
@@ -412,7 +404,7 @@
       echo $str_table_header.$str_table_rows.$str_table_close;     
     }
 
-    $db->close();
+    CommitDB ();
   ?>
 
     <!-- /.content -->

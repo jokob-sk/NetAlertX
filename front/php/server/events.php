@@ -18,9 +18,6 @@
 //------------------------------------------------------------------------------
   // Set maximum execution time to 1 minute
   ini_set ('max_execution_time','60');
-  
-  // Open DB
-  OpenDB();
 
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {

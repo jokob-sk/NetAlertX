@@ -19,9 +19,6 @@
 //------------------------------------------------------------------------------
   // Set maximum execution time to 15 seconds
   ini_set ('max_execution_time','30');
-  
-  // Open DB
-  OpenDB();
 
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
@@ -64,6 +61,7 @@
     }
   }
 
+  CommitDB();
 
 //------------------------------------------------------------------------------
 //  Query Device Data
@@ -538,7 +536,7 @@ function ImportCSV() {
    }
 
 
-   $db->close();
+   CommitDB();
 
 }
 
@@ -938,8 +936,6 @@ function getPholus() {
                             'Value'         => $row['Value'],
                             'Extra'         => $row['Extra']);
     }
-
-    $db->close();
 
     if(count($tableData) == 0)
     {
