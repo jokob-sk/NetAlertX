@@ -291,6 +291,12 @@ PHOLUS_RUN              = 'once'
 PHOLUS_RUN_TIMEOUT      = 300
 PHOLUS_RUN_SCHD         = '0 4 * * *'
 
+# Pholus settings
+# ----------------------
+NMAP_ACTIVE             = False
+NMAP_TIMEOUT            = 120
+NMAP_RUN                = 'once'
+NMAP_RUN_SCHD           = '0 2 * * *'
 
 #===============================================================================
 # Initialise user defined values
@@ -366,6 +372,9 @@ def importConfig ():
     global PIHOLE_ACTIVE, DHCP_ACTIVE
     # Pholus
     global PHOLUS_ACTIVE, PHOLUS_TIMEOUT, PHOLUS_FORCE, PHOLUS_DAYS_DATA, PHOLUS_RUN, PHOLUS_RUN_SCHD, PHOLUS_RUN_TIMEOUT
+    # Nmap
+    global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD 
+    
 
     # get config file
     config_file = Path(fullConfPath)
@@ -452,6 +461,12 @@ def importConfig ():
     PHOLUS_RUN_TIMEOUT = check_config_dict('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , config_dict)   
     PHOLUS_RUN_SCHD = check_config_dict('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , config_dict)
     PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
+    
+    # Nmap
+    NMAP_ACTIVE = check_config_dict('NMAP_ACTIVE', NMAP_ACTIVE , config_dict)
+    NMAP_TIMEOUT = check_config_dict('NMAP_TIMEOUT', NMAP_TIMEOUT , config_dict)
+    NMAP_RUN = check_config_dict('NMAP_RUN', NMAP_RUN , config_dict)
+    NMAP_RUN_SCHD = check_config_dict('NMAP_RUN_SCHD', NMAP_RUN_SCHD , config_dict)
         
 
     #  Code_Name, Display_Name, Description, Type, Options, Value, Group
@@ -529,7 +544,14 @@ def importConfig ():
         ('PHOLUS_RUN', 'Pholus enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(PHOLUS_RUN) , 'Pholus'),
         ('PHOLUS_RUN_TIMEOUT', 'Pholus timeout schedule', '',  'integer', '', '' , str(PHOLUS_RUN_TIMEOUT) , 'Pholus'),
         ('PHOLUS_RUN_SCHD', 'Pholus schedule', '',  'text', '', '' , str(PHOLUS_RUN_SCHD) , 'Pholus'),
-        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus')        
+        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus'),
+
+        # Nmap
+        ('NMAP_ACTIVE', 'Enable Nmap scans', '',  'boolean', '', '' , str(NMAP_ACTIVE) , 'Nmap'),
+        ('NMAP_TIMEOUT', 'Nmap timeout', '',  'integer', '', '' , str(NMAP_TIMEOUT) , 'Nmap'),              
+        ('NMAP_RUN', 'Nmap enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(NMAP_RUN) , 'Nmap'),        
+        ('NMAP_RUN_SCHD', 'Nmap schedule', '',  'text', '', '' , str(NMAP_RUN_SCHD) , 'Nmap')
+        
 
     ]
     # Insert into DB    
@@ -550,11 +572,19 @@ def importConfig ():
     # Update scheduler
     global tz, mySchedules
 
-    tz                  = timezone(TIMEZONE)        
-    pholusSchedule      = Cron(PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))    
-    
+    #  Init timezone in case it changed
+    tz = timezone(TIMEZONE) 
+
+    # reset schedules
     mySchedules = []
+           
+    # init pholus schedule
+    pholusSchedule = Cron(PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))    
     mySchedules.append(serviceSchedule("pholus", pholusSchedule, pholusSchedule.next(), False))
+
+    # init nmap schedule
+    nmapSchedule = Cron(NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
+    mySchedules.append(serviceSchedule("nmap", nmapSchedule, nmapSchedule.next(), False))
 
     # Format and prepare the list of subnets
     updateSubnets()
@@ -638,19 +668,37 @@ def main ():
             if PHOLUS_RUN == "schedule" or PHOLUS_RUN == "once":
 
                 pholusSchedule = [sch for sch in mySchedules if sch.service == "pholus"][0]
-                runPholus = False
+                run = False
 
                 # run once after application starts
                 if PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
-                    runPholus = True
+                    run = True
 
                 # run if overdue scheduled time
                 if PHOLUS_RUN == "schedule":
-                    runPholus = pholusSchedule.runScheduleCheck()                    
+                    run = pholusSchedule.runScheduleCheck()                    
 
-                if runPholus:
+                if run:
                     pholusSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performPholusScan(PHOLUS_RUN_TIMEOUT)
+            
+            # Execute Nmap scheduled or one-off scan if enabled and run conditions fulfilled
+            if NMAP_RUN == "schedule" or NMAP_RUN == "once":
+
+                nmapSchedule = [sch for sch in mySchedules if sch.service == "nmap"][0]
+                run = False
+
+                # run once after application starts
+                if NMAP_RUN == "once" and nmapSchedule.last_run == 0:
+                    run = True
+
+                # run if overdue scheduled time
+                if NMAP_RUN == "schedule":
+                    run = nmapSchedule.runScheduleCheck()                    
+
+                if run:
+                    nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+                    performNmapScan(NMAP_TIMEOUT)
 
             # Perform an arp-scan if not disable with a file
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
@@ -1689,6 +1737,81 @@ def update_devices_names ():
     # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
+def performNmapScan(timeoutSec, ip = ""):
+    devicesToScan = []
+    # Check if we got a specific IP or if we scan all devices
+    if ip != "":
+        devicesToScan.append(ip)
+    else:
+        # Get all devices
+        devicesToScan = get_all_devices()
+
+
+    updateState("Scan: Nmap")
+
+    file_print('[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device')  
+
+    file_print("        Estimated max delay: ", (len(devicesToScan) * int(timeoutSec)), 's ', '(', round((len(devicesToScan) * int(timeoutSec))/60,1) , 'min)' )
+
+    for device in devicesToScan:
+        # Execute command
+        output = ""
+
+        # nmap -p portFrom-portTo  192.168.1.3
+        # nmap -p -10000  192.168.1.3
+        nmapArgs = ['nmap', '-p', "-10000", device["dev_LastIP"]]
+
+        try:
+            # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
+            output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            file_print(e.output)
+            file_print("        Error - Nmap Scan - check logs")            
+        except subprocess.TimeoutExpired as timeErr:
+            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached') 
+
+        if output == "": # check if the subprocess failed                    
+            file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
+        else: 
+            file_print('[', timeNow(), '] Scan: Nmap SUCCESS')
+        
+        #  check the last run output        
+        newLines = output.split('\n')
+
+        # regular logging
+        for line in newLines:
+            append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
+        
+        # collect ports
+        params = []
+
+        index = 0
+        startCollecting = False
+        duration = "" 
+        for line in newLines:            
+            if 'Starting Nmap' in line:
+                if len(newLines) > index+1 and 'Note: Host seems down' in newLines[index+1]:
+                    break # this entry is empty
+            elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:
+                startCollecting = True
+            elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
+                startCollecting = False # end reached
+            elif startCollecting and len(line.split()) == 3:
+                # file_print('>>>>>', line, 'len', len(line.split()))
+                params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
+            elif 'Nmap done' in line:
+                duration = line.split('scanned in ')[1]
+            else:
+                file_print('>>>>>', line, 'len', len(line.split()))
+        index += 1
+
+        if len(params) > 0:                
+            sql.executemany ("""INSERT INTO Nmap_Scan ("MAC", "Time", "Port",   "State", "Service", "Extra") VALUES (?, ?, ?, ?, ?, ?)""", params) 
+            commitDB ()
+
+
+#-------------------------------------------------------------------------------
 def performPholusScan (timeoutSec):
 
     # scan every interface
@@ -1722,7 +1845,7 @@ def performPholusScan (timeoutSec):
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
             file_print(e.output)
-            file_print("        Error - PholusScan - check logs")            
+            file_print("        Error - Pholus Scan - check logs")            
         except subprocess.TimeoutExpired as timeErr:
             file_print('        Pholus TIMEOUT - the process forcefully terminated as timeout reached') 
 
@@ -2864,12 +2987,12 @@ def upgradeDB ():
     """).fetchone() == None
 
     # if pholusScanMissing == False:
-    #     # Re-creating Pholus_Scan table    
-    #     file_print("[upgradeDB] Re-creating Pholus_Scan table")
+    #     # Re-creating Pholus_Scan table  
     #     sql.execute("DROP TABLE Pholus_Scan;")       
     #     pholusScanMissing = True  
 
     if pholusScanMissing:
+        file_print("[upgradeDB] Re-creating Pholus_Scan table")
         sql.execute("""      
         CREATE TABLE "Pholus_Scan" (        
         "Index"	          INTEGER,
@@ -2879,6 +3002,32 @@ def upgradeDB ():
         "IP_v4_or_v6"	  TEXT,
         "Record_Type"	  TEXT,
         "Value"           TEXT,
+        "Extra"           TEXT,
+        PRIMARY KEY("Index" AUTOINCREMENT)
+        );      
+        """)
+
+    # indicates, if Nmap_Scan table is available 
+    nmapScanMissing = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Nmap_Scan'; 
+    """).fetchone() == None
+
+    # if nmapScanMissing == False:
+    #     # Re-creating Nmap_Scan table    
+    #     sql.execute("DROP TABLE Nmap_Scan;")       
+    #     nmapScanMissing = True  
+
+    if nmapScanMissing:
+        file_print("[upgradeDB] Re-creating Nmap_Scan table")
+        sql.execute("""      
+        CREATE TABLE "Nmap_Scan" (        
+        "Index"	          INTEGER,
+        "MAC"	          TEXT,
+        "Port"	          TEXT,
+        "Time"	          TEXT,        
+        "State"	          TEXT,
+        "Service"	      TEXT,       
         "Extra"           TEXT,
         PRIMARY KEY("Index" AUTOINCREMENT)
         );      

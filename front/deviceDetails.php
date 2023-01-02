@@ -597,7 +597,7 @@ if ($_REQUEST['mac'] == 'Internet') {
                 <!-- Comment out tbody when trying to implement better table with datatables here -->
                 <!-- IDEA: Show unmatched pholus entries?  -->
                 <tbody id="tablePholusBody">
-                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span>Nothing sniffed out with Polus for this device.</span></td></tr>
+                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span><?php echo lang("DevDetail_Tab_PholusEmpty"); ?></span></td></tr>
                 </tbody>
               </table>
               </div>

@@ -154,6 +154,7 @@ $lang['en_us'] = array(
 'DevDetail_Tab_Presence' => 'Presence',
 'DevDetail_Tab_Events' => 'Events',
 'DevDetail_Tab_Pholus' => 'Pholus',
+'DevDetail_Tab_PholusEmpty' => 'Nothing sniffed out with Pholus for this device.',
 'DevDetail_MainInfo_Title' => 'Main Info',
 'DevDetail_MainInfo_mac' => 'MAC',
 'DevDetail_MainInfo_Name' => 'Name',
@@ -567,6 +568,16 @@ the arp-scan will take hours to complete instead of seconds.
 (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
+
+// Nmap
+'NMAP_ACTIVE_name' => 'Cycle run',
+'NMAP_ACTIVE_description' => 'If enabled this will execute the scan before every network scan cycle. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
+'NMAP_TIMEOUT_name' => 'Run timeout',
+'NMAP_TIMEOUT_description' => 'Maximum time to wait for an Nmap scan to finish.',
+'NMAP_RUN_name' => 'Scheduled run',
+'NMAP_RUN_description' => 'Enable a regular Nmap scan on your network on all devices. The scheduling settings can be found below. If you select <code>once</code> Nmap is run only once on start for the time specified in <a href="#NMAP_TIMEOUT"><code>NMAP_TIMEOUT</code> setting</a>.',
+'NMAP_RUN_SCHD_name' => 'Schedule',
+'NMAP_RUN_SCHD_description' => 'Only run if you select <code>schedule</code> in the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format.',
 
 );
 
