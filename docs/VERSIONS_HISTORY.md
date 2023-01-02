@@ -14,6 +14,8 @@
   |  v2.50  | First public release                                            |
 
 
+# 🆕 2022+ [Newest Release notes](https://github.com/jokob-sk/Pi.Alert/issues/138)
+
 ## Pi.Alert v3.02
 <!--- --------------------------------------------------------------------- --->
  **PENDING UPDATE DOC**

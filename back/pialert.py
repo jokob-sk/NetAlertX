@@ -1786,7 +1786,7 @@ def performNmapScan(devicesToScan):
             file_print(e.output)
             file_print("        Error - Nmap Scan - check logs")            
         except subprocess.TimeoutExpired as timeErr:
-            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached') 
+            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for', device["dev_LastIP"]) 
 
         if output == "": # check if the subprocess failed                    
             file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
@@ -1814,13 +1814,10 @@ def performNmapScan(devicesToScan):
                 startCollecting = True
             elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                 startCollecting = False # end reached
-            elif startCollecting and len(line.split()) == 3:
-                # file_print('>>>>>', line, 'len', len(line.split()))
+            elif startCollecting and len(line.split()) == 3:                
                 params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
             elif 'Nmap done' in line:
-                duration = line.split('scanned in ')[1]
-            # else:
-            #     file_print('>>>>>', line, 'len', len(line.split()))
+                duration = line.split('scanned in ')[1]            
         index += 1
 
         if len(params) > 0:                

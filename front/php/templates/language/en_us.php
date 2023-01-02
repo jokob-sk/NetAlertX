@@ -155,6 +155,8 @@ $lang['en_us'] = array(
 'DevDetail_Tab_Events' => 'Events',
 'DevDetail_Tab_Pholus' => 'Pholus',
 'DevDetail_Tab_PholusEmpty' => 'Nothing sniffed out with Pholus for this device.',
+'DevDetail_Tab_NmapTableHeader' => 'Scheduled scan results',
+'DevDetail_Tab_NmapTableText' => 'Set up a schedule in <a href="/settings.php#NMAP_ACTIVE">Settings</a>',
 'DevDetail_Tab_NmapEmpty' => 'No ports detected with Nmap on this device.',
 'DevDetail_MainInfo_Title' => 'Main Info',
 'DevDetail_MainInfo_mac' => 'MAC',

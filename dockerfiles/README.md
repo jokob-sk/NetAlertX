@@ -6,7 +6,7 @@
 
 # 🐳 A docker image for Pi.Alert 
 
-🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md)
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📄 [Dockerfile](https://github.com/jokob-sk/Pi.Alert/blob/main/Dockerfile) | 📚 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main//dockerfiles/README.md) | 🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/issues/138)
 
 <a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" width="300px" />
@@ -24,8 +24,8 @@
 docker run -d --rm --network=host \
   -v local/path/pialert/config:/home/pi/pialert/config \
   -v local/path/pialert/db:/home/pi/pialert/db \
-  -e TZ=Europe/Berlin
-  -e PORT=20211
+  -e TZ=Europe/Berlin \
+  -e PORT=20211 \
   jokobsk/pi.alert:latest
   ```
 - The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.

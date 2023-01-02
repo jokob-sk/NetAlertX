@@ -532,7 +532,9 @@
                   }
                   </script>
 
-                  <h3>Below results are from scheduled scans you can set up in Settings</h3>
+                  <h3><?php echo lang("DevDetail_Tab_NmapTableHeader");?></h3>
+
+                  <div><?php echo lang("DevDetail_Tab_NmapTableText");?></div>
 
                 <table id="tableNmap" class="table table-bordered table-hover table-striped ">
                   <thead>
