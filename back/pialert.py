@@ -288,14 +288,14 @@ PHOLUS_TIMEOUT          = 20
 PHOLUS_FORCE            = False
 PHOLUS_DAYS_DATA        = 0
 PHOLUS_RUN              = 'once'
-PHOLUS_RUN_TIMEOUT      = 300
+PHOLUS_RUN_TIMEOUT      = 600
 PHOLUS_RUN_SCHD         = '0 4 * * *'
 
 # Nmap settings
 # ----------------------
-NMAP_ACTIVE             = False
+NMAP_ACTIVE             = True
 NMAP_TIMEOUT            = 120
-NMAP_RUN                = 'once'
+NMAP_RUN                = 'none'
 NMAP_RUN_SCHD           = '0 2 * * *'
 NMAP_ARGS               = '-p -10000'
 
