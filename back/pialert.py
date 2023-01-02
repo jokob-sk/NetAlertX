@@ -711,7 +711,7 @@ def main ():
 
             # Check if new devices need to be scanned with Nmap
             if NMAP_ACTIVE:
-                sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MACq FROM Events_Devices
+                sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime""")

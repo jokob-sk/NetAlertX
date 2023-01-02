@@ -574,7 +574,7 @@ the arp-scan will take hours to complete instead of seconds.
 
 // Nmap
 'NMAP_ACTIVE_name' => 'Cycle run',
-'NMAP_ACTIVE_description' => 'If enabled this will execute the scan every time a new device is found on the network. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
+'NMAP_ACTIVE_description' => 'If enabled this will execute a scan on a newly found device. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
 'NMAP_TIMEOUT_name' => 'Run timeout',
 'NMAP_TIMEOUT_description' => 'Maximum time to wait for an Nmap scan to finish on any device.',
 'NMAP_RUN_name' => 'Scheduled run',
