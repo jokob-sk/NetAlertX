@@ -56,6 +56,7 @@
       case 'getGroups':               getGroups();                             break;
       case 'getLocations':            getLocations();                          break;
       case 'getPholus':               getPholus();                             break;
+      case 'getNmap':                 getNmap();                             break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -900,7 +901,7 @@ function getLocations() {
 }
 
 //------------------------------------------------------------------------------
-//  Query the List of locations
+//  Query the List of Pholus entries
 //------------------------------------------------------------------------------
 function getPholus() {
   global $db;
@@ -934,6 +935,53 @@ function getPholus() {
                             'IP_v4_or_v6'   => $row['IP_v4_or_v6'],
                             'Record_Type'   => $row['Record_Type'],
                             'Value'         => $row['Value'],
+                            'Extra'         => $row['Extra']);
+    }
+
+    if(count($tableData) == 0)
+    {
+      echo "false";
+    } else{
+      // Return json
+      echo (json_encode ($tableData));
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+//  Query the List of Nmap entries
+//------------------------------------------------------------------------------
+function getNmap() {
+  global $db;
+
+  // SQL
+  $mac = $_REQUEST['mac']; 
+
+  if ($mac == "Internet") // Not performing data lookup for router (improvement idea for later maybe)
+  {
+    echo "false";
+    return;
+  }
+
+  if (false === filter_var($mac , FILTER_VALIDATE_MAC)) {
+    throw new Exception('Invalid mac address');
+  }
+  else{
+    $sql = 'SELECT * from Nmap_Scan where MAC ="'.$mac.'" ';
+
+    // array 
+    $tableData = array();
+
+    // execute query
+    $result = $db->query($sql);
+    while ($row = $result -> fetchArray (SQLITE3_ASSOC)){   
+      // Push row data      
+      $tableData[] = array( 'Index'         => $row['Index'],
+                            'MAC'           => $row['MAC'],
+                            'Port'          => $row['Port'],
+                            'Time'          => $row['Time'],
+                            'State'         => $row['State'],
+                            'Service'       => $row['Service'],                            
                             'Extra'         => $row['Extra']);
     }
 

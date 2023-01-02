@@ -155,6 +155,7 @@ $lang['en_us'] = array(
 'DevDetail_Tab_Events' => 'Events',
 'DevDetail_Tab_Pholus' => 'Pholus',
 'DevDetail_Tab_PholusEmpty' => 'Nothing sniffed out with Pholus for this device.',
+'DevDetail_Tab_NmapEmpty' => 'No ports detected with Nmap on this device.',
 'DevDetail_MainInfo_Title' => 'Main Info',
 'DevDetail_MainInfo_mac' => 'MAC',
 'DevDetail_MainInfo_Name' => 'Name',
@@ -453,7 +454,7 @@ the arp-scan will take hours to complete instead of seconds.
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
 'PIALERT_WEB_PASSWORD_description' => 'The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli</code> in the container',
 'INCLUDED_SECTIONS_name' => 'Notify on',
-'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (CTRL + Click to select / deselect).',
+'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select / deselect).',
 'SCAN_CYCLE_MINUTES_name' => 'Scan cycle delay',
 'SCAN_CYCLE_MINUTES_description' => 'The delay between scans. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This is influenced by the network mask set in the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a> at the top. Every IP takes a couple seconds to scan.',
 'DAYS_TO_KEEP_EVENTS_name' => 'Delete events older than',
@@ -564,20 +565,22 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_RUN_TIMEOUT_name' => 'Scheduled run timeout',
 'PHOLUS_RUN_TIMEOUT_description' => 'The timeout in seconds for the scheduled Pholus scan. Same notes regarding the duration apply as on the <a href="#PHOLUS_TIMEOUT"><code>PHOLUS_TIMEOUT</code> setting</a>. A scheduled scan doesn\'t check if there are <code>(unknown)</code> or <code>(name not found)</code> devices, the scan is executed either way.',
 'PHOLUS_RUN_SCHD_name' => 'Schedule',
-'PHOLUS_RUN_SCHD_description' => 'Only run if you select <code>schedule</code> in the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format 
+'PHOLUS_RUN_SCHD_description' => 'Only enabled if you select <code>schedule</code> in the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format 
 (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
 
 // Nmap
 'NMAP_ACTIVE_name' => 'Cycle run',
-'NMAP_ACTIVE_description' => 'If enabled this will execute the scan before every network scan cycle. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
+'NMAP_ACTIVE_description' => 'If enabled this will execute the scan every time a new device is found on the network. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
 'NMAP_TIMEOUT_name' => 'Run timeout',
-'NMAP_TIMEOUT_description' => 'Maximum time to wait for an Nmap scan to finish.',
+'NMAP_TIMEOUT_description' => 'Maximum time to wait for an Nmap scan to finish on any device.',
 'NMAP_RUN_name' => 'Scheduled run',
 'NMAP_RUN_description' => 'Enable a regular Nmap scan on your network on all devices. The scheduling settings can be found below. If you select <code>once</code> Nmap is run only once on start for the time specified in <a href="#NMAP_TIMEOUT"><code>NMAP_TIMEOUT</code> setting</a>.',
 'NMAP_RUN_SCHD_name' => 'Schedule',
-'NMAP_RUN_SCHD_description' => 'Only run if you select <code>schedule</code> in the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format.',
+'NMAP_RUN_SCHD_description' => 'Only enabled if you select <code>schedule</code> in the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format.',
+'NMAP_ARGS_name' => 'Arguments',
+'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
 );
 

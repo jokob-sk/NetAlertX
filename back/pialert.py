@@ -291,12 +291,13 @@ PHOLUS_RUN              = 'once'
 PHOLUS_RUN_TIMEOUT      = 300
 PHOLUS_RUN_SCHD         = '0 4 * * *'
 
-# Pholus settings
+# Nmap settings
 # ----------------------
 NMAP_ACTIVE             = False
 NMAP_TIMEOUT            = 120
 NMAP_RUN                = 'once'
 NMAP_RUN_SCHD           = '0 2 * * *'
+NMAP_ARGS               = '-p -10000'
 
 #===============================================================================
 # Initialise user defined values
@@ -373,7 +374,7 @@ def importConfig ():
     # Pholus
     global PHOLUS_ACTIVE, PHOLUS_TIMEOUT, PHOLUS_FORCE, PHOLUS_DAYS_DATA, PHOLUS_RUN, PHOLUS_RUN_SCHD, PHOLUS_RUN_TIMEOUT
     # Nmap
-    global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD 
+    global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     
 
     # get config file
@@ -467,6 +468,7 @@ def importConfig ():
     NMAP_TIMEOUT = check_config_dict('NMAP_TIMEOUT', NMAP_TIMEOUT , config_dict)
     NMAP_RUN = check_config_dict('NMAP_RUN', NMAP_RUN , config_dict)
     NMAP_RUN_SCHD = check_config_dict('NMAP_RUN_SCHD', NMAP_RUN_SCHD , config_dict)
+    NMAP_ARGS = check_config_dict('NMAP_ARGS', NMAP_ARGS , config_dict)
         
 
     #  Code_Name, Display_Name, Description, Type, Options, Value, Group
@@ -550,7 +552,8 @@ def importConfig ():
         ('NMAP_ACTIVE', 'Enable Nmap scans', '',  'boolean', '', '' , str(NMAP_ACTIVE) , 'Nmap'),
         ('NMAP_TIMEOUT', 'Nmap timeout', '',  'integer', '', '' , str(NMAP_TIMEOUT) , 'Nmap'),              
         ('NMAP_RUN', 'Nmap enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(NMAP_RUN) , 'Nmap'),        
-        ('NMAP_RUN_SCHD', 'Nmap schedule', '',  'text', '', '' , str(NMAP_RUN_SCHD) , 'Nmap')
+        ('NMAP_RUN_SCHD', 'Nmap schedule', '',  'text', '', '' , str(NMAP_RUN_SCHD) , 'Nmap'),
+        ('NMAP_ARGS', 'Nmap custom arguments', '',  'text', '', '' , str(NMAP_ARGS) , 'Nmap')
         
 
     ]
@@ -698,17 +701,29 @@ def main ():
 
                 if run:
                     nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
-                    performNmapScan(NMAP_TIMEOUT)
+                    performNmapScan(get_all_devices())
 
-            # Perform an arp-scan if not disable with a file
+            # Perform an arp-scan if not disabled with a file
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
                 last_network_scan = time_started
                 cycle = 1 # network scan
                 scan_network() 
+
+            # Check if new devices need to be scanned with Nmap
+            if NMAP_ACTIVE:
+                sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MACq FROM Events_Devices
+                        WHERE eve_PendingAlertEmail = 1
+                        AND eve_EventType = 'New Device'
+                        ORDER BY eve_DateTime""")
+
+                rows = sql.fetchall()
+                commitDB()
+                
+                performNmapScan(rows)
             
             # Reporting   
             if cycle in check_report:         
-                email_reporting()
+                send_notifications()
 
             # clean up the DB once a day
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
@@ -941,6 +956,17 @@ def cleanup_database ():
                     WHERE Pholus_Scan.MAC = p2.MAC
                     AND Pholus_Scan.Value = p2.Value
                     AND Pholus_Scan.Record_Type = p2.Record_Type
+                    );""") 
+
+    # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table    
+    file_print('    Nmap_Scan: Delete all duplicates')
+    sql.execute ("""DELETE  FROM Nmap_Scan
+                    WHERE rowid > (
+                    SELECT MIN(rowid) FROM Nmap_Scan p2  
+                    WHERE Nmap_Scan.MAC = p2.MAC
+                    AND Nmap_Scan.Port = p2.Port
+                    AND Nmap_Scan.State = p2.State
+                    AND Nmap_Scan.Service = p2.Service
                     );""") 
     
     # Shrink DB
@@ -1737,15 +1763,8 @@ def update_devices_names ():
     # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
-def performNmapScan(timeoutSec, ip = ""):
-    devicesToScan = []
-    # Check if we got a specific IP or if we scan all devices
-    if ip != "":
-        devicesToScan.append(ip)
-    else:
-        # Get all devices
-        devicesToScan = get_all_devices()
-
+def performNmapScan(devicesToScan):
+    timeoutSec = NMAP_TIMEOUT
 
     updateState("Scan: Nmap")
 
@@ -1759,7 +1778,10 @@ def performNmapScan(timeoutSec, ip = ""):
 
         # nmap -p portFrom-portTo  192.168.1.3
         # nmap -p -10000  192.168.1.3
-        nmapArgs = ['nmap', '-p', "-10000", device["dev_LastIP"]]
+        nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
+        # nmapArgs = nmapArgs.append(NMAP_ARGS.split())
+        # nmapArgs = nmapArgs.append(device["dev_LastIP"])
+
 
         try:
             # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
@@ -1802,8 +1824,8 @@ def performNmapScan(timeoutSec, ip = ""):
                 params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
             elif 'Nmap done' in line:
                 duration = line.split('scanned in ')[1]
-            else:
-                file_print('>>>>>', line, 'len', len(line.split()))
+            # else:
+            #     file_print('>>>>>', line, 'len', len(line.split()))
         index += 1
 
         if len(params) > 0:                
@@ -2176,7 +2198,7 @@ def skip_repeated_notifications ():
 # create a json for webhook and mqtt notifications to provide further integration options  
 json_final = []
 
-def email_reporting ():
+def send_notifications ():
     global mail_text
     global mail_html
 

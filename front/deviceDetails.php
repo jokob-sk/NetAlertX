@@ -460,9 +460,9 @@
 
               <div class="tab-pane fade" id="panNmap">
 
-<?php
-if ($_REQUEST['mac'] == 'Internet') {
-?>
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
                 <h4 class="">Online Speedtest</h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                   <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
@@ -482,9 +482,9 @@ if ($_REQUEST['mac'] == 'Internet') {
                     })
                   }
                   </script>
-<?php  
-}
-?>
+              <?php  
+              }
+              ?>
                 <h4 class="">Nmap Scans</h4>
                 <div style="width:100%; text-align: center;">
                   <script>
@@ -531,8 +531,28 @@ if ($_REQUEST['mac'] == 'Internet') {
                     })
                   }
                   </script>
+
+                <table id="tableNmap" class="table table-bordered table-hover table-striped ">
+                  <thead>
+                  <tr>
+                    <th>Index</th>                    
+                    <th>Time</th>
+                    <th>Port</th>
+                    <th>State</th>
+                    <th>Service</th>
+                    <th>Extra</th>
+                  </tr>
+                  </thead>
+                  <!-- Comment out tbody when trying to implement better table with datatables here -->
+                  <!-- IDEA: Show unmatched pholus entries?  -->
+                  <tbody id="tableNmapBody">
+                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?php echo lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
+                  </tbody>
+                </table>
               
               </div>
+
+
 
 
 
@@ -1612,8 +1632,56 @@ function initializeTabsNew () {
     {
       loadPholus();
     }
+    if(target == "#panNmap")
+    {
+      loadNmap();
+    }
   });
 }
+
+// -----------------------------------------------------------------------------
+
+function loadNmap()
+{
+    // console.log(mac)
+    // console.log('php/server/devices.php?action=getPholus&mac='+ mac)
+
+    $(".deviceSpecific").remove();
+    
+    $.get('php/server/devices.php?action=getNmap&mac='+ mac, function(data) {
+      
+      data = sanitize(data);      
+
+      if(data != "false" && $.trim(data) != [])
+      {
+        var listData = JSON.parse(data);
+        var order = 1;
+        
+        // console.log(listData)
+
+        // console.log(listData[0].MAC)
+
+        tableRows = "";
+
+        // for each item
+        listData.forEach(function (item, index) {                    
+          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Time+'</td><td>'+item.Port+'</td><td>'+item.State+'</td><td>'+item.Service+'</td><td>'+item.Extra+'</td></tr>'; 
+        });        
+        
+        $("#tableNmapBody").html($("#tableNmapBody").html()+tableRows);
+        // $("#tablePholusPlc").attr("style", "display:none");
+        $("#tableNmapPlc").hide();
+      }
+      else
+      {
+        // console.log("else")
+        $("#tableNmapPlc").show();
+        $(".deviceSpecific").remove();
+      }        
+    });
+}
+
+// -----------------------------------------------------------------------------
 
 function loadPholus()
 {
@@ -1760,10 +1828,6 @@ $("#"+tableId).attr("data-mac", mac)
 $('#'+tableId).on( 'length.dt', function ( e, settings, len ) {
   setParameter (parSessionsRows, len);
 
-  // Sync Rows in both datatables
-  // if ( $('#tableEvents').DataTable().page.len() != len) {
-  //   $('#tableEvents').DataTable().page.len( len ).draw();
-  // }
 } );
 
 }
@@ -1777,10 +1841,15 @@ window.onload = function async()
 
 function reloadTab()
 {
-  // load tab data only when needed (tab change)
+  // tab loaded without switching
   if(getCache("activeDevicesTab") == "tabPholus")
   {
     loadPholus();
+  }
+  
+  if(getCache("activeDevicesTab") == "tabNmap")
+  {
+    loadNmap();
   }
 }
 
