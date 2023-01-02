@@ -25,8 +25,6 @@ import time
 import decimal
 import datetime
 from datetime import timedelta
-# from datetime import datetime
-# from datetime import date
 import sqlite3
 import socket
 import io
@@ -40,9 +38,6 @@ import threading
 from pathlib import Path
 from cron_converter import Cron
 from pytz import timezone
-
-# from ssdpy import SSDPClient
-# import upnpclient
 
 #===============================================================================
 # PATHS
@@ -157,28 +152,28 @@ def fixPermissions():
             file_print(e.output)
 
 
-checkPermissionsOK()
+checkPermissionsOK() # Initial check
 
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
-        file_print("[Setup] The "+ pathToCheck +" file is not readable (missing?). Trying to copy over the backed-up (default) one.")      
+        file_print("[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one.")
         try:
             # try runnning a subprocess
             p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                file_print("[Setup] Error copying the default file ("+defaultFile+") to it's destination ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory.")
+                file_print("[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory.")
             else:
-                file_print("[Setup] Default file ("+defaultFile+") copied over successfully to ("+pathToCheck+").")
+                file_print("[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+").")
 
             # write stdout and stderr into .log files for debugging if needed
             logResult (stdout, stderr)
             
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print("[Setup] Error copying the default file ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck)
+            file_print("[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck)
             file_print(e.output)
 
 #===============================================================================
@@ -194,7 +189,7 @@ if dbR_access == False:
     initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 
 if dbR_access == False or confR_access == False:
-    if checkPermissionsOK() == False:
+    if checkPermissionsOK() == False: # second check 
         fixPermissions()
 
 
@@ -312,8 +307,7 @@ def openDB ():
         return
 
     # Log    
-    print_log ('Opening DB')   
-     
+    print_log ('Opening DB')
 
     # Open DB and Cursor
     sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
@@ -334,10 +328,8 @@ def commitDB ():
     # Log    
     print_log ('Commiting DB changes')
 
-    # Close DB
+    # Commit changes to DB
     sql_connection.commit()
-    # sql_connection.close()
-    # sql_connection = None   
 
 #-------------------------------------------------------------------------------
 # Import user values
@@ -550,8 +542,7 @@ def importConfig ():
     # Used to determine the next import
     lastTimeImported = time.time()
 
-    # Used to display a message in the UI
-    # sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (timeNow(),))  
+    # Used to display a message in the UI when old (outdated) settings are loaded    
     sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (round(time.time() * 1000),))  
     
     commitDB()
@@ -580,7 +571,6 @@ def importConfig ():
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
-last_pholus_scheduled_run = 0
 
 # timestamps of last execution times
 startTime = time_started
@@ -595,7 +585,7 @@ last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendo
 
 def main ():
     # Initialize global variables
-    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_pholus_scheduled_run
+    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
 
@@ -644,22 +634,22 @@ def main ():
                 cycle = 'update_vendors'
                 update_devices_MAC_vendors()
 
-            # Execute Pholus scheduled scan if enabled and run conditions fulfilled
+            # Execute Pholus scheduled or one-off scan if enabled and run conditions fulfilled
             if PHOLUS_RUN == "schedule" or PHOLUS_RUN == "once":
 
+                pholusSchedule = [sch for sch in mySchedules if sch.service == "pholus"][0]
                 runPholus = False
 
                 # run once after application starts
-                if PHOLUS_RUN == "once" and last_pholus_scheduled_run == 0:
+                if PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
                     runPholus = True
 
                 # run if overdue scheduled time
-                if (not runPholus) and (PHOLUS_RUN == "schedule"):
-                    runPholus = [sch for sch in mySchedules if sch.service == "pholus"][0].runScheduleCheck()
-                    # runPholus = mySchedules[0].runScheduleCheck()
+                if PHOLUS_RUN == "schedule":
+                    runPholus = pholusSchedule.runScheduleCheck()                    
 
                 if runPholus:
-                    last_pholus_scheduled_run = datetime.datetime.now(tz).replace(microsecond=0)
+                    pholusSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performPholusScan(PHOLUS_RUN_TIMEOUT)
 
             # Perform an arp-scan if not disable with a file
@@ -1011,46 +1001,6 @@ def query_MAC_vendor (pMAC):
 #===============================================================================
 def scan_network ():
     reporting = False
-    
-    # # devtest start
-
-    # file_print("---------------------------------------------")
-
-    #     client = SSDPClient()
-
-    # devices = client.m_search("ssdp:all")
-
-    # for device in devices:
-    #     print(device.get("usn"))
-    #     print("000000000000000000000000000000000000000000000000000000000000\n")
-    #     print(device)
-
-    # print("---------------------------------------------")
-
-    # devices = upnpclient.discover()
-
-    # print("---------------------------------------------")
-
-    # for device in devices:
-    #     print(device)
-
-    # print("---------------------------------------------")
-
-
-    # sockAddr = ("192.168.1.14", 443);
-
-    # sockInfo = socket.getnameinfo(sockAddr, socket.NI_NAMEREQD);
-
-    # # find an example using NI_MAXHOST
-
-    # print(sockInfo);
-
-
-    # nmap > vendor > espressifg > ESP32 type
-    # UDP ports
-    #  nmap -sU 192.168.1.14 
-
-    # # devtest end
 
     # Header
     updateState("Scan: Network")
@@ -1694,7 +1644,6 @@ def update_devices_names ():
         performPholusScan(PHOLUS_TIMEOUT)
 
     # get names from Pholus scan 
-    # sql.execute ('SELECT * FROM Pholus_Scan where "MAC" in (select "dev_MAC" from Devices where "dev_Name" IN ("(unknown)","")) and "Record_Type"="Answer"')        
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
     pholusResults = list(sql.fetchall())        
     commitDB()
@@ -2070,19 +2019,6 @@ def create_sessions_snapshot ():
     print_log ('Sessions Snapshot - 2 Insert')
     sql.execute ("""INSERT INTO Sessions
                     SELECT * FROM Convert_Events_to_Sessions""" )
-
-#    OLD FORMAT INSERT IN TWO PHASES
-#    PERFORMACE BETTER THAN SELECT WITH UNION
-#
-#    # Insert sessions from first query
-#    print_log ('Sessions Snapshot - 2 Query 1')
-#    sql.execute ("""INSERT INTO Sessions
-#                    SELECT * FROM Convert_Events_to_Sessions_Phase1""" )
-#
-#    # Insert sessions from first query
-#    print_log ('Sessions Snapshot - 3 Query 2')
-#    sql.execute ("""INSERT INTO Sessions
-#                    SELECT * FROM Convert_Events_to_Sessions_Phase2""" )
 
     print_log ('Sessions end')
     commitDB()
@@ -3131,13 +3067,6 @@ class serviceSchedule:
 
         # get the current time with the currently specified timezone
         nowTime = datetime.datetime.now(tz).replace(microsecond=0)
-
-        # #  DEBUG
-        # file_print("now                      : ", nowTime.isoformat())
-        # file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat())
-        # file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat())
-        # file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
-        # file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
 
         # Run the schedule if the current time is past the schedule time we saved last time and 
         #               (maybe the following check is unnecessary:)
