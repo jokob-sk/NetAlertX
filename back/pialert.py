@@ -557,14 +557,13 @@ def importConfig ():
     commitDB()
 
     # Update scheduler
-    global schedule, tz, last_next_pholus_schedule, last_next_pholus_schedule_used
+    global tz, mySchedules
 
-    tz       = timezone(TIMEZONE)    
-    cron     = Cron(PHOLUS_RUN_SCHD)
-    schedule = cron.schedule(start_date=datetime.datetime.now(tz))
-
-    last_next_pholus_schedule = schedule.next()
-    last_next_pholus_schedule_used = False
+    tz                  = timezone(TIMEZONE)        
+    pholusSchedule      = Cron(PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))    
+    
+    mySchedules = []
+    mySchedules.append(serviceSchedule("pholus", pholusSchedule, pholusSchedule.next(), False))
 
     # Format and prepare the list of subnets
     updateSubnets()
@@ -613,7 +612,7 @@ def main ():
     
     while True:
 
-        # update NOW time
+        # update time started
         time_started = datetime.datetime.now()
 
         # re-load user configuration
@@ -656,8 +655,8 @@ def main ():
 
                 # run if overdue scheduled time
                 if (not runPholus) and (PHOLUS_RUN == "schedule"):
-                    # cron_instance.from_string(PHOLUS_RUN_SCHD)
-                    runPholus = runSchedule()
+                    runPholus = [sch for sch in mySchedules if sch.service == "pholus"][0].runScheduleCheck()
+                    # runPholus = mySchedules[0].runScheduleCheck()
 
                 if runPholus:
                     last_pholus_scheduled_run = datetime.datetime.now(tz).replace(microsecond=0)
@@ -1806,9 +1805,6 @@ def performPholusScan (timeoutSec):
         if len(params) > 0:                
             sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 
             commitDB ()
-
-
-
 
 #-------------------------------------------------------------------------------
 def cleanResult(str):
@@ -3116,43 +3112,50 @@ def hide_email(email):
     return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
 
 #-------------------------------------------------------------------------------
-def runSchedule():
+# Cron-like Scheduling
+#-------------------------------------------------------------------------------
+class serviceSchedule:
+    def __init__(self, service, scheduleObject, last_next_schedule, was_last_schedule_used, last_run = 0):
+        self.service = service
+        self.scheduleObject = scheduleObject
+        self.last_next_schedule = last_next_schedule
+        self.last_run = last_run
+        self.was_last_schedule_used = was_last_schedule_used  
+    def runScheduleCheck(self):
 
-    global last_next_pholus_schedule
-    global last_pholus_scheduled_run
-    global last_next_pholus_schedule_used
+        result = False 
 
-    result = False 
+        # Initialize the last run time if never run before
+        if self.last_run == 0:
+            self.last_run =  (datetime.datetime.now(tz) - timedelta(days=365)).replace(microsecond=0)
 
-    # Initialize the last run time if never run before
-    if last_pholus_scheduled_run == 0:
-        last_pholus_scheduled_run =  (datetime.datetime.now(tz) - timedelta(days=365)).replace(microsecond=0)
+        # get the current time with the currently specified timezone
+        nowTime = datetime.datetime.now(tz).replace(microsecond=0)
 
-    # get the current time with the currently specified timezone
-    nowTime = datetime.datetime.now(tz).replace(microsecond=0)
+        # #  DEBUG
+        # file_print("now                      : ", nowTime.isoformat())
+        # file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat())
+        # file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat())
+        # file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
+        # file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
 
-    # #  DEBUG
-    # file_print("now                      : ", nowTime.isoformat())
-    # file_print("last_pholus_scheduled_run: ", last_pholus_scheduled_run.isoformat())
-    # file_print("last_next_pholus_schedule: ", last_next_pholus_schedule.isoformat())
-    # file_print("nowTime > last_next_pholus_schedule: ", nowTime > last_next_pholus_schedule)
-    # file_print("last_pholus_scheduled_run < last_next_pholus_schedule: ", last_pholus_scheduled_run < last_next_pholus_schedule)
+        # Run the schedule if the current time is past the schedule time we saved last time and 
+        #               (maybe the following check is unnecessary:)
+        # if the last run is past the last time we run a scheduled Pholus scan
+        if nowTime > self.last_next_schedule and self.last_run < self.last_next_schedule:
+            print_log("Scheduler run: YES")
+            self.was_last_schedule_used = True
+            result = True
+        else:
+            print_log("Scheduler run: NO")
+        
+        if self.was_last_schedule_used:
+            self.was_last_schedule_used = False
+            self.last_next_schedule = self.scheduleObject.next()            
 
-    # Run the schedule if the current time is past the schedule time we saved last time and 
-    #               (maybe the following check is unnecessary:)
-    # if the last run is past the last time we run a scheduled Pholus scan
-    if nowTime > last_next_pholus_schedule and last_pholus_scheduled_run < last_next_pholus_schedule:
-        print_log("Scheduler run: YES")
-        last_next_pholus_schedule_used = True
-        result = True
-    else:
-        print_log("Scheduler run: NO")
-    
-    if last_next_pholus_schedule_used:
-        last_next_pholus_schedule_used = False
-        last_next_pholus_schedule = schedule.next()            
+        return result
 
-    return result
+        # print("Hello my name is " + self.scheduleObject)
 
 #===============================================================================
 # BEGIN
