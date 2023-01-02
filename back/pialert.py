@@ -1775,13 +1775,8 @@ def performNmapScan(devicesToScan):
     for device in devicesToScan:
         # Execute command
         output = ""
-
-        # nmap -p portFrom-portTo  192.168.1.3
-        # nmap -p -10000  192.168.1.3
+        # prepare arguments from user supplied ones
         nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
-        # nmapArgs = nmapArgs.append(NMAP_ARGS.split())
-        # nmapArgs = nmapArgs.append(device["dev_LastIP"])
-
 
         try:
             # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
@@ -1796,7 +1791,7 @@ def performNmapScan(devicesToScan):
         if output == "": # check if the subprocess failed                    
             file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
         else: 
-            file_print('[', timeNow(), '] Scan: Nmap SUCCESS')
+            file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"])
         
         #  check the last run output        
         newLines = output.split('\n')

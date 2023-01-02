@@ -532,6 +532,8 @@
                   }
                   </script>
 
+                  <h3>Below results are from scheduled scans you can set up in Settings</h3>
+
                 <table id="tableNmap" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
