@@ -165,7 +165,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log'];
+  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus.log", "pialert_pholus_lastrun.log"];
   
   if(in_array($logFile, $allowedFiles))
   {
@@ -179,7 +179,10 @@ function cleanLog($logFile)
     fwrite($file, "[".$timestamp. "] Log file manually purged" .PHP_EOL."");
     fclose($file);
     displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);      
-  }  
+  } else
+  {
+    displayMessage('File <code>'.$logFile.'</code> is not allowed to be purged.', FALSE, TRUE, TRUE, TRUE);      
+  } 
 }
 
 // ----------------------------------------------------------------------------------------
