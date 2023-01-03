@@ -155,6 +155,12 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
               <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
+                        <div class="db_info_table_cell" style="min-width: 140px"><?php echo lang('Maintenance_version');?></div>
+                        <div class="db_info_table_cell">
+                        <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>"><?php echo '<span id="new-version-text" class="myhidden">' .lang('Maintenance_new_version').'</span>'.'<span id="current-version-text" class="myhidden">' .lang('Maintenance_current_version').'</span>';?></div>
+                        </div>
+                    </div>
+                    <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?php echo lang('Maintenance_database_path');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db;?>
@@ -809,5 +815,6 @@ window.onload = function asyncFooter()
 }
 
 </script>
+
 
 

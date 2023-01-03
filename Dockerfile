@@ -8,8 +8,7 @@ ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
 
 RUN apt-get update \
     && apt-get install --no-install-recommends tini ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip -y \
-    && pip3 install requests paho-mqtt scapy cron-converter pytz \
-    # && pip3 install requests paho-mqtt ssdpy upnpclient \
+    && pip3 install requests paho-mqtt scapy cron-converter pytz \    
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     && apt-get clean autoclean \
     && apt-get autoremove \
@@ -40,7 +39,9 @@ RUN rm /etc/nginx/sites-available/default \
     # Create a backup of the pialert.conf to be used if the user didn't supply a configuration file
     && cp /home/pi/pialert/config/pialert.conf /home/pi/pialert/back/pialert.conf_bak \
     # Create a backup of the pialert.db to be used if the user didn't supply a database
-    && cp /home/pi/pialert/db/pialert.db /home/pi/pialert/back/pialert.db_bak 
+    && cp /home/pi/pialert/db/pialert.db /home/pi/pialert/back/pialert.db_bak \
+    # Create a buildtimestamp.txt to later check if a new version was released
+    && date +%s > /home/pi/pialert/front/buildtimestamp.txt
 
 ENTRYPOINT ["tini", "--"]
 

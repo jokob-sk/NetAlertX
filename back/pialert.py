@@ -641,6 +641,8 @@ def main ():
         # re-load user configuration
         importConfig() 
 
+        isNewVersion()
+
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
 
@@ -2224,6 +2226,9 @@ def send_notifications ():
 
     # Open html Template
     template_file = open(PIALERT_BACK_PATH + '/report_template.html', 'r') 
+    if isNewVersion():
+        template_file = open(PIALERT_BACK_PATH + '/report_template_new_version.html', 'r') 
+
     mail_html = template_file.read() 
     template_file.close() 
 
@@ -2234,6 +2239,8 @@ def send_notifications ():
 
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
+
+    
 
     if 'internet' in INCLUDED_SECTIONS:
         # Compose Internet Section        
@@ -3217,6 +3224,34 @@ def hide_email(email):
         return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
 
     return email    
+
+#-------------------------------------------------------------------------------
+def isNewVersion():    
+
+    f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
+    buildTimestamp = int(f.read().strip())
+    f.close() 
+
+    url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+    text = url.text
+
+    data = json.loads(text)
+    
+    # Debug
+    write_file (logPath + '/pialert_version_new.json', json.dumps(data)) 
+
+    # make sure we received a valid response and not an API rate limit exceeded message
+    if len(data) > 0:
+    
+        dateTimeStr = data[0]["published_at"]
+
+        realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+
+        if realeaseTimestamp > buildTimestamp + 600:        
+            file_print("here")
+            return True    
+
+    return False
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling

@@ -223,6 +223,7 @@ if ($ENABLED_DARKMODE === True) {
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
+          <div class="new-version myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
           <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?php echo lang('Navigation_Maintenance');?></span></a>
         </li>
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
@@ -239,31 +240,40 @@ if ($ENABLED_DARKMODE === True) {
     <!-- /.sidebar -->
   </aside>
 
+<script src="js/pialert_common.js"></script>
 <script defer>
 
-function getParam(targetId, key, skipCache = false) {  
+//--------------------------------------------------------------
 
-  skipCacheQuery = "";
+  
+  //--------------------------------------------------------------
+  function getParam(targetId, key, skipCache = false) {  
 
-  if(skipCache)
-  {
-    skipCacheQuery = "&skipcache";
+    skipCacheQuery = "";
+
+    if(skipCache)
+    {
+      skipCacheQuery = "&skipcache";
+    }
+
+    // get parameter value
+    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
+      var result = data;
+
+      document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
+
+    });
   }
 
-  // get parameter value
-  $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
-    var result = data;
+  //--------------------------------------------------------------
 
-    document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
+  // Update server time in the header
+  show_pia_servertime()
 
-  });
-}
+  // Update server state in the header
+  updateState()
 
-// Update server time in the header
-show_pia_servertime()
 
-// Update server state in the header
-updateState()
 
 </script>
 

@@ -51,7 +51,7 @@ CommitDB();
       <h1 id="pageTitle">
          <?php echo lang('Navigation_Settings');?>
       </h1>
-      Last time imported from the pialert.conf file: <span id="lastImportedTime"></span>
+      <div class="settingsImported"><?php echo lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
     <div class="content">
    <?php      

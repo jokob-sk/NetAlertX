@@ -51,6 +51,7 @@
 
 <!-- Pi.Alert -------------------------------------------------------------- -->
   <script src="js/pialert_common.js"></script>
+  <script src="js/handle_version.js"></script>
 
 </body>
 </html>

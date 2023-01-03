@@ -666,10 +666,10 @@ height: 50px;
     width:46%;
 }
 
-/* .setting_input
+.myhidden
 {
-    width:35%;
-} */
+    display:none;
+}
 
 .center 
 {
@@ -702,4 +702,13 @@ height: 50px;
 .drp-edit
 {
     cursor: pointer;
+}
+
+.new-version
+{   
+    top: -6px;
+    position: absolute;
+    z-index: 1;
+    left: 0px;
+    font-size: large;
 }

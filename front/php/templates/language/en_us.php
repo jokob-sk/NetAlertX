@@ -216,6 +216,9 @@ $lang['en_us'] = array(
 //////////////////////////////////////////////////////////////////
 
 'Maintenance_Title' => 'Maintenance tools',
+'Maintenance_version' => 'Application updates',
+'Maintenance_new_version' => '🆕 A new version is available. Check out the <a href="https://github.com/jokob-sk/Pi.Alert/releases" target="_blank">release notes</a>.',
+'Maintenance_current_version' => 'You are up-to-date. Check out what <a href="https://github.com/jokob-sk/Pi.Alert/issues/138" target="_blank">I\'m working on</a>.',
 'Maintenance_database_path' => 'Database-Path',
 'Maintenance_database_size' => 'Database-Size',
 'Maintenance_database_lastmod' => 'Last Modification',
@@ -432,6 +435,7 @@ $lang['en_us'] = array(
 'settings_missing' => 'Not all settings loaded, refresh the page! This is probably caused by a high load on the database.',
 'settings_missing_block' => 'You can\'t save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.',
 'settings_old' => 'The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved in the <code>pialert.conf</code> file, but the background process didn\'t have time to import it yet to the DB. You can wait until the settings get refreshed so you don\'t overwrite your old values. Feel free to save your settings either way if you don\'t mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.',
+'settings_imported' => 'Last time settings were imported from the pialert.conf file:',
 
 //General
 'SCAN_SUBNETS_name' => 'Subnets to scan',
