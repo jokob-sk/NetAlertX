@@ -639,9 +639,7 @@ def main ():
         time_started = datetime.datetime.now()
 
         # re-load user configuration
-        importConfig() 
-
-        isNewVersion()
+        importConfig()         
 
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
@@ -3241,7 +3239,7 @@ def isNewVersion():
     write_file (logPath + '/pialert_version_new.json', json.dumps(data)) 
 
     # make sure we received a valid response and not an API rate limit exceeded message
-    if len(data) > 0:
+    if len(data) > 0 and  "published_at" in data:
     
         dateTimeStr = data[0]["published_at"]
 
