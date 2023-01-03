@@ -89,7 +89,6 @@ jobs:
           # generate Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest
-            type=raw,value=${{github.event.head_commit.message}}
             type=schedule
             type=ref,event=branch
             type=ref,event=pr
