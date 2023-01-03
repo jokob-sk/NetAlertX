@@ -1786,7 +1786,7 @@ def performNmapScan(devicesToScan):
             file_print(e.output)
             file_print("        Error - Nmap Scan - check logs")            
         except subprocess.TimeoutExpired as timeErr:
-            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for', device["dev_LastIP"]) 
+            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"]) 
 
         if output == "": # check if the subprocess failed                    
             file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
@@ -2594,14 +2594,18 @@ def send_email (pText, pHTML):
     smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
     smtp_connection.ehlo()
 
-    if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
-        smtp_connection.starttls()
-        smtp_connection.ehlo()
-    if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
-        smtp_connection.login (SMTP_USER, SMTP_PASS)
+    try: 
+        if not SafeParseGlobalBool("SMTP_SKIP_TLS"):
+            smtp_connection.starttls()
+            smtp_connection.ehlo()
+        if not SafeParseGlobalBool("SMTP_SKIP_LOGIN"):
+            smtp_connection.login (SMTP_USER, SMTP_PASS)
 
-    smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
-    smtp_connection.quit()
+            smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
+            smtp_connection.quit()
+    except smtplib.SMTPAuthenticationError as e: 
+        file_print('      ERROR: Couldn\'t connect to the SMTP, skipping Email')
+
 
 #-------------------------------------------------------------------------------
 def SafeParseGlobalBool(boolVariable):
@@ -3208,7 +3212,11 @@ def get_all_devices():
 #-------------------------------------------------------------------------------
 def hide_email(email):
     m = email.split('@')
-    return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+
+    if len(m) == 2:
+        return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+
+    return email    
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling
