@@ -240,6 +240,7 @@ $lang['en_us'] = array(
 'Maintenance_lang_selector_text' => 'The change takes place on the client side, so it affects only the current browser.',
 'Maintenance_lang_selector_apply' => 'Apply',
 'Maintenance_Tools_Tab_Settings' => 'Settings',
+'Maintenance_Tools_Tab_UISettings' => 'UI Settings',
 'Maintenance_Tools_Tab_Tools' => 'Tools',
 'Maintenance_Tools_Tab_BackupRestore' => 'Backup / Restore',
 'Maintenance_Tools_Tab_Logging' => 'Logs',

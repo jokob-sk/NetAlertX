@@ -341,19 +341,25 @@ def commitDB ():
 
 #-------------------------------------------------------------------------------
 # Import user values
+# Check config dictionary
+def ccd(key, default, config, name, inputtype, options, group, desc = "", regex = ""):
+    result = default
 
-def check_config_dict(key, default, config):
     if key in config:
-        return config[key]
-    else: 
-        return default
+         result =  config[key]
+
+    global mySettings
+
+    mySettings.append((key, name, desc, inputtype, options, regex, str(result) , group))
+
+    return result
 
 #-------------------------------------------------------------------------------
 
 def importConfig (): 
 
     # Specify globals so they can be overwritten with the new config
-    global lastTimeImported
+    global lastTimeImported, mySettings
     # General
     global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
     # Email
@@ -377,7 +383,7 @@ def importConfig ():
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     
-
+    mySettings = [] # reset settings
     # get config file
     config_file = Path(fullConfPath)
 
@@ -387,185 +393,96 @@ def importConfig ():
     
     # load the variables from  pialert.conf
     code = compile(config_file.read_text(), config_file.name, "exec")
-    config_dict = {}
-    exec(code, {"__builtins__": {}}, config_dict)
+    c_d = {} # config dictionary
+    exec(code, {"__builtins__": {}}, c_d)
 
     # Import setting if found in the dictionary
     # General
-
-    ENABLE_ARPSCAN = check_config_dict('ENABLE_ARPSCAN', ENABLE_ARPSCAN , config_dict) 
-    SCAN_SUBNETS = check_config_dict('SCAN_SUBNETS', SCAN_SUBNETS , config_dict)
-    PRINT_LOG = check_config_dict('PRINT_LOG', PRINT_LOG , config_dict)
-    TIMEZONE = check_config_dict('TIMEZONE', TIMEZONE , config_dict)
-    PIALERT_WEB_PROTECTION = check_config_dict('PIALERT_WEB_PROTECTION', PIALERT_WEB_PROTECTION , config_dict)
-    PIALERT_WEB_PASSWORD = check_config_dict('PIALERT_WEB_PASSWORD', PIALERT_WEB_PASSWORD , config_dict)
-    INCLUDED_SECTIONS = check_config_dict('INCLUDED_SECTIONS', INCLUDED_SECTIONS , config_dict)
-    SCAN_CYCLE_MINUTES = check_config_dict('SCAN_CYCLE_MINUTES', SCAN_CYCLE_MINUTES , config_dict)
-    DAYS_TO_KEEP_EVENTS = check_config_dict('DAYS_TO_KEEP_EVENTS', DAYS_TO_KEEP_EVENTS , config_dict)
-    REPORT_DASHBOARD_URL = check_config_dict('REPORT_DASHBOARD_URL', REPORT_DASHBOARD_URL , config_dict)
+    ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', ENABLE_ARPSCAN , c_d, 'Enable arpscan', 'boolean', '', 'General') 
+    SCAN_SUBNETS = ccd('SCAN_SUBNETS', SCAN_SUBNETS , c_d, 'Subnets to scan', 'subnets', '', 'General')
+    PRINT_LOG = ccd('PRINT_LOG', PRINT_LOG , c_d, 'Print additional logging', 'boolean', '', 'General')
+    TIMEZONE = ccd('TIMEZONE', TIMEZONE , c_d, 'Time zone', 'text', '', 'General')
+    PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', PIALERT_WEB_PROTECTION , c_d, 'Enable logon', 'boolean', '', 'General')
+    PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', PIALERT_WEB_PASSWORD , c_d, 'Logon password', 'readonly', '', 'General')
+    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', INCLUDED_SECTIONS , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", 'General')
+    SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', SCAN_CYCLE_MINUTES , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
+    DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', DAYS_TO_KEEP_EVENTS , c_d, 'Delete events days', 'integer', '', 'General')
+    REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', REPORT_DASHBOARD_URL , c_d, 'PiAlert URL', 'text', '', 'General')
 
     # Email
-    REPORT_MAIL = check_config_dict('REPORT_MAIL', REPORT_MAIL , config_dict)
-    SMTP_SERVER = check_config_dict('SMTP_SERVER', SMTP_SERVER , config_dict)
-    SMTP_PORT = check_config_dict('SMTP_PORT', SMTP_PORT , config_dict)
-    REPORT_TO = check_config_dict('REPORT_TO', REPORT_TO , config_dict)
-    REPORT_FROM = check_config_dict('REPORT_FROM', REPORT_FROM , config_dict)
-    SMTP_SKIP_LOGIN = check_config_dict('SMTP_SKIP_LOGIN', SMTP_SKIP_LOGIN , config_dict)
-    SMTP_USER = check_config_dict('SMTP_USER', SMTP_USER , config_dict)
-    SMTP_PASS = check_config_dict('SMTP_PASS', SMTP_PASS , config_dict)
-    SMTP_SKIP_TLS = check_config_dict('SMTP_SKIP_TLS', SMTP_SKIP_TLS , config_dict)
+    REPORT_MAIL = ccd('REPORT_MAIL', REPORT_MAIL , c_d, 'Enable email', 'boolean', '', 'Email')
+    SMTP_SERVER = ccd('SMTP_SERVER', SMTP_SERVER , c_d,'SMTP server URL', 'text', '', 'Email')
+    SMTP_PORT = ccd('SMTP_PORT', SMTP_PORT , c_d, 'SMTP port', 'integer', '', 'Email')
+    REPORT_TO = ccd('REPORT_TO', REPORT_TO , c_d, 'Email to', 'text', '', 'Email')
+    REPORT_FROM = ccd('REPORT_FROM', REPORT_FROM , c_d, 'Email Subject', 'text', '', 'Email')
+    SMTP_SKIP_LOGIN = ccd('SMTP_SKIP_LOGIN', SMTP_SKIP_LOGIN , c_d, 'SMTP skip login', 'boolean', '', 'Email')
+    SMTP_USER = ccd('SMTP_USER', SMTP_USER , c_d, 'SMTP user', 'text', '', 'Email')
+    SMTP_PASS = ccd('SMTP_PASS', SMTP_PASS , c_d, 'SMTP password', 'password', '', 'Email')
+    SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', SMTP_SKIP_TLS , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
 
     # Webhooks
-    REPORT_WEBHOOK = check_config_dict('REPORT_WEBHOOK', REPORT_WEBHOOK , config_dict)
-    WEBHOOK_URL = check_config_dict('WEBHOOK_URL', WEBHOOK_URL , config_dict)
-    WEBHOOK_PAYLOAD = check_config_dict('WEBHOOK_PAYLOAD', WEBHOOK_PAYLOAD , config_dict)
-    WEBHOOK_REQUEST_METHOD = check_config_dict('WEBHOOK_REQUEST_METHOD', WEBHOOK_REQUEST_METHOD , config_dict)
+    REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', REPORT_WEBHOOK , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks')
+    WEBHOOK_URL = ccd('WEBHOOK_URL', WEBHOOK_URL , c_d, 'Target URL', 'text', '', 'Webhooks')
+    WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', WEBHOOK_PAYLOAD , c_d, 'Payload type', 'selecttext', "['json', 'html', 'text']", 'Webhooks')
+    WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', WEBHOOK_REQUEST_METHOD , c_d, 'Req type', 'selecttext', "['GET', 'POST', 'PUT']", 'Webhooks')
 
     # Apprise
-    REPORT_APPRISE = check_config_dict('REPORT_APPRISE', REPORT_APPRISE , config_dict)
-    APPRISE_HOST = check_config_dict('APPRISE_HOST', APPRISE_HOST , config_dict)
-    APPRISE_URL = check_config_dict('APPRISE_URL', APPRISE_URL , config_dict)
+    REPORT_APPRISE = ccd('REPORT_APPRISE', REPORT_APPRISE , c_d, 'Enable Apprise', 'boolean', '', 'Apprise')
+    APPRISE_HOST = ccd('APPRISE_HOST', APPRISE_HOST , c_d, 'Apprise host URL', 'text', '', 'Apprise')
+    APPRISE_URL = ccd('APPRISE_URL', APPRISE_URL , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
 
     # NTFY
-    REPORT_NTFY = check_config_dict('REPORT_NTFY', REPORT_NTFY , config_dict)
-    NTFY_HOST = check_config_dict('NTFY_HOST', NTFY_HOST , config_dict)
-    NTFY_TOPIC = check_config_dict('NTFY_TOPIC', NTFY_TOPIC , config_dict)
-    NTFY_USER = check_config_dict('NTFY_USER', NTFY_USER , config_dict)
-    NTFY_PASSWORD = check_config_dict('NTFY_PASSWORD', NTFY_PASSWORD , config_dict)
+    REPORT_NTFY = ccd('REPORT_NTFY', REPORT_NTFY , c_d, 'Enable NTFY', 'boolean', '', 'NTFY')
+    NTFY_HOST = ccd('NTFY_HOST', NTFY_HOST , c_d, 'NTFY host URL', 'text', '', 'NTFY')
+    NTFY_TOPIC = ccd('NTFY_TOPIC', NTFY_TOPIC , c_d, 'NTFY topic', 'text', '', 'NTFY')
+    NTFY_USER = ccd('NTFY_USER', NTFY_USER , c_d, 'NTFY user', 'text', '', 'NTFY')
+    NTFY_PASSWORD = ccd('NTFY_PASSWORD', NTFY_PASSWORD , c_d, 'NTFY password', 'password', '', 'NTFY')
 
     # PUSHSAFER
-    REPORT_PUSHSAFER = check_config_dict('REPORT_PUSHSAFER', REPORT_PUSHSAFER , config_dict)
-    PUSHSAFER_TOKEN = check_config_dict('PUSHSAFER_TOKEN', PUSHSAFER_TOKEN , config_dict)
+    REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', REPORT_PUSHSAFER , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER')
+    PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', PUSHSAFER_TOKEN , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
 
     # MQTT
-    REPORT_MQTT = check_config_dict('REPORT_MQTT', REPORT_MQTT , config_dict)
-    MQTT_BROKER = check_config_dict('MQTT_BROKER', MQTT_BROKER , config_dict)
-    MQTT_PORT = check_config_dict('MQTT_PORT', MQTT_PORT , config_dict)
-    MQTT_USER = check_config_dict('MQTT_USER', MQTT_USER , config_dict)
-    MQTT_PASSWORD = check_config_dict('MQTT_PASSWORD', MQTT_PASSWORD , config_dict)
-    MQTT_QOS = check_config_dict('MQTT_QOS', MQTT_QOS , config_dict)
-    MQTT_DELAY_SEC = check_config_dict('MQTT_DELAY_SEC', MQTT_DELAY_SEC , config_dict)
+    REPORT_MQTT = ccd('REPORT_MQTT', REPORT_MQTT , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
+    MQTT_BROKER = ccd('MQTT_BROKER', MQTT_BROKER , c_d, 'MQTT broker', 'text', '', 'MQTT')
+    MQTT_PORT = ccd('MQTT_PORT', MQTT_PORT , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
+    MQTT_USER = ccd('MQTT_USER', MQTT_USER , c_d, 'MQTT user', 'text', '', 'MQTT')
+    MQTT_PASSWORD = ccd('MQTT_PASSWORD', MQTT_PASSWORD , c_d, 'MQTT password', 'password', '', 'MQTT')
+    MQTT_QOS = ccd('MQTT_QOS', MQTT_QOS , c_d, 'MQTT Quality of Service', 'selectinteger', "['0', '1', '2']", 'MQTT')
+    MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', MQTT_DELAY_SEC , c_d, 'MQTT delay', 'selectinteger', "['2', '3', '4', '5']", 'MQTT')
 
     # DynDNS
-    DDNS_ACTIVE = check_config_dict('DDNS_ACTIVE', DDNS_ACTIVE , config_dict)
-    DDNS_DOMAIN = check_config_dict('DDNS_DOMAIN', DDNS_DOMAIN , config_dict)
-    DDNS_USER = check_config_dict('DDNS_USER', DDNS_USER , config_dict)
-    DDNS_PASSWORD = check_config_dict('DDNS_PASSWORD', DDNS_PASSWORD , config_dict)
-    DDNS_UPDATE_URL = check_config_dict('DDNS_UPDATE_URL', DDNS_UPDATE_URL , config_dict)
+    DDNS_ACTIVE = ccd('DDNS_ACTIVE', DDNS_ACTIVE , c_d, 'Enable DynDNS', 'boolean', '', 'DynDNS')
+    DDNS_DOMAIN = ccd('DDNS_DOMAIN', DDNS_DOMAIN , c_d, 'DynDNS domain URL', 'text', '', 'DynDNS')
+    DDNS_USER = ccd('DDNS_USER', DDNS_USER , c_d, 'DynDNS user', 'text', '', 'DynDNS')
+    DDNS_PASSWORD = ccd('DDNS_PASSWORD', DDNS_PASSWORD , c_d, 'DynDNS password', 'password', '', 'DynDNS')
+    DDNS_UPDATE_URL = ccd('DDNS_UPDATE_URL', DDNS_UPDATE_URL , c_d, 'DynDNS update URL', 'text', '', 'DynDNS')
 
     # PiHole
-    PIHOLE_ACTIVE = check_config_dict('PIHOLE_ACTIVE',  PIHOLE_ACTIVE, config_dict)
-    DHCP_ACTIVE = check_config_dict('DHCP_ACTIVE', DHCP_ACTIVE , config_dict)
+    PIHOLE_ACTIVE = ccd('PIHOLE_ACTIVE',  PIHOLE_ACTIVE, c_d, 'Enable PiHole mapping', 'boolean', '', 'PiHole')
+    DHCP_ACTIVE = ccd('DHCP_ACTIVE', DHCP_ACTIVE , c_d, 'Enable PiHole DHCP', 'boolean', '', 'PiHole')
 
     # PHOLUS
-    PHOLUS_ACTIVE = check_config_dict('PHOLUS_ACTIVE', PHOLUS_ACTIVE , config_dict)
-    PHOLUS_TIMEOUT = check_config_dict('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , config_dict)
-    PHOLUS_FORCE = check_config_dict('PHOLUS_FORCE', PHOLUS_FORCE , config_dict)
-    PHOLUS_RUN = check_config_dict('PHOLUS_RUN', PHOLUS_RUN , config_dict)
-    PHOLUS_RUN_TIMEOUT = check_config_dict('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , config_dict)   
-    PHOLUS_RUN_SCHD = check_config_dict('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , config_dict)
-    PHOLUS_DAYS_DATA = check_config_dict('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , config_dict)
+    PHOLUS_ACTIVE = ccd('PHOLUS_ACTIVE', PHOLUS_ACTIVE , c_d, 'Enable Pholus scans', 'boolean', '', 'Pholus')
+    PHOLUS_TIMEOUT = ccd('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , c_d, 'Pholus timeout', 'integer', '', 'Pholus')
+    PHOLUS_FORCE = ccd('PHOLUS_FORCE', PHOLUS_FORCE , c_d, 'Pholus force check', 'boolean', '', 'Pholus')
+    PHOLUS_RUN = ccd('PHOLUS_RUN', PHOLUS_RUN , c_d, 'Pholus enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Pholus')
+    PHOLUS_RUN_TIMEOUT = ccd('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , c_d, 'Pholus timeout schedule', 'integer', '', 'Pholus')   
+    PHOLUS_RUN_SCHD = ccd('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , c_d, 'Pholus schedule', 'text', '', 'Pholus')
+    PHOLUS_DAYS_DATA = ccd('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , c_d, 'Pholus keep days', 'integer', '', 'Pholus')
     
     # Nmap
-    NMAP_ACTIVE = check_config_dict('NMAP_ACTIVE', NMAP_ACTIVE , config_dict)
-    NMAP_TIMEOUT = check_config_dict('NMAP_TIMEOUT', NMAP_TIMEOUT , config_dict)
-    NMAP_RUN = check_config_dict('NMAP_RUN', NMAP_RUN , config_dict)
-    NMAP_RUN_SCHD = check_config_dict('NMAP_RUN_SCHD', NMAP_RUN_SCHD , config_dict)
-    NMAP_ARGS = check_config_dict('NMAP_ARGS', NMAP_ARGS , config_dict)
-        
-
-    #  Code_Name, Display_Name, Description, Type, Options, Value, Group
-    settings = [
-
-        # General
-        ('ENABLE_ARPSCAN', 'Enable arpscan', '',  'boolean', '', '' , str(ENABLE_ARPSCAN) , 'General'),
-        ('SCAN_SUBNETS', 'Subnets to scan', '',  'subnets', '', '' , str(SCAN_SUBNETS) , 'General'),
-        ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
-        ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
-        ('PIALERT_WEB_PROTECTION', 'Enable logon', '', 'boolean', '', '' , str(PIALERT_WEB_PROTECTION) , 'General'),
-        ('PIALERT_WEB_PASSWORD', 'Logon password', '', 'readonly', '', '' , str(PIALERT_WEB_PASSWORD) , 'General'),
-        ('INCLUDED_SECTIONS', 'Notify on changes in', '', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", '' , str(INCLUDED_SECTIONS) , 'General'),
-        ('SCAN_CYCLE_MINUTES', 'Scan cycle delay (m)', '', 'integer', '', '' , str(SCAN_CYCLE_MINUTES) , 'General'),
-        ('DAYS_TO_KEEP_EVENTS', 'Delete events older than (days)', '', 'integer', '', '' , str(DAYS_TO_KEEP_EVENTS) , 'General'),
-        ('REPORT_DASHBOARD_URL', 'PiAlert URL', '',  'text', '', '' , str(REPORT_DASHBOARD_URL) , 'General'),        
-
-        # Email
-        ('REPORT_MAIL', 'Enable email', '',  'boolean', '', '' , str(REPORT_MAIL) , 'Email'),
-        ('SMTP_SERVER', 'SMTP server URL', '',  'text', '', '' , str(SMTP_SERVER) , 'Email'),
-        ('SMTP_PORT', 'SMTP port', '',  'integer', '', '' , str(SMTP_PORT) , 'Email'),
-        ('REPORT_TO', 'Email to', '',  'text', '', '' , str(REPORT_TO) , 'Email'),
-        ('REPORT_FROM', 'Email Subject', '',  'text', '', '' , str(REPORT_FROM) , 'Email'),
-        ('SMTP_SKIP_LOGIN', 'SMTP skip login', '',  'boolean', '', '' , str(SMTP_SKIP_LOGIN) , 'Email'),
-        ('SMTP_USER', 'SMTP user', '',  'text', '', '' , str(SMTP_USER) , 'Email'),
-        ('SMTP_PASS', 'SMTP password', '',  'password', '', '' , str(SMTP_PASS) , 'Email'),
-        ('SMTP_SKIP_TLS', 'SMTP skip TLS', '',  'boolean', '', '' , str(SMTP_SKIP_TLS) , 'Email'), 
-
-        # Webhooks
-        ('REPORT_WEBHOOK', 'Enable Webhooks', '',  'boolean', '', '' , str(REPORT_WEBHOOK) , 'Webhooks'),
-        ('WEBHOOK_URL', 'Target URL', '',  'text', '', '' , str(WEBHOOK_URL) , 'Webhooks'),
-        ('WEBHOOK_PAYLOAD', 'Payload type', '',  'selecttext', "['json', 'html', 'text']", '' , str(WEBHOOK_PAYLOAD) , 'Webhooks'),
-        ('WEBHOOK_REQUEST_METHOD', 'Request type', '',  'selecttext', "['GET', 'POST', 'PUT']", '' , str(WEBHOOK_REQUEST_METHOD) , 'Webhooks'),
-
-        # Apprise
-        ('REPORT_APPRISE', 'Enable Apprise', '',  'boolean', '', '' , str(REPORT_APPRISE) , 'Apprise'),
-        ('APPRISE_HOST', 'Apprise host URL', '',  'text', '', '' , str(APPRISE_HOST) , 'Apprise'),
-        ('APPRISE_URL', 'Apprise notification URL', '',  'text', '', '' , str(APPRISE_URL) , 'Apprise'),
-
-        # NTFY
-        ('REPORT_NTFY', 'Enable NTFY', '',  'boolean', '', '' , str(REPORT_NTFY) , 'NTFY'),
-        ('NTFY_HOST', 'NTFY host URL', '',  'text', '', '' , str(NTFY_HOST) , 'NTFY'),
-        ('NTFY_TOPIC', 'NTFY topic', '',  'text', '', '' , str(NTFY_TOPIC) , 'NTFY'),
-        ('NTFY_USER', 'NTFY user', '',  'text', '', '' , str(NTFY_USER) , 'NTFY'),
-        ('NTFY_PASSWORD', 'NTFY password', '',  'password', '', '' , str(NTFY_PASSWORD) , 'NTFY'),
-
-        # PUSHSAFER
-        ('REPORT_PUSHSAFER', 'Enable PUSHSAFER', '',  'boolean', '', '' , str(REPORT_PUSHSAFER) , 'PUSHSAFER'),
-        ('PUSHSAFER_TOKEN', 'PUSHSAFER token', '',  'text', '', '' , str(PUSHSAFER_TOKEN) , 'PUSHSAFER'),
-
-        # MQTT
-        ('REPORT_MQTT', 'Enable MQTT', '',  'boolean', '', '' , str(REPORT_MQTT) , 'MQTT'),
-        ('MQTT_BROKER', 'MQTT broker host URL', '',  'text', '', '' , str(MQTT_BROKER) , 'MQTT'),
-        ('MQTT_PORT', 'MQTT broker port', '',  'integer', '', '' , str(MQTT_PORT) , 'MQTT'),
-        ('MQTT_USER', 'MQTT user', '',  'text', '', '' , str(MQTT_USER) , 'MQTT'),
-        ('MQTT_PASSWORD', 'MQTT password', '',  'password', '', '' , str(MQTT_PASSWORD) , 'MQTT'),
-        ('MQTT_QOS', 'MQTT Quality of Service', '',  'selectinteger', "['0', '1', '2']", '' , str(MQTT_QOS) , 'MQTT'),
-        ('MQTT_DELAY_SEC', 'MQTT delay per device (s)', '',  'selectinteger', "['2', '3', '4', '5']", '' , str(MQTT_DELAY_SEC) , 'MQTT'),
-
-        #DynDNS
-        ('DDNS_ACTIVE', 'Enable DynDNS', '',  'boolean', '', '' , str(DDNS_ACTIVE) , 'DynDNS'),
-        # ('QUERY_MYIP_SERVER', 'Query MY IP Server URL', '',  'text', '', '' , QUERY_MYIP_SERVER , 'DynDNS'),
-        ('DDNS_DOMAIN', 'DynDNS domain URL', '',  'text', '', '' , str(DDNS_DOMAIN) , 'DynDNS'),
-        ('DDNS_USER', 'DynDNS user', '',  'text', '', '' , str(DDNS_USER) , 'DynDNS'),
-        ('DDNS_PASSWORD', 'DynDNS password', '',  'password', '', '' , str(DDNS_PASSWORD) , 'DynDNS'),
-        ('DDNS_UPDATE_URL', 'DynDNS update URL', '',  'text', '', '' , str(DDNS_UPDATE_URL) , 'DynDNS'),
-
-        # PiHole
-        ('PIHOLE_ACTIVE', 'Enable PiHole mapping', '',  'boolean', '', '' , str(PIHOLE_ACTIVE) , 'PiHole'),
-        ('DHCP_ACTIVE', 'Enable PiHole DHCP', '',  'boolean', '', '' , str(DHCP_ACTIVE) , 'PiHole'),
-
-        # Pholus
-        ('PHOLUS_ACTIVE', 'Enable Pholus scans', '',  'boolean', '', '' , str(PHOLUS_ACTIVE) , 'Pholus'),
-        ('PHOLUS_TIMEOUT', 'Pholus timeout', '',  'integer', '', '' , str(PHOLUS_TIMEOUT) , 'Pholus'),
-        ('PHOLUS_FORCE', 'Pholus force check', '',  'boolean', '', '' , str(PHOLUS_FORCE) , 'Pholus'),        
-        ('PHOLUS_RUN', 'Pholus enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(PHOLUS_RUN) , 'Pholus'),
-        ('PHOLUS_RUN_TIMEOUT', 'Pholus timeout schedule', '',  'integer', '', '' , str(PHOLUS_RUN_TIMEOUT) , 'Pholus'),
-        ('PHOLUS_RUN_SCHD', 'Pholus schedule', '',  'text', '', '' , str(PHOLUS_RUN_SCHD) , 'Pholus'),
-        ('PHOLUS_DAYS_DATA', 'Pholus keep days', '',  'integer', '', '' , str(PHOLUS_DAYS_DATA) , 'Pholus'),
-
-        # Nmap
-        ('NMAP_ACTIVE', 'Enable Nmap scans', '',  'boolean', '', '' , str(NMAP_ACTIVE) , 'Nmap'),
-        ('NMAP_TIMEOUT', 'Nmap timeout', '',  'integer', '', '' , str(NMAP_TIMEOUT) , 'Nmap'),              
-        ('NMAP_RUN', 'Nmap enable schedule', '',  'selecttext', "['none', 'once', 'schedule']", '' , str(NMAP_RUN) , 'Nmap'),        
-        ('NMAP_RUN_SCHD', 'Nmap schedule', '',  'text', '', '' , str(NMAP_RUN_SCHD) , 'Nmap'),
-        ('NMAP_ARGS', 'Nmap custom arguments', '',  'text', '', '' , str(NMAP_ARGS) , 'Nmap')
-        
-
-    ]
+    NMAP_ACTIVE = ccd('NMAP_ACTIVE', NMAP_ACTIVE , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
+    NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', NMAP_TIMEOUT , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
+    NMAP_RUN = ccd('NMAP_RUN', NMAP_RUN , c_d, 'Nmap enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Nmap')
+    NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', NMAP_RUN_SCHD , c_d, 'Nmap schedule', 'text', '', 'Nmap')
+    NMAP_ARGS = ccd('NMAP_ARGS', NMAP_ARGS , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
+    
     # Insert into DB    
     sql.execute ("DELETE FROM Settings")
     
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", settings)
+         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
 
 
     # Used to determine the next import
@@ -1917,8 +1834,7 @@ def cleanResult(str):
     str = str.replace("._googlecast", "")
     str = str.replace(".lan", "")
     str = str.replace(".home", "")
-    # Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77 (remove 32 chars at the end matching a regex?)
-
+    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
     str = str.replace(".", "")
 
     return str
@@ -1934,13 +1850,10 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
     index = 0
     for result in allRes:
         if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and '._googlezone' not in result["Value"]:
-            # found entries with a matching MAC address, let's collect indexes 
-            # pholusMatchesAll.append([list(item) for item in result]) 
+            # found entries with a matching MAC address, let's collect indexes             
             pholusMatchesIndexes.append(index)
 
         index += 1
-
-    # file_print('pholusMatchesIndexes:', len(pholusMatchesIndexes))       
 
     # return if nothing found
     if len(pholusMatchesIndexes) == 0:
@@ -1954,15 +1867,13 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
     for i in pholusMatchesIndexes:
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
             return allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0]
-
     
     # second best - contains airplay
     # Matches for example: 
     # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
     for i in pholusMatchesIndexes:
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
-    
+            return cleanResult(allRes[i]["Value"].split('"')[1])    
 
     # Contains PTR Class:32769
     # Matches for example: 
@@ -1971,14 +1882,12 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
             return cleanResult(allRes[i]["Value"].split('"')[1])
 
-
     # Contains AAAA Class:IN
     # Matches for example: 
     # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
     for i in pholusMatchesIndexes:
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
             return cleanResult(allRes[i]["Value"].split('.local.')[0])
-
 
     # Contains _googlecast._tcp.local. PTR Class:IN
     # Matches for example: 
@@ -1987,7 +1896,6 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
             return cleanResult(allRes[i]["Value"].split('"')[1])
 
-
     # Contains A Class:32769
     # Matches for example: 
     # Android.local. A Class:32769 "192.168.1.6"
@@ -1995,14 +1903,12 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
             return cleanResult(allRes[i]["Value"].split(' A Class:32769')[0])
 
-
     # # Contains PTR Class:IN
     # Matches for example: 
     # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
     for i in pholusMatchesIndexes:
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
             return cleanResult(allRes[i]["Value"].split('"')[1])
-
 
     return -1
     
@@ -2013,19 +1919,6 @@ def resolve_device_name_dig (pMAC, pIP):
     newName = ""
 
     try :
-        # pMACstr = str(pMAC)
-        
-        # # Check MAC parameter
-        # mac = pMACstr.replace (':','')
-        # # file_print( ">>>>>> DIG >>>>>")
-        # if len(pMACstr) != 17 or len(mac) != 12 :
-        #     return -2
-
-        # DEBUG
-        # file_print(pMAC, pIP)
-
-        # Resolve name with DIG
-        # file_print( ">>>>>> DIG1 >>>>>")
         dig_args = ['dig', '+short', '-x', pIP]
 
         # Execute command
@@ -2037,8 +1930,6 @@ def resolve_device_name_dig (pMAC, pIP):
             file_print(e.output)            
             # newName = "Error - check logs"
             return -1
-
-        # file_print( ">>>>>> DIG2 >>>>> Name", newName)
 
         # Check returns
         newName = newName.strip()

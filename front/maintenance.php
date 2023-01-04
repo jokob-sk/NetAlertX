@@ -184,7 +184,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         <li class="active">
-          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_Settings');?></a>
+          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_UISettings');?></a>
         </li>
         <li>
           <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab"><?php echo lang('Maintenance_Tools_Tab_Tools');?></a>
