@@ -50,7 +50,6 @@ confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
-STOPARPSCAN = pialertPath + "/db/setting_stoparpscan"
 
 # Global variables
 
@@ -205,6 +204,8 @@ piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
 # GENERAL settings
 # ----------------------
+ENABLE_ARPSCAN          = True
+SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
 PRINT_LOG               = False
 TIMEZONE                = 'Europe/Berlin'
 PIALERT_WEB_PROTECTION  = False
@@ -212,7 +213,7 @@ PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020
 INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']  
 SCAN_CYCLE_MINUTES      = 5            
 
-SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
+
 
 DAYS_TO_KEEP_EVENTS     = 90
 
@@ -354,7 +355,7 @@ def importConfig ():
     # Specify globals so they can be overwritten with the new config
     global lastTimeImported
     # General
-    global SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
+    global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
     # Email
     global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS
     # Webhooks
@@ -391,6 +392,8 @@ def importConfig ():
 
     # Import setting if found in the dictionary
     # General
+
+    ENABLE_ARPSCAN = check_config_dict('ENABLE_ARPSCAN', ENABLE_ARPSCAN , config_dict) 
     SCAN_SUBNETS = check_config_dict('SCAN_SUBNETS', SCAN_SUBNETS , config_dict)
     PRINT_LOG = check_config_dict('PRINT_LOG', PRINT_LOG , config_dict)
     TIMEZONE = check_config_dict('TIMEZONE', TIMEZONE , config_dict)
@@ -475,6 +478,7 @@ def importConfig ():
     settings = [
 
         # General
+        ('ENABLE_ARPSCAN', 'Enable arpscan', '',  'boolean', '', '' , str(ENABLE_ARPSCAN) , 'General'),
         ('SCAN_SUBNETS', 'Subnets to scan', '',  'subnets', '', '' , str(SCAN_SUBNETS) , 'General'),
         ('PRINT_LOG', 'Print additional logging', '',  'boolean', '', '' , str(PRINT_LOG) , 'General'),
         ('TIMEZONE', 'Time zone', '',  'text', '', '' ,str(TIMEZONE) , 'General'),
@@ -704,26 +708,26 @@ def main ():
                     performNmapScan(get_all_devices())
 
             # Perform an arp-scan if not disabled with a file
-            if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started and os.path.exists(STOPARPSCAN) == False:
+            if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 cycle = 1 # network scan
                 scan_network() 
-
-            # Check if new devices need to be scanned with Nmap
-            if NMAP_ACTIVE:
-                sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
-                        WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime""")
-
-                rows = sql.fetchall()
-                commitDB()
-                
-                performNmapScan(rows)
             
             # Reporting   
             if cycle in check_report:         
                 send_notifications()
+
+                # Check if new devices need to be scanned with Nmap
+                if NMAP_ACTIVE:
+                    sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
+                            WHERE eve_PendingAlertEmail = 1
+                            AND eve_EventType = 'New Device'
+                            ORDER BY eve_DateTime""")
+
+                    rows = sql.fetchall()
+                    commitDB()
+                    
+                    performNmapScan(rows)
 
             # clean up the DB once a day
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
@@ -1094,10 +1098,12 @@ def scan_network ():
     # ScanCycle data        
     cycle_interval  = scanCycle_data['cic_EveryXmin']
     
-    # arp-scan command    
-    file_print('    arp-scan start')    
-    arpscan_devices = execute_arpscan ()
-    print_log ('arp-scan ends')
+    # arp-scan command
+    arpscan_devices = []
+    if ENABLE_ARPSCAN:    
+        file_print('    arp-scan start')    
+        arpscan_devices = execute_arpscan ()
+        print_log ('arp-scan ends')
     
     # DEBUG - print number of rows updated    
     # file_print('aspr-scan result:', len(arpscan_devices))
@@ -1292,11 +1298,12 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
                 (cycle,))
 
-    # Insert new arp-scan devices
-    sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
-                     "    cur_IP, cur_Vendor, cur_ScanMethod) "+
-                     "VALUES ("+ str(cycle) + ", :mac, :ip, :hw, 'arp-scan')",
-                     p_arpscan_devices) 
+    if len(p_arpscan_devices) > 0:
+        # Insert new arp-scan devices
+        sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
+                        "    cur_IP, cur_Vendor, cur_ScanMethod) "+
+                        "VALUES ("+ str(cycle) + ", :mac, :ip, :hw, 'arp-scan')",
+                        p_arpscan_devices) 
 
     # Insert Pi-hole devices
     sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, 
@@ -1706,8 +1713,6 @@ def update_devices_names ():
     foundDig = 0
     foundPholus = 0
 
-    # Devices without name
-    file_print('        Trying to resolve devices without name')
     # BUGFIX #97 - Updating name of Devices w/o IP    
     sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','', '(name not found)') AND dev_LastIP <> '-'")
     unknownDevices = sql.fetchall() 
@@ -1716,6 +1721,13 @@ def update_devices_names ():
     # perform Pholus scan if (unknown) devices found
     if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
         performPholusScan(PHOLUS_TIMEOUT)
+
+    # skip checks if no unknown devices
+    if len(unknownDevices) == 0 and PHOLUS_FORCE == False:
+        return
+
+    # Devices without name
+    file_print('        Trying to resolve devices without name')
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
@@ -1764,65 +1776,68 @@ def update_devices_names ():
 
 #-------------------------------------------------------------------------------
 def performNmapScan(devicesToScan):
-    timeoutSec = NMAP_TIMEOUT
 
-    updateState("Scan: Nmap")
+    if len(devicesToScan) > 0:
 
-    file_print('[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device')  
+        timeoutSec = NMAP_TIMEOUT
 
-    file_print("        Estimated max delay: ", (len(devicesToScan) * int(timeoutSec)), 's ', '(', round((len(devicesToScan) * int(timeoutSec))/60,1) , 'min)' )
+        updateState("Scan: Nmap")
 
-    for device in devicesToScan:
-        # Execute command
-        output = ""
-        # prepare arguments from user supplied ones
-        nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
+        file_print('[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device')  
 
-        try:
-            # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
-            output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            file_print(e.output)
-            file_print("        Error - Nmap Scan - check logs")            
-        except subprocess.TimeoutExpired as timeErr:
-            file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"]) 
+        file_print("        Estimated max delay: ", (len(devicesToScan) * int(timeoutSec)), 's ', '(', round((len(devicesToScan) * int(timeoutSec))/60,1) , 'min)' )
 
-        if output == "": # check if the subprocess failed                    
-            file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
-        else: 
-            file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"])
-        
-        #  check the last run output        
-        newLines = output.split('\n')
+        for device in devicesToScan:
+            # Execute command
+            output = ""
+            # prepare arguments from user supplied ones
+            nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
 
-        # regular logging
-        for line in newLines:
-            append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
-        
-        # collect ports
-        params = []
+            try:
+                # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
+                output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
+            except subprocess.CalledProcessError as e:
+                # An error occured, handle it
+                file_print(e.output)
+                file_print("        Error - Nmap Scan - check logs")            
+            except subprocess.TimeoutExpired as timeErr:
+                file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"]) 
 
-        index = 0
-        startCollecting = False
-        duration = "" 
-        for line in newLines:            
-            if 'Starting Nmap' in line:
-                if len(newLines) > index+1 and 'Note: Host seems down' in newLines[index+1]:
-                    break # this entry is empty
-            elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:
-                startCollecting = True
-            elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
-                startCollecting = False # end reached
-            elif startCollecting and len(line.split()) == 3:                
-                params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
-            elif 'Nmap done' in line:
-                duration = line.split('scanned in ')[1]            
-        index += 1
+            if output == "": # check if the subprocess failed                    
+                file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
+            else: 
+                file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"])
+            
+            #  check the last run output        
+            newLines = output.split('\n')
 
-        if len(params) > 0:                
-            sql.executemany ("""INSERT INTO Nmap_Scan ("MAC", "Time", "Port",   "State", "Service", "Extra") VALUES (?, ?, ?, ?, ?, ?)""", params) 
-            commitDB ()
+            # regular logging
+            for line in newLines:
+                append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
+            
+            # collect ports
+            params = []
+
+            index = 0
+            startCollecting = False
+            duration = "" 
+            for line in newLines:            
+                if 'Starting Nmap' in line:
+                    if len(newLines) > index+1 and 'Note: Host seems down' in newLines[index+1]:
+                        break # this entry is empty
+                elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:
+                    startCollecting = True
+                elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
+                    startCollecting = False # end reached
+                elif startCollecting and len(line.split()) == 3:                
+                    params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
+                elif 'Nmap done' in line:
+                    duration = line.split('scanned in ')[1]            
+            index += 1
+
+            if len(params) > 0:                
+                sql.executemany ("""INSERT INTO Nmap_Scan ("MAC", "Time", "Port",   "State", "Service", "Extra") VALUES (?, ?, ?, ?, ?, ?)""", params) 
+                commitDB ()
 
 
 #-------------------------------------------------------------------------------

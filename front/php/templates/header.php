@@ -276,4 +276,3 @@ if ($ENABLED_DARKMODE === True) {
 
 
 </script>
-

@@ -73,16 +73,6 @@ $pia_db = str_replace('front', 'db', getcwd()).'/pialert.db';
 $pia_db_size = number_format((filesize($pia_db) / 1000000),2,",",".") . ' MB';
 $pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
 
-// Pause Arp Scan ---------------------------------------------------------------
-
-if (!file_exists('../db/setting_stoparpscan')) {
-  $execstring = 'ps -f -u root | grep "sudo arp-scan" 2>&1';
-  $pia_arpscans = "";
-  exec($execstring, $pia_arpscans);
-  $pia_arpscans_result = sizeof($pia_arpscans).' '.lang('Maintenance_arp_status_on');
-} else {
-  $pia_arpscans_result = '<span style="color:red;">arp-Scan '.lang('Maintenance_arp_status_off') .'</span>';
-}
 
 // Count and Calc Backups -------------------------------------------------------
 
@@ -183,12 +173,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                         <div class="db_info_table_cell">
                             <?php echo $Pia_Archive_count.' '.lang('Maintenance_database_backup_found').' / '.lang('Maintenance_database_backup_total').': '.$Pia_Archive_diskusage;?>
                         </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?php echo lang('Maintenance_arp_status');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $pia_arpscans_result;?></div>
-                    </div>
+                    </div>                    
                 </div>                
               </div>
               <!-- /.box-body -->
@@ -264,13 +249,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                             <button type="button" class="btn bg-green dbtools-button" id="btnPiaEnableDarkmode" onclick="askPiaEnableDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_darkmode_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-yellow dbtools-button" id="btnPiaToggleArpScan" onclick="askPiaToggleArpScan()"><?php echo lang('Maintenance_Tool_arpscansw');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_arpscansw_text');?></div>
-                    </div>
+                    </div>                    
                 </div>
         </div>
         <div class="tab-pane" id="tab_DBTools">

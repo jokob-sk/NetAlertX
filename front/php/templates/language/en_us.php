@@ -438,6 +438,8 @@ $lang['en_us'] = array(
 'settings_imported' => 'Last time settings were imported from the pialert.conf file:',
 
 //General
+'ENABLE_ARPSCAN_name' => 'Enable ARP scan',
+'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
 

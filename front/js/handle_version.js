@@ -11,13 +11,21 @@ function handleVersion(){
       if(release_timestamp > build_timestamp + 600 )
       {
         console.log("New release!")
+        // handling the navigation menu icon
         $('#version').attr("class", $('#version').attr("class").replace("myhidden", ""))
-        $('#new-version-text').attr("class", $('#new-version-text').attr("class").replace("myhidden", ""))
-        
+
+        maintenanceDiv = $('#new-version-text')
       }
       else{
-        console.log("All up-to-date!")        
-        $('#current-version-text').attr("class", $('#current-version-text').attr("class").replace("myhidden", ""))        
+        console.log("All up-to-date!")    
+
+        maintenanceDiv = $('#current-version-text')  
+      }
+
+      // handling the maintenance section message      
+      if(emptyArr.includes(maintenanceDiv) == false && $(maintenanceDiv).length != 0)
+      { 
+        $(maintenanceDiv).attr("class", $(maintenanceDiv).attr("class").replace("myhidden", ""))
       }
     } 
 

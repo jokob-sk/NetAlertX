@@ -559,25 +559,6 @@ function PiaEnableDarkmode() {
      }
   }
 
-
-//------------------------------------------------------------------------------
-//  Toggle on/off Arp-Scans
-//------------------------------------------------------------------------------
-function PiaToggleArpScan() {
-  $file = '../../../db/setting_stoparpscan';
-  global $pia_lang;
-
-  if (file_exists($file)) {
-      echo lang('BackDevices_Arpscan_enabled');
-      unlink($file);
-      echo("<meta http-equiv='refresh' content='1'>");
-     } else {
-      echo lang('BackDevices_Arpscan_disabled');
-      $startarpscan = fopen($file, 'w');
-      echo("<meta http-equiv='refresh' content='1'>");
-     }
-  }
-
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status
 //------------------------------------------------------------------------------
