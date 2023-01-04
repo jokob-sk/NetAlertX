@@ -51,6 +51,10 @@ dbPath = '/db/pialert.db'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 
+vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
+piholeDB               = '/etc/pihole/pihole-FTL.db'
+piholeDhcpleases       = '/etc/pihole/dhcp.leases'
+
 # Global variables
 
 userSubnets = []
@@ -90,6 +94,8 @@ def logResult (stdout, stderr):
         append_file_binary (logPath + '/stdout.log', stdout)  
 
 #-------------------------------------------------------------------------------
+PRINT_LOG = False
+
 def print_log (pText):
     global log_timestamp
 
@@ -191,115 +197,6 @@ if dbR_access == False or confR_access == False:
     if checkPermissionsOK() == False: # second check 
         fixPermissions()
 
-
-#===============================================================================
-# USER CONFIG VARIABLES - DEFAULTS
-#===============================================================================
-
-vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
-piholeDB               = '/etc/pihole/pihole-FTL.db'
-piholeDhcpleases       = '/etc/pihole/dhcp.leases'
-
-# INITIALIZE VARIABLES from pialert.conf
-
-# GENERAL settings
-# ----------------------
-ENABLE_ARPSCAN          = True
-SCAN_SUBNETS            = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']
-PRINT_LOG               = False
-TIMEZONE                = 'Europe/Berlin'
-PIALERT_WEB_PROTECTION  = False
-PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
-INCLUDED_SECTIONS       = ['internet', 'new_devices', 'down_devices', 'events']  
-SCAN_CYCLE_MINUTES      = 5            
-
-
-
-DAYS_TO_KEEP_EVENTS     = 90
-
-# EMAIL settings
-# ----------------------
-SMTP_SERVER             = ''
-SMTP_PORT               = 587
-SMTP_USER               = ''
-SMTP_PASS               = ''
-SMTP_SKIP_TLS           = False
-SMTP_SKIP_LOGIN	        = False
-
-REPORT_MAIL             = False
-REPORT_FROM             = 'Pi.Alert <' + SMTP_USER +'>'
-REPORT_TO               = 'user@gmail.com'
-REPORT_DASHBOARD_URL    = 'http://pi.alert/'
-
-# Webhook settings
-# ----------------------
-REPORT_WEBHOOK          = False
-WEBHOOK_URL             = ''
-WEBHOOK_PAYLOAD         = 'json'       
-WEBHOOK_REQUEST_METHOD  = 'GET'        
-
-# Apprise settings
-#-----------------------
-REPORT_APPRISE          = False
-APPRISE_URL = ''
-APPRISE_HOST = ''
-
-# NTFY (https://ntfy.sh/) settings
-# ----------------------
-REPORT_NTFY             = False
-NTFY_USER = ''
-NTFY_PASSWORD = ''
-NTFY_TOPIC = ''
-NTFY_HOST = 'https://ntfy.sh'
-
-# PUSHSAFER (https://www.pushsafer.com/) settings
-# ----------------------
-REPORT_PUSHSAFER        = False
-PUSHSAFER_TOKEN         = 'ApiKey'
-
-# MQTT settings
-# ----------------------
-REPORT_MQTT = False
-MQTT_BROKER = ''
-MQTT_PORT   = ''
-MQTT_CLIENT_ID = 'PiAlert'
-MQTT_USER = ''
-MQTT_PASSWORD = ''
-MQTT_QOS = 0
-MQTT_DELAY_SEC = 2
-
-# DynDNS
-# ----------------------
-DDNS_ACTIVE             = False
-DDNS_DOMAIN             = 'your_domain.freeddns.org'
-DDNS_USER               = 'dynu_user'
-DDNS_PASSWORD           = 'A0000000B0000000C0000000D0000000'
-DDNS_UPDATE_URL         = 'https://api.dynu.com/nic/update?'
-
-# PIHOLE settings
-# ----------------------
-PIHOLE_ACTIVE           = False                         
-DHCP_ACTIVE             = False                         
-
-
-# Pholus settings
-# ----------------------
-PHOLUS_ACTIVE           = False
-PHOLUS_TIMEOUT          = 20
-PHOLUS_FORCE            = False
-PHOLUS_DAYS_DATA        = 0
-PHOLUS_RUN              = 'once'
-PHOLUS_RUN_TIMEOUT      = 600
-PHOLUS_RUN_SCHD         = '0 4 * * *'
-
-# Nmap settings
-# ----------------------
-NMAP_ACTIVE             = True
-NMAP_TIMEOUT            = 120
-NMAP_RUN                = 'none'
-NMAP_RUN_SCHD           = '0 2 * * *'
-NMAP_ARGS               = '-p -10000'
-
 #===============================================================================
 # Initialise user defined values
 #===============================================================================
@@ -398,85 +295,85 @@ def importConfig ():
 
     # Import setting if found in the dictionary
     # General
-    ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', ENABLE_ARPSCAN , c_d, 'Enable arpscan', 'boolean', '', 'General') 
-    SCAN_SUBNETS = ccd('SCAN_SUBNETS', SCAN_SUBNETS , c_d, 'Subnets to scan', 'subnets', '', 'General')
-    PRINT_LOG = ccd('PRINT_LOG', PRINT_LOG , c_d, 'Print additional logging', 'boolean', '', 'General')
-    TIMEZONE = ccd('TIMEZONE', TIMEZONE , c_d, 'Time zone', 'text', '', 'General')
-    PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', PIALERT_WEB_PROTECTION , c_d, 'Enable logon', 'boolean', '', 'General')
-    PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', PIALERT_WEB_PASSWORD , c_d, 'Logon password', 'readonly', '', 'General')
-    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', INCLUDED_SECTIONS , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", 'General')
-    SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', SCAN_CYCLE_MINUTES , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
-    DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', DAYS_TO_KEEP_EVENTS , c_d, 'Delete events days', 'integer', '', 'General')
-    REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', REPORT_DASHBOARD_URL , c_d, 'PiAlert URL', 'text', '', 'General')
+    ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General') 
+    SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')
+    PRINT_LOG = ccd('PRINT_LOG', False , c_d, 'Print additional logging', 'boolean', '', 'General')
+    TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
+    PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
+    PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
+    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", 'General')
+    SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', 5 , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
+    DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
+    REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
 
     # Email
-    REPORT_MAIL = ccd('REPORT_MAIL', REPORT_MAIL , c_d, 'Enable email', 'boolean', '', 'Email')
-    SMTP_SERVER = ccd('SMTP_SERVER', SMTP_SERVER , c_d,'SMTP server URL', 'text', '', 'Email')
-    SMTP_PORT = ccd('SMTP_PORT', SMTP_PORT , c_d, 'SMTP port', 'integer', '', 'Email')
-    REPORT_TO = ccd('REPORT_TO', REPORT_TO , c_d, 'Email to', 'text', '', 'Email')
-    REPORT_FROM = ccd('REPORT_FROM', REPORT_FROM , c_d, 'Email Subject', 'text', '', 'Email')
-    SMTP_SKIP_LOGIN = ccd('SMTP_SKIP_LOGIN', SMTP_SKIP_LOGIN , c_d, 'SMTP skip login', 'boolean', '', 'Email')
-    SMTP_USER = ccd('SMTP_USER', SMTP_USER , c_d, 'SMTP user', 'text', '', 'Email')
-    SMTP_PASS = ccd('SMTP_PASS', SMTP_PASS , c_d, 'SMTP password', 'password', '', 'Email')
-    SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', SMTP_SKIP_TLS , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
+    REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email')
+    SMTP_SERVER = ccd('SMTP_SERVER', '' , c_d,'SMTP server URL', 'text', '', 'Email')
+    SMTP_PORT = ccd('SMTP_PORT', 587 , c_d, 'SMTP port', 'integer', '', 'Email')
+    REPORT_TO = ccd('REPORT_TO', 'user@gmail.com' , c_d, 'Email to', 'text', '', 'Email')
+    REPORT_FROM = ccd('REPORT_FROM', 'Pi.Alert <user@gmail.com>' , c_d, 'Email Subject', 'text', '', 'Email')
+    SMTP_SKIP_LOGIN = ccd('SMTP_SKIP_LOGIN', False , c_d, 'SMTP skip login', 'boolean', '', 'Email')
+    SMTP_USER = ccd('SMTP_USER', '' , c_d, 'SMTP user', 'text', '', 'Email')
+    SMTP_PASS = ccd('SMTP_PASS', '' , c_d, 'SMTP password', 'password', '', 'Email')
+    SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', False , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
 
     # Webhooks
-    REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', REPORT_WEBHOOK , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks')
-    WEBHOOK_URL = ccd('WEBHOOK_URL', WEBHOOK_URL , c_d, 'Target URL', 'text', '', 'Webhooks')
-    WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', WEBHOOK_PAYLOAD , c_d, 'Payload type', 'selecttext', "['json', 'html', 'text']", 'Webhooks')
-    WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', WEBHOOK_REQUEST_METHOD , c_d, 'Req type', 'selecttext', "['GET', 'POST', 'PUT']", 'Webhooks')
+    REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks')
+    WEBHOOK_URL = ccd('WEBHOOK_URL', '' , c_d, 'Target URL', 'text', '', 'Webhooks')
+    WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'selecttext', "['json', 'html', 'text']", 'Webhooks')
+    WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'selecttext', "['GET', 'POST', 'PUT']", 'Webhooks')
 
     # Apprise
-    REPORT_APPRISE = ccd('REPORT_APPRISE', REPORT_APPRISE , c_d, 'Enable Apprise', 'boolean', '', 'Apprise')
-    APPRISE_HOST = ccd('APPRISE_HOST', APPRISE_HOST , c_d, 'Apprise host URL', 'text', '', 'Apprise')
-    APPRISE_URL = ccd('APPRISE_URL', APPRISE_URL , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
+    REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise')
+    APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
+    APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
 
     # NTFY
-    REPORT_NTFY = ccd('REPORT_NTFY', REPORT_NTFY , c_d, 'Enable NTFY', 'boolean', '', 'NTFY')
-    NTFY_HOST = ccd('NTFY_HOST', NTFY_HOST , c_d, 'NTFY host URL', 'text', '', 'NTFY')
-    NTFY_TOPIC = ccd('NTFY_TOPIC', NTFY_TOPIC , c_d, 'NTFY topic', 'text', '', 'NTFY')
-    NTFY_USER = ccd('NTFY_USER', NTFY_USER , c_d, 'NTFY user', 'text', '', 'NTFY')
-    NTFY_PASSWORD = ccd('NTFY_PASSWORD', NTFY_PASSWORD , c_d, 'NTFY password', 'password', '', 'NTFY')
+    REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY')
+    NTFY_HOST = ccd('NTFY_HOST', 'https://ntfy.sh' , c_d, 'NTFY host URL', 'text', '', 'NTFY')
+    NTFY_TOPIC = ccd('NTFY_TOPIC', '' , c_d, 'NTFY topic', 'text', '', 'NTFY')
+    NTFY_USER = ccd('NTFY_USER', '' , c_d, 'NTFY user', 'text', '', 'NTFY')
+    NTFY_PASSWORD = ccd('NTFY_PASSWORD', '' , c_d, 'NTFY password', 'password', '', 'NTFY')
 
     # PUSHSAFER
-    REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', REPORT_PUSHSAFER , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER')
-    PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', PUSHSAFER_TOKEN , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
+    REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER')
+    PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
 
     # MQTT
-    REPORT_MQTT = ccd('REPORT_MQTT', REPORT_MQTT , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
-    MQTT_BROKER = ccd('MQTT_BROKER', MQTT_BROKER , c_d, 'MQTT broker', 'text', '', 'MQTT')
-    MQTT_PORT = ccd('MQTT_PORT', MQTT_PORT , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
-    MQTT_USER = ccd('MQTT_USER', MQTT_USER , c_d, 'MQTT user', 'text', '', 'MQTT')
-    MQTT_PASSWORD = ccd('MQTT_PASSWORD', MQTT_PASSWORD , c_d, 'MQTT password', 'password', '', 'MQTT')
-    MQTT_QOS = ccd('MQTT_QOS', MQTT_QOS , c_d, 'MQTT Quality of Service', 'selectinteger', "['0', '1', '2']", 'MQTT')
-    MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', MQTT_DELAY_SEC , c_d, 'MQTT delay', 'selectinteger', "['2', '3', '4', '5']", 'MQTT')
+    REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
+    MQTT_BROKER = ccd('MQTT_BROKER', '' , c_d, 'MQTT broker', 'text', '', 'MQTT')
+    MQTT_PORT = ccd('MQTT_PORT', 1883 , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
+    MQTT_USER = ccd('MQTT_USER', '' , c_d, 'MQTT user', 'text', '', 'MQTT')
+    MQTT_PASSWORD = ccd('MQTT_PASSWORD', '' , c_d, 'MQTT password', 'password', '', 'MQTT')
+    MQTT_QOS = ccd('MQTT_QOS', 0 , c_d, 'MQTT Quality of Service', 'selectinteger', "['0', '1', '2']", 'MQTT')
+    MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', 2 , c_d, 'MQTT delay', 'selectinteger', "['2', '3', '4', '5']", 'MQTT')
 
     # DynDNS
-    DDNS_ACTIVE = ccd('DDNS_ACTIVE', DDNS_ACTIVE , c_d, 'Enable DynDNS', 'boolean', '', 'DynDNS')
-    DDNS_DOMAIN = ccd('DDNS_DOMAIN', DDNS_DOMAIN , c_d, 'DynDNS domain URL', 'text', '', 'DynDNS')
-    DDNS_USER = ccd('DDNS_USER', DDNS_USER , c_d, 'DynDNS user', 'text', '', 'DynDNS')
-    DDNS_PASSWORD = ccd('DDNS_PASSWORD', DDNS_PASSWORD , c_d, 'DynDNS password', 'password', '', 'DynDNS')
-    DDNS_UPDATE_URL = ccd('DDNS_UPDATE_URL', DDNS_UPDATE_URL , c_d, 'DynDNS update URL', 'text', '', 'DynDNS')
+    DDNS_ACTIVE = ccd('DDNS_ACTIVE', False , c_d, 'Enable DynDNS', 'boolean', '', 'DynDNS')
+    DDNS_DOMAIN = ccd('DDNS_DOMAIN', 'your_domain.freeddns.org' , c_d, 'DynDNS domain URL', 'text', '', 'DynDNS')
+    DDNS_USER = ccd('DDNS_USER', 'dynu_user' , c_d, 'DynDNS user', 'text', '', 'DynDNS')
+    DDNS_PASSWORD = ccd('DDNS_PASSWORD', 'A0000000B0000000C0000000D0000000' , c_d, 'DynDNS password', 'password', '', 'DynDNS')
+    DDNS_UPDATE_URL = ccd('DDNS_UPDATE_URL', 'https://api.dynu.com/nic/update?' , c_d, 'DynDNS update URL', 'text', '', 'DynDNS')
 
     # PiHole
-    PIHOLE_ACTIVE = ccd('PIHOLE_ACTIVE',  PIHOLE_ACTIVE, c_d, 'Enable PiHole mapping', 'boolean', '', 'PiHole')
-    DHCP_ACTIVE = ccd('DHCP_ACTIVE', DHCP_ACTIVE , c_d, 'Enable PiHole DHCP', 'boolean', '', 'PiHole')
+    PIHOLE_ACTIVE = ccd('PIHOLE_ACTIVE',  False, c_d, 'Enable PiHole mapping', 'boolean', '', 'PiHole')
+    DHCP_ACTIVE = ccd('DHCP_ACTIVE', False , c_d, 'Enable PiHole DHCP', 'boolean', '', 'PiHole')
 
     # PHOLUS
-    PHOLUS_ACTIVE = ccd('PHOLUS_ACTIVE', PHOLUS_ACTIVE , c_d, 'Enable Pholus scans', 'boolean', '', 'Pholus')
-    PHOLUS_TIMEOUT = ccd('PHOLUS_TIMEOUT', PHOLUS_TIMEOUT , c_d, 'Pholus timeout', 'integer', '', 'Pholus')
-    PHOLUS_FORCE = ccd('PHOLUS_FORCE', PHOLUS_FORCE , c_d, 'Pholus force check', 'boolean', '', 'Pholus')
-    PHOLUS_RUN = ccd('PHOLUS_RUN', PHOLUS_RUN , c_d, 'Pholus enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Pholus')
-    PHOLUS_RUN_TIMEOUT = ccd('PHOLUS_RUN_TIMEOUT', PHOLUS_RUN_TIMEOUT , c_d, 'Pholus timeout schedule', 'integer', '', 'Pholus')   
-    PHOLUS_RUN_SCHD = ccd('PHOLUS_RUN_SCHD', PHOLUS_RUN_SCHD , c_d, 'Pholus schedule', 'text', '', 'Pholus')
-    PHOLUS_DAYS_DATA = ccd('PHOLUS_DAYS_DATA', PHOLUS_DAYS_DATA , c_d, 'Pholus keep days', 'integer', '', 'Pholus')
+    PHOLUS_ACTIVE = ccd('PHOLUS_ACTIVE', False , c_d, 'Enable Pholus scans', 'boolean', '', 'Pholus')
+    PHOLUS_TIMEOUT = ccd('PHOLUS_TIMEOUT', 20 , c_d, 'Pholus timeout', 'integer', '', 'Pholus')
+    PHOLUS_FORCE = ccd('PHOLUS_FORCE', False , c_d, 'Pholus force check', 'boolean', '', 'Pholus')
+    PHOLUS_RUN = ccd('PHOLUS_RUN', 'once' , c_d, 'Pholus enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Pholus')
+    PHOLUS_RUN_TIMEOUT = ccd('PHOLUS_RUN_TIMEOUT', 600 , c_d, 'Pholus timeout schedule', 'integer', '', 'Pholus')   
+    PHOLUS_RUN_SCHD = ccd('PHOLUS_RUN_SCHD', '0 4 * * *' , c_d, 'Pholus schedule', 'text', '', 'Pholus')
+    PHOLUS_DAYS_DATA = ccd('PHOLUS_DAYS_DATA', 0 , c_d, 'Pholus keep days', 'integer', '', 'Pholus')
     
     # Nmap
-    NMAP_ACTIVE = ccd('NMAP_ACTIVE', NMAP_ACTIVE , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
-    NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', NMAP_TIMEOUT , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
-    NMAP_RUN = ccd('NMAP_RUN', NMAP_RUN , c_d, 'Nmap enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Nmap')
-    NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', NMAP_RUN_SCHD , c_d, 'Nmap schedule', 'text', '', 'Nmap')
-    NMAP_ARGS = ccd('NMAP_ARGS', NMAP_ARGS , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
+    NMAP_ACTIVE = ccd('NMAP_ACTIVE', True , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
+    NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', 150 , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
+    NMAP_RUN = ccd('NMAP_RUN', 'none' , c_d, 'Nmap enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Nmap')
+    NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', '0 2 * * *' , c_d, 'Nmap schedule', 'text', '', 'Nmap')
+    NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
     
     # Insert into DB    
     sql.execute ("DELETE FROM Settings")
@@ -2703,7 +2600,7 @@ def mqtt_create_client():
             mqtt_connected_to_broker = False
 
 
-    client = mqtt_client.Client(MQTT_CLIENT_ID)   # Set Connecting Client ID    
+    client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
     client.username_pw_set(MQTT_USER, MQTT_PASSWORD)    
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
