@@ -376,11 +376,9 @@ def importConfig ():
     NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
     
     # Insert into DB    
-    sql.execute ("DELETE FROM Settings")
-    
+    sql.execute ("DELETE FROM Settings")    
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
-
 
     # Used to determine the next import
     lastTimeImported = time.time()
@@ -411,11 +409,6 @@ def importConfig ():
     updateSubnets()
 
     file_print('[', timeNow(), '] Config: Imported new config')  
-#-------------------------------------------------------------------------------
-
-#===============================================================================
-# USER CONFIG VARIABLES - END
-#===============================================================================
 
 #===============================================================================
 # MAIN
@@ -433,6 +426,8 @@ last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and than once a week
 
+# indicates, if a new version is available
+newVersionAvailable = False
 
 def main ():
     # Initialize global variables
@@ -474,6 +469,8 @@ def main ():
             startTime = startTime.replace (microsecond=0)      
 
             # determine run/scan type based on passed time
+
+            # check for changes in Internet IP
             if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
                 cycle = 'internet_IP'                
                 last_internet_IP_scan = time_started
@@ -521,7 +518,7 @@ def main ():
                     nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performNmapScan(get_all_devices())
 
-            # Perform an arp-scan if not disabled with a file
+            # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 cycle = 1 # network scan
@@ -1025,14 +1022,6 @@ def execute_arpscan ():
         if device['mac'] not in unique_mac: 
             unique_mac.append(device['mac'])
             unique_devices.append(device)    
-
-    # DEBUG
-        # file_print(devices_list)
-        # file_print(unique_mac)
-        # file_print(unique_devices)
-        # file_print(len(devices_list))
-        # file_print(len(unique_mac))
-        # file_print(len(unique_devices))
 
     # return list
     return unique_devices
@@ -2692,8 +2681,6 @@ def mqtt_start():
 #===============================================================================
 # DB
 #===============================================================================
-
-
 #-------------------------------------------------------------------------------
 def upgradeDB (): 
 
@@ -2776,7 +2763,8 @@ def upgradeDB ():
     ('Front_Devices_Rows', '100'),
     ('Front_Details_Tab', 'tabDetails'),
     ('Back_Settings_Imported', round(time.time() * 1000)),
-    ('Back_App_State', 'Initializing')
+    ('Back_App_State', 'Initializing'), 
+    ('Back_New_Version_Available', False)
     ] 
 
     sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
@@ -3000,7 +2988,6 @@ def get_device_stats():
       """)
 
     row = sql.fetchone()
-
     commitDB()
 
     return row
@@ -3027,32 +3014,34 @@ def hide_email(email):
     return email    
 
 #-------------------------------------------------------------------------------
-def isNewVersion():    
+def isNewVersion():   
+    global newVersionAvailable
 
-    f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
-    buildTimestamp = int(f.read().strip())
-    f.close() 
+    if newVersionAvailable == False:    
 
-    url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
-    text = url.text
+        f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
+        buildTimestamp = int(f.read().strip())
+        f.close() 
 
-    data = json.loads(text)
-    
-    # Debug
-    write_file (logPath + '/pialert_version_new.json', json.dumps(data)) 
+        url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+        text = url.text
 
-    # make sure we received a valid response and not an API rate limit exceeded message
-    if len(data) > 0 and  "published_at" in data:
-    
-        dateTimeStr = data[0]["published_at"]
+        data = json.loads(text)
 
-        realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+        # make sure we received a valid response and not an API rate limit exceeded message
+        if len(data) > 0 and "published_at" in data[0]:        
+        
+            dateTimeStr = data[0]["published_at"]
 
-        if realeaseTimestamp > buildTimestamp + 600:        
-            file_print("here")
-            return True    
+            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
-    return False
+            if realeaseTimestamp > buildTimestamp + 600:        
+                file_print("    New version of the container available!")
+                newVersionAvailable = True 
+                sql.execute ("UPDATE Parameters SET par_Value='"+ str(newVersionAvailable) +"' WHERE par_ID='Back_New_Version_Available'") 
+
+    return newVersionAvailable
+
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling

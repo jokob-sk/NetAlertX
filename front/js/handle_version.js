@@ -51,7 +51,7 @@ function handleVersion(){
           release_timestamp = new Date(release_datetime).getTime() / 1000;          
 
           // cache value
-          setCookie("release_timestamp", release_timestamp, 5);
+          setCookie("release_timestamp", release_timestamp, 30);
 
           handleVersion();
         }
