@@ -99,12 +99,12 @@ CommitDB();
               // text - textbox
               if($set['Type'] == 'text' ) 
               {
-                $input = '<input class="form-control input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
+                $input = '<input class="form-control" onChange="settingsChanged()" input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
               } 
               // password - hidden text
               elseif ($set['Type'] == 'password')
               {
-                $input = '<input class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
+                $input = '<input onChange="settingsChanged()" class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
               }
               // readonly 
               elseif ($set['Type'] == 'readonly')
@@ -116,17 +116,17 @@ CommitDB();
               {
                 $checked = "";
                 if ($set['Value'] == "True") { $checked = "checked";};
-                $input = '<input class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
+                $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
               }
               // integer - number input
               elseif ($set['Type'] == 'integer')
               {
-                $input = '<input class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
+                $input = '<input onChange="settingsChanged()" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
               }
               // selecttext - dropdown
               elseif ($set['Type'] == 'selecttext')
               {
-                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
                 
                 $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
@@ -145,7 +145,7 @@ CommitDB();
               // selectinteger - dropdown
               elseif ($set['Type'] == 'selectinteger')
               {
-                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
 
                 $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
@@ -165,7 +165,7 @@ CommitDB();
               // multiselect
               elseif ($set['Type'] == 'multiselect')
               {
-                $input = '<select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
+                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
 
                 $values = createArray($set['Value']);
                 $options = createArray($set['Options']);
@@ -187,7 +187,7 @@ CommitDB();
                 $input = $input.
                 '<div class="row form-group">
                   <div class="col-xs-6">
-                    <input class="form-control " id="ipMask" type="text" placeholder="192.168.1.0/24"/>
+                    <input class="form-control" id="ipMask" type="text" placeholder="192.168.1.0/24"/>
                   </div>';
                 // Add interface button
                 $input = $input.
@@ -275,12 +275,15 @@ CommitDB();
 
       $('#ipMask').val('');
       $('#ipInterface').val('');
+
+      settingsChanged();
     }
   }
 
   // ---------------------------------------------------------
   function removeInterfaces()
   {
+    settingsChanged();
     $('#SCAN_SUBNETS').empty();
   }
 
@@ -337,6 +340,8 @@ CommitDB();
           // $("#result").html(data);    
           // console.log(data);
           showModalOk ('Result', data );
+          // Remove navigation prompt "Are you sure you want to leave..."
+          window.onbeforeunload = null;
         }
       });
     }
@@ -378,8 +383,15 @@ CommitDB();
     });
   }
 
-  // ---------------------------------------------------------
+  // --------------------------------------------------------- 
 
+  function settingsChanged()
+  {
+    // Enable navigation prompt ... "Are you sure you want to leave..."
+    window.onbeforeunload = function() {  
+      return true;
+    };
+  }
 
 
 </script>
@@ -389,8 +401,5 @@ CommitDB();
   // ---------------------------------------------------------
   // Show last time settings have been imported
   getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
-
-
-
 
 </script>
