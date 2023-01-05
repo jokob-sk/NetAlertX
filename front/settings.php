@@ -383,16 +383,6 @@ CommitDB();
     });
   }
 
-  // --------------------------------------------------------- 
-
-  function settingsChanged()
-  {
-    // Enable navigation prompt ... "Are you sure you want to leave..."
-    window.onbeforeunload = function() {  
-      return true;
-    };
-  }
-
 
 </script>
 

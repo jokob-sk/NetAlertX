@@ -12,6 +12,7 @@ require '/home/pi/pialert/front/php/templates/timezone.php';
 require '/home/pi/pialert/front/php/templates/skinUI.php';
 
 
+
 $FUNCTION = [];
 $SETTINGS = [];
 
@@ -34,6 +35,10 @@ if ($FUNCTION  == 'savesettings')
 elseif ($FUNCTION  == 'cleanLog')
 {
   cleanLog($SETTINGS);
+}
+elseif ($FUNCTION  == 'saveNmapPort' && array_key_exists('index', $_REQUEST) && array_key_exists('value', $_REQUEST) )
+{
+  saveNmapPort($_REQUEST['index'], $_REQUEST['value']);
 }
 
 //------------------------------------------------------------------------------
@@ -280,6 +285,29 @@ function saveSettings()
     FALSE, TRUE, TRUE, TRUE);    
 
 }
+
+// -------------------------------------------------------------------------------------------
+function saveNmapPort($portIndex, $value)
+{
+  if(is_integer($portIndex))
+  {
+    $value = escapeString($value);
+
+    // sql
+    $sql = 'UPDATE Nmap_Scan SET Extra = "'. quotes($value) .'" WHERE Index="' . $portIndex .'"';
+    // update Data
+    $result = $db->query($sql);
+
+    // check result
+    if ($result == TRUE) {
+      echo lang('Gen_Upd');
+    } else {
+      echo lang('Gen_Upd_Fail')."\n\n$sql \n\n". $db->lastErrorMsg();
+    }
+  }
+  echo "asdasdasasd";
+}
+// -------------------------------------------------------------------------------------------
 
 function getString ($codeName, $default) {
 

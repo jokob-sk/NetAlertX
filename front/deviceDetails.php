@@ -686,7 +686,7 @@ if ($ENABLED_DARKMODE === True) {
 
   mac                     = getMac()  // can also be rowID!! not only mac 
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
-  var pos                 = -1;
+  var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
   var parTab              = 'Front_Details_Tab';
   var parSessionsRows     = 'Front_Details_Sessions_Rows';
@@ -783,13 +783,6 @@ function main () {
             }
           });
 
-          // Ask before exit without saving data
-          window.onbeforeunload = function(){
-            if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-              return 'Are you sure you want to discard unsaved changes?';
-            }
-          };
-
         });
       });
 
@@ -841,7 +834,7 @@ function initializeiCheck () {
       setParameter (parEventsHide, event.currentTarget.checked);
     } else {
       // Activate save & restore
-      activateSaveRestoreData();
+      // activateSaveRestoreData();
 
       // Ask skip notifications
       // if (event.currentTarget.id == 'chkArchived' ) {
@@ -1342,8 +1335,7 @@ function getDeviceData (readAllData=false) {
         if (deviceData['dev_RandomMAC'] == 1)        {$('#iconRandomMACactive').removeClass   ('hidden');
                                                       $('#iconRandomMACinactive').addClass    ('hidden'); }
         else                                         {$('#iconRandomMACactive').addClass      ('hidden');
-                                                      $('#iconRandomMACinactive').removeClass ('hidden'); };
-        deactivateSaveRestoreData ();
+                                                      $('#iconRandomMACinactive').removeClass ('hidden'); };        
       }
 
       // Check if device is part of the devicesList      
@@ -1388,8 +1380,49 @@ function getDeviceData (readAllData=false) {
 // cycle between devices
 function recordSwitch(direction) {
 
-  var recordToSave = null;
+  if(somethingChanged)
+  {
+    showModalDefaultStrParam ('Unsaved changes', 'Do you want to discard your changes?',
+      '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', performSwitch, direction);
+  } else
+  {    
+    performSwitch(direction)
+  }
 
+  // // update the global position in the devices list variable 'pos'
+  // if(direction == "next")
+  // {
+  //   // Next Record
+  //   if (pos < (devicesList.length-1) ) {
+  //     pos++;
+  //   }
+  // }else if (direction == "prev")
+  // {
+  //   if (pos > 0) {
+  //     pos--;
+  //   }
+  // }
+
+  // // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
+  // // mac = params.mac;
+  // mac = devicesList[pos].mac.toString();
+  
+  // // Save Changes
+  // // if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
+  // //   setDeviceData (direction, recordSwitch);    
+  // // }
+  
+  // getDeviceData (true); 
+
+  // // reload current tab
+  // reloadTab()
+
+}
+
+function performSwitch(direction)
+{
+  somethingChanged = false;
+  
   // update the global position in the devices list variable 'pos'
   if(direction == "next")
   {
@@ -1404,20 +1437,21 @@ function recordSwitch(direction) {
     }
   }
 
+  console.log('here ' + pos)
+
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
   mac = devicesList[pos].mac.toString();
   
   // Save Changes
-  if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-    setDeviceData (direction, recordSwitch);    
-  }
+  // if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
+  //   setDeviceData (direction, recordSwitch);    
+  // }
   
   getDeviceData (true); 
 
   // reload current tab
   reloadTab()
-
 }
 
 // -----------------------------------------------------------------------------
@@ -1447,9 +1481,7 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&newdevice='      + ($('#chkNewDevice')[0].checked * 1)
     + '&archived='       + ($('#chkArchived')[0].checked * 1)
     , function(msg) {
-
-    // deactivate button 
-    deactivateSaveRestoreData ();
+    
     showMessage (msg);
 
     // clear session storage 
@@ -1458,6 +1490,10 @@ function setDeviceData (direction='', refreshCallback='') {
     setCache("#dropdownGroup","");
     setCache("#dropdownLocation","");
     setCache("#dropdownNetworkNodeMac","");
+
+    // Remove navigation prompt "Are you sure you want to leave..."
+    window.onbeforeunload = null;
+    somethingChanged      = false;
 
     // Callback fuction
     if (typeof refreshCallback == 'function') {
@@ -1491,8 +1527,7 @@ function skipNotifications () {
   }
 
   // Set cycle 0
-  $('#txtScanCycle').val ('no');
-  activateSaveRestoreData();
+  $('#txtScanCycle').val ('no');  
 }
 
 // -----------------------------------------------------------------------------
@@ -1581,32 +1616,13 @@ function getDeviceEvents () {
 
 // -----------------------------------------------------------------------------
 // Activate save & restore on any value change
-$(document).on('input', 'input:text', function() {
-  activateSaveRestoreData();
+$(document).on('input', 'input:text', function() {  
+  settingsChanged();
 });
-
-$(document).on('input', 'textarea', function() {
-  activateSaveRestoreData();
-});
-
-
-// -----------------------------------------------------------------------------
-function activateSaveRestoreData () {
-  $('#btnRestore').removeAttr ('disabled');
-  $('#btnSave').removeAttr ('disabled');
-}
-
-
-function deactivateSaveRestoreData () {
-  //$('#btnRestore').attr ('disabled','');
-  $('#btnSave').attr ('disabled','');
-}
-
 
 // -----------------------------------------------------------------------------
 function setTextValue (textElement, textValue) {
-  $('#'+textElement).val (textValue);
-  activateSaveRestoreData ();
+  $('#'+textElement).val (textValue);  
 }
 
 // -----------------------------------------------------------------------------
@@ -1647,10 +1663,7 @@ function initializeTabsNew () {
 
 function loadNmap()
 {
-    // console.log(mac)
-    // console.log('php/server/devices.php?action=getPholus&mac='+ mac)
-
-    $(".deviceSpecific").remove();
+    $(".deviceSpecific").remove(); // remove any previous data listed in teh table
     
     $.get('php/server/devices.php?action=getNmap&mac='+ mac, function(data) {
       
@@ -1660,20 +1673,26 @@ function loadNmap()
       {
         var listData = JSON.parse(data);
         var order = 1;
-        
-        // console.log(listData)
 
-        // console.log(listData[0].MAC)
 
         tableRows = "";
 
         // for each item
         listData.forEach(function (item, index) {                    
-          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Time+'</td><td>'+item.Port+'</td><td>'+item.State+'</td><td>'+item.Service+'</td><td>'+item.Extra+'</td></tr>'; 
+          tableRows += '<tr class="deviceSpecific"><td>'
+                      +item.Index+'</td><td>'
+                      +item.Time+'</td><td>'
+                      +item.Port+'</td><td>'
+                      +item.State+'</td><td>'
+                      +item.Service+'</td><td>'
+                      +'<div class="input-group">\
+                            <input class="form-control" id="port_'+item.Index+'" type="text" value="'+item.Extra+'">\
+                            <span class="input-group-addon"><i class="fa fa-save " onclick="saveNmapPort('+item.Index+')"></i></span>\
+                            </div>\
+                      </td></tr>';
         });        
         
-        $("#tableNmapBody").html($("#tableNmapBody").html()+tableRows);
-        // $("#tablePholusPlc").attr("style", "display:none");
+        $("#tableNmapBody").html($("#tableNmapBody").html()+tableRows);        
         $("#tableNmapPlc").hide();
       }
       else
@@ -1689,10 +1708,7 @@ function loadNmap()
 
 function loadPholus()
 {
-    // console.log(mac)
-    // console.log('php/server/devices.php?action=getPholus&mac='+ mac)
-
-    $(".deviceSpecific").remove();
+    $(".deviceSpecific").remove(); // remove any previous data listed in teh table
     
     $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
       
@@ -1702,20 +1718,15 @@ function loadPholus()
       {
         var listData = JSON.parse(data);
         var order = 1;
-        
-        // console.log(listData)
-
-        // console.log(listData[0].MAC)
 
         tableRows = "";
 
         // for each item
         listData.forEach(function (item, index) {                    
-          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+item.Extra+'</td></tr>'; 
+          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+ item.Extra +'</td></tr>'; 
         });        
         
-        $("#tablePholusBody").html($("#tablePholusBody").html()+tableRows);
-        // $("#tablePholusPlc").attr("style", "display:none");
+        $("#tablePholusBody").html($("#tablePholusBody").html()+tableRows);        
         $("#tablePholusPlc").hide();
       }
       else
@@ -1775,8 +1786,6 @@ function loadPholus()
 //       // $(".deviceSpecific").remove();
 //     } 
 
-
-    
     
 //   });
 // }
@@ -1855,6 +1864,11 @@ function reloadTab()
   {
     loadNmap();
   }
+}
+
+function saveNmapPort(index)
+{
+  saveData('saveNmapPort',index , $('#port_'+index).val())
 }
 
 

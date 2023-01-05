@@ -49,6 +49,28 @@
   </div>
   <!-- /.modal-dialog -->
 </div>
+
+<!-- Modal Default Str -->
+<div class="modal fade" id="modal-str" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="modal-str-title" class="modal-title"> Modal Default Title </h4>
+      </div>
+
+      <div id="modal-str-message" class="modal-body"> Modal Default message </div>
+
+      <div class="modal-footer">
+        <button id="modal-str-cancel" type="button" class="btn btn-default pull-left" style="min-width: 80px;" data-dismiss="modal">       Cancel </button>
+        <button id="modal-str-OK"     type="button" class="btn btn-primary"           style="min-width: 80px;" > OK     </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
           
 
 <!-- Modal warning -->

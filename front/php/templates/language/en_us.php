@@ -20,6 +20,8 @@ $lang['en_us'] = array(
 'Gen_Restore' => 'Run Restore',
 'Gen_Switch' => 'Switch',
 'Gen_AreYouSure' => 'Are you sure?',
+'Gen_Upd' => 'Updated successfully',
+'Gen_Upd_Fail' => 'Update failed',
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022

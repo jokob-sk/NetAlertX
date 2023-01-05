@@ -118,6 +118,24 @@ function showModalDefault (title, message, btnCancel, btnOK, callbackFunction) {
 }
 
 // -----------------------------------------------------------------------------
+
+function showModalDefaultStrParam (title, message, btnCancel, btnOK, callbackFunction, param='') {
+  // set captions
+  $('#modal-str-title').html   (title);
+  $('#modal-str-message').html (message);
+  $('#modal-str-cancel').html  (btnCancel);
+  $('#modal-str-OK').html      (btnOK);
+  $("#modal-str-OK").off("click"); //remove existing handlers
+  $('#modal-str-OK').on('click', function (){ 
+    $('#modal-str').modal('hide');
+    callbackFunction(param)
+  })
+
+  // Show modal
+  $('#modal-str').modal('show');
+}
+
+// -----------------------------------------------------------------------------
 function showModalWarning (title, message, btnCancel, btnOK, callbackFunction) {
   // set captions
   $('#modal-warning-title').html   (title);
@@ -199,6 +217,25 @@ function setParameter (parameter, value) {
 }
 
 
+// -----------------------------------------------------------------------------  
+function saveData(functionName, index, value) {
+
+  console.log(functionName + ' ' + index +' ' + value)
+
+  $.ajax({
+    method: "POST",
+    url: "/home/pi/pialert/front/php/server/util.php",
+    data: { function: functionName, index: index, value:value  },
+    success: function(data) {      
+        // console.log(data);
+        showModalOk ('Result', data );
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+      }
+  });
+
+}
+
 // -----------------------------------------------------------------------------
 function sleep(milliseconds) {
   const date = Date.now();
@@ -208,6 +245,16 @@ function sleep(milliseconds) {
   } while (currentDate - date < milliseconds);
 }
 
+// --------------------------------------------------------- 
+somethingChanged = false;
+function settingsChanged()
+{
+  somethingChanged = true;
+  // Enable navigation prompt ... "Are you sure you want to leave..."
+  window.onbeforeunload = function() {  
+    return true;
+  };
+}
 
 // -----------------------------------------------------------------------------
 function translateHTMLcodes (text) {
