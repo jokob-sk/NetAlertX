@@ -525,9 +525,7 @@ def main ():
                 scan_network() 
             
             # Reporting   
-            if cycle in check_report:         
-                send_notifications()
-
+            if cycle in check_report:
                 # Check if new devices need to be scanned with Nmap
                 if NMAP_ACTIVE:
                     sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
@@ -539,6 +537,9 @@ def main ():
                     commitDB()
                     
                     performNmapScan(rows)
+
+                # send all configured notifications
+                send_notifications()
 
             # clean up the DB once a day
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
@@ -1584,17 +1585,22 @@ def performNmapScan(devicesToScan):
 
         timeoutSec = NMAP_TIMEOUT
 
+        devTotal = len(devicesToScan)
+
         updateState("Scan: Nmap")
 
         file_print('[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device')  
 
-        file_print("        Estimated max delay: ", (len(devicesToScan) * int(timeoutSec)), 's ', '(', round((len(devicesToScan) * int(timeoutSec))/60,1) , 'min)' )
+        file_print("        Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' )
 
+        devIndex = 0
         for device in devicesToScan:
             # Execute command
             output = ""
             # prepare arguments from user supplied ones
             nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
+
+            progress = ' (' + str(devIndex) + '/' + str(devTotal) + ')'
 
             try:
                 # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
@@ -1602,14 +1608,16 @@ def performNmapScan(devicesToScan):
             except subprocess.CalledProcessError as e:
                 # An error occured, handle it
                 file_print(e.output)
-                file_print("        Error - Nmap Scan - check logs")            
+                file_print("        Error - Nmap Scan - check logs", progress)            
             except subprocess.TimeoutExpired as timeErr:
-                file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"]) 
+                file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"], progress) 
 
             if output == "": # check if the subprocess failed                    
-                file_print('[', timeNow(), '] Scan: Nmap FAIL - check logs') 
+                file_print('[', timeNow(), '] Scan: Nmap FAIL for ', device["dev_LastIP"], progress ,' check logs for details') 
             else: 
-                file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"])
+                file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"], progress)
+
+            devIndex += 1
             
             #  check the last run output        
             newLines = output.split('\n')
