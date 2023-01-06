@@ -33,7 +33,7 @@ The system continuously scans the network for, **New devices**, **New connection
 
 ## 🧩 Notification Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
-   - Webhooks ([sample JSON](docs/webhook_json_sample.json))
+   - [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) ([sample JSON](docs/webhook_json_sample.json))
    - Home Assistant via [MQTT](https://www.home-assistant.io/integrations/mqtt/) 
      - discovery ~10s per device, deleting not supported, use [MQTT Explorer](https://mqtt-explorer.com/) for now
 
