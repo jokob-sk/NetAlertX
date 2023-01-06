@@ -1513,6 +1513,7 @@ function askDeleteDeviceEvents () {
     '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDeviceEvents');
 }
 
+// -----------------------------------------------------------------------------
 function deleteDeviceEvents () {
   // Check MAC
   if (mac == '') {
@@ -1645,23 +1646,28 @@ function loadNmap()
         var listData = JSON.parse(data);
         var order = 1;
 
-
         tableRows = "";
 
         // for each item
         listData.forEach(function (item, index) {                    
-          tableRows += '<tr class="deviceSpecific"><td>'
-                      +item.Index+'</td><td>'
-                      +item.Time+'</td><td><a href="http://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">'
-                      +item.Port+'</a><a href="https://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank"><span style="padding-left:5px"><i class="fa fa-lock "></i></a></span></td><td>'
-                      +item.State+'</td><td>'
-                      +item.Service+'</td><td>'
-                      +'<div class="input-group">\
-                            <input class="form-control" id="port_'+item.Index+'" type="text" value="'+item.Extra+'">\
-                            <span class="input-group-addon"><i class="fa fa-save " onclick="saveNmapPort('+item.Index+')"></i></span>\
+          tableRows += '<tr class="deviceSpecific">\
+                          <td>'+item.Index+'</td>\
+                          <td>'+item.Time+'</td>\
+                          <td>\
+                            <a href="http://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">'+item.Port+'</a>\
+                            <a href="https://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">\
+                              <span style="padding-left:5px"><i class="fa fa-lock "></i></a></span>\
+                          </td>\
+                          <td>'+item.State+'</td>\
+                          <td>'+item.Service+'</td>\
+                          <td>\
+                            <div class="input-group">\
+                              <input class="form-control" id="port_'+item.Index+'" type="text" value="'+item.Extra+'">\
+                              <span class="input-group-addon"><i class="fa fa-save " onclick="saveNmapPort('+item.Index+')"></i></span>\
                             </div>\
-                      </td></tr>';
-        });        
+                          </td>\
+                        </tr>';
+                        });        
         
         $("#tableNmapBody").html($("#tableNmapBody").html()+tableRows);        
         $("#tableNmapPlc").hide();
@@ -1708,58 +1714,6 @@ function loadPholus()
       }        
     });
 }
-
-// function loadPholus()
-// {
-//   tableId = "tablePholus";
-  
-  
-//   $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
-    
-
-//     console.log("here URL mac:" + mac)
-//     console.log("here table mac:" + $("#"+tableId).attr("data-mac"))
-//     console.log("here")
-
-//     // check if already initialized
-//     if($("#"+tableId).attr("data-mac") == mac)
-//     {
-//       console.log("return")
-//       return;
-//     }
-
-
-
-//   initTable(tableId, mac);
-
-//     data = sanitize(data);      
-
-//     if(data != "false" && $.trim(data) != [])
-//     {
-//       var listData = JSON.parse(data);
-//       var order = 1;
-
-//       tableRows = "";
-
-//       // for each item
-//       listData.forEach(function (item, index) {                    
-//         tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+item.Extra+'</td></tr>'; 
-//       });        
-      
-//       $("#tablePholus tbody").first().html(tableRows);
-//       // $("#tablePholusPlc").attr("style", "display:none");
-//       // $("#tablePholusPlc").hide();
-//     }
-//     else
-//     {
-//       // console.log("else")
-//       // $("#tablePholusPlc").show();
-//       // $(".deviceSpecific").remove();
-//     } 
-
-    
-//   });
-// }
 
 //-----------------------------------------------------------------------------------
 

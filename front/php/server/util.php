@@ -10,28 +10,14 @@
 
 require '/home/pi/pialert/front/php/templates/timezone.php';
 require '/home/pi/pialert/front/php/templates/skinUI.php';
-// require '/home/pi/pialert/front/php/templates/language/lang.php';
-// require '/home/pi/pialert/front/php/server/db.php';
-
-
 
 $FUNCTION = [];
 $SETTINGS = [];
 
-// displayMessage($_REQUEST);
-
-
-// echo 'hereeeeeeeeeeeeeeeeeeeeee1';
-
 // init request params
 if(array_key_exists('function', $_REQUEST) != FALSE)
 {  
-  displayMessage(array_key_exists('function', $_REQUEST));
-  displayMessage(array_key_exists('index', $_REQUEST));
-  displayMessage(array_key_exists('value', $_REQUEST));
-  $FUNCTION = $_REQUEST['function'];
-  displayMessage($FUNCTION);
- 
+  $FUNCTION = $_REQUEST['function']; 
 }
 
 if(array_key_exists('settings', $_REQUEST) != FALSE)
@@ -78,18 +64,22 @@ function createArray($input){
   return $options;
 }
 
+// -------------------------------------------------------------------------------------------
 function formatDate ($date1) {
   return date_format (new DateTime ($date1) , 'Y-m-d   H:i');
 }
 
+// -------------------------------------------------------------------------------------------
 function formatDateDiff ($date1, $date2) {
   return date_diff (new DateTime ($date1), new DateTime ($date2 ) )-> format ('%ad   %H:%I');
 }
 
+// -------------------------------------------------------------------------------------------
 function formatDateISO ($date1) {
   return date_format (new DateTime ($date1),'c');
 }
 
+// -------------------------------------------------------------------------------------------
 function formatEventDate ($date1, $eventType) {
   if (!empty ($date1) ) {
     $ret = formatDate ($date1);
@@ -102,6 +92,7 @@ function formatEventDate ($date1, $eventType) {
   return $ret;
 }
 
+// -------------------------------------------------------------------------------------------
 function formatIPlong ($IP) {
   return sprintf('%u', ip2long($IP) );
 }
@@ -310,19 +301,25 @@ function getString ($codeName, $default) {
   return $default;
 }
 
+// -------------------------------------------------------------------------------------------
+
 function getDateFromPeriod () {
   $period = $_REQUEST['period'];    
   return '"'. date ('Y-m-d', strtotime ('+1 day -'. $period) ) .'"';
 }
 
+// -------------------------------------------------------------------------------------------
 function quotes ($text) {
   return str_replace ('"','""',$text);
 }
     
+// -------------------------------------------------------------------------------------------
 function logServerConsole ($text) {
   $x = array();
   $y = $x['__________'. $text .'__________'];
 }
+
+// -------------------------------------------------------------------------------------------
 
 function getNetworkTypes(){
 
@@ -333,6 +330,7 @@ function getNetworkTypes(){
   return $array;
 }
 
+// -------------------------------------------------------------------------------------------
 function getDevicesColumns(){
 
   $columns = ["dev_MAC", 
@@ -375,7 +373,7 @@ function getCache($key) {
     return "";
   }
 }
-
+// -------------------------------------------------------------------------------------------
 function setCache($key, $value) {
   setcookie($key,  $value, time()+300, "/","", 0); // 5min cache
 }
