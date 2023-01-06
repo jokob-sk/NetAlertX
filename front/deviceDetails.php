@@ -149,7 +149,10 @@
                       <div class="form-group">
                         <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Name');?></label>
                         <div class="col-sm-9">
-                          <input class="form-control" id="txtName" type="text" value="--">
+                          <div class="input-group">
+                            <input class="form-control" id="txtName" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtName');"></i></span>
+                          </div>
                         </div>
                       </div>
 
@@ -1388,36 +1391,9 @@ function recordSwitch(direction) {
   {    
     performSwitch(direction)
   }
-
-  // // update the global position in the devices list variable 'pos'
-  // if(direction == "next")
-  // {
-  //   // Next Record
-  //   if (pos < (devicesList.length-1) ) {
-  //     pos++;
-  //   }
-  // }else if (direction == "prev")
-  // {
-  //   if (pos > 0) {
-  //     pos--;
-  //   }
-  // }
-
-  // // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
-  // // mac = params.mac;
-  // mac = devicesList[pos].mac.toString();
-  
-  // // Save Changes
-  // // if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-  // //   setDeviceData (direction, recordSwitch);    
-  // // }
-  
-  // getDeviceData (true); 
-
-  // // reload current tab
-  // reloadTab()
-
 }
+
+// -----------------------------------------------------------------------------
 
 function performSwitch(direction)
 {
@@ -1437,17 +1413,12 @@ function performSwitch(direction)
     }
   }
 
-  console.log('here ' + pos)
+  // console.log('here ' + pos)
 
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
   mac = devicesList[pos].mac.toString();
-  
-  // Save Changes
-  // if ( ! document.getElementById('btnSave').hasAttribute('disabled') ) {
-  //   setDeviceData (direction, recordSwitch);    
-  // }
-  
+    
   getDeviceData (true); 
 
   // reload current tab
@@ -1681,8 +1652,8 @@ function loadNmap()
         listData.forEach(function (item, index) {                    
           tableRows += '<tr class="deviceSpecific"><td>'
                       +item.Index+'</td><td>'
-                      +item.Time+'</td><td>'
-                      +item.Port+'</td><td>'
+                      +item.Time+'</td><td><a href="http://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">'
+                      +item.Port+'</a><a href="https://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank"><span style="padding-left:5px"><i class="fa fa-lock "></i></a></span></td><td>'
                       +item.State+'</td><td>'
                       +item.Service+'</td><td>'
                       +'<div class="input-group">\
@@ -1790,6 +1761,7 @@ function loadPholus()
 //   });
 // }
 
+//-----------------------------------------------------------------------------------
 
 function initTable(tableId, mac){
 
@@ -1821,29 +1793,31 @@ function initTable(tableId, mac){
   // Processing
   'processing'  : true,
   'language'    : {
-    processing: '<table><td width="130px" align="middle">Loading...</td>'+
-                '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
-                '</td></table>',
-    emptyTable: 'No data',
-    "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
-    "search":     "<?php echo lang('Events_Searchbox');?>: ",
-    "paginate": {
-        "next":       "<?php echo lang('Events_Table_nav_next');?>",
-        "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
-    },
-    "info":           "<?php echo lang('Events_Table_info');?>",
-  }
-});
+      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
+                  '</td></table>',
+      emptyTable: 'No data',
+      "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
+      "search":     "<?php echo lang('Events_Searchbox');?>: ",
+      "paginate": {
+          "next":       "<?php echo lang('Events_Table_nav_next');?>",
+          "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+      },
+      "info":           "<?php echo lang('Events_Table_info');?>",
+    }
+  });
 
-$("#"+tableId).attr("data-mac", mac)
+  $("#"+tableId).attr("data-mac", mac)
 
-// Save Parameters rows & order when changed
-$('#'+tableId).on( 'length.dt', function ( e, settings, len ) {
-  setParameter (parSessionsRows, len);
+  // Save Parameters rows & order when changed
+  $('#'+tableId).on( 'length.dt', function ( e, settings, len ) {
+    setParameter (parSessionsRows, len);
 
-} );
+  } );
 
 }
+
+//-----------------------------------------------------------------------------------
 
 window.onload = function async()
 {
@@ -1851,6 +1825,8 @@ window.onload = function async()
 
   reloadTab();
 }
+
+//-----------------------------------------------------------------------------------
 
 function reloadTab()
 {
@@ -1866,9 +1842,11 @@ function reloadTab()
   }
 }
 
+//-----------------------------------------------------------------------------------
+
 function saveNmapPort(index)
 {
-  saveData('saveNmapPort',index , $('#port_'+index).val())
+  saveData('saveNmapPort', index, $('#port_'+index).val())
 }
 
 

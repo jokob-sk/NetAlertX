@@ -171,7 +171,7 @@ function modalWarningOK () {
 }
 
 // -----------------------------------------------------------------------------
-
+// remove unnecessary lines from the result
 function sanitize(data)
 {
   return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
@@ -205,12 +205,12 @@ function setParameter (parameter, value) {
       sleep (200);
       $.get('php/server/parameters.php?action=set&parameter=' + parameter +
         '&value='+ value,
-      function(data) {
-        if (data != "OK") {
-         // alert (data);
-        } else {
-        // alert ("OK. Second attempt");
-        };
+        function(data) {
+          if (data != "OK") {
+          // alert (data);
+          } else {
+          // alert ("OK. Second attempt");
+          };
       } );
     };
   } );
@@ -219,18 +219,22 @@ function setParameter (parameter, value) {
 
 // -----------------------------------------------------------------------------  
 function saveData(functionName, index, value) {
-
-  console.log(functionName + ' ' + index +' ' + value)
-
   $.ajax({
-    method: "POST",
-    url: "/home/pi/pialert/front/php/server/util.php",
-    data: { function: functionName, index: index, value:value  },
+    method: "GET",
+    url: "php/server/devices.php",
+    data: { action: functionName, index: index, value:value  },
     success: function(data) {      
-        // console.log(data);
-        showModalOk ('Result', data );
-        // Remove navigation prompt "Are you sure you want to leave..."
-        window.onbeforeunload = null;
+        
+        if(sanitize(data) == 'OK')
+        {
+          showMessage("Saved")
+          // Remove navigation prompt "Are you sure you want to leave..."
+          window.onbeforeunload = null;
+        } else
+        {
+          showMessage("ERROR")
+        }        
+
       }
   });
 

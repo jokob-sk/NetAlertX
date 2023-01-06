@@ -56,7 +56,8 @@
       case 'getGroups':               getGroups();                             break;
       case 'getLocations':            getLocations();                          break;
       case 'getPholus':               getPholus();                             break;
-      case 'getNmap':                 getNmap();                             break;
+      case 'getNmap':                 getNmap();                               break;
+      case 'saveNmapPort':            saveNmapPort();                          break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -145,7 +146,6 @@ function getDeviceData() {
 //------------------------------------------------------------------------------
 function setDeviceData() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = 'UPDATE Devices SET
@@ -184,7 +184,6 @@ function setDeviceData() {
 //------------------------------------------------------------------------------
 function deleteDevice() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = 'DELETE FROM Devices WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
@@ -203,8 +202,7 @@ function deleteDevice() {
 //  Delete all devices with empty MAC addresses
 //------------------------------------------------------------------------------
 function deleteAllWithEmptyMACs() {
-  global $db;
-  global $pia_lang;
+  global $db;  
 
   // sql
   $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
@@ -223,8 +221,7 @@ function deleteAllWithEmptyMACs() {
 //  Delete all devices with empty MAC addresses
 //------------------------------------------------------------------------------
 function deleteUnknownDevices() {
-  global $db;
-  global $pia_lang;
+  global $db;  
 
   // sql
   $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)"';
@@ -244,7 +241,6 @@ function deleteUnknownDevices() {
 //------------------------------------------------------------------------------
 function deleteDeviceEvents() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = 'DELETE FROM Events WHERE eve_MAC="' . $_REQUEST['mac'] .'"';
@@ -264,7 +260,6 @@ function deleteDeviceEvents() {
 //------------------------------------------------------------------------------
 function deleteAllDevices() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = 'DELETE FROM Devices';
@@ -284,8 +279,6 @@ function deleteAllDevices() {
 //------------------------------------------------------------------------------
 function deleteEvents() {
   global $db;
-  global $pia_lang;
-
   // sql
   $sql = 'DELETE FROM Events';
   // execute sql
@@ -304,7 +297,6 @@ function deleteEvents() {
 //------------------------------------------------------------------------------
 function deleteEvents30() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', '-30 day')";
@@ -324,7 +316,6 @@ function deleteEvents30() {
 //------------------------------------------------------------------------------
 function deleteActHistory() {
   global $db;
-  global $pia_lang;
 
   // sql
   $sql = 'DELETE FROM Online_History';
@@ -346,8 +337,7 @@ function PiaBackupDBtoArchive() {
   // prepare fast Backup
   $file = '../../../db/pialert.db';
   $newfile = '../../../db/pialert.db.latestbackup';
-  global $pia_lang;
-
+  
   // copy files as a fast Backup
   if (!copy($file, $newfile)) {
       echo lang('BackDevices_Backup_CopError');
@@ -374,8 +364,7 @@ function PiaBackupDBtoArchive() {
 function PiaRestoreDBfromArchive() {
   // prepare fast Backup
   $file = '../../../db/pialert.db';
-  $oldfile = '../../../db/pialert.db.prerestore';
-  global $pia_lang;
+  $oldfile = '../../../db/pialert.db.prerestore';  
 
   // copy files as a fast Backup
   if (!copy($file, $oldfile)) {
@@ -399,8 +388,7 @@ function PiaRestoreDBfromArchive() {
 //------------------------------------------------------------------------------
 //  Purge Backups
 //------------------------------------------------------------------------------
-function PiaPurgeDBBackups() {
-  global $pia_lang;
+function PiaPurgeDBBackups() {  
 
   $Pia_Archive_Path = '../../../db';
   $Pia_Backupfiles = array();
@@ -485,8 +473,7 @@ function ImportCSV() {
 
   if (file_exists($file)) {
 
-    global $db;
-    global $pia_lang;
+    global $db;    
 
     $error = "";
 
@@ -545,8 +532,7 @@ function ImportCSV() {
 //  Toggle Dark/Light Themes
 //------------------------------------------------------------------------------
 function PiaEnableDarkmode() {
-  $file = '../../../db/setting_darkmode';
-  global $pia_lang;
+  $file = '../../../db/setting_darkmode';  
 
   if (file_exists($file)) {
       echo lang('BackDevices_darkmode_disabled');
@@ -948,7 +934,8 @@ function getNmap() {
     throw new Exception('Invalid mac address');
   }
   else{
-    $sql = 'SELECT * from Nmap_Scan where MAC ="'.$mac.'" ';
+    // $sql = 'SELECT * from Nmap_Scan where MAC ="'.$mac.'" ';
+    $sql = 'select * from (select * from Nmap_Scan  INNER JOIN Devices on Nmap_Scan.MAC = Devices.dev_MAC) where MAC = "'.$mac.'" ';
 
     // array 
     $tableData = array();
@@ -963,6 +950,7 @@ function getNmap() {
                             'Time'          => $row['Time'],
                             'State'         => $row['State'],
                             'Service'       => $row['Service'],                            
+                            'IP'            => $row['dev_LastIP'],                            
                             'Extra'         => $row['Extra']);
     }
 
@@ -975,6 +963,33 @@ function getNmap() {
     }
   }
 }
+
+// -------------------------------------------------------------------------------------------
+
+function saveNmapPort()
+{
+
+  $portIndex = $_REQUEST['index'];
+  $value = $_REQUEST['value'];
+ 
+  if(is_integer((int)$portIndex))
+  {
+    global $db;
+     // sql
+    $sql = 'UPDATE Nmap_Scan SET "Extra" = "'. $value .'" WHERE "Index"=' . $portIndex ;
+    // update Data
+    $result = $db->query($sql);
+
+    // check result
+    if ($result == TRUE) {
+      echo 'OK';
+    } else {
+      echo 'KO';
+    }
+  }
+  // echo "asdasdasasd";
+}
+
 
 //------------------------------------------------------------------------------
 //  Status Where conditions
