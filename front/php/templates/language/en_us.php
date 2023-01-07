@@ -439,10 +439,11 @@ $lang['en_us'] = array(
 'settings_missing_block' => 'You can\'t save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.',
 'settings_old' => 'The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved in the <code>pialert.conf</code> file, but the background process didn\'t have time to import it yet to the DB. You can wait until the settings get refreshed so you don\'t overwrite your old values. Feel free to save your settings either way if you don\'t mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.',
 'settings_imported' => 'Last time settings were imported from the pialert.conf file:',
+'settings_expand_all' => 'Expand all',
 
 //General
 'ENABLE_ARPSCAN_name' => 'Enable ARP scan',
-'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
+'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a onclick="toggleAllSettings()" href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
 
@@ -566,7 +567,7 @@ the arp-scan will take hours to complete instead of seconds.
 
 // Pholus
 'PHOLUS_ACTIVE_name' => 'Cycle run',
-'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. If enabled this will execute the scan before every network scan cycle until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Please be aware it can spam the network with unnecessary traffic. Depends on the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>. For a scheduled or one-off scan, check the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>.',
+'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. If enabled this will execute the scan before every network scan cycle until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Please be aware it can spam the network with unnecessary traffic. Depends on the <a onclick="toggleAllSettings()" href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>. For a scheduled or one-off scan, check the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>.',
 'PHOLUS_TIMEOUT_name' => 'Cycle run timeout',
 'PHOLUS_TIMEOUT_description' => 'How long in seconds should Pholus be sniffing on each interface if above condition is fulfilled. The longer you leave it on, the more likely devices would broadcast more info. This timeout adds to the time it takes to perform an arp-scan on your network.',
 'PHOLUS_FORCE_name' => 'Cycle force scan',
@@ -577,7 +578,7 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_RUN_TIMEOUT_description' => 'The timeout in seconds for the scheduled Pholus scan. Same notes regarding the duration apply as on the <a href="#PHOLUS_TIMEOUT"><code>PHOLUS_TIMEOUT</code> setting</a>. A scheduled scan doesn\'t check if there are <code>(unknown)</code> or <code>(name not found)</code> devices, the scan is executed either way.',
 'PHOLUS_RUN_SCHD_name' => 'Schedule',
 'PHOLUS_RUN_SCHD_description' => 'Only enabled if you select <code>schedule</code> in the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format 
-(e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
+(e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick="toggleAllSettings()" href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
 

@@ -15,22 +15,29 @@
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
       <h4><?php echo lang('HelpFAQ_Cat_General');?></h4>
+
        <div class="panel-group" id="accordion_gen">
         <div class="panel panel-default">
+
           <div class="panel-heading">
             <h4 class="panel-title">
               <a data-toggle="collapse" data-parent="#accordion_gen" href="#collapse100">
               <?php echo lang('HelpFAQ_Cat_General_100_head');?></a>
             </h4>
           </div>
+
           <div id="collapse100" class="panel-collapse collapse" style="font-size: 16px;">
             <div class="panel-body"><?php echo lang('HelpFAQ_Cat_General_100_text_a');?>
               <span class="text-danger help_faq_code"><?php echo date_default_timezone_get(); ?></span><br>
               <?php echo lang('HelpFAQ_Cat_General_100_text_b');?> 
               <span class="text-danger help_faq_code"><?php echo php_ini_loaded_file(); ?></span><br>
-              <?php echo lang('HelpFAQ_Cat_General_100_text_c');?></div>
+              <?php echo lang('HelpFAQ_Cat_General_100_text_c');?>
+            </div>
           </div>
+
         </div>
+
+        
         <div class="panel panel-default">
           <div class="panel-heading">
             <h4 class="panel-title">

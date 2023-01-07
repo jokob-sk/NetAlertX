@@ -49,11 +49,11 @@ CommitDB();
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?php echo lang('Navigation_Settings');?>
+         <?php echo lang('Navigation_Settings');?> <a><i id='toggleSettings' onclick="toggleAllSettings()" class="fa fa-angle-double-down"></i> </a>
       </h1>
       <div class="settingsImported"><?php echo lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
-    <div class="content">
+    <div class="content " id='accordion_gen'>
    <?php      
 
       $html = "";
@@ -67,160 +67,168 @@ CommitDB();
       }
 
       // create settings groups
+      $isIn = ' in ';
       foreach ($groups as $group) { 
-        $html = $html.'<section class="content box">
-          <h4>'.$group.'</h4>';
-          
-          // populate settings for each group
-          foreach ($settings as $set) { 
-            if($set["Group"] == $group)
-            {
-              $html = $html.
-              '<div class=" row table_row" >
-                <div class="table_cell setting_name bold" ><label>';
+        $html = $html.'<div  class=" box panel panel-default">
+                          <div class="panel-heading">
+                            <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
+                              <h4 class="panel-title">'.$group.'</h4>
+                            </a>
+                          </div>
+                          <div id="'.$group.'" class="panel-collapse collapse '.$isIn.'"> 
+                           <div class="panel-body">';
+        $isIn = ' '; // open the first panel only by default on page load
 
-              $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name']).'</label>';
+        // populate settings for each group id="collapse100" class="panel-collapse collapse"
+        foreach ($settings as $set) { 
+          if($set["Group"] == $group)
+          {
+            $html = $html.
+            '<div  class=" row table_row" > 
+              <div class="table_cell setting_name bold" ><label>';
 
-              $html = $html.'<div class="small" ><code>'.$set['Code_Name'].'</code></div>';
+            $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name']).'</label>';
 
-              $html = $html.
+            $html = $html.'<div class="small" ><code>'.$set['Code_Name'].'</code></div>';
+
+            $html = $html.
+            '</div>       
+              <div class="table_cell setting_description" >';               
+
+            $html = $html.getString ($set['Code_Name'].'_description', $set['Description']);
+
+            $html = $html.
               '</div>       
-               <div class="table_cell setting_description" >';               
+            <div class="table_cell setting_input" >';
 
-              $html = $html.getString ($set['Code_Name'].'_description', $set['Description']);
+            // render different input types based on the settings type
+            $input = "";
 
-              $html = $html.
-                '</div>       
-              <div class="table_cell setting_input" >';
-
-              // render different input types based on the settings type
-              $input = "";
-
-              // text - textbox
-              if($set['Type'] == 'text' ) 
-              {
-                $input = '<input class="form-control" onChange="settingsChanged()" input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
-              } 
-              // password - hidden text
-              elseif ($set['Type'] == 'password')
-              {
-                $input = '<input onChange="settingsChanged()" class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
-              }
-              // readonly 
-              elseif ($set['Type'] == 'readonly')
-              {
-                $input = '<input class="form-control input" id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
-              }
-              // boolean - checkbox
-              elseif ($set['Type'] == 'boolean')
-              {
-                $checked = "";
-                if ($set['Value'] == "True") { $checked = "checked";};
-                $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
-              }
-              // integer - number input
-              elseif ($set['Type'] == 'integer')
-              {
-                $input = '<input onChange="settingsChanged()" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
-              }
-              // selecttext - dropdown
-              elseif ($set['Type'] == 'selecttext')
-              {
-                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
-                
-                $values = createArray($set['Value']);
-                $options = createArray($set['Options']);
-
-                foreach ($options as $option) {              
-                  $selected = "";
-
-                  if( in_array( $option , $values) == true) {
-                    $selected = "selected";
-                  }
-
-                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-                }                
-                $input = $input.'</select>';
-              }
-              // selectinteger - dropdown
-              elseif ($set['Type'] == 'selectinteger')
-              {
-                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
-
-                $values = createArray($set['Value']);
-                $options = createArray($set['Options']);
-
-                foreach ($options as $option) {   
-                  
-                  $selected = "";
-
-                  if( in_array( $option , $values) == true) {
-                    $selected = "selected";
-                  }
-
-                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-                }                
-                $input = $input.'</select>';
-              }
-              // multiselect
-              elseif ($set['Type'] == 'multiselect')
-              {
-                $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
-
-                $values = createArray($set['Value']);
-                $options = createArray($set['Options']);
-
-                foreach ($options as $option) {                     
-                  $selected = "";
-
-                  if( in_array( $option , $values) == true) {
-                    $selected = "selected";
-                  }
-
-                  $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-                }                
-                $input = $input.'</select>';
-              }
-              // multiselect
-              elseif ($set['Type'] == 'subnets')
-              {
-                $input = $input.
-                '<div class="row form-group">
-                  <div class="col-xs-6">
-                    <input class="form-control" id="ipMask" type="text" placeholder="192.168.1.0/24"/>
-                  </div>';
-                // Add interface button
-                $input = $input.
-                  '<div class="col-xs-3">
-                    <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
-                  </div>
-                  <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>
-                 </div>';
-                
-                // list all interfaces as options
-                $input = $input.'<div class="form-group">
-                  <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
-                  
-                $options = createArray($set['Value']);                
-
-                foreach ($options as $option) {                                       
-
-                  $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
-                }                
-                $input = $input.'</select></div>';
-                // Remove all interfaces button               
-                $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
-                
-              }               
-
-              $html = $html.$input;
-
-              $html = $html.'</div>  
-              </div>';
+            // text - textbox
+            if($set['Type'] == 'text' ) 
+            {
+              $input = '<input class="form-control" onChange="settingsChanged()" input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
+            } 
+            // password - hidden text
+            elseif ($set['Type'] == 'password')
+            {
+              $input = '<input onChange="settingsChanged()" class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
             }
-          }
+            // readonly 
+            elseif ($set['Type'] == 'readonly')
+            {
+              $input = '<input class="form-control input" id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
+            }
+            // boolean - checkbox
+            elseif ($set['Type'] == 'boolean')
+            {
+              $checked = "";
+              if ($set['Value'] == "True") { $checked = "checked";};
+              $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
+            }
+            // integer - number input
+            elseif ($set['Type'] == 'integer')
+            {
+              $input = '<input onChange="settingsChanged()" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
+            }
+            // selecttext - dropdown
+            elseif ($set['Type'] == 'selecttext')
+            {
+              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+              
+              $values = createArray($set['Value']);
+              $options = createArray($set['Options']);
 
-        $html = $html.'</section>';
+              foreach ($options as $option) {              
+                $selected = "";
+
+                if( in_array( $option , $values) == true) {
+                  $selected = "selected";
+                }
+
+                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+              }                
+              $input = $input.'</select>';
+            }
+            // selectinteger - dropdown
+            elseif ($set['Type'] == 'selectinteger')
+            {
+              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+
+              $values = createArray($set['Value']);
+              $options = createArray($set['Options']);
+
+              foreach ($options as $option) {   
+                
+                $selected = "";
+
+                if( in_array( $option , $values) == true) {
+                  $selected = "selected";
+                }
+
+                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+              }                
+              $input = $input.'</select>';
+            }
+            // multiselect
+            elseif ($set['Type'] == 'multiselect')
+            {
+              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
+
+              $values = createArray($set['Value']);
+              $options = createArray($set['Options']);
+
+              foreach ($options as $option) {                     
+                $selected = "";
+
+                if( in_array( $option , $values) == true) {
+                  $selected = "selected";
+                }
+
+                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+              }                
+              $input = $input.'</select>';
+            }
+            // multiselect
+            elseif ($set['Type'] == 'subnets')
+            {
+              $input = $input.
+              '<div class="row form-group">
+                <div class="col-xs-6">
+                  <input class="form-control" id="ipMask" type="text" placeholder="192.168.1.0/24"/>
+                </div>';
+              // Add interface button
+              $input = $input.
+                '<div class="col-xs-3">
+                  <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
+                </div>
+                <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>
+                </div>';
+              
+              // list all interfaces as options
+              $input = $input.'<div class="form-group">
+                <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
+                
+              $options = createArray($set['Value']);                
+
+              foreach ($options as $option) {                                       
+
+                $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
+              }                
+              $input = $input.'</select></div>';
+              // Remove all interfaces button               
+              $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
+              
+            }               
+
+            $html = $html.$input;
+
+            $html = $html.'</div>  
+            </div>';
+          }
+        }
+
+        $html = $html.'</div></div></div>';
       }
 
       echo $html;
@@ -381,6 +389,36 @@ CommitDB();
       document.getElementById(targetId).innerHTML = result;      
 
     });
+  }
+  
+  
+  // -----------------------------------------------------------------------------
+  function toggleAllSettings()
+  {
+    inStr = ' in';
+    allOpen = true;
+    openIcon = 'fa-angle-double-down';
+    closeIcon = 'fa-angle-double-up';
+
+    $('.panel-collapse').each(function(){
+      if($(this).attr('class').indexOf(inStr) == -1)
+      {
+        allOpen = false;
+      }
+    })
+
+    if(allOpen)
+    {
+      // close all
+      $('.panel-collapse').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})
+      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
+    }
+    else{
+      // open all
+      $('.panel-collapse').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
+    }
+    
   }
 
 
