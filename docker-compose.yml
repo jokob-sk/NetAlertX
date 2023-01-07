@@ -1,6 +1,7 @@
 version: "3"
 services:
   pialert:
+    privileged: true
     build: .
     container_name: pialert
     network_mode: "host"

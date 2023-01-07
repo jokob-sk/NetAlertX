@@ -139,11 +139,9 @@ def checkPermissionsOK():
 def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
-
-    if dbR_access == False or dbW_access == False:
-        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', dbPath])
-    if confR_access == False or confW_access == False:
-        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', confPath])
+    
+    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])    
+    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
 
     for com in chmodCommands:
         # Execute command
@@ -193,9 +191,8 @@ if confR_access == False:
 if dbR_access == False:
     initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 
-if dbR_access == False or confR_access == False:
-    if checkPermissionsOK() == False: # second check 
-        fixPermissions()
+# last attempt
+fixPermissions()
 
 #===============================================================================
 # Initialise user defined values
@@ -2182,8 +2179,8 @@ def send_notifications ():
 
     # DEBUG - Write output emails for testing
     #if True :
-    #    write_file (logPath + '/report_output.txt', mail_text) 
-    #    write_file (logPath + '/report_output.html', mail_html) 
+    write_file (logPath + '/report_output.txt', mail_text) 
+    write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:

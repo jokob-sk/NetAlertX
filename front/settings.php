@@ -73,7 +73,8 @@ CommitDB();
 
       // create settings groups
       $isIn = ' in ';
-      foreach ($groups as $group) { 
+      foreach ($groups as $group) 
+      { 
         $html = $html.'<div  class=" box panel panel-default">
                           <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
                             <div class="panel-heading">                              
@@ -84,8 +85,9 @@ CommitDB();
                             <div class="panel-body">';
         $isIn = ' '; // open the first panel only by default on page load
 
-        // populate settings for each group id="collapse100" class="panel-collapse collapse"
-        foreach ($settings as $set) { 
+        // populate settings for each group 
+        foreach ($settings as $set) 
+        { 
           if($set["Group"] == $group)
           {
             $html = $html.
