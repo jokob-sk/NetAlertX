@@ -496,7 +496,7 @@ the arp-scan will take hours to complete instead of seconds.
 
 //Webhooks
 'REPORT_WEBHOOK_name' => 'Enable Webhooks',
-'REPORT_WEBHOOK_description' => 'Enable webhooks for notifications. If enabled, configure related settings below.',
+'REPORT_WEBHOOK_description' => 'Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href="https://n8n.io/" target="_blank">n8n</a> to name a few. Check out this simple <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md" target="_blank">n8n guide here</a> to get started. If enabled, configure related settings below.',
 'WEBHOOK_URL_name' => 'Target URL',
 'WEBHOOK_URL_description' => 'Target URL starting with <code>http://</code> or <code>https://</code>.',
 'WEBHOOK_PAYLOAD_name' => 'Payload type',

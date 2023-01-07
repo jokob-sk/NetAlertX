@@ -1743,7 +1743,8 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
 
     index = 0
     for result in allRes:
-        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and '._googlezone' not in result["Value"]:
+        #  limiting entries used for name resolution to the ones containing the current IP (v4 only)
+        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and result["IP_v4_or_v6"] == pIP and '._googlezone' not in result["Value"]:
             # found entries with a matching MAC address, let's collect indexes             
             pholusMatchesIndexes.append(index)
 

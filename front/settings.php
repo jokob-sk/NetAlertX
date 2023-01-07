@@ -49,7 +49,12 @@ CommitDB();
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?php echo lang('Navigation_Settings');?> <a><i id='toggleSettings' onclick="toggleAllSettings()" class="fa fa-angle-double-down"></i> </a>
+          <?php echo lang('Navigation_Settings');?> 
+          <a style="cursor:pointer">
+            <span>
+              <i id='toggleSettings' onclick="toggleAllSettings()" class="fa fa-angle-double-down"></i>
+            </span> 
+          </a>
       </h1>
       <div class="settingsImported"><?php echo lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
@@ -70,13 +75,13 @@ CommitDB();
       $isIn = ' in ';
       foreach ($groups as $group) { 
         $html = $html.'<div  class=" box panel panel-default">
-                          <div class="panel-heading">
-                            <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
-                              <h4 class="panel-title">'.$group.'</h4>
-                            </a>
-                          </div>
+                          <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
+                            <div class="panel-heading">                              
+                                <h4 class="panel-title">'.$group.'</h4>                              
+                            </div>
+                          </a>
                           <div id="'.$group.'" class="panel-collapse collapse '.$isIn.'"> 
-                           <div class="panel-body">';
+                            <div class="panel-body">';
         $isIn = ' '; // open the first panel only by default on page load
 
         // populate settings for each group id="collapse100" class="panel-collapse collapse"
