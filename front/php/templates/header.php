@@ -40,7 +40,10 @@ require '/home/pi/pialert/front/php/templates/security.php';
   
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/solid.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/brands.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/v5-font-face.css">
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/Ionicons/css/ionicons.min.css">
@@ -133,7 +136,7 @@ if ($ENABLED_DARKMODE === True) {
     <nav class="navbar navbar-static-top" role="navigation">
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
+        <i class="fa-solid fa-bars"></i>
       </a>      
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">

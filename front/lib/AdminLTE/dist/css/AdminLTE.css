@@ -259,7 +259,7 @@ a:focus {
   font-family: fontAwesome;
 }
 .main-header .sidebar-toggle:before {
-  content: "\f0c9";
+  /* content: "\f0c9"; */
 }
 .main-header .sidebar-toggle:hover {
   color: #fff;
@@ -272,7 +272,7 @@ a:focus {
   font-family: "Font Awesome\ 5 Free";
 }
 .main-header .sidebar-toggle.fa5:before {
-  content: "\f0c9";
+  /* content: "\f0c9"; */
   font-weight: 900;
 }
 .main-header .sidebar-toggle .icon-bar {

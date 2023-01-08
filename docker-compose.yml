@@ -1,6 +1,7 @@
 version: "3"
 services:
   pialert:
+    privileged: true
     build: .
     container_name: pialert
     network_mode: "host"
@@ -20,6 +21,7 @@ services:
       - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      
       - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
+      - ${DEV_LOCATION}/front/lib/AdminLTE:/home/pi/pialert/front/lib/AdminLTE
       - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
       - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php
       - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php

@@ -35,7 +35,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                         'Options'      => $row['Options'],
                         'RegEx'        => $row['RegEx'],
                         'Value'        => $row['Value'],
-                        'Group'        => $row['Group']
+                        'Group'        => $row['Group'],
+                        'Events'       => $row['Events']
                       ); 
 }
 
@@ -73,7 +74,8 @@ CommitDB();
 
       // create settings groups
       $isIn = ' in ';
-      foreach ($groups as $group) { 
+      foreach ($groups as $group) 
+      { 
         $html = $html.'<div  class=" box panel panel-default">
                           <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
                             <div class="panel-heading">                              
@@ -84,8 +86,9 @@ CommitDB();
                             <div class="panel-body">';
         $isIn = ' '; // open the first panel only by default on page load
 
-        // populate settings for each group id="collapse100" class="panel-collapse collapse"
-        foreach ($settings as $set) { 
+        // populate settings for each group 
+        foreach ($settings as $set) 
+        { 
           if($set["Group"] == $group)
           {
             $html = $html.
@@ -104,7 +107,7 @@ CommitDB();
 
             $html = $html.
               '</div>       
-            <div class="table_cell setting_input" >';
+            <div class="table_cell setting_input input-group" >';
 
             // render different input types based on the settings type
             $input = "";
@@ -129,7 +132,8 @@ CommitDB();
             {
               $checked = "";
               if ($set['Value'] == "True") { $checked = "checked";};
-              $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';                
+              $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';              
+              
             }
             // integer - number input
             elseif ($set['Type'] == 'integer')
@@ -194,7 +198,7 @@ CommitDB();
               }                
               $input = $input.'</select>';
             }
-            // multiselect
+            //  subnets
             elseif ($set['Type'] == 'subnets')
             {
               $input = $input.
@@ -228,7 +232,21 @@ CommitDB();
 
             $html = $html.$input;
 
-            $html = $html.'</div>  
+            // render any buttons or additional actions if specified            
+            $eventsHtml = "";
+            
+            // displayMessage($set['Events'], FALSE, TRUE, TRUE, TRUE);   
+            
+            $eventsList = createArray($set['Events']);  
+
+            if(count($eventsList) > 0)
+            {
+              foreach ($eventsList as $event) {
+                $eventsHtml = $eventsHtml.'<span class="input-group-addon"><i class="fa fa-vial-circle-check" data-toggle="'.$event.'"></i></span>';
+              }
+            }
+
+            $html = $html.$eventsHtml.'</div>  
             </div>';
           }
         }

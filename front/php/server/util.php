@@ -40,7 +40,16 @@ elseif ($FUNCTION  == 'cleanLog')
 // Formatting data functions
 //------------------------------------------------------------------------------
 // Creates a PHP array from a string representing a python array (input format ['...','...'])
+// Only supports:
+//      - one level arrays, not nested ones
+//      - single quotes 
 function createArray($input){
+
+  // empty array
+  if($input == '[]')
+  {
+    return [];
+  }
 
   // regex patterns
   $patternBrackets = '/(^\s*\[)|(\]\s*$)/';
@@ -54,6 +63,12 @@ function createArray($input){
 
   // create array
   $optionsTmp = explode(",", $noBrackets);
+
+  // handle only one item in array
+  if(count($optionsTmp) == 0)
+  {
+    return [preg_replace($patternQuotes, $replacement, $noBrackets)];
+  }
 
   // remove quotes
   foreach ($optionsTmp as $item)

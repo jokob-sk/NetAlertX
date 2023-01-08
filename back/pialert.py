@@ -139,11 +139,9 @@ def checkPermissionsOK():
 def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
-
-    if dbR_access == False or dbW_access == False:
-        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', dbPath])
-    if confR_access == False or confW_access == False:
-        chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', confPath])
+    
+    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])    
+    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
 
     for com in chmodCommands:
         # Execute command
@@ -193,9 +191,8 @@ if confR_access == False:
 if dbR_access == False:
     initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 
-if dbR_access == False or confR_access == False:
-    if checkPermissionsOK() == False: # second check 
-        fixPermissions()
+# last attempt
+fixPermissions()
 
 #===============================================================================
 # Initialise user defined values
@@ -239,7 +236,7 @@ def commitDB ():
 #-------------------------------------------------------------------------------
 # Import user values
 # Check config dictionary
-def ccd(key, default, config, name, inputtype, options, group, desc = "", regex = ""):
+def ccd(key, default, config, name, inputtype, options, group, events=[], desc = "", regex = ""):
     result = default
 
     if key in config:
@@ -247,7 +244,7 @@ def ccd(key, default, config, name, inputtype, options, group, desc = "", regex 
 
     global mySettings
 
-    mySettings.append((key, name, desc, inputtype, options, regex, str(result) , group))
+    mySettings.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
 
     return result
 
@@ -307,7 +304,7 @@ def importConfig ():
     REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
 
     # Email
-    REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email')
+    REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
     SMTP_SERVER = ccd('SMTP_SERVER', '' , c_d,'SMTP server URL', 'text', '', 'Email')
     SMTP_PORT = ccd('SMTP_PORT', 587 , c_d, 'SMTP port', 'integer', '', 'Email')
     REPORT_TO = ccd('REPORT_TO', 'user@gmail.com' , c_d, 'Email to', 'text', '', 'Email')
@@ -318,29 +315,29 @@ def importConfig ():
     SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', False , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
 
     # Webhooks
-    REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks')
+    REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
     WEBHOOK_URL = ccd('WEBHOOK_URL', '' , c_d, 'Target URL', 'text', '', 'Webhooks')
     WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'selecttext', "['json', 'html', 'text']", 'Webhooks')
     WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'selecttext', "['GET', 'POST', 'PUT']", 'Webhooks')
 
     # Apprise
-    REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise')
+    REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise', ['test'])
     APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
     APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
 
     # NTFY
-    REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY')
+    REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
     NTFY_HOST = ccd('NTFY_HOST', 'https://ntfy.sh' , c_d, 'NTFY host URL', 'text', '', 'NTFY')
     NTFY_TOPIC = ccd('NTFY_TOPIC', '' , c_d, 'NTFY topic', 'text', '', 'NTFY')
     NTFY_USER = ccd('NTFY_USER', '' , c_d, 'NTFY user', 'text', '', 'NTFY')
     NTFY_PASSWORD = ccd('NTFY_PASSWORD', '' , c_d, 'NTFY password', 'password', '', 'NTFY')
 
     # PUSHSAFER
-    REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER')
+    REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER', ['test'])
     PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
 
     # MQTT
-    REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
+    REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT', ['test'])
     MQTT_BROKER = ccd('MQTT_BROKER', '' , c_d, 'MQTT broker', 'text', '', 'MQTT')
     MQTT_PORT = ccd('MQTT_PORT', 1883 , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
     MQTT_USER = ccd('MQTT_USER', '' , c_d, 'MQTT user', 'text', '', 'MQTT')
@@ -378,7 +375,7 @@ def importConfig ():
     # Insert into DB    
     sql.execute ("DELETE FROM Settings")    
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
+         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
 
     # Used to determine the next import
     lastTimeImported = time.time()
@@ -2182,8 +2179,8 @@ def send_notifications ():
 
     # DEBUG - Write output emails for testing
     #if True :
-    #    write_file (logPath + '/report_output.txt', mail_text) 
-    #    write_file (logPath + '/report_output.html', mail_html) 
+    write_file (logPath + '/report_output.txt', mail_text) 
+    write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
@@ -2792,14 +2789,15 @@ def upgradeDB ():
 
     sql.execute("""      
     CREATE TABLE "Settings" (        
-    "Code_Name"	TEXT,
+    "Code_Name"	    TEXT,
     "Display_Name"	TEXT,
     "Description"	TEXT,        
-    "Type" TEXT,
-    "Options" TEXT,
-    "RegEx"   TEXT,
-    "Value"	TEXT,
-    "Group"	TEXT
+    "Type"          TEXT,
+    "Options"       TEXT,
+    "RegEx"         TEXT,
+    "Value"	        TEXT,
+    "Group"	        TEXT,
+    "Events"	    TEXT
     );      
     """)
 
