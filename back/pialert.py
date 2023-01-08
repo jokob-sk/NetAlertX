@@ -42,10 +42,8 @@ from pytz import timezone
 #===============================================================================
 # PATHS
 #===============================================================================
-PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
-pialertPath = PIALERT_BACK_PATH + "/.."  #to fix - remove references and use pialertPath instead
-logPath     = pialertPath + '/front/log'
 pialertPath = '/home/pi/pialert'
+logPath     = pialertPath + '/front/log'
 confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
 fullConfPath = pialertPath + confPath
@@ -451,6 +449,9 @@ def main ():
         # re-load user configuration
         importConfig()         
 
+        # check if there is a front end initiated event which needs to be executed
+        check_and_run_event()
+
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
 
@@ -797,9 +798,8 @@ def update_devices_MAC_vendors (pArg = ''):
     file_print('[', startTime, '] Upkeep - Update HW Vendors:' )
 
     # Update vendors DB (iab oui)
-    file_print('    Updating vendors DB (iab & oui)')
-    # update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', ' > ', logPath +  '/update_vendors.log',    '2>&1']
-    update_args = ['sh', PIALERT_BACK_PATH + '/update_vendors.sh', pArg]
+    file_print('    Updating vendors DB (iab & oui)')    
+    update_args = ['sh', pialertPath + '/update_vendors.sh', pArg]
 
     try:
         # try runnning a subprocess
@@ -807,10 +807,6 @@ def update_devices_MAC_vendors (pArg = ''):
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         file_print(e.output)        
-    
-    # DEBUG
-        # update_args = ['./vendors_db_update.sh']
-        # subprocess.call (update_args, shell=True)
 
     # Initialize variables
     recordsToUpdate = []
@@ -1597,7 +1593,7 @@ def performNmapScan(devicesToScan):
             # prepare arguments from user supplied ones
             nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
 
-            progress = ' (' + str(devIndex) + '/' + str(devTotal) + ')'
+            progress = ' (' + str(devIndex+1) + '/' + str(devTotal) + ')'
 
             try:
                 # try runnning a subprocess with a forced (timeout + 30 seconds)  in case the subprocess hangs
@@ -2016,14 +2012,14 @@ def send_notifications ():
 						)""")
 
     # Open text Template
-    template_file = open(PIALERT_BACK_PATH + '/report_template.txt', 'r') 
+    template_file = open(pialertPath + '/back/report_template.txt', 'r') 
     mail_text = template_file.read() 
     template_file.close() 
 
     # Open html Template
-    template_file = open(PIALERT_BACK_PATH + '/report_template.html', 'r') 
+    template_file = open(pialertPath + '/back/report_template.html', 'r') 
     if isNewVersion():
-        template_file = open(PIALERT_BACK_PATH + '/report_template_new_version.html', 'r') 
+        template_file = open(pialertPath + '/back/report_template_new_version.html', 'r') 
 
     mail_html = template_file.read() 
     template_file.close() 
@@ -2191,7 +2187,7 @@ def send_notifications ():
             file_print('      Sending report by Email')
             send_email (mail_text, mail_html)
         else :
-            file_print('    Skip mail')
+            file_print('      Skip email')
         if REPORT_APPRISE and check_config('apprise'):
             updateState("Send: Apprise")
             file_print('      Sending report by Apprise')
@@ -2770,7 +2766,8 @@ def upgradeDB ():
     ('Front_Details_Tab', 'tabDetails'),
     ('Back_Settings_Imported', round(time.time() * 1000)),
     ('Back_App_State', 'Initializing'), 
-    ('Back_New_Version_Available', False)
+    ('Back_New_Version_Available', False),
+    ('Front_Event', 'none')    
     ] 
 
     sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
@@ -3019,6 +3016,48 @@ def hide_email(email):
         return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
 
     return email    
+
+#-------------------------------------------------------------------------------
+def check_and_run_event():
+    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
+    rows = sql.fetchall()    
+
+    event, param = ['','']
+    if len(rows) > 0 and rows[0]['par_Value'] != 'none':        
+        event = rows[0]['par_Value'].split('|')[0]
+        param = rows[0]['par_Value'].split('|')[1]
+    else:
+        return
+
+    if event == 'test':
+        handle_test(param)
+
+    # clear event execution flag
+    sql.execute ("UPDATE Parameters SET par_Value='none' WHERE par_ID='Front_Event'")        
+
+    # commit to DB  
+    commitDB ()
+
+#-------------------------------------------------------------------------------
+def handle_test(testType):
+    if testType == 'REPORT_MAIL':
+        test_email()
+
+#-------------------------------------------------------------------------------    
+def test_email():
+
+    # Open text Template
+    template_file = open(pialertPath + '/back/report_sample_1.txt', 'r') 
+    mail_text_txt = template_file.read() 
+    template_file.close() 
+
+    # Open html Template 
+    template_file = open(pialertPath + '/back/report_sample_2.html', 'r') 
+    mail_text_html = template_file.read() 
+    template_file.close() 
+
+    send_email(mail_text_txt, mail_text_html)
+    
 
 #-------------------------------------------------------------------------------
 def isNewVersion():   

@@ -692,6 +692,13 @@ height: 50px;
     
 }
 
+.settings-expand-icon {
+    font-size: medium;
+    /* background-color: #272c30; */
+    margin: 10px;
+    
+}
+
 .settings_content input[type=checkbox] 
 { 
     width: auto 
@@ -711,4 +718,9 @@ height: 50px;
     z-index: 1;
     left: 0px;
     font-size: large;
+}
+
+.pointer
+{
+    cursor:pointer;
 }

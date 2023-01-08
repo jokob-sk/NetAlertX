@@ -1,0 +1,50 @@
+Report Date: 2021-12-08 12:30
+Server:      Synology-NAS
+
+New Devices
+----------------------
+Name: 	(name not found)
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.121
+	Time: 	2021-12-08 12:30
+	More Info: 	Micro-Star INTL CO., LTD.
+
+Name: 	(name not found)
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.151
+	Time: 	2021-12-08 12:30
+	More Info: 	Espressif Inc.
+
+
+
+Events
+----------------------
+Name: 	Samsung
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.27
+	Time: 	2021-12-08 12:30
+	Event: 	Connected
+	More Info: 	
+
+Name: 	(name not found)
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.6
+	Time: 	2021-12-08 12:30
+	Event: 	Disconnected
+	More Info: 	
+
+Name: 	Google-Home-Mini
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.16
+	Time: 	2021-12-08 12:30
+	Event: 	Disconnected
+	More Info: 	
+
+Name: 	(name not found)
+	MAC: 	2c:2c:2c:2c:2c:2c
+	IP: 	192.168.1.119
+	Time: 	2021-12-08 12:30
+	Event: 	Disconnected
+	More Info: 	
+
+

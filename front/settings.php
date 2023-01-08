@@ -53,7 +53,7 @@ CommitDB();
           <?php echo lang('Navigation_Settings');?> 
           <a style="cursor:pointer">
             <span>
-              <i id='toggleSettings' onclick="toggleAllSettings()" class="fa fa-angle-double-down"></i>
+              <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
             </span> 
           </a>
       </h1>
@@ -239,10 +239,16 @@ CommitDB();
             
             $eventsList = createArray($set['Events']);  
 
+            $iconMap = [
+              "test"  => ["To test this configuration you have to save it at first.","fa-vial-circle-check"]              
+            ];
+
             if(count($eventsList) > 0)
             {
               foreach ($eventsList as $event) {
-                $eventsHtml = $eventsHtml.'<span class="input-group-addon"><i class="fa fa-vial-circle-check" data-toggle="'.$event.'"></i></span>';
+                $eventsHtml = $eventsHtml.'<span class="input-group-addon">
+                  <i title="'.$iconMap[$event][0].'" class="fa '.$iconMap[$event][1].' pointer" data-myparam="'.$set['Code_Name'].'" data-myevent="'.$event.'"></i>
+                </span>';
               }
             }
 
@@ -444,10 +450,29 @@ CommitDB();
     
   }
 
-
 </script>
 
 <script defer>
+
+  // ----------------------------------------------------------------------------- 
+  // handling events on the backend initiated by the front end START
+  // ----------------------------------------------------------------------------- 
+  $(window).on('load', function() { 
+    $('i[data-myevent]').each(function(index, element){
+      $(element).attr('onclick', 
+      'handleEvent(\"' + $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam') + '\")'      
+      );
+    });
+  });
+
+  function handleEvent (value){        
+
+    setParameter ('Front_Event', value)
+
+  }
+  // ----------------------------------------------------------------------------- 
+  // handling events on the backend initiated by the front end END
+  // ----------------------------------------------------------------------------- 
 
   // ---------------------------------------------------------
   // Show last time settings have been imported
