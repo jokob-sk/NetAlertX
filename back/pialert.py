@@ -335,7 +335,7 @@ def importConfig ():
     PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
 
     # MQTT
-    REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT', ['test'])
+    REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
     MQTT_BROKER = ccd('MQTT_BROKER', '' , c_d, 'MQTT broker', 'text', '', 'MQTT')
     MQTT_PORT = ccd('MQTT_PORT', 1883 , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
     MQTT_USER = ccd('MQTT_USER', '' , c_d, 'MQTT user', 'text', '', 'MQTT')
@@ -2423,7 +2423,7 @@ def send_webhook (_json, _html):
     if WEBHOOK_PAYLOAD == 'text':
         payloadData = to_text(_json)
 
-    #Define slack-compatible payload
+    # Define slack-compatible payload
     _json_payload = { "text": payloadData } if WEBHOOK_PAYLOAD == 'text' else {
     "username": "Pi.Alert",
     "text": "There are new notifications",
@@ -2767,7 +2767,7 @@ def upgradeDB ():
     ('Back_Settings_Imported', round(time.time() * 1000)),
     ('Back_App_State', 'Initializing'), 
     ('Back_New_Version_Available', False),
-    ('Front_Event', 'none')    
+    ('Front_Event', 'finished')    
     ] 
 
     sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
@@ -2906,6 +2906,15 @@ def checkIPV4(ip):
         return False
 
 #-------------------------------------------------------------------------------
+def get_file_content(path):
+
+    f = open(path, 'r') 
+    content = f.read() 
+    f.close() 
+
+    return content
+
+#-------------------------------------------------------------------------------
 
 def updateSubnets():
     global userSubnets
@@ -3023,7 +3032,7 @@ def check_and_run_event():
     rows = sql.fetchall()    
 
     event, param = ['','']
-    if len(rows) > 0 and rows[0]['par_Value'] != 'none':        
+    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':        
         event = rows[0]['par_Value'].split('|')[0]
         param = rows[0]['par_Value'].split('|')[1]
     else:
@@ -3033,31 +3042,38 @@ def check_and_run_event():
         handle_test(param)
 
     # clear event execution flag
-    sql.execute ("UPDATE Parameters SET par_Value='none' WHERE par_ID='Front_Event'")        
+    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")        
 
     # commit to DB  
     commitDB ()
 
 #-------------------------------------------------------------------------------
 def handle_test(testType):
-    if testType == 'REPORT_MAIL':
-        test_email()
 
-#-------------------------------------------------------------------------------    
-def test_email():
+    file_print('[', timeNow(), '] START Test: ', testType)    
 
-    # Open text Template
-    template_file = open(pialertPath + '/back/report_sample_1.txt', 'r') 
-    mail_text_txt = template_file.read() 
-    template_file.close() 
+    # Open text sample    
+    sample_txt = get_file_content(pialertPath + '/back/report_sample_1.txt')
 
-    # Open html Template 
-    template_file = open(pialertPath + '/back/report_sample_2.html', 'r') 
-    mail_text_html = template_file.read() 
-    template_file.close() 
+    # Open html sample     
+    sample_html = get_file_content(pialertPath + '/back/report_sample_2.html')
 
-    send_email(mail_text_txt, mail_text_html)
+    # Open json sample and get only the payload part      
+    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]      
     
+    if testType == 'REPORT_MAIL':
+        send_email(sample_txt, sample_html)
+    if testType == 'REPORT_WEBHOOK':
+        send_webhook (sample_json_payload, sample_txt)
+    if testType == 'REPORT_APPRISE':
+        send_apprise (sample_html) 
+    if testType == 'REPORT_NTFY':
+        send_ntfy (sample_txt)
+    if testType == 'REPORT_PUSHSAFER':
+        send_pushsafer (sample_txt)
+
+    file_print('[', timeNow(), '] END Test: ', testType)
+
 
 #-------------------------------------------------------------------------------
 def isNewVersion():   

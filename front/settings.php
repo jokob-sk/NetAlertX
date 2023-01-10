@@ -82,7 +82,7 @@ CommitDB();
                                 <h4 class="panel-title">'.$group.'</h4>                              
                             </div>
                           </a>
-                          <div id="'.$group.'" class="panel-collapse collapse '.$isIn.'"> 
+                          <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 
                             <div class="panel-body">';
         $isIn = ' '; // open the first panel only by default on page load
 
@@ -234,20 +234,22 @@ CommitDB();
 
             // render any buttons or additional actions if specified            
             $eventsHtml = "";
-            
-            // displayMessage($set['Events'], FALSE, TRUE, TRUE, TRUE);   
-            
+            // if available get all the events associated with this setting 
             $eventsList = createArray($set['Events']);  
 
-            $iconMap = [
-              "test"  => ["To test this configuration you have to save it at first.","fa-vial-circle-check"]              
-            ];
+            // icon map for the events
+            // $iconMap = [
+            //   "test"  => [lang("settings_event_tooltip"),""]
+            // ];
 
             if(count($eventsList) > 0)
             {
               foreach ($eventsList as $event) {
                 $eventsHtml = $eventsHtml.'<span class="input-group-addon">
-                  <i title="'.$iconMap[$event][0].'" class="fa '.$iconMap[$event][1].' pointer" data-myparam="'.$set['Code_Name'].'" data-myevent="'.$event.'"></i>
+                  <i title="'.lang($event."_event_tooltip").'" class="fa '.lang($event."_event_icon").' pointer" 
+                  data-myparam="'.$set['Code_Name'].'" 
+                  data-myevent="'.$event.'">                 
+                  </i>
                 </span>';
               }
             }
@@ -384,8 +386,8 @@ CommitDB();
     }
   }
 
-  // ---------------------------------------------------------
-  function getParam(targetId, key, skipCache = false, callback) {  
+  // ---------------------------------------------------------  
+  function getParam(targetId, key, skipCache = false) {  
 
     skipCacheQuery = "";
 
@@ -395,9 +397,9 @@ CommitDB();
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data, callback) {
+    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
 
-      var result = data;        
+      var result = data;   
       
       if(key == "Back_Settings_Imported")
       {
@@ -415,8 +417,7 @@ CommitDB();
         result = result.replaceAll('"', '');
       }
 
-      document.getElementById(targetId).innerHTML = result;      
-
+      document.getElementById(targetId).innerHTML = result.replaceAll('"', ''); 
     });
   }
   
@@ -427,7 +428,7 @@ CommitDB();
     inStr = ' in';
     allOpen = true;
     openIcon = 'fa-angle-double-down';
-    closeIcon = 'fa-angle-double-up';
+    closeIcon = 'fa-angle-double-up';    
 
     $('.panel-collapse').each(function(){
       if($(this).attr('class').indexOf(inStr) == -1)
@@ -435,16 +436,17 @@ CommitDB();
         allOpen = false;
       }
     })
-
+    
     if(allOpen)
     {
       // close all
-      $('.panel-collapse').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})      
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
     }
     else{
       // open all
-      $('.panel-collapse').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
     }
     
@@ -465,11 +467,44 @@ CommitDB();
     });
   });
 
-  function handleEvent (value){        
+  modalEventStatusId = 'modal-message-front-event'
 
+  function handleEvent (value){
     setParameter ('Front_Event', value)
 
+    // console.log(value)
+
+    // show message
+    showModalOk("<?php echo lang("general_event_title")?>", "<?php echo lang("general_event_description")?> <code id='"+modalEventStatusId+"'></code>");
+
+    // Periodically update state of the requested action
+    getParam(modalEventStatusId,"Front_Event", true, updateModalState)
+
+    updateModalState()
   }
+
+
+  function updateModalState(){
+
+    setTimeout(function(){
+      displayedEvent = $('#'+modalEventStatusId).html()
+
+      // console.log(displayedEvent)
+      // console.log(displayedEvent.indexOf('finished') == -1)
+
+      // loop until finished  
+      if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 4s
+      {
+        
+        getParam(modalEventStatusId,"Front_Event", true)
+
+        updateModalState()
+        
+      }
+    }, 2000);
+  }
+
+
   // ----------------------------------------------------------------------------- 
   // handling events on the backend initiated by the front end END
   // ----------------------------------------------------------------------------- 

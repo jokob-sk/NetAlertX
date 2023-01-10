@@ -431,6 +431,17 @@ $lang['en_us'] = array(
 											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online.',
 
 //////////////////////////////////////////////////////////////////
+// Front end events
+//////////////////////////////////////////////////////////////////
+
+'test_event_tooltip' => 'Save your changes at first before you test your settings.',
+'test_event_icon' => 'fa-vial-circle-check',
+'general_event_title' => 'Executing an ad-hoc event',
+'general_event_description' => 'The event you\'ve triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a onclick=\'setCache(\"activeMaintenanceTab\", \"tab_Logging_id\")\' href=\"/maintenance.php#tab_Logging\">error log</a> if you didn\'t get the expected result. <br/> <br/>  Status: ',
+
+
+
+//////////////////////////////////////////////////////////////////
 // Settings
 //////////////////////////////////////////////////////////////////
 
@@ -440,6 +451,7 @@ $lang['en_us'] = array(
 'settings_old' => 'The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved in the <code>pialert.conf</code> file, but the background process didn\'t have time to import it yet to the DB. You can wait until the settings get refreshed so you don\'t overwrite your old values. Feel free to save your settings either way if you don\'t mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.',
 'settings_imported' => 'Last time settings were imported from the pialert.conf file:',
 'settings_expand_all' => 'Expand all',
+
 
 //General
 'ENABLE_ARPSCAN_name' => 'Enable ARP scan',
