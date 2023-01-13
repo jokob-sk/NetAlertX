@@ -485,6 +485,8 @@ the arp-scan will take hours to complete instead of seconds.
 'DAYS_TO_KEEP_EVENTS_description' => 'This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically.',
 'REPORT_DASHBOARD_URL_name' => 'Pi.Alert URL',
 'REPORT_DASHBOARD_URL_description' => 'This URL is used as the base for generating links in the emails. Enter full URL starting with <code>http://</code> including the port number (no trailig slash <code>/</code>).',
+'DIG_GET_IP_ARG_name' => 'Internet IP discovery',
+'DIG_GET_IP_ARG_description' => 'Change the <a href="https://linux.die.net/man/1/dig" target="_blank">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>.',
 
 //Email
 'REPORT_MAIL_name' => 'Enable email',

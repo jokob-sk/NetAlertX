@@ -766,7 +766,7 @@ function main () {
           initializeCalendar();
     
           // Read Cookies
-          devicesList = getCookie('devicesList');
+          devicesList = getCache('devicesList');
           if (devicesList != '') {
               devicesList = JSON.parse (devicesList);
           } else {
@@ -923,22 +923,22 @@ function writeDropdownHtml(dropdownId, dropdownHtmlContent)
   HTMLelement.innerHTML += dropdownHtmlContent;
 }
 // -----------------------------------------------------------------------------
-function getCache(key)
-{
-  // check cache
-  if(sessionStorage.getItem(key))
-  {
-    return sessionStorage.getItem(key);
-  } else
-  {
-    return "";
-  }
-}
-// -----------------------------------------------------------------------------
-function setCache(key, data)
-{
-  sessionStorage.setItem(key, data); 
-}
+// function getCache(key)
+// {
+//   // check cache
+//   if(sessionStorage.getItem(key))
+//   {
+//     return sessionStorage.getItem(key);
+//   } else
+//   {
+//     return "";
+//   }
+// }
+// // -----------------------------------------------------------------------------
+// function setCache(key, data)
+// {
+//   sessionStorage.setItem(key, data); 
+// }
 // -----------------------------------------------------------------------------
 
 function initializeComboSkipRepeated () {

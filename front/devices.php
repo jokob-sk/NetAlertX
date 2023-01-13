@@ -341,11 +341,11 @@ function initializeDatatable () {
     
   $('#tableDevices').on( 'order.dt', function () {
     setParameter (parTableOrder, JSON.stringify (table.order()) );
-    setCookie ('devicesList', getDevicesFromTable(table) );
+    setCache ('devicesList', getDevicesFromTable(table) );
   } );
 
   $('#tableDevices').on( 'search.dt', function () {
-    setCookie ('devicesList', getDevicesFromTable(table) ); 
+    setCache ('devicesList', getDevicesFromTable(table) ); 
   } );
 
 };

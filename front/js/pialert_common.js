@@ -16,21 +16,30 @@ var emptyArr            = ['undefined', "", undefined, null];
 //   get: (searchParams, prop) => searchParams.get(prop.toString()),
 // });
 
+
+// -----------------------------------------------------------------------------
+// Simple session cache withe expiration managed via cookies
+// -----------------------------------------------------------------------------
 function getCache(key)
 {
   // check cache
   if(sessionStorage.getItem(key))
   {
-    return sessionStorage.getItem(key);
-  } else
-  {
-    return "";
+    // check if not expired
+    if(getCookie(key + '_session_expiry') != "")
+    {
+      return sessionStorage.getItem(key);
+    }
   }
+
+  return "";  
 }
 
-function setCache(key, data)
+// -----------------------------------------------------------------------------
+function setCache(key, data, expirationMinutes='')
 {
   sessionStorage.setItem(key, data); 
+  setCookie (key + '_session_expiry', 'OK', expirationMinutes='')
 }
 
 
@@ -40,7 +49,7 @@ function setCookie (cookie, value, expirationMinutes='') {
   var expires = '';
   if (typeof expirationMinutes === 'number') {
     expires = ';expires=' + new Date(Date.now() + expirationMinutes *60*1000).toUTCString();
-  }
+  } 
 
   // Save Cookie
   document.cookie = cookie + "=" + value + expires;
@@ -87,7 +96,8 @@ function deleteAllCookies() {
 }
 
 
-
+// -----------------------------------------------------------------------------
+// Modal dialog handling
 // -----------------------------------------------------------------------------
 function showModalOk (title, message, callbackFunction = null) {
   // set captions
@@ -171,13 +181,6 @@ function modalWarningOK () {
 }
 
 // -----------------------------------------------------------------------------
-// remove unnecessary lines from the result
-function sanitize(data)
-{
-  return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
-}
-
-// -----------------------------------------------------------------------------
 function showMessage (textMessage="") {
   if (textMessage.toLowerCase().includes("error")  ) {
     // show error
@@ -193,6 +196,15 @@ function showMessage (textMessage="") {
   }
 }
 
+
+// -----------------------------------------------------------------------------
+// General utilities
+// -----------------------------------------------------------------------------
+// remove unnecessary lines from the result
+function sanitize(data)
+{
+  return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
+}
 
 // -----------------------------------------------------------------------------
 function setParameter (parameter, value) {

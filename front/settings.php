@@ -286,7 +286,7 @@ CommitDB();
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 59;
+  var settingsNumber = 60;
 
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 

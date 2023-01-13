@@ -253,7 +253,7 @@ def importConfig ():
     # Specify globals so they can be overwritten with the new config
     global lastTimeImported, mySettings
     # General
-    global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL
+    global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG
     # Email
     global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS
     # Webhooks
@@ -300,6 +300,7 @@ def importConfig ():
     SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', 5 , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
     DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
+    DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
 
     # Email
     REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
@@ -629,19 +630,12 @@ def check_internet_IP ():
 def get_internet_IP ():
     # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
     # Using 'dig'
-    dig_args = ['dig', '+short', '-4', 'myip.opendns.com', '@resolver1.opendns.com']
+    dig_args = ['dig', '+short'] + DIG_GET_IP_ARG.strip().split()
     try:
         cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         file_print(e.output)
         cmd_output = '' # no internet
-    
-
-    ## BUGFIX #12 - Query IPv4 address (not IPv6)
-    ## Using 'curl' instead of 'dig'
-    ## curl_args = ['curl', '-s', 'https://diagnostic.opendns.com/myip']
-    #curl_args = ['curl', '-s', QUERY_MYIP_SERVER]
-    #cmd_output = subprocess.check_output (curl_args, universal_newlines=True)
 
     # Check result is an IP
     IP = check_IP_format (cmd_output)
