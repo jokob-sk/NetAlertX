@@ -222,7 +222,7 @@ if ($ENABLED_DARKMODE === True) {
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><i class="fa fa-server"></i> <span><?php echo lang('Navigation_Network');?></span></a>
+          <a href="network.php"><i class="fa fa-network-wired"></i> <span><?php echo lang('Navigation_Network');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">

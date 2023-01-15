@@ -253,13 +253,13 @@
                       <!-- Network -->
                       <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?></h4>                    
                       <div class="form-group">
-                        <label class="col-sm-6 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
-                        <div class="col-sm-6">  
+                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
+                        <div class="col-sm-9">  
                           <div class="input-group"> 
 
                             <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
                             <div class="input-group-btn">
-
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
@@ -270,8 +270,8 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="col-sm-6 control-label"><?php echo lang('DevDetail_MainInfo_Network_Port');?></label>
-                        <div class="col-sm-6">
+                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network_Port');?></label>
+                        <div class="col-sm-9">
                           <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
                       </div>
@@ -547,7 +547,7 @@
                     <th>Port</th>
                     <th>State</th>
                     <th>Service</th>
-                    <th>Extra</th>
+                    <th>Extra (Notes)</th>
                   </tr>
                   </thead>
                   <!-- Comment out tbody when trying to implement better table with datatables here -->
@@ -908,6 +908,15 @@ function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
 function editDrp(dropdownId)
 {
   $('#'+dropdownId).focus();
+}
+
+// -----------------------------------------------------------------------------
+// Go to the corect network node in the Network section
+function goToNetworkNode(dropdownId)
+{  
+  setCache('activeNetworkTab', $('#'+dropdownId).val().replaceAll(":","_")+'_id');
+  window.location.href = './network.php';
+  
 }
 
 // -----------------------------------------------------------------------------

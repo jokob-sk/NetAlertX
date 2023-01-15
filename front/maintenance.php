@@ -669,10 +669,14 @@ function PiaToggleArpScan()
   });
 }
 
+// --------------------------------------------------------
 
 // Clean log file 
 var targetLogFile = "";
 var logFileAction = "";
+
+
+// --------------------------------------------------------
 
 function logManage(callback) {
   targetLogFile = arguments[0];  // target
@@ -682,6 +686,7 @@ function logManage(callback) {
     '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', "performLogManage");
 }
 
+// --------------------------------------------------------
 function performLogManage() { 
   // Execute
   console.log("targetLogFile:" + targetLogFile)
@@ -697,36 +702,23 @@ function performLogManage() {
   })
   }
 
+// --------------------------------------------------------
 function scrollDown()
 {
-  var tempArea = $('#pialert_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+  var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log'];
+  
+  for (let i = 0; i < areaIDs.length; i++) {
 
-  tempArea = $('#pialert_front_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+    var tempArea = $('#' + areaIDs[i]);
+    $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
 
-  tempArea = $('#IP_changes_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-
-  tempArea = $('#stdout_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-
-  tempArea = $('#stderr_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-
-  tempArea = $('#pialert_pholus_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-
-  tempArea = $('#pialert_pholus_lastrun_log');
-  $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-
+  }
 }
 
+// --------------------------------------------------------
 function initializeTabs () {  
 
   key = "activeMaintenanceTab"
-
-  // --------------------------------------------------------
 
   // default selection
   selectedTab = "tab_Settings"
@@ -736,9 +728,8 @@ function initializeTabs () {
 
   // update cookie if target specified
   if(target != "")
-  {
-    // console.log(target)
-    setCache(key, target+'_id')
+  {    
+    setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
   }
 
   // get the tab id from the cookie (already overriden by the target)
@@ -748,10 +739,6 @@ function initializeTabs () {
   }
 
   // Activate panel
-  if(!emptyArr.includes(getCache(key)))
-  {
-    selectedTab = getCache(key);
-  }
   $('.nav-tabs a[id='+ selectedTab +']').tab('show');
 
   // When changed save new current tab
@@ -770,6 +757,8 @@ function initializeTabs () {
   });
 }
 
+// --------------------------------------------------------
+
 // save language in a cookie
 $('#langselector').on('change', function (e) {
     var optionSelected = $("option:selected", this);
@@ -777,7 +766,7 @@ $('#langselector').on('change', function (e) {
     setCookie("language",valueSelected )
     location.reload();
   });
-
+// --------------------------------------------------------
 
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()

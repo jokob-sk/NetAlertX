@@ -20,7 +20,7 @@
   <section class="content-header">
   <?php require 'php/templates/notification.php'; ?>
     <h1 id="pageTitle">
-        <?php echo lang('Network_Title');?>
+      <i class="fa fa-network-wired"></i> <?php echo lang('Network_Title');?>
     </h1>
   </section>
 
@@ -47,9 +47,9 @@
           $node_badge = circle_offline;
         }
         
-
+        $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="'.$activetab.'">
-                              <a href="#'.str_replace(":", "_", $node_mac).'" data-toggle="tab" >'
+                              <a href="#'.$idFromMac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
                                   .$node_name.' ' .$str_port.$node_badge.
                               '</a>
                           </li>';
@@ -71,17 +71,29 @@
           $node_badge = badge_offline;
         }
 
-        $str_tab_pane = '<div class="tab-pane '.$activetab.'" id="'.str_replace(":", "_", $node_mac).'">
-                            <a href="./deviceDetails.php?mac='.$node_mac.'">
-                              <h4>'.$node_name.'</h4>
-                            </a>
-                            <table class="table table-striped" style="width:200px;"> 
+        $idFromMac = str_replace(":", "_", $node_mac);
+        $idParentMac = str_replace(":", "_", $node_parent_mac);
+        $str_tab_pane = '<div class="tab-pane '.$activetab.'" id="'.$idFromMac.'">
+                            <div>
+                              <h2 class="page-header"><i class="fa fa-server"></i> '.lang('Network_Node'). '</h2>
+                            </div>
+                            <table class="table table-striped" > 
                               <tbody>
                                 <tr> 
-                                  <td >
-                                    <b>MAC:</b>
+                                  <td class="col-sm-3">
+                                    <b>'.lang('Network_Node').'</b>
                                   </td>
-                                  <td class="anonymize">'
+                                  <td  class="anonymize">
+                                    <a href="./deviceDetails.php?mac='.$node_mac.'">
+                                    '.$node_name.'
+                                    </a>
+                                  </td>
+                                </tr>
+                                <tr> 
+                                  <td >
+                                    <b>MAC</b>
+                                  </td>
+                                  <td data-mynodemac="'.$node_mac.'" class="anonymize">'
                                     .$node_mac.
                                   '</td>
                                 </tr>
@@ -95,7 +107,7 @@
                                 </tr>
                                 <tr> 
                                   <td>
-                                    <b>'.lang('Network_Table_State').':</b> 
+                                    <b>'.lang('Network_Table_State').'</b> 
                                   </td>
                                   <td>  '
                                     .$node_badge.
@@ -103,29 +115,33 @@
                                 </tr>
                                 <tr> 
                                   <td>
-                                    <b>'.lang('DevDetail_MainInfo_Network').'</b> 
+                                    <b>'.lang('Network_Parent').'</b> 
                                   </td>
                                   <td>  
-                                    <a href="./deviceDetails.php?mac='.$node_parent_mac.'">
-                                      <b class="anonymize">'.$node_parent_mac.'</b>
+                                    <a onclick="setCache(\'activeNetworkTab\',\''.$idParentMac.'_id\')" href="./network.php">
+                                      <b class="anonymize">'.$idParentMac.'  <i class="fa fa-square-up-right"></i></b>
                                     </a>                                 
                                   </td>
                               </tr>
                               </tbody>
                             </table>
                             <br>
-                             <div class="box-body no-padding">';
+                             <div id="assignedDevices"  class="box-body no-padding">
+                              <div class="page-header">
+                                <h3>
+                                  <i class="fa fa-sitemap"></i> '.lang('Network_Connected').'
+                                </h3>
+                              </div>
+                             ';
 
-        $str_table =      '   <h4>
-                              '.lang('Device_Title').'
-                              </h4>
-                              <table class="table table-striped">
+        $str_table =      '   <table class="table table-striped">
                                 <tbody>
                                 <tr>
-                                  <th style="width: 40px">Port</th>
-                                  <th style="width: 100px">'.lang('Network_Table_State').'</th>
-                                  <th>'.lang('Network_Table_Hostname').'</th>
-                                  <th>'.lang('Network_Table_IP').'</th>
+                                  <th class="col-sm-1" >Port</th>
+                                  <th class="col-sm-1" >'.lang('Network_Table_State').'</th>
+                                  <th class="col-sm-2" >'.lang('Network_Table_Hostname').'</th>
+                                  <th class="col-sm-1" >'.lang('Network_Table_IP').'</th>
+                                  <th class="col-sm-3" >'.lang('Network_ManageLeaf').'</th>
                                 </tr>';
         
         // Prepare Array for Devices with Port value
@@ -204,6 +220,9 @@
                               <td class="anonymize">'
                                 .$row['last_ip'].
                               '</td>
+                              <td class="">
+                                <button class="btn btn-primary btn-danger" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageUnassign').'</button>
+                              </td>
                             </tr>';
           
         }        
@@ -214,13 +233,9 @@
         // no connected device - don't render table, just display some info
         if($str_table_rows == "")
         {
-          $str_table = "<div>
-                          <h4>
-                            ".lang('Device_Title')."
-                          </h4>
+          $str_table = "<div>                        
                           <div>
-                            This network device (node) doesn't have any assigned devices (leaf nodes).                             
-                            Go to <a href='devices.php'><b>".lang('Device_Title')."</b></a>, select a device you want to attach to this node and assign it in the <b>Details</b> tab by selecting it in the <b>".lang('DevDetail_MainInfo_Network') ."</b> dropdown.
+                            ".lang("Network_NoAssignedDevices")."
                           </div>
                         </div>";
           $str_table_close = "";
@@ -354,17 +369,19 @@
     if (!(empty($tableData))) {
       $str_table_header =  '
                         <div class="content">
-                          <div class="box box-aqua box-body">
+                          <div id="unassignedDevices" class="box box-aqua box-body">
                             <section> 
-                              <h4>
-                                '.lang('Network_UnassignedDevices').'
-                              </h4>
+                              <h3>
+                                <i class="fa fa-laptop"></i> '.lang('Network_UnassignedDevices').'
+                              </h3>
                               <table class="table table-striped">
                                 <tbody>
                                 <tr>                              
-                                  <th style="width: 100px">'.lang('Network_Table_State').'</th>
-                                  <th>'.lang('Network_Table_Hostname').'</th>
-                                  <th>'.lang('Network_Table_IP').'</th>
+                                  <th  class="col-sm-1" ></th>
+                                  <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
+                                  <th  class="col-sm-2" >'.lang('Network_Table_Hostname').'</th>
+                                  <th  class="col-sm-1" >'.lang('Network_Table_IP').'</th>
+                                  <th  class="col-sm-3" >'.lang('Network_Assign').'</th>
                                 </tr>';   
 
       $str_table_rows = "";        
@@ -378,7 +395,9 @@
         }
 
         $str_table_rows = $str_table_rows.
-                                          '<tr>                  
+                                          '
+                                          <tr>                  
+                                            <td> </td> 
                                             <td>'
                                               .$state.
                                             '</td>
@@ -389,9 +408,11 @@
                                             </td>
                                             <td>'
                                               .$row['last_ip'].
-                                            '</td>
+                                            '</td>                                            
+                                            <td>
+                                            <button class="btn btn-primary" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageAssign').'</button>
+                                          </td>
                                           </tr>';
-
       }        
 
       $str_table_close =    '</tbody>
@@ -415,3 +436,75 @@
 <?php
   require 'php/templates/footer.php';
 ?>
+
+
+<script defer>
+
+  // ---------------------------------------------------------------------------
+  // events on tab change
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
+
+    initButtons();
+  });
+
+  // ---------------------------------------------------------------------------
+  function initTab()
+  {
+    key = "activeNetworkTab"
+
+    // default selection
+    selectedTab = "Internet_id"
+
+    // the #target from the url
+    target = window.location.hash.substr(1)  
+
+    // update cookie if target specified
+    if(target != "")
+    {      
+      setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
+    }
+
+    // get the tab id from the cookie (already overriden by the target)
+    if(!emptyArr.includes(getCache(key)))
+    {
+      selectedTab = getCache(key);
+    }
+
+    // Activate panel
+    $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+
+    // When changed save new current tab
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      setCache(key, $(e.target).attr('id'))
+    });
+    
+  }
+
+  // ---------------------------------------------------------------------------
+  function initButtons()
+  {
+    // init parent node
+    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac');
+
+    // init the Assign buttons
+    $('#unassignedDevices  button[data-myleafmac]').each(function(){
+      $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","'+currentNodeMac+'")')
+    }); 
+
+    // init Unassign buttons
+    $('#assignedDevices button[data-myleafmac]').each(function(){
+      $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","")')
+    }); 
+  }
+
+  // ---------------------------------------------------------------------------
+  function updateLeaf(leafMac,nodeMac)
+  {
+    saveData('updateNetworkLeaf', leafMac, nodeMac);
+    setTimeout("location.reload();", 1000); // refresh page after 1s
+  }
+
+  // init selected (first) tab
+  initTab();
+
+</script>

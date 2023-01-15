@@ -230,11 +230,11 @@ function setParameter (parameter, value) {
 
 
 // -----------------------------------------------------------------------------  
-function saveData(functionName, index, value) {
+function saveData(functionName, id, value) {
   $.ajax({
     method: "GET",
     url: "php/server/devices.php",
-    data: { action: functionName, index: index, value:value  },
+    data: { action: functionName, id: id, value:value  },
     success: function(data) {      
         
         if(sanitize(data) == 'OK')

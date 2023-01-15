@@ -58,6 +58,7 @@
       case 'getPholus':               getPholus();                             break;
       case 'getNmap':                 getNmap();                               break;
       case 'saveNmapPort':            saveNmapPort();                          break;
+      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -969,7 +970,7 @@ function getNmap() {
 function saveNmapPort()
 {
 
-  $portIndex = $_REQUEST['index'];
+  $portIndex = $_REQUEST['id'];
   $value = $_REQUEST['value'];
  
   if(is_integer((int)$portIndex))
@@ -987,9 +988,35 @@ function saveNmapPort()
       echo 'KO';
     }
   }
-  // echo "asdasdasasd";
+ 
 }
 
+// ----------------------------------------------------------------------------------------
+function updateNetworkLeaf()
+{
+  $nodeMac = $_REQUEST['value'];
+  $leafMac = $_REQUEST['id'];
+
+  if ((false === filter_var($nodeMac , FILTER_VALIDATE_MAC) && $nodeMac != "Internet" && $nodeMac != "") || false === filter_var($leafMac , FILTER_VALIDATE_MAC) ) {
+    throw new Exception('Invalid mac address');
+  }
+  else
+  {
+    global $db;
+    // sql
+    $sql = 'UPDATE Devices SET "dev_Network_Node_MAC_ADDR" = "'. $nodeMac .'" WHERE "dev_MAC"="' . $leafMac.'"' ;
+    // update Data
+    $result = $db->query($sql);
+
+    // check result
+    if ($result == TRUE) {
+      echo 'OK';
+    } else {
+      echo 'KO';
+    }
+  }
+
+}
 
 //------------------------------------------------------------------------------
 //  Status Where conditions
