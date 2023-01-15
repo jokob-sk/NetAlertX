@@ -357,15 +357,14 @@ function getDevicesFromTable(table)
 {
   rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
   rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+  rowNames = table.column(0, { 'search': 'applied' }).data().toArray() // 
+  rowTypes = table.column(2, { 'search': 'applied' }).data().toArray() // 
 
   result = []
 
   rowIDs.map(function(rowID, index){
-    result.push({"rowid": rowID, "mac":rowMACs[index]})
+    result.push({"rowid": rowID, "mac":rowMACs[index], "name" : rowNames[index],"type" : rowTypes[index] })
   })
-  
-  // console.log(rowIDs)
-  // console.log(result)  
 
   return JSON.stringify (result)
 }

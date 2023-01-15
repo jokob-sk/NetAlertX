@@ -221,7 +221,7 @@
                                 .$row['last_ip'].
                               '</td>
                               <td class="">
-                                <button class="btn btn-primary btn-danger" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageUnassign').'</button>
+                                <button class="btn btn-primary btn-danger btn-sm" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageUnassign').'</button>
                               </td>
                             </tr>';
           
@@ -410,7 +410,7 @@
                                               .$row['last_ip'].
                                             '</td>                                            
                                             <td>
-                                            <button class="btn btn-primary" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageAssign').'</button>
+                                            <button class="btn btn-primary btn-sm" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageAssign').'</button>
                                           </td>
                                           </tr>';
       }        

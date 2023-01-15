@@ -258,9 +258,9 @@
                           <div class="input-group"> 
 
                             <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
+                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
                             <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
+                              <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
                               </ul>
@@ -677,8 +677,9 @@ if ($ENABLED_DARKMODE === True) {
 ?>
 
 <!-- page script ----------------------------------------------------------- -->
-<script>
+<script defer>
 
+  // ------------------------------------------------------------
   function getMac(){
     params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
@@ -687,8 +688,33 @@ if ($ENABLED_DARKMODE === True) {
     return params.mac
   }  
 
+  // ------------------------------------------------------------
+  function getDevicesListValue(idColumn, idValue, returnColumn)
+  {
+    return devicesList.find((item) => {return item[idColumn] == idValue})[returnColumn]
+  }
+
+  // ------------------------------------------------------------
+  function getDevicesList()
+  {
+    // Read cache
+    devicesList = getCache('devicesList');
+    
+    if (devicesList != '') {
+        devicesList = JSON.parse (devicesList);
+    } else {
+        devicesList = [];
+    }
+    return devicesList;
+  }
+
+  // ------------------------------------------------------------
+
   mac                     = getMac()  // can also be rowID!! not only mac 
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
+
+  devicesList = getDevicesList();
+
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
   var parTab              = 'Front_Details_Tab';
@@ -763,16 +789,7 @@ function main () {
           initializeiCheck();
           initializeCombos();
           initializeDatatables();
-          initializeCalendar();
-    
-          // Read Cookies
-          devicesList = getCache('devicesList');
-          if (devicesList != '') {
-              devicesList = JSON.parse (devicesList);
-          } else {
-              devicesList = [];
-          }
-
+          initializeCalendar();    
 
           // query data
           getDeviceData(true);
@@ -911,10 +928,10 @@ function editDrp(dropdownId)
 }
 
 // -----------------------------------------------------------------------------
-// Go to the corect network node in the Network section
+// Go to the correct network node in the Network section
 function goToNetworkNode(dropdownId)
 {  
-  setCache('activeNetworkTab', $('#'+dropdownId).val().replaceAll(":","_")+'_id');
+  setCache('activeNetworkTab', $('#'+dropdownId).attr('data-mynodemac').replaceAll(":","_")+'_id');
   window.location.href = './network.php';
   
 }
@@ -932,23 +949,7 @@ function writeDropdownHtml(dropdownId, dropdownHtmlContent)
   HTMLelement.innerHTML += dropdownHtmlContent;
 }
 // -----------------------------------------------------------------------------
-// function getCache(key)
-// {
-//   // check cache
-//   if(sessionStorage.getItem(key))
-//   {
-//     return sessionStorage.getItem(key);
-//   } else
-//   {
-//     return "";
-//   }
-// }
-// // -----------------------------------------------------------------------------
-// function setCache(key, data)
-// {
-//   sessionStorage.setItem(key, data); 
-// }
-// -----------------------------------------------------------------------------
+
 
 function initializeComboSkipRepeated () {
   // find dropdown menu element
@@ -1200,7 +1201,7 @@ function getDeviceData (readAllData=false) {
 
   // Check MAC
   if (mac == '') {
-    console.log("getDeviceData mac AA: ", mac)
+    // console.log("getDeviceData mac AA: ", mac)
     return;
   }
 
@@ -1261,7 +1262,7 @@ function getDeviceData (readAllData=false) {
       // Deactivate controls
       $('#panDetails :input').attr('disabled', true);
 
-      // Check if device is deleted o no exists in this session
+      // Check if device is deleted or don't exist in this session
       if (pos == -1) {
         devicesList = [];
         $('#pageTitle').html ('Device not found: <small>'+ mac +'</small>');
@@ -1309,7 +1310,7 @@ function getDeviceData (readAllData=false) {
         // Activate controls
         $('#panDetails :input').attr('disabled', false);
 
-        mac                                          =deviceData['dev_MAC'];
+        mac                                          = deviceData['dev_MAC'];
 
         // update the mac parameter in the URL, this makes the selected device persistent when the page is reloaded
         var searchParams = new URLSearchParams(window.location.search);
@@ -1317,6 +1318,8 @@ function getDeviceData (readAllData=false) {
         var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
         history.pushState(null, '', newRelativePathQuery);
         getSessionsPresenceEvents();
+        
+        devicesList = getDevicesList();
 
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
@@ -1327,8 +1330,9 @@ function getDeviceData (readAllData=false) {
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
-        $('#txtComments').val                        (deviceData['dev_Comments']);
-        $('#txtNetworkNodeMac').val                  (deviceData['dev_Network_Node_MAC_ADDR']);
+        $('#txtComments').val                        (deviceData['dev_Comments']);        
+        $('#txtNetworkNodeMac').val                  (getDevicesListValue('mac', deviceData['dev_Network_Node_MAC_ADDR'] ,'name'));
+        $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
@@ -1353,7 +1357,7 @@ function getDeviceData (readAllData=false) {
       // Check if device is part of the devicesList      
       pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);      
       if (pos == -1) {
-        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['dev_MAC']});
+        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['dev_MAC'], "name": deviceData['dev_Name'], "type": deviceData['dev_DeviceType']});
         pos=0;
       }
     }
@@ -1422,8 +1426,6 @@ function performSwitch(direction)
     }
   }
 
-  // console.log('here ' + pos)
-
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
   mac = devicesList[pos].mac.toString();
@@ -1451,7 +1453,7 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()
     + '&comments='       + $('#txtComments').val()
-    + '&networknode='    + $('#txtNetworkNodeMac').val()
+    + '&networknode='    + $('#txtNetworkNodeMac').attr('data-mynodemac')
     + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + ($('#txtScanCycle').val() == "yes" ? "1" : "0")
@@ -1603,7 +1605,15 @@ $(document).on('input', 'input:text', function() {
 
 // -----------------------------------------------------------------------------
 function setTextValue (textElement, textValue) {
-  $('#'+textElement).val (textValue);  
+  if(textElement == "txtNetworkNodeMac")
+  {
+    $('#'+textElement).attr ('data-mynodemac', textValue);
+    $('#'+textElement).val (getDevicesListValue('mac', textValue ,'name') ); //here
+  } else
+  {
+    $('#'+textElement).attr ('data-myvalue', textValue);
+    $('#'+textElement).val (textValue);  
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -1814,3 +1824,7 @@ function saveNmapPort(index)
 
 
 </script>
+
+<script defer>
+
+<script>
