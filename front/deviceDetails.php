@@ -195,10 +195,20 @@
                       <div class="form-group">
                         <label class="col-sm-3 control-label">
                           <?php echo lang('DevDetail_Icon');?> 
-                          <a href="https://fontawesome.com/search?q=laptop&o=r&m=free" target="_blank"><i class="fa fa-arrow-up-right-from-square"></i></a>
+                          <a href="https://fontawesome.com/search?q=laptop&o=r&m=free" target="_blank"> <span><i class="fa fa-fw fa-arrow-up-right-from-square"></i></a><span>
                         </label>
                         <div class="col-sm-9">
-                          <input class="form-control" title="<?php echo lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
+                          <div class="input-group">
+                            <input class="form-control" title="<?php echo lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtIcon');"></i></span>
+                            <div class="input-group-btn">
+                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <span class="fa fa-caret-down"></span>
+                              </button>
+                              <ul id="dropdownIcon" class="dropdown-menu dropdown-menu-right">
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
 

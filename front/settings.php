@@ -79,7 +79,7 @@ CommitDB();
         $html = $html.'<div  class=" box panel panel-default">
                           <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
                             <div class="panel-heading">                              
-                                <h4 class="panel-title">'.$group.'</h4>                              
+                                <h4 class="panel-title">'.lang($group.'_settings_group').'</h4>                              
                             </div>
                           </a>
                           <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 

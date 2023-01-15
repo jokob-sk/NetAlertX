@@ -210,11 +210,11 @@ if ($ENABLED_DARKMODE === True) {
       <ul class="sidebar-menu" data-widget="tree">
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
-          <a href="devices.php"><i class="fa fa-laptop"></i> <span><?php echo lang('Navigation_Devices');?></span></a>
+          <a href="devices.php"><span><?php echo lang('Navigation_Devices');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
-          <a href="presence.php"><i class="fa fa-calendar"></i> <span><?php echo lang('Navigation_Presence');?></span></a>
+          <a href="presence.php"><?php echo lang('Navigation_Presence');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
@@ -222,7 +222,7 @@ if ($ENABLED_DARKMODE === True) {
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><i class="fa fa-network-wired"></i> <span><?php echo lang('Navigation_Network');?></span></a>
+          <a href="network.php"><span><?php echo lang('Navigation_Network');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">

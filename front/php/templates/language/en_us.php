@@ -45,12 +45,12 @@ $lang['en_us'] = array(
 // Device Page
 //////////////////////////////////////////////////////////////////
 
-'Navigation_Devices' => 'Devices',
-'Navigation_Presence' => 'Presence',
+'Navigation_Devices' => '<i class="fa fa-laptop"></i> Devices',
+'Navigation_Presence' => '<i class="fa fa-calendar"></i> Presence',
 'Navigation_Events' => 'Events',
 'Navigation_Maintenance' => 'Maintenance',
 'Navigation_Settings' => 'Settings',
-'Navigation_Network' => 'Network',
+'Navigation_Network' => '<i class="fa fa-fw fa-network-wired"></i>  Network',
 'Navigation_HelpFAQ' => 'Help / FAQ',
 'Device_Title' => 'Devices',
 'Device_Shortcut_AllDevices' => 'All Devices',
@@ -150,17 +150,17 @@ $lang['en_us'] = array(
 'DevDetail_Shortcut_Sessions' => 'Sessions',
 'DevDetail_Shortcut_Presence' => 'Presence',
 'DevDetail_Shortcut_DownAlerts' => 'Down Alerts',
-'DevDetail_Tab_Details' => 'Details',
-'DevDetail_Tab_Nmap' => 'Nmap',
-'DevDetail_Tab_Sessions' => 'Sessions',
-'DevDetail_Tab_Presence' => 'Presence',
-'DevDetail_Tab_Events' => 'Events',
-'DevDetail_Tab_Pholus' => 'Pholus',
+'DevDetail_Tab_Details' => '<i class="fa fa-info-circle"></i> Details',
+'DevDetail_Tab_Nmap' => '<i class="fa fa-ethernet"></i> Nmap',
+'DevDetail_Tab_Sessions' => '<i class="fa fa-calendar"></i> Sessions',
+'DevDetail_Tab_Presence' => '<i class="fa fa-calendar"></i> Presence',
+'DevDetail_Tab_Events' => '<i class="fa fa-bolt"></i> Events',
+'DevDetail_Tab_Pholus' => '<i class="fa fa-search"></i> Pholus',
 'DevDetail_Tab_PholusEmpty' => 'Nothing sniffed out with Pholus for this device.',
 'DevDetail_Tab_NmapTableHeader' => 'Scheduled scan results',
 'DevDetail_Tab_NmapTableText' => 'Set up a schedule in <a href="/settings.php#NMAP_ACTIVE">Settings</a>',
 'DevDetail_Tab_NmapEmpty' => 'No ports detected with Nmap on this device.',
-'DevDetail_MainInfo_Title' => 'Main Info',
+'DevDetail_MainInfo_Title' => '<i class="fa fa-pencil"></i> Main Info',
 'DevDetail_MainInfo_mac' => 'MAC',
 'DevDetail_MainInfo_Name' => 'Name',
 'DevDetail_MainInfo_Owner' => 'Owner',
@@ -176,13 +176,13 @@ $lang['en_us'] = array(
 'DevDetail_MainInfo_Network' => '<i class="fa fa-server"></i> Node (MAC)',
 'DevDetail_GoToNetworkNode' => 'Navigate to the Network page of the given node.',
 'DevDetail_MainInfo_Network_Port' => '<i class="fa fa-ethernet"></i> Port',
-'DevDetail_SessionInfo_Title' => 'Session Info',
+'DevDetail_SessionInfo_Title' => '<i class="fa fa-calendar"></i> Session Info',
 'DevDetail_SessionInfo_Status' => 'Status',
 'DevDetail_SessionInfo_FirstSession' => 'First Session',
 'DevDetail_SessionInfo_LastSession' => 'Last Session',
 'DevDetail_SessionInfo_LastIP' => 'Last IP',
 'DevDetail_SessionInfo_StaticIP' => 'Static IP',
-'DevDetail_EveandAl_Title' => 'Events & Alerts config',
+'DevDetail_EveandAl_Title' => '<i class="fa fa-bolt"></i> Events & Alerts config',
 'DevDetail_EveandAl_ScanCycle' => 'Scan device',
 'DevDetail_EveandAl_AlertAllEvents' => 'Alert All Events',
 'DevDetail_EveandAl_AlertDown' => 'Alert Down',
@@ -375,7 +375,7 @@ $lang['en_us'] = array(
 'Network_Node' => 'Network node',
 'Network_Node_Name' => 'Node name',
 'Network_Parent' => 'Parent network device',
-'Network_NoAssignedDevices' => 'This network node doesn\'t have any assigned devices (leaf nodes). Assign one from bellow or go to the <b>Details</b> tab of any device in <a href="devices.php"><b> <i class="fa fa-laptop"></i> Devices</b></a>, and assign it to a network <b><i class="fa fa-server"></i> Node (MAC)</b> and <b><i class="fa fa-ethernet"></i> Port</b> there.',
+'Network_NoAssignedDevices' => 'This network node doesn\'t have any assigned devices (leaf nodes). Assign one from bellow or go to the <b><i class="fa fa-info-circle"></i> Details</b> tab of any device in <a href="devices.php"><b> <i class="fa fa-laptop"></i> Devices</b></a>, and assign it to a network <b><i class="fa fa-server"></i> Node (MAC)</b> and <b><i class="fa fa-ethernet"></i> Port</b> there.',
 
 //////////////////////////////////////////////////////////////////
 // Help Page
@@ -383,7 +383,7 @@ $lang['en_us'] = array(
 
 'HelpFAQ_Title' => 'Help / FAQ',
 'HelpFAQ_Cat_General' => 'General',
-'HelpFAQ_Cat_Detail' => 'Details',
+'HelpFAQ_Cat_Detail' => '<i class="fa fa-info-circle"></i> Details',
 'HelpFAQ_Cat_General_100_head' => 'The clock on the top right and the times of the events/presence are not correct (time difference).',
 'HelpFAQ_Cat_General_100_text_a' => 'On your PC the following time zone is set for the PHP environment:',
 'HelpFAQ_Cat_General_100_text_b' => 'If this is not the timezone you are in, you should change the timezone in the PHP configuration file. You can find it in this directory:',
@@ -466,11 +466,11 @@ $lang['en_us'] = array(
 
 
 //General
+'General_settings_group' => '<i class="fa fa-gears"></i> General',
 'ENABLE_ARPSCAN_name' => 'Enable ARP scan',
 'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a onclick="toggleAllSettings()" href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
-
 The arp-scan time itself depends on the number of IP addresses to check. 
 The number of IPs to check depends on the <a target="_blank" href="https://www.calculator.net/ip-subnet-calculator.html">network mask</a> you set here. 
 For example, a <code>/24</code> mask results in 256 IPs to check, where as a <code>/16</code> 
@@ -501,6 +501,7 @@ the arp-scan will take hours to complete instead of seconds.
 'DIG_GET_IP_ARG_description' => 'Change the <a href="https://linux.die.net/man/1/dig" target="_blank">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>.',
 
 //Email
+'Email_settings_group' => '<i class="fa fa-at"></i> Email',
 'REPORT_MAIL_name' => 'Enable email',
 'REPORT_MAIL_description' => 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below.',
 'SMTP_SERVER_name' => 'SMTP server URL',
@@ -521,6 +522,7 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_FROM_description' => 'Notification email subject line.',
 
 //Webhooks
+'Webhooks_settings_group' => '<i class="fa fa-circle-nodes"></i> Webhooks',
 'REPORT_WEBHOOK_name' => 'Enable Webhooks',
 'REPORT_WEBHOOK_description' => 'Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href="https://n8n.io/" target="_blank">n8n</a> to name a few. Check out this simple <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md" target="_blank">n8n guide here</a> to get started. If enabled, configure related settings below.',
 'WEBHOOK_URL_name' => 'Target URL',
@@ -531,6 +533,7 @@ the arp-scan will take hours to complete instead of seconds.
 'WEBHOOK_REQUEST_METHOD_description' => 'The HTTP request method to be used for the webhook call.',
 
 // Apprise
+'Apprise_settings_group' => '<i class="fa fa-bullhorn"></i> Apprise',
 'REPORT_APPRISE_name' => 'Enable Apprise',
 'REPORT_APPRISE_description' => 'Enable sending notifications via <a target="_blank" href="https://hub.docker.com/r/caronc/apprise">Apprise</a>.',
 'APPRISE_HOST_name' => 'Apprise host URL',
@@ -539,6 +542,7 @@ the arp-scan will take hours to complete instead of seconds.
 'APPRISE_URL_description' => 'Apprise notification target URL.',
 
 // NTFY
+'NTFY_settings_group' => '<i class="fa fa-terminal"></i> NTFY',
 'REPORT_NTFY_name' => 'Enable NTFY',
 'REPORT_NTFY_description' => 'Enable sending notifications via <a target="_blank" href="https://ntfy.sh/">NTFY</a>.',
 'NTFY_HOST_name' => 'NTFY host URL',
@@ -551,6 +555,7 @@ the arp-scan will take hours to complete instead of seconds.
 'NTFY_PASSWORD_description' => 'Enter password if you need (host) an instance with enabled authetication.',
 
 // Pushsafer
+'PUSHSAFER_settings_group' => '<i class="fa fa-bell"></i> Pushsafer',
 'REPORT_PUSHSAFER_name' => 'Enable Pushsafer',
 'REPORT_PUSHSAFER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.',
 'PUSHSAFER_TOKEN_name' => 'Pushsafer token',
@@ -558,6 +563,7 @@ the arp-scan will take hours to complete instead of seconds.
 
 
 // MQTT
+'MQTT_settings_group' => '<i class="fa fa-square-rss"></i> MQTT',
 'REPORT_MQTT_name' => 'Enable MQTT',
 'REPORT_MQTT_description' => 'Enable sending notifications via <a target="_blank" href="https://www.home-assistant.io/integrations/mqtt/">MQTT</a> to your Home Assistance instance.',
 'MQTT_BROKER_name' => 'MQTT broker URL',
@@ -574,6 +580,7 @@ the arp-scan will take hours to complete instead of seconds.
 'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
 
 //DynDNS
+'DynDNS_settings_group' => '<i class="fa fa-globe"></i> DynDNS',
 'DDNS_ACTIVE_name' => 'Enable DynDNS',
 'DDNS_ACTIVE_description' => '',
 'DDNS_DOMAIN_name' => 'DynDNS domain URL',
@@ -586,12 +593,14 @@ the arp-scan will take hours to complete instead of seconds.
 'DDNS_UPDATE_URL_description' => 'Update URL starting with <code>http://</code> or <code>https://</code>.',
 
 // PiHole
+'PiHole_settings_group' => '<i class="fa fa-seedling"></i> PiHole',
 'PIHOLE_ACTIVE_name' => 'Enable PiHole mapping',
 'PIHOLE_ACTIVE_description' => 'You need to map<code>:/etc/pihole/pihole-FTL.db</code> in the <code>docker-compose.yml</code> file if you enable this setting.',
 'DHCP_ACTIVE_name' => 'Enable PiHole DHCP',
 'DHCP_ACTIVE_description' => 'You need to map <code>:/etc/pihole/dhcp.leases</code> in the <code>docker-compose.yml</code> file if you enable this setting.',
 
 // Pholus
+'Pholus_settings_group' => '<i class="fa fa-search"></i> Pholus',
 'PHOLUS_ACTIVE_name' => 'Cycle run',
 'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. If enabled this will execute the scan before every network scan cycle until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Please be aware it can spam the network with unnecessary traffic. Depends on the <a onclick="toggleAllSettings()" href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>. For a scheduled or one-off scan, check the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>.',
 'PHOLUS_TIMEOUT_name' => 'Cycle run timeout',
@@ -609,6 +618,7 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
 
 // Nmap
+'Nmap_settings_group' => '<i class="fa fa-ethernet"></i> Nmap',
 'NMAP_ACTIVE_name' => 'Cycle run',
 'NMAP_ACTIVE_description' => 'If enabled this will execute a scan on a newly found device. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
 'NMAP_TIMEOUT_name' => 'Run timeout',
