@@ -154,6 +154,7 @@ function setDeviceData() {
                  dev_Owner                  = "'. quotes($_REQUEST['owner'])        .'",
                  dev_DeviceType             = "'. quotes($_REQUEST['type'])         .'",
                  dev_Vendor                 = "'. quotes($_REQUEST['vendor'])       .'",
+                 dev_Icon                   = "'. quotes($_REQUEST['icon'])         .'",
                  dev_Favorite               = "'. quotes($_REQUEST['favorite'])     .'",
                  dev_Group                  = "'. quotes($_REQUEST['group'])        .'",
                  dev_Location               = "'. quotes($_REQUEST['location'])     .'",

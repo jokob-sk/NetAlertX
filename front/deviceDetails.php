@@ -191,6 +191,17 @@
                         </div>
                       </div>
 
+                      <!-- Icon -->
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                          <?php echo lang('DevDetail_Icon');?> 
+                          <a href="https://fontawesome.com/search?q=laptop&o=r&m=free" target="_blank"><i class="fa fa-arrow-up-right-from-square"></i></a>
+                        </label>
+                        <div class="col-sm-9">
+                          <input class="form-control" title="<?php echo lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
+                        </div>
+                      </div>
+
                       <!-- Vendor -->
                       <div class="form-group">
                         <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Vendor');?></label>
@@ -250,31 +261,7 @@
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
                       </div>
-                      <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?></h4>                    
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
-                        <div class="col-sm-9">  
-                          <div class="input-group"> 
-
-                            <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
-                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
-                                    <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
-                              </ul>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network_Port');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtNetworkPort" type="text" value="--">
-                        </div>
-                      </div>
+                      
 
 
                     </div>          
@@ -322,6 +309,32 @@
                         <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_StaticIP');?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkStaticIP" type="checkbox">
+                        </div>
+                      </div>
+
+                      <!-- Network -->
+                      <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?></h4>                    
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
+                        <div class="col-sm-9">  
+                          <div class="input-group"> 
+
+                            <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
+                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
+                            <div class="input-group-btn">
+                              <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
+                                    <span class="fa fa-caret-down"></span></button>
+                              <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
+                              </ul>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network_Port');?></label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
                       </div>
       
@@ -691,6 +704,11 @@ if ($ENABLED_DARKMODE === True) {
   // ------------------------------------------------------------
   function getDevicesListValue(idColumn, idValue, returnColumn)
   {
+    if(emptyArr.includes(devicesList) || emptyArr.includes(idValue))
+    {
+      return '';
+    }
+
     return devicesList.find((item) => {return item[idColumn] == idValue})[returnColumn]
   }
 
@@ -1235,6 +1253,7 @@ function getDeviceData (readAllData=false) {
       $('#txtOwner').val               ('--');
       $('#txtDeviceType').val          ('--');
       $('#txtVendor').val              ('--');
+      $('#txtIcon').val                ('--');
 
       $('#chkFavorite').iCheck         ('uncheck'); 
       $('#txtGroup').val               ('--');
@@ -1326,6 +1345,7 @@ function getDeviceData (readAllData=false) {
         $('#txtOwner').val                           (deviceData['dev_Owner']);
         $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
         $('#txtVendor').val                          (deviceData['dev_Vendor']);
+        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'laptop'));        
   
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
         $('#txtGroup').val                           (deviceData['dev_Group']);
@@ -1437,6 +1457,15 @@ function performSwitch(direction)
 }
 
 // -----------------------------------------------------------------------------
+function initDefault (value, defaultVal) {
+  if (emptyArr.includes(value))
+  {
+    return defaultVal;
+  }
+
+  return value;
+}
+// -----------------------------------------------------------------------------
 function setDeviceData (direction='', refreshCallback='') {
   // Check MAC
   if (mac == '') {
@@ -1449,6 +1478,7 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&owner='          + $('#txtOwner').val()
     + '&type='           + $('#txtDeviceType').val()
     + '&vendor='         + $('#txtVendor').val()
+    + '&icon='           + $('#txtIcon').val()
     + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()

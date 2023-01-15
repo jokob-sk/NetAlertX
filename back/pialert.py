@@ -2730,6 +2730,17 @@ def upgradeDB ():
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
 
+    # dev_Icon column
+    dev_Icon_missing = sql.execute ("""
+      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
+      """).fetchone()[0] == 0
+
+    if dev_Icon_missing :
+      file_print("[upgradeDB] Adding dev_Icon to the Devices table")     
+      sql.execute("""      
+      ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
+      """)
+
     # Re-creating Parameters table
     file_print("[upgradeDB] Re-creating Parameters table")
     sql.execute("DROP TABLE Parameters;")
