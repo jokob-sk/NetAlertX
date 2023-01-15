@@ -1854,7 +1854,3 @@ function saveNmapPort(index)
 
 
 </script>
-
-<script defer>
-
-<script>
