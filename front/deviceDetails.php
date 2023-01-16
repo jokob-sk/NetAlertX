@@ -784,7 +784,7 @@ function main () {
   tab = selectedTab;
 
   // get parameter value
-  $.get('php/server/parameters.php?action=get&parameter='+ parPeriod, function(data) {
+  $.get('php/server/parameters.php?action=get&defaultValue=1 day&parameter='+ parPeriod, function(data) {
     var result = JSON.parse(data);
     if (result) {
       period = result;
@@ -792,21 +792,21 @@ function main () {
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ parSessionsRows, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parSessionsRows, function(data) {
       var result = JSON.parse(data);
       if (Number.isInteger (result) ) {
           sessionsRows = result;
       }
 
       // get parameter value
-      $.get('php/server/parameters.php?action=get&parameter='+ parEventsRows, function(data) {
+      $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parEventsRows, function(data) {
         var result = JSON.parse(data);
         if (Number.isInteger (result) ) {
             eventsRows = result;
         }
   
         // get parameter value
-        $.get('php/server/parameters.php?action=get&parameter='+ parEventsHide, function(data) {
+        $.get('php/server/parameters.php?action=get&defaultValue=true&parameter='+ parEventsHide, function(data) {
           var result = JSON.parse(data);
           if (result) {
               eventsHide = result;

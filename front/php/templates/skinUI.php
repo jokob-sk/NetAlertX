@@ -4,9 +4,14 @@
 // ## GUI settings processing start
 // ###################################
 
-if (file_exists('/home/pi/pialert/db/setting_darkmode')) {
-    $ENABLED_DARKMODE = True;
+if( isset($_COOKIE['Front_Dark_Mode_Enabled']))
+{
+    $ENABLED_DARKMODE = $_COOKIE['Front_Dark_Mode_Enabled'] == "true";
+}else
+{
+    $ENABLED_DARKMODE = False;
 }
+
 foreach (glob("/home/pi/pialert/db/setting_skin*") as $filename) {
     $pia_skin_selected = str_replace('setting_','',basename($filename));
 }

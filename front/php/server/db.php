@@ -70,11 +70,6 @@ function OpenDB (...$DBPath) {
   $db->exec('PRAGMA journal_mode = wal;');
 }
 
-function CommitDB () {
-  global $db;
-  
-  // $db->commit();
-}
 
 // # Open DB once and keep open
 // # Opening / closing DB frequently actually casues more issues

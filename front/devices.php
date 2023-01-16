@@ -215,7 +215,7 @@
 function main () {
   
   // get parameter value
-  $.get('php/server/parameters.php?action=get&parameter='+ parTableRows, function(data) {
+  $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
     var result = JSON.parse(data);
 
     result = parseInt(result, 10)
@@ -225,7 +225,7 @@ function main () {
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ parTableOrder, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
       var result = JSON.parse(data);
       result = JSON.parse(result);
       if (Array.isArray (result) ) {

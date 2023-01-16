@@ -41,9 +41,7 @@
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
       case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
-      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;
-      case 'PiaEnableDarkmode':       PiaEnableDarkmode();                     break;
-      case 'PiaToggleArpScan':        PiaToggleArpScan();                      break; 
+      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;             
       case 'ExportCSV':               ExportCSV();                             break;    
       case 'ImportCSV':               ImportCSV();                             break;     
 
@@ -66,7 +64,7 @@
     }
   }
 
-  CommitDB();
+ 
 
 //------------------------------------------------------------------------------
 //  Query Device Data
@@ -527,27 +525,7 @@ function ImportCSV() {
     echo lang('BackDevices_DBTools_ImportCSVMissing');    
    }
 
-
-   CommitDB();
-
 }
-
-//------------------------------------------------------------------------------
-//  Toggle Dark/Light Themes
-//------------------------------------------------------------------------------
-function PiaEnableDarkmode() {
-  $file = '../../../db/setting_darkmode';  
-
-  if (file_exists($file)) {
-      echo lang('BackDevices_darkmode_disabled');
-      unlink($file);
-      echo("<meta http-equiv='refresh' content='1'>");
-     } else {
-      echo lang('BackDevices_darkmode_enabled');
-      $darkmode = fopen($file, 'w');
-      echo("<meta http-equiv='refresh' content='1'>");
-     }
-  }
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status

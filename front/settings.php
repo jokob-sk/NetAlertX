@@ -40,7 +40,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       ); 
 }
 
-CommitDB();
 
 ?>
 <!-- Page ------------------------------------------------------------------ -->
@@ -397,7 +396,7 @@ CommitDB();
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=0&parameter='+ key + skipCacheQuery, function(data) {
 
       var result = data;   
       

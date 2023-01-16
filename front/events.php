@@ -188,7 +188,7 @@
 // -----------------------------------------------------------------------------
 function main () {
   // get parameter value
-  $.get('php/server/parameters.php?action=get&parameter='+ parPeriod, function(data) {
+  $.get('php/server/parameters.php?action=get&defaultValue=1 day&parameter='+ parPeriod, function(data) {
     var result = JSON.parse(data);
     if (result) {
       period = result;
@@ -196,7 +196,7 @@ function main () {
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ parTableRows, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
       var result = JSON.parse(data);
       result = parseInt(result, 10)
       if (Number.isInteger (result) ) {

@@ -22,16 +22,21 @@
   ini_set ('max_execution_time','15');
 
   $skipCache = FALSE;
+  $defaultValue = '';
 
   if (isset ($_REQUEST['skipcache'])) {
     $skipCache = TRUE;    
+  }
+
+  if (isset ($_REQUEST['defaultValue'])) {
+    $defaultValue = $_REQUEST['defaultValue'];    
   }
 
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'get':  getParameter($skipCache);                break;
+      case 'get':  getParameter($skipCache, $defaultValue); break;
       case 'set':  setParameter();                          break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
@@ -41,18 +46,19 @@
 //------------------------------------------------------------------------------
 //  Get Parameter Value
 //------------------------------------------------------------------------------
-function getParameter($skipCache) {
+function getParameter($skipCache, $defaultValue) {
 
   $parameter = $_REQUEST['parameter'];
   $value = "";
 
-  // get the value from the cookie if available
-  if(getCache($parameter) != "")
+  // get the value from the cache if available
+  $cachedValue = getCache($parameter);
+  if($cachedValue != "")
   {
-    $value  = getCache($parameter);
+    $value  = $cachedValue;
   }
 
-  // query the database if no cache entry found or requesting live data for the Back_App_State in the header
+  // query the database if no cache entry found or requesting live data (skipping cache)
   if($skipCache || $value == "" )
   {
     global $db;
@@ -62,12 +68,15 @@ function getParameter($skipCache) {
     
     $result = $db->query($sql);
     $row = $result -> fetchArray (SQLITE3_NUM);  
-    $value = $row[0];
 
-    // Commit DB
-    CommitDB();
+    if($row != NULL && count($row) == 1)
+    {
+      $value = $row[0];
+    } else{
+      $value = $defaultValue;
+    }
 
-    // update cookie cache  
+    // update cache  
     setCache($parameter, $value);
   }
   // return value
@@ -109,10 +118,7 @@ function setParameter() {
     }
   }
 
-  // Commit DB
-  CommitDB();
-
-  // update cookie cache  
+  // update cache  
   setCache($parameter, $value);
 
   echo 'OK';

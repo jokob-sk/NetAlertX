@@ -246,7 +246,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-green dbtools-button" id="btnPiaEnableDarkmode" onclick="askPiaEnableDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
+                            <button type="button" class="btn bg-green dbtools-button" id="btnToggleDarkmode" onclick="askToggleDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_darkmode_text');?></div>
                     </div>                    
@@ -641,31 +641,38 @@ function ImportCSV()
   });
 }
 
+
+// --------------------------------------------------------
 // Switch Darkmode 
-function askPiaEnableDarkmode() {
+function askToggleDarkmode() {
   // Ask 
   showModalWarning('<?php echo lang('Maintenance_Tool_darkmode_noti');?>', '<?php echo lang('Maintenance_Tool_darkmode_noti_text');?>',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Switch');?>', 'PiaEnableDarkmode');
-}
-function PiaEnableDarkmode()
-{ 
-  // Execute
-  $.get('php/server/devices.php?action=PiaEnableDarkmode', function(msg) {
-    showMessage (msg);
-  });
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Switch');?>', 'ToggleDarkmode');
 }
 
-// Toggle the Arp-Scans 
-function askPiaToggleArpScan () {
-  // Ask 
-  showModalWarning('<?php echo lang('Maintenance_Tool_arpscansw_noti');?>', '<?php echo lang('Maintenance_Tool_arpscansw_noti_text');?>',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Switch');?>', 'PiaToggleArpScan');
-}
-function PiaToggleArpScan()
-{ 
-  // Execute
-  $.get('php/server/devices.php?action=PiaToggleArpScan', function(msg) {
-    showMessage (msg);
+// --------------------------------------------------------
+function ToggleDarkmode()
+{   
+  // get parameter Front_Dark_Mode_Enabled value
+  $.get('php/server/parameters.php?action=get&defaultValue=false&parameter=Front_Dark_Mode_Enabled', function(data) {
+  var result = JSON.parse(data);
+  if (result) {
+      darkModeEnabled = result == 'true';      
+
+      darkModeEnabled = !darkModeEnabled;      
+
+      $.get('php/server/parameters.php?action=set&parameter=Front_Dark_Mode_Enabled&value='+ darkModeEnabled,
+        function(data) {
+          if (data != "OK") {
+            showMessage (data);
+            setTimeout(function (){location.reload()}, 1000);
+            
+          } else {
+            showMessage (data);
+          };
+      } );
+      
+  }
   });
 }
 

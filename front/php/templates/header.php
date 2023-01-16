@@ -10,7 +10,6 @@
 <?php
 
 require '/home/pi/pialert/front/php/templates/timezone.php';
-require '/home/pi/pialert/front/php/templates/skinUI.php';
 require '/home/pi/pialert/front/php/templates/language/lang.php';
 require '/home/pi/pialert/front/php/templates/security.php';
 
@@ -260,7 +259,7 @@ if ($ENABLED_DARKMODE === True) {
     }
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&parameter='+ key + skipCacheQuery, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=NULL&parameter='+ key + skipCacheQuery, function(data) {
       var result = data;
 
       document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    

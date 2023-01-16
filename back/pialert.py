@@ -2741,36 +2741,6 @@ def upgradeDB ():
       ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
       """)
 
-    # Re-creating Parameters table
-    file_print("[upgradeDB] Re-creating Parameters table")
-    sql.execute("DROP TABLE Parameters;")
-
-    sql.execute("""      
-      CREATE TABLE "Parameters" (
-        "par_ID"	TEXT,
-        "par_Value"	TEXT
-      );      
-      """)    
-
-    params = [
-    # General
-    ('Front_Events_Period', '1 day'),
-    ('Front_Details_Sessions_Rows', '50'),
-    ('Front_Details_Events_Rows', '50'),
-    ('Front_Details_Events_Hide', 'True'),
-    ('Front_Events_Rows', '50'),
-    ('Front_Details_Period', '1 day'),
-    ('Front_Devices_Order', '[[3,"desc"],[0,"asc"]]'),
-    ('Front_Devices_Rows', '100'),
-    ('Front_Details_Tab', 'tabDetails'),
-    ('Back_Settings_Imported', round(time.time() * 1000)),
-    ('Back_App_State', 'Initializing'), 
-    ('Back_New_Version_Available', False),
-    ('Front_Event', 'finished')    
-    ] 
-
-    sql.executemany ("""INSERT INTO Parameters ("par_ID", "par_Value") VALUES (?, ?)""", params)  
-
     # indicates, if Settings table is available 
     settingsMissing = sql.execute("""
     SELECT name FROM sqlite_master WHERE type='table'

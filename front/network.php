@@ -433,7 +433,7 @@
       echo $str_table_header.$str_table_rows.$str_table_close;     
     }
 
-    CommitDB ();
+
   ?>
 
     <!-- /.content -->

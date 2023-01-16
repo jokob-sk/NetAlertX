@@ -2,7 +2,6 @@
 
 
 require 'php/templates/language/lang.php';
-require 'php/templates/skinUI.php';
 require 'php/templates/security.php';
 
 if ($Pia_WebProtection != 'true')

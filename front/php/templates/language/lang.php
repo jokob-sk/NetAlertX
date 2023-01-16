@@ -14,6 +14,7 @@ if(!isset($_COOKIE["language"])) {
 
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = defaultLang;}
 
+require '/home/pi/pialert/front/php/templates/skinUI.php';
 require 'en_us.php';
 require 'de_de.php';
 require 'es_es.php';
