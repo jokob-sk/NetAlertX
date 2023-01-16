@@ -153,7 +153,8 @@
                 <tr>
                   <th><?php echo lang('Device_TableHead_Name');?></th>
                   <th><?php echo lang('Device_TableHead_Owner');?></th>
-                  <th><?php echo lang('Device_TableHead_Type');?></th>
+                  <th><?php echo lang('Device_TableHead_Type');?></th>       
+                  <th><?php echo lang('Device_TableHead_Icon');?></th>           
                   <th><?php echo lang('Device_TableHead_Favorite');?></th>
                   <th><?php echo lang('Device_TableHead_Group');?></th>
                   <th><?php echo lang('Device_TableHead_FirstSession');?></th>
@@ -164,6 +165,7 @@
                   <th><?php echo lang('Device_TableHead_MAC');?></th>
                   <th><?php echo lang('Device_TableHead_LastIPOrder');?></th>
                   <th><?php echo lang('Device_TableHead_Rowid');?></th>
+                  
                 </tr>
                 </thead>
               </table>
@@ -244,9 +246,11 @@ function main () {
 function initializeDatatable () {
   // If the device has a small width (mobile) only show name, ip, and status columns. 
   if (window.screen.width < 400) {
-    var tableColumnShow = [10,11,12,1,2,3,4,5,6,8];
+    // var tableColumnHide = [10,11,12,1,2,3,4,5,6,8];
+    var tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
   } else {
-    var tableColumnShow = [10, 11, 12];
+    // var tableColumnHide = [10, 11, 12];
+    var tableColumnHide = [11, 12, 13];
   };
   var table=
   $('#tableDevices').DataTable({
@@ -265,20 +269,30 @@ function initializeDatatable () {
     // 'order'       : [[3,'desc'], [0,'asc']],
 
     'columnDefs'   : [
-      {visible:   false,         targets: tableColumnShow },
-      {className: 'text-center', targets: [3, 8, 9] },
-      {width:     '80px',        targets: [5, 6] },
-      {width:     '0px',         targets: 9 },
-      {orderData: [11],          targets: 7 },
+      {visible:   false,         targets: tableColumnHide },      
+      {className: 'text-center', targets: [3, 4, 9, 10] },      
+      {width:     '80px',        targets: [6, 7] },      
+      {width:     '30px',        targets: [10, 13] },      
+      {orderData: [11],          targets: 8 },
 
       // Device Name
       {targets: [0],
         'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[10] +'" class="">'+ cellData +'</a></b>');
+            $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[11] +'" class="">'+ cellData +'</a></b>');
       } },
 
-      // Favorite
+      // Icon      
       {targets: [3],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          if (!emptyArr.includes(cellData)){
+            $(td).html ('<i class="fa fa-'+cellData+' " style="font-size:16px"></i>');
+          } else {
+            $(td).html ('');
+          }
+      } },
+      // Favorite
+      // {targets: [3],
+      {targets: [4],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
             $(td).html ('<i class="fa fa-star text-yellow" style="font-size:16px"></i>');
@@ -288,13 +302,15 @@ function initializeDatatable () {
       } },
         
       // Dates
-      {targets: [5, 6],
+      // {targets: [5, 6],
+      {targets: [6, 7],
         'createdCell': function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
       } },
 
       // Random MAC
-      {targets: [8],
+      // {targets: [8],
+      {targets: [9],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
             $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
@@ -304,7 +320,8 @@ function initializeDatatable () {
       } },
 
       // Status color
-      {targets: [9],
+      // {targets: [9],
+      {targets: [10],
         'createdCell': function (td, cellData, rowData, row, col) {
           switch (cellData) {
             case 'Down':      color='red';              break;
@@ -355,8 +372,10 @@ function initializeDatatable () {
 // Gets a JSON list of rowID and mac from the displayed table in the UI
 function getDevicesFromTable(table)
 {
-  rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
-  rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+  // rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
+  rowIDs = table.column(13, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
+  // rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+  rowMACs = table.column(11, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
   rowNames = table.column(0, { 'search': 'applied' }).data().toArray() // 
   rowTypes = table.column(2, { 'search': 'applied' }).data().toArray() // 
 

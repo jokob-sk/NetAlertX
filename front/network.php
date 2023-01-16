@@ -29,7 +29,7 @@
     <?php
 
       // Create top-level node (network devices) tabs 
-      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $activetab) {        
+      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $activetab) {        
 
         // prepare string with port number in brackets if available
         $str_port = "";
@@ -46,11 +46,16 @@
         {
           $node_badge = circle_offline;
         }
+
+        if($icon != '')
+        {
+          $icon = '<i class="fa fa-'.$icon.'"></i> ';
+        }
         
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="'.$activetab.'">
                               <a href="#'.$idFromMac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                  .$node_name.' ' .$str_port.$node_badge.
+                                .$icon.$node_name.' ' .$str_port.$node_badge.
                               '</a>
                           </li>';
 
@@ -262,14 +267,15 @@
     //                          \
     //                          PC (leaf)
     
-    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac
+    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
             FROM 
             (
                   SELECT  a.dev_Name as  node_name,        
                         a.dev_MAC as node_mac,
                         a.dev_PresentLastScan as online,
                         a.dev_DeviceType as node_type,
-                        a.dev_Network_Node_MAC_ADDR as parent_mac
+                        a.dev_Network_Node_MAC_ADDR as parent_mac,
+                        a.dev_Icon as node_icon
                   FROM Devices a 
                   WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
             ) t1
@@ -294,7 +300,8 @@
                               'online'                  => $row['online'],
                               'node_type'               => $row['node_type'],
                               'parent_mac'              => $row['parent_mac'],
-                              'node_ports_count'        => $row['node_ports_count']); 
+                              'node_icon'               => $row['node_icon'],
+                              'node_ports_count'        => $row['node_ports_count']);
     }
 
     // Control no rows
@@ -312,6 +319,7 @@
                           $row['online'],
                           $row['node_type'], 
                           $row['node_ports_count'],
+                          $row['node_icon'],
                           $activetab);
 
                           $activetab = ""; // reset active tab indicator, only the first tab is active

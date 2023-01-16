@@ -151,7 +151,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtName" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtName');"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtName');"></i></span>
                           </div>
                         </div>
                       </div>
@@ -162,7 +162,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtOwner');"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtOwner');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down "></span></button>                                
@@ -179,7 +179,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtDeviceType');"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtDeviceType');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span></button>
@@ -200,7 +200,8 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" title="<?php echo lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtIcon');"></i></span>
+                            <span class="input-group-addon" title='<?php echo lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtIcon');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
@@ -234,7 +235,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtGroup');"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtGroup');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
@@ -252,7 +253,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil drp-edit" onclick="editDrp('txtLocation');"></i></span>
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtLocation');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
@@ -330,7 +331,7 @@
                           <div class="input-group"> 
 
                             <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
-                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right drp-edit" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
+                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right pointer" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
@@ -896,11 +897,12 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( '#dropdownOwner',                      'getOwners',       'txtOwner', true);
-  initializeCombo ( '#dropdownDeviceType',                 'getDeviceTypes',  'txtDeviceType', true);
-  initializeCombo ( '#dropdownGroup',                      'getGroups',       'txtGroup', true);
-  initializeCombo ( '#dropdownLocation',                   'getLocations',    'txtLocation', true);
-  initializeCombo ( '#dropdownNetworkNodeMac',             'getNetworkNodes', 'txtNetworkNodeMac', false);
+  initializeCombo ( '#dropdownOwner',          'getOwners',       'txtOwner', true);
+  initializeCombo ( '#dropdownDeviceType',     'getDeviceTypes',  'txtDeviceType', true);
+  initializeCombo ( '#dropdownGroup',          'getGroups',       'txtGroup', true);
+  initializeCombo ( '#dropdownLocation',       'getLocations',    'txtLocation', true);
+  initializeCombo ( '#dropdownNetworkNodeMac', 'getNetworkNodes', 'txtNetworkNodeMac', false);
+  initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -948,7 +950,6 @@ function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
   }
 }
 // -----------------------------------------------------------------------------
-
 // Edit dropdown value
 function editDrp(dropdownId)
 {
@@ -1553,26 +1554,29 @@ function skipNotifications () {
 }
 
 // -----------------------------------------------------------------------------
-function askDeleteDeviceEvents () {
+// Overwrite all devices of the same type with the currently selected icon
+function askOverwriteIconType () {
   // Check MAC
   if (mac == '') {
     return;
   }
 
-  // Ask delete device Events 
-  showModalWarning ('<?php echo lang('DevDetail_button_DeleteEvents');?>', '<?php echo lang('DevDetail_button_DeleteEvents_Warning');?>',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDeviceEvents');
+  // Ask overwrite icon types 
+  showModalWarning ('<?php echo lang('DevDetail_button_OverwriteIcons');?>', '<?php echo lang('DevDetail_button_OverwriteIcons_Warning');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'overwriteIconType');
 }
 
 // -----------------------------------------------------------------------------
-function deleteDeviceEvents () {
+function overwriteIconType () {
   // Check MAC
   if (mac == '') {
     return;
   }
 
+  var icon = $('#txtIcon').val();
+
   // Delete device events
-  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+  $.get('php/server/devices.php?action=overwriteIconType&mac='+ mac + '&icon=' + icon, function(msg) {
     showMessage (msg);
   });
 
@@ -1580,6 +1584,34 @@ function deleteDeviceEvents () {
   $('#panDetails :input').attr('disabled', true);
 }
 
+// -----------------------------------------------------------------------------
+function askDeleteDevice () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Ask delete device
+  showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDevice');
+}
+
+
+// -----------------------------------------------------------------------------
+function deleteDevice () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Delete device
+  $.get('php/server/devices.php?action=deleteDevice&mac='+ mac, function(msg) {
+    showMessage (msg);
+  });
+
+  // Deactivate controls
+  $('#panDetails :input').attr('disabled', true);
+}
 // -----------------------------------------------------------------------------
 function askDeleteDevice () {
   // Check MAC
@@ -1644,11 +1676,12 @@ $(document).on('input', 'input:text', function() {
 });
 
 // -----------------------------------------------------------------------------
+// Initialize a text input with the correct value
 function setTextValue (textElement, textValue) {
   if(textElement == "txtNetworkNodeMac")
   {
     $('#'+textElement).attr ('data-mynodemac', textValue);
-    $('#'+textElement).val (getDevicesListValue('mac', textValue ,'name') ); //here
+    $('#'+textElement).val (getDevicesListValue('mac', textValue ,'name') ); 
   } else
   {
     $('#'+textElement).attr ('data-myvalue', textValue);

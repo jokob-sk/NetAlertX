@@ -59,6 +59,8 @@
       case 'getNmap':                 getNmap();                               break;
       case 'saveNmapPort':            saveNmapPort();                          break;
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
+      case 'overwriteIconType':       overwriteIconType();                     break;
+      case 'getIcons':                getIcons();                              break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -606,7 +608,8 @@ function getDevicesList() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     $tableData['data'][] = array ($row['dev_Name'],
                                   $row['dev_Owner'],
-                                  $row['dev_DeviceType'],
+                                  $row['dev_DeviceType'],                                  
+                                  $row['dev_Icon'],
                                   $row['dev_Favorite'],
                                   $row['dev_Group'],
                                   formatDate ($row['dev_FirstConnection']),
@@ -617,6 +620,7 @@ function getDevicesList() {
                                   $row['dev_MAC'], // MAC (hidden)
                                   formatIPlong ($row['dev_LastIP']), // IP orderable
                                   $row['rowid'] // Rowid (hidden)
+                                  
                                  );
   }
 
@@ -707,6 +711,32 @@ function getNetworkNodes() {
     // Push row data
     $tableData[] = array('id'    => $row['dev_MAC'], 
                          'name'  => $row['dev_Name'] );                        
+  }
+  
+  // Control no rows
+  if (empty($tableData)) {
+    $tableData = [];
+  }
+  
+    // Return json
+  echo (json_encode ($tableData));
+}
+
+//------------------------------------------------------------------------------
+function getIcons() {
+  global $db;
+
+  // Device Data
+  $sql = 'select dev_Icon from Devices group by dev_Icon';
+
+  $result = $db->query($sql);
+
+  // arrays of rows
+  $tableData = array();
+  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
+    // Push row data
+    $tableData[] = array('id'    => $row['dev_Icon'], 
+                         'name'  => '<i class="fa fa-'.$row['dev_Icon'].'"></i> - '.$row['dev_Icon'] );                          
   }
   
   // Control no rows
@@ -1006,6 +1036,33 @@ function updateNetworkLeaf()
     global $db;
     // sql
     $sql = 'UPDATE Devices SET "dev_Network_Node_MAC_ADDR" = "'. $nodeMac .'" WHERE "dev_MAC"="' . $leafMac.'"' ;
+    // update Data
+    $result = $db->query($sql);
+
+    // check result
+    if ($result == TRUE) {
+      echo 'OK';
+    } else {
+      echo 'KO';
+    }
+  }
+
+}
+
+// ----------------------------------------------------------------------------------------
+function overwriteIconType()
+{
+  $mac = $_REQUEST['mac'];
+  $icon = $_REQUEST['icon'];
+
+  if ((false === filter_var($mac , FILTER_VALIDATE_MAC) && $mac != "Internet" && $mac != "")  ) {
+    throw new Exception('Invalid mac address');
+  }
+  else
+  {
+    global $db;
+    // sql    
+    $sql = 'UPDATE Devices SET "dev_Icon" = "'. $icon .'" where dev_DeviceType in (select dev_DeviceType from Devices where dev_MAC = "' . $mac.'")' ;
     // update Data
     $result = $db->query($sql);
 
