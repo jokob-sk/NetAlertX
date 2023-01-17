@@ -249,7 +249,34 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                             <button type="button" class="btn bg-green dbtools-button" id="btnToggleDarkmode" onclick="askToggleDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_darkmode_text');?></div>
-                    </div>                    
+                    </div>   
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a">
+                        <div class="form-group" >                          
+                          <select id="columnsSelect" class="form-control select2 select2-hidden-accessible" multiple=""  onchange="saveSelectedColumns()" style="width: 100%;"  tabindex="-1" aria-hidden="true">
+                            <option value="0"><?php echo lang('Device_TableHead_Name');?></option>
+                            <option value="1"><?php echo lang('Device_TableHead_Owner');?></option>
+                            <option value="2"><?php echo lang('Device_TableHead_Type');?></option>
+                            <option value="3"><?php echo lang('Device_TableHead_Icon');?></option>
+                            <option value="4"><?php echo lang('Device_TableHead_Favorite');?></option>
+                            <option value="5"><?php echo lang('Device_TableHead_Group');?></option>
+                            <option value="6"><?php echo lang('Device_TableHead_FirstSession');?></option>
+                            <option value="7"><?php echo lang('Device_TableHead_LastSession');?></option>
+                            <option value="8"><?php echo lang('Device_TableHead_LastIP');?></option>
+                            <option value="9"><?php echo lang('Device_TableHead_MAC');?></option>
+                            <option value="10"><?php echo lang('Device_TableHead_Status');?></option>                            
+                            <option value="11"><?php echo lang('Device_TableHead_MAC_full');?></option>                            
+                            <option value="12"><?php echo lang('Device_TableHead_LastIPOrder');?></option>
+                            <option value="13"><?php echo lang('Device_TableHead_Rowid');?></option>
+                          </select>
+                          
+                        </div>
+                        </div>
+                        
+                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_displayed_columns_text');?></div>
+                    </div>  
+                    
+                    
                 </div>
         </div>
         <div class="tab-pane" id="tab_DBTools">
@@ -725,6 +752,48 @@ function scrollDown()
 }
 
 // --------------------------------------------------------
+//  $.get('php/server/parameters.php?action=set&parameter=Front_Dark_Mode_Enabled&expireMinutes=525600&value='+ darkModeEnabled,
+function saveSelectedColumns () { 
+  $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ $('#columnsSelect').val().toString() +']&parameter=Front_Devices_Columns', function(data) {
+
+  });
+}
+
+// --------------------------------------------------------
+function initializeSelectedColumns () { 
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,12,13]&parameter=Front_Devices_Columns', function(data) {
+
+    // console.log(data);
+
+    tableColumnShow = numberArrayFromString(data);
+
+    // console.log(tableColumnShow);
+    
+
+    for(i=0; i < tableColumnShow.length; i++)
+    {
+      // console.log(tableColumnShow)
+
+      // $("#columnsSelect").select2('data', {id: '1049', text: 'MyLabel'});
+
+      // create the option and append to Select2
+      var option = new Option($('#columnsSelect option[value='+tableColumnShow[i]+']').html(), tableColumnShow[i] , true, true);
+      $("#columnsSelect").append(option).trigger('change');
+
+      // // manually trigger the `select2:select` event
+      // $("#columnsSelect").trigger({
+      //     type: 'select2:select',
+      //     params: {
+      //         data: data
+      //     }
+      // });
+      
+      // $('#'+columnsSelect+' option[value='+tableColumnShow[i]+']').html()
+    }
+    
+  });
+} 
+// --------------------------------------------------------
 function initializeTabs () {  
 
   key = "activeMaintenanceTab"
@@ -780,6 +849,8 @@ $('#langselector').on('change', function (e) {
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()
 {
+  initializeSelectedColumns();
+
   scrollDown();
 
   initializeTabs();
@@ -793,5 +864,16 @@ window.onload = function asyncFooter()
 
 </script>
 
+<link rel="stylesheet" href="lib/AdminLTE/bower_components/select2/dist/css/select2.min.css">
+<script src="lib/AdminLTE/bower_components/select2/dist/js/select2.full.min.js"></script>
 
 
+<script>
+$(function () {
+    //Initialize Select2 Elements   
+    $('.select2').select2();
+});
+</script>
+
+<!-- ----------------------------------------------------------------------- -->
+<script src="js/pialert_common.js"></script>

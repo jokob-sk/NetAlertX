@@ -207,6 +207,13 @@ function sanitize(data)
 }
 
 // -----------------------------------------------------------------------------
+function numberArrayFromString(data)
+{
+  data = JSON.parse(sanitize(data));
+  return data.replace(/\[|\]/g, '').split(',').map(Number);
+}
+
+// -----------------------------------------------------------------------------
 function setParameter (parameter, value) {
   // Retry
   $.get('php/server/parameters.php?action=set&parameter=' + parameter +

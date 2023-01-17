@@ -162,7 +162,7 @@
                   <th><?php echo lang('Device_TableHead_LastIP');?></th>
                   <th><?php echo lang('Device_TableHead_MAC');?></th>
                   <th><?php echo lang('Device_TableHead_Status');?></th>
-                  <th><?php echo lang('Device_TableHead_MAC');?></th>
+                  <th><?php echo lang('Device_TableHead_MAC_full');?></th>
                   <th><?php echo lang('Device_TableHead_LastIPOrder');?></th>
                   <th><?php echo lang('Device_TableHead_Rowid');?></th>
                   
@@ -206,6 +206,8 @@
   var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
+  var tableColumnShow = [0,1,2,3,4,5,6,7,8,9,10,12,13]
+  var tableColumnAll  = [0,1,2,3,4,5,6,7,8,9,10,12,13]
 
   // Read parameters & Initialize components
   main();
@@ -215,43 +217,63 @@
 function main () {
   
   // get parameter value
-  $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
-    var result = JSON.parse(data);
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns', function(data) {
+    
+    tableColumnShow = numberArrayFromString(data);
 
-    result = parseInt(result, 10)
-
-    if (Number.isInteger (result) ) {
-        tableRows = result;  
-    }
+    console.log(tableColumnShow);
 
     // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
+    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
       var result = JSON.parse(data);
-      result = JSON.parse(result);
-      if (Array.isArray (result) ) {
-        tableOrder = result;
+
+      result = parseInt(result, 10)
+
+      if (Number.isInteger (result) ) {
+          tableRows = result;  
       }
 
-      // Initialize components with parameters
-      initializeDatatable();
+      // get parameter value
+      $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
+        var result = JSON.parse(data);
+        result = JSON.parse(result);
+        if (Array.isArray (result) ) {
+          tableOrder = result;
+        }
 
-      // query data
-      getDevicesTotals();
-      getDevicesList (deviceStatus);
-     });
+        // Initialize components with parameters
+        initializeDatatable();
+
+        // query data
+        getDevicesTotals();
+        getDevicesList (deviceStatus);
+      });
+    });
    });
 }
 
 // -----------------------------------------------------------------------------
 function initializeDatatable () {
+  //
+  var tableColumnHide = [];
+  for(i = 0; i < tableColumnAll.length; i++)
+  {    
+    // hide this coolumn if not in the tableColumnShow variable
+    if(tableColumnShow.includes(tableColumnAll[i]) == false)
+    {
+      tableColumnHide.push(tableColumnAll[i]);
+    }    
+  }
+
   // If the device has a small width (mobile) only show name, ip, and status columns. 
-  if (window.screen.width < 400) {
-    // var tableColumnHide = [10,11,12,1,2,3,4,5,6,8];
-    var tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
-  } else {
-    // var tableColumnHide = [10, 11, 12];
-    var tableColumnHide = [11, 12, 13];
-  };
+  if (window.screen.width < 400) {    
+    // var tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
+    tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
+  } 
+  // else {  
+  //   // var tableColumnHide = [11, 12, 13];
+  //   tableColumnHide = [11, 12, 13];
+  // };
   var table=
   $('#tableDevices').DataTable({
     'paging'       : true,
@@ -411,6 +433,10 @@ function getDevicesTotals () {
 
 
 // -----------------------------------------------------------------------------
+function getDeviceColumns () {
+
+}
+// -----------------------------------------------------------------------------
 function getDevicesList (status) {
   // Save status selected
   deviceStatus = status;
@@ -437,3 +463,5 @@ function getDevicesList (status) {
 };
 
 </script>
+
+<script src="js/pialert_common.js"></script>

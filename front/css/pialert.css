@@ -724,3 +724,16 @@ height: 50px;
 {
     cursor:pointer;
 }
+.db_info_table_row .select2-container--default .select2-selection--multiple .select2-selection__choice
+{
+    background-color:#258744;
+}
+.db_info_table_row .select2-container--default .select2-selection--multiple
+{
+    background-color:#606060;
+}
+
+.select2-container .select2-dropdown
+{
+    background-color:#606060;
+}
