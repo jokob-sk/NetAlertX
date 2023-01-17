@@ -391,8 +391,8 @@ function getCache($key) {
   }
 }
 // -------------------------------------------------------------------------------------------
-function setCache($key, $value) {
-  setcookie($key,  $value, time()+300, "/","", 0); // 5min cache
+function setCache($key, $value, $expireMinutes = 5) {
+  setcookie($key,  $value, time()+$expireMinutes*60, "/","", 0); 
 }
 
 

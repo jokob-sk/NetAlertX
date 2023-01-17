@@ -22,7 +22,9 @@
   ini_set ('max_execution_time','15');
 
   $skipCache = FALSE;
+  $expireMinutes = 5;
   $defaultValue = '';
+  
 
   if (isset ($_REQUEST['skipcache'])) {
     $skipCache = TRUE;    
@@ -32,12 +34,16 @@
     $defaultValue = $_REQUEST['defaultValue'];    
   }
 
+  if (isset ($_REQUEST['expireMinutes'])) {
+    $expireMinutes = $_REQUEST['expireMinutes'];    
+  }
+
   // Action functions
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'get':  getParameter($skipCache, $defaultValue); break;
-      case 'set':  setParameter();                          break;
+      case 'get':  getParameter($skipCache, $defaultValue, $expireMinutes); break;
+      case 'set':  setParameter($expireMinutes);                          break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -46,7 +52,7 @@
 //------------------------------------------------------------------------------
 //  Get Parameter Value
 //------------------------------------------------------------------------------
-function getParameter($skipCache, $defaultValue) {
+function getParameter($skipCache, $defaultValue, $expireMinutes) {
 
   $parameter = $_REQUEST['parameter'];
   $value = "";
@@ -77,7 +83,7 @@ function getParameter($skipCache, $defaultValue) {
     }
 
     // update cache  
-    setCache($parameter, $value);
+    setCache($parameter, $value, $expireMinutes);
   }
   // return value
   echo (json_encode ($value));  
@@ -87,10 +93,10 @@ function getParameter($skipCache, $defaultValue) {
 //------------------------------------------------------------------------------
 //  Set Parameter Value
 //------------------------------------------------------------------------------
-function setParameter() {
+function setParameter($expireMinutes) {
 
   $parameter = $_REQUEST['parameter'];
-  $value = $_REQUEST['value'];
+  $value = $_REQUEST['value'];  
     
   global $db;
  
@@ -119,7 +125,7 @@ function setParameter() {
   }
 
   // update cache  
-  setCache($parameter, $value);
+  setCache($parameter, $value, $expireMinutes);
 
   echo 'OK';
 }

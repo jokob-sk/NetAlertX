@@ -341,8 +341,6 @@
                   $activetab = ""; // reset active tab indicator, only the first tab is active
     
     }
-                              
-    commitDB ();
 
     ?>
     <!-- /.tab-pane -->

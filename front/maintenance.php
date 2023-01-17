@@ -654,14 +654,16 @@ function askToggleDarkmode() {
 function ToggleDarkmode()
 {   
   // get parameter Front_Dark_Mode_Enabled value
-  $.get('php/server/parameters.php?action=get&defaultValue=false&parameter=Front_Dark_Mode_Enabled', function(data) {
+  $.get('php/server/parameters.php?action=get&defaultValue=false&expireMinutes=525600&parameter=Front_Dark_Mode_Enabled', function(data) {
   var result = JSON.parse(data);
   if (result) {
       darkModeEnabled = result == 'true';      
 
+      // invert value
       darkModeEnabled = !darkModeEnabled;      
 
-      $.get('php/server/parameters.php?action=set&parameter=Front_Dark_Mode_Enabled&value='+ darkModeEnabled,
+      // save inverted value
+      $.get('php/server/parameters.php?action=set&parameter=Front_Dark_Mode_Enabled&expireMinutes=525600&value='+ darkModeEnabled,
         function(data) {
           if (data != "OK") {
             showMessage (data);
@@ -756,7 +758,7 @@ function initializeTabs () {
   // events on tab change
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
-    //alert(target);
+    
     if(target == "#tab_Logging")
     {
       scrollDown();
