@@ -12,7 +12,7 @@
   require '/home/pi/pialert/front/php/templates/timezone.php';
   require '/home/pi/pialert/front/php/templates/language/lang.php';
   require '/home/pi/pialert/front/php/server/db.php';
-  require '/home/pi/pialert/front/php/server/util.php';  
+  require '/home/pi/pialert/front/php/server/util.php';    
 
 //------------------------------------------------------------------------------
 //  Action selector
@@ -569,6 +569,51 @@ function getDevicesTotals() {
 function getDevicesList() {
   global $db;
 
+
+  $columnOrderMapping = array(
+    array("dev_Name", 0, -1),               //  2
+    array("dev_Owner", 1, -1),              //    5
+    array("dev_DeviceType", 2, -1),         //    6  
+    array("dev_Icon", 3, -1),               //  0
+    array("dev_Favorite", 4, -1),           //    7
+    array("dev_Group", 5, -1),              //    8
+    array("dev_FirstConnection", 6, -1),    //    9
+    array("dev_LastConnection", 7, -1),     //    10
+    array("dev_LastIP", 8, -1),             //  4
+    array("dev_MAC", 9, -1),                //    11
+    array("dev_Status", 10, -1),            //  1
+    array("dev_MAC_full", 11, -1),          //  3
+    array("dev_LastIP_orderable", 12, -1),  //    12
+    array("rowid", 13, -1)                  //    13
+  );
+
+  // get device columns order
+  $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns"';
+  $result = $db->query($sql);
+  $row = $result -> fetchArray (SQLITE3_NUM);  
+
+  if($row != NULL && count($row) == 1)
+  {
+    $displayedColumns = createArray($row[0]);
+
+    // init ordered columns
+    $index = 0;
+    foreach ($displayedColumns as $columnIndex) {     
+      
+      $columnOrderMapping[$columnIndex][2] = $index;
+
+      $index = $index + 1;
+    }
+
+    foreach ($columnOrderMapping as $mapping) {
+      if($mapping[2] == -1)
+      {
+        $mapping[2] = $index;
+        $index = $index + 1;
+      }
+    }
+  } 
+
   // SQL
   $condition = getDeviceCondition ($_REQUEST['status']);
 
@@ -581,9 +626,12 @@ function getDevicesList() {
           FROM Devices '. $condition;
   $result = $db->query($sql);
 
+
+
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
+
     $tableData['data'][] = array ($row['dev_Name'],
                                   $row['dev_Owner'],
                                   $row['dev_DeviceType'],                                  

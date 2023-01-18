@@ -1,0 +1,1 @@
+var deviceColumns = {'Icon':4, 'Owner':5}

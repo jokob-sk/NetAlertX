@@ -1755,7 +1755,7 @@ function loadNmap()
                           <td>\
                             <div class="input-group">\
                               <input class="form-control" id="port_'+item.Index+'" type="text" value="'+item.Extra+'">\
-                              <span class="input-group-addon"><i class="fa fa-save " onclick="saveNmapPort('+item.Index+')"></i></span>\
+                              <span class="input-group-addon"><i class="fa fa-save pointer" onclick="saveNmapPort('+item.Index+')"></i></span>\
                             </div>\
                           </td>\
                         </tr>';

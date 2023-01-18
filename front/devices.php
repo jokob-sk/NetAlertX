@@ -237,6 +237,9 @@ function main () {
       $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
         var result = JSON.parse(data);
         result = JSON.parse(result);
+
+        
+
         if (Array.isArray (result) ) {
           tableOrder = result;
         }
@@ -253,9 +256,16 @@ function main () {
 }
 
 // -----------------------------------------------------------------------------
+var tableColumnHide = [];
+
+function mapIndx(oldIndex)
+{
+  newIndex = oldIndex;
+  return newIndex;
+}
+
+
 function initializeDatatable () {
-  //
-  var tableColumnHide = [];
   for(i = 0; i < tableColumnAll.length; i++)
   {    
     // hide this coolumn if not in the tableColumnShow variable
@@ -292,19 +302,19 @@ function initializeDatatable () {
 
     'columnDefs'   : [
       {visible:   false,         targets: tableColumnHide },      
-      {className: 'text-center', targets: [3, 4, 9, 10] },      
-      {width:     '80px',        targets: [6, 7] },      
-      {width:     '30px',        targets: [10, 13] },      
-      {orderData: [11],          targets: 8 },
+      {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10)] },      
+      {width:     '80px',        targets: [mapIndx(6), mapIndx(7)] },      
+      {width:     '30px',        targets: [mapIndx(10), mapIndx(13)] },      
+      {orderData: [mapIndx(11)],          targets: mapIndx(8) },
 
       // Device Name
-      {targets: [0],
+      {targets: [mapIndx(0)],
         'createdCell': function (td, cellData, rowData, row, col) {
             $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[11] +'" class="">'+ cellData +'</a></b>');
       } },
 
       // Icon      
-      {targets: [3],
+      {targets: [mapIndx(3)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (!emptyArr.includes(cellData)){
             $(td).html ('<i class="fa fa-'+cellData+' " style="font-size:16px"></i>');
@@ -314,7 +324,7 @@ function initializeDatatable () {
       } },
       // Favorite
       // {targets: [3],
-      {targets: [4],
+      {targets: [mapIndx(4)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
             $(td).html ('<i class="fa fa-star text-yellow" style="font-size:16px"></i>');
@@ -325,14 +335,14 @@ function initializeDatatable () {
         
       // Dates
       // {targets: [5, 6],
-      {targets: [6, 7],
+      {targets: [mapIndx(6), mapIndx(7)],
         'createdCell': function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
       } },
 
       // Random MAC
       // {targets: [8],
-      {targets: [9],
+      {targets: [mapIndx(9)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
             $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
@@ -343,7 +353,7 @@ function initializeDatatable () {
 
       // Status color
       // {targets: [9],
-      {targets: [10],
+      {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {
           switch (cellData) {
             case 'Down':      color='red';              break;
@@ -395,11 +405,11 @@ function initializeDatatable () {
 function getDevicesFromTable(table)
 {
   // rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
-  rowIDs = table.column(13, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
+  rowIDs = table.column(mapIndx(13), { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
   // rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
-  rowMACs = table.column(11, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
-  rowNames = table.column(0, { 'search': 'applied' }).data().toArray() // 
-  rowTypes = table.column(2, { 'search': 'applied' }).data().toArray() // 
+  rowMACs = table.column(mapIndx(11), { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+  rowNames = table.column(mapIndx(0), { 'search': 'applied' }).data().toArray() // 
+  rowTypes = table.column(mapIndx(2), { 'search': 'applied' }).data().toArray() // 
 
   result = []
 
