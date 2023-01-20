@@ -150,21 +150,7 @@
             <div class="box-body table-responsive">
               <table id="tableDevices" class="table table-bordered table-hover table-striped">
                 <thead>
-                <tr>
-                  <th><?php echo lang('Device_TableHead_Name');?></th>
-                  <th><?php echo lang('Device_TableHead_Owner');?></th>
-                  <th><?php echo lang('Device_TableHead_Type');?></th>       
-                  <th><?php echo lang('Device_TableHead_Icon');?></th>           
-                  <th><?php echo lang('Device_TableHead_Favorite');?></th>
-                  <th><?php echo lang('Device_TableHead_Group');?></th>
-                  <th><?php echo lang('Device_TableHead_FirstSession');?></th>
-                  <th><?php echo lang('Device_TableHead_LastSession');?></th>
-                  <th><?php echo lang('Device_TableHead_LastIP');?></th>
-                  <th><?php echo lang('Device_TableHead_MAC');?></th>
-                  <th><?php echo lang('Device_TableHead_Status');?></th>
-                  <th><?php echo lang('Device_TableHead_MAC_full');?></th>
-                  <th><?php echo lang('Device_TableHead_LastIPOrder');?></th>
-                  <th><?php echo lang('Device_TableHead_Rowid');?></th>
+                <tr>                
                   
                 </tr>
                 </thead>
@@ -206,7 +192,8 @@
   var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
-  var tableColumnShow = [0,1,2,3,4,5,6,7,8,9,10,12,13]
+  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,12,13]
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13]
   var tableColumnAll  = [0,1,2,3,4,5,6,7,8,9,10,12,13]
 
   // Read parameters & Initialize components
@@ -215,41 +202,72 @@
 
 // -----------------------------------------------------------------------------
 function main () {
-  
-  // get parameter value
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns', function(data) {
+
+  // get visible columns
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns_Visible', function(data) {
     
-    tableColumnShow = numberArrayFromString(data);
+    tableColumnVisible = numberArrayFromString(data);
 
-    console.log(tableColumnShow);
+    // get the custom order specified by the user
+    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns_Order', function(data) {
+    
+      tableColumnOrder = numberArrayFromString(data);
 
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
-      var result = JSON.parse(data);
+      //initialize the table headers in the correct order
+      var headersDefaultOrder = [ '<?php echo lang('Device_TableHead_Name');?>',
+                                  '<?php echo lang('Device_TableHead_Owner');?>',
+                                  '<?php echo lang('Device_TableHead_Type');?>',       
+                                  '<?php echo lang('Device_TableHead_Icon');?>',
+                                  '<?php echo lang('Device_TableHead_Favorite');?>',
+                                  '<?php echo lang('Device_TableHead_Group');?>',
+                                  '<?php echo lang('Device_TableHead_FirstSession');?>',
+                                  '<?php echo lang('Device_TableHead_LastSession');?>',
+                                  '<?php echo lang('Device_TableHead_LastIP');?>',
+                                  '<?php echo lang('Device_TableHead_MAC');?>',
+                                  '<?php echo lang('Device_TableHead_Status');?>',
+                                  '<?php echo lang('Device_TableHead_MAC_full');?>',
+                                  '<?php echo lang('Device_TableHead_LastIPOrder');?>',
+                                  '<?php echo lang('Device_TableHead_Rowid');?>'];
 
-      result = parseInt(result, 10)
-
-      if (Number.isInteger (result) ) {
-          tableRows = result;  
+      html = '';
+                                  
+      for(index = 0; index < tableColumnOrder.length; index++)
+      {
+        html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
       }
 
+      $('#tableDevices tr').html(html);   
+      
+
+
       // get parameter value
-      $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
+      $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
         var result = JSON.parse(data);
-        result = JSON.parse(result);
 
-        
+        result = parseInt(result, 10)
 
-        if (Array.isArray (result) ) {
-          tableOrder = result;
+        if (Number.isInteger (result) ) {
+            tableRows = result;  
         }
 
-        // Initialize components with parameters
-        initializeDatatable();
+        // get parameter value
+        $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
+          var result = JSON.parse(data);
+          result = JSON.parse(result);
 
-        // query data
-        getDevicesTotals();
-        getDevicesList (deviceStatus);
+          
+
+          if (Array.isArray (result) ) {
+            tableOrder = result;
+          }
+
+          // Initialize components with parameters
+          initializeDatatable();
+
+          // query data
+          getDevicesTotals();
+          getDevicesList (deviceStatus);
+        });
       });
     });
    });
@@ -260,24 +278,31 @@ var tableColumnHide = [];
 
 function mapIndx(oldIndex)
 {
-  newIndex = oldIndex;
-  return newIndex;
+  for(i=0;i<tableColumnOrder.length;i++)
+  {
+    if(tableColumnOrder[i] == oldIndex)
+    {
+      // console.log('newIndex')
+      // console.log(i)
+      return i;
+    }
+  }
 }
 
+// -----------------------------------------------------------------------------
 
 function initializeDatatable () {
-  for(i = 0; i < tableColumnAll.length; i++)
+  for(i = 0; i < tableColumnOrder.length; i++)
   {    
-    // hide this coolumn if not in the tableColumnShow variable
-    if(tableColumnShow.includes(tableColumnAll[i]) == false)
+    // hide this column if not in the tableColumnVisible variable
+    if(tableColumnVisible.includes(tableColumnOrder[i]) == false)
     {
-      tableColumnHide.push(tableColumnAll[i]);
+      tableColumnHide.push(mapIndx(tableColumnOrder[i]));
     }    
   }
 
   // If the device has a small width (mobile) only show name, ip, and status columns. 
-  if (window.screen.width < 400) {    
-    // var tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
+  if (window.screen.width < 400) {        
     tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
   } 
   // else {  
@@ -310,7 +335,7 @@ function initializeDatatable () {
       // Device Name
       {targets: [mapIndx(0)],
         'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[11] +'" class="">'+ cellData +'</a></b>');
+            $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
       } },
 
       // Icon      
@@ -322,8 +347,7 @@ function initializeDatatable () {
             $(td).html ('');
           }
       } },
-      // Favorite
-      // {targets: [3],
+      // Favorite      
       {targets: [mapIndx(4)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
@@ -333,15 +357,13 @@ function initializeDatatable () {
           }
       } },
         
-      // Dates
-      // {targets: [5, 6],
+      // Dates      
       {targets: [mapIndx(6), mapIndx(7)],
         'createdCell': function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
       } },
 
-      // Random MAC
-      // {targets: [8],
+      // Random MAC      
       {targets: [mapIndx(9)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
@@ -351,8 +373,7 @@ function initializeDatatable () {
           }
       } },
 
-      // Status color
-      // {targets: [9],
+      // Status color      
       {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {
           switch (cellData) {

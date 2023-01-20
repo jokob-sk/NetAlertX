@@ -80,6 +80,24 @@ function createArray($input){
 }
 
 // -------------------------------------------------------------------------------------------
+// For debugging - Print arrays
+function printArray ($array) {
+  echo '[';
+  foreach ($array as $val)
+  {
+    if(is_array($val))
+    {
+      echo '<br/>';
+      printArray($val);
+    } else
+    {
+      echo $val.', ';
+    }
+  }  
+  echo ']<br/>';
+}
+
+// -------------------------------------------------------------------------------------------
 function formatDate ($date1) {
   return date_format (new DateTime ($date1) , 'Y-m-d   H:i');
 }

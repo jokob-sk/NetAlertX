@@ -155,7 +155,7 @@ $lang['en_us'] = array(
 'DevDetail_Shortcut_DownAlerts' => 'Down Alerts',
 'DevDetail_Tab_Details' => '<i class="fa fa-info-circle"></i> Details',
 'DevDetail_Tab_Nmap' => '<i class="fa fa-ethernet"></i> Nmap',
-'DevDetail_Tab_Sessions' => '<i class="fa fa-calendar"></i> Sessions',
+'DevDetail_Tab_Sessions' => '<i class="fa fa-list-ol"></i> Sessions',
 'DevDetail_Tab_Presence' => '<i class="fa fa-calendar"></i> Presence',
 'DevDetail_Tab_Events' => '<i class="fa fa-bolt"></i> Events',
 'DevDetail_Tab_Pholus' => '<i class="fa fa-search"></i> Pholus',

@@ -761,14 +761,36 @@ function scrollDown()
 // --------------------------------------------------------
 
 function saveSelectedColumns () { 
-  $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ $('#columnsSelect').val().toString() +']&parameter=Front_Devices_Columns', function(data) {
-      showMessage(data)
+  $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ $('#columnsSelect').val().toString() +']&parameter=Front_Devices_Columns_Visible', function(data) {
+    // save full order of all columns to simplify mapping later on
+    
+    colDisplayed = $('#columnsSelect').val();
+
+    colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13'];
+
+    colNewOrder = colDisplayed;
+
+    for(i = 0; i < colDefaultOrder.length; i++)
+    {
+      if(!colDisplayed.includes(colDefaultOrder[i]))
+      {
+        colNewOrder.push(colDefaultOrder[i])
+      }
+    }
+
+    console.log(colNewOrder);
+
+    $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ colNewOrder.toString() +']&parameter=Front_Devices_Columns_Order', function(data) {
+
+      showMessage(data);
+
+    });
   });
 }
 
 // --------------------------------------------------------
 function initializeSelectedColumns () { 
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,12,13]&parameter=Front_Devices_Columns', function(data) {
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,12,13]&parameter=Front_Devices_Columns_Visible', function(data) {
 
     tableColumnShow = numberArrayFromString(data);
 

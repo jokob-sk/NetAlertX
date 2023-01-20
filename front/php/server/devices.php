@@ -569,50 +569,39 @@ function getDevicesTotals() {
 function getDevicesList() {
   global $db;
 
-
+  // This object is used to map from the old order ( second parameter, first number) to the 3rd parameter (Second number (here initialized to -1))
   $columnOrderMapping = array(
-    array("dev_Name", 0, -1),               //  2
-    array("dev_Owner", 1, -1),              //    5
-    array("dev_DeviceType", 2, -1),         //    6  
-    array("dev_Icon", 3, -1),               //  0
-    array("dev_Favorite", 4, -1),           //    7
-    array("dev_Group", 5, -1),              //    8
-    array("dev_FirstConnection", 6, -1),    //    9
-    array("dev_LastConnection", 7, -1),     //    10
-    array("dev_LastIP", 8, -1),             //  4
-    array("dev_MAC", 9, -1),                //    11
-    array("dev_Status", 10, -1),            //  1
-    array("dev_MAC_full", 11, -1),          //  3
-    array("dev_LastIP_orderable", 12, -1),  //    12
-    array("rowid", 13, -1)                  //    13
+    array("dev_Name", 0, -1),               
+    array("dev_Owner", 1, -1),              
+    array("dev_DeviceType", 2, -1),         
+    array("dev_Icon", 3, -1),               
+    array("dev_Favorite", 4, -1),           
+    array("dev_Group", 5, -1),              
+    array("dev_FirstConnection", 6, -1),    
+    array("dev_LastConnection", 7, -1),     
+    array("dev_LastIP", 8, -1),             
+    array("dev_MAC", 9, -1),                
+    array("dev_Status", 10, -1),            
+    array("dev_MAC_full", 11, -1),          
+    array("dev_LastIP_orderable", 12, -1),  
+    array("rowid", 13, -1)                  
   );
 
   // get device columns order
-  $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns"';
+  $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns_Order"';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);  
 
   if($row != NULL && count($row) == 1)
   {
-    $displayedColumns = createArray($row[0]);
+    // ordered columns setting from the maintenance page
+    $orderedColumns = createArray($row[0]);
 
-    // init ordered columns
-    $index = 0;
-    foreach ($displayedColumns as $columnIndex) {     
-      
-      $columnOrderMapping[$columnIndex][2] = $index;
-
-      $index = $index + 1;
+    // init ordered columns    
+    for($i = 0; $i < count($orderedColumns); $i++) {           
+      $columnOrderMapping[$i][2] = $orderedColumns[$i];      
     }
-
-    foreach ($columnOrderMapping as $mapping) {
-      if($mapping[2] == -1)
-      {
-        $mapping[2] = $index;
-        $index = $index + 1;
-      }
-    }
-  } 
+  }
 
   // SQL
   $condition = getDeviceCondition ($_REQUEST['status']);
@@ -625,29 +614,36 @@ function getDevicesList() {
           END AS dev_Status
           FROM Devices '. $condition;
   $result = $db->query($sql);
-
-
-
+  
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
-    $tableData['data'][] = array ($row['dev_Name'],
-                                  $row['dev_Owner'],
-                                  $row['dev_DeviceType'],                                  
-                                  $row['dev_Icon'],
-                                  $row['dev_Favorite'],
-                                  $row['dev_Group'],
-                                  formatDate ($row['dev_FirstConnection']),
-                                  formatDate ($row['dev_LastConnection']),
-                                  $row['dev_LastIP'],
-                                  ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
-                                  $row['dev_Status'],
-                                  $row['dev_MAC'], // MAC (hidden)
-                                  formatIPlong ($row['dev_LastIP']), // IP orderable
-                                  $row['rowid'] // Rowid (hidden)
-                                  
-                                 );
+    $defaultOrder = array ($row['dev_Name'],
+                            $row['dev_Owner'],
+                            $row['dev_DeviceType'],                                  
+                            $row['dev_Icon'],
+                            $row['dev_Favorite'],
+                            $row['dev_Group'],
+                            formatDate ($row['dev_FirstConnection']),
+                            formatDate ($row['dev_LastConnection']),
+                            $row['dev_LastIP'],
+                            ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
+                            $row['dev_Status'],
+                            $row['dev_MAC'], // MAC (hidden)
+                            formatIPlong ($row['dev_LastIP']), // IP orderable
+                            $row['rowid'] // Rowid (hidden)      
+                            );
+
+    $newOrder = array();
+
+    
+    for($index = 0; $index  < count($columnOrderMapping); $index++)
+    {
+      array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
+    }
+
+    $tableData['data'][] = $newOrder;
   }
 
   // Control no rows
