@@ -193,8 +193,7 @@
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
   var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,12,13]
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13]
-  var tableColumnAll  = [0,1,2,3,4,5,6,7,8,9,10,12,13]
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13]  
 
   // Read parameters & Initialize components
   main();
