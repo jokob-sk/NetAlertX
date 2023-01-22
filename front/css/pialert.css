@@ -571,8 +571,8 @@
     display: table-cell;
     text-align: center; 
     padding: 10px; 
-    /* min-width: 180px;  */
-    width: 25%; 
+    min-width: 180px; 
+    width: 20%; 
     vertical-align: middle;
 }
 .db_tools_table_cell_b {
@@ -720,42 +720,75 @@ height: 50px;
     font-size: large;
 }
 
-#columnsSelectNew li
-{
-    list-style-type: none;
-    padding: 1px;
-}
-
 .pointer
 {
     cursor:pointer;
 }
-.mainDrgLi
+.db_info_table_row .select2-container--default .select2-selection--multiple .select2-selection__choice
 {
-    padding: 3px;
-    text-align: start;
-    width: 100%;    
+    background-color:#258744;
 }
-.drgLiLeft i
+.db_info_table_row .select2-container--default .select2-selection--multiple
 {
-    width:25px;
-}
-.drgLiLeft
-{
-    width:92%;
-    float: left;
-}
-.drgLiRight
-{
-    width:5%;    
+    background-color:#606060;
 }
 
-.fullwidth
+.select2-container .select2-dropdown
 {
-    width:100%
+    background-color:#606060;
 }
 
-.columnsOrder
+#networkTree .box
 {
-    display:block;
+    padding:2px;
+    margin:2px;
 }
+#networkTree .netNodeText
+{
+    top: 2px;
+    margin: 2px;    
+    position: absolute;
+}
+#networkTree
+{
+    margin-left: 16px;
+    /* border: solid;
+    border-color:#606060;     */
+    position: relative;
+    font-size: 0.75em;
+}
+#networkTree .netIcon
+{
+    width: 25px;;
+    float:left;
+    display:inline;    
+}
+#networkTree .netCollapse
+{
+    display: block;
+    position: absolute;
+    margin-left: 156px;
+    top: -3px;
+    font-size: large;
+    left: -15px;
+}
+#networkTree .highlightedNode
+{
+    border: solid;
+    border-color:cyan;
+}
+#networkTree .netStatus-Off-line i
+{
+    color: #dd4b39;
+}
+
+.spanNetworkTree {
+    display: inline-block;
+    width: 120px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+
+  

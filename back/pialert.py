@@ -3054,17 +3054,20 @@ def isNewVersion():
         buildTimestamp = int(f.read().strip())
         f.close() 
 
-        url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
-        text = url.text
-
-        data = json.loads(text)
+        try:
+            url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+            text = url.text
+            data = json.loads(text)
+        except requests.exceptions.ConnectionError as e:
+            file_print("    Couldn't check for new release.") 
+            data = ""
 
         # make sure we received a valid response and not an API rate limit exceeded message
         if len(data) > 0 and "published_at" in data[0]:        
-        
-            dateTimeStr = data[0]["published_at"]
 
-            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+            dateTimeStr = data[0]["published_at"]            
+
+            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))            
 
             if realeaseTimestamp > buildTimestamp + 600:        
                 file_print("    New version of the container available!")

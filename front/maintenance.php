@@ -202,8 +202,8 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="text-align:center;">
                             <form method="post" action="maintenance.php">
-                              <div style="">
-                                  <select name="langselector" id="langselector" class="fullwidth form-control bg-green"  style="margin-bottom:5px;">
+                              <div style="display: inline-block;">
+                                  <select name="langselector" id="langselector" class="form-control bg-green"  style="width:160px; margin-bottom:5px;">
                                       <option value=""><?php echo lang('Maintenance_lang_selector_empty');?></option>
                                       <option value="en_us"><?php echo lang('Maintenance_lang_en_us');?></option>
                                       <option value="de_de"><?php echo lang('Maintenance_lang_de_de');?></option>
@@ -219,8 +219,8 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" style="text-align: center;">
                             <form method="post" action="maintenance.php">
-                            <div style=" text-align: center;">
-                                <select name="skinselector" class="form-control bg-green" style="margin-bottom:5px;">
+                            <div style="display: inline-block; text-align: center;">
+                                <select name="skinselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
                                     <option value=""><?php echo lang('Maintenance_themeselector_empty');?></option>
                                     <option value="skin-black-light">black light</option>
                                     <option value="skin-black">black</option>
@@ -235,7 +235,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                     <option value="skin-yellow-light">yellow light</option>
                                     <option value="skin-yellow">yellow</option>
                                 </select></div>
-                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?php echo lang('Maintenance_themeselector_apply');?>" class="fullwidth btn bg-green">
+                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?php echo lang('Maintenance_themeselector_apply');?>" class="btn bg-green" style="width:160px;">
                                 <?php // echo $pia_skin_test; ?>
                             </div>
                             </form>
@@ -246,7 +246,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-green dbtools-button fullwidth" id="btnToggleDarkmode" onclick="askToggleDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
+                            <button type="button" class="btn bg-green dbtools-button" id="btnToggleDarkmode" onclick="askToggleDarkmode()"><?php echo lang('Maintenance_Tool_darkmode');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_darkmode_text');?></div>
                     </div>   
@@ -269,6 +269,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                 <option value="11"><?php echo lang('Device_TableHead_MAC_full');?></option>                            
                                 <option value="12"><?php echo lang('Device_TableHead_LastIPOrder');?></option>
                                 <option value="13"><?php echo lang('Device_TableHead_Rowid');?></option>
+                                <option value="14"><?php echo lang('Device_TableHead_Parent_MAC');?></option>
                               </select>
                               <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
                             </div>
@@ -278,24 +279,6 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                         
                         <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_displayed_columns_text');?></div>
                     </div>  
-
-
-                    <div class="db_info_table_row">
-                      <div class="db_tools_table_cell_a">
-                          <div class="form-group" > 
-                            <div class="" > 
-                              <ul id="columnsSelectNew" class="" multiple=""    tabindex="-1" aria-hidden="true">
-                              </ul>
-                              <span class="input-group-addon"><i title="<?php echo lang('Gen_Save');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
-                            </div>
-                          </div>
-
-                        </div>
-                        <div class="db_tools_table_cell_b"><?php echo lang('Maintenance_Tool_order_columns_text');?></div>
-                        </div>
-                        
-                        
-                    
                     
                     
                 </div>
@@ -778,28 +761,13 @@ function scrollDown()
 // Manage displayed columns
 // --------------------------------------------------------
 
-var columnLabels = [    '<?php echo lang('Device_TableHead_Name');?>',
-                        '<?php echo lang('Device_TableHead_Owner');?>',
-                        '<?php echo lang('Device_TableHead_Type');?>',
-                        '<?php echo lang('Device_TableHead_Icon');?>',
-                        '<?php echo lang('Device_TableHead_Favorite');?>',
-                        '<?php echo lang('Device_TableHead_Group');?>',
-                        '<?php echo lang('Device_TableHead_FirstSession');?>',
-                        '<?php echo lang('Device_TableHead_LastSession');?>',
-                        '<?php echo lang('Device_TableHead_LastIP');?>',
-                        '<?php echo lang('Device_TableHead_MAC');?>',
-                        '<?php echo lang('Device_TableHead_Status');?>',                            
-                        '<?php echo lang('Device_TableHead_MAC_full');?>',                            
-                        '<?php echo lang('Device_TableHead_LastIPOrder');?>',
-                        '<?php echo lang('Device_TableHead_Rowid');?>'];
-
 function saveSelectedColumns () { 
   $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ $('#columnsSelect').val().toString() +']&parameter=Front_Devices_Columns_Visible', function(data) {
     // save full order of all columns to simplify mapping later on
     
     colDisplayed = $('#columnsSelect').val();
 
-    colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13'];
+    colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13','14'];
 
     colNewOrder = colDisplayed;
 
@@ -823,11 +791,9 @@ function saveSelectedColumns () {
 
 // --------------------------------------------------------
 function initializeSelectedColumns () { 
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,12,13]&parameter=Front_Devices_Columns_Visible', function(data) {
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,12,13,14]&parameter=Front_Devices_Columns_Visible', function(data) {
 
     tableColumnShow = numberArrayFromString(data);
-
-    listItems = ''
 
     for(i=0; i < tableColumnShow.length; i++)
     {
@@ -836,22 +802,9 @@ function initializeSelectedColumns () {
       
       $("#columnsSelect").append(option).trigger('change');
 
-
-      listItems += '<li value="'+tableColumnShow[i]+'" class="ui-state-default pointer">\
-                                  <div class="mainDrgLi  btn-sm btn bg-olive ">\
-                                    <div class="drgLiLeft">  \
-                                      <i title="<?php echo lang('Maintenance_Tool_drag_me');?>" class="fa fa-grip  pointer" ></i>\
-                                      '+columnLabels[tableColumnShow[i]]+'\
-                                    </div>\
-                                    <div class="drgLiRight">\
-                                      <input class="flat-red" title="<?php echo lang('Maintenance_Tool_check_visible');?>" type="checkbox"  checked >\
-                                    </div>\
-                                  </div>\
-                                </li>';
-    }    
-
-    $("#columnsSelectNew").html(listItems);
-
+      $(option).attr('eee','eee')
+    }
+    
   });
 } 
 
@@ -861,25 +814,19 @@ function initializeSelectedColumns () {
 $(function () {    
     selectEl = $('.select2').select2();
    
-    console.log('------------')
     selectEl.next().children().children().children().sortable({
       containment: 'parent', stop: function (event, ui) {
         ui.item.parent().children('[title]').each(function () {
           var title = $(this).attr('title');
-          console.log(title)
           var original = $( 'option:contains(' + title + ')', selectEl ).first();
           original.detach();
           selectEl.append(original)
         });
-        // selectEl.change();
+        selectEl.change();
       }
     });
 });
 
-
-$( function() {
-    $( "#columnsSelectNew" ).sortable();
-  } );
 
 
 // --------------------------------------------------------

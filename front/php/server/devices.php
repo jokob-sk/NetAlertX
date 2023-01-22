@@ -584,7 +584,8 @@ function getDevicesList() {
     array("dev_Status", 10, -1),            
     array("dev_MAC_full", 11, -1),          
     array("dev_LastIP_orderable", 12, -1),  
-    array("rowid", 13, -1)                  
+    array("rowid", 13, -1),            
+    array("dev_Network_Node_MAC_ADDR", 14, -1)                  
   );
 
   // get device columns order
@@ -632,7 +633,8 @@ function getDevicesList() {
                             $row['dev_Status'],
                             $row['dev_MAC'], // MAC (hidden)
                             formatIPlong ($row['dev_LastIP']), // IP orderable
-                            $row['rowid'] // Rowid (hidden)      
+                            $row['rowid'], // Rowid (hidden)      
+                            $row['dev_Network_Node_MAC_ADDR'] // 
                             );
 
     $newOrder = array();

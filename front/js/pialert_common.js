@@ -261,6 +261,16 @@ function saveData(functionName, id, value) {
 
 
 // -----------------------------------------------------------------------------
+// remove an item from an array
+function removeItemFromArray(arr, value) {
+  var index = arr.indexOf(value);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+  return arr;
+}
+
+// -----------------------------------------------------------------------------
 function sleep(milliseconds) {
   const date = Date.now();
   let currentDate = null;

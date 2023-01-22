@@ -24,10 +24,13 @@
     </h1>
   </section>
 
+
+
+  <div id="networkTree" ></div>
+
   <!-- Main content ---------------------------------------------------------- -->
   <section class="content">
     <?php
-
       // Create top-level node (network devices) tabs 
       function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $activetab) {        
 
@@ -54,7 +57,7 @@
         
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="'.$activetab.'">
-                              <a href="#'.$idFromMac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
+                              <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
                                 .$icon.$node_name.' ' .$str_port.$node_badge.
                               '</a>
                           </li>';
@@ -312,7 +315,7 @@
     echo '<div class="nav-tabs-custom" style="margin-bottom: 0px;">
     <ul class="nav nav-tabs">';
 
-    $activetab='active';                    
+    $activetab='active';
     foreach ($tableData as $row) {                            
         createDeviceTabs( $row['node_mac'], 
                           $row['node_name'], 
@@ -433,25 +436,229 @@
 
 
   ?>
-
+    
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
 <!-- ----------------------------------------------------------------------- -->
+
+
+
 <?php
   require 'php/templates/footer.php';
 ?>
 
+<script src="lib/AdminLTE/index.js"></script>
+<script src="lib/AdminLTE/require.js"></script>
+<script src="js/pialert_common.js"></script>
 
-<script defer>
+
+<script>
+  // ---------------------------------------------------------------------------
+  // Tree functionality
+  // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------  
+  function getDevicesList()
+  {
+    // Read cache
+    devicesList = getCache('devicesList');
+    
+    if (devicesList != '') {
+        devicesList = JSON.parse (devicesList);
+    } else {
+        devicesList = [];
+    }
+    return devicesList;
+  }
+
+  
+  // ---------------------------------------------------------------------------
+  var leafNodesCount = 0;
+  var treeLoadedAlready = false;
+  var hiddenMacs = [];
+
+  function getChildren(node, list, path)
+  {
+    var children = [];
+
+    // loop thru all items and find childern...
+    for(var i in list)
+    {
+      //... of teh current node
+      if(list[i].parentMac == node.mac && !hiddenMacs.includes(list[i].parentMac))
+      {        
+        // and process them 
+        children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, hiddenMacs))
+      }
+    }
+
+    // note the total number of leaf nodes to calculate the font scaling
+    if(!treeLoadedAlready && children.length == 0) 
+    { 
+      leafNodesCount++ 
+    }
+    
+    return { 
+      name: node.name,      
+      path: path,
+      mac: node.mac,
+      parentMac: node.parentMac,
+      icon: node.icon,
+      type: node.type,
+      status: node.status,
+      hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
+      hiddenChildren: hiddenMacs.includes(node.mac),
+      qty: children.length,
+      children:  children
+    };
+        
+  }
 
   // ---------------------------------------------------------------------------
-  // events on tab change
+  list = getDevicesList();
+  function getHierarchy()
+  {    
+    for(i in list)
+    {      
+      if(list[i].mac == 'Internet')
+      { 
+        return (getChildren(list[i], list, ''))
+        break;
+      }
+    }
+  }
+
+
+  // ---------------------------------------------------------------------------
+  function toggleSubTree(parentMac, treePath)
+  {
+    treePath = treePath.split('|')
+
+    if(!hiddenMacs.includes(parentMac))
+    {
+      hiddenMacs.push(parentMac)
+    }
+    else
+    {
+      removeItemFromArray(hiddenMacs, parentMac)
+    }
+
+    list = getDevicesList();
+
+    // updatedTree = myHierarchy;
+    updatedTree = getHierarchy()
+
+    myTree.refresh(updatedTree);
+
+    // re-attach any onclick events
+    attachTreeEvents();   
+  }
+
+  // --------------------------------------------------------------------------- 
+  function attachTreeEvents()
+  {
+    //  toggle subtree functionality
+    $("div[data-mytreemac]").each(function(){
+        $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')
+    }); 
+  }
+
+  // --------------------------------------------------------------------------- 
+  var myTree;
+  var treeAreaHeight = 600;
+  function initTree(myHierarchy)
+  {    
+    // to prevent font scaling everytime we collapse/expand a subtree
+    treeLoadedAlready = true;
+
+    $("#networkTree").attr('style', "height:"+treeAreaHeight+"px; width:1070px")
+
+    myTree = Treeviz.create({
+      htmlId: "networkTree",
+      
+      renderNode:  nodeData =>  { 
+
+        // calculate the font size of the leaf nodes to fit everything into the tree area
+        var fontSize = (nodeData.data.hasChildren) ? "" : "font-size:"+((600/(20*leafNodesCount)).toFixed(2))+"em;";
+
+        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon '><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
+        collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
+        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
+        statusCss = " netStatus-" + nodeData.data.status;
+
+        selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
+
+        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";
+
+        return result = "<div class='box "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
+                          style='height:"+nodeData.settings.nodeHeight+"px;\
+                                 width:180px;\
+                                 display:flex;\
+                                 flex-direction:column;\
+                                 justify-content:center;\
+                                 " + fontSize + "\
+                                 align-items:center;\
+                                 background-color:" +nodeData.data.color+";\
+                                 border-radius:5px;'\
+                          >\
+                          <div class='netNodeText'>\
+                            <strong>" + deviceIcon +
+                              "<span class='spanNetworkTree'>"+nodeData.data.name+"</span>\
+                            </strong>"
+                            +collapseExpandHtml+ 
+                          "</div></div>";
+        },
+
+      onNodeClick:  nodeData =>  { 
+          // console.log(this)  
+        },
+      mainAxisNodeSpacing: 'auto',
+      secondaryAxisNodeSpacing: 0.3,
+      nodeHeight: '25',    
+      marginTop: '5',
+      hasZoom: false,
+      hasPan: false,
+      marginLeft: '15',
+      idKey: "name",
+      hasFlatData: false,
+      linkWidth: (nodeData) => 3,
+      relationnalField: "children",
+      });
+
+      myTree.refresh(myHierarchy);
+      
+    }
+
+  // ---------------------------------------------------------------------------
+  // Tabs functionality
+  // ---------------------------------------------------------------------------
+  // Register events on tab change
+  
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
 
-    initButtons();
+    // init parent node
+    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac');      
+
+    initButtons(currentNodeMac);
+
+    // change highlighted node in the tree
+    selNode = $("#networkTree .highlightedNode")[0]
+
+    // console.log(selNode)
+
+    if(selNode)
+    {
+      $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
+    }
+
+    newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
+    
+    $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
+    
+
   });
+
 
   // ---------------------------------------------------------------------------
   function initTab()
@@ -483,15 +690,14 @@
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       setCache(key, $(e.target).attr('id'))
     });
+
+  
     
   }
 
   // ---------------------------------------------------------------------------
-  function initButtons()
+  function initButtons(currentNodeMac)
   {
-    // init parent node
-    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac');
-
     // init the Assign buttons
     $('#unassignedDevices  button[data-myleafmac]').each(function(){
       $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","'+currentNodeMac+'")')
@@ -510,7 +716,18 @@
     setTimeout("location.reload();", 1000); // refresh page after 1s
   }
 
+
   // init selected (first) tab
-  initTab();
+  initTab();  
+
+  // create tree
+  initTree(getHierarchy());
+
+  // attach on-click events
+  attachTreeEvents();
+
 
 </script>
+
+
+

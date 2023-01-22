@@ -192,8 +192,9 @@
   var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
-  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,12,13]
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13]  
+  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,12,13,14];
+  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,12,13,14]';
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13,14] ; 
 
   // Read parameters & Initialize components
   main();
@@ -203,12 +204,12 @@
 function main () {
 
   // get visible columns
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns_Visible', function(data) {
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Visible', function(data) {
     
     tableColumnVisible = numberArrayFromString(data);
 
     // get the custom order specified by the user
-    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue=[0,1,2,3,4,5,6,7,8,9,10,11,12,13]&parameter=Front_Devices_Columns_Order', function(data) {
+    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Order', function(data) {
     
       tableColumnOrder = numberArrayFromString(data);
 
@@ -226,7 +227,9 @@ function main () {
                                   '<?php echo lang('Device_TableHead_Status');?>',
                                   '<?php echo lang('Device_TableHead_MAC_full');?>',
                                   '<?php echo lang('Device_TableHead_LastIPOrder');?>',
-                                  '<?php echo lang('Device_TableHead_Rowid');?>'];
+                                  '<?php echo lang('Device_TableHead_Rowid');?>',
+                                  '<?php echo lang('Device_TableHead_Parent_MAC');?>'
+                                ];
 
       html = '';
                                   
@@ -423,18 +426,26 @@ function initializeDatatable () {
 // -----------------------------------------------------------------------------
 // Gets a JSON list of rowID and mac from the displayed table in the UI
 function getDevicesFromTable(table)
-{
-  // rowIDs = table.column(12, { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
-  rowIDs = table.column(mapIndx(13), { 'search': 'applied' }).data().toArray()  // rowID is in hidden column 12
-  // rowMACs = table.column(10, { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
-  rowMACs = table.column(mapIndx(11), { 'search': 'applied' }).data().toArray() // MAC is in hidden column 10
+{  
+  rowIDs = table.column(mapIndx(13), { 'search': 'applied' }).data().toArray()  //   
+  rowMACs = table.column(mapIndx(11), { 'search': 'applied' }).data().toArray() // 
   rowNames = table.column(mapIndx(0), { 'search': 'applied' }).data().toArray() // 
   rowTypes = table.column(mapIndx(2), { 'search': 'applied' }).data().toArray() // 
+  rowIcons = table.column(mapIndx(3), { 'search': 'applied' }).data().toArray() // 
+  rowParentMAC = table.column(mapIndx(14), { 'search': 'applied' }).data().toArray() // 
+  rowStatus = table.column(mapIndx(10), { 'search': 'applied' }).data().toArray() // 
 
   result = []
 
   rowIDs.map(function(rowID, index){
-    result.push({"rowid": rowID, "mac":rowMACs[index], "name" : rowNames[index],"type" : rowTypes[index] })
+    result.push({
+                  "rowid": rowID, 
+                  "mac":rowMACs[index], 
+                  "name" : rowNames[index],
+                  "type" : rowTypes[index],
+                  "icon" : rowIcons[index],
+                  "parentMac" : rowParentMAC[index],
+                  "status" : rowStatus[index] })
   })
 
   return JSON.stringify (result)
