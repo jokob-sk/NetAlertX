@@ -45,7 +45,6 @@ docker run -d --rm --network=host \
 | :------------- | :------------- |:-------------| 
 | **Required** | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
 | **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
-|Optional| `:/home/pi/pialert/db/setting_darkmode` |  Map an empty file with the name `setting_darkmode` if you want to force the dark mode on container rebuilt  | 
 |Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 |Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
 |Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole  | 
@@ -99,9 +98,7 @@ services:
     restart: unless-stopped
     volumes:
       - local/path/pialert/config:/home/pi/pialert/config
-      - local/path/pialert/db:/home/pi/pialert/db
-      # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
-      - local/path/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
+      - local/path/pialert/db:/home/pi/pialert/db      
       # (optional) useful for debugging if you have issues setting up the container
       - local/path/logs:/home/pi/pialert/front/log
     environment:
@@ -127,9 +124,7 @@ services:
     restart: unless-stopped
     volumes:
       - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
-      - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
-      - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
+      - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db      
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
     environment:

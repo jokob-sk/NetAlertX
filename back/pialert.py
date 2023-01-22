@@ -20,7 +20,6 @@ from email.mime.text import MIMEText
 import sys
 import subprocess
 import os
-import tempfile
 import re
 import time
 import decimal
