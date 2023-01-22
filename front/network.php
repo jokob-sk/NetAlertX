@@ -449,8 +449,8 @@
   require 'php/templates/footer.php';
 ?>
 
-<script src="lib/AdminLTE/index.js"></script>
-<script src="lib/AdminLTE/require.js"></script>
+<script src="lib/treeviz/index.js"></script>
+<script src="lib/treeviz/require.js"></script>
 <script src="js/pialert_common.js"></script>
 
 
