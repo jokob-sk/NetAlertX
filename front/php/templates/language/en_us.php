@@ -255,7 +255,7 @@ $lang['en_us'] = array(
 'Maintenance_Tools_Tab_Tools' => 'Tools',
 'Maintenance_Tools_Tab_BackupRestore' => 'Backup / Restore',
 'Maintenance_Tools_Tab_Logging' => 'Logs',
-'Maintenance_Tool_displayed_columns_text' => 'Change the order of the columns in the <a href="devices.php"><b> <i class="fa fa-laptop"></i> Devices</b></a> page. (The drag-and-drop is a bit clunky, but for now workable, not a common task).',
+'Maintenance_Tool_displayed_columns_text' => 'Change the visibility and order of the columns in the <a href="devices.php"><b> <i class="fa fa-laptop"></i> Devices</b></a> page. (The drag-and-drop is a bit clunky, but for now workable, not a common task - won\'t fix for now (tried for <a href="https://github.com/jokob-sk/Pi.Alert/commit/94b32f0f7332879f5a7d2af05dafa2e5d5cfa5da">like 3h</a> - happy for someone to submit a PR :) )).',
 'Maintenance_Tool_order_columns_text' => '',
 'Maintenance_Tool_darkmode' => 'Toggle Modes (Dark/Light)',
 'Maintenance_Tool_drag_me' => 'Drag me to reorder columns.',
@@ -411,7 +411,7 @@ $lang['en_us'] = array(
                 							 chmod -R 770 ~/pialert/db
               								 </span><br>
               								 If the database is still read-only, try reinstalling or restoring a database backup from the maintenance page.',
-'HelpFAQ_Cat_General_102docker_head' => '(🐳 Docker only) Database issues (AJAX errors, read-only, not found)',
+'HelpFAQ_Cat_General_102docker_head' => 'Database issues (AJAX errors, read-only, not found)',
 'HelpFAQ_Cat_General_102docker_text' => 'Double-check you\'ve followed the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles">dockerfile readme (most up-to-date info)</a>. <br/> <br/> <ul data-sourcepos="49:4-52:146" dir="auto">
 											<li data-sourcepos="49:4-49:106">Download the <a target="_blank"  href="https://github.com/jokob-sk/Pi.Alert/blob/main/db/pialert.db">original DB from GitHub</a>.</li>
 											<li data-sourcepos="50:4-50:195">Map the <code>pialert.db</code> file (<g-emoji class="g-emoji" alias="warning" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png">⚠</g-emoji> not folder) from above to <code>/home/pi/pialert/db/pialert.db</code> (see <a target="_blank"  href="https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-examples">Examples</a> for details).</li>
@@ -427,7 +427,7 @@ $lang['en_us'] = array(
          									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there. 
          									If yes, delete them there as well. Now you can start Pi.Alert again. Now the device(s) should not show up anymore.',
 'HelpFAQ_Cat_Detail_300_head' => 'What means ',
-'HelpFAQ_Cat_Detail_300_text_a' => 'means a network device (a device of the type AP, Gateway, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet).',
+'HelpFAQ_Cat_Detail_300_text_a' => 'means a network device (a device of the type AP, Gateway, Firewall, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet).',
 'HelpFAQ_Cat_Detail_300_text_b' => 'designates the port number where the currently edited device is connected to this network device.',
 'HelpFAQ_Cat_Detail_301_head_a' => 'When is scanning now? At ',
 'HelpFAQ_Cat_Detail_301_head_b' => ' says 1min but the graph shows 5min intervals.',

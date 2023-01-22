@@ -17,6 +17,7 @@ services:
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
+      - ${DEV_LOCATION}/back/report_template_new_version.html:/home/pi/pialert/back/report_template_new_version.html      
       - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
       - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      

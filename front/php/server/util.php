@@ -359,7 +359,7 @@ function logServerConsole ($text) {
 function getNetworkTypes(){
 
   $array = array(
-    "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
+    "AP", "Gateway", "Firewall", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
   );
 
   return $array;

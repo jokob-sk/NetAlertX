@@ -725,7 +725,7 @@ function getNetworkNodes() {
   global $db;
 
   // Device Data
-  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in (  "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter")';
+  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in (  "AP", "Gateway", "Firewall", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter")';
 
   $result = $db->query($sql);
 
@@ -789,7 +789,7 @@ function getDeviceTypes() {
                  "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)", "NAS",
                  "Domotic", "IP Camera", "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
                  "Clock", "House Appliance", "Phone", "Radio",
-                 "AP", "Gateway", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter" )
+                 "AP", "Gateway", "Firewall", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter" )
 
           UNION SELECT 1 as dev_Order, "Smartphone"
           UNION SELECT 1 as dev_Order, "Tablet"
@@ -817,6 +817,7 @@ function getDeviceTypes() {
           -- network devices
           UNION SELECT 5 as dev_Order, "AP"
           UNION SELECT 5 as dev_Order, "Gateway"
+          UNION SELECT 5 as dev_Order, "Firewall"
           UNION SELECT 5 as dev_Order, "Powerline"
           UNION SELECT 5 as dev_Order, "Switch"
           UNION SELECT 5 as dev_Order, "WLAN"
