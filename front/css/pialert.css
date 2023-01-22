@@ -691,6 +691,9 @@ height: 50px;
     margin: 10px;
     
 }
+#settingsPage .panel-heading:hover{    
+    background-color: #272c30;
+}
 
 .settings-expand-icon {
     font-size: medium;

@@ -602,9 +602,9 @@
                                  background-color:" +nodeData.data.color+";\
                                  border-radius:5px;'\
                           >\
-                          <div class='netNodeText'>\
+                          <div class='netNodeText '>\
                             <strong>" + deviceIcon +
-                              "<span class='spanNetworkTree'>"+nodeData.data.name+"</span>\
+                              "<span class='spanNetworkTree anonymizeDev'>"+nodeData.data.name+"</span>\
                             </strong>"
                             +collapseExpandHtml+ 
                           "</div></div>";

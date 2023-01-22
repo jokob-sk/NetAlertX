@@ -20,6 +20,7 @@ from email.mime.text import MIMEText
 import sys
 import subprocess
 import os
+import tempfile
 import re
 import time
 import decimal
@@ -112,6 +113,8 @@ def print_log (pText):
 
     # Save current time to calculate elapsed time until next log
     log_timestamp = log_timestamp2 
+
+    return pText
     
 #-------------------------------------------------------------------------------
 # check RW access of DB and config file
@@ -255,7 +258,7 @@ def importConfig ():
     # General
     global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG
     # Email
-    global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS
+    global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS, SMTP_FORCE_SSL
     # Webhooks
     global REPORT_WEBHOOK, WEBHOOK_URL, WEBHOOK_PAYLOAD, WEBHOOK_REQUEST_METHOD
     # Apprise
@@ -312,6 +315,7 @@ def importConfig ():
     SMTP_USER = ccd('SMTP_USER', '' , c_d, 'SMTP user', 'text', '', 'Email')
     SMTP_PASS = ccd('SMTP_PASS', '' , c_d, 'SMTP password', 'password', '', 'Email')
     SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', False , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
+    SMTP_FORCE_SSL = ccd('SMTP_FORCE_SSL', False , c_d, 'Force SSL', 'boolean', '', 'Email')
 
     # Webhooks
     REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
@@ -2383,21 +2387,58 @@ def send_email (pText, pHTML):
     msg.attach (MIMEText (pText, 'plain'))
     msg.attach (MIMEText (pHTML, 'html'))
 
-    # Send mail
-    smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
-    smtp_connection.ehlo()
+    failedAt = ''
 
-    try: 
-        if not SMTP_SKIP_TLS:            
+    failedAt = print_log ('SMTP try')
+
+    try:
+        # Send mail
+        failedAt = print_log('Trying to open connection to ' + str(SMTP_SERVER) + ':' + str(SMTP_PORT))
+
+        if SMTP_FORCE_SSL:
+            failedAt = print_log('SMTP_FORCE_SSL == True so using .SMTP_SSL()')
+            if SMTP_PORT == 0:            
+                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER)')
+                smtp_connection = smtplib.SMTP_SSL(SMTP_SERVER)
+            else:
+                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER, SMTP_PORT)')
+                smtp_connection = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
+            
+        else:
+            failedAt = print_log('SMTP_FORCE_SSL == False so using .SMTP()')
+            if SMTP_PORT == 0:
+                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER)')
+                smtp_connection = smtplib.SMTP (SMTP_SERVER)
+            else:
+                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER, SMTP_PORT)')
+                smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
+
+        failedAt = print_log('Setting SMTP debug level')
+        smtp_connection.set_debuglevel(1) 
+        
+        failedAt = print_log( 'Sending .ehlo()')
+        smtp_connection.ehlo()
+
+        if not SMTP_SKIP_TLS:       
+            failedAt = print_log('SMTP_SKIP_TLS == False so sending .starttls()')
             smtp_connection.starttls()
+            failedAt = print_log('SMTP_SKIP_TLS == False so sending .ehlo()')
             smtp_connection.ehlo()
         if not SMTP_SKIP_LOGIN:
+            failedAt = print_log('SMTP_SKIP_LOGIN == False so sending .login()')
             smtp_connection.login (SMTP_USER, SMTP_PASS)
-
-            smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
-            smtp_connection.quit()
+            
+        failedAt = print_log('Sending .sendmail()')
+        smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
+        smtp_connection.quit()
     except smtplib.SMTPAuthenticationError as e: 
-        file_print('      ERROR: Couldn\'t connect to the SMTP server, skipping Email')
+        file_print('      ERROR: Failed at - ', failedAt)
+        file_print('      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError), skipping Email (enable PRINT_LOG for more logging)')
+    except smtplib.SMTPServerDisconnected as e: 
+        file_print('      ERROR: Failed at - ', failedAt)
+        file_print('      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable PRINT_LOG for more logging)')
+
+    file_print('      DEBUG: Last executed - ', failedAt)
 
 
 #-------------------------------------------------------------------------------

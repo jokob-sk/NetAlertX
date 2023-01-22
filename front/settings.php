@@ -43,7 +43,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 ?>
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div id="settingsPage" class="content-wrapper">
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
@@ -285,7 +285,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 60;
+  var settingsNumber = 61;
 
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
@@ -374,9 +374,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       method: "POST",
       url: "../php/server/util.php",
       data: { function: 'savesettings', settings: collectSettings() },
-      success: function(data, textStatus) {
-          // $("#result").html(data);    
-          // console.log(data);
+      success: function(data, textStatus) {                    
           showModalOk ('Result', data );
           // Remove navigation prompt "Are you sure you want to leave..."
           window.onbeforeunload = null;

@@ -337,7 +337,7 @@ function initializeDatatable () {
       // Device Name
       {targets: [mapIndx(0)],
         'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html ('<b><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
       } },
 
       // Icon      
@@ -349,6 +349,27 @@ function initializeDatatable () {
             $(td).html ('');
           }
       } },
+
+      // Full MAC      
+      {targets: [mapIndx(11)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          if (!emptyArr.includes(cellData)){
+            $(td).html ('<span class="anonymizeMac">'+cellData+'</span>');
+          } else {
+            $(td).html ('');
+          }
+      } },
+      
+      // IP address      
+      {targets: [mapIndx(12)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          if (!emptyArr.includes(cellData)){
+            $(td).html ('<span class="anonymizeIp">'+cellData+'</span>');
+          } else {
+            $(td).html ('');
+          }
+      } },
+      
       // Favorite      
       {targets: [mapIndx(4)],
         'createdCell': function (td, cellData, rowData, row, col) {

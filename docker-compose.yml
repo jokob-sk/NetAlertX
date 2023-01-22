@@ -13,9 +13,9 @@ services:
       # (optional) map an empty file with the name 'setting_darkmode' if you want to force the dark mode on container rebuilt
       - ${APP_DATA_LOCATION}/pialert/db/setting_darkmode:/home/pi/pialert/db/setting_darkmode
       # (optional) useful for debugging if you have issues setting up the container
-      - ${LOGS_LOCATION}:/home/pi/pialert/front/log
+      - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
-      - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
+      - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py     
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
       - ${DEV_LOCATION}/back/report_template_new_version.html:/home/pi/pialert/back/report_template_new_version.html      
       - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
