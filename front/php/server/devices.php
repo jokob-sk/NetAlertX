@@ -571,21 +571,21 @@ function getDevicesList() {
 
   // This object is used to map from the old order ( second parameter, first number) to the 3rd parameter (Second number (here initialized to -1))
   $columnOrderMapping = array(
-    array("dev_Name", 0, -1),               
-    array("dev_Owner", 1, -1),              
-    array("dev_DeviceType", 2, -1),         
-    array("dev_Icon", 3, -1),               
-    array("dev_Favorite", 4, -1),           
-    array("dev_Group", 5, -1),              
-    array("dev_FirstConnection", 6, -1),    
-    array("dev_LastConnection", 7, -1),     
-    array("dev_LastIP", 8, -1),             
-    array("dev_MAC", 9, -1),                
-    array("dev_Status", 10, -1),            
-    array("dev_MAC_full", 11, -1),          
-    array("dev_LastIP_orderable", 12, -1),  
-    array("rowid", 13, -1),            
-    array("dev_Network_Node_MAC_ADDR", 14, -1)                  
+    array("dev_Name", 0, 0),               
+    array("dev_Owner", 1, 1),              
+    array("dev_DeviceType", 2, 2),         
+    array("dev_Icon", 3, 3),               
+    array("dev_Favorite", 4, 4),           
+    array("dev_Group", 5, 5),              
+    array("dev_FirstConnection", 6, 6),    
+    array("dev_LastConnection", 7, 7),     
+    array("dev_LastIP", 8, 8),             
+    array("dev_MAC", 9, 9),                
+    array("dev_Status", 10, 10),            
+    array("dev_MAC_full", 11, 11),          
+    array("dev_LastIP_orderable", 12, 12),  
+    array("rowid", 13, 13),            
+    array("dev_Network_Node_MAC_ADDR", 14, 14)                  
   );
 
   // get device columns order

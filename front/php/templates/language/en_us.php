@@ -68,6 +68,7 @@ $lang['en_us'] = array(
 'Device_TableHead_Type' => 'Type',
 'Device_TableHead_Icon' => 'Icon',
 'Device_TableHead_RowID' => 'Row ID',
+'Device_TableHead_Rowid' => 'Row ID',
 'Device_TableHead_Parent_MAC' => 'Parent node MAC',
 'Device_TableHead_Favorite' => 'Favorite',
 'Device_TableHead_Group' => 'Group',

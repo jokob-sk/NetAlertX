@@ -3101,7 +3101,7 @@ def isNewVersion():
         except requests.exceptions.ConnectionError as e:
             file_print("    Couldn't check for new release.") 
             data = ""
-
+        
         # make sure we received a valid response and not an API rate limit exceeded message
         if len(data) > 0 and "published_at" in data[0]:        
 

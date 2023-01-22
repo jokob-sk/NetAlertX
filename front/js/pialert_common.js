@@ -292,12 +292,16 @@ function settingsChanged()
 
 // -----------------------------------------------------------------------------
 function translateHTMLcodes (text) {
-  if (text == null) {
+  if (text == null || emptyArr.includes(text)) {
     return null;
+  } else if (typeof text === 'string' || text instanceof String)
+  {
+    var text2 = text.replace(new RegExp(' ', 'g'), "&nbsp");
+    text2 = text2.replace(new RegExp('<', 'g'), "&lt");
+    return text2;
   }
-  var text2 = text.replace(new RegExp(' ', 'g'), "&nbsp");
-  text2 = text2.replace(new RegExp('<', 'g'), "&lt");
-  return text2;
+
+  return "";
 }
 
 
