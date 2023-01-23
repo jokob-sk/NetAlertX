@@ -453,6 +453,32 @@
 <script src="lib/treeviz/require.js"></script>
 <script src="js/pialert_common.js"></script>
 
+<script>
+  $.get('php/server/devices.php?action=getDevicesList&status=all', function(data) {     
+
+      rawData = JSON.parse (data)
+      // console.log(rawData)
+
+      devicesListnew = rawData["data"].map(item =>  { return {
+                                                              "name":item[0], 
+                                                              "type":item[2], 
+                                                              "icon":item[3], 
+                                                              "mac":item[11], 
+                                                              "parentMac":item[14], 
+                                                              "rowid":item[13], 
+                                                              "status":item[10] 
+                                                              }})
+
+      setCache('devicesList', JSON.stringify(devicesListnew))
+
+      // create tree
+      initTree(getHierarchy());
+
+      // attach on-click events
+      attachTreeEvents();
+    });
+</script>
+
 
 <script defer>
   // ---------------------------------------------------------------------------
@@ -485,7 +511,7 @@
     // loop thru all items and find childern...
     for(var i in list)
     {
-      //... of teh current node
+      //... of the current node
       if(list[i].parentMac == node.mac && !hiddenMacs.includes(list[i].parentMac))
       {        
         // and process them 
@@ -516,9 +542,11 @@
   }
 
   // ---------------------------------------------------------------------------
-  list = getDevicesList();
+  
   function getHierarchy()
   {    
+    list = getDevicesList();
+    
     for(i in list)
     {      
       if(list[i].mac == 'Internet')
@@ -623,7 +651,7 @@
       marginTop: '5',
       hasZoom: false,
       hasPan: false,
-      marginLeft: '15',
+      // marginLeft: '15',
       idKey: "name",
       hasFlatData: false,
       linkWidth: (nodeData) => 3,
@@ -676,8 +704,6 @@
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       setCache(key, $(e.target).attr('id'))
     });
-
-  
     
   }
 
@@ -725,12 +751,6 @@
 
   // init selected (first) tab
   initTab();  
-
-  // create tree
-  initTree(getHierarchy());
-
-  // attach on-click events
-  attachTreeEvents();
 
   // init Assign/Unassign buttons
   initButtons()
