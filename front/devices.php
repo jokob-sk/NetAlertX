@@ -204,12 +204,12 @@
 function main () {
 
   // get visible columns
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Visible', function(data) {
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
     
     tableColumnVisible = numberArrayFromString(data);
 
     // get the custom order specified by the user
-    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Order', function(data) {
+    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
     
       tableColumnOrder = numberArrayFromString(data);
 
