@@ -332,7 +332,7 @@ function initializeDatatable () {
       {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10)] },      
       {width:     '80px',        targets: [mapIndx(6), mapIndx(7)] },      
       {width:     '30px',        targets: [mapIndx(10), mapIndx(13)] },      
-      {orderData: [mapIndx(11)],          targets: mapIndx(8) },
+      {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
       // Device Name
       {targets: [mapIndx(0)],
