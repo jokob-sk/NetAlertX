@@ -2840,6 +2840,17 @@ def upgradeDB ():
     AND name='Nmap_Scan'; 
     """).fetchone() == None
 
+     # Re-creating Parameters table
+    file_print("[upgradeDB] Re-creating Parameters table")
+    sql.execute("DROP TABLE Parameters;")
+
+    sql.execute("""      
+      CREATE TABLE "Parameters" (
+        "par_ID" TEXT PRIMARY KEY,
+        "par_Value"	TEXT
+      );      
+      """)
+
     # Initialize Parameters if unavailable
     initOrSetParam('Back_App_State','Initializing')
 

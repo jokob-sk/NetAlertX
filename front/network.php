@@ -454,10 +454,10 @@
 <script src="js/pialert_common.js"></script>
 
 <script>
-  $.get('php/server/devices.php?action=getDevicesList&status=all', function(data) {     
+  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
 
       rawData = JSON.parse (data)
-      // console.log(rawData)
+      console.log(rawData)
 
       devicesListnew = rawData["data"].map(item =>  { return {
                                                               "name":item[0], 
@@ -469,7 +469,9 @@
                                                               "status":item[10] 
                                                               }})
 
-      setCache('devicesList', JSON.stringify(devicesListnew))
+      setCache('devicesListNew', JSON.stringify(devicesListnew))
+
+      console.log(devicesListnew)
 
       // create tree
       initTree(getHierarchy());
@@ -488,7 +490,7 @@
   function getDevicesList()
   {
     // Read cache
-    devicesList = getCache('devicesList');
+    devicesList = getCache('devicesListNew');
     
     if (devicesList != '') {
         devicesList = JSON.parse (devicesList);

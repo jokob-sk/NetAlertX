@@ -569,6 +569,13 @@ function getDevicesTotals() {
 function getDevicesList() {
   global $db;
 
+  $forceDefaultOrder = FALSE;
+
+  if (isset ($_REQUEST['forceDefaultOrder']) )
+  {
+    $forceDefaultOrder = TRUE;
+  }
+
   // This object is used to map from the old order ( second parameter, first number) to the 3rd parameter (Second number (here initialized to -1))
   $columnOrderMapping = array(
     array("dev_Name", 0, 0),               
@@ -588,19 +595,22 @@ function getDevicesList() {
     array("dev_Network_Node_MAC_ADDR", 14, 14)                  
   );
 
-  // get device columns order
-  $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns_Order"';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);  
-
-  if($row != NULL && count($row) == 1)
+  if($forceDefaultOrder == FALSE) 
   {
-    // ordered columns setting from the maintenance page
-    $orderedColumns = createArray($row[0]);
+    // get device columns order
+    $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns_Order"';
+    $result = $db->query($sql);
+    $row = $result -> fetchArray (SQLITE3_NUM);  
 
-    // init ordered columns    
-    for($i = 0; $i < count($orderedColumns); $i++) {           
-      $columnOrderMapping[$i][2] = $orderedColumns[$i];      
+    if($row != NULL && count($row) == 1)
+    {
+      // ordered columns setting from the maintenance page
+      $orderedColumns = createArray($row[0]);
+
+      // init ordered columns    
+      for($i = 0; $i < count($orderedColumns); $i++) {           
+        $columnOrderMapping[$i][2] = $orderedColumns[$i];      
+      }
     }
   }
 
