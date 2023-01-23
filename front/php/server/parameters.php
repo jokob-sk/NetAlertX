@@ -80,6 +80,9 @@ function getParameter($skipCache, $defaultValue, $expireMinutes) {
       $value = $row[0];
     } else{
       $value = $defaultValue;
+
+      // Nothing found in the DB, Insert new value
+      insertNew($parameter, $value);
     }
 
     // update cache  
@@ -113,15 +116,7 @@ function setParameter($expireMinutes) {
   $changes = $db->changes();
   if ($changes == 0) {
     // Insert new value
-    $sql = 'INSERT INTO Parameters (par_ID, par_Value)
-            VALUES ("'. quotes($parameter) .'",
-                    "'. quotes($value)     .'")';
-    $result = $db->query($sql);
-
-    if (! $result == TRUE) {
-      echo "Error creating parameter\n\n$sql \n\n". $db->lastErrorMsg();
-      return;
-    }
+    insertNew($parameter, $value);
   }
 
   // update cache  
@@ -129,5 +124,22 @@ function setParameter($expireMinutes) {
 
   echo 'OK';
 }
+
+function insertNew($parameter, $value)
+{
+  global $db;
+
+  // Insert new value
+  $sql = 'INSERT INTO Parameters (par_ID, par_Value)
+          VALUES ("'. quotes($parameter) .'",
+                  "'. quotes($value)     .'")';
+  $result = $db->query($sql);
+
+  if (! $result == TRUE) {
+    echo "Error creating parameter\n\n$sql \n\n". $db->lastErrorMsg();
+    return;
+  }
+}
+
 
 ?>

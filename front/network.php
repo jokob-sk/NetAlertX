@@ -454,7 +454,7 @@
 <script src="js/pialert_common.js"></script>
 
 
-<script>
+<script defer>
   // ---------------------------------------------------------------------------
   // Tree functionality
   // ---------------------------------------------------------------------------
@@ -580,7 +580,11 @@
       renderNode:  nodeData =>  { 
 
         // calculate the font size of the leaf nodes to fit everything into the tree area
-        var fontSize = (nodeData.data.hasChildren) ? "" : "font-size:"+((600/(20*leafNodesCount)).toFixed(2))+"em;";
+        leafNodesCount == 0 ? 1 : leafNodesCount;
+        emSize = ((600/(20*leafNodesCount)).toFixed(2));        
+        emSize = emSize > 1 ? 1 : emSize;
+        
+        var fontSize = (nodeData.data.hasChildren) ? "" : "font-size:"+emSize+"em;";
 
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon '><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
@@ -589,7 +593,7 @@
 
         selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
 
-        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";
+        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";        
 
         return result = "<div class='box "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
                           style='height:"+nodeData.settings.nodeHeight+"px;\
@@ -637,25 +641,7 @@
   
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
 
-    // init parent node
-    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac');      
-
-    initButtons(currentNodeMac);
-
-    // change highlighted node in the tree
-    selNode = $("#networkTree .highlightedNode")[0]
-
-    // console.log(selNode)
-
-    if(selNode)
-    {
-      $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
-    }
-
-    newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
-    
-    $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
-    
+    initButtons()
 
   });
 
@@ -696,8 +682,26 @@
   }
 
   // ---------------------------------------------------------------------------
-  function initButtons(currentNodeMac)
-  {
+  function initButtons()
+  { 
+
+    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac'); 
+
+    // change highlighted node in the tree
+    selNode = $("#networkTree .highlightedNode")[0]
+
+    // console.log(selNode)
+
+    if(selNode)
+    {
+      $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
+    }
+
+    newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
+    
+    $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
+
+
     // init the Assign buttons
     $('#unassignedDevices  button[data-myleafmac]').each(function(){
       $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","'+currentNodeMac+'")')
@@ -712,6 +716,8 @@
   // ---------------------------------------------------------------------------
   function updateLeaf(leafMac,nodeMac)
   {
+    console.log(leafMac)
+    console.log(nodeMac)
     saveData('updateNetworkLeaf', leafMac, nodeMac);
     setTimeout("location.reload();", 1000); // refresh page after 1s
   }
@@ -725,6 +731,9 @@
 
   // attach on-click events
   attachTreeEvents();
+
+  // init Assign/Unassign buttons
+  initButtons()
 
 
 </script>

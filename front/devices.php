@@ -192,9 +192,9 @@
   var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
-  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,12,13,14];
-  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,12,13,14]';
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,12,13,14] ; 
+  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]';
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] ; 
 
   // Read parameters & Initialize components
   main();
@@ -461,7 +461,7 @@ function getDevicesFromTable(table)
   rowIDs.map(function(rowID, index){
     result.push({
                   "rowid": rowID, 
-                  "mac":rowMACs[index], 
+                  "mac"  : rowMACs[index], 
                   "name" : rowNames[index],
                   "type" : rowTypes[index],
                   "icon" : rowIcons[index],

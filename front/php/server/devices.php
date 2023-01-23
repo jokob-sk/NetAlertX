@@ -622,8 +622,8 @@ function getDevicesList() {
 
     $defaultOrder = array ($row['dev_Name'],
                             $row['dev_Owner'],
-                            $row['dev_DeviceType'],                                  
-                            $row['dev_Icon'],
+                            handleNull($row['dev_DeviceType']),
+                            handleNull($row['dev_Icon'], "laptop"),
                             $row['dev_Favorite'],
                             $row['dev_Group'],
                             formatDate ($row['dev_FirstConnection']),
@@ -634,12 +634,12 @@ function getDevicesList() {
                             $row['dev_MAC'], // MAC (hidden)
                             formatIPlong ($row['dev_LastIP']), // IP orderable
                             $row['rowid'], // Rowid (hidden)      
-                            $row['dev_Network_Node_MAC_ADDR'] // 
+                            handleNull($row['dev_Network_Node_MAC_ADDR']) // 
                             );
 
     $newOrder = array();
 
-    
+    // reorder columns based on user settings
     for($index = 0; $index  < count($columnOrderMapping); $index++)
     {
       array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
@@ -757,10 +757,11 @@ function getIcons() {
 
   // arrays of rows
   $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
+  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
+    $icon = handleNull($row['dev_Icon'], "laptop"); 
     // Push row data
-    $tableData[] = array('id'    => $row['dev_Icon'], 
-                         'name'  => '<i class="fa fa-'.$row['dev_Icon'].'"></i> - '.$row['dev_Icon'] );                          
+    $tableData[] = array('id'    => $icon, 
+                         'name'  => '<i class="fa fa-'.$icon.'"></i> - '.$icon );                          
   }
   
   // Control no rows

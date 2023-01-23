@@ -383,7 +383,7 @@ def importConfig ():
     lastTimeImported = time.time()
 
     # Used to display a message in the UI when old (outdated) settings are loaded    
-    sql.execute ("""UPDATE Parameters set "par_Value" = ?  where  "par_ID" = "Back_Settings_Imported" """,  (round(time.time() * 1000),))  
+    initOrSetParam("Back_Settings_Imported",(round(time.time() * 1000),) )    
     
     commitDB()
 
@@ -2840,6 +2840,9 @@ def upgradeDB ():
     AND name='Nmap_Scan'; 
     """).fetchone() == None
 
+    # Initialize Parameters if unavailable
+    initOrSetParam('Back_App_State','Initializing')
+
     # if nmapScanMissing == False:
     #     # Re-creating Nmap_Scan table    
     #     sql.execute("DROP TABLE Nmap_Scan;")       
@@ -2859,8 +2862,14 @@ def upgradeDB ():
         PRIMARY KEY("Index" AUTOINCREMENT)
         );      
         """)
-      
-    # don't hog DB access  
+    
+    commitDB ()
+
+#-------------------------------------------------------------------------------
+def initOrSetParam(parID, parValue):    
+
+    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")        
+
     commitDB ()
 
 #-------------------------------------------------------------------------------
@@ -2868,7 +2877,6 @@ def updateState(newState):
 
     sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
 
-    # don't hog DB access  
     commitDB ()
 
  
@@ -3112,7 +3120,7 @@ def isNewVersion():
             if realeaseTimestamp > buildTimestamp + 600:        
                 file_print("    New version of the container available!")
                 newVersionAvailable = True 
-                sql.execute ("UPDATE Parameters SET par_Value='"+ str(newVersionAvailable) +"' WHERE par_ID='Back_New_Version_Available'") 
+                initOrSetParam('Back_New_Version_Available', str(newVersionAvailable))                
 
     return newVersionAvailable
 
