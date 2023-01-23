@@ -469,8 +469,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function handleEvent (value){
     setParameter ('Front_Event', value)
 
-    // console.log(value)
-
     // show message
     showModalOk("<?php echo lang("general_event_title")?>", "<?php echo lang("general_event_description")?> <code id='"+modalEventStatusId+"'></code>");
 
@@ -485,9 +483,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     setTimeout(function(){
       displayedEvent = $('#'+modalEventStatusId).html()
-
-      // console.log(displayedEvent)
-      // console.log(displayedEvent.indexOf('finished') == -1)
 
       // loop until finished  
       if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 4s

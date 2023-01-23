@@ -516,7 +516,7 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_MAIL_name' => 'Enable email',
 'REPORT_MAIL_description' => 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below.',
 'SMTP_SERVER_name' => 'SMTP server URL',
-'SMTP_SERVER_description' => 'The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>. I don\'t recommend using Gmail as an SMTP server as the setup is <a target="_blank" href="https://support.google.com/a/answer/176600">quite complex</a> (I couldn\'t get it to work - Please reach out with a guide if you did)',
+'SMTP_SERVER_description' => 'The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>. To use Gmail as an SMTP server <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SMTP_GMAIL.md">follow this guide</a>',
 'SMTP_PORT_name' => 'SMTP server PORT',
 'SMTP_PORT_description' => 'Port number used for the SMTP connection. Set to <code>0</code> if you don\'t want to use a port when connecting to the SMTP server.',
 'SMTP_SKIP_LOGIN_name' => 'Skip authentication',
