@@ -21,7 +21,8 @@
   <?php require 'php/templates/notification.php'; ?>
     <h1 id="pageTitle">
       <i class="fa fa-network-wired"></i> <?php echo lang('Network_Title');?>
-    </h1>
+      <span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span>
+    </h1>    
   </section>
 
 

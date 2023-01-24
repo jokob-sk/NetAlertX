@@ -324,7 +324,7 @@
                       </div>
 
                       <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?></h4>                    
+                      <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
                       <div class="form-group">
                         <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
