@@ -457,8 +457,7 @@
 <script>
   $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
 
-      rawData = JSON.parse (data)
-      console.log(rawData)
+      rawData = JSON.parse (data)      
 
       devicesListnew = rawData["data"].map(item =>  { return {
                                                               "name":item[0], 
@@ -471,8 +470,6 @@
                                                               }})
 
       setCache('devicesListNew', JSON.stringify(devicesListnew))
-
-      console.log(devicesListnew)
 
       // create tree
       initTree(getHierarchy());

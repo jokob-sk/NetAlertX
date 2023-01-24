@@ -715,12 +715,15 @@ if ($ENABLED_DARKMODE === True) {
   // ------------------------------------------------------------
   function getDevicesListValue(idColumn, idValue, returnColumn)
   {
-    if(emptyArr.includes(devicesList) || emptyArr.includes(idValue))
+    // Read cache
+    devicesListAll = JSON.parse(getCache('devicesListAll'));
+
+    if(emptyArr.includes(devicesListAll) || emptyArr.includes(idValue))
     {
       return '';
     }
 
-    return devicesList.find((item) => {return item[idColumn] == idValue})[returnColumn]
+    return devicesListAll.find((item) => {return item[idColumn] == idValue})[returnColumn]
   }
 
   // ------------------------------------------------------------
@@ -741,8 +744,29 @@ if ($ENABLED_DARKMODE === True) {
 
   mac                     = getMac()  // can also be rowID!! not only mac 
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
+  var devicesListAll      = [];   // this will contain a list off all devices 
 
-  devicesList = getDevicesList();
+
+  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
+
+      rawData = JSON.parse (data)      
+
+      devicesListAll = rawData["data"].map(item =>  { return {
+                                                              "name":item[0], 
+                                                              "type":item[2], 
+                                                              "icon":item[3], 
+                                                              "mac":item[11], 
+                                                              "parentMac":item[14], 
+                                                              "rowid":item[13], 
+                                                              "status":item[10] 
+                                                              }})
+
+      setCache('devicesListAll', JSON.stringify(devicesListAll))
+
+    // Read parameters & Initialize components
+    main();
+  });
+
 
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
@@ -759,8 +783,7 @@ if ($ENABLED_DARKMODE === True) {
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
 
-  // Read parameters & Initialize components
-  main();
+
 
 
 // -----------------------------------------------------------------------------
