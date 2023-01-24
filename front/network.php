@@ -359,7 +359,7 @@
                         dev_Name as name,                        
                         dev_LastIP as last_ip,
                         dev_Network_Node_MAC_ADDR
-                    FROM Devices WHERE (dev_Network_Node_MAC_ADDR is null or dev_Network_Node_MAC_ADDR = "" or dev_Network_Node_MAC_ADDR = " " ) and dev_MAC not like "%internet%" order by name asc'; 
+                    FROM Devices WHERE (dev_Network_Node_MAC_ADDR is null or dev_Network_Node_MAC_ADDR = "" or dev_Network_Node_MAC_ADDR = " " or dev_Network_Node_MAC_ADDR = "undefined") and dev_MAC not like "%internet%" order by name asc'; 
 
     global $db;
     $func_result = $db->query($func_sql);  
