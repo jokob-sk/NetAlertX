@@ -33,7 +33,7 @@ To setup a device named `rapberrypi` as a `Switch` in our network.
 
 - After clicking the `Assign` button in the previous section, the `(AppleTV)` (1) device is now connected to our `raspberrypi` (2).
 
-![Device details](/docs/img/NETWORK_TREE/Network_Page_2_Levels.png)
+![Network page with 2 levels](/docs/img/NETWORK_TREE/Network_Page_2_Levels.png)
 
 - You can see the `raspberrypi` represents the Network node type `Switch` (3)
 - The `(AppleTV)` to `raspberrypi` connection is also displayed in the table of `Connected devices` (4).
