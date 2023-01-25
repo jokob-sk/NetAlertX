@@ -504,6 +504,45 @@
   var treeLoadedAlready = false;
   var hiddenMacs = [];
 
+  // ---------------------------------------------------------------------------
+  function formatFlatDevicesList()
+  {
+    devList = getDevicesList()
+
+    result = []
+
+    for(i=0;i<devList.length;i++)
+    {
+      node = devList[i]
+
+      if(!hiddenMacs.includes(node.parentMac))
+      {
+          result.push(
+          { 
+            name: node.name,      
+            path: '',
+            mac: node.mac,
+            id: node.mac,
+            parentMac: node.parentMac,
+            icon: node.icon,
+            type: node.type,
+            status: node.status,
+            hasChildren: true,
+            hiddenChildren: true,
+            qty: 5,
+            // children:  children
+          })
+
+      }
+
+    }
+
+    console.log(result)
+
+    return result;
+  }
+
+  // ---------------------------------------------------------------------------
   function getChildren(node, list, path)
   {
     var children = [];
@@ -529,6 +568,7 @@
       name: node.name,      
       path: path,
       mac: node.mac,
+      id: node.mac,
       parentMac: node.parentMac,
       icon: node.icon,
       type: node.type,
@@ -578,6 +618,27 @@
     updatedTree = getHierarchy()
 
     myTree.refresh(updatedTree);
+
+    // re-attach any onclick events
+    attachTreeEvents();   
+  }
+  // ---------------------------------------------------------------------------
+  function toggleFlatSubTree(parentMac, treePath)
+  {
+    // treePath = treePath.split('|')
+
+    if(!hiddenMacs.includes(parentMac))
+    {
+      hiddenMacs.push(parentMac)
+    }
+    else
+    {
+      removeItemFromArray(hiddenMacs, parentMac)
+    }
+
+    list = formatFlatDevicesList();
+
+    myTree.refresh(list);
 
     // re-attach any onclick events
     attachTreeEvents();   
@@ -646,20 +707,23 @@
           // console.log(this)  
         },
       mainAxisNodeSpacing: 'auto',
+      // mainAxisNodeSpacing: 3,
       secondaryAxisNodeSpacing: 0.3,
       nodeHeight: '25',    
       marginTop: '5',
       hasZoom: false,
       hasPan: false,
       // marginLeft: '15',
-      idKey: "name",
+      idKey: "id",
       hasFlatData: false,
+      // hasFlatData: true,
       linkWidth: (nodeData) => 3,
       relationnalField: "children",
+      // relationnalField: "parentMac",
       });
 
       myTree.refresh(myHierarchy);
-      
+      // myTree.refresh(formatFlatDevicesList());  //hasFlatData       
     }
 
   // ---------------------------------------------------------------------------
