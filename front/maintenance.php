@@ -271,6 +271,8 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                 <option value="13"><?php echo lang('Device_TableHead_Rowid');?></option>
                                 <option value="14"><?php echo lang('Device_TableHead_Parent_MAC');?></option>
                                 <option value="15"><?php echo lang('Device_TableHead_Connected_Devices');?></option>
+                                <option value="16"><?php echo lang('Device_TableHead_Location');?></option>
+                                <option value="17"><?php echo lang('Device_TableHead_Vendor');?></option>
                               </select>
                               <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
                             </div>
@@ -761,8 +763,8 @@ function scrollDown()
 // --------------------------------------------------------
 // Manage displayed columns
 // --------------------------------------------------------
-colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13','14','15'];
-colDefaultOrderTxt = '[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15]';
+colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13','14','15','16','17'];
+colDefaultOrderTxt = '[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17]';
 
 
 function saveSelectedColumns () { 

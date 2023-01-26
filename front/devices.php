@@ -193,8 +193,8 @@
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
   
-  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]';
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] ; 
+  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]';
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17] ; 
   var tableColumnVisible = tableColumnOrder;
 
   // Read parameters & Initialize components
@@ -230,7 +230,9 @@ function main () {
                                   '<?php echo lang('Device_TableHead_LastIPOrder');?>',
                                   '<?php echo lang('Device_TableHead_Rowid');?>',
                                   '<?php echo lang('Device_TableHead_Parent_MAC');?>',
-                                  '<?php echo lang('Device_TableHead_Connected_Devices');?>'
+                                  '<?php echo lang('Device_TableHead_Connected_Devices');?>',
+                                  '<?php echo lang('Device_TableHead_Location');?>',
+                                  '<?php echo lang('Device_TableHead_Vendor');?>'
                                 ];
 
       html = '';
@@ -331,8 +333,8 @@ function initializeDatatable () {
 
     'columnDefs'   : [
       {visible:   false,         targets: tableColumnHide },      
-      {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10)] },      
-      {width:     '80px',        targets: [mapIndx(6), mapIndx(7)] },      
+      {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15)] },      
+      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
       {width:     '30px',        targets: [mapIndx(10), mapIndx(13)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
@@ -340,6 +342,17 @@ function initializeDatatable () {
       {targets: [mapIndx(0)],
         'createdCell': function (td, cellData, rowData, row, col) {
             $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+      } },
+
+      // Connected Devices 
+      // <a onclick="setCache(\'activeNetworkTab\',\''.$idParentMac.'_id\')" href="./network.php">
+      //                                 <b class="anonymize">'.$idParentMac.'  <i class="fa fa-square-up-right"></i></b>
+      //                               </a>
+      {targets: [mapIndx(15)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+            $(td).html ('<b><a href="./network.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            // $(td).find("b").attr('onclick', "setCache('activeNetworkTab','"+rowData[mapIndx(11)]+"_id')" );
+
       } },
 
       // Icon      

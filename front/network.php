@@ -127,7 +127,7 @@
                                     <b>'.lang('Network_Parent').'</b> 
                                   </td>
                                   <td>  
-                                    <a onclick="setCache(\'activeNetworkTab\',\''.$idParentMac.'_id\')" href="./network.php">
+                                    <a href="./network.php?mac='.$idParentMac.'">
                                       <b class="anonymize">'.$idParentMac.'  <i class="fa fa-square-up-right"></i></b>
                                     </a>                                 
                                   </td>
@@ -507,58 +507,7 @@
   var hiddenChildren = [];
   
 
-  // ---------------------------------------------------------------------------
-  function formatFlatDevicesList()
-  {
-    devList = getDevicesList()
-
-    devListNoOrphans = []
-
-    for(i=0;i<devList.length;i++)
-    {
-      node = devList[i]
-
-      if(node.mac != 'Internet' && node.parentMac != "")
-      {
-        devListNoOrphans.push(node)
-      }
-    }
-
-    list = devListNoOrphans;
-
-    result = []
-
-    for(i=0;i<devList.length;i++)
-    {
-      node = devList[i]
-
-      // if(!hiddenMacs.includes(node.parentMac))
-      if(!hiddenMacs.includes(node.mac))
-      {
-          result.push(
-          { 
-            name: node.name,      
-            path: '',
-            mac: node.mac,
-            id: node.mac,
-            parentMac: node.parentMac,
-            icon: node.icon,
-            type: node.type,
-            status: node.status,
-            hasChildren: true,
-            hiddenChildren: true,
-            qty: node.childrenQty
-            // children:  children
-          })
-
-      }
-
-    }
-
-    console.log(result)
-
-    return result;
-  }
+  
 
   // ---------------------------------------------------------------------------
   function getChildren(node, list, path)
@@ -640,35 +589,13 @@
     // re-attach any onclick events
     attachTreeEvents();   
   }
-  // ---------------------------------------------------------------------------
-  function toggleFlatSubTree(parentMac, treePath)
-  {
-    // treePath = treePath.split('|')
-
-    if(!hiddenMacs.includes(parentMac))
-    {
-      hiddenMacs.push(parentMac)
-    }
-    else
-    {
-      removeItemFromArray(hiddenMacs, parentMac)
-    }
-
-    list = formatFlatDevicesList();
-
-    myTree.refresh(list);
-
-    // re-attach any onclick events
-    attachTreeEvents();   
-  }
-
+  
   // --------------------------------------------------------------------------- 
   function attachTreeEvents()
   {
     //  toggle subtree functionality
     $("div[data-mytreemac]").each(function(){
-        // $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')
-        $(this).attr('onclick', 'toggleFlatSubTree("'+$(this).attr('data-mytreemac')+'")') //hasFlatData
+        $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')        
     }); 
   }
 
@@ -734,15 +661,12 @@
       hasPan: false,
       // marginLeft: '15',
       idKey: "id",
-      // hasFlatData: false,
-      hasFlatData: true,
+      hasFlatData: false,      
       linkWidth: (nodeData) => 3,
-      // relationnalField: "children",
-      relationnalField: "parentMac",
+      relationnalField: "children",      
       });
 
-      // myTree.refresh(myHierarchy);
-      myTree.refresh(formatFlatDevicesList());  //hasFlatData       
+      myTree.refresh(myHierarchy);      
     }
 
   // ---------------------------------------------------------------------------
@@ -766,12 +690,12 @@
     selectedTab = "Internet_id"
 
     // the #target from the url
-    target = window.location.hash.substr(1)  
+    target = getQueryString('mac') 
 
     // update cookie if target specified
     if(target != "")
     {      
-      setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
+      setCache(key, target.replaceAll(":","_")+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
     }
 
     // get the tab id from the cookie (already overriden by the target)

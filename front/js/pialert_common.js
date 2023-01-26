@@ -10,7 +10,7 @@
 // -----------------------------------------------------------------------------
 var timerRefreshData = ''
 var modalCallbackFunction = '';
-var emptyArr            = ['undefined', "", undefined, null];
+var emptyArr            = ['undefined', "", undefined, null, 'null'];
 
 // urlParams = new Proxy(new URLSearchParams(window.location.search), {
 //   get: (searchParams, prop) => searchParams.get(prop.toString()),
@@ -290,6 +290,18 @@ function settingsChanged()
   };
 }
 
+// -----------------------------------------------------------------------------
+function getQueryString(key){
+  params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+
+  tmp = params[key] 
+  
+  result = emptyArr.includes(tmp) ? "" : tmp;
+
+  return result
+}  
 // -----------------------------------------------------------------------------
 function translateHTMLcodes (text) {
   if (text == null || emptyArr.includes(text)) {
