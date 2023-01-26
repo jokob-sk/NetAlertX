@@ -344,15 +344,10 @@ function initializeDatatable () {
             $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
       } },
 
-      // Connected Devices 
-      // <a onclick="setCache(\'activeNetworkTab\',\''.$idParentMac.'_id\')" href="./network.php">
-      //                                 <b class="anonymize">'.$idParentMac.'  <i class="fa fa-square-up-right"></i></b>
-      //                               </a>
+      // Connected Devices       
       {targets: [mapIndx(15)],
         'createdCell': function (td, cellData, rowData, row, col) {
             $(td).html ('<b><a href="./network.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
-            // $(td).find("b").attr('onclick', "setCache('activeNetworkTab','"+rowData[mapIndx(11)]+"_id')" );
-
       } },
 
       // Icon      

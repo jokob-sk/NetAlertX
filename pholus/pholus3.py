@@ -864,7 +864,9 @@ def main():
         file_print_pr("[DEBUG] Timestamp 34: ", timeNow()) 
         pr = multiprocessing.Process(target=Sniffer_Offline, args=(values.interface,q,values.show_ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,values.source6,values.source4,values.target_mac,values.target_mac,values.source_mac,values.hlimit))
         pr.start()
-        pr.join()
+        pr.join(15)
+        if pr.is_alive():                    
+            file_print("SUB-PROCESS KILLED TIMESTAMP: ", timeNow()) 
         file_print_pr("[DEBUG] Timestamp 35: ", timeNow()) 
         results=[]
         while not q.empty():
@@ -1118,7 +1120,9 @@ def main():
                     file_print_pr("[DEBUG] Timestamp 56: ", timeNow()) 
                     try:
                         file_print_pr("[DEBUG] Timestamp 57: ", timeNow()) 
-                        pr2.join()
+                        pr2.join(15)
+                        if pr.is_alive():                    
+                            file_print("SUB-PROCESS KILLED TIMESTAMP: ", timeNow())                             
                         file_print_pr("[DEBUG] Timestamp 58: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 3")
@@ -1143,7 +1147,9 @@ def main():
                 if pr2:
                     try:
                         file_print_pr("[DEBUG] Timestamp 61: ", timeNow()) 
-                        pr2.join()
+                        pr2.join(15)
+                        if pr.is_alive():                    
+                            file_print("SUB-PROCESS KILLED TIMESTAMP: ", timeNow())                         
                         file_print_pr("[DEBUG] Timestamp 62: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 4")
@@ -1170,7 +1176,9 @@ def main():
                 if pr3:
                     try:
                         file_print_pr("[DEBUG] Timestamp 65: ", timeNow()) 
-                        pr3.join()
+                        pr3.join(15)
+                        if pr.is_alive():                    
+                            file_print("SUB-PROCESS KILLED TIMESTAMP: ", timeNow()) 
                         file_print_pr("[DEBUG] Timestamp 66: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 5")
