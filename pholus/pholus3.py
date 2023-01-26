@@ -21,6 +21,8 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#supress Scapy warning
 runPath = os.path.dirname(os.path.abspath(__file__))
 runPathTmp  = runPath + "/.."  
 logPath     = runPathTmp + '/front/log'
+# DEBUG
+isDebug = False
 
 
 #===============================================================================
@@ -61,6 +63,8 @@ write_file(logPath + "/pialert_pholus_subp_pr.log", "")
 
 # For separate logging of the multiprocess subprocess
 def file_print_pr(*args):
+    if isDebug == False:
+        return
 
     result = ''
     
@@ -139,10 +143,10 @@ def get_my_ipv4_addr(interface):
 ##########################
 class Sniffer():
     def __init__ (self,filter,interface,sniffer_timeout,queue,dns,show_ttl,dos_ttl, conflict, ttl,d4, d6, target_mac, auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flooding_interval, v4, v6):
-        file_print(">>>>>>> sniffer_args: ", filter," ",interface," ",sniffer_timeout," ",queue," ",dns," ",show_ttl," ",dos_ttl," ", conflict," ", ttl," ",d4," ", d6," ", target_mac," ", auto_fake_responses," ",source_IPv6," ", source_IPv4," ", target_mac1," ", target_mac2," ",source_mac," ",hlimit," ",workstation," ",printer," ",googlecast," ",airtv," ",flood," ",flooding_timeout," ",flooding_interval," ", v4," ", v6)
+        file_print_pr("[DEBUG] sniffer_args: ", filter," ",interface," ",sniffer_timeout," ",queue," ",dns," ",show_ttl," ",dos_ttl," ", conflict," ", ttl," ",d4," ", d6," ", target_mac," ", auto_fake_responses," ",source_IPv6," ", source_IPv4," ", target_mac1," ", target_mac2," ",source_mac," ",hlimit," ",workstation," ",printer," ",googlecast," ",airtv," ",flood," ",flooding_timeout," ",flooding_interval," ", v4," ", v6)
         self.filter = filter
         self.interface = interface
-        file_print(">>>>>>> sniffer_timeout: ", sniffer_timeout)
+        file_print_pr("[DEBUG] sniffer_timeout: ", sniffer_timeout)
         self.sniffer_timeout=sniffer_timeout
         self.queue=queue
         self.dns=dns
@@ -178,7 +182,7 @@ class Sniffer():
 ##################################
 class Sniffer_Offline():
     def __init__ (self,interface,queue,show_ttl,d4, d6, target_mac,auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,hlimit):
-        file_print(">>>>>>> Timestamp 0.0210aa: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 1: ", timeNow())
         self.interface = interface
         self.queue=queue
         self.show_ttl=show_ttl
@@ -201,9 +205,8 @@ class Sniffer_Offline():
 ########################################################################
 def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,interface,d4,d6,target_mac,auto_fake_responses,source_IPv6,source_IPv4,target_mac1,target_mac2,source_mac,hlimit,workstation,printer,googlecast,airtv,flood,flooding_timeout,flodding_interval,v4,v6):
 
-    # file_print(">>>>>>> Timestamp 0.0210: ", timeNow())
-    file_print_pr(">>>>>>> Timestamp 0.0210: ", timeNow())
-    file_print_pr(">>>>>>> Test ")
+    file_print_pr("[DEBUG] Timestamp 2: ", timeNow())
+    file_print_pr("[DEBUG] 3 ")
 
     dns_type = {12: "PTR", 28: "AAAA", 13: "HINFO",33: "SRV", 1: "A", 255: "* (ANY)", 16: "TXT", 15: "MX", 6: "SOA", 256: "URI", 5: "CNAME",39: "DNAME"}
     Ether_src=packets.getlayer(Ether).src
@@ -213,12 +216,11 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
     elif packets.haslayer(IP):
         IP_src=packets.getlayer(IP).src
     else:
-        file_print(">>>>>>> Timestamp 0.021: ", timeNow())
-        file_print_pr(">>>>>>> Test 2")
+        file_print_pr("[DEBUG] Timestamp 4: ", timeNow())        
         
     res0= Ether_src + " | " + IP_src.ljust(27)
     if packets.haslayer(DNS):
-        file_print_pr(">>>>>>> Test 4")
+        file_print_pr("[DEBUG] Timestamp 5: ", timeNow()) 
         dns=packets.getlayer(DNS)
         if (conflict or dos_ttl) and dns.ancount>0:
             DNSBlocks = [ ]
@@ -274,13 +276,13 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
             else:
                 new_packet=new_packet/UDP(dport=5353,sport=5353)/new_DNS_packet
             for x in range(0,2):#Send each packet twice
-                file_print_pr(">>>>>>> Test 6")
+                file_print_pr("[DEBUG] Timestamp 6: ", timeNow()) 
                 sendp(new_packet,iface=interface)
-                file_print_pr(">>>>>>> Test 6.1")
+                file_print_pr("[DEBUG] Timestamp 7: ", timeNow()) 
             
         elif auto_fake_responses or (not (dos_ttl or conflict)):
             ## IF THIS IS A QUERY ##
-            file_print_pr(">>>>>>> Test 6.2")
+            file_print_pr("[DEBUG] Timestamp 8: ", timeNow()) 
             if dns.opcode==0:
                 res0 = res0 + ""
                 if dns.qdcount>0:
@@ -488,9 +490,9 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                         dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0,ancount=1)/DNSRR(rrname=qname,ttl=myttl,rdata=source_IPv4,type="A")
                                     else:
                                         dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0,ancount=1)/DNSRR(rrname=qname,ttl=myttl,rdata=source_IPv4,type="A")
-                                file_print_pr(">>>>>>> Test 6.23")        
+                                file_print_pr("[DEBUG] Timestamp 9: ", timeNow())      
                                 send_packets(v4,v6,source_mac,target_mac1,target_mac2,source_IPv4,d4,source_IPv6,d6,interface,hlimit,dns_packet,False,10.0,0.1)#CHANGE DEFAULT VALUES
-                                file_print_pr(">>>>>>> Test 6.24")
+                                file_print_pr("[DEBUG] Timestamp 10: ", timeNow()) 
                             ### END "IF WE NEED TO AUTO RESPOND WITH A FAKE RESPONSE
                             ### NEXT LINES ARE ONLY USED TO PRINT RESULTS ###
                             if dnsqr.qclass==32769:
@@ -526,7 +528,7 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 else:
                                     ARtype=str(dnsrropt.type)
                                 res = res0 + " | Additional_Record   | " + rrname.decode("utf-8")  + " " + ARtype 
-                                file_print_pr(">>>>>>> Test 6.24")
+                                file_print_pr("[DEBUG] Timestamp 11: ", timeNow()) 
                                 if dnsrropt.haslayer(EDNS0TLV):
                                     edns0tlv=dnsrropt.getlayer(EDNS0TLV)
                                     if edns0tlv.optcode==4:
@@ -595,26 +597,27 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                     str_type   = str(b_to_str(dns_type[dnsrr.type])) + ""
                                     str_rdata  = str(b_to_str(dnsrr.rdata)) + ""
                                     str_rclass = str(b_to_str(dnsrr.rclass)) + ""
-
+                                    file_print_pr("[DEBUG] Timestamp 12: ", timeNow()) 
                                     res = str_res0 + " | Additional_Record   | "+str_rrname + " " + str_type+" " + str_rclass + ' "' +str_rdata+'"'
                                 if show_ttl:
                                     res = res + " TTL:"+str(dnsrr.ttl)
                                 if print_res==1:
                                     file_print(res)
-                                file_print_pr(">>>>>>> Test 6.27")
+                                file_print_pr("[DEBUG] Timestamp 13: ", timeNow()) 
                                 queue.put(res)
                                 block = block.payload
-                                file_print_pr(">>>>>>> Test 6.270")
+                                file_print_pr("[DEBUG] Timestamp 14: ", timeNow()) 
 
                 if dns.ancount>0:
                     DNSBlocks = [ ]
                     DNSBlocks.append(dns.an)
                     for block in DNSBlocks:
-                        file_print_pr(">>>>>>> Test 6.271")
+                        file_print_pr("[DEBUG] Timestamp 15: ", timeNow()) 
                         while isinstance(block,DNSRR):
                             dnsrr=block.getlayer(DNSRR)
                             if dnsrr.rclass==1:
                                 rclass="Class:IN"
+                                file_print_pr("[DEBUG] Timestamp 16: ", timeNow()) 
                             else:
                                 rclass="Class:"+str(dnsrr.rclass)
                             rdata=dnsrr.rdata
@@ -632,24 +635,28 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 if isinstance(rdata,list):
                                     rdata = b" ".join(rdata).decode("utf-8")
                                 res = res0 + " | Answer              | "+dnsrr.rrname.decode("utf-8") + " " + dns_type[dnsrr.type]+" " + rclass + ' "' +rdata+'"'
-                                file_print_pr(">>>>>>> Test 6.272004")
+                                file_print_pr("[DEBUG] Timestamp 17: ", timeNow()) 
+                                file_print_pr("[DEBUG] Timestamp 18: ", timeNow()) 
                             if show_ttl:
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
                                 file_print(res)
+                            file_print_pr("[DEBUG] Timestamp 19: ", timeNow()) 
                             queue.put(res)
                             block = block.payload
-                            file_print_pr(">>>>>>> Test 6.272")
-                if dns.nscount>0:
-                    file_print_pr(">>>>>>> Test 6.273")
+                            file_print_pr("[DEBUG] Timestamp 20: ", timeNow()) 
+                if dns.nscount>0:  #MAYBE HERE
+                    file_print_pr("[DEBUG] Timestamp 21: ", timeNow()) 
                     DNSBlocks = [ ]
                     DNSBlocks.append(dns.ns)
+                    file_print_pr("[DEBUG] Timestamp 22: ", timeNow())                     
                     for block in DNSBlocks:
-                        file_print_pr(">>>>>>> Test 6.28")
+                        file_print_pr("[DEBUG] Timestamp 23: ", timeNow()) 
                         while isinstance(block,DNSRR):
                             dnsrr=block.getlayer(DNSRR)
                             if dnsrr.rclass==1:
                                 rclass="Class:IN"
+                                file_print_pr("[DEBUG] Timestamp 24: ", timeNow()) 
                             else:
                                 rclass="Class:"+str(dnsrr.rclass) 
 
@@ -664,20 +671,22 @@ def ext_handler(packets,queue,unidns,show_ttl,print_res,dos_ttl,conflict,ttl,int
                                 res = res + " TTL:"+str(dnsrr.ttl)
                             if print_res==1:
                                 file_print(res)
-                            file_print_pr(">>>>>>> Test 6.274")
+                            file_print_pr("[DEBUG] Timestamp 25: ", timeNow())                             
                             queue.put(res)
-                            block = block.payload                            
+                            block = block.payload
+                            file_print_pr("[DEBUG] Timestamp 26: ", timeNow())                 
                 else:
-                    file_print_pr(">>>>>>> Test 6.27200")
+                    file_print_pr("[DEBUG] Timestamp 27: ", timeNow()) 
             else:
-                file_print("not a DNS Query", dns.summary())
-                file_print_pr(">>>>>>> Test 6.272001")
+                file_print_pr("[DEBUG] Timestamp 28: ", timeNow()) 
         else:
-            file_print_pr(">>>>>>> Test 6.2720055")
+            file_print_pr("[DEBUG] Timestamp 29: ", timeNow()) 
     else:
-        file_print_pr(">>>>>>> Test 3")
+        file_print_pr("[DEBUG] Timestamp 30: ", timeNow()) 
 
-    file_print_pr(">>>>>>> Test 6.272005599")
+    file_print_pr("[DEBUG] Timestamp 31: ", timeNow()) 
+    file_print_pr("[DEBUG] Timestamp 32: ", timeNow(), "  ", res0)  
+    file_print_pr("[DEBUG] Timestamp 33: ", timeNow(), "  ", res)  
         
 
 ########################################
@@ -852,11 +861,11 @@ def main():
             exit(0)
         file_print("Press Ctrl-C to exit and print the results")
         q = multiprocessing.Queue()
-        file_print(">>>>>>> Timestamp 0.1: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 34: ", timeNow()) 
         pr = multiprocessing.Process(target=Sniffer_Offline, args=(values.interface,q,values.show_ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,values.source6,values.source4,values.target_mac,values.target_mac,values.source_mac,values.hlimit))
         pr.start()
         pr.join()
-        file_print(">>>>>>> Timestamp 0.2: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 35: ", timeNow()) 
         results=[]
         while not q.empty():
             results.append(q.get())
@@ -928,9 +937,9 @@ def main():
             file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
             file_print("Press Ctrl-C to exit")
             try:
-                file_print(">>>>>>> Timestamp 0.0210ab: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 36: ", timeNow()) 
                 Sniffer(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6)
-                file_print(">>>>>>> Timestamp 0.0210abc: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 37: ", timeNow()) 
             except KeyboardInterrupt:
                 file_print("Exiting on user's request 1")
                 exit(0)
@@ -940,25 +949,25 @@ def main():
         file_print("I will sniff for ",values.sniffer_timeout," seconds, unless interrupted by Ctrl-C")
         pr = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q,values.dns,values.show_ttl, values.dos_ttl, values.conflict, values.ttl,values.d4,values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2, source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
         pr.daemon = True
-        file_print(">>>>>>> Timestamp 0.01: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 38: ", timeNow()) 
         pr.start()
-        file_print(">>>>>>> Timestamp 0.02: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 39: ", timeNow()) 
         file_print("------------------------------------------------------------------------")
         time.sleep(1)#to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
-        file_print(">>>>>>> Timestamp 0.03: ", timeNow())
+        file_print_pr("[DEBUG] Timestamp 40: ", timeNow()) 
         ##########################################################################################################
         if values.request:
-            file_print(">>>>>>> Timestamp 1: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 41: ", timeNow()) 
             requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,values.query,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
-            file_print(">>>>>>> Timestamp 2: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 42: ", timeNow()) 
         elif values.response:
             #qr=1=>Response, aa=1=>Server is an authority for the domain, rd=0=> Do not query recursively
-            file_print(">>>>>>> Timestamp 3: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 43: ", timeNow()) 
             if values.dns:
                 dns_packet=UDP(dport=53)/DNS(qr=1,aa=1,rd=0)
             else:
                 dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=1,aa=1,rd=0)
-            file_print(">>>>>>> Timestamp 4: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 44: ", timeNow()) 
             responses = values.dns_response.split(",")
             no_of_answers=0
             no_of_additional_records=0
@@ -1046,7 +1055,7 @@ def main():
             dns_packet[DNS].arcount=no_of_additional_records
             send_packets(values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,values.d4,source_IPv6,values.d6,values.interface,values.hlimit,dns_packet,values.flood,values.flooding_timeout,values.flooding_interval)
         elif values.rdns_scanning:
-            file_print(">>>>>>> Timestamp 5: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 45: ", timeNow()) 
             dns_query=None
             ipn = ipaddress.ip_network(values.rdns_scanning)
             for ip in ipn.hosts():
@@ -1060,21 +1069,27 @@ def main():
             else:
                 dns_packet=UDP(sport=5353,dport=5353)/DNS(qr=0,qd=dns_query)
             send_packets(values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,values.d4,source_IPv6,values.d6,values.interface,values.hlimit,dns_packet,values.flood,values.flooding_timeout,values.flooding_interval)
-            file_print(">>>>>>> Timestamp 6: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 46: ", timeNow()) 
         elif values.service_scan:
-            file_print(">>>>>>> Timestamp 7: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 47: ", timeNow()) 
             requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,values.query,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
-            file_print(">>>>>>> Timestamp 8: ", timeNow())
+            file_print_pr("[DEBUG] Timestamp 48: ", timeNow()) 
         ############################################################################################
         ############################################################################################
         if pr:
+            file_print_pr("[DEBUG] Timestamp 49: ", timeNow()) 
             try:
-                file_print(">>>>>>> Timestamp 6.1000: ", timeNow())
-                pr.join()
-                file_print(">>>>>>> Timestamp 6.2: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 50: ", timeNow())  #HERE STUCK
+                pr.join(20)
+                if pr.is_alive():                    
+                    file_print("SUB-PROCESS KILLED TIMESTAMP: ", timeNow()) 
+                    file_print_pr("[DEBUG] Timestamp 51: ", timeNow()) 
+                file_print_pr("[DEBUG] Timestamp 52: ", timeNow()) 
             except KeyboardInterrupt:
                 file_print("Exiting on user's request 2")
                 exit(0)
+
+            file_print_pr("[DEBUG] Timestamp 53: ", timeNow()) 
 
             #### AFTER EXITING, PRINT THE RESULTS ####
             results=[]
@@ -1083,12 +1098,12 @@ def main():
             if values.rdns_scanning:
                 targets=[]
                 q2 = multiprocessing.Queue()
-                file_print(">>>>>>> Timestamp 9: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 54: ", timeNow()) 
                 pr2 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q2,values.dns,values.show_ttl, values.dos_ttl,values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))                
                 pr2.daemon = True
                 pr2.start()
                 time.sleep(1)       #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
-                file_print(">>>>>>> Timestamp 10: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 55: ", timeNow()) 
                 for r in results:
                     r2=r.split(" ")
                     service=r2[7].strip('"')
@@ -1100,8 +1115,11 @@ def main():
                         targets.append((r2[1],service))
                         requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,service,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
                 if pr2:
+                    file_print_pr("[DEBUG] Timestamp 56: ", timeNow()) 
                     try:
+                        file_print_pr("[DEBUG] Timestamp 57: ", timeNow()) 
                         pr2.join()
+                        file_print_pr("[DEBUG] Timestamp 58: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 3")
                     while not q2.empty():
@@ -1109,12 +1127,12 @@ def main():
             elif values.service_scan:
                 targets=[]
                 q2 = multiprocessing.Queue()
-                file_print(">>>>>>> Timestamp 11: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 59: ", timeNow()) 
                 pr2 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q2,values.dns,values.show_ttl, values.dos_ttl,values.conflict, values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
                 pr2.daemon = True
                 pr2.start()
                 time.sleep(1)       #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
-                file_print(">>>>>>> Timestamp 12: ", timeNow())
+                file_print_pr("[DEBUG] Timestamp 60: ", timeNow()) 
                 for r in results:
                     r2=r.split(" ")
                     service=r2[7].strip('"')[:-1]
@@ -1124,19 +1142,21 @@ def main():
                         requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,service,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
                 if pr2:
                     try:
+                        file_print_pr("[DEBUG] Timestamp 61: ", timeNow()) 
                         pr2.join()
+                        file_print_pr("[DEBUG] Timestamp 62: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 4")
                     while not q2.empty():
                         results.append(q2.get())
                     targets2=[]
                     q3 = multiprocessing.Queue()
-                    file_print(">>>>>>> Timestamp 13: ", timeNow())
+                    file_print_pr("[DEBUG] Timestamp 63: ", timeNow()) 
                     pr3 = multiprocessing.Process(target=Sniffer, args=(myfilter, values.interface, float(values.sniffer_timeout),q3,values.dns,values.show_ttl, values.dos_ttl, values.conflict,values.ttl,values.d4, values.d6, values.target_mac, values.auto_fake_responses,source_IPv6, source_IPv4, target_mac1, target_mac2,source_mac,values.hlimit,values.workstation,values.printer,values.googlecast,values.airtv,values.flood,values.flooding_timeout,values.flooding_interval,values.v4,values.v6))
                     pr3.daemon = True
                     pr3.start()
                     time.sleep(1)   #to make sure than sniffer has started before we proceed, otherwise you may miss some traffic
-                    file_print(">>>>>>> Timestamp 14: ", timeNow())
+                    file_print_pr("[DEBUG] Timestamp 64: ", timeNow()) 
                     for r in results:
                         r2=r.split(" ")
                         service=r2[4]
@@ -1149,7 +1169,9 @@ def main():
                             requests(values.interface,values.v4,values.v6,source_mac,target_mac1,target_mac2,source_IPv4,source_IPv6,values.d4,values.d6,values.hlimit,values.dns,values.domain,service,values.qtype,True,q_class,values.flood,values.flooding_interval,values.flooding_timeout)
                 if pr3:
                     try:
+                        file_print_pr("[DEBUG] Timestamp 65: ", timeNow()) 
                         pr3.join()
+                        file_print_pr("[DEBUG] Timestamp 66: ", timeNow()) 
                     except KeyboardInterrupt:
                         file_print("Exiting on user's request 5")
                 while not q3.empty():

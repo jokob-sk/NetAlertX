@@ -1664,6 +1664,7 @@ def performPholusScan (timeoutSec):
         # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
         adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
 
+        #  python3 -m trace --trace /home/pi/pialert/pholus/pholus3.py eth1 -rdns_scanning  192.168.1.0/24 -stimeout 600
         pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
 
         # Execute command
