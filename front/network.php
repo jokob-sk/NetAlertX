@@ -466,7 +466,8 @@
                                                               "mac":item[11], 
                                                               "parentMac":item[14], 
                                                               "rowid":item[13], 
-                                                              "status":item[10] 
+                                                              "status":item[10],
+                                                              "childrenQty":item[15]
                                                               }})
 
       setCache('devicesListNew', JSON.stringify(devicesListnew))
@@ -502,12 +503,28 @@
   // ---------------------------------------------------------------------------
   var leafNodesCount = 0;
   var treeLoadedAlready = false;
-  var hiddenMacs = [];
+  var hiddenMacs = []; // hidden children
+  var hiddenChildren = [];
+  
 
   // ---------------------------------------------------------------------------
   function formatFlatDevicesList()
   {
     devList = getDevicesList()
+
+    devListNoOrphans = []
+
+    for(i=0;i<devList.length;i++)
+    {
+      node = devList[i]
+
+      if(node.mac != 'Internet' && node.parentMac != "")
+      {
+        devListNoOrphans.push(node)
+      }
+    }
+
+    list = devListNoOrphans;
 
     result = []
 
@@ -515,7 +532,8 @@
     {
       node = devList[i]
 
-      if(!hiddenMacs.includes(node.parentMac))
+      // if(!hiddenMacs.includes(node.parentMac))
+      if(!hiddenMacs.includes(node.mac))
       {
           result.push(
           { 
@@ -529,7 +547,7 @@
             status: node.status,
             hasChildren: true,
             hiddenChildren: true,
-            qty: 5,
+            qty: node.childrenQty
             // children:  children
           })
 
@@ -649,7 +667,8 @@
   {
     //  toggle subtree functionality
     $("div[data-mytreemac]").each(function(){
-        $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')
+        // $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')
+        $(this).attr('onclick', 'toggleFlatSubTree("'+$(this).attr('data-mytreemac')+'")') //hasFlatData
     }); 
   }
 
@@ -715,15 +734,15 @@
       hasPan: false,
       // marginLeft: '15',
       idKey: "id",
-      hasFlatData: false,
-      // hasFlatData: true,
+      // hasFlatData: false,
+      hasFlatData: true,
       linkWidth: (nodeData) => 3,
-      relationnalField: "children",
-      // relationnalField: "parentMac",
+      // relationnalField: "children",
+      relationnalField: "parentMac",
       });
 
-      myTree.refresh(myHierarchy);
-      // myTree.refresh(formatFlatDevicesList());  //hasFlatData       
+      // myTree.refresh(myHierarchy);
+      myTree.refresh(formatFlatDevicesList());  //hasFlatData       
     }
 
   // ---------------------------------------------------------------------------

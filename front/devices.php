@@ -192,9 +192,10 @@
   var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
-  var tableColumnVisible = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]';
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] ; 
+  
+  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]';
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] ; 
+  var tableColumnVisible = tableColumnOrder;
 
   // Read parameters & Initialize components
   main();
@@ -228,7 +229,8 @@ function main () {
                                   '<?php echo lang('Device_TableHead_MAC_full');?>',
                                   '<?php echo lang('Device_TableHead_LastIPOrder');?>',
                                   '<?php echo lang('Device_TableHead_Rowid');?>',
-                                  '<?php echo lang('Device_TableHead_Parent_MAC');?>'
+                                  '<?php echo lang('Device_TableHead_Parent_MAC');?>',
+                                  '<?php echo lang('Device_TableHead_Connected_Devices');?>'
                                 ];
 
       html = '';

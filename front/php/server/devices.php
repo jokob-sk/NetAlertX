@@ -566,6 +566,72 @@ function getDevicesTotals() {
 //------------------------------------------------------------------------------
 //  Query the List of devices in a determined Status
 //------------------------------------------------------------------------------
+// function getDevicesListForNetworkTree() {
+//   global $db;
+
+//   $sql = 'SELECT *, CASE
+//               WHEN t1.dev_AlertDeviceDown=1 AND t1.dev_PresentLastScan=0 THEN "Down"
+//               WHEN t1.dev_NewDevice=1 THEN "New"
+//               WHEN t1.dev_PresentLastScan=1 THEN "On-line"
+//               ELSE "Off-line"  END AS dev_Status
+//               FROM (Devices ) t1
+//           LEFT JOIN
+//                       (
+//                             SELECT *,
+//                                   count() as connected_devices 
+//                             FROM Devices b 
+//                             WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+//                       ) t2
+//                       ON (t1.dev_MAC = t2.dev_MAC); ';
+
+//   $result = $db->query($sql);
+
+//   // arrays of rows
+//   $tableData = array();
+//   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
+
+//   $defaultOrder = array ($row['dev_Name'],
+//                     $row['dev_Owner'],
+//                     handleNull($row['dev_DeviceType']),
+//                     handleNull($row['dev_Icon'], "laptop"),
+//                     $row['dev_Favorite'],
+//                     $row['dev_Group'],
+//                     formatDate ($row['dev_FirstConnection']),
+//                     formatDate ($row['dev_LastConnection']),
+//                     $row['dev_LastIP'],
+//                     ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
+//                     $row['dev_Status'],
+//                     $row['dev_MAC'], // MAC (hidden)
+//                     formatIPlong ($row['dev_LastIP']), // IP orderable
+//                     $row['rowid'], // Rowid (hidden)      
+//                     handleNull($row['dev_Network_Node_MAC_ADDR']), // 
+//                     handleNull($row['connected_devices']) // 
+//                     );
+
+//   $newOrder = array();
+
+//   // reorder columns based on user settings
+//   for($index = 0; $index  < count($columnOrderMapping); $index++)
+//   {
+//   array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
+//   }
+
+//   $tableData['data'][] = $newOrder;
+//   }
+
+//   // Control no rows
+//   if (empty($tableData['data'])) {
+//   $tableData['data'] = '';
+//   }
+
+//   // Return json
+//   echo (json_encode ($tableData));
+
+// }
+
+//------------------------------------------------------------------------------
+//  Query the List of devices in a determined Status
+//------------------------------------------------------------------------------
 function getDevicesList() {
   global $db;
 
@@ -592,7 +658,8 @@ function getDevicesList() {
     array("dev_MAC_full", 11, 11),          
     array("dev_LastIP_orderable", 12, 12),  
     array("rowid", 13, 13),            
-    array("dev_Network_Node_MAC_ADDR", 14, 14)                  
+    array("dev_Network_Node_MAC_ADDR", 14, 14),
+    array("connected_devices", 15, 15)                  
   );
 
   if($forceDefaultOrder == FALSE) 
@@ -617,13 +684,39 @@ function getDevicesList() {
   // SQL
   $condition = getDeviceCondition ($_REQUEST['status']);
 
-  $sql = 'SELECT rowid, *, CASE
-            WHEN dev_AlertDeviceDown=1 AND dev_PresentLastScan=0 THEN "Down"
-            WHEN dev_NewDevice=1 THEN "New"
-            WHEN dev_PresentLastScan=1 THEN "On-line"
-            ELSE "Off-line"
-          END AS dev_Status
-          FROM Devices '. $condition;
+  $sql = 'SELECT * FROM (
+              SELECT rowid, *, CASE
+                      WHEN t1.dev_AlertDeviceDown=1 AND t1.dev_PresentLastScan=0 THEN "Down"
+                      WHEN t1.dev_NewDevice=1 THEN "New"
+                      WHEN t1.dev_PresentLastScan=1 THEN "On-line"
+                      ELSE "Off-line"  END AS dev_Status
+                      FROM Devices t1 '.$condition.') t3  
+                    LEFT JOIN
+                              (
+                                    SELECT dev_Network_Node_MAC_ADDR as dev_Network_Node_MAC_ADDR_t2, dev_MAC as dev_MAC_t2,
+                                          count() as connected_devices 
+                                    FROM Devices b 
+                                    WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+                              ) t2
+                              ON (t3.dev_MAC = t2.dev_MAC_t2);';
+
+
+  // $sql = 'SELECT  * FROM (
+  //               SELECT rowid, *, CASE
+  //                       WHEN t1.dev_AlertDeviceDown=1 AND t1.dev_PresentLastScan=0 THEN "Down"
+  //                       WHEN t1.dev_NewDevice=1 THEN "New"
+  //                       WHEN t1.dev_PresentLastScan=1 THEN "On-line"
+  //                       ELSE "Off-line"  END AS dev_Status
+  //                       FROM Devices t1 '.$condition.') t3  
+  //                     LEFT JOIN
+  //                               (
+  //                                     SELECT dev_Network_Node_MAC_ADDR, dev_MAC,
+  //                                           count() as connected_devices 
+  //                                     FROM Devices b 
+  //                                     WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+  //                               ) t2
+  //                               ON (t3.dev_MAC = t2.dev_MAC);';
+
   $result = $db->query($sql);
   
   // arrays of rows
@@ -644,7 +737,8 @@ function getDevicesList() {
                             $row['dev_MAC'], // MAC (hidden)
                             formatIPlong ($row['dev_LastIP']), // IP orderable
                             $row['rowid'], // Rowid (hidden)      
-                            handleNull($row['dev_Network_Node_MAC_ADDR']) // 
+                            handleNull($row['dev_Network_Node_MAC_ADDR']),
+                            handleNull($row['connected_devices']) //     
                             );
 
     $newOrder = array();
