@@ -40,6 +40,16 @@ from cron_converter import Cron
 from pytz import timezone
 
 #===============================================================================
+# SQL queries
+#===============================================================================
+
+sql_devices_all = "select dev_MAC, dev_Name, dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice, dev_Network_Node_MAC_ADDR, dev_Network_Node_port,  dev_Icon from Devices"
+sql_devices_stats =  "SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown from Online_History order by Scan_Date desc limit  1"
+sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
+sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
+sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
+
+#===============================================================================
 # PATHS
 #===============================================================================
 pialertPath = '/home/pi/pialert'
@@ -54,6 +64,8 @@ piholeDB               = '/etc/pihole/pihole-FTL.db'
 piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
 # Global variables
+
+debug_force_notification = False
 
 userSubnets = []
 time_started = datetime.datetime.now()
@@ -535,10 +547,10 @@ def main ():
                             AND eve_EventType = 'New Device'
                             ORDER BY eve_DateTime""")
 
-                    rows = sql.fetchall()
+                    newDevices = sql.fetchall()
                     commitDB()
                     
-                    performNmapScan(rows)
+                    performNmapScan(newDevices)
 
                 # send all configured notifications
                 send_notifications()
@@ -1983,8 +1995,7 @@ def skip_repeated_notifications ():
 json_final = []
 
 def send_notifications ():
-    global mail_text
-    global mail_html
+    global mail_text, mail_html, json_final    
 
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
 
@@ -2171,13 +2182,15 @@ def send_notifications ():
                     "events": json_events
                     }    
 
-    # DEBUG - Write output emails for testing
-    #if True :
+    #  Write output emails for testing    
     write_file (logPath + '/report_output.txt', mail_text) 
     write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != []:
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or debug_force_notification:        
+
+        update_api()
+
         file_print('    Changes detected, sending reports')
 
         if REPORT_MAIL and check_config('email'):  
@@ -2279,42 +2292,7 @@ def check_config(service):
         else:
             return True 
 
-#-------------------------------------------------------------------------------
-def send_ntfy (_Text):
-    headers = {
-        "Title": "Pi.Alert Notification",
-        "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
-        "Priority": "urgent",
-        "Tags": "warning"
-    }
-    # if username and password are set generate hash and update header
-    if NTFY_USER != "" and NTFY_PASSWORD != "":
-	# Generate hash for basic auth
-        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
-        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
 
-	# add authorization header with hash
-        headers["Authorization"] = "Basic {}".format(basichash)
-
-    requests.post("{}/{}".format( NTFY_HOST, NTFY_TOPIC),
-    data=_Text,
-    headers=headers)
-
-def send_pushsafer (_Text):
-    url = 'https://www.pushsafer.com/api'
-    post_fields = {
-        "t" : 'Pi.Alert Message',
-        "m" : _Text,
-        "s" : 11,
-        "v" : 3,
-        "i" : 148,
-        "c" : '#ef7f7f',
-        "d" : 'a',
-        "u" : REPORT_DASHBOARD_URL,
-        "ut" : 'Open Pi.Alert',
-        "k" : PUSHSAFER_TOKEN,
-        }
-    requests.post(url, data=post_fields)
    
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
@@ -2349,30 +2327,9 @@ def remove_tag (pText, pTag):
     # return text without the tag
     return pText.replace ('<'+ pTag +'>','').replace ('</'+ pTag +'>','')
 
-#-------------------------------------------------------------------------------
-def write_file (pPath, pText):
-    # Write the text depending using the correct python version
-    if sys.version_info < (3, 0):
-        file = io.open (pPath , mode='w', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') ) 
-        file.close() 
-    else:
-        file = open (pPath, 'w', encoding='utf-8') 
-        file.write (pText) 
-        file.close() 
 
 #-------------------------------------------------------------------------------
-def append_line_to_file (pPath, pText):
-    # append the line depending using the correct python version
-    if sys.version_info < (3, 0):
-        file = io.open (pPath , mode='a', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') ) 
-        file.close() 
-    else:
-        file = open (pPath, 'a', encoding='utf-8') 
-        file.write (pText) 
-        file.close() 
-
+# Reporting 
 #-------------------------------------------------------------------------------
 def send_email (pText, pHTML):
 
@@ -2414,7 +2371,10 @@ def send_email (pText, pHTML):
                 smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
 
         failedAt = print_log('Setting SMTP debug level')
-        smtp_connection.set_debuglevel(1) 
+
+        # Verbose debug of the communication between SMTP server and client
+        if PRINT_LOG:
+            smtp_connection.set_debuglevel(1) 
         
         failedAt = print_log( 'Sending .ehlo()')
         smtp_connection.ehlo()
@@ -2438,8 +2398,44 @@ def send_email (pText, pHTML):
         file_print('      ERROR: Failed at - ', failedAt)
         file_print('      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable PRINT_LOG for more logging)')
 
-    file_print('      DEBUG: Last executed - ', failedAt)
+    print_log('      DEBUG: Last executed - ' + str(failedAt))
 
+#-------------------------------------------------------------------------------
+def send_ntfy (_Text):
+    headers = {
+        "Title": "Pi.Alert Notification",
+        "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
+        "Priority": "urgent",
+        "Tags": "warning"
+    }
+    # if username and password are set generate hash and update header
+    if NTFY_USER != "" and NTFY_PASSWORD != "":
+	# Generate hash for basic auth
+        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
+        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
+
+	# add authorization header with hash
+        headers["Authorization"] = "Basic {}".format(basichash)
+
+    requests.post("{}/{}".format( NTFY_HOST, NTFY_TOPIC),
+    data=_Text,
+    headers=headers)
+
+def send_pushsafer (_Text):
+    url = 'https://www.pushsafer.com/api'
+    post_fields = {
+        "t" : 'Pi.Alert Message',
+        "m" : _Text,
+        "s" : 11,
+        "v" : 3,
+        "i" : 148,
+        "c" : '#ef7f7f',
+        "d" : 'a',
+        "u" : REPORT_DASHBOARD_URL,
+        "ut" : 'Open Pi.Alert',
+        "k" : PUSHSAFER_TOKEN,
+        }
+    requests.post(url, data=post_fields)
 
 #-------------------------------------------------------------------------------
 def send_webhook (_json, _html):
@@ -2507,6 +2503,8 @@ def send_apprise (html):
         # An error occured, handle it
         file_print(e.output)    
 
+#-------------------------------------------------------------------------------
+# MQTT
 #-------------------------------------------------------------------------------
 mqtt_connected_to_broker = False
 mqtt_sensors = []
@@ -2917,8 +2915,88 @@ def to_binary_sensor(input):
 
 
 #===============================================================================
+# API
+#===============================================================================
+def update_api():
+    file_print('     [API] Updating files in /front/api')    
+    folder = pialertPath + '/front/api/'
+
+    write_file(folder + 'notification_text.txt'  , mail_text)
+    write_file(folder + 'notification_text.html'  , mail_html)
+    write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
+
+
+    dataSourcesSQLs = [
+        ["devices", sql_devices_all],
+        ["nmap_scan", sql_nmap_scan_all],
+        ["pholus_scan", sql_pholus_scan_all],
+        ["events_pending_alert", sql_events_pending_alert]
+    ]
+
+    # Save selected database tables
+    for dsSQL in dataSourcesSQLs:
+    
+        sql.execute(dsSQL[1]) 
+
+        columnNames = list(map(lambda x: x[0], sql.description)) 
+
+        rows = sql.fetchall()    
+
+        json_string = get_table_as_json(rows, columnNames)
+
+        write_file(folder + 'table_' + dsSQL[0] + '.json'  , json.dumps(json_string))     
+
+#-------------------------------------------------------------------------------
+def get_table_as_json(rows, names):
+
+    result = {"data":[]}
+
+    for row in rows: 
+        tmp = fill_row(names, row)
+    
+        result["data"].append(tmp)
+    return result
+
+#-------------------------------------------------------------------------------
+def fill_row(names, row):  
+    
+    rowEntry = {}
+
+    index = 0
+    for name in names:
+        rowEntry[name]= if_byte_then_to_str(row[name])
+        index += 1
+
+    return rowEntry
+
+#===============================================================================
 # UTIL
 #===============================================================================
+
+#-------------------------------------------------------------------------------
+def write_file (pPath, pText):
+    # Write the text depending using the correct python version
+    if sys.version_info < (3, 0):
+        file = io.open (pPath , mode='w', encoding='utf-8')
+        file.write ( pText.decode('unicode_escape') ) 
+        file.close() 
+    else:
+        file = open (pPath, 'w', encoding='utf-8') 
+        file.write (pText) 
+        file.close() 
+
+#-------------------------------------------------------------------------------
+def append_line_to_file (pPath, pText):
+    # append the line depending using the correct python version
+    if sys.version_info < (3, 0):
+        file = io.open (pPath , mode='a', encoding='utf-8')
+        file.write ( pText.decode('unicode_escape') ) 
+        file.close() 
+    else:
+        file = open (pPath, 'a', encoding='utf-8') 
+        file.write (pText) 
+        file.close() 
+
 #-------------------------------------------------------------------------------
 # Make a regular expression
 # for validating an Ip-address
@@ -2967,6 +3045,14 @@ def sanitize_string(input):
         input = input.decode('utf-8')
     value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
     return value
+
+#-------------------------------------------------------------------------------
+
+def if_byte_then_to_str(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+        input = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return input
 
 #-------------------------------------------------------------------------------
 
@@ -3025,9 +3111,7 @@ def to_text(_json):
 def get_device_stats():
 
     # columns = ["online","down","all","archived","new","unknown"]
-    sql.execute("""      
-      SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, (select count(*) from Devices a where dev_NewDevice = 1 ) as new, (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown from Online_History order by Scan_Date desc limit  1 
-      """)
+    sql.execute(sql_devices_stats)
 
     row = sql.fetchone()
     commitDB()
@@ -3036,9 +3120,7 @@ def get_device_stats():
 #-------------------------------------------------------------------------------
 def get_all_devices():    
 
-    sql.execute("""      
-        select dev_MAC, dev_Name, dev_DeviceType, dev_Vendor, dev_Group, dev_FirstConnection, dev_LastConnection, dev_LastIP, dev_StaticIP, dev_PresentLastScan, dev_LastNotification, dev_NewDevice, dev_Network_Node_MAC_ADDR from Devices 
-      """)
+    sql.execute(sql_devices_all)
 
     row = sql.fetchall()
 

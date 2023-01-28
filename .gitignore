@@ -2,5 +2,6 @@
 config/pialert.conf
 db/*
 front/log/*
+front/api/*
 **/%40eaDir/
 **/@eaDir/
