@@ -48,6 +48,7 @@ docker run -d --rm --network=host \
 |Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 |Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
 |Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole  | 
+|Optional| `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
 
 
 ### Config (`pialert.conf`)
@@ -56,7 +57,7 @@ docker run -d --rm --network=host \
 - ❗ Set the `SCAN_SUBNETS` variable. 
    * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
    * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
-   * Examples for one and two subnets  (❗ Note the `['...', '...']` format for two or more subnets):
+   * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
      * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
      * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']` 
 

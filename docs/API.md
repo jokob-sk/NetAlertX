@@ -1,11 +1,22 @@
-## Where are API endpoints located
+## API endpoints
 
-PiAlert comes with a simple API. These API endpoints are static files, which are updated during:
+PiAlert comes with a simple API. These API endpoints are static files, that are periodically updated based on your settings. 
 
-1) A notification event
-2) TBD
+
+### When are the endpoints updated
+
+Once you enable the API (`ENABLE_API` setting), the endpoints are updated during these events:
+
+1) Always during a notification event.
+2) (optional) If `API_RUN` is set to `schedule` on a specified cron-like schedule specified by the `API_RUN_SCHD` setting.
+3) (optional) If `API_RUN` is set to `interval` every N seconds specified by the `API_RUN_INTERVAL` setting (minimum 5).
+
+
+### Location of the endpoints
 
 In the container, these files are located under the `/home/pi/pialert/front/api/` folder and thus on the `<pialert_url>/api/<File name>` url.
+
+### Available endpoints
 
 You can access the following files:
 
@@ -16,8 +27,72 @@ You can access the following files:
   | `notification_json_final.json` | The json version of the last notification (e.g. used for webhooks - [sample JSON](https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json)). |
   | `table_devices.json` | The current (at the time of the last update as mentioned above on this page) state of all of the available Devices detected by the app. |
   | `table_nmap_scan.json` | The current state of the discovered ports by the regular NMAP scans. |
-  | `pholus_scan.json` | The latest state of the [pholus](https://github.com/jokob-sk/Pi.Alert/tree/main/pholus) (A multicast DNS and DNS Service Discovery Security Assessment Tool) scan results. |
+  | `table_pholus_scan.json` | The latest state of the [pholus](https://github.com/jokob-sk/Pi.Alert/tree/main/pholus) (A multicast DNS and DNS Service Discovery Security Assessment Tool) scan results. |
   | `table_events_pending_alert.json` | The list of the unprocessed (pending) notification events. |
   
   Current/latest state of the aforementioned files depends on your settings.
+
+### JSON Data format
+
+The endpoints starting with the `table_` prefix contain most, if not all, data contained in the corresponding database table. The common format for those is:
+
+```JSON
+{
+  "data": [
+        {
+          "db_column_name": "data",
+          "db_column_name2": "data2"      
+        }, 
+        {
+          "db_column_name": "data3",
+          "db_column_name2": "data4" 
+        }
+    ]
+}
+
+```
+
+Example JSON of the `table_devices.json` endpoint with two Devices (database rows):
+
+```JSON
+{
+  "data": [
+        {
+          "dev_MAC": "Internet",
+          "dev_Name": "Net - Huawei",
+          "dev_DeviceType": "Router",
+          "dev_Vendor": null,
+          "dev_Group": "Always on",
+          "dev_FirstConnection": "2021-01-01 00:00:00",
+          "dev_LastConnection": "2021-01-28 22:22:11",
+          "dev_LastIP": "192.168.1.24",
+          "dev_StaticIP": 0,
+          "dev_PresentLastScan": 1,
+          "dev_LastNotification": "2023-01-28 22:22:28.998715",
+          "dev_NewDevice": 0,
+          "dev_Network_Node_MAC_ADDR": "",
+          "dev_Network_Node_port": "",
+          "dev_Icon": "globe"
+        }, 
+        {
+          "dev_MAC": "a4:8f:ff:aa:ba:1f",
+          "dev_Name": "Net - USG",
+          "dev_DeviceType": "Firewall",
+          "dev_Vendor": "Ubiquiti Inc",
+          "dev_Group": "",
+          "dev_FirstConnection": "2021-02-12 22:05:00",
+          "dev_LastConnection": "2021-07-17 15:40:00",
+          "dev_LastIP": "192.168.1.1",
+          "dev_StaticIP": 1,
+          "dev_PresentLastScan": 1,
+          "dev_LastNotification": "2021-07-17 15:40:10.667717",
+          "dev_NewDevice": 0,
+          "dev_Network_Node_MAC_ADDR": "Internet",
+          "dev_Network_Node_port": 1,
+          "dev_Icon": "shield-halved"
+      }
+    ]
+}
+
+```
 

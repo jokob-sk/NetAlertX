@@ -288,6 +288,8 @@ def importConfig ():
     global PHOLUS_ACTIVE, PHOLUS_TIMEOUT, PHOLUS_FORCE, PHOLUS_DAYS_DATA, PHOLUS_RUN, PHOLUS_RUN_SCHD, PHOLUS_RUN_TIMEOUT
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
+    # API
+    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL
     
     mySettings = [] # reset settings
     # get config file
@@ -385,8 +387,14 @@ def importConfig ():
     NMAP_RUN = ccd('NMAP_RUN', 'none' , c_d, 'Nmap enable schedule', 'selecttext', "['none', 'once', 'schedule']", 'Nmap')
     NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', '0 2 * * *' , c_d, 'Nmap schedule', 'text', '', 'Nmap')
     NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
+
+    # API 
+    ENABLE_API = ccd('ENABLE_API', True , c_d, 'Enable API', 'boolean', '', 'API')    
+    API_RUN = ccd('API_RUN', 'schedule' , c_d, 'API execution', 'selecttext', "['none', 'interval', 'schedule']", 'API')
+    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')
+    API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
     
-    # Insert into DB    
+    # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
@@ -416,6 +424,10 @@ def importConfig ():
     nmapSchedule = Cron(NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
     mySchedules.append(serviceSchedule("nmap", nmapSchedule, nmapSchedule.next(), False))
 
+    # init API schedule
+    apiSchedule = Cron(API_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
+    mySchedules.append(serviceSchedule("api", apiSchedule, apiSchedule.next(), False))
+
     # Format and prepare the list of subnets
     updateSubnets()
 
@@ -433,6 +445,7 @@ now_minus_24h = time_started - datetime.timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
+last_API_update = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and than once a week
@@ -442,7 +455,7 @@ newVersionAvailable = False
 
 def main ():
     # Initialize global variables
-    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
+    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_API_update
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql
 
@@ -467,6 +480,12 @@ def main ():
 
         # check if there is a front end initiated event which needs to be executed
         check_and_run_event()
+
+        # Execute API update if enabled via the interval schedule settings and if enough time passed
+        if API_RUN == "interval" and last_API_update + datetime.timedelta(seconds = API_RUN_INTERVAL) < time_started:
+
+            last_API_update = time_started                
+            update_api()
 
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
@@ -496,7 +515,7 @@ def main ():
                 cycle = 'update_vendors'
                 update_devices_MAC_vendors()
 
-            # Execute Pholus scheduled or one-off scan if enabled and run conditions fulfilled
+            # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
             if PHOLUS_RUN == "schedule" or PHOLUS_RUN == "once":
 
                 pholusSchedule = [sch for sch in mySchedules if sch.service == "pholus"][0]
@@ -514,7 +533,7 @@ def main ():
                     pholusSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performPholusScan(PHOLUS_RUN_TIMEOUT)
             
-            # Execute Nmap scheduled or one-off scan if enabled and run conditions fulfilled
+            # Execute scheduled or one-off Nmap scan if enabled and run conditions fulfilled
             if NMAP_RUN == "schedule" or NMAP_RUN == "once":
 
                 nmapSchedule = [sch for sch in mySchedules if sch.service == "nmap"][0]
@@ -531,6 +550,19 @@ def main ():
                 if run:
                     nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performNmapScan(get_all_devices())
+
+            # Execute scheduled API update if enabled
+            if API_RUN == "schedule":
+
+                apiSchedule = [sch for sch in mySchedules if sch.service == "api"][0]
+                run = False
+
+                # run if overdue scheduled time
+                run = apiSchedule.runScheduleCheck()
+
+                if run:
+                    apiSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+                    update_api()
 
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
@@ -2189,7 +2221,7 @@ def send_notifications ():
     # Send Mail
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or debug_force_notification:        
 
-        update_api()
+        update_api(True)
 
         file_print('    Changes detected, sending reports')
 
@@ -2913,19 +2945,25 @@ def to_binary_sensor(input):
     return result
         
 
-
 #===============================================================================
 # API
 #===============================================================================
-def update_api():
+def update_api(isNotification = False):
+
+    #  Proceed only if enabled in settings
+    if ENABLE_API == False:
+        return
+
     file_print('     [API] Updating files in /front/api')    
     folder = pialertPath + '/front/api/'
 
-    write_file(folder + 'notification_text.txt'  , mail_text)
-    write_file(folder + 'notification_text.html'  , mail_html)
-    write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
+    if isNotification:
+        #  Update last notification alert in all formats
+        write_file(folder + 'notification_text.txt'  , mail_text)
+        write_file(folder + 'notification_text.html'  , mail_html)
+        write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
-
+    #  prepare databse tables we want to expose
     dataSourcesSQLs = [
         ["devices", sql_devices_all],
         ["nmap_scan", sql_nmap_scan_all],

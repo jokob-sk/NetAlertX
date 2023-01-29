@@ -646,6 +646,16 @@ the arp-scan will take hours to complete instead of seconds.
 'NMAP_ARGS_name' => 'Arguments',
 'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
+// Nmap
+'API_settings_group' => '<i class="fa fa-arrow-down-up-across-line"></i> API',
+'ENABLE_API_name' => 'Enable API',
+'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name`</code> url.',
+'API_RUN_name' => 'Scheduling updates',
+'API_RUN_description' => 'Scheduling settings to specify when the API endpoints should be updated. If set to <code>schedule</code> then endpoints will be updated on a specified cron-like schedule specified by the <code>API_RUN_SCHD</code> setting. Otherwise if set to <code>interval</code> endpoints will be updated every N seconds specified by the <code>API_RUN_INTERVAL</code> setting.',
+'API_RUN_SCHD_name' => 'Schedule',
+'API_RUN_SCHD_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>schedule</code>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>).',
+'API_RUN_INTERVAL_name' => 'API update interval',
+'API_RUN_INTERVAL_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>interval</code>. The minimum cycle is <code>5</code> seconds.',
 );
 
 ?>
