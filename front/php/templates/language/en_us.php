@@ -649,7 +649,7 @@ the arp-scan will take hours to complete instead of seconds.
 // Nmap
 'API_settings_group' => '<i class="fa fa-arrow-down-up-across-line"></i> API',
 'ENABLE_API_name' => 'Enable API',
-'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name`</code> url.',
+'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name</code> url.',
 'API_RUN_name' => 'Scheduling updates',
 'API_RUN_description' => 'Scheduling settings to specify when the API endpoints should be updated. If set to <code>schedule</code> then endpoints will be updated on a specified cron-like schedule specified by the <code>API_RUN_SCHD</code> setting. Otherwise if set to <code>interval</code> endpoints will be updated every N seconds specified by the <code>API_RUN_INTERVAL</code> setting.',
 'API_RUN_SCHD_name' => 'Schedule',
