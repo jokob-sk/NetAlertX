@@ -654,8 +654,13 @@ the arp-scan will take hours to complete instead of seconds.
 'API_RUN_description' => 'Scheduling settings to specify when the API endpoints should be updated. If set to <code>schedule</code> then endpoints will be updated on a specified cron-like schedule specified by the <code>API_RUN_SCHD</code> setting. Otherwise if set to <code>interval</code> endpoints will be updated every N seconds specified by the <code>API_RUN_INTERVAL</code> setting.',
 'API_RUN_SCHD_name' => 'Schedule',
 'API_RUN_SCHD_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>schedule</code>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>).',
-'API_RUN_INTERVAL_name' => 'API update interval',
+'API_RUN_INTERVAL_name' => 'Update interval',
 'API_RUN_INTERVAL_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>interval</code>. The minimum cycle is <code>5</code> seconds.',
+'API_CUSTOM_SQL_name' => 'Custom endpoint',
+'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file then exposed via the <code>table_custom_endpoint.json</code> file endpoint.',
+
+
+
 );
 
 ?>

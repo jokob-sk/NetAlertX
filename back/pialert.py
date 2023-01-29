@@ -289,7 +289,7 @@ def importConfig ():
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     # API
-    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL
+    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
     
     mySettings = [] # reset settings
     # get config file
@@ -391,8 +391,9 @@ def importConfig ():
     # API 
     ENABLE_API = ccd('ENABLE_API', True , c_d, 'Enable API', 'boolean', '', 'API')    
     API_RUN = ccd('API_RUN', 'schedule' , c_d, 'API execution', 'selecttext', "['none', 'interval', 'schedule']", 'API')
-    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')
+    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')    
     API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
+    API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
     
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -2968,7 +2969,8 @@ def update_api(isNotification = False):
         ["devices", sql_devices_all],
         ["nmap_scan", sql_nmap_scan_all],
         ["pholus_scan", sql_pholus_scan_all],
-        ["events_pending_alert", sql_events_pending_alert]
+        ["events_pending_alert", sql_events_pending_alert],
+        ["custom_endpoint", API_CUSTOM_SQL]
     ]
 
     # Save selected database tables
