@@ -3234,6 +3234,8 @@ def isNewVersion():
         buildTimestamp = int(f.read().strip())
         f.close() 
 
+        data = ""
+
         try:
             url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
             text = url.text
