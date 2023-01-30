@@ -2188,7 +2188,8 @@ def send_notifications ():
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
     if 'internet' in INCLUDED_SECTIONS:
-        # Compose Internet Section      
+        # Compose Internet Section    
+        text = ""  
 
         json_string = get_table_as_json("""SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "Additional info" FROM Events
                         WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
@@ -2205,7 +2206,7 @@ def send_notifications ():
 
             # prepare text-only message
             text_line = '{}\t{}\n'
-            text = ""
+
             for device in json_string["data"]:
                 for header in headers:
                     text += text_line.format ( header + ': ', device[header])  
@@ -2221,7 +2222,9 @@ def send_notifications ():
         json_internet = json_string["data"] 
 
     if 'new_devices' in INCLUDED_SECTIONS:
-        # Compose New Devices Section  
+        # Compose New Devices Section 
+        text = ""
+
         json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
@@ -2255,6 +2258,7 @@ def send_notifications ():
 
     if 'down_devices' in INCLUDED_SECTIONS:
         # Compose Devices Down Section   
+        text = ""
 
         json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -2288,6 +2292,7 @@ def send_notifications ():
 
     if 'events' in INCLUDED_SECTIONS:
         # Compose Events Section  
+        text = ""
 
         json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
