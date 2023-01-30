@@ -646,7 +646,7 @@ the arp-scan will take hours to complete instead of seconds.
 'NMAP_ARGS_name' => 'Arguments',
 'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
-// Nmap
+// API
 'API_settings_group' => '<i class="fa fa-arrow-down-up-across-line"></i> API',
 'ENABLE_API_name' => 'Enable API',
 'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name</code> url.',
@@ -657,7 +657,7 @@ the arp-scan will take hours to complete instead of seconds.
 'API_RUN_INTERVAL_name' => 'Update interval',
 'API_RUN_INTERVAL_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>interval</code>. The minimum cycle is <code>5</code> seconds.',
 'API_CUSTOM_SQL_name' => 'Custom endpoint',
-'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file then exposed via the <code>table_custom_endpoint.json</code> file endpoint.',
+'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href="/api/table_custom_endpoint.json" target="_blank"><code>table_custom_endpoint.json</code> file endpoint</a>.',
 
 
 
