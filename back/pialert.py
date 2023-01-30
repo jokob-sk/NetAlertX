@@ -2215,7 +2215,7 @@ def send_notifications ():
             for header in headers:
                 html = format_table(html, header, thProps)   
         
-        mail_text = mail_html.replace ('<SECTION_INTERNET>', text + '\n')
+        mail_text = mail_text.replace ('<SECTION_INTERNET>', text + '\n')
         mail_html = mail_html.replace ('<INTERNET_TABLE>', html)
         
         # collect "internet" (IP changes) for the webhook json          
@@ -2249,7 +2249,7 @@ def send_notifications ():
             for header in headers:
                 html = format_table(html, header, thProps)
 
-        mail_text = mail_html.replace ('<SECTION_NEW_DEVICES>', text + '\n')
+        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', text + '\n')
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', html)
         
         # collect "new_devices" for the webhook json          
@@ -2284,7 +2284,7 @@ def send_notifications ():
             for header in headers:
                 html = format_table(html, header, thProps)   
 
-        mail_text = mail_html.replace ('<SECTION_DEVICES_DOWN>', text + '\n')
+        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', text + '\n')
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', html)
         
         # collect "down_devices" for the webhook json
@@ -2319,7 +2319,7 @@ def send_notifications ():
             for header in headers:
                 html = format_table(html, header, thProps)   
 
-        mail_text = mail_html.replace ('<SECTION_EVENTS>', text + '\n')
+        mail_text = mail_text.replace ('<SECTION_EVENTS>', text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', html)
         
         # collect "events" for the webhook json        
