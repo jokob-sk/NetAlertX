@@ -2242,12 +2242,16 @@ def send_notifications ():
         mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
     
-    if 'ports' in INCLUDED_SECTIONS and changedPorts_json_struc is not None:           
-        json_ports =  changedPorts_json_struc.json["data"]       
+    if 'ports' in INCLUDED_SECTIONS:  
+        # collect "ports" for the webhook json 
+        if changedPorts_json_struc is not None:          
+            json_ports =  changedPorts_json_struc.json["data"]       
 
-        notiStruc = construct_notifications("", "Events", True, changedPorts_json_struc)
+        notiStruc = construct_notifications("", "Ports", True, changedPorts_json_struc)
 
         mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
+        # mail_text = mail_text.replace ('<PORTS_TABLE>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<PORTS_TABLE>', "Ports changed! Check PiAlert for details!" + '\n')
 
     json_final = {
                     "internet": json_internet,                        
@@ -2330,6 +2334,9 @@ def send_notifications ():
 #-------------------------------------------------------------------------------
 def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
 
+    if suppliedJsonStruct is None and sqlQuery == "":
+        return noti_struc("", "", "")
+
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
     headerProps = "width='120px' style='color:blue; font-size: 16px;' bgcolor='#909090' "
     thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
@@ -2337,10 +2344,10 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
     build_direction = "TOP_TO_BOTTOM"
     text_line = '{}\t{}\n'
 
-    if sqlQuery != "":
+    if suppliedJsonStruct is None:
         json_struc = get_table_as_json(sqlQuery)
     else:
-        json_struc = suppliedJson
+        json_struc = suppliedJsonStruct
 
     json = json_struc.json
     html = ""    
@@ -3425,8 +3432,6 @@ class serviceSchedule:
             self.last_next_schedule = self.scheduleObject.next()            
 
         return result
-
-        # print("Hello my name is " + self.scheduleObject)
 
 #===============================================================================
 # BEGIN
