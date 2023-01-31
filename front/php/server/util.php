@@ -8,8 +8,8 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
-require '/home/pi/pialert/front/php/templates/timezone.php';
-require '/home/pi/pialert/front/php/templates/skinUI.php';
+require dirname(__FILE__).'/../templates/timezone.php';
+require dirname(__FILE__).'/../templates/skinUI.php';
 
 $FUNCTION = [];
 $SETTINGS = [];
