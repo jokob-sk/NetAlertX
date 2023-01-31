@@ -11,7 +11,6 @@
 
   require 'php/templates/header.php';
   require 'php/templates/graph.php';
-  require 'php/server/util.php';
   
 
   // check permissions
@@ -27,7 +26,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-           <?php echo lang('Device_Title');?>
+           <?= lang('Device_Title');?>
       </h1>
     </section>
 
@@ -40,7 +39,7 @@
           <a href="#" onclick="javascript: getDevicesList('all');">
           <div class="small-box bg-aqua">
             <div class="inner"><h3 id="devicesAll"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_AllDevices');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_AllDevices');?></p>
             </div>
             <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
           </div>
@@ -52,7 +51,7 @@
           <a href="#" onclick="javascript: getDevicesList('connected');">
           <div class="small-box bg-green">
             <div class="inner"><h3 id="devicesConnected"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_Connected');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_Connected');?></p>
             </div>
             <div class="icon"><i class="fa fa-plug text-green-40"></i></div>
           </div>
@@ -64,7 +63,7 @@
           <a href="#" onclick="javascript: getDevicesList('favorites');">
           <div class="small-box bg-yellow">
             <div class="inner"><h3 id="devicesFavorites"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_Favorites');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_Favorites');?></p>
             </div>
             <div class="icon"><i class="fa fa-star text-yellow-40"></i></div>
           </div>
@@ -76,7 +75,7 @@
           <a href="#" onclick="javascript: getDevicesList('new');">
           <div class="small-box bg-yellow">
             <div class="inner"><h3 id="devicesNew"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_NewDevices');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_NewDevices');?></p>
             </div>
             <div class="icon"><i class="ion ion-plus-round text-yellow-40"></i></div>
           </div>
@@ -88,7 +87,7 @@
           <a href="#" onclick="javascript: getDevicesList('down');">
           <div class="small-box bg-red">
             <div class="inner"><h3 id="devicesDown"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_DownAlerts');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_DownAlerts');?></p>
             </div>
             <div class="icon"><i class="fa fa-warning text-red-40"></i></div>
           </div>
@@ -100,7 +99,7 @@
           <a href="#" onclick="javascript: getDevicesList('archived');">
           <div class="small-box bg-gray top_small_box_gray_text">
             <div class="inner"><h3 id="devicesArchived"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Device_Shortcut_Archived');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_Archived');?></p>
             </div>
             <div class="icon"><i class="fa fa-eye-slash text-gray-40"></i></div>
           </div>
@@ -115,7 +114,7 @@
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo lang('Device_Shortcut_OnlineChart');?> </h3>
+                <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?> </h3>
               </div>
               <div class="box-body">
                 <div class="chart">
@@ -227,24 +226,24 @@ function main () {
       tableColumnOrder = numberArrayFromString(data);
 
       //initialize the table headers in the correct order
-      var headersDefaultOrder = [ '<?php echo lang('Device_TableHead_Name');?>',
-                                  '<?php echo lang('Device_TableHead_Owner');?>',
-                                  '<?php echo lang('Device_TableHead_Type');?>',       
-                                  '<?php echo lang('Device_TableHead_Icon');?>',
-                                  '<?php echo lang('Device_TableHead_Favorite');?>',
-                                  '<?php echo lang('Device_TableHead_Group');?>',
-                                  '<?php echo lang('Device_TableHead_FirstSession');?>',
-                                  '<?php echo lang('Device_TableHead_LastSession');?>',
-                                  '<?php echo lang('Device_TableHead_LastIP');?>',
-                                  '<?php echo lang('Device_TableHead_MAC');?>',
-                                  '<?php echo lang('Device_TableHead_Status');?>',
-                                  '<?php echo lang('Device_TableHead_MAC_full');?>',
-                                  '<?php echo lang('Device_TableHead_LastIPOrder');?>',
-                                  '<?php echo lang('Device_TableHead_Rowid');?>',
-                                  '<?php echo lang('Device_TableHead_Parent_MAC');?>',
-                                  '<?php echo lang('Device_TableHead_Connected_Devices');?>',
-                                  '<?php echo lang('Device_TableHead_Location');?>',
-                                  '<?php echo lang('Device_TableHead_Vendor');?>'
+      var headersDefaultOrder = [ '<?= lang('Device_TableHead_Name');?>',
+                                  '<?= lang('Device_TableHead_Owner');?>',
+                                  '<?= lang('Device_TableHead_Type');?>',       
+                                  '<?= lang('Device_TableHead_Icon');?>',
+                                  '<?= lang('Device_TableHead_Favorite');?>',
+                                  '<?= lang('Device_TableHead_Group');?>',
+                                  '<?= lang('Device_TableHead_FirstSession');?>',
+                                  '<?= lang('Device_TableHead_LastSession');?>',
+                                  '<?= lang('Device_TableHead_LastIP');?>',
+                                  '<?= lang('Device_TableHead_MAC');?>',
+                                  '<?= lang('Device_TableHead_Status');?>',
+                                  '<?= lang('Device_TableHead_MAC_full');?>',
+                                  '<?= lang('Device_TableHead_LastIPOrder');?>',
+                                  '<?= lang('Device_TableHead_Rowid');?>',
+                                  '<?= lang('Device_TableHead_Parent_MAC');?>',
+                                  '<?= lang('Device_TableHead_Connected_Devices');?>',
+                                  '<?= lang('Device_TableHead_Location');?>',
+                                  '<?= lang('Device_TableHead_Vendor');?>'
                                 ];
 
       html = '';
@@ -328,7 +327,7 @@ function initializeDatatable () {
   $('#tableDevices').DataTable({
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, '<?php echo lang('Device_Tablelenght_all');?>']],
+    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, '<?= lang('Device_Tablelenght_all');?>']],
     'searching'    : true,
 
     'ordering'     : true,
@@ -436,13 +435,13 @@ function initializeDatatable () {
     'language'    : {
       processing: '<table> <td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td> </table>',
       emptyTable: 'No data',
-      "lengthMenu": "<?php echo lang('Device_Tablelenght');?>",
-      "search":     "<?php echo lang('Device_Searchbox');?>: ",
+      "lengthMenu": "<?= lang('Device_Tablelenght');?>",
+      "search":     "<?= lang('Device_Searchbox');?>: ",
       "paginate": {
-          "next":       "<?php echo lang('Device_Table_nav_next');?>",
-          "previous":   "<?php echo lang('Device_Table_nav_prev');?>"
+          "next":       "<?= lang('Device_Table_nav_next');?>",
+          "previous":   "<?= lang('Device_Table_nav_prev');?>"
       },
-      "info":           "<?php echo lang('Device_Table_info');?>",
+      "info":           "<?= lang('Device_Table_info');?>",
     }
   });
 
@@ -524,13 +523,13 @@ function getDevicesList (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = '<?php echo lang('Device_Shortcut_AllDevices');?>';  color = 'aqua';    break;
-    case 'connected':  tableTitle = '<?php echo lang('Device_Shortcut_Connected');?>';   color = 'green';   break;
-    case 'favorites':  tableTitle = '<?php echo lang('Device_Shortcut_Favorites');?>';   color = 'yellow';  break;
-    case 'new':        tableTitle = '<?php echo lang('Device_Shortcut_NewDevices');?>';  color = 'yellow';  break;
-    case 'down':       tableTitle = '<?php echo lang('Device_Shortcut_DownAlerts');?>';  color = 'red';     break;
-    case 'archived':   tableTitle = '<?php echo lang('Device_Shortcut_Archived');?>';    color = 'gray';    break;
-    default:           tableTitle = '<?php echo lang('Device_Shortcut_Devices');?>';     color = 'gray';    break;
+    case 'all':        tableTitle = '<?= lang('Device_Shortcut_AllDevices');?>';  color = 'aqua';    break;
+    case 'connected':  tableTitle = '<?= lang('Device_Shortcut_Connected');?>';   color = 'green';   break;
+    case 'favorites':  tableTitle = '<?= lang('Device_Shortcut_Favorites');?>';   color = 'yellow';  break;
+    case 'new':        tableTitle = '<?= lang('Device_Shortcut_NewDevices');?>';  color = 'yellow';  break;
+    case 'down':       tableTitle = '<?= lang('Device_Shortcut_DownAlerts');?>';  color = 'red';     break;
+    case 'archived':   tableTitle = '<?= lang('Device_Shortcut_Archived');?>';    color = 'gray';    break;
+    default:           tableTitle = '<?= lang('Device_Shortcut_Devices');?>';     color = 'gray';    break;
   } 
 
   // Set title and color

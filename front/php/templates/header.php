@@ -8,10 +8,8 @@
 #--------------------------------------------------------------------------- -->
 
 <?php
-
-require '/home/pi/pialert/front/php/templates/timezone.php';
-require '/home/pi/pialert/front/php/templates/language/lang.php';
-require '/home/pi/pialert/front/php/templates/security.php';
+require dirname(__FILE__).'/../server/init.php';
+require dirname(__FILE__).'/security.php';
 
 ?>
 
@@ -169,8 +167,8 @@ if ($ENABLED_DARKMODE === True) {
               <li class="user-header" style=" height: 100px;">
                 <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
                 <p style="float: right; width: 200px">
-                <?php echo lang('About_Title');?>
-                  <small><?php echo lang('About_Design');?> Raspberry Pi</small>
+                <?= lang('About_Title');?>
+                  <small><?= lang('About_Design');?> Raspberry Pi</small>
                 </p>
               </li>
 
@@ -178,7 +176,7 @@ if ($ENABLED_DARKMODE === True) {
 
               <li class="user-footer">
                 <div class="pull-right">
-                  <a href="index.php?action=logout" class="btn btn-danger"><?php echo lang('About_Exit');?></a>
+                  <a href="index.php?action=logout" class="btn btn-danger"><?= lang('About_Exit');?></a>
                 </div>
               </li>
             </ul>
@@ -209,31 +207,31 @@ if ($ENABLED_DARKMODE === True) {
       <ul class="sidebar-menu" data-widget="tree">
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
-          <a href="devices.php"><span><?php echo lang('Navigation_Devices');?></span></a>
+          <a href="devices.php"><span><i class="fa fa-laptop"></i> <?= lang('Navigation_Devices');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
-          <a href="presence.php"><?php echo lang('Navigation_Presence');?></span></a>
+          <a href="presence.php"><i class="fa fa-calendar"></i> <?= lang('Navigation_Presence');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
-          <a href="events.php"><i class="fa fa-bolt"></i> <span><?php echo lang('Navigation_Events');?></span></a>
+          <a href="events.php"><i class="fa fa-bolt"></i> <span><?= lang('Navigation_Events');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><span><?php echo lang('Navigation_Network');?></span></a>
+          <a href="network.php"><span><i class="fa fa-fw fa-network-wired"></i>  <?= lang('Navigation_Network');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <div class="new-version myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
-          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?php echo lang('Navigation_Maintenance');?></span></a>
+          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?= lang('Navigation_Maintenance');?></span></a>
         </li>
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
-          <a href="settings.php"><i class="fa fa-cog"></i> <span><?php echo lang('Navigation_Settings');?></span></a>
+          <a href="settings.php"><i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span></a>
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
-          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?php echo lang('Navigation_HelpFAQ');?></span></a>
+          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?= lang('Navigation_HelpFAQ');?></span></a>
         </li>
       </ul>
 

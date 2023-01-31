@@ -2,12 +2,6 @@
 
 require 'php/templates/header.php';
 
-
-//------------------------------------------------------------------------------
-// External files
-require 'php/server/db.php';
-require 'php/server/util.php';
-
 //------------------------------------------------------------------------------
 //  Action selector
 //------------------------------------------------------------------------------
@@ -49,14 +43,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-          <?php echo lang('Navigation_Settings');?> 
+          <?= lang('Navigation_Settings');?> 
           <a style="cursor:pointer">
             <span>
               <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
             </span> 
           </a>
       </h1>
-      <div class="settingsImported"><?php echo lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
+      <div class="settingsImported"><?= lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
     <div class="content " id='accordion_gen'>
    <?php      
@@ -268,7 +262,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     <!-- /.content -->
     <div class="row" >
           <div class="row">
-            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?php echo lang('DevDetail_button_Save');?></button>
+            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
           </div>
           <div id="result"></div>
       </div>
@@ -285,12 +279,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 66;
+  var settingsNumber = 67;
 
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
   {
-    showModalOk('WARNING', "<?php echo lang("settings_missing")?>");    
+    showModalOk('WARNING', "<?= lang("settings_missing")?>");    
   }
 
 
@@ -367,7 +361,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function saveSettings() {
     if(<?php echo count($settings)?> != settingsNumber) 
     {
-      showModalOk('WARNING', "<?php echo lang("settings_missing_block")?>");    
+      showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
     } else
     {
       $.ajax({
@@ -408,7 +402,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         // check if displayed settings are outdated
         if(fileModificationTime > importedMiliseconds)
         {
-          showModalOk('WARNING: Outdated settings displayed', "<?php echo lang("settings_old")?>");
+          showModalOk('WARNING: Outdated settings displayed', "<?= lang("settings_old")?>");
         }
       } else{
         result = result.replaceAll('"', '');
@@ -470,7 +464,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     setParameter ('Front_Event', value)
 
     // show message
-    showModalOk("<?php echo lang("general_event_title")?>", "<?php echo lang("general_event_description")?> <code id='"+modalEventStatusId+"'></code>");
+    showModalOk("<?= lang("general_event_title")?>", "<?= lang("general_event_description")?> <code id='"+modalEventStatusId+"'></code>");
 
     // Periodically update state of the requested action
     getParam(modalEventStatusId,"Front_Event", true, updateModalState)

@@ -8,11 +8,9 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
-require '/home/pi/pialert/front/php/templates/timezone.php';
-
 //------------------------------------------------------------------------------
 // DB File Path
-$DBFILE = '/home/pi/pialert/db/pialert.db';
+$DBFILE = dirname(__FILE__).'/../../../db/pialert.db';
 
 //------------------------------------------------------------------------------
 // Connect DB
@@ -74,6 +72,3 @@ function OpenDB (...$DBPath) {
 // # Open DB once and keep open
 // # Opening / closing DB frequently actually casues more issues
 OpenDB (); // main
-
-   
-?>

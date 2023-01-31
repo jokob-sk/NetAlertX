@@ -47,12 +47,12 @@ $lang['en_us'] = array(
 // Device Page
 //////////////////////////////////////////////////////////////////
 
-'Navigation_Devices' => '<i class="fa fa-laptop"></i> Devices',
-'Navigation_Presence' => '<i class="fa fa-calendar"></i> Presence',
+'Navigation_Devices' => 'Devices',
+'Navigation_Presence' => 'Presence',
 'Navigation_Events' => 'Events',
 'Navigation_Maintenance' => 'Maintenance',
 'Navigation_Settings' => 'Settings',
-'Navigation_Network' => '<i class="fa fa-fw fa-network-wired"></i>  Network',
+'Navigation_Network' => 'Network',
 'Navigation_HelpFAQ' => 'Help / FAQ',
 'Device_Title' => 'Devices',
 'Device_Shortcut_AllDevices' => 'All Devices',
@@ -513,6 +513,8 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_DASHBOARD_URL_description' => 'This URL is used as the base for generating links in the emails. Enter full URL starting with <code>http://</code> including the port number (no trailig slash <code>/</code>).',
 'DIG_GET_IP_ARG_name' => 'Internet IP discovery',
 'DIG_GET_IP_ARG_description' => 'Change the <a href="https://linux.die.net/man/1/dig" target="_blank">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>.',
+'UI_LANG_name' => 'Select Language',
+'UI_LANG_description' => '',
 
 //Email
 'Email_settings_group' => '<i class="fa fa-at"></i> Email',

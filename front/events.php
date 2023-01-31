@@ -17,17 +17,17 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         <?php echo lang('Events_Title');?>
+         <?= lang('Events_Title');?>
       </h1>
 
       <!-- period selector -->
       <span class="breadcrumb" style="top: 0px;">
         <select class="form-control" id="period" onchange="javascript: periodChanged();">
-          <option value="1 day"><?php echo lang('Events_Periodselect_today');?></option>
-          <option value="7 days"><?php echo lang('Events_Periodselect_LastWeek');?></option>
-          <option value="1 month" selected><?php echo lang('Events_Periodselect_LastMonth');?></option>
-          <option value="1 year"><?php echo lang('Events_Periodselect_LastYear');?></option>
-          <option value="100 years"><?php echo lang('Events_Periodselect_All');?></option>
+          <option value="1 day"><?= lang('Events_Periodselect_today');?></option>
+          <option value="7 days"><?= lang('Events_Periodselect_LastWeek');?></option>
+          <option value="1 month" selected><?= lang('Events_Periodselect_LastMonth');?></option>
+          <option value="1 year"><?= lang('Events_Periodselect_LastYear');?></option>
+          <option value="100 years"><?= lang('Events_Periodselect_All');?></option>
         </select>
       </span>
     </section>
@@ -42,7 +42,7 @@
           <a href="#" onclick="javascript: getEvents('all');">
             <div class="small-box bg-aqua">
               <div class="inner"> <h3 id="eventsAll"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_AllEvents');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_AllEvents');?></p>
               </div>
               <div class="icon"> <i class="fa fa-bolt text-aqua-40"></i> </div>
             </div>
@@ -54,7 +54,7 @@
           <a href="#" onclick="javascript: getEvents('sessions');">
             <div class="small-box bg-green">
               <div class="inner"> <h3 id="eventsSessions"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_Sessions');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_Sessions');?></p>
               </div>
               <div class="icon"> <i class="fa fa-plug text-green-40"></i> </div>
             </div>
@@ -66,7 +66,7 @@
           <a href="#" onclick="javascript: getEvents('missing');">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="eventsMissing"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_MissSessions');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_MissSessions');?></p>
               </div>
               <div class="icon"> <i class="fa fa-exchange text-yellow-40"></i> </div>
             </div>
@@ -78,7 +78,7 @@
           <a href="#" onclick="javascript: getEvents('voided');">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="eventsVoided"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_VoidSessions');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_VoidSessions');?></p>
               </div>
               <div class="icon"> <i class="fa fa-exclamation-circle text-yellow-40"></i> </div>
             </div>
@@ -90,7 +90,7 @@
           <a href="#" onclick="javascript: getEvents('new');">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="eventsNewDevices"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_NewDevices');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_NewDevices');?></p>
               </div>
               <div class="icon"> <i class="ion ion-plus-round text-yellow-40"></i> </div>
             </div>
@@ -102,7 +102,7 @@
           <a href="#" onclick="javascript: getEvents('down');">
             <div  class="small-box bg-red">
               <div class="inner"> <h3 id="eventsDown"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Events_Shortcut_DownAlerts');?></p>
+                <p class="infobox_label"><?= lang('Events_Shortcut_DownAlerts');?></p>
               </div>
               <div class="icon"> <i class="fa fa-warning text-red-40"></i> </div>
             </div>
@@ -127,18 +127,18 @@
               <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                 <thead>
                 <tr>
-                  <th><?php echo lang('Events_TableHead_Order');?></th>
-                  <th><?php echo lang('Events_TableHead_Device');?></th>
-                  <th><?php echo lang('Events_TableHead_Owner');?></th>
-                  <th><?php echo lang('Events_TableHead_Date');?></th>
-                  <th><?php echo lang('Events_TableHead_EventType');?></th>
-                  <th><?php echo lang('Events_TableHead_Connection');?></th>
-                  <th><?php echo lang('Events_TableHead_Disconnection');?></th>
-                  <th><?php echo lang('Events_TableHead_Duration');?></th>
-                  <th><?php echo lang('Events_TableHead_DurationOrder');?></th>
-                  <th><?php echo lang('Events_TableHead_IP');?></th>
-                  <th><?php echo lang('Events_TableHead_IPOrder');?></th>
-                  <th><?php echo lang('Events_TableHead_AdditionalInfo');?></th>
+                  <th><?= lang('Events_TableHead_Order');?></th>
+                  <th><?= lang('Events_TableHead_Device');?></th>
+                  <th><?= lang('Events_TableHead_Owner');?></th>
+                  <th><?= lang('Events_TableHead_Date');?></th>
+                  <th><?= lang('Events_TableHead_EventType');?></th>
+                  <th><?= lang('Events_TableHead_Connection');?></th>
+                  <th><?= lang('Events_TableHead_Disconnection');?></th>
+                  <th><?= lang('Events_TableHead_Duration');?></th>
+                  <th><?= lang('Events_TableHead_DurationOrder');?></th>
+                  <th><?= lang('Events_TableHead_IP');?></th>
+                  <th><?= lang('Events_TableHead_IPOrder');?></th>
+                  <th><?= lang('Events_TableHead_AdditionalInfo');?></th>
                 </tr>
                 </thead>
               </table>
@@ -253,13 +253,13 @@ function initializeDatatable () {
     'language'    : {
       processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
       emptyTable: 'No data',
-      "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
-      "search":     "<?php echo lang('Events_Searchbox');?>: ",
+      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
+      "search":     "<?= lang('Events_Searchbox');?>: ",
       "paginate": {
-          "next":       "<?php echo lang('Events_Table_nav_next');?>",
-          "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+          "next":       "<?= lang('Events_Table_nav_next');?>",
+          "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
-      "info":           "<?php echo lang('Events_Table_info');?>",
+      "info":           "<?= lang('Events_Table_info');?>",
     }
   });
 
@@ -311,13 +311,13 @@ function getEvents (p_eventsType) {
 
   // Define color & title for the status selected
   switch (eventsType) {
-    case 'all':       tableTitle = '<?php echo lang('Events_Shortcut_AllEvents');?>';      color = 'aqua';    sesionCols = false;  break;
-    case 'sessions':  tableTitle = '<?php echo lang('Events_Shortcut_Sessions');?>';       color = 'green';   sesionCols = true;   break;
-    case 'missing':   tableTitle = '<?php echo lang('Events_Shortcut_MissSessions');?>';   color = 'yellow';  sesionCols = true;   break;
-    case 'voided':    tableTitle = '<?php echo lang('Events_Shortcut_VoidSessions');?>';   color = 'yellow';  sesionCols = false;  break;
-    case 'new':       tableTitle = '<?php echo lang('Events_Shortcut_NewDevices');?>';     color = 'yellow';  sesionCols = false;  break;
-    case 'down':      tableTitle = '<?php echo lang('Events_Shortcut_DownAlerts');?>';     color = 'red';     sesionCols = false;  break;
-    default:          tableTitle = '<?php echo lang('Events_Shortcut_Events');?>';         boxClass = '';     sesionCols = false;  break;
+    case 'all':       tableTitle = '<?= lang('Events_Shortcut_AllEvents');?>';      color = 'aqua';    sesionCols = false;  break;
+    case 'sessions':  tableTitle = '<?= lang('Events_Shortcut_Sessions');?>';       color = 'green';   sesionCols = true;   break;
+    case 'missing':   tableTitle = '<?= lang('Events_Shortcut_MissSessions');?>';   color = 'yellow';  sesionCols = true;   break;
+    case 'voided':    tableTitle = '<?= lang('Events_Shortcut_VoidSessions');?>';   color = 'yellow';  sesionCols = false;  break;
+    case 'new':       tableTitle = '<?= lang('Events_Shortcut_NewDevices');?>';     color = 'yellow';  sesionCols = false;  break;
+    case 'down':      tableTitle = '<?= lang('Events_Shortcut_DownAlerts');?>';     color = 'red';     sesionCols = false;  break;
+    default:          tableTitle = '<?= lang('Events_Shortcut_Events');?>';         boxClass = '';     sesionCols = false;  break;
   } 
 
   // Set title and color
