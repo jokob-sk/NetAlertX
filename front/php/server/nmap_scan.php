@@ -33,4 +33,3 @@ if(filter_var($PIA_HOST_IP, FILTER_VALIDATE_IP))  // Vulnerability fix v22.12.20
 {
     echo '<h4>Internal error.</h4>';
 }
-?>

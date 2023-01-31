@@ -6,18 +6,21 @@
 
 $defaultLang = "en_us";
 
-if(!isset($_COOKIE["language"])) {
-  $pia_lang_selected = $defaultLang;
-} else {   
-  $pia_lang_selected = $_COOKIE["language"];
+global $db;
+
+$result = $db->querySingle("SELECT Value FROM Settings WHERE Code_Name = 'UI_LANG'"); 
+switch($result){
+  case 'Spanish': $pia_lang_selected = 'es_es'; break;
+  case 'German': $pia_lang_selected = 'de_de'; break;
+  default: $pia_lang_selected = 'en_us'; break;
 }
 
-if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = defaultLang;}
+if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = $defaultLang;}
 
-require '/home/pi/pialert/front/php/templates/skinUI.php';
-require 'en_us.php';
-require 'de_de.php';
-require 'es_es.php';
+require dirname(__FILE__).'/../skinUI.php';
+require dirname(__FILE__).'/en_us.php';
+require dirname(__FILE__).'/de_de.php';
+require dirname(__FILE__).'/es_es.php';
 
 function lang($key)
 {
@@ -45,4 +48,3 @@ function lang($key)
     
   return $temp;
 }
-?>

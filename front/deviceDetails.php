@@ -9,7 +9,6 @@
 
 <?php
   require 'php/templates/header.php';
-  require 'php/server/db.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -26,11 +25,11 @@
       <!-- period selector -->
       <span class="breadcrumb" style="top: 0px;">
         <select class="form-control" id="period" onchange="javascript: periodChanged();">
-          <option value="1 day"><?php echo lang('DevDetail_Periodselect_today');?></option>
-          <option value="7 days"><?php echo lang('DevDetail_Periodselect_LastWeek');?></option>
-          <option value="1 month" selected><?php echo lang('DevDetail_Periodselect_LastMonth');?></option>
-          <option value="1 year"><?php echo lang('DevDetail_Periodselect_LastYear');?></option>
-          <option value="100 years"><?php echo lang('DevDetail_Periodselect_All');?></option>
+          <option value="1 day"><?= lang('DevDetail_Periodselect_today');?></option>
+          <option value="7 days"><?= lang('DevDetail_Periodselect_LastWeek');?></option>
+          <option value="1 month" selected><?= lang('DevDetail_Periodselect_LastMonth');?></option>
+          <option value="1 year"><?= lang('DevDetail_Periodselect_LastYear');?></option>
+          <option value="100 years"><?= lang('DevDetail_Periodselect_All');?></option>
         </select>
       </span>
     </section>
@@ -45,7 +44,7 @@
           <a href="#" onclick="javascript: $('#tabDetails').trigger('click')">
             <div class="small-box bg-aqua">
               <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3>
-                <p class="infobox_label"><?php echo lang('DevDetail_Shortcut_CurrentStatus');?></p>
+                <p class="infobox_label"><?= lang('DevDetail_Shortcut_CurrentStatus');?></p>
               </div>
               <div class="icon"> <i id="deviceStatusIcon" class=""></i></div>
             </div>
@@ -57,7 +56,7 @@
           <a href="#" onclick="javascript: $('#tabSessions').trigger('click');">
             <div class="small-box bg-green">
               <div class="inner"> <h3 id="deviceSessions"> -- </h3>
-                <p class="infobox_label"><?php echo lang('DevDetail_Shortcut_Sessions');?></p>
+                <p class="infobox_label"><?= lang('DevDetail_Shortcut_Sessions');?></p>
               </div>
               <div class="icon"> <i class="fa fa-plug"></i> </div>
             </div>
@@ -69,7 +68,7 @@
           <a href="#" onclick="javascript: $('#tabPresence').trigger('click')">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3>
-                <p class="infobox_label"><?php echo lang('DevDetail_Shortcut_Presence');?></p>
+                <p class="infobox_label"><?= lang('DevDetail_Shortcut_Presence');?></p>
               </div>
               <div id="deviceEventsIcon" class="icon"> <i class="fa fa-calendar"></i> </div>
             </div>
@@ -81,7 +80,7 @@
           <a href="#" onclick="javascript: $('#tabEvents').trigger('click');">
             <div  class="small-box bg-red">
               <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3>
-                <p class="infobox_label"><?php echo lang('DevDetail_Shortcut_DownAlerts');?></p>
+                <p class="infobox_label"><?= lang('DevDetail_Shortcut_DownAlerts');?></p>
               </div>
               <div class="icon"> <i class="fa fa-warning"></i> </div>
             </div>
@@ -99,15 +98,15 @@
 
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
-              <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?php echo lang('DevDetail_Tab_Details');?>  </a></li>
+              <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
                 <?php
                 if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
                 ?>
               <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
-              <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?php echo lang('DevDetail_Tab_Sessions');?> </a></li>
-              <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?php echo lang('DevDetail_Tab_Presence');?> </a></li>
-              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?php echo lang('DevDetail_Tab_Events');?>   </a></li>
-              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?php echo lang('DevDetail_Tab_Pholus');?>   </a></li>
+              <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
+              <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
+              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
+              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -134,12 +133,12 @@
                 <div class="row">
     <!-- column 1 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Title');?></h4>
+                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Title');?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- MAC -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_mac');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_mac');?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtMAC" type="text" readonly value="--">
                         </div>
@@ -147,7 +146,7 @@
       
                       <!-- Name -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Name');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Name');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtName" type="text" value="--">
@@ -158,7 +157,7 @@
 
                       <!-- Owner -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Owner');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Owner');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
@@ -175,7 +174,7 @@
 
                       <!-- Type -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Type');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Type');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
@@ -194,13 +193,13 @@
                       <!-- Icon -->
                       <div class="form-group">
                         <label class="col-sm-3 control-label">
-                          <?php echo lang('DevDetail_Icon');?> 
+                          <?= lang('DevDetail_Icon');?> 
                           <a href="https://fontawesome.com/search?q=laptop&o=r&m=free" target="_blank"> <span><i class="fa fa-fw fa-arrow-up-right-from-square"></i></a><span>
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
-                            <input class="form-control" title="<?php echo lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
-                            <span class="input-group-addon" title='<?php echo lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
+                            <input class="form-control" title="<?= lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
+                            <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
                             <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtIcon');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -215,7 +214,7 @@
 
                       <!-- Vendor -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Vendor');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Vendor');?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtVendor" type="text" value="--">
                         </div>
@@ -223,7 +222,7 @@
 
                       <!-- Favorite -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Favorite');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Favorite');?></label>
                         <div class="col-sm-9" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkFavorite" type="checkbox">
                         </div>
@@ -231,7 +230,7 @@
 
                       <!-- Group -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Group');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Group');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
@@ -249,7 +248,7 @@
 
                       <!-- Location -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Location');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Location');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
@@ -267,7 +266,7 @@
 
                       <!-- Comments -->
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Comments');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Comments');?></label>
                         <div class="col-sm-9">
                           <textarea class="form-control" rows="3" id="txtComments"></textarea>
                         </div>
@@ -280,12 +279,12 @@
 
     <!-- column 2 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_SessionInfo_Title');?></h4>
+                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_SessionInfo_Title');?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- Status -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_Status');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_Status');?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtStatus" type="text" readonly value="--">
                         </div>
@@ -293,7 +292,7 @@
       
                       <!-- First Session -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_FirstSession');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_FirstSession');?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtFirstConnection" type="text" readonly value="--">
                         </div>
@@ -301,7 +300,7 @@
       
                       <!-- Last Session -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_LastSession');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_LastSession');?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtLastConnection" type="text" readonly value="--">
                         </div>
@@ -309,7 +308,7 @@
       
                       <!-- Last IP -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_LastIP');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_LastIP');?></label>
                         <div class="col-sm-7">
                           <input class="form-control" id="txtLastIP" type="text" readonly value="--">
                         </div>
@@ -317,21 +316,21 @@
 
                       <!-- Static IP -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_SessionInfo_StaticIP');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_StaticIP');?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkStaticIP" type="checkbox">
                         </div>
                       </div>
 
                       <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
+                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
                           <div class="input-group"> 
 
                             <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
-                            <span class="input-group-addon"><i title="<?php echo lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right pointer" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
+                            <span class="input-group-addon"><i title="<?= lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right pointer" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
@@ -343,7 +342,7 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo lang('DevDetail_MainInfo_Network_Port');?></label>
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network_Port');?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
@@ -354,12 +353,12 @@
 
     <!-- column 3 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?php echo lang('DevDetail_EveandAl_Title');?></h4>
+                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_EveandAl_Title');?></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- Scan Cycle -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_ScanCycle');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_ScanCycle');?></label>
                         <div class="col-sm-7">
                           <div class="input-group">
                             <input class="form-control" id="txtScanCycle" type="text" value="--" readonly >
@@ -367,8 +366,8 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','yes')"><?php echo lang('DevDetail_EveandAl_ScanCycle_a');?></a></li>                                
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','no');"><?php echo lang('DevDetail_EveandAl_ScanCycle_z');?></a></li>
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','yes')"><?= lang('DevDetail_EveandAl_ScanCycle_a');?></a></li>                                
+                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','no');"><?= lang('DevDetail_EveandAl_ScanCycle_z');?></a></li>
                               </ul>
                             </div>
                           </div>
@@ -377,7 +376,7 @@
 
                       <!-- Alert events -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_AlertAllEvents');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_AlertAllEvents');?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkAlertEvents" type="checkbox">
                         </div>
@@ -385,7 +384,7 @@
       
                       <!-- Alert Down -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_AlertDown');?></label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_AlertDown');?></label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox red hidden" id="chkAlertDown" type="checkbox">
                         </div>
@@ -393,7 +392,7 @@
 
                       <!-- Skip Notifications -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label" style="padding-top: 0px; padding-left: 0px;"><?php echo lang('DevDetail_EveandAl_Skip');?></label>
+                        <label class="col-sm-5 control-label" style="padding-top: 0px; padding-left: 0px;"><?= lang('DevDetail_EveandAl_Skip');?></label>
                         <div class="col-sm-7">
                           <div class="input-group">
                             <input class="form-control" id="txtSkipRepeated" type="text" value="--" readonly >
@@ -414,7 +413,7 @@
 
                       <!-- New Device -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_NewDevice');?>:</label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_NewDevice');?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox orange hidden" id="chkNewDevice" type="checkbox">
                         </div>
@@ -422,7 +421,7 @@
 
                       <!-- Archived -->
                       <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_Archived');?>:</label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_Archived');?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <input class="checkbox blue hidden" id="chkArchived" type="checkbox">
                         </div>
@@ -430,7 +429,7 @@
 
                       <!-- Randomized MAC -->
                       <div class="form-group" >
-                        <label class="col-sm-5 control-label"><?php echo lang('DevDetail_EveandAl_RandomMAC');?>:</label>
+                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_RandomMAC');?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <span id="iconRandomMACinactive" data-toggle="tooltip" data-placement="right" title="Random MAC is Inactive">
                             <i style="font-size: 24px;" class="text-gray glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
@@ -450,13 +449,13 @@
                   <div class="col-xs-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?php echo lang('DevDetail_button_DeleteEvents');?> </button>
+                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?= lang('DevDetail_button_DeleteEvents');?> </button>
                         <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-                          id="btnDelete"   onclick="askDeleteDevice()">   <?php echo lang('DevDetail_button_Delete');?> </button>
+                          id="btnDelete"   onclick="askDeleteDevice()">   <?= lang('DevDetail_button_Delete');?> </button>
                         <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
-                          id="btnRestore"  onclick="getDeviceData(true)"> <?php echo lang('DevDetail_button_Reset');?> </button>
+                          id="btnRestore"  onclick="getDeviceData(true)"> <?= lang('DevDetail_button_Reset');?> </button>
                         <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; " 
-                          id="btnSave"     onclick="setDeviceData()" >     <?php echo lang('DevDetail_button_Save');?> </button>
+                          id="btnSave"     onclick="setDeviceData()" >     <?= lang('DevDetail_button_Save');?> </button>
                     </div>
                   </div>
 
@@ -470,12 +469,12 @@
                 <table id="tableSessions" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th><?php echo lang('DevDetail_SessionTable_Order');?></th>
-                    <th><?php echo lang('DevDetail_SessionTable_Connection');?></th>
-                    <th><?php echo lang('DevDetail_SessionTable_Disconnection');?></th>
-                    <th><?php echo lang('DevDetail_SessionTable_Duration');?></th>
-                    <th><?php echo lang('DevDetail_SessionTable_IP');?></th>
-                    <th><?php echo lang('DevDetail_SessionTable_Additionalinfo');?></th>
+                    <th><?= lang('DevDetail_SessionTable_Order');?></th>
+                    <th><?= lang('DevDetail_SessionTable_Connection');?></th>
+                    <th><?= lang('DevDetail_SessionTable_Disconnection');?></th>
+                    <th><?= lang('DevDetail_SessionTable_Duration');?></th>
+                    <th><?= lang('DevDetail_SessionTable_IP');?></th>
+                    <th><?= lang('DevDetail_SessionTable_Additionalinfo');?></th>
                   </tr>
                   </thead>
                 </table>
@@ -516,10 +515,10 @@
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
-                        document.getElementById('piamanualnmap_fast').innerHTML='<?php echo lang('DevDetail_Nmap_buttonFast');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_normal').innerHTML='<?php echo lang('DevDetail_Nmap_buttonDefault');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_detail').innerHTML='<?php echo lang('DevDetail_Nmap_buttonDetail');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?php echo lang('DevDetail_Nmap_buttonSkipDiscovery');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_fast').innerHTML='<?= lang('DevDetail_Nmap_buttonFast');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_normal').innerHTML='<?= lang('DevDetail_Nmap_buttonDefault');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_detail').innerHTML='<?= lang('DevDetail_Nmap_buttonDetail');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?= lang('DevDetail_Nmap_buttonSkipDiscovery');?> (' + document.getElementById('txtLastIP').value +')';
                       }, 2000);
                   </script>
 
@@ -530,11 +529,11 @@
                 
                   <div style="text-align: left;">
                     <ul style="padding:20px;">
-                      <li><?php echo lang('DevDetail_Nmap_buttonFast_text');?></li>
-                      <li><?php echo lang('DevDetail_Nmap_buttonDefault_text');?></li>
-                      <li><?php echo lang('DevDetail_Nmap_buttonDetail_text');?></li>
-                      <li><?php echo lang('DevDetail_Nmap_buttonSkipDiscovery_text');?></li>
-                      <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><?php echo lang('DevDetail_Nmap_resultsLink');?></a></li>
+                      <li><?= lang('DevDetail_Nmap_buttonFast_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonDefault_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonDetail_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonSkipDiscovery_text');?></li>
+                      <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><?= lang('DevDetail_Nmap_resultsLink');?></a></li>
 
                     </ul>
                   </div>
@@ -559,9 +558,9 @@
                   }
                   </script>
 
-                  <h3><?php echo lang("DevDetail_Tab_NmapTableHeader");?></h3>
+                  <h3><?= lang("DevDetail_Tab_NmapTableHeader");?></h3>
 
-                  <div><?php echo lang("DevDetail_Tab_NmapTableText");?></div>
+                  <div><?= lang("DevDetail_Tab_NmapTableText");?></div>
 
                 <table id="tableNmap" class="table table-bordered table-hover table-striped ">
                   <thead>
@@ -577,7 +576,7 @@
                   <!-- Comment out tbody when trying to implement better table with datatables here -->
                   <!-- IDEA: Show unmatched pholus entries?  -->
                   <tbody id="tableNmapBody">
-                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?php echo lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
+                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
                   </tbody>
                 </table>
               
@@ -614,7 +613,7 @@
                 <div class="text-center">
                   <label>
                     <input class="checkbox blue hidden" id="chkHideConnectionEvents" type="checkbox" checked>
-                    <?php echo lang('DevDetail_Events_CheckBox');?>
+                    <?= lang('DevDetail_Events_CheckBox');?>
                   </label>
                 </div>
                 
@@ -648,7 +647,7 @@
                 <!-- Comment out tbody when trying to implement better table with datatables here -->
                 <!-- IDEA: Show unmatched pholus entries?  -->
                 <tbody id="tablePholusBody">
-                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span><?php echo lang("DevDetail_Tab_PholusEmpty"); ?></span></td></tr>
+                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_PholusEmpty"); ?></span></td></tr>
                 </tbody>
               </table>
               </div>
@@ -1065,13 +1064,13 @@ function initializeDatatables () {
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
-      "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
-      "search":     "<?php echo lang('Events_Searchbox');?>: ",
+      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
+      "search":     "<?= lang('Events_Searchbox');?>: ",
       "paginate": {
-          "next":       "<?php echo lang('Events_Table_nav_next');?>",
-          "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+          "next":       "<?= lang('Events_Table_nav_next');?>",
+          "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
-      "info":           "<?php echo lang('Events_Table_info');?>",
+      "info":           "<?= lang('Events_Table_info');?>",
     }
   });
 
@@ -1104,13 +1103,13 @@ function initializeDatatables () {
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
-      "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
-      "search":     "<?php echo lang('Events_Searchbox');?>: ",
+      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
+      "search":     "<?= lang('Events_Searchbox');?>: ",
       "paginate": {
-          "next":       "<?php echo lang('Events_Table_nav_next');?>",
-          "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+          "next":       "<?= lang('Events_Table_nav_next');?>",
+          "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
-      "info":           "<?php echo lang('Events_Table_info');?>",
+      "info":           "<?= lang('Events_Table_info');?>",
     }
   });
 
@@ -1149,7 +1148,7 @@ function initializeCalendar () {
     slotLabelInterval : '04:00:00',
     slotLabelFormat   : 'H:mm',
     timeFormat        : 'H:mm', 
-    locale            : '<?php echo lang('Presence_CalHead_lang');?>',
+    locale            : '<?= lang('Presence_CalHead_lang');?>',
     header: {
       left            : 'prev,next today',
       center          : 'title',
@@ -1160,14 +1159,14 @@ function initializeCalendar () {
       agendaYear: {
         type               : 'agenda',
         duration           : { year: 1 },
-        buttonText         : '<?php echo lang('Presence_CalHead_year');?>',
+        buttonText         : '<?= lang('Presence_CalHead_year');?>',
         columnHeaderFormat : ''
       },
 
       agendaMonth: {
         type               : 'agenda',
         duration           : { month: 1 },
-        buttonText         : '<?php echo lang('Presence_CalHead_month');?>',
+        buttonText         : '<?= lang('Presence_CalHead_month');?>',
         columnHeaderFormat : 'D'
       }
     },
@@ -1453,7 +1452,7 @@ function recordSwitch(direction) {
   if(somethingChanged)
   {
     showModalDefaultStrParam ('Unsaved changes', 'Do you want to discard your changes?',
-      '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', performSwitch, direction);
+      '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', performSwitch, direction);
   } else
   {    
     performSwitch(direction)
@@ -1561,7 +1560,7 @@ function askSkipNotifications () {
   if ($('#chkArchived')[0].checked && $('#txtScanCycle').val() != "no") {
     // Ask skip notifications
     showModalDefault ('Device Archived', 'Do you want to skip all notifications for this device?',
-      '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'skipNotifications');
+      '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'skipNotifications');
   }
 }
 
@@ -1583,8 +1582,8 @@ function askDeleteDeviceEvents () {
   }
 
   // Ask delete device Events 
-  showModalWarning ('<?php echo lang('DevDetail_button_DeleteEvents');?>', '<?php echo lang('DevDetail_button_DeleteEvents_Warning');?>',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDeviceEvents');
+  showModalWarning ('<?= lang('DevDetail_button_DeleteEvents');?>', '<?= lang('DevDetail_button_DeleteEvents_Warning');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDeviceEvents');
 }
 
 function deleteDeviceEvents () {
@@ -1611,8 +1610,8 @@ function askOverwriteIconType () {
   }
 
   // Ask overwrite icon types 
-  showModalWarning ('<?php echo lang('DevDetail_button_OverwriteIcons');?>', '<?php echo lang('DevDetail_button_OverwriteIcons_Warning');?>',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Okay');?>', 'overwriteIconType');
+  showModalWarning ('<?= lang('DevDetail_button_OverwriteIcons');?>', '<?= lang('DevDetail_button_OverwriteIcons_Warning');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'overwriteIconType');
 }
 
 // -----------------------------------------------------------------------------
@@ -1642,7 +1641,7 @@ function askDeleteDevice () {
 
   // Ask delete device
   showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDevice');
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDevice');
 }
 
 
@@ -1670,7 +1669,7 @@ function askDeleteDevice () {
 
   // Ask delete device
   showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDevice');
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDevice');
 }
 
 
@@ -1892,13 +1891,13 @@ function initTable(tableId, mac){
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
-      "lengthMenu": "<?php echo lang('Events_Tablelenght');?>",
-      "search":     "<?php echo lang('Events_Searchbox');?>: ",
+      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
+      "search":     "<?= lang('Events_Searchbox');?>: ",
       "paginate": {
-          "next":       "<?php echo lang('Events_Table_nav_next');?>",
-          "previous":   "<?php echo lang('Events_Table_nav_prev');?>"
+          "next":       "<?= lang('Events_Table_nav_next');?>",
+          "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
-      "info":           "<?php echo lang('Events_Table_info');?>",
+      "info":           "<?= lang('Events_Table_info');?>",
     }
   });
 
