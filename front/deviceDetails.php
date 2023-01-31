@@ -1575,6 +1575,32 @@ function skipNotifications () {
   // Set cycle 0
   $('#txtScanCycle').val ('no');  
 }
+// -----------------------------------------------------------------------------
+function askDeleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Ask delete device Events 
+  showModalWarning ('<?php echo lang('DevDetail_button_DeleteEvents');?>', '<?php echo lang('DevDetail_button_DeleteEvents_Warning');?>',
+    '<?php echo lang('Gen_Cancel');?>', '<?php echo lang('Gen_Delete');?>', 'deleteDeviceEvents');
+}
+
+function deleteDeviceEvents () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Delete device events
+  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+    showMessage (msg);
+  });
+
+  // Deactivate controls
+  $('#panDetails :input').attr('disabled', true);
+}
 
 // -----------------------------------------------------------------------------
 // Overwrite all devices of the same type with the currently selected icon

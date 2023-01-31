@@ -38,6 +38,7 @@ import threading
 from pathlib import Path
 from cron_converter import Cron
 from pytz import timezone
+from json2table import convert
 
 #===============================================================================
 # SQL queries
@@ -68,6 +69,7 @@ piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 debug_force_notification = False
 
 userSubnets = []
+changedPorts = []
 time_started = datetime.datetime.now()
 cron_instance = Cron()
 log_timestamp = time_started
@@ -289,7 +291,7 @@ def importConfig ():
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     # API
-    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL
+    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
     
     mySettings = [] # reset settings
     # get config file
@@ -312,7 +314,7 @@ def importConfig ():
     TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
     PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events']", 'General')
+    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports']", 'General')
     SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', 5 , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
     DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
@@ -391,8 +393,9 @@ def importConfig ():
     # API 
     ENABLE_API = ccd('ENABLE_API', True , c_d, 'Enable API', 'boolean', '', 'API')    
     API_RUN = ccd('API_RUN', 'schedule' , c_d, 'API execution', 'selecttext', "['none', 'interval', 'schedule']", 'API')
-    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')
+    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')    
     API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
+    API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
     
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -574,10 +577,16 @@ def main ():
             if cycle in check_report:
                 # Check if new devices need to be scanned with Nmap
                 if NMAP_ACTIVE:
-                    sql.execute ("""SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
-                            WHERE eve_PendingAlertEmail = 1
-                            AND eve_EventType = 'New Device'
-                            ORDER BY eve_DateTime""")
+                    sql.execute ("""SELECT * FROM 
+                                    ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
+                                                                WHERE eve_PendingAlertEmail = 1
+                                                                AND eve_EventType = 'New Device'
+                                    ORDER BY eve_DateTime ) t1
+                                    LEFT JOIN 
+                                    (
+                                        SELECT dev_Name, dev_MAC as dev_MAC_t2 FROM Devices 
+                                    ) t2 
+                                    ON t1.dev_MAC = t2.dev_MAC_t2""")
 
                     newDevices = sql.fetchall()
                     commitDB()
@@ -1615,6 +1624,8 @@ def update_devices_names ():
 #-------------------------------------------------------------------------------
 def performNmapScan(devicesToScan):
 
+    global changedPorts     
+
     if len(devicesToScan) > 0:
 
         timeoutSec = NMAP_TIMEOUT
@@ -1660,8 +1671,8 @@ def performNmapScan(devicesToScan):
             for line in newLines:
                 append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
             
-            # collect ports
-            params = []
+            # collect ports / new Nmap Entries
+            newEntries = []
 
             index = 0
             startCollecting = False
@@ -1674,16 +1685,112 @@ def performNmapScan(devicesToScan):
                     startCollecting = True
                 elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                     startCollecting = False # end reached
-                elif startCollecting and len(line.split()) == 3:                
-                    params.append((device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], ''))
+                elif startCollecting and len(line.split()) == 3:                                    
+                    newEntries.append(nmap_entry(device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], device["dev_Name"]))
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             index += 1
 
-            if len(params) > 0:                
-                sql.executemany ("""INSERT INTO Nmap_Scan ("MAC", "Time", "Port",   "State", "Service", "Extra") VALUES (?, ?, ?, ?, ?, ?)""", params) 
-                commitDB ()
+            # previous Nmap Entries
+            oldEntries = []
+            
+            if len(newEntries) > 0:   
 
+                #  get all current NMAP ports from the DB
+                sql.execute(sql_nmap_scan_all) 
+
+                rows = sql.fetchall()
+
+                for row in rows: 
+                    oldEntries.append(nmap_entry(row["MAC"], row["Port"], row["State"], row["Service"], device["dev_Name"], row["Extra"], row["Index"]))
+
+                indexesToRemove = []
+
+                # Remove all entries already available in the database
+                for newEntry in newEntries:
+                    #  Check if available in oldEntries
+                    if any(x.hash == newEntry.hash for x in oldEntries):
+                        newEntries.pop(index)
+
+                file_print('[', timeNow(), '] Scan: Nmap found ', len(newEntries), ' new or changed ports')
+
+                # collect new ports, find the corresponding old entry and return for notification purposes
+                # also update the DB with the new values after deleting the old ones
+                if len(newEntries) > 0:
+
+                    params = []
+                    indexesToDelete = ""
+
+                    # Find old entry matching the new entry hash
+                    for newEntry in newEntries:                   
+
+                        foundEntry = None
+
+                        for oldEntry in oldEntries:
+                            if oldEntry.hash == newEntry.hash:
+
+                                params.append(newEntry.mac, newEntry.time, newEntry.port, newEntry.state, newEntry.service, oldEntry.extra)
+
+                                indexesToDelete = indexesToDelete + str(oldEntry.index) + ','
+
+                                foundEntry = oldEntry
+                        
+                        if foundEntry is not None:
+                            changedPorts.append(
+                                    {
+                                        'new' : { 
+                                                    "Name"   : foundEntry.name, 
+                                                    "MAC"    : newEntry.mac, 
+                                                    "Port"   : newEntry.port, 
+                                                    "State"  : newEntry.state, 
+                                                    "Service": newEntry.service, 
+                                                    "Extra"  : foundEntry.extra
+                                            }, 
+                                        'old' : { 
+                                                    "Name"   : foundEntry.name, 
+                                                    "MAC"    : foundEntry.mac, 
+                                                    "Port"   : foundEntry.port, 
+                                                    "State"  : foundEntry.state, 
+                                                    "Service": foundEntry.service, 
+                                                    "Extra"  : foundEntry.extra
+                                            }
+                                    }
+                                )                            
+                        else:
+                            changedPorts.append(
+                                    {
+                                        'new' : { 
+                                                    "Name"   : "New device", 
+                                                    "MAC"    : newEntry.mac, 
+                                                    "Port"   : newEntry.port, 
+                                                    "State"  : newEntry.state, 
+                                                    "Service": newEntry.service, 
+                                                    "Extra"  : ""
+                                            }
+                                    }
+                                )
+
+                    #  Delete old entries if available
+                    if len(indexesToDelete) > 0:
+                        sql.execute ("DELETE FROM Nmap_Scan where Index in (" + indexesToDelete[:-1] +")")
+                        commitDB ()
+
+                    # Insert new values into the DB 
+                    sql.executemany ("""INSERT INTO Nmap_Scan ("MAC", "Time", "Port", "State", "Service", "Extra") VALUES (?, ?, ?, ?, ?, ?)""", params) 
+                    commitDB ()
+
+#-------------------------------------------------------------------------------
+class nmap_entry:
+    def __init__(self, mac, time, port, state, service, name = '', extra = '', index = 0):
+        self.mac = mac
+        self.time = time
+        self.port = port
+        self.state = state
+        self.service = service
+        self.name = name
+        self.extra = extra
+        self.index = index
+        self.hash = str(hash(str(mac) + str(port)+ str(state)+ str(service)))
 
 #-------------------------------------------------------------------------------
 def performPholusScan (timeoutSec):
@@ -2027,9 +2134,14 @@ def skip_repeated_notifications ():
 json_final = []
 
 def send_notifications ():
-    global mail_text, mail_html, json_final    
+    global mail_text, mail_html, json_final, changedPorts
 
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
+    table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
+    headerProps = "width='120px' style='color:blue; font-size: 12px;' bgcolor='#909090' "
+    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
+
+    build_direction = "TOP_TO_BOTTOM"
 
     # Reporting section
     file_print('  Check if something to report')    
@@ -2039,6 +2151,8 @@ def send_notifications ():
     json_new_devices = []
     json_down_devices = []
     json_events = []
+    json_ports = []
+
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
@@ -2073,153 +2187,180 @@ def send_notifications ():
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
-    
-
     if 'internet' in INCLUDED_SECTIONS:
-        # Compose Internet Section        
-        mail_section_Internet = False
-        mail_text_Internet = ''
-        mail_html_Internet = ''
-        text_line_template = '{} \t{}\t{}\t{}\n'
-        html_line_template = '<tr>\n'+ \
-            '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
-            '  <td style="font-size: 24px; color:#D02020"> {} </td>\n'+ \
-            '  <td> {} </td>\n</tr>\n'
+        # Compose Internet Section    
+        text = ""  
 
-        sql.execute ("""SELECT * FROM Events
+        json_string = get_table_as_json("""SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "Additional info" FROM Events
                         WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
-                        ORDER BY eve_DateTime""")
+                        ORDER BY eve_DateTime""")  
 
+        if json_string["data"] == []:
+            html = ""      
+        else:
+            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+
+            html = format_table(html, "data", headerProps, "Internet IP change")
+
+            headers = ["MAC", "Datetime", "IP", "Event Type", "Additional info"]
+
+            # prepare text-only message
+            text_line = '{}\t{}\n'
+
+            for device in json_string["data"]:
+                for header in headers:
+                    text += text_line.format ( header + ': ', device[header])  
+
+            #  Format HTML table headers
+            for header in headers:
+                html = format_table(html, header, thProps)   
         
-        for eventAlert in sql :
-            mail_section_Internet = 'internet' in INCLUDED_SECTIONS
-            # collect "internet" (IP changes) for the webhook json   
-            json_internet = add_json_list (eventAlert, json_internet)
-
-            mail_text_Internet += text_line_template.format (
-                'Event:', eventAlert['eve_EventType'], 'Time:', eventAlert['eve_DateTime'],
-                'IP:', eventAlert['eve_IP'], 'More Info:', eventAlert['eve_AdditionalInfo'])
-            mail_html_Internet += html_line_template.format (
-                deviceUrl, eventAlert['eve_MAC'],
-                eventAlert['eve_EventType'], eventAlert['eve_DateTime'],
-                eventAlert['eve_IP'], eventAlert['eve_AdditionalInfo'])
-
-
-        format_report_section (mail_section_Internet, 'SECTION_INTERNET',
-            'TABLE_INTERNET', mail_text_Internet, mail_html_Internet)
+        mail_text = mail_text.replace ('<SECTION_INTERNET>', text + '\n')
+        mail_html = mail_html.replace ('<INTERNET_TABLE>', html)
+        
+        # collect "internet" (IP changes) for the webhook json          
+        json_internet = json_string["data"] 
 
     if 'new_devices' in INCLUDED_SECTIONS:
-        # Compose New Devices Section
-        mail_section_new_devices = False
-        mail_text_new_devices = ''
-        mail_html_new_devices = ''
-        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-        html_line_template    = '<tr>\n'+ \
-            '  <td> <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+\
-            '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
-        
-        sql.execute ("""SELECT * FROM Events_Devices
+        # Compose New Devices Section 
+        text = ""
+
+        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime""")
+                        ORDER BY eve_DateTime""")        
+        if json_string["data"] == []:
+            html = ""                  
+        else:
+            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
 
-        for eventAlert in sql :
-            mail_section_new_devices = 'new_devices' in INCLUDED_SECTIONS
-            # collect "new_devices" for the webhook json  
-            json_new_devices = add_json_list (eventAlert, json_new_devices)
+            html = format_table(html, "data", headerProps, "New devices")
 
-            mail_text_new_devices += text_line_template.format (
-                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 'IP: ', eventAlert['eve_IP'],
-                'Time: ', eventAlert['eve_DateTime'], 'More Info: ', eventAlert['eve_AdditionalInfo'])
-            mail_html_new_devices += html_line_template.format (
-                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-                eventAlert['dev_Name'], eventAlert['eve_AdditionalInfo'])
-    
-        format_report_section (mail_section_new_devices, 'SECTION_NEW_DEVICES',
-            'TABLE_NEW_DEVICES', mail_text_new_devices, mail_html_new_devices)
+            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
+
+            # prepare text-only message
+            text_line = '{}\t{}\n'
+            text = ""
+            for device in json_string["data"]:
+                for header in headers:
+                    text += text_line.format ( header + ': ', device[header])  
+
+            #  Format HTML table headers
+            for header in headers:
+                html = format_table(html, header, thProps)
+
+        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', text + '\n')
+        mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', html)
+        
+        # collect "new_devices" for the webhook json          
+        json_new_devices = json_string["data"]
 
 
     if 'down_devices' in INCLUDED_SECTIONS:
-        # Compose Devices Down Section
-        mail_section_devices_down = False
-        mail_text_devices_down = ''
-        mail_html_devices_down = ''
-        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-        html_line_template     = '<tr>\n'+ \
-            '  <td> <a href="{}{}"> {} </a>  </td>\n  <td> {} </td>\n'+ \
-            '  <td> {} </td>\n  <td> {} </td>\n</tr>\n'
+        # Compose Devices Down Section   
+        text = ""
 
-        sql.execute ("""SELECT * FROM Events_Devices
+        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
-                        ORDER BY eve_DateTime""")
+                        ORDER BY eve_DateTime""")        
+        if json_string["data"] == []:
+            html = ""      
+        else:
+            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
 
-        for eventAlert in sql :
-            mail_section_devices_down = 'down_devices' in INCLUDED_SECTIONS
-            # collect "down_devices" for the webhook json
-            json_down_devices = add_json_list (eventAlert, json_down_devices)
+            html = format_table(html, "data", headerProps, "Down devices")
 
-            mail_text_devices_down += text_line_template.format (
-                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'],
-                'Time: ', eventAlert['eve_DateTime'],'IP: ', eventAlert['eve_IP'])
-            mail_html_devices_down += html_line_template.format (
-                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-                eventAlert['dev_Name'])
+            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
 
-        format_report_section (mail_section_devices_down, 'SECTION_DEVICES_DOWN',
-            'TABLE_DEVICES_DOWN', mail_text_devices_down, mail_html_devices_down)
+            # prepare text-only message
+            text_line = '{}\t{}\n'
+            text = ""
+            for device in json_string["data"]:
+                for header in headers:
+                    text += text_line.format ( header + ': ', device[header])  
 
+            #  Format HTML table headers
+            for header in headers:
+                html = format_table(html, header, thProps)   
+
+        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', text + '\n')
+        mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', html)
+        
+        # collect "down_devices" for the webhook json
+        json_down_devices = json_string["data"] 
 
     if 'events' in INCLUDED_SECTIONS:
-        # Compose Events Section
-        mail_section_events = False
-        mail_text_events   = ''
-        mail_html_events   = ''
-        text_line_template = '{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\t{}\t{}\n\n'
-        html_line_template = '<tr>\n  <td>'+ \
-                ' <a href="{}{}"> {} </a> </td>\n  <td> {} </td>\n'+ \
-                '  <td> {} </td>\n  <td> {} </td>\n  <td> {} </td>\n'+ \
-                '  <td> {} </td>\n</tr>\n'
+        # Compose Events Section  
+        text = ""
 
-        sql.execute ("""SELECT * FROM Events_Devices
+        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')
-                        ORDER BY eve_DateTime""")
+                        ORDER BY eve_DateTime""")        
+        if json_string["data"] == []:
+            html = ""      
+        else:
+            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
 
-        for eventAlert in sql :
-            mail_section_events = 'events' in INCLUDED_SECTIONS
-            # collect "events" for the webhook json
-            json_events = add_json_list (eventAlert, json_events)
-            
-            mail_text_events += text_line_template.format (
-                'Name: ', eventAlert['dev_Name'], 'MAC: ', eventAlert['eve_MAC'], 
-                'IP: ', eventAlert['eve_IP'],'Time: ', eventAlert['eve_DateTime'],
-                'Event: ', eventAlert['eve_EventType'],'More Info: ', eventAlert['eve_AdditionalInfo'])
-            mail_html_events += html_line_template.format (
-                deviceUrl, eventAlert['eve_MAC'], eventAlert['eve_MAC'],
-                eventAlert['eve_DateTime'], eventAlert['eve_IP'],
-                eventAlert['eve_EventType'], eventAlert['dev_Name'],
-                eventAlert['eve_AdditionalInfo'])
+            html = format_table(html, "data", headerProps, "Events")
 
-        format_report_section (mail_section_events, 'SECTION_EVENTS',
-            'TABLE_EVENTS', mail_text_events, mail_html_events)
+            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
+
+            # prepare text-only message
+            text_line = '{}\t{}\n'
+            text = ""
+            for device in json_string["data"]:
+                for header in headers:
+                    text += text_line.format ( header + ': ', device[header])              
+
+            #  Format HTML table headers
+            for header in headers:
+                html = format_table(html, header, thProps)   
+
+        mail_text = mail_text.replace ('<SECTION_EVENTS>', text + '\n')
+        mail_html = mail_html.replace ('<EVENTS_TABLE>', html)
+        
+        # collect "events" for the webhook json        
+        json_events = json_string["data"]
+    
+    if 'ports' in INCLUDED_SECTIONS:           
+        json_ports =  changedPorts
+
+        json_string = { "data" : changedPorts }
+        
+        if json_string["data"] == []:
+            html = ""      
+        else:
+            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+
+            html = format_table(html, "data", headerProps, "Changed or new ports")
+
+            headers = ["Name", "MAC", "Port", "State", "Service", "Extra"]
+
+            for header in headers:
+                html = format_table(html, header, thProps)        
+
+        mail_html = mail_html.replace ('<PORTS_TABLE>', html)
 
     json_final = {
                     "internet": json_internet,                        
                     "new_devices": json_new_devices,
                     "down_devices": json_down_devices,                        
-                    "events": json_events
+                    "events": json_events,
+                    "ports": json_ports,
                     }    
+    
+    # Create clickable MAC links 
+    mail_html = generate_mac_links (mail_html, deviceUrl)
 
-    #  Write output emails for testing    
+    #  Write output emails for debug    
     write_file (logPath + '/report_output.txt', mail_text) 
     write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or debug_force_notification:        
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or debug_force_notification:        
 
         update_api(True)
 
@@ -2272,6 +2413,8 @@ def send_notifications ():
                  """, (datetime.datetime.now(),) )
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1""")
+    
+    changedPorts = []
 
     # DEBUG - print number of rows updated
     file_print('    Notifications: ', sql.rowcount)
@@ -2326,6 +2469,26 @@ def check_config(service):
 
 
    
+#-------------------------------------------------------------------------------
+def format_table (html, thValue, props, newThValue = ''):
+
+    if newThValue == '':
+        newThValue = thValue
+        
+    return html.replace("<th>"+thValue+"</th>", "<th "+props+" >"+newThValue+"</th>" )
+
+#-------------------------------------------------------------------------------
+def generate_mac_links (html, deviceUrl):
+
+    p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
+
+    MACs = re.findall(p, html)
+
+    for mac in MACs:        
+        html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
+
+    return html
+
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
@@ -2968,29 +3131,30 @@ def update_api(isNotification = False):
         ["devices", sql_devices_all],
         ["nmap_scan", sql_nmap_scan_all],
         ["pholus_scan", sql_pholus_scan_all],
-        ["events_pending_alert", sql_events_pending_alert]
+        ["events_pending_alert", sql_events_pending_alert],
+        ["custom_endpoint", API_CUSTOM_SQL]
     ]
 
     # Save selected database tables
     for dsSQL in dataSourcesSQLs:
-    
-        sql.execute(dsSQL[1]) 
 
-        columnNames = list(map(lambda x: x[0], sql.description)) 
-
-        rows = sql.fetchall()    
-
-        json_string = get_table_as_json(rows, columnNames)
+        json_string = get_table_as_json(dsSQL[1])
 
         write_file(folder + 'table_' + dsSQL[0] + '.json'  , json.dumps(json_string))     
 
 #-------------------------------------------------------------------------------
-def get_table_as_json(rows, names):
+def get_table_as_json(sqlQuery):
+
+    sql.execute(sqlQuery) 
+
+    columnNames = list(map(lambda x: x[0], sql.description)) 
+
+    rows = sql.fetchall()    
 
     result = {"data":[]}
 
     for row in rows: 
-        tmp = fill_row(names, row)
+        tmp = fill_row(columnNames, row)
     
         result["data"].append(tmp)
     return result
@@ -3233,6 +3397,8 @@ def isNewVersion():
         f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
         buildTimestamp = int(f.read().strip())
         f.close() 
+
+        data = ""
 
         try:
             url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")

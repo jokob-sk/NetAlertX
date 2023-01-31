@@ -204,14 +204,26 @@
 // -----------------------------------------------------------------------------
 function main () {
 
+  // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
+  cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  
+
+  defaultValue = cookieColumnsVisibleStr == "" ? columnsStr : cookieColumnsVisibleStr;
+
   // get visible columns
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
     
+    // save which columns are in the Devices page visible
     tableColumnVisible = numberArrayFromString(data);
 
+    // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
+    cookieColumnsOrderStr = decodeURI(getCookie("Front_Devices_Columns_Order")).replaceAll('%2C',',')
+
+    defaultValue = cookieColumnsOrderStr == "" ? columnsStr : cookieColumnsOrderStr;    
+
     // get the custom order specified by the user
-    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+columnsStr+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
+    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
     
+      // save the columns order in the Devices page 
       tableColumnOrder = numberArrayFromString(data);
 
       //initialize the table headers in the correct order
@@ -243,8 +255,6 @@ function main () {
       }
 
       $('#tableDevices tr').html(html);   
-      
-
 
       // get parameter value
       $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
@@ -282,14 +292,13 @@ function main () {
 // -----------------------------------------------------------------------------
 var tableColumnHide = [];
 
+// mapping the default order to the user specified one
 function mapIndx(oldIndex)
 {
   for(i=0;i<tableColumnOrder.length;i++)
   {
     if(tableColumnOrder[i] == oldIndex)
     {
-      // console.log('newIndex')
-      // console.log(i)
       return i;
     }
   }

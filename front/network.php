@@ -502,7 +502,8 @@
   
   // ---------------------------------------------------------------------------
   var leafNodesCount = 0;
-  var treeLoadedAlready = false;
+  var visibleNodesCount = 0;
+  var parentNodesCount = 0;
   var hiddenMacs = []; // hidden children
   var hiddenChildren = [];
   
@@ -519,17 +520,24 @@
     {
       //... of the current node
       if(list[i].parentMac == node.mac && !hiddenMacs.includes(list[i].parentMac))
-      {        
+      {   
+        visibleNodesCount++
+
         // and process them 
         children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, hiddenMacs))
+
       }
     }
 
     // note the total number of leaf nodes to calculate the font scaling
-    if(!treeLoadedAlready && children.length == 0) 
+    if(children.length == 0) 
     { 
       leafNodesCount++ 
-    }
+    } else
+    {
+      parentNodesCount++
+    }  
+
     
     return { 
       name: node.name,      
@@ -602,10 +610,17 @@
   // --------------------------------------------------------------------------- 
   var myTree;
   var treeAreaHeight = 600;
+  var emSize;
+  var nodeHeight;
+
   function initTree(myHierarchy)
   {    
-    // to prevent font scaling everytime we collapse/expand a subtree
-    treeLoadedAlready = true;
+    // calculate the font size of the leaf nodes to fit everything into the tree area
+    leafNodesCount == 0 ? 1 : leafNodesCount;
+    emSize = ((600/(20*leafNodesCount)).toFixed(2));        
+    emSize = emSize > 1 ? 1 : emSize;      
+    
+    nodeHeight = ((emSize*100*0.30).toFixed(0))
 
     $("#networkTree").attr('style', "height:"+treeAreaHeight+"px; width:1070px")
 
@@ -613,17 +628,11 @@
       htmlId: "networkTree",
       
       renderNode:  nodeData =>  { 
+        var fontSize = "font-size:"+emSize+"em;";
 
-        // calculate the font size of the leaf nodes to fit everything into the tree area
-        leafNodesCount == 0 ? 1 : leafNodesCount;
-        emSize = ((600/(20*leafNodesCount)).toFixed(2));        
-        emSize = emSize > 1 ? 1 : emSize;
-        
-        var fontSize = (nodeData.data.hasChildren) ? "" : "font-size:"+emSize+"em;";
-
-        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon '><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
+        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
-        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
+        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*2.5+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
         statusCss = " netStatus-" + nodeData.data.status;
 
         selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
@@ -638,7 +647,6 @@
                                  justify-content:center;\
                                  " + fontSize + "\
                                  align-items:center;\
-                                 background-color:" +nodeData.data.color+";\
                                  border-radius:5px;'\
                           >\
                           <div class='netNodeText '>\
@@ -655,7 +663,7 @@
       mainAxisNodeSpacing: 'auto',
       // mainAxisNodeSpacing: 3,
       secondaryAxisNodeSpacing: 0.3,
-      nodeHeight: '25',    
+      nodeHeight: nodeHeight.toString(),    
       marginTop: '5',
       hasZoom: false,
       hasPan: false,
@@ -665,7 +673,7 @@
       linkWidth: (nodeData) => 3,
       relationnalField: "children",      
       });
-
+      
       myTree.refresh(myHierarchy);      
     }
 
