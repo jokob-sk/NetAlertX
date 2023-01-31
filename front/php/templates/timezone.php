@@ -4,9 +4,9 @@
 // ## TimeZone processing start
 // ###################################
 
-$configFolderPath = "/home/pi/pialert/config/";
+$configFolderPath = dirname(__FILE__)."/../../../config/";
 $config_file = "pialert.conf";
-$logFolderPath = "/home/pi/pialert/front/log/";
+$logFolderPath = dirname(__FILE__)."/../../log/";
 $log_file = "pialert_front.log";
 
 
@@ -40,5 +40,3 @@ $timestamp = $date->format('Y-m-d_H-i-s');
 // ###################################
 // ## TimeZone processing end
 // ###################################
-
-?>

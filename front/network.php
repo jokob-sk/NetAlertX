@@ -1,8 +1,6 @@
 <?php
 
   require 'php/templates/header.php';
-  require 'php/server/db.php';
-  require 'php/server/util.php';
 
   // online / offline badges HTML snippets 
   define('badge_online', '<div class="badge bg-green text-white" style="width: 60px;">Online</div>');
@@ -20,7 +18,7 @@
   <section class="content-header">
   <?php require 'php/templates/notification.php'; ?>
     <h1 id="pageTitle">
-      <i class="fa fa-network-wired"></i> <?php echo lang('Network_Title');?>
+      <i class="fa fa-network-wired"></i> <?= lang('Network_Title');?>
       <span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span>
     </h1>    
   </section>

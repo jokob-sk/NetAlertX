@@ -18,7 +18,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         <?php echo lang('Presence_Title');?>
+         <?= lang('Presence_Title');?>
       </h1>
     </section>
 
@@ -32,7 +32,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('all');">
           <div class="small-box bg-aqua">
             <div class="inner"><h3 id="devicesAll"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Presence_Shortcut_AllDevices');?></p>
+                <p class="infobox_label"><?= lang('Presence_Shortcut_AllDevices');?></p>
             </div>
             <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
           </div>
@@ -44,7 +44,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('connected');">
             <div class="small-box bg-green">
               <div class="inner"> <h3 id="devicesConnected"> -- </h3> 
-                  <p class="infobox_label"><?php echo lang('Presence_Shortcut_Connected');?></p>
+                  <p class="infobox_label"><?= lang('Presence_Shortcut_Connected');?></p>
               </div>
               <div class="icon"> <i class="fa fa-plug text-green-40"></i> </div>
             </div>
@@ -56,7 +56,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('favorites');">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="devicesFavorites"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Presence_Shortcut_Favorites');?></p>
+                <p class="infobox_label"><?= lang('Presence_Shortcut_Favorites');?></p>
               </div>
               <div class="icon"> <i class="fa fa-star text-yellow-40"></i> </div>
             </div>
@@ -68,7 +68,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('new');">
             <div  class="small-box bg-yellow">
               <div class="inner"> <h3 id="devicesNew"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Presence_Shortcut_NewDevices');?></p>
+                <p class="infobox_label"><?= lang('Presence_Shortcut_NewDevices');?></p>
               </div>
               <div class="icon"> <i class="ion ion-plus-round text-yellow-40"></i> </div>
             </div>
@@ -80,7 +80,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('down');">
             <div  class="small-box bg-red">
               <div class="inner"> <h3 id="devicesDown"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Presence_Shortcut_DownAlerts');?></p>
+                <p class="infobox_label"><?= lang('Presence_Shortcut_DownAlerts');?></p>
               </div>
               <div class="icon"> <i class="fa fa-warning text-red-40"></i> </div>
             </div>
@@ -92,7 +92,7 @@
           <a href="#" onclick="javascript: getDevicesPresence('archived');">
             <div  class="small-box bg-gray top_small_box_gray_text">
               <div class="inner"> <h3 id="devicesHidden"> -- </h3>
-                <p class="infobox_label"><?php echo lang('Presence_Shortcut_Archived');?></p>
+                <p class="infobox_label"><?= lang('Presence_Shortcut_Archived');?></p>
               </div>
               <div class="icon"> <i class="fa fa-eye-slash text-gray-40"></i> </div>
             </div>
@@ -106,7 +106,7 @@
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?php echo lang('Device_Shortcut_OnlineChart');?></h3>
+                <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?></h3>
               </div>
               <div class="box-body">
                 <div class="chart">
@@ -242,12 +242,12 @@ function initializeCalendar () {
     allDaySlot        : false,
     timeFormat        : 'H:mm', 
 
-    resourceLabelText : '<?php echo lang('Presence_CallHead_Devices');?>',
+    resourceLabelText : '<?= lang('Presence_CallHead_Devices');?>',
     resourceAreaWidth : '160px',
     slotWidth         : '1px',
 
     resourceOrder     : '-favorite,title',
-    locale            : '<?php echo lang('Presence_CalHead_lang');?>',
+    locale            : '<?= lang('Presence_CalHead_lang');?>',
 
     //schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -256,7 +256,7 @@ function initializeCalendar () {
       timelineYear: {
         type              : 'timeline',
         duration          : { year: 1 },
-        buttonText        : '<?php echo lang('Presence_CalHead_year');?>',
+        buttonText        : '<?= lang('Presence_CalHead_year');?>',
         slotLabelFormat   : 'MMM',
         // Hack to show partial day events not as fullday events
         slotDuration      : {minutes: 44641}
@@ -265,7 +265,7 @@ function initializeCalendar () {
       timelineQuarter: {
         type              : 'timeline',
         duration          : { month: 3 },
-        buttonText        : '<?php echo lang('Presence_CalHead_quarter');?>',
+        buttonText        : '<?= lang('Presence_CalHead_quarter');?>',
         slotLabelFormat   : 'MMM',
         // Hack to show partial day events not as fullday events
         slotDuration      : {minutes: 44641}
@@ -274,7 +274,7 @@ function initializeCalendar () {
       timelineMonth: {
         type              : 'timeline',
         duration          : { month: 1 },
-        buttonText        : '<?php echo lang('Presence_CalHead_month');?>',
+        buttonText        : '<?= lang('Presence_CalHead_month');?>',
         slotLabelFormat   : 'D',
         // Hack to show partial day events not as fullday events
         slotDuration      : '24:00:01'
@@ -283,7 +283,7 @@ function initializeCalendar () {
       timelineWeek: {
         type              : 'timeline',
         duration          : { week: 1 },
-        buttonText        : '<?php echo lang('Presence_CalHead_week');?>',
+        buttonText        : '<?= lang('Presence_CalHead_week');?>',
         slotLabelFormat   : 'D',
         slotDuration      : '24:00:01'
       }
@@ -361,13 +361,13 @@ function getDevicesPresence (status) {
 
   // Defini color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = '<?php echo lang('Presence_Shortcut_AllDevices');?>';    color = 'aqua';    break;
-    case 'connected':  tableTitle = '<?php echo lang('Presence_Shortcut_Connected');?>';     color = 'green';   break;
-    case 'favorites':  tableTitle = '<?php echo lang('Presence_Shortcut_Favorites');?>';     color = 'yellow';  break;
-    case 'new':        tableTitle = '<?php echo lang('Presence_Shortcut_NewDevices');?>';    color = 'yellow';  break;
-    case 'down':       tableTitle = '<?php echo lang('Presence_Shortcut_DownAlerts');?>';    color = 'red';     break;
-    case 'archived':   tableTitle = '<?php echo lang('Presence_Shortcut_Archived');?>';      color = 'gray';    break;
-    default:           tableTitle = '<?php echo lang('Presence_Shortcut_Devices');?>';       color = 'gray';    break;
+    case 'all':        tableTitle = '<?= lang('Presence_Shortcut_AllDevices');?>';    color = 'aqua';    break;
+    case 'connected':  tableTitle = '<?= lang('Presence_Shortcut_Connected');?>';     color = 'green';   break;
+    case 'favorites':  tableTitle = '<?= lang('Presence_Shortcut_Favorites');?>';     color = 'yellow';  break;
+    case 'new':        tableTitle = '<?= lang('Presence_Shortcut_NewDevices');?>';    color = 'yellow';  break;
+    case 'down':       tableTitle = '<?= lang('Presence_Shortcut_DownAlerts');?>';    color = 'red';     break;
+    case 'archived':   tableTitle = '<?= lang('Presence_Shortcut_Archived');?>';      color = 'gray';    break;
+    default:           tableTitle = '<?= lang('Presence_Shortcut_Devices');?>';       color = 'gray';    break;
   } 
 
   // Set title and color

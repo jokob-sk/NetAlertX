@@ -1,7 +1,5 @@
 <?php
 
-require 'php/server/db.php';
-
 global $db;
 
 $Pia_Graph_Device_Time = array();
@@ -27,6 +25,3 @@ function pia_graph_devices_data($Pia_Graph_Array) {
       echo ",";
   }
 }
-
-
-?>
