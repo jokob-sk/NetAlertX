@@ -69,7 +69,7 @@ piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 debug_force_notification = False
 
 userSubnets = []
-changedPorts = []
+changedPorts_json_struc = None
 time_started = datetime.datetime.now()
 cron_instance = Cron()
 log_timestamp = time_started
@@ -1625,7 +1625,9 @@ def update_devices_names ():
 #-------------------------------------------------------------------------------
 def performNmapScan(devicesToScan):
 
-    global changedPorts     
+    global changedPorts_json_struc     
+
+    changedPortsTmp = []
 
     if len(devicesToScan) > 0:
 
@@ -1735,41 +1737,39 @@ def performNmapScan(devicesToScan):
                                 indexesToDelete = indexesToDelete + str(oldEntry.index) + ','
 
                                 foundEntry = oldEntry
-                        
+
+                        columnNames = ["Name", "MAC", "Port", "State", "Service", "Extra", "NewOrOld"  ]
                         if foundEntry is not None:
-                            changedPorts.append(
-                                    {
-                                        'new' : { 
-                                                    "Name"   : foundEntry.name, 
-                                                    "MAC"    : newEntry.mac, 
-                                                    "Port"   : newEntry.port, 
-                                                    "State"  : newEntry.state, 
-                                                    "Service": newEntry.service, 
-                                                    "Extra"  : foundEntry.extra
-                                            }, 
-                                        'old' : { 
-                                                    "Name"   : foundEntry.name, 
-                                                    "MAC"    : foundEntry.mac, 
-                                                    "Port"   : foundEntry.port, 
-                                                    "State"  : foundEntry.state, 
-                                                    "Service": foundEntry.service, 
-                                                    "Extra"  : foundEntry.extra
-                                            }
-                                    }
-                                )                            
+                            changedPortsTmp.append({       
+                                                    "Name"      : foundEntry.name, 
+                                                    "MAC"       : newEntry.mac, 
+                                                    "Port"      : newEntry.port, 
+                                                    "State"     : newEntry.state, 
+                                                    "Service"   : newEntry.service, 
+                                                    "Extra"     : foundEntry.extra,
+                                                    "NewOrOld"  : "New values"
+                                                })
+                            changedPortsTmp.append({ 
+                                                    "Name"      : foundEntry.name, 
+                                                    "MAC"       : foundEntry.mac, 
+                                                    "Port"      : foundEntry.port, 
+                                                    "State"     : foundEntry.state, 
+                                                    "Service"   : foundEntry.service, 
+                                                    "Extra"     : foundEntry.extra,
+                                                    "NewOrOld"  : "Old values"
+                                                })                            
                         else:
-                            changedPorts.append(
-                                    {
-                                        'new' : { 
-                                                    "Name"   : "New device", 
-                                                    "MAC"    : newEntry.mac, 
-                                                    "Port"   : newEntry.port, 
-                                                    "State"  : newEntry.state, 
-                                                    "Service": newEntry.service, 
-                                                    "Extra"  : ""
-                                            }
-                                    }
-                                )
+                            changedPortsTmp.append({
+                                                    "Name"      : "New device", 
+                                                    "MAC"       : newEntry.mac, 
+                                                    "Port"      : newEntry.port, 
+                                                    "State"     : newEntry.state, 
+                                                    "Service"   : newEntry.service, 
+                                                    "Extra"     : "",
+                                                    "NewOrOld"  : "New device"                                       
+                                                })
+
+                    changedPorts_json_struc = json_struc({ "data" : changedPortsTmp}, columnNames)
 
                     #  Delete old entries if available
                     if len(indexesToDelete) > 0:
@@ -2135,15 +2135,9 @@ def skip_repeated_notifications ():
 json_final = []
 
 def send_notifications ():
-    global mail_text, mail_html, json_final, changedPorts
+    global mail_text, mail_html, json_final, changedPorts_json_struc, partial_html, partial_txt, partial_json
 
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
-    table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
-    headerProps = "width='120px' style='color:blue; font-size: 16px;' bgcolor='#909090' "
-    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
-
-    build_direction = "TOP_TO_BOTTOM"
-    text_line = '{}\t\t{}\n'
 
     # Reporting section
     file_print('  Check if something to report')    
@@ -2154,7 +2148,6 @@ def send_notifications ():
     json_down_devices = []
     json_events = []
     json_ports = []
-
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
@@ -2190,160 +2183,71 @@ def send_notifications ():
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
     if 'internet' in INCLUDED_SECTIONS:
-        # Compose Internet Section    
-        text = ""  
-
-        json_string = get_table_as_json("""SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "Additional info" FROM Events
+        # Compose Internet Section
+        sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
                         WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
-                        ORDER BY eve_DateTime""")  
+                        ORDER BY eve_DateTime"""
 
-        if json_string["data"] == []:
-            html = ""      
-        else:
-            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+        notiStruc = construct_notifications(sqlQuery, "Internet IP change")
 
-            html = format_table(html, "data", headerProps, "Internet IP change")
-
-            headers = ["MAC", "Datetime", "IP", "Event Type", "Additional info"]
-
-            # prepare text-only message
-            for device in json_string["data"]:
-                for header in headers:
-                    text += text_line.format ( header + ': ', device[header])  
-                text += '\n'
-
-            #  Format HTML table headers
-            for header in headers:
-                html = format_table(html, header, thProps)   
-        
-        mail_text = mail_text.replace ('<SECTION_INTERNET>', text + '\n')
-        mail_html = mail_html.replace ('<INTERNET_TABLE>', html)
-        
         # collect "internet" (IP changes) for the webhook json          
-        json_internet = json_string["data"] 
+        json_internet = notiStruc.json["data"]
+
+        mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
+        mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
 
     if 'new_devices' in INCLUDED_SECTIONS:
         # Compose New Devices Section 
-        text = ""
-
-        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime""")        
-        if json_string["data"] == []:
-            html = ""                  
-        else:
-            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+                        ORDER BY eve_DateTime"""
 
-            html = format_table(html, "data", headerProps, "New devices")
+        notiStruc = construct_notifications(sqlQuery, "New devices")
 
-            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
+        # collect "new_devices" for the webhook json         
+        json_new_devices = notiStruc.json["data"]
 
-            # prepare text-only message            
-            text = ""
-            for device in json_string["data"]:
-                for header in headers:
-                    text += text_line.format ( header + ': ', device[header]) 
-                text += '\n'
-
-            #  Format HTML table headers
-            for header in headers:
-                html = format_table(html, header, thProps)
-
-        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', text + '\n')
-        mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', html)
-        
-        # collect "new_devices" for the webhook json          
-        json_new_devices = json_string["data"]
-
+        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', notiStruc.text + '\n')
+        mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
 
     if 'down_devices' in INCLUDED_SECTIONS:
         # Compose Devices Down Section   
-        text = ""
-
-        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
-                        ORDER BY eve_DateTime""")        
-        if json_string["data"] == []:
-            html = ""      
-        else:
-            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+                        ORDER BY eve_DateTime"""
 
-            html = format_table(html, "data", headerProps, "Down devices")
+        notiStruc = construct_notifications(sqlQuery, "Down devices")
 
-            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
+        # collect "new_devices" for the webhook json         
+        json_down_devices = notiStruc.json["data"]
 
-            # prepare text-only message            
-            text = ""
-            for device in json_string["data"]:
-                for header in headers:
-                    text += text_line.format ( header + ': ', device[header]) 
-                text += '\n'
-
-            #  Format HTML table headers
-            for header in headers:
-                html = format_table(html, header, thProps)   
-
-        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', text + '\n')
-        mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', html)
-        
-        # collect "down_devices" for the webhook json
-        json_down_devices = json_string["data"] 
+        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
+        mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
 
     if 'events' in INCLUDED_SECTIONS:
-        # Compose Events Section  
-        text = ""
-
-        json_string = get_table_as_json("""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        # Compose Events Section   
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')
-                        ORDER BY eve_DateTime""")        
-        if json_string["data"] == []:
-            html = ""      
-        else:
-            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+                        ORDER BY eve_DateTime"""
 
-            html = format_table(html, "data", headerProps, "Events")
+        notiStruc = construct_notifications(sqlQuery, "Events")
 
-            headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
+        # collect "events" for the webhook json         
+        json_events = notiStruc.json["data"]
 
-            # prepare text-only message            
-            text = ""
-            for device in json_string["data"]:
-                for header in headers:
-                    text += text_line.format ( header + ': ', device[header])  
-                text += '\n'
-
-            #  Format HTML table headers
-            for header in headers:
-                html = format_table(html, header, thProps)   
-
-        mail_text = mail_text.replace ('<SECTION_EVENTS>', text + '\n')
-        mail_html = mail_html.replace ('<EVENTS_TABLE>', html)
-        
-        # collect "events" for the webhook json        
-        json_events = json_string["data"]
+        mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
+        mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
     
-    if 'ports' in INCLUDED_SECTIONS:           
-        json_ports =  changedPorts
+    if 'ports' in INCLUDED_SECTIONS and changedPorts_json_struc is not None:           
+        json_ports =  changedPorts_json_struc.json["data"]       
 
-        json_string = { "data" : changedPorts }
-        
-        if json_string["data"] == []:
-            html = ""      
-        else:
-            html = convert(json_string, build_direction=build_direction, table_attributes=table_attributes)
+        notiStruc = construct_notifications("", "Events", True, changedPorts_json_struc)
 
-            html = format_table(html, "data", headerProps, "Changed or new ports")
-
-            headers = ["Name", "MAC", "Port", "State", "Service", "Extra"]
-
-            for header in headers:
-                html = format_table(html, header, thProps)        
-
-        mail_html = mail_html.replace ('<PORTS_TABLE>', html)
+        mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
 
     json_final = {
                     "internet": json_internet,                        
@@ -2415,7 +2319,7 @@ def send_notifications ():
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1""")
     
-    changedPorts = []
+    changedPorts = None
 
     # DEBUG - print number of rows updated
     file_print('    Notifications: ', sql.rowcount)
@@ -2423,6 +2327,56 @@ def send_notifications ():
     # Commit changes    
     commitDB()
 
+#-------------------------------------------------------------------------------
+def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
+
+    table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
+    headerProps = "width='120px' style='color:blue; font-size: 16px;' bgcolor='#909090' "
+    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
+
+    build_direction = "TOP_TO_BOTTOM"
+    text_line = '{}\t{}\n'
+
+    if sqlQuery != "":
+        json_struc = get_table_as_json(sqlQuery)
+    else:
+        json_struc = suppliedJson
+
+    json = json_struc.json
+    html = ""    
+    text = ""
+
+    if json["data"] != []:
+
+        html = convert(json, build_direction=build_direction, table_attributes=table_attributes)
+
+        html = format_table(html, "data", headerProps, tableTitle)
+
+        headers = json_struc.columnNames
+
+        # prepare text-only message
+        if skipText == False:
+            for device in json["data"]:
+                for header in headers:
+                    padding = ""
+                    if len(header) < 4:
+                        padding = "\t"
+                    text += text_line.format ( header + ': ' + padding, device[header]) 
+                text += '\n'
+
+        #  Format HTML table headers
+        for header in headers:
+            html = format_table(html, header, thProps)
+
+    return noti_struc(json, text, html)
+
+#-------------------------------------------------------------------------------
+class noti_struc:
+    def __init__(self, json, text, html):
+        self.json = json
+        self.text = text
+        self.html = html
+       
 #-------------------------------------------------------------------------------
 def check_config(service):
 
@@ -3144,7 +3098,7 @@ def update_api(isNotification = False):
     # Save selected database tables
     for dsSQL in dataSourcesSQLs:
 
-        json_string = get_table_as_json(dsSQL[1])
+        json_string = get_table_as_json(dsSQL[1]).json
 
         write_file(folder + 'table_' + dsSQL[0] + '.json'  , json.dumps(json_string))     
 
@@ -3163,7 +3117,13 @@ def get_table_as_json(sqlQuery):
         tmp = fill_row(columnNames, row)
     
         result["data"].append(tmp)
-    return result
+    return json_struc(result, columnNames)
+
+#-------------------------------------------------------------------------------
+class json_struc:
+    def __init__(self, json, columnNames):
+        self.json = json
+        self.columnNames = columnNames       
 
 #-------------------------------------------------------------------------------
 def fill_row(names, row):  
