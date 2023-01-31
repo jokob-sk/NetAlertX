@@ -279,7 +279,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 67;
+  var settingsNumber = 68;
 
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
