@@ -175,7 +175,7 @@ $lang['en_us'] = array(
 'DevDetail_MainInfo_Owner' => 'Owner',
 'DevDetail_MainInfo_Type' => 'Type',
 'DevDetail_Icon' => 'Icon',
-'DevDetail_Icon_Descr' => 'Enter a font awesome icon name without the fa- prefix.',
+'DevDetail_Icon_Descr' => 'Enter a font awesome icon name without the fa- prefix or with complete class, e.g.: fa fa-brands fa-apple.',
 'DevDetail_MainInfo_Vendor' => 'Vendor',
 'DevDetail_MainInfo_Favorite' => 'Favorite',
 'DevDetail_MainInfo_Group' => 'Group',
@@ -555,7 +555,7 @@ the arp-scan will take hours to complete instead of seconds.
 'APPRISE_HOST_name' => 'Apprise host URL',
 'APPRISE_HOST_description' => 'Apprise host URL starting with <code>http://</code> or <code>https://</code>. (don\'t forget to include <code>/notify</code> at the end)',
 'APPRISE_URL_name' => 'Apprise notification URL',
-'APPRISE_URL_description' => 'Apprise notification target URL.',
+'APPRISE_URL_description' => 'Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>.',
 
 // NTFY
 'NTFY_settings_group' => '<i class="fa fa-terminal"></i> NTFY',
@@ -576,6 +576,8 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_PUSHSAFER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.',
 'PUSHSAFER_TOKEN_name' => 'Pushsafer token',
 'PUSHSAFER_TOKEN_description' => 'Your secret Pushsafer API key (token).',
+'APPRISE_PAYLOAD_name' => 'Payload type',
+'APPRISE_PAYLOAD_description' => 'Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram.',
 
 
 // MQTT

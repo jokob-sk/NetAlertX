@@ -275,7 +275,7 @@ def importConfig ():
     # Webhooks
     global REPORT_WEBHOOK, WEBHOOK_URL, WEBHOOK_PAYLOAD, WEBHOOK_REQUEST_METHOD
     # Apprise
-    global REPORT_APPRISE, APPRISE_HOST, APPRISE_URL
+    global REPORT_APPRISE, APPRISE_HOST, APPRISE_URL, APPRISE_PAYLOAD
     # NTFY
     global REPORT_NTFY, NTFY_HOST, NTFY_TOPIC, NTFY_USER, NTFY_PASSWORD
     # PUSHSAFER
@@ -342,6 +342,7 @@ def importConfig ():
     REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise', ['test'])
     APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
     APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
+    APPRISE_PAYLOAD = ccd('APPRISE_PAYLOAD', 'html' , c_d, 'Payload type', 'selecttext', "['html', 'text']", 'Apprise')
 
     # NTFY
     REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
@@ -451,7 +452,7 @@ last_internet_IP_scan = now_minus_24h
 last_API_update = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
-last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and than once a week
+last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
 
 # indicates, if a new version is available
 newVersionAvailable = False
@@ -2138,10 +2139,11 @@ def send_notifications ():
 
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
-    headerProps = "width='120px' style='color:blue; font-size: 12px;' bgcolor='#909090' "
+    headerProps = "width='120px' style='color:blue; font-size: 16px;' bgcolor='#909090' "
     thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
 
     build_direction = "TOP_TO_BOTTOM"
+    text_line = '{}\t\t{}\n'
 
     # Reporting section
     file_print('  Check if something to report')    
@@ -2205,11 +2207,10 @@ def send_notifications ():
             headers = ["MAC", "Datetime", "IP", "Event Type", "Additional info"]
 
             # prepare text-only message
-            text_line = '{}\t{}\n'
-
             for device in json_string["data"]:
                 for header in headers:
                     text += text_line.format ( header + ': ', device[header])  
+                text += '\n'
 
             #  Format HTML table headers
             for header in headers:
@@ -2238,12 +2239,12 @@ def send_notifications ():
 
             headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
 
-            # prepare text-only message
-            text_line = '{}\t{}\n'
+            # prepare text-only message            
             text = ""
             for device in json_string["data"]:
                 for header in headers:
-                    text += text_line.format ( header + ': ', device[header])  
+                    text += text_line.format ( header + ': ', device[header]) 
+                text += '\n'
 
             #  Format HTML table headers
             for header in headers:
@@ -2273,12 +2274,12 @@ def send_notifications ():
 
             headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
 
-            # prepare text-only message
-            text_line = '{}\t{}\n'
+            # prepare text-only message            
             text = ""
             for device in json_string["data"]:
                 for header in headers:
-                    text += text_line.format ( header + ': ', device[header])  
+                    text += text_line.format ( header + ': ', device[header]) 
+                text += '\n'
 
             #  Format HTML table headers
             for header in headers:
@@ -2308,12 +2309,12 @@ def send_notifications ():
 
             headers = ["MAC", "Datetime", "IP", "Event Type", "Device name", "Comments"]
 
-            # prepare text-only message
-            text_line = '{}\t{}\n'
+            # prepare text-only message            
             text = ""
             for device in json_string["data"]:
                 for header in headers:
-                    text += text_line.format ( header + ': ', device[header])              
+                    text += text_line.format ( header + ': ', device[header])  
+                text += '\n'
 
             #  Format HTML table headers
             for header in headers:
@@ -2375,7 +2376,7 @@ def send_notifications ():
         if REPORT_APPRISE and check_config('apprise'):
             updateState("Send: Apprise")
             file_print('      Sending report by Apprise')
-            send_apprise (mail_html)
+            send_apprise (mail_html, mail_text)
         else :
             file_print('      Skip Apprise')
         if REPORT_WEBHOOK and check_config('webhook'):
@@ -2679,17 +2680,22 @@ def send_webhook (_json, _html):
         file_print(e.output)
 
 #-------------------------------------------------------------------------------
-def send_apprise (html):
+def send_apprise (html, text):
     #Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
+    payload = html
+
+    if APPRISE_PAYLOAD == 'text':
+        payload = text
+
     _json_payload={
     "urls": APPRISE_URL,
-    "title": "Pi.Alert Notifications",
-    "format": "html",
-    "body": html
+    "title": "Pi.Alert Notifications",    
+    "format": APPRISE_PAYLOAD,
+    "body": payload    
     }
 
     try:
-        # try runnning a subprocess
+        # try runnning a subprocess        
         p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = p.communicate()
         # write stdout and stderr into .log files for debugging if needed
@@ -3379,7 +3385,7 @@ def handle_test(testType):
     if testType == 'REPORT_WEBHOOK':
         send_webhook (sample_json_payload, sample_txt)
     if testType == 'REPORT_APPRISE':
-        send_apprise (sample_html) 
+        send_apprise (sample_html, sample_txt) 
     if testType == 'REPORT_NTFY':
         send_ntfy (sample_txt)
     if testType == 'REPORT_PUSHSAFER':
