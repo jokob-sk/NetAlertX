@@ -1,18 +1,8 @@
 Report Date: <REPORT_DATE>
 Server:      <SERVER_NAME>
 
-New Devices
-----------------------
 <SECTION_NEW_DEVICES>
-Devices Down
-----------------------
 <SECTION_DEVICES_DOWN>
-Events
-----------------------
 <SECTION_EVENTS>
-Internet
-----------------------
 <SECTION_INTERNET>
-Ports
-----------------------
 <PORTS_TABLE>

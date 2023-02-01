@@ -308,7 +308,7 @@ def importConfig ():
 
     # Import setting if found in the dictionary
     # General
-    ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General') 
+    ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General', ['run']) 
     SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')
     PRINT_LOG = ccd('PRINT_LOG', False , c_d, 'Print additional logging', 'boolean', '', 'General')
     TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
@@ -1030,7 +1030,7 @@ def scan_network ():
     return reporting
 
 #-------------------------------------------------------------------------------
-def query_ScanCycle_Data (pOpenCloseDB = False):
+def query_ScanCycle_Data (pOpenCloseDB = False, cycle = 1):
     # Query Data
     sql.execute ("""SELECT cic_arpscanCycles, cic_EveryXmin
                     FROM ScanCycles
@@ -2251,8 +2251,12 @@ def send_notifications ():
         notiStruc = construct_notifications("", "Ports", True, changedPorts_json_struc)
 
         mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
-        # mail_text = mail_text.replace ('<PORTS_TABLE>', notiStruc.text + '\n')
-        mail_text = mail_text.replace ('<PORTS_TABLE>', "Ports changed! Check PiAlert for details!" + '\n')
+
+        portsTxt = ""
+        if changedPorts_json_struc is not None:
+            portsTxt = "Ports \n---------\n Ports changed! Check PiAlert for details!\n"        
+
+        mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
 
     json_final = {
                     "internet": json_internet,                        
@@ -2261,6 +2265,8 @@ def send_notifications ():
                     "events": json_events,
                     "ports": json_ports,
                     }    
+
+    mail_text = removeDuplicateNewLines(mail_text)
     
     # Create clickable MAC links 
     mail_html = generate_mac_links (mail_html, deviceUrl)
@@ -2355,6 +2361,7 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
     text = ""
 
     if json["data"] != []:
+        text = tableTitle + "\n---------\n"
 
         html = convert(json, build_direction=build_direction, table_attributes=table_attributes)
 
@@ -3158,6 +3165,8 @@ def write_file (pPath, pText):
         file.close() 
     else:
         file = open (pPath, 'w', encoding='utf-8') 
+        if pText is None:
+            pText = ""
         file.write (pText) 
         file.close() 
 
@@ -3305,6 +3314,14 @@ def get_all_devices():
 
 
 #-------------------------------------------------------------------------------
+def removeDuplicateNewLines(text):
+    if "\n\n" in text:
+        return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
+    else:
+        return text
+
+    
+#-------------------------------------------------------------------------------
 def hide_email(email):
     m = email.split('@')
 
@@ -3327,12 +3344,25 @@ def check_and_run_event():
 
     if event == 'test':
         handle_test(param)
+    if event == 'run':
+        handle_run(param)
 
     # clear event execution flag
     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")        
 
     # commit to DB  
     commitDB ()
+
+#-------------------------------------------------------------------------------
+def handle_run(runType):
+    global last_network_scan
+
+    file_print('[', timeNow(), '] START Run: ', runType)  
+
+    if runType == 'ENABLE_ARPSCAN':
+        last_network_scan = now_minus_24h        
+
+    file_print('[', timeNow(), '] END Run: ', runType)
 
 #-------------------------------------------------------------------------------
 def handle_test(testType):
