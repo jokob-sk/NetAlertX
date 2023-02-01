@@ -2358,7 +2358,7 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
 
         html = convert(json, build_direction=build_direction, table_attributes=table_attributes)
 
-        html = format_table(html, "data", headerProps, tableTitle)
+        html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">')
 
         headers = json_struc.columnNames
 
