@@ -3315,7 +3315,7 @@ def get_all_devices():
 
 #-------------------------------------------------------------------------------
 def removeDuplicateNewLines(text):
-    if "\n\n" in text:
+    if "\n\n\n" in text:
         return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
     else:
         return text
