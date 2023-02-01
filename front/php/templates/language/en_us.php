@@ -175,7 +175,7 @@ $lang['en_us'] = array(
 'DevDetail_MainInfo_Owner' => 'Owner',
 'DevDetail_MainInfo_Type' => 'Type',
 'DevDetail_Icon' => 'Icon',
-'DevDetail_Icon_Descr' => 'Enter a font awesome icon name without the fa- prefix.',
+'DevDetail_Icon_Descr' => 'Enter a font awesome icon name without the fa- prefix or with complete class, e.g.: fa fa-brands fa-apple.',
 'DevDetail_MainInfo_Vendor' => 'Vendor',
 'DevDetail_MainInfo_Favorite' => 'Favorite',
 'DevDetail_MainInfo_Group' => 'Group',
@@ -513,8 +513,8 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_DASHBOARD_URL_description' => 'This URL is used as the base for generating links in the emails. Enter full URL starting with <code>http://</code> including the port number (no trailig slash <code>/</code>).',
 'DIG_GET_IP_ARG_name' => 'Internet IP discovery',
 'DIG_GET_IP_ARG_description' => 'Change the <a href="https://linux.die.net/man/1/dig" target="_blank">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>.',
-'UI_LANG_name' => 'Select Language',
-'UI_LANG_description' => '',
+'UI_LANG_name' => 'UI Language',
+'UI_LANG_description' => 'Select the preferred UI language.',
 
 //Email
 'Email_settings_group' => '<i class="fa fa-at"></i> Email',
@@ -557,7 +557,7 @@ the arp-scan will take hours to complete instead of seconds.
 'APPRISE_HOST_name' => 'Apprise host URL',
 'APPRISE_HOST_description' => 'Apprise host URL starting with <code>http://</code> or <code>https://</code>. (don\'t forget to include <code>/notify</code> at the end)',
 'APPRISE_URL_name' => 'Apprise notification URL',
-'APPRISE_URL_description' => 'Apprise notification target URL.',
+'APPRISE_URL_description' => 'Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>.',
 
 // NTFY
 'NTFY_settings_group' => '<i class="fa fa-terminal"></i> NTFY',
@@ -578,6 +578,8 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_PUSHSAFER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.',
 'PUSHSAFER_TOKEN_name' => 'Pushsafer token',
 'PUSHSAFER_TOKEN_description' => 'Your secret Pushsafer API key (token).',
+'APPRISE_PAYLOAD_name' => 'Payload type',
+'APPRISE_PAYLOAD_description' => 'Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram.',
 
 
 // MQTT

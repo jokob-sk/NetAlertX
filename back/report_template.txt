@@ -13,3 +13,6 @@ Events
 Internet
 ----------------------
 <SECTION_INTERNET>
+Ports
+----------------------
+<PORTS_TABLE>
