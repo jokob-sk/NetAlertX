@@ -2330,7 +2330,7 @@ def send_notifications ():
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1""")
     
-    changedPorts = None
+    changedPorts_json_struc = None
 
     # DEBUG - print number of rows updated
     file_print('    Notifications: ', sql.rowcount)
@@ -3370,10 +3370,10 @@ def handle_test(testType):
     file_print('[', timeNow(), '] START Test: ', testType)    
 
     # Open text sample    
-    sample_txt = get_file_content(pialertPath + '/back/report_sample_1.txt')
+    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
 
     # Open html sample     
-    sample_html = get_file_content(pialertPath + '/back/report_sample_2.html')
+    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
 
     # Open json sample and get only the payload part      
     sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]      
