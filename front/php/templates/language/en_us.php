@@ -260,6 +260,7 @@ $lang['en_us'] = array(
 'Maintenance_Tools_Tab_BackupRestore' => 'Backup / Restore',
 'Maintenance_Tools_Tab_Logging' => 'Logs',
 'Maintenance_Tool_displayed_columns_text' => 'Change the visibility and order of the columns in the <a href="devices.php"><b> <i class="fa fa-laptop"></i> Devices</b></a> page. (The drag-and-drop is a bit clunky, but for now workable, not a common task - won\'t fix for now (tried for <a href="https://github.com/jokob-sk/Pi.Alert/commit/94b32f0f7332879f5a7d2af05dafa2e5d5cfa5da">like 3h</a> - happy for someone to submit a PR :) )).',
+'Maintenance_Tool_displayed_columns_num' => 'Number of elements to show in the devices table.',
 'Maintenance_Tool_order_columns_text' => '',
 'Maintenance_Tool_darkmode' => 'Toggle Modes (Dark/Light)',
 'Maintenance_Tool_drag_me' => 'Drag me to reorder columns.',
