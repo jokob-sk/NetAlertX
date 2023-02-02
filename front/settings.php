@@ -238,10 +238,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             if(count($eventsList) > 0)
             {
               foreach ($eventsList as $event) {
-                $eventsHtml = $eventsHtml.'<span class="input-group-addon">
-                  <i title="'.lang($event."_event_tooltip").'" class="fa '.lang($event."_event_icon").' pointer" 
+                $eventsHtml = $eventsHtml.'<span class="input-group-addon pointer"
                   data-myparam="'.$set['Code_Name'].'" 
-                  data-myevent="'.$event.'">                 
+                  data-myevent="'.$event.'"
+                >
+                  <i title="'.lang($event."_event_tooltip").'" class="fa '.lang($event."_event_icon").' " >                 
                   </i>
                 </span>';
               }
@@ -451,7 +452,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // handling events on the backend initiated by the front end START
   // ----------------------------------------------------------------------------- 
   $(window).on('load', function() { 
-    $('i[data-myevent]').each(function(index, element){
+    $('span[data-myevent]').each(function(index, element){
       $(element).attr('onclick', 
       'handleEvent(\"' + $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam') + '\")'      
       );

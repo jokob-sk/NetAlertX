@@ -462,6 +462,8 @@ $lang['en_us'] = array(
 
 'test_event_tooltip' => 'Save your changes at first before you test your settings.',
 'test_event_icon' => 'fa-vial-circle-check',
+'run_event_tooltip' => 'Enable the setting and save your changes at first before you run it.',
+'run_event_icon' => 'fa-play',
 'general_event_title' => 'Executing an ad-hoc event',
 'general_event_description' => 'The event you\'ve triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a onclick=\'setCache(\"activeMaintenanceTab\", \"tab_Logging_id\")\' href=\"/maintenance.php#tab_Logging\">error log</a> if you didn\'t get the expected result. <br/> <br/>  Status: ',
 

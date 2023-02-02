@@ -7,8 +7,8 @@ See [sample JSON](https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_js
 ![Email template](/docs/img/WEBHOOK_N8N/n8n_send_email_settings.png)
 
 ```
-{{$json["body"]["attachments"][0]["text"]["new_devices"]}}
-{{$json["body"]["attachments"][0]["text"]["events"]}}
+Events count: {{ $json["body"]["attachments"][0]["text"]["events"].length }}
+New devices count: {{ $json["body"]["attachments"][0]["text"]["new_devices"].length }}
 ```
 
 ### Get your webhook in n8n
