@@ -12,7 +12,8 @@ name: Publish Docker image
 on:
   release:
     types: [published]
-
+    tags:
+      - '*.*.*'
 jobs:
   docker:
     runs-on: ubuntu-latest

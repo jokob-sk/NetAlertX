@@ -1873,7 +1873,7 @@ def cleanResult(str):
     str = str.replace(".lan", "")
     str = str.replace(".home", "")
     str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-    str = str.replace(".", "")
+    # str = str.replace(".", "")
 
     return str
 
