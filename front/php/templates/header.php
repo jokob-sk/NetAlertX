@@ -51,7 +51,7 @@ require dirname(__FILE__).'/security.php';
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
-  <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?= _CONFIG_['skin']; ?>.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?php echo $pia_skin_selected;?>.min.css">
 
   <!-- Pi.Alert CSS -->
   <link rel="stylesheet" href="css/pialert.css">
@@ -112,7 +112,7 @@ if ($ENABLED_DARKMODE === True) {
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition <?= _CONFIG_['skin']; ?> layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition <?php echo $pia_skin_selected;?> layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

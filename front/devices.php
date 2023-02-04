@@ -203,51 +203,89 @@
 // -----------------------------------------------------------------------------
 function main () {
 
-  // save which columns are in the Devices page visible
-  tableColumnVisible = <?= json_encode(_CONFIG_['columnsTable']); ?>;
+  // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
+  cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  
 
-  // save the columns order in the Devices page 
-  tableColumnOrder = <?= json_encode(_CONFIG_['columnsTable']); ?>;
+  defaultValue = cookieColumnsVisibleStr == "" ? columnsStr : cookieColumnsVisibleStr;
 
-  //initialize the table headers in the correct order
-  var headersDefaultOrder = [ '<?= lang('Device_TableHead_Name');?>',
-                              '<?= lang('Device_TableHead_Owner');?>',
-                              '<?= lang('Device_TableHead_Type');?>',       
-                              '<?= lang('Device_TableHead_Icon');?>',
-                              '<?= lang('Device_TableHead_Favorite');?>',
-                              '<?= lang('Device_TableHead_Group');?>',
-                              '<?= lang('Device_TableHead_FirstSession');?>',
-                              '<?= lang('Device_TableHead_LastSession');?>',
-                              '<?= lang('Device_TableHead_LastIP');?>',
-                              '<?= lang('Device_TableHead_MAC');?>',
-                              '<?= lang('Device_TableHead_Status');?>',
-                              '<?= lang('Device_TableHead_MAC_full');?>',
-                              '<?= lang('Device_TableHead_LastIPOrder');?>',
-                              '<?= lang('Device_TableHead_Rowid');?>',
-                              '<?= lang('Device_TableHead_Parent_MAC');?>',
-                              '<?= lang('Device_TableHead_Connected_Devices');?>',
-                              '<?= lang('Device_TableHead_Location');?>',
-                              '<?= lang('Device_TableHead_Vendor');?>'
-                            ];
+  // get visible columns
+  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
+    
+    // save which columns are in the Devices page visible
+    tableColumnVisible = numberArrayFromString(data);
 
-  html = '';
-                              
-  for(index = 0; index < tableColumnOrder.length; index++)
-  {
-    html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
-  }
+    // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
+    cookieColumnsOrderStr = decodeURI(getCookie("Front_Devices_Columns_Order")).replaceAll('%2C',',')
 
-  $('#tableDevices tr').html(html); 
+    defaultValue = cookieColumnsOrderStr == "" ? columnsStr : cookieColumnsOrderStr;    
 
-  tableRows = <?= _CONFIG_['numElementDevicesTable']; ?>;
-  tableOrder = <?= json_encode([[3, "desc"],[0, "asc"]]); ?>;
+    // get the custom order specified by the user
+    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
+    
+      // save the columns order in the Devices page 
+      tableColumnOrder = numberArrayFromString(data);
 
-  // Initialize components with parameters
-  initializeDatatable();
+      //initialize the table headers in the correct order
+      var headersDefaultOrder = [ '<?= lang('Device_TableHead_Name');?>',
+                                  '<?= lang('Device_TableHead_Owner');?>',
+                                  '<?= lang('Device_TableHead_Type');?>',       
+                                  '<?= lang('Device_TableHead_Icon');?>',
+                                  '<?= lang('Device_TableHead_Favorite');?>',
+                                  '<?= lang('Device_TableHead_Group');?>',
+                                  '<?= lang('Device_TableHead_FirstSession');?>',
+                                  '<?= lang('Device_TableHead_LastSession');?>',
+                                  '<?= lang('Device_TableHead_LastIP');?>',
+                                  '<?= lang('Device_TableHead_MAC');?>',
+                                  '<?= lang('Device_TableHead_Status');?>',
+                                  '<?= lang('Device_TableHead_MAC_full');?>',
+                                  '<?= lang('Device_TableHead_LastIPOrder');?>',
+                                  '<?= lang('Device_TableHead_Rowid');?>',
+                                  '<?= lang('Device_TableHead_Parent_MAC');?>',
+                                  '<?= lang('Device_TableHead_Connected_Devices');?>',
+                                  '<?= lang('Device_TableHead_Location');?>',
+                                  '<?= lang('Device_TableHead_Vendor');?>'
+                                ];
 
-  // query data
-  getDevicesTotals();
-  getDevicesList (deviceStatus);
+      html = '';
+                                  
+      for(index = 0; index < tableColumnOrder.length; index++)
+      {
+        html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
+      }
+
+      $('#tableDevices tr').html(html);   
+
+      // get parameter value
+      $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
+        var result = JSON.parse(data);
+
+        result = parseInt(result, 10)
+
+        if (Number.isInteger (result) ) {
+            tableRows = result;  
+        }
+
+        // get parameter value
+        $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
+          var result = JSON.parse(data);
+          result = JSON.parse(result);
+
+          
+
+          if (Array.isArray (result) ) {
+            tableOrder = result;
+          }
+
+          // Initialize components with parameters
+          initializeDatatable();
+
+          // query data
+          getDevicesTotals();
+          getDevicesList (deviceStatus);
+        });
+      });
+    });
+   });
 }
 
 // -----------------------------------------------------------------------------
