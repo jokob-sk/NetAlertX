@@ -10,7 +10,7 @@ If you wish to develop a plugin, please check the existing plugin structure.
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration including the settings available to the user. |
   | `script.py` |  yes | The Python script itself |
-  | `last_result.log` | yes | The file used to interface between PiAlert and the plugin (script). Should contain a set of testing data. |
+  | `last_result.log` | yes | The file used to interface between PiAlert and the plugin (script).  |
   | `script.log` | no | Logging output (recommended) |
   | `README.md` | no | Amy setup considerations or overview |
 
@@ -30,7 +30,7 @@ Used to interface between PiAlert and the plugin (script). After every scan it s
 
   | Order | Represented Column | Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
-  | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. Should be UNIQUE in the context of the last result (so in `last_result.log`) |
+  | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
   | 1 | `Object_SecondaryID` | no | Optionalsecondary ID to create a relationship beween other entities, such as a MAC address |
   | 2 | `DateTime` | yes | When the event occured in the format `2023-01-02 15:56:30` |
   | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For example IP address |

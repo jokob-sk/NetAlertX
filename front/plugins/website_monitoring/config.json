@@ -40,8 +40,22 @@
             
         },
         {
+            "type": "FORCE_REPORT",
+            "default_value": false,
+            "options": [],
+            "name" : {
+                "en_us" : "Schedule"
+            },
+            "description": 
+                {
+                    "en_us" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_TIMEOUT\"><code>WEBMON_TIMEOUT</code> setting</a>."
+                }
+            
+        },
+        {
             "type": "RUN_SCHD",
             "default_value":"0 2 * * *",
+            "options": [],
             "name" : {
                 "en_us" : "Schedule"
             },
@@ -54,6 +68,7 @@
         {
             "type": "API_SQL",
             "default_value":"SELECT * FROM plugin_website_monitor",
+            "options": [],
             "name" : {
                 "en_us" : "API endpoint"
             },
@@ -66,6 +81,7 @@
         {
             "type": "TIMEOUT",
             "default_value":5,
+            "options": [],
             "name" : {
                 "en_us" : "Run timeout"
             },
@@ -90,6 +106,7 @@
         {
             "type": "ARGS",
             "default_value":"",
+            "options": [],
             "name" : {
                 "en_us" : "Run timeout"
             },
