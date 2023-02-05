@@ -18,6 +18,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 import sys
+from collections import namedtuple
 import subprocess
 import os
 import re
@@ -57,6 +58,7 @@ pialertPath = '/home/pi/pialert'
 logPath     = pialertPath + '/front/log'
 confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
+pluginsPath =  pialertPath + '/front/plugins'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 
@@ -398,19 +400,22 @@ def importConfig ():
     API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')    
     API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
     API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
-    
-    # Insert settings into the DB    
-    sql.execute ("DELETE FROM Settings")    
-    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
 
-    # Used to determine the next import
-    lastTimeImported = time.time()
+    #Plugins
+    plugins = get_plugins_configs()
 
-    # Used to display a message in the UI when old (outdated) settings are loaded    
-    initOrSetParam("Back_Settings_Imported",(round(time.time() * 1000),) )    
-    
-    commitDB()
+    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins) ) 
+    for plugin in  plugins:
+        file_print('      ---------------------------------------------') 
+        file_print('      Name       : ', plugin.display_name ) 
+        file_print('      Description: ', plugin.description.en_us ) 
+        
+        prefix = plugin.settings_short_prefix        
+
+        for set in plugin.settings:     
+            codeName = prefix + "_" + set.type       
+            ccd(codeName, set.default_value , c_d, set.name.en_us, get_setting_type(set), str(set.options), prefix)   
+
 
     # Update scheduler
     global tz, mySchedules
@@ -435,6 +440,19 @@ def importConfig ():
 
     # Format and prepare the list of subnets
     updateSubnets()
+
+    # Insert settings into the DB    
+    sql.execute ("DELETE FROM Settings")    
+    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
+         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
+
+    # Used to determine the next import
+    lastTimeImported = time.time()
+
+    # Is used to display a message in the UI when old (outdated) settings are loaded    
+    initOrSetParam("Back_Settings_Imported",(round(time.time() * 1000),) )    
+    
+    commitDB()
 
     file_print('[', timeNow(), '] Config: Imported new config')  
 
@@ -3458,6 +3476,38 @@ def isNewVersion():
 
     return newVersionAvailable
 
+
+#-------------------------------------------------------------------------------
+# Plugins
+#-------------------------------------------------------------------------------
+def get_plugins_configs():
+
+    plugins = []
+
+    for root, dirs, files in os.walk(pluginsPath):
+        for d in dirs:            # Loop over directories, not files
+            
+            # filelist.append(os.path.join(root, d))
+
+            plugins.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
+    return plugins
+
+#-------------------------------------------------------------------------------
+def get_setting_type(setting):
+    if setting.type in ['RUN']:
+        return 'selecttext'
+    if setting.type in ['ENABLE', 'FORCE_REPORT']:
+        return 'boolean'
+    if setting.type in ['TIMEOUT', 'RUN_TIMEOUT']:
+        return 'integer'
+    if setting.type in ['NOTIFY_ON']:
+        return 'multiselect'
+
+    return 'text'
+
+#-------------------------------------------------------------------------------
+def custom_plugin_decoder(pluginDict):
+    return namedtuple('X', pluginDict.keys())(*pluginDict.values())
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling

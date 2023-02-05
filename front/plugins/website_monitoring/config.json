@@ -27,6 +27,19 @@
     },
     "settings":[
         {
+            "type": "ENABLE",
+            "default_value":"False",
+            "options": [],
+            "name" : {
+                "en_us" : "Enable plugin"
+            },
+            "description": 
+                {
+                    "en_us" : "Enable a regular scan of your services. You need to enable this setting for anything to be executed regarding this plugin."
+                }
+            
+        },
+        {
             "type": "RUN",
             "default_value":"none",
             "options": ["none","once","schedule"],
@@ -79,7 +92,7 @@
             
         },
         {
-            "type": "TIMEOUT",
+            "type": "RUN_TIMEOUT",
             "default_value":5,
             "options": [],
             "name" : {
