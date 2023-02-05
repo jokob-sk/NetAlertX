@@ -314,7 +314,7 @@ def importConfig ():
     TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
     PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports']", 'General')
+    INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports', 'plugins']", 'General')
     SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', 5 , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')
     DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
@@ -3042,6 +3042,38 @@ def upgradeDB ():
         PRIMARY KEY("Index" AUTOINCREMENT)
         );      
         """)
+
+    # Plugin state
+    sql_Plugins_State = """ CREATE TABLE IF NOT EXISTS Plugins_State(
+                        "Index"	          INTEGER,
+                        Plugin TEXT NOT NULL,
+                        Object_PrimaryID TEXT NOT NULL,
+                        Object_SecondaryID TEXT NOT NULL,
+                        DateTime TEXT NOT NULL,                        
+                        Watched_Value1 TEXT NOT NULL,
+                        Watched_Value2 TEXT NOT NULL,
+                        Watched_Value3 TEXT NOT NULL,
+                        Watched_Value4 TEXT NOT NULL,
+                        Extra TEXT NOT NULL,
+                        PRIMARY KEY("Index" AUTOINCREMENT)
+                    ); """
+    # sql.execute(sql_Plugins_State)
+
+    # Plugin execution results
+    sql_Plugin_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
+                        "Index"	          INTEGER,
+                        Plugin TEXT NOT NULL,
+                        Object_PrimaryID TEXT NOT NULL,
+                        Object_SecondaryID TEXT NOT NULL,
+                        DateTime TEXT NOT NULL,                        
+                        Watched_Value1 TEXT NOT NULL,
+                        Watched_Value2 TEXT NOT NULL,
+                        Watched_Value3 TEXT NOT NULL,
+                        Watched_Value4 TEXT NOT NULL,
+                        Processed TEXT NOT NULL,                        
+                        PRIMARY KEY("Index" AUTOINCREMENT)
+                    ); """
+    # sql.execute(sql_Plugin_Events)
     
     commitDB ()
 
