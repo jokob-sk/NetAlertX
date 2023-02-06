@@ -482,7 +482,8 @@ $lang['en_us'] = array(
 
 
 //General
-'General_settings_group' => '<i class="fa fa-gears"></i> General',
+'General_display_name' => 'General',
+'General_icon' => '<i class="fa fa-gears"></i>',
 'ENABLE_ARPSCAN_name' => 'Enable ARP scan',
 'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a onclick="toggleAllSettings()" href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
@@ -519,7 +520,8 @@ the arp-scan will take hours to complete instead of seconds.
 'UI_LANG_description' => 'Select the preferred UI language.',
 
 //Email
-'Email_settings_group' => '<i class="fa fa-at"></i> Email',
+'Email_display_name' => 'Email',
+'Email_icon' => '<i class="fa fa-at"></i>',
 'REPORT_MAIL_name' => 'Enable email',
 'REPORT_MAIL_description' => 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below.',
 'SMTP_SERVER_name' => 'SMTP server URL',
@@ -542,7 +544,8 @@ the arp-scan will take hours to complete instead of seconds.
 'REPORT_FROM_description' => 'Notification email subject line.',
 
 //Webhooks
-'Webhooks_settings_group' => '<i class="fa fa-circle-nodes"></i> Webhooks',
+'Webhooks_display_name' => 'Webhooks',
+'Webhooks_icon' => '<i class="fa fa-circle-nodes"></i>',
 'REPORT_WEBHOOK_name' => 'Enable Webhooks',
 'REPORT_WEBHOOK_description' => 'Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href="https://n8n.io/" target="_blank">n8n</a> to name a few. Check out this simple <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md" target="_blank">n8n guide here</a> to get started. If enabled, configure related settings below.',
 'WEBHOOK_URL_name' => 'Target URL',
@@ -553,7 +556,8 @@ the arp-scan will take hours to complete instead of seconds.
 'WEBHOOK_REQUEST_METHOD_description' => 'The HTTP request method to be used for the webhook call.',
 
 // Apprise
-'Apprise_settings_group' => '<i class="fa fa-bullhorn"></i> Apprise',
+'Apprise_display_name' => 'Apprise',
+'Apprise_icon' => '<i class="fa fa-bullhorn"></i>',
 'REPORT_APPRISE_name' => 'Enable Apprise',
 'REPORT_APPRISE_description' => 'Enable sending notifications via <a target="_blank" href="https://hub.docker.com/r/caronc/apprise">Apprise</a>.',
 'APPRISE_HOST_name' => 'Apprise host URL',
@@ -562,7 +566,8 @@ the arp-scan will take hours to complete instead of seconds.
 'APPRISE_URL_description' => 'Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>.',
 
 // NTFY
-'NTFY_settings_group' => '<i class="fa fa-terminal"></i> NTFY',
+'NTFY_display_name' => 'NTFY',
+'NTFY_icon' => '<i class="fa fa-terminal"></i>',
 'REPORT_NTFY_name' => 'Enable NTFY',
 'REPORT_NTFY_description' => 'Enable sending notifications via <a target="_blank" href="https://ntfy.sh/">NTFY</a>.',
 'NTFY_HOST_name' => 'NTFY host URL',
@@ -575,7 +580,8 @@ the arp-scan will take hours to complete instead of seconds.
 'NTFY_PASSWORD_description' => 'Enter password if you need (host) an instance with enabled authetication.',
 
 // Pushsafer
-'PUSHSAFER_settings_group' => '<i class="fa fa-bell"></i> Pushsafer',
+'PUSHSAFER_display_name' => 'Pushsafer',
+'PUSHSAFER_icon' => '<i class="fa fa-bell"></i>',
 'REPORT_PUSHSAFER_name' => 'Enable Pushsafer',
 'REPORT_PUSHSAFER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.',
 'PUSHSAFER_TOKEN_name' => 'Pushsafer token',
@@ -585,7 +591,8 @@ the arp-scan will take hours to complete instead of seconds.
 
 
 // MQTT
-'MQTT_settings_group' => '<i class="fa fa-square-rss"></i> MQTT',
+'MQTT_display_name' => 'MQTT',
+'MQTT_icon' => '<i class="fa fa-square-rss"></i>',
 'REPORT_MQTT_name' => 'Enable MQTT',
 'REPORT_MQTT_description' => 'Enable sending notifications via <a target="_blank" href="https://www.home-assistant.io/integrations/mqtt/">MQTT</a> to your Home Assistance instance.',
 'MQTT_BROKER_name' => 'MQTT broker URL',
@@ -602,7 +609,8 @@ the arp-scan will take hours to complete instead of seconds.
 'MQTT_DELAY_SEC_description' => 'A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn\'t affect subsequent scans or notifications.',
 
 //DynDNS
-'DynDNS_settings_group' => '<i class="fa fa-globe"></i> DynDNS',
+'DynDNS_display_name' => 'DynDNS',
+'DynDNS_icon' => '<i class="fa fa-globe"></i>',
 'DDNS_ACTIVE_name' => 'Enable DynDNS',
 'DDNS_ACTIVE_description' => '',
 'DDNS_DOMAIN_name' => 'DynDNS domain URL',
@@ -615,14 +623,16 @@ the arp-scan will take hours to complete instead of seconds.
 'DDNS_UPDATE_URL_description' => 'Update URL starting with <code>http://</code> or <code>https://</code>.',
 
 // PiHole
-'PiHole_settings_group' => '<i class="fa fa-seedling"></i> PiHole',
+'PiHole_display_name' => 'PiHole',
+'PiHole_icon' => '<i class="fa fa-seedling"></i>',
 'PIHOLE_ACTIVE_name' => 'Enable PiHole mapping',
 'PIHOLE_ACTIVE_description' => 'You need to map<code>:/etc/pihole/pihole-FTL.db</code> in the <code>docker-compose.yml</code> file if you enable this setting.',
 'DHCP_ACTIVE_name' => 'Enable PiHole DHCP',
 'DHCP_ACTIVE_description' => 'You need to map <code>:/etc/pihole/dhcp.leases</code> in the <code>docker-compose.yml</code> file if you enable this setting.',
 
 // Pholus
-'Pholus_settings_group' => '<i class="fa fa-search"></i> Pholus',
+'Pholus_display_name' => 'Pholus',
+'Pholus_icon' => '<i class="fa fa-search"></i>',
 'PHOLUS_ACTIVE_name' => 'Cycle run',
 'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. If enabled this will execute the scan before every network scan cycle until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Please be aware it can spam the network with unnecessary traffic. Depends on the <a onclick="toggleAllSettings()" href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a>. For a scheduled or one-off scan, check the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>.',
 'PHOLUS_TIMEOUT_name' => 'Cycle run timeout',
@@ -640,7 +650,8 @@ the arp-scan will take hours to complete instead of seconds.
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
 
 // Nmap
-'Nmap_settings_group' => '<i class="fa fa-ethernet"></i> Nmap',
+'Nmap_display_name' => 'Nmap',
+'Nmap_icon' => '<i class="fa fa-ethernet"></i>',
 'NMAP_ACTIVE_name' => 'Cycle run',
 'NMAP_ACTIVE_description' => 'If enabled this will execute a scan on a newly found device. For a scheduled or one-off scan, check the <a href="#NMAP_RUN"><code>NMAP_RUN</code> setting</a>.',
 'NMAP_TIMEOUT_name' => 'Run timeout',
@@ -653,7 +664,8 @@ the arp-scan will take hours to complete instead of seconds.
 'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
 // API
-'API_settings_group' => '<i class="fa fa-arrow-down-up-across-line"></i> API',
+'API_display_name' => 'API',
+'API_icon' => '<i class="fa fa-arrow-down-up-across-line"></i>',
 'ENABLE_API_name' => 'Enable API',
 'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name</code> url.',
 'API_RUN_name' => 'Scheduling updates',

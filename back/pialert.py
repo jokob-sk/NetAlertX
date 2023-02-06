@@ -269,7 +269,7 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
 def importConfig (): 
 
     # Specify globals so they can be overwritten with the new config
-    global lastTimeImported, mySettings
+    global lastTimeImported, mySettings, plugins
     # General
     global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
     # Email
@@ -404,17 +404,24 @@ def importConfig ():
     #Plugins
     plugins = get_plugins_configs()
 
-    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins) ) 
-    for plugin in  plugins:
-        file_print('      ---------------------------------------------') 
-        file_print('      Name       : ', plugin.display_name ) 
-        file_print('      Description: ', plugin.description.en_us ) 
-        
-        prefix = plugin.settings_short_prefix        
+    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.dict) ) 
 
-        for set in plugin.settings:     
-            codeName = prefix + "_" + set.type       
-            ccd(codeName, set.default_value , c_d, set.name.en_us, get_setting_type(set), str(set.options), prefix)   
+    
+    for plugin in plugins.list:
+        file_print('      ---------------------------------------------') 
+        file_print('      Name       : ', plugin["display_name"][0]["string"] ) 
+        file_print('      Description: ', plugin["description"][0]["string"] ) 
+        
+        pref = plugin["settings_short_prefix"]    
+        
+        collect_lang_strings(plugin, pref)
+
+        
+        for set in plugin["settings"]:     
+            codeName = pref + "_" + set["type"]       
+            ccd(codeName, set["default_value"] , c_d, set["name"][0]["string"], get_setting_type(set), str(set["options"]), pref)
+
+            collect_lang_strings(set,  pref + "_" + set["type"])
 
 
     # Update scheduler
@@ -3075,7 +3082,7 @@ def upgradeDB ():
                         Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    # sql.execute(sql_Plugins_State)
+    sql.execute(sql_Plugins_State)
 
     # Plugin execution results
     sql_Plugin_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
@@ -3091,7 +3098,18 @@ def upgradeDB ():
                         Processed TEXT NOT NULL,                        
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    # sql.execute(sql_Plugin_Events)
+    sql.execute(sql_Plugin_Events)
+
+    # Dynamically generated language strings
+    sql.execute("DROP TABLE Language_Strings;") 
+    sql.execute(""" CREATE TABLE IF NOT EXISTS Language_Strings(
+                        "Index"	          INTEGER,
+                        Language_Code TEXT NOT NULL,
+                        String_Key TEXT NOT NULL,
+                        String_Value TEXT NOT NULL,
+                        Extra TEXT NOT NULL,                                                    
+                        PRIMARY KEY("Index" AUTOINCREMENT)
+                    ); """)   
     
     commitDB ()
 
@@ -3482,25 +3500,49 @@ def isNewVersion():
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
 
-    plugins = []
+    pluginsDict = []
+    pluginsList = []
 
     for root, dirs, files in os.walk(pluginsPath):
         for d in dirs:            # Loop over directories, not files
-            
-            # filelist.append(os.path.join(root, d))
+            pluginsDict.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
+            pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
-            plugins.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
-    return plugins
+    return plugins_struct(pluginsDict, pluginsList)
+
+#-------------------------------------------------------------------------------
+class plugins_struct:
+    def __init__(self, dict, list):
+        self.dict = dict
+        self.list = list
+
+#-------------------------------------------------------------------------------
+def collect_lang_strings(json, pref):
+
+    for prop in json["localized"]:                   
+        for language_string in json[prop]:
+            import_language_string(language_string["language_code"], pref + "_" + prop, language_string["string"])   
+        
+
+#-------------------------------------------------------------------------------
+def import_language_string(code, key, value, extra = ""):
+
+    sql.execute ("""INSERT INTO Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra))) 
+
+    commitDB ()
 
 #-------------------------------------------------------------------------------
 def get_setting_type(setting):
-    if setting.type in ['RUN']:
+
+    type = setting["type"]
+
+    if type in ['RUN']:
         return 'selecttext'
-    if setting.type in ['ENABLE', 'FORCE_REPORT']:
+    if type in ['ENABLE', 'FORCE_REPORT']:
         return 'boolean'
-    if setting.type in ['TIMEOUT', 'RUN_TIMEOUT']:
+    if type in ['TIMEOUT', 'RUN_TIMEOUT']:
         return 'integer'
-    if setting.type in ['NOTIFY_ON']:
+    if type in ['NOTIFY_ON']:
         return 'multiselect'
 
     return 'text'

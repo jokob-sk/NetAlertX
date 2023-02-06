@@ -21,7 +21,7 @@ More on specific files below.
 
 Used to interface between PiAlert and the plugin (script). After every scan it should contain only the results from the latest scan/execution. 
 
-- The format is a `csv`-like file with the pipe `|` separator. 8 (eight) values need to be supplied, so every line needs to contain 7 pipe separators. Empty values arerepresented by `null`  
+- The format is a `csv`-like file with the pipe `|` separator. 8 (eight) values need to be supplied, so every line needs to contain 7 pipe separators. Empty values are represented by `null`  
 - Don't render "headers" for these "columns"
 - Every scan result / event entry needs to be on a new line
 - You can find which "columns" need to be present in the script results and if the value is required below. 
