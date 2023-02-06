@@ -14,6 +14,17 @@ $confPath = "../config/pialert.conf";
 
 checkPermissions([$dbPath, $confPath]);
 
+// get settings from the API json file
+
+// path to your JSON file
+$file = '../front/api/table_settings.json'; 
+// put the content of the file in a variable
+$data = file_get_contents($file); 
+// JSON decode
+$settingsJson = json_decode($data); 
+
+// get settings from the DB
+
 global $db;
 
 $result = $db->query("SELECT * FROM Settings");  
@@ -72,7 +83,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         $html = $html.'<div  class=" box panel panel-default">
                           <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
                             <div class="panel-heading">                              
-                                <h4 class="panel-title">'.lang($group.'_settings_group').'</h4>                              
+                                <h4 class="panel-title">'.lang($group.'_icon')." ".lang($group.'_display_name').'</h4>                              
                             </div>
                           </a>
                           <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 
@@ -280,15 +291,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <script>
 
   // number of settings has to be equal to
-  var settingsNumber = 68;
+
+  // display the name of the first person
+  // echo $settingsJson[0]->name;
+  var settingsNumber = <?php echo count($settingsJson->data)?>;
 
   // Wrong number of settings processing
   if(<?php echo count($settings)?> != settingsNumber) 
   {
     showModalOk('WARNING', "<?= lang("settings_missing")?>");    
   }
-
-
   
   // ---------------------------------------------------------
   function addInterface()

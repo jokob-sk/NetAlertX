@@ -50,15 +50,18 @@ sql_devices_stats =  "SELECT Online_Devices as online, Down_Devices as down, All
 sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
 sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
+sql_settings = "SELECT  * FROM Settings"
 
 #===============================================================================
 # PATHS
 #===============================================================================
 pialertPath = '/home/pi/pialert'
-logPath     = pialertPath + '/front/log'
+
 confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
-pluginsPath =  pialertPath + '/front/plugins'
+
+pluginsPath  = pialertPath + '/front/plugins'
+logPath      = pialertPath + '/front/log'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
 
@@ -151,7 +154,7 @@ def checkPermissionsOK():
     file_print('------------------------------------------------')
 
     return dbR_access and dbW_access and confR_access and confW_access 
-
+#-------------------------------------------------------------------------------
 def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
@@ -173,6 +176,7 @@ def fixPermissions():
 
 checkPermissionsOK() # Initial check
 
+#-------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
@@ -255,6 +259,7 @@ def commitDB ():
 def ccd(key, default, config, name, inputtype, options, group, events=[], desc = "", regex = ""):
     result = default
 
+    # use existing value if already supplied, otehrwise default value is used
     if key in config:
          result =  config[key]
 
@@ -266,10 +271,10 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
 
 #-------------------------------------------------------------------------------
 
-def importConfig (): 
+def importConfigs (): 
 
     # Specify globals so they can be overwritten with the new config
-    global lastTimeImported, mySettings
+    global lastTimeImported, mySettings, plugins
     # General
     global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
     # Email
@@ -293,7 +298,7 @@ def importConfig ():
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     # API
-    global ENABLE_API, API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
+    global API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
     
     mySettings = [] # reset settings
     # get config file
@@ -394,52 +399,72 @@ def importConfig ():
     NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', '0 2 * * *' , c_d, 'Nmap schedule', 'text', '', 'Nmap')
     NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
 
-    # API 
-    ENABLE_API = ccd('ENABLE_API', True , c_d, 'Enable API', 'boolean', '', 'API')    
+    # API     
     API_RUN = ccd('API_RUN', 'schedule' , c_d, 'API execution', 'selecttext', "['none', 'interval', 'schedule']", 'API')
     API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')    
     API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
     API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
 
-    #Plugins
-    plugins = get_plugins_configs()
-
-    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins) ) 
-    for plugin in  plugins:
-        file_print('      ---------------------------------------------') 
-        file_print('      Name       : ', plugin.display_name ) 
-        file_print('      Description: ', plugin.description.en_us ) 
-        
-        prefix = plugin.settings_short_prefix        
-
-        for set in plugin.settings:     
-            codeName = prefix + "_" + set.type       
-            ccd(codeName, set.default_value , c_d, set.name.en_us, get_setting_type(set), str(set.options), prefix)   
-
-
-    # Update scheduler
-    global tz, mySchedules
+    # Prepare scheduler
+    global tz, mySchedules, plugins
 
     #  Init timezone in case it changed
     tz = timezone(TIMEZONE) 
 
     # reset schedules
-    mySchedules = []
-           
+    mySchedules = [] 
+
     # init pholus schedule
     pholusSchedule = Cron(PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))    
-    mySchedules.append(serviceSchedule("pholus", pholusSchedule, pholusSchedule.next(), False))
+    mySchedules.append(schedule_class("pholus", pholusSchedule, pholusSchedule.next(), False))
 
     # init nmap schedule
     nmapSchedule = Cron(NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
-    mySchedules.append(serviceSchedule("nmap", nmapSchedule, nmapSchedule.next(), False))
+    mySchedules.append(schedule_class("nmap", nmapSchedule, nmapSchedule.next(), False))
 
     # init API schedule
     apiSchedule = Cron(API_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
-    mySchedules.append(serviceSchedule("api", apiSchedule, apiSchedule.next(), False))
+    mySchedules.append(schedule_class("api", apiSchedule, apiSchedule.next(), False))
 
     # Format and prepare the list of subnets
     updateSubnets()
+
+    # Plugins START
+    # -----------------
+    plugins = get_plugins_configs()
+
+    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.dict) )
+
+    #  handle plugins
+    for plugin in plugins.list:
+        print_plugin_info(plugin, ['display_name','description'])
+        
+        pref = plugin["settings_short_prefix"]    
+        
+        # collect plugin level language strings
+        collect_lang_strings(plugin, pref)
+        
+        for set in plugin["settings"]:
+            setType = set["type"]
+            # Setting code name / key  
+            key = pref + "_" + setType 
+
+            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], get_form_control(set), str(set["options"]), pref)
+
+            # Save the user defined value into the object
+            set["value"] = v
+
+            # Setup schedules
+            if setType == 'RUN_SCHD':
+                newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(tz))
+                mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+
+            # Collect settings related language strings
+            collect_lang_strings(set,  pref + "_" + set["type"])
+    # -----------------
+    # Plugins END
+           
+
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -454,6 +479,9 @@ def importConfig ():
     
     commitDB()
 
+    #  update only the settings datasource
+    update_api(False, ["settings"])
+
     file_print('[', timeNow(), '] Config: Imported new config')  
 
 #===============================================================================
@@ -461,6 +489,7 @@ def importConfig ():
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
+plugins_once_run = False
 
 # timestamps of last execution times
 startTime = time_started
@@ -480,7 +509,7 @@ def main ():
     # Initialize global variables
     global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_API_update
     # second set of global variables
-    global startTime, log_timestamp, sql_connection, sql
+    global startTime, log_timestamp, sql_connection, sql, plugins_once_run
 
     # DB
     sql_connection = None
@@ -492,14 +521,19 @@ def main ():
 
     # Upgrade DB if needed
     upgradeDB()
-    
+
     while True:
 
         # update time started
         time_started = datetime.datetime.now()
 
-        # re-load user configuration
-        importConfig()         
+        # re-load user configuration and plugins
+        importConfigs()       
+
+        # Handle plugins executed ONCE
+        if plugins_once_run == False:
+            run_plugin_script('once')  
+            plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
         check_and_run_event()
@@ -819,8 +853,8 @@ def cleanup_database ():
     file_print('[', startTime, '] Upkeep Database:' )
 
     # Cleanup Online History
-    file_print('    Online_History: Delete all older than 1 day')
-    sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-1 day')")
+    file_print('    Online_History: Delete all older than 3 days')
+    sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-3 day')")
     file_print('    Optimize Database')
 
     # Cleanup Events
@@ -3075,7 +3109,7 @@ def upgradeDB ():
                         Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    # sql.execute(sql_Plugins_State)
+    sql.execute(sql_Plugins_State)
 
     # Plugin execution results
     sql_Plugin_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
@@ -3091,7 +3125,26 @@ def upgradeDB ():
                         Processed TEXT NOT NULL,                        
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    # sql.execute(sql_Plugin_Events)
+    sql.execute(sql_Plugin_Events)
+
+    # Dynamically generated language strings
+    # indicates, if Language_Strings table is available 
+    languageStringsMissing = sql.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='Language_Strings'; 
+    """).fetchone() == None
+    
+    if languageStringsMissing == False:
+        sql.execute("DROP TABLE Language_Strings;") 
+
+    sql.execute(""" CREATE TABLE IF NOT EXISTS Language_Strings(
+                        "Index"	          INTEGER,
+                        Language_Code TEXT NOT NULL,
+                        String_Key TEXT NOT NULL,
+                        String_Value TEXT NOT NULL,
+                        Extra TEXT NOT NULL,                                                    
+                        PRIMARY KEY("Index" AUTOINCREMENT)
+                    ); """)   
     
     commitDB ()
 
@@ -3136,11 +3189,7 @@ def to_binary_sensor(input):
 #===============================================================================
 # API
 #===============================================================================
-def update_api(isNotification = False):
-
-    #  Proceed only if enabled in settings
-    if ENABLE_API == False:
-        return
+def update_api(isNotification = False, updateOnlyDataSources = []):
 
     file_print('     [API] Updating files in /front/api')    
     folder = pialertPath + '/front/api/'
@@ -3157,15 +3206,18 @@ def update_api(isNotification = False):
         ["nmap_scan", sql_nmap_scan_all],
         ["pholus_scan", sql_pholus_scan_all],
         ["events_pending_alert", sql_events_pending_alert],
+        ["settings", sql_settings],
         ["custom_endpoint", API_CUSTOM_SQL]
     ]
 
     # Save selected database tables
     for dsSQL in dataSourcesSQLs:
 
-        json_string = get_table_as_json(dsSQL[1]).json
+        if updateOnlyDataSources == [] or dsSQL[0] in updateOnlyDataSources:
 
-        write_file(folder + 'table_' + dsSQL[0] + '.json'  , json.dumps(json_string))     
+            json_string = get_table_as_json(dsSQL[1]).json
+
+            write_file(folder + 'table_' + dsSQL[0] + '.json'  , json.dumps(json_string))     
 
 #-------------------------------------------------------------------------------
 def get_table_as_json(sqlQuery):
@@ -3482,25 +3534,49 @@ def isNewVersion():
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
 
-    plugins = []
+    pluginsDict = []
+    pluginsList = []
 
     for root, dirs, files in os.walk(pluginsPath):
         for d in dirs:            # Loop over directories, not files
-            
-            # filelist.append(os.path.join(root, d))
+            pluginsDict.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
+            pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
-            plugins.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
-    return plugins
+    return plugins_class(pluginsDict, pluginsList)
 
 #-------------------------------------------------------------------------------
-def get_setting_type(setting):
-    if setting.type in ['RUN']:
+class plugins_class:
+    def __init__(self, dict, list):
+        self.dict = dict
+        self.list = list
+
+#-------------------------------------------------------------------------------
+def collect_lang_strings(json, pref):
+
+    for prop in json["localized"]:                   
+        for language_string in json[prop]:
+            import_language_string(language_string["language_code"], pref + "_" + prop, language_string["string"])   
+        
+
+#-------------------------------------------------------------------------------
+def import_language_string(code, key, value, extra = ""):
+
+    sql.execute ("""INSERT INTO Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra))) 
+
+    commitDB ()
+
+#-------------------------------------------------------------------------------
+def get_form_control(setting):
+
+    type = setting["type"]
+
+    if type in ['RUN']:
         return 'selecttext'
-    if setting.type in ['ENABLE', 'FORCE_REPORT']:
+    if type in ['ENABLE', 'FORCE_REPORT']:
         return 'boolean'
-    if setting.type in ['TIMEOUT', 'RUN_TIMEOUT']:
+    if type in ['TIMEOUT', 'RUN_TIMEOUT']:
         return 'integer'
-    if setting.type in ['NOTIFY_ON']:
+    if type in ['WATCH', 'LIST']:
         return 'multiselect'
 
     return 'text'
@@ -3510,15 +3586,64 @@ def custom_plugin_decoder(pluginDict):
     return namedtuple('X', pluginDict.keys())(*pluginDict.values())
 
 #-------------------------------------------------------------------------------
+def run_plugin_script(runType):
+    
+    global plugins
+
+    for plugin in plugins.list:
+        set = get_plugin_setting(plugin, "RUN")
+        if set['value'] == runType:
+            file_print('      [Plugin] Run')
+            print_plugin_info(plugin, ['display_name'])
+            file_print('      [Plugin] CMD', get_plugin_setting(plugin, "CMD")["value"])
+                        
+            
+
+#-------------------------------------------------------------------------------
+def get_plugin_setting(plugin, key):
+    
+    for set in plugin['settings']:
+        if set["type"] == key:
+          return set  
+
+
+#-------------------------------------------------------------------------------
+def get_plugin_string(props, el):
+
+    result = ''
+
+    if el in props['localized']:
+        for str in props[el]:
+            if str['language_code'] == 'en_us':
+                result = str['string']
+        
+        if result == '':
+            result = 'en_us string missing'
+
+    else:
+        result = props[el]
+    
+    return result
+
+#-------------------------------------------------------------------------------
+def print_plugin_info(plugin, elements = ['display_name']):
+
+    file_print('      ---------------------------------------------') 
+
+    for el in elements:
+        res = get_plugin_string(plugin, el)
+        file_print('      ', el ,': ', res) 
+
+#-------------------------------------------------------------------------------
 # Cron-like Scheduling
 #-------------------------------------------------------------------------------
-class serviceSchedule:
+class schedule_class:
     def __init__(self, service, scheduleObject, last_next_schedule, was_last_schedule_used, last_run = 0):
         self.service = service
         self.scheduleObject = scheduleObject
         self.last_next_schedule = last_next_schedule
         self.last_run = last_run
-        self.was_last_schedule_used = was_last_schedule_used  
+        self.was_last_schedule_used = was_last_schedule_used          
     def runScheduleCheck(self):
 
         result = False 
