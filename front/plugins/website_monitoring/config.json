@@ -1,6 +1,6 @@
 {
     "code_name": "website_monitor",
-    "settings_short_prefix": "WEBMON",
+    "unique_prefix": "WEBMON",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",

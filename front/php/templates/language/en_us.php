@@ -347,6 +347,7 @@ $lang['en_us'] = array(
 'BackDevices_DBTools_ImportCSV' => 'The devices from the CSV file were imported successfully.',
 'BackDevices_DBTools_ImportCSVError' => 'The CSV file couldn\'t be imported. Make sure the format is correct.',
 'BackDevices_DBTools_ImportCSVMissing' => 'The CSV file couldn\'t be found under <b>/config/devices.csv.</b>',
+'BackDevices_Device_UpdDevError' => 'Error updating devices, try later. The database is probable locked due to an ongoing task.',
 
 
 //////////////////////////////////////////////////////////////////

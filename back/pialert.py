@@ -51,6 +51,15 @@ sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
 sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
+sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
+                                                                WHERE eve_PendingAlertEmail = 1
+                                                                AND eve_EventType = 'New Device'
+                                    ORDER BY eve_DateTime ) t1
+                                    LEFT JOIN 
+                                    (
+                                        SELECT dev_Name, dev_MAC as dev_MAC_t2 FROM Devices 
+                                    ) t2 
+                                    ON t1.dev_MAC = t2.dev_MAC_t2"""
 
 #===============================================================================
 # PATHS
@@ -439,7 +448,7 @@ def importConfigs ():
     for plugin in plugins.list:
         print_plugin_info(plugin, ['display_name','description'])
         
-        pref = plugin["settings_short_prefix"]    
+        pref = plugin["unique_prefix"]    
         
         # collect plugin level language strings
         collect_lang_strings(plugin, pref)
@@ -532,7 +541,7 @@ def main ():
 
         # Handle plugins executed ONCE
         if plugins_once_run == False:
-            run_plugin_script('once')  
+            run_plugin_scripts('once')  
             plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
@@ -556,9 +565,13 @@ def main ():
 
             # Timestamp
             startTime = time_started
-            startTime = startTime.replace (microsecond=0)      
+            startTime = startTime.replace (microsecond=0) 
+
+            # Check if any plugins need to run on schedule
+            run_plugin_scripts('schedule') 
 
             # determine run/scan type based on passed time
+            # --------------------------------------------
 
             # check for changes in Internet IP
             if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
@@ -629,23 +642,19 @@ def main ():
             
             # Reporting   
             if cycle in check_report:
-                # Check if new devices need to be scanned with Nmap
-                if NMAP_ACTIVE:
-                    sql.execute ("""SELECT * FROM 
-                                    ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
-                                                                WHERE eve_PendingAlertEmail = 1
-                                                                AND eve_EventType = 'New Device'
-                                    ORDER BY eve_DateTime ) t1
-                                    LEFT JOIN 
-                                    (
-                                        SELECT dev_Name, dev_MAC as dev_MAC_t2 FROM Devices 
-                                    ) t2 
-                                    ON t1.dev_MAC = t2.dev_MAC_t2""")
+                # Check if new devices found
+                sql.execute (sql_new_devices)
+                newDevices = sql.fetchall()
+                commitDB()
+                
+                #  new devices were found
+                if len(newDevices) > 0:
+                    #  run all plugins registered to be run when new devices are found
+                    run_plugin_scripts('on_new_device')
 
-                    newDevices = sql.fetchall()
-                    commitDB()
-                    
-                    performNmapScan(newDevices)
+                    #  Scan newly found devices with Nmap if enabled
+                    if NMAP_ACTIVE and len(newDevices) > 0:
+                        performNmapScan(newDevices)
 
                 # send all configured notifications
                 send_notifications()
@@ -910,6 +919,7 @@ def update_devices_MAC_vendors (pArg = ''):
         update_output = subprocess.check_output (update_args)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
+        file_print('    FAILED: Updating vendors DB ')  
         file_print(e.output)        
 
     # Initialize variables
@@ -1078,6 +1088,9 @@ def scan_network ():
   
     # Commit changes    
     commitDB()
+
+    # Run splugin scripts which are set to run every timne after a scan finished
+    run_plugin_scripts('always_after_scan')
 
     return reporting
 
@@ -2887,7 +2900,7 @@ def mqtt_start():
     # Get all devices
     devices = get_all_devices()
 
-    file_print("        Estimated delay: ", (len(devices) * int(MQTT_DELAY_SEC)), 's ', '(', round((len(devices) * int(MQTT_DELAY_SEC))/60,1) , 'min)' )
+    file_print("        Estimated delay: ", (len(devices) * int(MQTT_DELAY_SEC)*5), 's ', '(', round((len(devices) * int(MQTT_DELAY_SEC))/60,1) , 'min)' )
 
     for device in devices:        
 
@@ -3586,19 +3599,38 @@ def custom_plugin_decoder(pluginDict):
     return namedtuple('X', pluginDict.keys())(*pluginDict.values())
 
 #-------------------------------------------------------------------------------
-def run_plugin_script(runType):
+def run_plugin_scripts(runType):
     
-    global plugins
+    global plugins, tz, mySchedules
+
+    file_print('     [Plugins] Check if any plugins need to be executed on run type: ', runType)
 
     for plugin in plugins.list:
+
+        shouldRun = False
+
         set = get_plugin_setting(plugin, "RUN")
         if set['value'] == runType:
-            file_print('      [Plugin] Run')
-            print_plugin_info(plugin, ['display_name'])
-            file_print('      [Plugin] CMD', get_plugin_setting(plugin, "CMD")["value"])
-                        
-            
+            if runType != "schedule":
+                shouldRun = True
+            elif  runType == "schedule":
+                # run if overdue scheduled time   
+                prefix = plugin["unique_prefix"]
 
+                #  check scheduels if any contains a unique plugin prefix matching the current plugin
+                for schd in mySchedules:
+                    if schd.service == prefix:          
+                        # Check if schedule overdue
+                        shouldRun = schd.runScheduleCheck()  
+                        if shouldRun:
+                            # note the last time the scheduled plugin run was executed
+                            schd.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+
+        if shouldRun:            
+                        
+            print_plugin_info(plugin, ['display_name'])
+            file_print('     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"])
+            
 #-------------------------------------------------------------------------------
 def get_plugin_setting(plugin, key):
     
@@ -3628,11 +3660,11 @@ def get_plugin_string(props, el):
 #-------------------------------------------------------------------------------
 def print_plugin_info(plugin, elements = ['display_name']):
 
-    file_print('      ---------------------------------------------') 
+    file_print('     [Plugins] ---------------------------------------------') 
 
     for el in elements:
         res = get_plugin_string(plugin, el)
-        file_print('      ', el ,': ', res) 
+        file_print('     [Plugins] ', el ,': ', res) 
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling

@@ -1184,7 +1184,7 @@ function overwriteIconType()
     if ($result == TRUE) {
       echo 'OK';
     } else {
-      echo 'KO';
+      echo lang('BackDevices_Device_UpdDevError');
     }
   }
 

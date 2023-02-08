@@ -1623,7 +1623,7 @@ function overwriteIconType () {
 
   var icon = $('#txtIcon').val();
 
-  // Delete device events
+  // Mass update icons
   $.get('php/server/devices.php?action=overwriteIconType&mac='+ mac + '&icon=' + icon, function(msg) {
     showMessage (msg);
   });
