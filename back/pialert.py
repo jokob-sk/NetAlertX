@@ -2900,7 +2900,9 @@ def mqtt_start():
     # Get all devices
     devices = get_all_devices()
 
-    file_print("        Estimated delay: ", (len(devices) * int(MQTT_DELAY_SEC)*5), 's ', '(', round((len(devices) * int(MQTT_DELAY_SEC))/60,1) , 'min)' )
+    sec_delay = len(devices) * int(MQTT_DELAY_SEC)*5
+
+    file_print("        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' )
 
     for device in devices:        
 
@@ -3589,8 +3591,10 @@ def get_form_control(setting):
         return 'boolean'
     if type in ['TIMEOUT', 'RUN_TIMEOUT']:
         return 'integer'
-    if type in ['WATCH', 'LIST']:
+    if type in ['WATCH']:
         return 'multiselect'
+    if type in ['LIST']:
+        return 'text'        
 
     return 'text'
 
@@ -3630,7 +3634,7 @@ def run_plugin_scripts(runType):
                         
             print_plugin_info(plugin, ['display_name'])
             file_print('     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"])
-            
+
 #-------------------------------------------------------------------------------
 def get_plugin_setting(plugin, key):
     

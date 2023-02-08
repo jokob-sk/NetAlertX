@@ -275,24 +275,24 @@ function saveSettings()
     {
       if($group == $setting[0])
       {            
-        if($setting[3] == 'text' or $setting[3] == 'password' or $setting[3] == 'readonly' or $setting[3] == 'selecttext')
+        if($setting[2] == 'text' or $setting[2] == 'password' or $setting[2] == 'readonly' or $setting[2] == 'selecttext')
         {
-          $txt = $txt.$setting[1]."='".$setting[2]."'\n" ; 
-        } elseif($setting[3] == 'integer' or $setting[3] == 'selectinteger')
+          $txt = $txt.$setting[1]."='".$setting[3]."'\n" ; 
+        } elseif($setting[2] == 'integer' or $setting[2] == 'selectinteger')
         {
-          $txt = $txt.$setting[1]."=".$setting[2]."\n" ; 
-        } elseif($setting[3] == 'boolean')
+          $txt = $txt.$setting[1]."=".$setting[3]."\n" ; 
+        } elseif($setting[2] == 'boolean')
         {
           $val = "False";
-          if($setting[2] == 'true')
+          if($setting[3] == 'true')
           {
             $val = "True";
           }
           $txt = $txt.$setting[1]."=".$val."\n" ; 
-        }elseif($setting[3] == 'multiselect' or $setting[3] == 'subnets')
+        }elseif($setting[2] == 'multiselect' or $setting[2] == 'subnets')
         {
           $temp = '[';
-          foreach($setting[2] as $val)
+          foreach($setting[3] as $val)
           {
             $temp = $temp."'". $val."',";
           }

@@ -56,7 +56,7 @@
             "localized": ["name", "description"],
             "name" :[{
                 "language_code":"en_us",
-                "string" : "Run condition"
+                "string" : "When to run"
             }],
             "description": [{
                 "language_code":"en_us",

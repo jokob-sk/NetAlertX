@@ -30,6 +30,7 @@ global $db;
 $result = $db->query("SELECT * FROM Settings");  
 
 // array 
+$lists = array();
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      
@@ -233,6 +234,37 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
               
             }               
+            //  list
+            elseif ($set['Type'] == 'list')
+            {
+
+              $lists[] = array($set['Code_Name']);
+
+              $input = $input.
+              '<div class="row form-group">
+                <div class="col-xs-6">
+                  <input class="form-control" type="text" placeholder="Enter value"/>
+                </div>';
+              // Add interface button
+              $input = $input.
+                '<div class="col-xs-3"><button class="btn btn-primary" onclick="addList'.$set['Code_Name'].'()" >Add</button></div>
+                </div>';
+              
+              // list all interfaces as options
+              $input = $input.'<div class="form-group">
+                <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
+                
+              $options = createArray($set['Value']);                
+
+              foreach ($options as $option) {                                       
+
+                $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
+              }                
+              $input = $input.'</select></div>';
+              // Remove all interfaces button               
+              $input = $input.'<div><button class="btn btn-primary" onclick="removeList'.$set['Code_Name'].'()">Remove all</button></div>';
+              
+            }               
 
             $html = $html.$input;
 
@@ -301,6 +333,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   {
     showModalOk('WARNING', "<?= lang("settings_missing")?>");    
   }
+
+  <?php
+    foreach($list as $lists)
+    {
+      // HERE TODO
+    }
+  ?>
   
   // ---------------------------------------------------------
   function addInterface()
@@ -340,17 +379,17 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // generate javascript to collect values    
     <?php 
 
-    $noConversion = array('text', 'integer', 'password', 'readonly', 'selecttext', 'selectinteger', "multiselect"); 
+    $noConversion = array('text', 'integer', 'password', 'readonly', 'selecttext', 'selectinteger', 'multiselect'); 
 
     foreach ($settings as $set) { 
       if(in_array($set['Type'] , $noConversion))
       {         
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", $("#'.$set["Code_Name"].'").val(), "'.$set["Type"].'" ]);';      
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", $("#'.$set["Code_Name"].'").val() ]);';
       } 
       elseif ($set['Type'] == "boolean")
       {
         echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", temp, "'.$set["Type"].'" ]);';  
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temp ]);';  
       }
       elseif ($set["Code_Name"] == "SCAN_SUBNETS")
       {        
@@ -361,7 +400,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         });       
         
         ";
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", temps, "'.$set["Type"].'" ]);';
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
       }
     }
     
