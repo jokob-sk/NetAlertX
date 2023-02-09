@@ -26,11 +26,12 @@ $settingsJson = json_decode($data);
 // get settings from the DB
 
 global $db;
+global $settingKeyOfLists;
 
 $result = $db->query("SELECT * FROM Settings");  
 
 // array 
-$lists = array();
+$settingKeyOfLists = array();
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      
@@ -238,12 +239,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             elseif ($set['Type'] == 'list')
             {
 
-              $lists[] = array($set['Code_Name']);
+              $settingKeyOfLists[] = $set['Code_Name'];
 
               $input = $input.
               '<div class="row form-group">
-                <div class="col-xs-6">
-                  <input class="form-control" type="text" placeholder="Enter value"/>
+                <div class="col-xs-9">
+                  <input class="form-control" type="text" id="'.$set['Code_Name'].'_input" placeholder="Enter value"/>
                 </div>';
               // Add interface button
               $input = $input.
@@ -262,7 +263,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               }                
               $input = $input.'</select></div>';
               // Remove all interfaces button               
-              $input = $input.'<div><button class="btn btn-primary" onclick="removeList'.$set['Code_Name'].'()">Remove all</button></div>';
+              $input = $input.'<div><button class="btn btn-primary" onclick="removeFromList'.$set['Code_Name'].'()">Remove last</button></div>';
               
             }               
 
@@ -335,9 +336,31 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   }
 
   <?php
-    foreach($list as $lists)
+    // generate javascript methods to handle add and remove items to lists
+    foreach($settingKeyOfLists as $settingKey )
     {
-      // HERE TODO
+      $addList = 'function addList'.$settingKey.'()
+      {
+        input = $("#'.$settingKey.'_input").val();
+        $("#'.$settingKey.'").append($("<option disabled></option>").attr("value", input).text(input));
+
+        
+        $("#'.$settingKey.'_input").val("");
+  
+        settingsChanged();
+      }
+      ';      
+
+
+      $remList = 'function removeFromList'.$settingKey.'()
+      {
+        settingsChanged();
+        // $("#'.$settingKey.'").empty();
+        $("#'.$settingKey.'").find("option:last").remove();
+      }';
+
+      echo $remList;
+      echo $addList;
     }
   ?>
   
@@ -384,6 +407,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     foreach ($settings as $set) { 
       if(in_array($set['Type'] , $noConversion))
       {         
+        
         echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", $("#'.$set["Code_Name"].'").val() ]);';
       } 
       elseif ($set['Type'] == "boolean")
@@ -399,6 +423,22 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           temps.push($( selected ).val());
         });       
         
+        ";
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
+      }
+      elseif ($set['Type'] == "list")
+      { 
+        echo 'console.log($("#'.$set["Code_Name"].'"));';       
+        echo "var temps = [];
+        
+        $( '#".$set["Code_Name"]." option' ).each( function( i, selected ) {
+          vl = $( selected ).val()
+          if (vl != '')
+          {
+            temps.push(vl);
+          }
+        });       
+        console.log(temps);
         ";
         echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
       }

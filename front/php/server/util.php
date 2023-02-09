@@ -289,7 +289,7 @@ function saveSettings()
             $val = "True";
           }
           $txt = $txt.$setting[1]."=".$val."\n" ; 
-        }elseif($setting[2] == 'multiselect' or $setting[2] == 'subnets')
+        }elseif($setting[2] == 'multiselect' or $setting[2] == 'subnets' or $setting[2] == 'list')
         {
           $temp = '[';
           foreach($setting[3] as $val)

@@ -3594,7 +3594,7 @@ def get_form_control(setting):
     if type in ['WATCH']:
         return 'multiselect'
     if type in ['LIST']:
-        return 'text'        
+        return 'list'        
 
     return 'text'
 
