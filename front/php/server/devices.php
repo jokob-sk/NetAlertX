@@ -488,23 +488,29 @@ function ImportCSV() {
 
     $columns = getDevicesColumns();
 
-    $rowArray = array();
-
+    
     // Parse data from CSV file line by line (max 10000 lines)    
     foreach($data as $row)
     {
-      // Check if not empty and skipping first line
-      if(count(explode(',',$row)) == count($columns) && explode(',',$row)[0] != "\"dev_MAC\"")
+      // Check if not empty and skipping first line      
+      $rowArray = explode(',',$row);
+
+      if(count($rowArray) > 20)
       {
-        $sql = "INSERT INTO Devices (".implode(',', $columns).") VALUES (" . $row.")";         
-        $result = $db->query($sql);
+        $cleanMac = str_replace("\"","",$rowArray[0]);
         
-        // check result
-        if ($result != TRUE) {
-          $error = $db->lastErrorMsg();
-          // break the while loop on error
-          break;
-        } 
+        if(filter_var($cleanMac , FILTER_VALIDATE_MAC) == True || $cleanMac == "Internet")
+        {
+          $sql = "INSERT INTO Devices (".implode(',', $columns).") VALUES (" . $row.")";         
+          $result = $db->query($sql);
+          
+          // check result
+          if ($result != TRUE) {
+            $error = $db->lastErrorMsg();
+            // break the while loop on error
+            break;
+          } 
+        }
       }
       
     }
