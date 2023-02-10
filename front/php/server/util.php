@@ -35,7 +35,6 @@ elseif ($FUNCTION  == 'cleanLog')
   cleanLog($SETTINGS);
 }
 
-
 //------------------------------------------------------------------------------
 // Formatting data functions
 //------------------------------------------------------------------------------
@@ -427,5 +426,3 @@ function setCache($key, $value, $expireMinutes = 5) {
 
 
 ?>
-
-
