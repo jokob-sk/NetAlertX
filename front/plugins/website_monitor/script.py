@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
-# /home/pi/pialert/front/plugins/website_monitoring/script.py urls=http://google.com,http://bing.com
+# /home/pi/pialert/front/plugins/website_monitor/script.py urls=http://google.com,http://bing.com
 from __future__ import unicode_literals
 from time import sleep, time, strftime
 import requests

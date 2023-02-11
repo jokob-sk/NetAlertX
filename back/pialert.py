@@ -270,9 +270,12 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
 
     # use existing value if already supplied, otehrwise default value is used
     if key in config:
-         result =  config[key]
+        result =  config[key]
 
     global mySettings
+
+    if inputtype == 'text':
+        result = result.replace('\'', "_single_quote_")
 
     mySettings.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
 
@@ -283,7 +286,7 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
 def importConfigs (): 
 
     # Specify globals so they can be overwritten with the new config
-    global lastTimeImported, mySettings, plugins
+    global lastTimeImported, mySettings, plugins, plugins_once_run
     # General
     global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
     # Email
@@ -454,26 +457,26 @@ def importConfigs ():
         collect_lang_strings(plugin, pref)
         
         for set in plugin["settings"]:
-            setType = set["type"]
+            setFunction = set["function"]
             # Setting code name / key  
-            key = pref + "_" + setType 
+            key = pref + "_" + setFunction 
 
-            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], get_form_control(set), str(set["options"]), pref)
+            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
 
             # Save the user defined value into the object
             set["value"] = v
 
             # Setup schedules
-            if setType == 'RUN_SCHD':
+            if setFunction == 'RUN_SCHD':
                 newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(tz))
                 mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
             # Collect settings related language strings
-            collect_lang_strings(set,  pref + "_" + set["type"])
+            collect_lang_strings(set,  pref + "_" + set["function"])
     # -----------------
     # Plugins END
            
-
+    plugins_once_run = False
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -3510,6 +3513,17 @@ def handle_test(testType):
 
 
 #-------------------------------------------------------------------------------
+#  Return whole setting touple
+def get_setting(key):
+    result = None
+    # mySettings.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    for set in mySettings:
+        if set[0] == key:
+            result = set
+
+    return result
+
+#-------------------------------------------------------------------------------
 def isNewVersion():   
     global newVersionAvailable
 
@@ -3580,23 +3594,6 @@ def import_language_string(code, key, value, extra = ""):
 
     commitDB ()
 
-#-------------------------------------------------------------------------------
-def get_form_control(setting):
-
-    type = setting["type"]
-
-    if type in ['RUN']:
-        return 'selecttext'
-    if type in ['ENABLE', 'FORCE_REPORT']:
-        return 'boolean'
-    if type in ['TIMEOUT', 'RUN_TIMEOUT']:
-        return 'integer'
-    if type in ['WATCH']:
-        return 'multiselect'
-    if type in ['LIST']:
-        return 'list'        
-
-    return 'text'
 
 #-------------------------------------------------------------------------------
 def custom_plugin_decoder(pluginDict):
@@ -3614,7 +3611,7 @@ def run_plugin_scripts(runType):
         shouldRun = False
 
         set = get_plugin_setting(plugin, "RUN")
-        if set['value'] == runType:
+        if set != None and set['value'] == runType:
             if runType != "schedule":
                 shouldRun = True
             elif  runType == "schedule":
@@ -3634,16 +3631,155 @@ def run_plugin_scripts(runType):
                         
             print_plugin_info(plugin, ['display_name'])
             file_print('     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"])
+            execute_plugin(plugin)
 
 #-------------------------------------------------------------------------------
-def get_plugin_setting(plugin, key):
+# Executes the plugin command specified in the setting with the function specified as CMD 
+def execute_plugin(plugin):
+
+    # ------- necessary settings check  --------
+    set = get_plugin_setting(plugin, "CMD")
+
+    #  handle missing "function":"CMD" setting
+    if set == None:                
+        return 
+
+    set_CMD = set["value"]
+
+    set = get_plugin_setting(plugin, "RUN_TIMEOUT")
+
+    #  handle missing "function":"RUN_TIMEOUT" setting
+    if set == None:   
+        return 
     
-    for set in plugin['settings']:
-        if set["type"] == key:
-          return set  
+    set_RUN_TIMEOUT = set["value"] 
+
+    #  Prepare custom params
+    params = []
+
+    if "params" in plugin:
+        for param in plugin["params"]:            
+            resolved = ""
+
+            #  Get setting value
+            if param["type"] == "setting":
+                resolved = get_setting(param["value"])
+
+                if resolved != None:
+                    resolved = plugin_param_from_glob_set(resolved)
+
+            #  TODO HERE
+            # if param["type"] == "sql":
+            #     resolved = get_sql(param["value"])
+
+            if resolved == None:
+                file_print('     [Plugins] The parameter "name":"', param["name"], '" was resolved as None')
+
+            else:
+                params.append( [param["name"], resolved] )
+    
+
+    # ------- prepare params --------
+    # prepare command from plugin settings, custom parameters TODO HERE    
+    command = resolve_wildcards(set_CMD, params).split()
+
+    # Execute command
+    file_print('     [Plugins] Executing: ', set_CMD)
+
+    try:
+        # try runnning a subprocess with a forced timeout in case the subprocess hangs
+        output = subprocess.check_output (command, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        file_print(e.output)
+        file_print('        [Plugins] Error - enable PRINT_LOG and check logs')            
+    except subprocess.TimeoutExpired as timeErr:
+        file_print('        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached') 
+
+
+    #  check the last run output
+    f = open(pluginsPath + '/' + plugin["code_name"] + '/last_result.log', 'r+')
+    newLines = f.read().split('\n')
+    f.close()        
+
+    # cleanup - select only lines containing a separator to filter out unnecessary data
+    newLines = list(filter(lambda x: '|' in x, newLines))  
+
+    if len(newLines) == 0: # check if the subprocess failed / there was no valid output
+        file_print('        [Plugins] No output received from the plugin - enable PRINT_LOG and check logs')
+        return  
+    else: 
+        file_print('[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries')      
+
+    # regular logging
+    for line in newLines:
+        append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+    
+    # build SQL query parameters to insert into the DB
+    params = []
+
+    for line in newLines:
+        columns = line.split("|")
+        # There has to be always 8 columns
+        if len(columns) == 8:
+            params.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], columns[7]))
+        else:
+            file_print('        [Plugins]: Skipped invalid line in the output: ', line)
+
+    if len(params) > 0:                
+        sql.executemany ("""INSERT INTO Plugins_State ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", params) 
+        commitDB ()
 
 
 #-------------------------------------------------------------------------------
+# Flattens a setting to make it passable to a script
+def resolve_wildcards(command, params):
+    for param in params:
+        command = command.replace('{' + param[0] + '}', param[1])
+    return command
+
+#-------------------------------------------------------------------------------
+# Flattens a setting to make it passable to a script
+def plugin_param_from_glob_set(globalSetting):
+
+    setVal = globalSetting[6]
+    setTyp = globalSetting[3]
+
+
+    noConversion = ['text', 'integer', 'boolean', 'password', 'readonly', 'selectinteger', 'selecttext' ]
+    arrayConversion = ['multiselect', 'list'] 
+
+    if setTyp in noConversion:
+        return setVal
+
+    if setTyp in arrayConversion:
+        tmp = ''
+
+        tmp = setVal[:-1] # remove last bracket
+        tmp = tmp[1:] # remove first bracket
+        tmp = tmp.replace("'","").replace(' ','')
+
+        return tmp
+
+
+#-------------------------------------------------------------------------------
+# Gets the whole setting object
+def get_plugin_setting(plugin, function_key):
+    
+    result = None
+
+    for set in plugin['settings']:
+        if set["function"] == function_key:
+          result =  set 
+
+    if result == None:
+        file_print('     [Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name'))
+
+    return result
+
+
+#-------------------------------------------------------------------------------
+# Get localized string value on the top JSON depth, not recursive
 def get_plugin_string(props, el):
 
     result = ''

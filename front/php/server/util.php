@@ -276,7 +276,8 @@ function saveSettings()
       {            
         if($setting[2] == 'text' or $setting[2] == 'password' or $setting[2] == 'readonly' or $setting[2] == 'selecttext')
         {
-          $txt = $txt.$setting[1]."='".$setting[3]."'\n" ; 
+          $val = encode_single_quotes($setting[3]);
+          $txt = $txt.$setting[1]."='".$val."'\n" ; 
         } elseif($setting[2] == 'integer' or $setting[2] == 'selectinteger')
         {
           $txt = $txt.$setting[1]."=".$setting[3]."\n" ; 
@@ -290,12 +291,18 @@ function saveSettings()
           $txt = $txt.$setting[1]."=".$val."\n" ; 
         }elseif($setting[2] == 'multiselect' or $setting[2] == 'subnets' or $setting[2] == 'list')
         {
-          $temp = '[';
-          foreach($setting[3] as $val)
-          {
-            $temp = $temp."'". $val."',";
+          $temp = '[';         
+          
+          if (count($setting) > 3 && is_array( $setting[3]) == True){
+            foreach($setting[3] as $val)
+            {
+              $temp = $temp."'". encode_single_quotes($val)."',";
+            }
+
+            $temp = substr_replace($temp, "", -1); // remove last comma ','
           }
-          $temp = substr_replace($temp, "", -1).']';  // close brackets and remove last comma ','
+
+          $temp = $temp.']';  // close brackets 
           $txt = $txt.$setting[1]."=".$temp."\n" ; 
         }            
       }
@@ -321,8 +328,6 @@ function saveSettings()
 }
 
 // -------------------------------------------------------------------------------------------
-
-
 function getString ($codeName, $default) {
 
   $result = lang($codeName);
@@ -333,6 +338,16 @@ function getString ($codeName, $default) {
   }   
 
   return $default;
+}
+
+// -------------------------------------------------------------------------------------------
+
+
+function encode_single_quotes ($val) {
+
+  $result = str_replace ('\'','_single_quote_',$val);
+
+  return $result;
 }
 
 // -------------------------------------------------------------------------------------------

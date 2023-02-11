@@ -20,9 +20,14 @@
         "value" : "SELECT dev_MAC from DEVICES"
     },
     {
-        "name"  : "sites",
+        "name"  : "urls",
         "type"  : "setting",
-        "value" : "WEBMON_LIST"
+        "value" : "WEBMON_urls_to_check"
+    },
+    {
+        "name"  : "internet_ip",
+        "type"  : "setting",
+        "value" : "WEBMON_SQL_internet_ip"
     }],  
     "database_column_aliases":{
         "Plugins_Events":{
@@ -50,7 +55,8 @@
     },
     "settings":[
         {
-            "type": "RUN",            
+            "function": "RUN",            
+            "type": "selecttext",            
             "default_value":"disabled",
             "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
             "localized": ["name", "description"],
@@ -64,7 +70,23 @@
             }]
         },
         {
-            "type": "FORCE_REPORT",
+            "function": "CMD",
+            "type": "text",
+            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Command"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Comamnd to run"
+            }]
+        },
+        {
+            "function": "FORCE_REPORT",
+            "type": "boolean",
             "default_value": false,
             "options": [],
             "localized": ["name", "description"],
@@ -83,7 +105,8 @@
             
         },
         {
-            "type": "RUN_SCHD",
+            "function": "RUN_SCHD",
+            "type": "text",
             "default_value":"0 2 * * *",
             "options": [],
             "localized": ["name", "description"],
@@ -97,7 +120,8 @@
             }]
         },
         {
-            "type": "API_SQL",
+            "function": "API_SQL",
+            "type": "text",
             "default_value":"SELECT * FROM plugin_website_monitor",
             "options": [],
             "localized": ["name", "description"],
@@ -111,7 +135,8 @@
             }]            
         },
         {
-            "type": "RUN_TIMEOUT",
+            "function": "RUN_TIMEOUT",
+            "type": "integer",
             "default_value":5,
             "options": [],
             "localized": ["name", "description"],
@@ -125,7 +150,8 @@
             }]
         },
         {
-            "type": "WATCH",
+            "function": "WATCH",
+            "type": "multiselect",
             "default_value":["Watched_Value1"],
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
@@ -139,22 +165,9 @@
             }] 
         },
         {
-            "type": "CMD",
-            "default_value":"python3 script.py",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Command"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>."
-            }]
-        },
-        {
-            "type": "LIST",
-            "default_value":"",
+            "function": "urls_to_check",
+            "type": "list",
+            "default_value":[],
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -163,7 +176,22 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>."
+                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>."
+            }]
+        },
+        {
+            "function": "SQL_internet_ip",
+            "type": "readonly",
+            "default_value":"SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Helper variable"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Getting the IP address of the Router / Internet"
             }]
         }
 
