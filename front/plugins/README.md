@@ -1,3 +1,7 @@
+# ⚠ Disclaimer
+
+Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. 
+
 ## Overview
 
 PiAlert comes with a simple plugin system to feed events from third-party scripts into the UI and then send notifications if desired.
@@ -8,7 +12,7 @@ If you wish to develop a plugin, please check the existing plugin structure.
 
   | File | Required | Description | 
   |----------------------|----------------------|----------------------| 
-  | `config.json` | yes | Contains the plugin configuration including the settings available to the user. |
+  | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
   | `script.py` |  yes | The Python script itself |
   | `last_result.log` | yes | The file used to interface between PiAlert and the plugin (script).  |
   | `script.log` | no | Logging output (recommended) |
