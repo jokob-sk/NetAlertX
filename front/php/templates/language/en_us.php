@@ -490,15 +490,7 @@ $lang['en_us'] = array(
 'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a onclick="toggleAllSettings()" href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
-The arp-scan time itself depends on the number of IP addresses to check. 
-The number of IPs to check depends on the <a target="_blank" href="https://www.calculator.net/ip-subnet-calculator.html">network mask</a> you set here. 
-For example, a <code>/24</code> mask results in 256 IPs to check, where as a <code>/16</code> 
-mask checks around 65,536. Every IP takes a couple seconds. This means that with an incorrect configuration 
-the arp-scan will take hours to complete instead of seconds.
-<ol>
-<li>Specify the network mask. For example, the filter <code>192.168.1.0/24</code> covers IP ranges 192.168.1.0 to 192.168.1.255.</li>
-<li>Run <code>iwconfig</code> in your container to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
-</ol>
+The arp-scan time itself depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface. Check the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md" target="_blank">subnets documentation</a> for details.
 ',
 'LOG_LEVEL_name' => 'Print additional logging',
 'LOG_LEVEL_description' => 'This setting will enable more verbose logging. Useful for debugging events writing into the database.',
