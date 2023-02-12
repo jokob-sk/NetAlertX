@@ -499,8 +499,8 @@ the arp-scan will take hours to complete instead of seconds.
 <li>Run <code>iwconfig</code> in your container to find your interface name(s) (e.g.: <code>eth0</code>, <code>eth1</code>)</li>
 </ol>
 ',
-'PRINT_LOG_name' => 'Print additional logging',
-'PRINT_LOG_description' => 'This setting will enable more verbose logging. Useful for debugging events writing into the database.',
+'LOG_LEVEL_name' => 'Print additional logging',
+'LOG_LEVEL_description' => 'This setting will enable more verbose logging. Useful for debugging events writing into the database.',
 'TIMEZONE_name' => 'Time zone',
 'TIMEZONE_description' => 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',

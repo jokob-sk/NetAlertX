@@ -93,8 +93,30 @@ sql_connection = None
 #-------------------------------------------------------------------------------
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
+
 #-------------------------------------------------------------------------------
-def file_print(*args):
+debugLevels =   [
+                    ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3)
+                ]
+LOG_LEVEL = 'debug'
+
+def mylog(requestedDebugLevel, n):
+
+    setLvl = 0  
+    reqLvl = 0  
+
+    #  Get debug urgency/relative weight
+    for lvl in debugLevels:
+        if LOG_LEVEL == lvl[0]:
+            setLvl = lvl[1]
+        if requestedDebugLevel == lvl[0]:
+            reqLvl = lvl[1]
+
+    if reqLvl <= setLvl:
+        file_print (*n)
+
+#-------------------------------------------------------------------------------
+def file_print (*args):
 
     result = ''
     
@@ -120,20 +142,18 @@ def logResult (stdout, stderr):
         append_file_binary (logPath + '/stdout.log', stdout)  
 
 #-------------------------------------------------------------------------------
-PRINT_LOG = False
-
 def print_log (pText):
     global log_timestamp
 
     # Check LOG actived
-    if not PRINT_LOG :
+    if not LOG_LEVEL == 'debug' :
         return
 
     # Current Time    
     log_timestamp2 = datetime.datetime.now()
 
     # Print line + time + elapsed time + text
-    file_print('[PRINT_LOG] ',
+    file_print ('[LOG_LEVEL=debug] ',
         log_timestamp2, ' ',
         log_timestamp2 - log_timestamp, ' ',
         pText)
@@ -154,13 +174,13 @@ def checkPermissionsOK():
     dbW_access = (os.access(fullDbPath, os.W_OK))
 
 
-    file_print('\n Permissions check (All should be True)')
-    file_print('------------------------------------------------')
-    file_print( "  " , confPath ,     " | " , " READ  | " , confR_access)
-    file_print( "  " , confPath ,     " | " , " WRITE | " , confW_access)
-    file_print( "  " , dbPath , "       | " , " READ  | " , dbR_access)
-    file_print( "  " , dbPath , "       | " , " WRITE | " , dbW_access)
-    file_print('------------------------------------------------')
+    mylog('none', ['\n Permissions check (All should be True)'])
+    mylog('none', ['------------------------------------------------'])
+    mylog('none', [ "  " , confPath ,     " | " , " READ  | " , confR_access])
+    mylog('none', [ "  " , confPath ,     " | " , " WRITE | " , confW_access])
+    mylog('none', [ "  " , dbPath , "       | " , " READ  | " , dbR_access])
+    mylog('none', [ "  " , dbPath , "       | " , " WRITE | " , dbW_access])
+    mylog('none', ['------------------------------------------------'])
 
     return dbR_access and dbW_access and confR_access and confW_access 
 #-------------------------------------------------------------------------------
@@ -173,14 +193,14 @@ def fixPermissions():
 
     for com in chmodCommands:
         # Execute command
-        file_print("[Setup] Attempting to fix permissions.")
+        mylog('none', ["[Setup] Attempting to fix permissions."])
         try:
             # try runnning a subprocess
             result = subprocess.check_output (com, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print("[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)) 
-            file_print(e.output)
+            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)]) 
+            mylog('none', [e.output])
 
 
 checkPermissionsOK() # Initial check
@@ -189,24 +209,24 @@ checkPermissionsOK() # Initial check
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
-        file_print("[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one.")
+        mylog('none', ["[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one."])
         try:
             # try runnning a subprocess
             p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                file_print("[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory.")
+                mylog('none', ["[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
             else:
-                file_print("[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+").")
+                mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
 
             # write stdout and stderr into .log files for debugging if needed
             logResult (stdout, stderr)
             
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print("[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck)
-            file_print(e.output)
+            mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
+            mylog('none', [e.output])
 
 #===============================================================================
 # Basic checks and Setup
@@ -277,7 +297,8 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
     if inputtype == 'text':
         result = result.replace('\'', "_single_quote_")
 
-    mySettings.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
 
     return result
 
@@ -286,9 +307,9 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
 def importConfigs (): 
 
     # Specify globals so they can be overwritten with the new config
-    global lastTimeImported, mySettings, plugins, plugins_once_run
+    global lastTimeImported, mySettings, mySettingsSQLsafe, plugins, plugins_once_run
     # General
-    global ENABLE_ARPSCAN, SCAN_SUBNETS, PRINT_LOG, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
+    global ENABLE_ARPSCAN, SCAN_SUBNETS, LOG_LEVEL, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
     # Email
     global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS, SMTP_FORCE_SSL
     # Webhooks
@@ -313,6 +334,8 @@ def importConfigs ():
     global API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
     
     mySettings = [] # reset settings
+    mySettingsSQLsafe = [] # same as aboverr but safe to be passed into a SQL query
+
     # get config file
     config_file = Path(fullConfPath)
 
@@ -328,8 +351,8 @@ def importConfigs ():
     # Import setting if found in the dictionary
     # General
     ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General', ['run']) 
-    SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')
-    PRINT_LOG = ccd('PRINT_LOG', False , c_d, 'Print additional logging', 'boolean', '', 'General')
+    SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
+    LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'selecttext', "['none', 'minimal', 'verbose', 'debug']", 'General')
     TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
     PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
@@ -445,7 +468,7 @@ def importConfigs ():
     # -----------------
     plugins = get_plugins_configs()
 
-    file_print('[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.dict) )
+    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.dict)])
 
     #  handle plugins
     for plugin in plugins.list:
@@ -481,7 +504,7 @@ def importConfigs ():
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettings)
+         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", mySettingsSQLsafe)
 
     # Used to determine the next import
     lastTimeImported = time.time()
@@ -494,7 +517,7 @@ def importConfigs ():
     #  update only the settings datasource
     update_api(False, ["settings"])
 
-    file_print('[', timeNow(), '] Config: Imported new config')  
+    mylog('info', ['[', timeNow(), '] Config: Imported new config'])  
 
 #===============================================================================
 # MAIN
@@ -564,7 +587,7 @@ def main ():
 
             # Header
             updateState("Process: Start")
-            file_print('[', timeNow(), '] Process: Start')                
+            mylog('verbose', ['[', timeNow(), '] Process: Start'])                
 
             # Timestamp
             startTime = time_started
@@ -676,12 +699,12 @@ def main ():
                 action = str(cycle)
                 if action == "1":
                     action = "network_scan"
-                file_print('[', timeNow(), '] Last action: ', action)
+                mylog('verbose', ['[', timeNow(), '] Last action: ', action])
                 cycle = ""
 
             # Footer
             updateState("Process: Wait")
-            file_print('[', timeNow(), '] Process: Wait')            
+            mylog('verbose', ['[', timeNow(), '] Process: Wait'])            
         else:
             # do something
             cycle = ""           
@@ -697,54 +720,54 @@ def check_internet_IP ():
 
     # Header
     updateState("Scan: Internet IP")
-    file_print('[', startTime, '] Check Internet IP:')    
+    mylog('info', ['[', startTime, '] Check Internet IP:'])    
 
     # Get Internet IP
-    file_print('    Retrieving Internet IP:')
+    mylog('info', ['    Retrieving Internet IP:'])
     internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
     # Check result = IP
     if internet_IP == "" :
-        file_print('    Error retrieving Internet IP')
-        file_print('    Exiting...')
+        mylog('info', ['    Error retrieving Internet IP'])
+        mylog('info', ['    Exiting...'])
         return False
-    file_print('      ', internet_IP)
+    mylog('info', ['      ', internet_IP])
 
     # Get previous stored IP
-    file_print('    Retrieving previous IP:')    
+    mylog('info', ['    Retrieving previous IP:'])    
     previous_IP = get_previous_internet_IP ()
-    file_print('      ', previous_IP)
+    mylog('info', ['      ', previous_IP])
 
     # Check IP Change
     if internet_IP != previous_IP :
-        file_print('    Saving new IP')
+        mylog('info', ['    Saving new IP'])
         save_new_internet_IP (internet_IP)
-        file_print('        IP updated')        
+        mylog('info', ['        IP updated'])        
     else :
-        file_print('    No changes to perform')    
+        mylog('verbose', ['    No changes to perform'])    
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
-        file_print('    Retrieving Dynamic DNS IP')
+        mylog('verbose', ['    Retrieving Dynamic DNS IP'])
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
         if dns_IP == "" :
-            file_print('    Error retrieving Dynamic DNS IP')
-            file_print('    Exiting...')
-        file_print('   ', dns_IP)
+            mylog('info', ['    Error retrieving Dynamic DNS IP'])
+            mylog('info', ['    Exiting...'])
+        mylog('info', ['   ', dns_IP])
 
         # Check DNS Change
         if dns_IP != internet_IP :
-            file_print('    Updating Dynamic DNS IP')
+            mylog('info', ['    Updating Dynamic DNS IP'])
             message = set_dynamic_DNS_IP ()
-            file_print('       ', message)            
+            mylog('info', ['       ', message])            
         else :
-            file_print('    No changes to perform')
+            mylog('verbose', ['    No changes to perform'])
     else :
-        file_print('    Skipping Dynamic DNS update')
+        mylog('verbose', ['    Skipping Dynamic DNS update'])
 
 
 
@@ -756,7 +779,7 @@ def get_internet_IP ():
     try:
         cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
-        file_print(e.output)
+        mylog('none', [e.output])
         cmd_output = '' # no internet
 
     # Check result is an IP
@@ -776,7 +799,7 @@ def get_dynamic_DNS_IP ():
         dig_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)
+        mylog('none', [e.output])
         dig_output = '' # probably no internet
 
     # Check result is an IP
@@ -796,7 +819,7 @@ def set_dynamic_DNS_IP ():
             universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)
+        mylog('none', [e.output])
         curl_output = ""    
     
     return curl_output
@@ -862,24 +885,24 @@ def check_IP_format (pIP):
 def cleanup_database ():
     # Header    
     updateState("Upkeep: Clean DB") 
-    file_print('[', startTime, '] Upkeep Database:' )
+    mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
 
     # Cleanup Online History
-    file_print('    Online_History: Delete all older than 3 days')
+    mylog('verbose', ['    Online_History: Delete all older than 3 days'])
     sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-3 day')")
-    file_print('    Optimize Database')
+    mylog('verbose', ['    Optimize Database'])
 
     # Cleanup Events
-    file_print('    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days')
+    mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Cleanup Pholus_Scan
     if PHOLUS_DAYS_DATA != 0:
-        file_print('    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days')
+        mylog('verbose', ['    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
         sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
     
     # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table    
-    file_print('    Pholus_Scan: Delete all duplicates')
+    mylog('verbose', ['    Pholus_Scan: Delete all duplicates'])
     sql.execute ("""DELETE  FROM Pholus_Scan
                     WHERE rowid > (
                     SELECT MIN(rowid) FROM Pholus_Scan p2  
@@ -889,7 +912,7 @@ def cleanup_database ():
                     );""") 
 
     # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table    
-    file_print('    Nmap_Scan: Delete all duplicates')
+    mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
     sql.execute ("""DELETE  FROM Nmap_Scan
                     WHERE rowid > (
                     SELECT MIN(rowid) FROM Nmap_Scan p2  
@@ -900,7 +923,7 @@ def cleanup_database ():
                     );""") 
     
     # Shrink DB
-    file_print('    Shrink Database')
+    mylog('verbose', ['    Shrink Database'])
     sql.execute ("VACUUM;")
 
     commitDB()
@@ -911,10 +934,10 @@ def cleanup_database ():
 def update_devices_MAC_vendors (pArg = ''):
     # Header    
     updateState("Upkeep: Vendors")
-    file_print('[', startTime, '] Upkeep - Update HW Vendors:' )
+    mylog('verbose', ['[', startTime, '] Upkeep - Update HW Vendors:' ])
 
     # Update vendors DB (iab oui)
-    file_print('    Updating vendors DB (iab & oui)')    
+    mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
     update_args = ['sh', pialertPath + '/update_vendors.sh', pArg]
 
     try:
@@ -922,8 +945,8 @@ def update_devices_MAC_vendors (pArg = ''):
         update_output = subprocess.check_output (update_args)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print('    FAILED: Updating vendors DB ')  
-        file_print(e.output)        
+        mylog('none', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
+        mylog('none', [e.output])        
 
     # Initialize variables
     recordsToUpdate = []
@@ -931,7 +954,7 @@ def update_devices_MAC_vendors (pArg = ''):
     notFound = 0
 
     # All devices loop
-    file_print('    Searching devices vendor')    
+    mylog('verbose', ['    Searching devices vendor'])    
     for device in sql.execute ("SELECT * FROM Devices") :
         # Search vendor in HW Vendors DB
         vendor = query_MAC_vendor (device['dev_MAC'])
@@ -943,18 +966,14 @@ def update_devices_MAC_vendors (pArg = ''):
             recordsToUpdate.append ([vendor, device['dev_MAC']])
             
     # Print log    
-    file_print("    Devices Ignored:  ", ignored)
-    file_print("    Vendors Not Found:", notFound)
-    file_print("    Vendors updated:  ", len(recordsToUpdate) )
-    # DEBUG - print list of record to update
-        # file_print(recordsToUpdate)
+    mylog('verbose', ["    Devices Ignored:  ", ignored])
+    mylog('verbose', ["    Vendors Not Found:", notFound])
+    mylog('verbose', ["    Vendors updated:  ", len(recordsToUpdate) ])
+
 
     # update devices
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
-
-    # DEBUG - print number of rows updated
-        # file_print(sql.rowcount)
 
     # Commit DB
     commitDB()
@@ -984,7 +1003,7 @@ def query_MAC_vendor (pMAC):
             grep_output = subprocess.check_output (grep_args)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print(e.output)
+            mylog('none', [e.output])
             grep_output = "       There was an error, check logs for details"
 
         # Return Vendor
@@ -1004,15 +1023,15 @@ def scan_network ():
 
     # Header
     updateState("Scan: Network")
-    file_print('[', startTime, '] Scan Devices:' )       
+    mylog('verbose', ['[', startTime, '] Scan Devices:' ])       
 
     # # Query ScanCycle properties
     print_log ('Query ScanCycle confinguration')
     scanCycle_data = query_ScanCycle_Data (True)
     if scanCycle_data is None:
-        file_print('\n*************** ERROR ***************')
-        file_print('ScanCycle %s not found' % cycle )
-        file_print('    Exiting...\n')
+        mylog('none', ['\n*************** ERROR ***************'])
+        mylog('none', ['ScanCycle %s not found' % cycle ])
+        mylog('none', ['    Exiting...\n'])
         return False
 
     commitDB()
@@ -1023,27 +1042,24 @@ def scan_network ():
     # arp-scan command
     arpscan_devices = []
     if ENABLE_ARPSCAN:    
-        file_print('    arp-scan start')    
+        mylog('verbose', ['    arp-scan start'])    
         arpscan_devices = execute_arpscan ()
         print_log ('arp-scan ends')
-    
-    # DEBUG - print number of rows updated    
-    # file_print('aspr-scan result:', len(arpscan_devices))
 
     # Pi-hole method    
     if PIHOLE_ACTIVE :       
-        file_print('    Pi-hole start')        
+        mylog('verbose', ['    Pi-hole start'])        
         copy_pihole_network() 
         commitDB() 
 
     # DHCP Leases method    
     if DHCP_ACTIVE :        
-        file_print('    DHCP Leases start')        
+        mylog('verbose', ['    DHCP Leases start'])        
         read_DHCP_leases () 
         commitDB()
 
     # Load current scan data
-    file_print('  Processing scan results')     
+    mylog('verbose', ['  Processing scan results'])     
     save_scanned_devices (arpscan_devices, cycle_interval)    
     
     # Print stats
@@ -1052,17 +1068,17 @@ def scan_network ():
     print_log ('Stats end')
 
     # Create Events
-    file_print('  Updating DB Info')
-    file_print('    Sessions Events (connect / discconnect)')
+    mylog('verbose', ['  Updating DB Info'])
+    mylog('verbose', ['    Sessions Events (connect / discconnect)'])
     insert_events()
 
     # Create New Devices
     # after create events -> avoid 'connection' event
-    file_print('    Creating new devices')
+    mylog('verbose', ['    Creating new devices'])
     create_new_devices ()
 
     # Update devices info
-    file_print('    Updating Devices Info')
+    mylog('verbose', ['    Updating Devices Info'])
     update_devices_data_from_scan ()
 
     # Resolve devices names
@@ -1070,23 +1086,23 @@ def scan_network ():
     update_devices_names()
 
     # Void false connection - disconnections
-    file_print('    Voiding false (ghost) disconnections')
+    mylog('verbose', ['    Voiding false (ghost) disconnections'])
     void_ghost_disconnections ()
   
     # Pair session events (Connection / Disconnection)
-    file_print('    Pairing session events (connection / disconnection) ')
+    mylog('verbose', ['    Pairing session events (connection / disconnection) '])
     pair_sessions_events()  
   
     # Sessions snapshot
-    file_print('    Creating sessions snapshot')
+    mylog('verbose', ['    Creating sessions snapshot'])
     create_sessions_snapshot ()
 
     # Sessions snapshot
-    file_print('    Inserting scan results into Online_History')
+    mylog('verbose', ['    Inserting scan results into Online_History'])
     insertOnlineHistory()
   
     # Skip repeated notifications
-    file_print('    Skipping repeated notifications')
+    mylog('verbose', ['    Skipping repeated notifications'])
     skip_repeated_notifications ()
   
     # Commit changes    
@@ -1153,7 +1169,7 @@ def execute_arpscan_on_interface (interface):
         result = subprocess.check_output (arpscan_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)
+        mylog('none', [e.output])
         result = ""
 
     return result
@@ -1203,8 +1219,7 @@ def read_DHCP_leases ():
                             DHCP_IP, DHCP_Name, DHCP_MAC2)
                         VALUES (?, ?, ?, ?, ?)
                      """, data)
-    # DEBUG
-        # file_print(sql.rowcount)
+
     return reporting
 
 #-------------------------------------------------------------------------------
@@ -1269,19 +1284,19 @@ def print_scan_stats ():
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('    Devices Detected.......: ', str (sql.fetchone()[0]) )
+    mylog('verbose', ['    Devices Detected.......: ', str (sql.fetchone()[0]) ])
 
     # Devices arp-scan
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        arp-scan detected..: ', str (sql.fetchone()[0]) )
+    mylog('verbose', ['        arp-scan detected..: ', str (sql.fetchone()[0]) ])
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
                     (cycle,))
-    file_print('        Pi-hole detected...: +' + str (sql.fetchone()[0]) )
+    mylog('verbose', ['        Pi-hole detected...: +' + str (sql.fetchone()[0]) ])
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
@@ -1289,7 +1304,7 @@ def print_scan_stats ():
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
                     (cycle,))
-    file_print('        New Devices........: ' + str (sql.fetchone()[0]) )
+    mylog('verbose', ['        New Devices........: ' + str (sql.fetchone()[0]) ])
 
     # Devices in this ScanCycle
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -1297,7 +1312,7 @@ def print_scan_stats ():
                       AND dev_ScanCycle = ? """,
                     (cycle,))
     
-    file_print('    Devices in this cycle..: ' + str (sql.fetchone()[0]) )
+    mylog('verbose', ['    Devices in this cycle..: ' + str (sql.fetchone()[0]) ])
 
     # Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -1307,7 +1322,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    file_print('        Down Alerts........: ' + str (sql.fetchone()[0]) )
+    mylog('verbose', ['        Down Alerts........: ' + str (sql.fetchone()[0]) ])
 
     # New Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -1318,7 +1333,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    file_print('        New Down Alerts....: ' + str (sql.fetchone()[0]) )
+    mylog('verbose', ['        New Down Alerts....: ' + str (sql.fetchone()[0]) ])
 
     # New Connections
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -1326,7 +1341,7 @@ def print_scan_stats ():
                       AND dev_PresentLastScan = 0
                       AND dev_ScanCycle = ? """,
                     (cycle,))
-    file_print('        New Connections....: ' + str ( sql.fetchone()[0]) )
+    mylog('verbose', ['        New Connections....: ' + str ( sql.fetchone()[0]) ])
 
     # Disconnections
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -1336,7 +1351,7 @@ def print_scan_stats ():
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (cycle,))
-    file_print('        Disconnections.....: ' + str ( sql.fetchone()[0]) )
+    mylog('verbose', ['        Disconnections.....: ' + str ( sql.fetchone()[0]) ])
 
     # IP Changes
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -1344,7 +1359,7 @@ def print_scan_stats ():
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
                     (cycle,))
-    file_print('        IP Changes.........: ' + str ( sql.fetchone()[0]) )
+    mylog('verbose', ['        IP Changes.........: ' + str ( sql.fetchone()[0]) ])
 
 #-------------------------------------------------------------------------------
 def insertOnlineHistory():
@@ -1611,8 +1626,6 @@ def update_devices_data_from_scan ():
         if vendor != -1 and vendor != -2 :
             recordsToUpdate.append ([vendor, device['dev_MAC']])
 
-    # DEBUG - print list of record to update
-        # file_print(recordsToUpdate)
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
@@ -1644,7 +1657,7 @@ def update_devices_names ():
         return
 
     # Devices without name
-    file_print('        Trying to resolve devices without name')
+    mylog('verbose', ['        Trying to resolve devices without name'])
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
@@ -1652,7 +1665,7 @@ def update_devices_names ():
     commitDB()
 
     # Number of entries from previous Pholus scans
-    file_print("          Pholus entries from prev scans: ", len(pholusResults))
+    mylog('verbose', ["          Pholus entries from prev scans: ", len(pholusResults)])
 
     for device in unknownDevices:
         newName = -1
@@ -1679,8 +1692,8 @@ def update_devices_names ():
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    file_print("        Names Found (DiG/Pholus): ", len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" )                 
-    file_print("        Names Not Found         : ", len(recordsNotFound) )    
+    mylog('verbose', ["        Names Found (DiG/Pholus): ", len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" ])                 
+    mylog('verbose', ["        Names Not Found         : ", len(recordsNotFound) ])    
      
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )
@@ -1688,8 +1701,6 @@ def update_devices_names ():
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
     commitDB()
 
-    # DEBUG - print number of rows updated
-    # file_print(sql.rowcount)
 
 #-------------------------------------------------------------------------------
 def performNmapScan(devicesToScan):
@@ -1706,9 +1717,9 @@ def performNmapScan(devicesToScan):
 
         updateState("Scan: Nmap")
 
-        file_print('[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device')  
+        mylog('verbose', ['[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
 
-        file_print("        Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' )
+        mylog('verbose', ["        Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' ])
 
         devIndex = 0
         for device in devicesToScan:
@@ -1724,15 +1735,15 @@ def performNmapScan(devicesToScan):
                 output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
             except subprocess.CalledProcessError as e:
                 # An error occured, handle it
-                file_print(e.output)
-                file_print("        Error - Nmap Scan - check logs", progress)            
+                mylog('none', [e.output])
+                mylog('none', ["        Error - Nmap Scan - check logs", progress])            
             except subprocess.TimeoutExpired as timeErr:
-                file_print('        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"], progress) 
+                mylog('verbose', ['        Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"], progress]) 
 
             if output == "": # check if the subprocess failed                    
-                file_print('[', timeNow(), '] Scan: Nmap FAIL for ', device["dev_LastIP"], progress ,' check logs for details') 
+                mylog('info', ['[', timeNow(), '] Scan: Nmap FAIL for ', device["dev_LastIP"], progress ,' check logs for details']) 
             else: 
-                file_print('[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"], progress)
+                mylog('verbose', ['[', timeNow(), '] Scan: Nmap SUCCESS for ', device["dev_LastIP"], progress])
 
             devIndex += 1
             
@@ -1784,7 +1795,7 @@ def performNmapScan(devicesToScan):
                     if any(x.hash == newEntry.hash for x in oldEntries):
                         newEntries.pop(index)
 
-                file_print('[', timeNow(), '] Scan: Nmap found ', len(newEntries), ' new or changed ports')
+                mylog('verbose', ['[', timeNow(), '] Scan: Nmap found ', len(newEntries), ' new or changed ports'])
 
                 # collect new ports, find the corresponding old entry and return for notification purposes
                 # also update the DB with the new values after deleting the old ones
@@ -1871,7 +1882,7 @@ def performPholusScan (timeoutSec):
         temp = subnet.split("--interface=")
 
         if len(temp) != 2:
-            file_print("        Skip scan (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet)
+            mylog('none', ["        Skip scan (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet])
             return
 
         mask = temp[0].strip()
@@ -1879,8 +1890,8 @@ def performPholusScan (timeoutSec):
 
         # logging & updating app state        
         updateState("Scan: Pholus")        
-        file_print('[', timeNow(), '] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)')  
-        file_print("        Pholus scan on [interface] ", interface, " [mask] " , mask)
+        mylog('info', ['[', timeNow(), '] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
+        mylog('verbose', ["        Pholus scan on [interface] ", interface, " [mask] " , mask])
         
         # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
         adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
@@ -1896,15 +1907,15 @@ def performPholusScan (timeoutSec):
             output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print(e.output)
-            file_print("        Error - Pholus Scan - check logs")            
+            mylog('none', [e.output])
+            mylog('none', ["        Error - Pholus Scan - check logs"])            
         except subprocess.TimeoutExpired as timeErr:
-            file_print('        Pholus TIMEOUT - the process forcefully terminated as timeout reached') 
+            mylog('none', ['        Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
 
         if output == "": # check if the subprocess failed                    
-            file_print('[', timeNow(), '] Scan: Pholus FAIL - check logs') 
+            mylog('none', ['[', timeNow(), '] Scan: Pholus FAIL - check logs']) 
         else: 
-            file_print('[', timeNow(), '] Scan: Pholus SUCCESS')
+            mylog('verbose', ['[', timeNow(), '] Scan: Pholus SUCCESS'])
         
         #  check the last run output
         f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')
@@ -2034,7 +2045,7 @@ def resolve_device_name_dig (pMAC, pIP):
             newName = subprocess.check_output (dig_args, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            file_print(e.output)            
+            mylog('none', [e.output])            
             # newName = "Error - check logs"
             return -1
 
@@ -2209,7 +2220,7 @@ def send_notifications ():
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
 
     # Reporting section
-    file_print('  Check if something to report')    
+    mylog('verbose', ['  Check if something to report'])    
 
     # prepare variables for JSON construction
     json_internet = []
@@ -2348,47 +2359,47 @@ def send_notifications ():
 
         update_api(True)
 
-        file_print('    Changes detected, sending reports')
+        mylog('none', ['    Changes detected, sending reports'])
 
         if REPORT_MAIL and check_config('email'):  
             updateState("Send: Email")
-            file_print('      Sending report by Email')
+            mylog('info', ['      Sending report by Email'])
             send_email (mail_text, mail_html)
         else :
-            file_print('      Skip email')
+            mylog('verbose', ['      Skip email'])
         if REPORT_APPRISE and check_config('apprise'):
             updateState("Send: Apprise")
-            file_print('      Sending report by Apprise')
+            mylog('info', ['      Sending report by Apprise'])
             send_apprise (mail_html, mail_text)
         else :
-            file_print('      Skip Apprise')
+            mylog('verbose', ['      Skip Apprise'])
         if REPORT_WEBHOOK and check_config('webhook'):
             updateState("Send: Webhook")
-            file_print('      Sending report by Webhook')
+            mylog('info', ['      Sending report by Webhook'])
             send_webhook (json_final, mail_text)
         else :
-            file_print('      Skip webhook')
+            mylog('verbose', ['      Skip webhook'])
         if REPORT_NTFY and check_config('ntfy'):
             updateState("Send: NTFY")
-            file_print('      Sending report by NTFY')
+            mylog('info', ['      Sending report by NTFY'])
             send_ntfy (mail_text)
         else :
-            file_print('      Skip NTFY')
+            mylog('verbose', ['      Skip NTFY'])
         if REPORT_PUSHSAFER and check_config('pushsafer'):
             updateState("Send: PUSHSAFER")
-            file_print('      Sending report by PUSHSAFER')
+            mylog('info', ['      Sending report by PUSHSAFER'])
             send_pushsafer (mail_text)
         else :
-            file_print('      Skip PUSHSAFER')
+            mylog('verbose', ['      Skip PUSHSAFER'])
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
             updateState("Send: MQTT")
-            file_print('      Establishing MQTT thread')                          
+            mylog('info', ['      Establishing MQTT thread'])                          
             mqtt_start()        
         else :
-            file_print('      Skip MQTT')
+            mylog('verbose', ['      Skip MQTT'])
     else :
-        file_print('    No changes to report')
+        mylog('verbose', ['    No changes to report'])
 
     # Clean Pending Alert Events
     sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
@@ -2401,7 +2412,7 @@ def send_notifications ():
     changedPorts_json_struc = None
 
     # DEBUG - print number of rows updated
-    file_print('    Notifications: ', sql.rowcount)
+    mylog('info', ['    Notifications: ', sql.rowcount])
 
     # Commit changes    
     commitDB()
@@ -2465,42 +2476,42 @@ def check_config(service):
 
     if service == 'email':
         if SMTP_PASS == '' or SMTP_SERVER == '' or SMTP_USER == '' or REPORT_FROM == '' or REPORT_TO == '':
-            file_print('    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.')
+            mylog('none', ['    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
             return False
         else:
             return True   
 
     if service == 'apprise':
         if APPRISE_URL == '' or APPRISE_HOST == '':
-            file_print('    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.')
+            mylog('none', ['    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
             return False
         else:
             return True  
 
     if service == 'webhook':
         if WEBHOOK_URL == '':
-            file_print('    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.')
+            mylog('none', ['    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.'])
             return False
         else:
             return True 
 
     if service == 'ntfy':
         if NTFY_HOST == '' or NTFY_TOPIC == '':
-            file_print('    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.')
+            mylog('none', ['    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.'])
             return False
         else:
             return True 
 
     if service == 'pushsafer':
         if PUSHSAFER_TOKEN == 'ApiKey':
-            file_print('    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.')
+            mylog('none', ['    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.'])
             return False
         else:
             return True 
 
     if service == 'mqtt':
         if MQTT_BROKER == '' or MQTT_PORT == '' or MQTT_USER == '' or MQTT_PASSWORD == '':
-            file_print('    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.')
+            mylog('none', ['    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
             return True 
@@ -2566,8 +2577,9 @@ def remove_tag (pText, pTag):
 #-------------------------------------------------------------------------------
 def send_email (pText, pHTML):
 
-    # Print more info for debugging if PRINT_LOG enabled
-    print_log ('REPORT_TO: ' + hide_email(str(REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(SMTP_USER))) 
+    # Print more info for debugging if LOG_LEVEL == 'debug' 
+    if LOG_LEVEL == 'debug':
+        print_log ('REPORT_TO: ' + hide_email(str(REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(SMTP_USER))) 
 
     # Compose email
     msg = MIMEMultipart('alternative')
@@ -2605,8 +2617,8 @@ def send_email (pText, pHTML):
 
         failedAt = print_log('Setting SMTP debug level')
 
-        # Verbose debug of the communication between SMTP server and client
-        if PRINT_LOG:
+        # Log level set to debug of the communication between SMTP server and client
+        if LOG_LEVEL == 'debug':
             smtp_connection.set_debuglevel(1) 
         
         failedAt = print_log( 'Sending .ehlo()')
@@ -2625,11 +2637,11 @@ def send_email (pText, pHTML):
         smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
         smtp_connection.quit()
     except smtplib.SMTPAuthenticationError as e: 
-        file_print('      ERROR: Failed at - ', failedAt)
-        file_print('      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError), skipping Email (enable PRINT_LOG for more logging)')
+        mylog('none', ['      ERROR: Failed at - ', failedAt])
+        mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError), skipping Email (enable LOG_LEVEL=debug for more logging)'])
     except smtplib.SMTPServerDisconnected as e: 
-        file_print('      ERROR: Failed at - ', failedAt)
-        file_print('      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable PRINT_LOG for more logging)')
+        mylog('none', ['      ERROR: Failed at - ', failedAt])
+        mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable LOG_LEVEL=debug for more logging)'])
 
     print_log('      DEBUG: Last executed - ' + str(failedAt))
 
@@ -2714,7 +2726,7 @@ def send_webhook (_json, _html):
         logResult (stdout, stderr)    
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)
+        mylog('none', [e.output])
 
 #-------------------------------------------------------------------------------
 def send_apprise (html, text):
@@ -2739,7 +2751,7 @@ def send_apprise (html, text):
         logResult (stdout, stderr)      
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)    
+        mylog('none', [e.output])    
 
 #-------------------------------------------------------------------------------
 # MQTT
@@ -2760,7 +2772,7 @@ def publish_mqtt(client, topic, message):
         status = result[0]
 
         if status != 0:            
-            file_print("Waiting to reconnect to MQTT broker")
+            mylog('info', ["Waiting to reconnect to MQTT broker"])
             time.sleep(0.1) 
     return True
 
@@ -2849,10 +2861,10 @@ def mqtt_create_client():
         global mqtt_connected_to_broker
         
         if rc == 0: 
-            file_print("        Connected to broker")            
+            mylog('verbose', ["        Connected to broker"])            
             mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            file_print("        Connection failed")
+            mylog('none', ["        Connection failed"])
             mqtt_connected_to_broker = False
 
 
@@ -2905,7 +2917,7 @@ def mqtt_start():
 
     sec_delay = len(devices) * int(MQTT_DELAY_SEC)*5
 
-    file_print("        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' )
+    mylog('info', ["        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
     for device in devices:        
 
@@ -2993,7 +3005,7 @@ def upgradeDB ():
       """).fetchone()[0] == 0
 
     if dev_Network_Node_MAC_ADDR_missing :
-      file_print("[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table")   
+      mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])   
       sql.execute("""      
       ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
       """)
@@ -3004,7 +3016,7 @@ def upgradeDB ():
       """).fetchone()[0] == 0
 
     if dev_Network_Node_port_missing :
-      file_print("[upgradeDB] Adding dev_Network_Node_port to the Devices table")     
+      mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])     
       sql.execute("""      
       ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
       """)
@@ -3015,7 +3027,7 @@ def upgradeDB ():
       """).fetchone()[0] == 0
 
     if dev_Icon_missing :
-      file_print("[upgradeDB] Adding dev_Icon to the Devices table")     
+      mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])     
       sql.execute("""      
       ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
       """)
@@ -3027,7 +3039,7 @@ def upgradeDB ():
     """).fetchone() == None
 
     # Re-creating Settings table    
-    file_print("[upgradeDB] Re-creating Settings table")
+    mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
 
     if settingsMissing == False:   
         sql.execute("DROP TABLE Settings;")       
@@ -3058,7 +3070,7 @@ def upgradeDB ():
     #     pholusScanMissing = True  
 
     if pholusScanMissing:
-        file_print("[upgradeDB] Re-creating Pholus_Scan table")
+        mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
         sql.execute("""      
         CREATE TABLE "Pholus_Scan" (        
         "Index"	          INTEGER,
@@ -3080,7 +3092,7 @@ def upgradeDB ():
     """).fetchone() == None
 
      # Re-creating Parameters table
-    file_print("[upgradeDB] Re-creating Parameters table")
+    mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
     sql.execute("DROP TABLE Parameters;")
 
     sql.execute("""      
@@ -3099,7 +3111,7 @@ def upgradeDB ():
     #     nmapScanMissing = True  
 
     if nmapScanMissing:
-        file_print("[upgradeDB] Re-creating Nmap_Scan table")
+        mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
         sql.execute("""      
         CREATE TABLE "Nmap_Scan" (        
         "Index"	          INTEGER,
@@ -3209,7 +3221,7 @@ def to_binary_sensor(input):
 #===============================================================================
 def update_api(isNotification = False, updateOnlyDataSources = []):
 
-    file_print('     [API] Updating files in /front/api')    
+    mylog('verbose', ['     [API] Updating files in /front/api'])    
     folder = pialertPath + '/front/api/'
 
     if isNotification:
@@ -3477,17 +3489,17 @@ def check_and_run_event():
 def handle_run(runType):
     global last_network_scan
 
-    file_print('[', timeNow(), '] START Run: ', runType)  
+    mylog('info', ['[', timeNow(), '] START Run: ', runType])  
 
     if runType == 'ENABLE_ARPSCAN':
         last_network_scan = now_minus_24h        
 
-    file_print('[', timeNow(), '] END Run: ', runType)
+    mylog('info', ['[', timeNow(), '] END Run: ', runType])
 
 #-------------------------------------------------------------------------------
 def handle_test(testType):
 
-    file_print('[', timeNow(), '] START Test: ', testType)    
+    mylog('info', ['[', timeNow(), '] START Test: ', testType])    
 
     # Open text sample    
     sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
@@ -3509,7 +3521,7 @@ def handle_test(testType):
     if testType == 'REPORT_PUSHSAFER':
         send_pushsafer (sample_txt)
 
-    file_print('[', timeNow(), '] END Test: ', testType)
+    mylog('info', ['[', timeNow(), '] END Test: ', testType])
 
 
 #-------------------------------------------------------------------------------
@@ -3540,7 +3552,7 @@ def isNewVersion():
             text = url.text
             data = json.loads(text)
         except requests.exceptions.ConnectionError as e:
-            file_print("    Couldn't check for new release.") 
+            mylog('info', ["    Couldn't check for new release."]) 
             data = ""
         
         # make sure we received a valid response and not an API rate limit exceeded message
@@ -3551,7 +3563,7 @@ def isNewVersion():
             realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))            
 
             if realeaseTimestamp > buildTimestamp + 600:        
-                file_print("    New version of the container available!")
+                mylog('none', ["    New version of the container available!"])
                 newVersionAvailable = True 
                 initOrSetParam('Back_New_Version_Available', str(newVersionAvailable))                
 
@@ -3604,7 +3616,7 @@ def run_plugin_scripts(runType):
     
     global plugins, tz, mySchedules
 
-    file_print('     [Plugins] Check if any plugins need to be executed on run type: ', runType)
+    mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 
     for plugin in plugins.list:
 
@@ -3630,7 +3642,7 @@ def run_plugin_scripts(runType):
         if shouldRun:            
                         
             print_plugin_info(plugin, ['display_name'])
-            file_print('     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"])
+            mylog('debug', ['     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
             execute_plugin(plugin)
 
 #-------------------------------------------------------------------------------
@@ -3673,7 +3685,7 @@ def execute_plugin(plugin):
             #     resolved = get_sql(param["value"])
 
             if resolved == None:
-                file_print('     [Plugins] The parameter "name":"', param["name"], '" was resolved as None')
+                mylog('none', ['     [Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
 
             else:
                 params.append( [param["name"], resolved] )
@@ -3684,17 +3696,17 @@ def execute_plugin(plugin):
     command = resolve_wildcards(set_CMD, params).split()
 
     # Execute command
-    file_print('     [Plugins] Executing: ', set_CMD)
+    mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
 
     try:
         # try runnning a subprocess with a forced timeout in case the subprocess hangs
         output = subprocess.check_output (command, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        file_print(e.output)
-        file_print('        [Plugins] Error - enable PRINT_LOG and check logs')            
+        mylog('none', [e.output])
+        mylog('none', ['        [Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
     except subprocess.TimeoutExpired as timeErr:
-        file_print('        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached') 
+        mylog('none', ['        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
 
     #  check the last run output
@@ -3706,10 +3718,10 @@ def execute_plugin(plugin):
     newLines = list(filter(lambda x: '|' in x, newLines))  
 
     if len(newLines) == 0: # check if the subprocess failed / there was no valid output
-        file_print('        [Plugins] No output received from the plugin - enable PRINT_LOG and check logs')
+        mylog('none', ['        [Plugins] No output received from the plugin - enable LOG_LEVEL=debug and check logs'])
         return  
     else: 
-        file_print('[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries')      
+        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries'])      
 
     # regular logging
     for line in newLines:
@@ -3724,7 +3736,7 @@ def execute_plugin(plugin):
         if len(columns) == 8:
             params.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], columns[7]))
         else:
-            file_print('        [Plugins]: Skipped invalid line in the output: ', line)
+            mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
 
     if len(params) > 0:                
         sql.executemany ("""INSERT INTO Plugins_State ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", params) 
@@ -3734,8 +3746,14 @@ def execute_plugin(plugin):
 #-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
 def resolve_wildcards(command, params):
+
+    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])
+
     for param in params:
         command = command.replace('{' + param[0] + '}', param[1])
+
+    mylog('debug', ['        [Plugins]: Resolved CMD: ', command])
+
     return command
 
 #-------------------------------------------------------------------------------
@@ -3754,12 +3772,12 @@ def plugin_param_from_glob_set(globalSetting):
 
     if setTyp in arrayConversion:
         tmp = ''
+        for arrayItem in setVal:        
 
-        tmp = setVal[:-1] # remove last bracket
-        tmp = tmp[1:] # remove first bracket
-        tmp = tmp.replace("'","").replace(' ','')
+            tmp += arrayItem + ','
+            tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
 
-        return tmp
+        return tmp[:-1] # Remove last comma ','
 
 
 #-------------------------------------------------------------------------------
@@ -3773,7 +3791,7 @@ def get_plugin_setting(plugin, function_key):
           result =  set 
 
     if result == None:
-        file_print('     [Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name'))
+        mylog('none', ['     [Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
 
     return result
 
@@ -3800,11 +3818,11 @@ def get_plugin_string(props, el):
 #-------------------------------------------------------------------------------
 def print_plugin_info(plugin, elements = ['display_name']):
 
-    file_print('     [Plugins] ---------------------------------------------') 
+    mylog('verbose', ['     [Plugins] ---------------------------------------------']) 
 
     for el in elements:
         res = get_plugin_string(plugin, el)
-        file_print('     [Plugins] ', el ,': ', res) 
+        mylog('verbose', ['     [Plugins] ', el ,': ', res]) 
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling
