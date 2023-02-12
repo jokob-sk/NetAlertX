@@ -150,12 +150,12 @@ def print_log (pText):
         return
 
     # Current Time    
-    log_timestamp2 = datetime.datetime.now()
+    log_timestamp2 = datetime.datetime.now().replace(microsecond=0)
 
     # Print line + time + elapsed time + text
     file_print ('[LOG_LEVEL=debug] ',
         log_timestamp2, ' ',
-        log_timestamp2 - log_timestamp, ' ',
+        log_timestamp2.replace(microsecond=0) - log_timestamp.replace(microsecond=0), ' ',
         pText)
 
     # Save current time to calculate elapsed time until next log
@@ -277,7 +277,7 @@ def commitDB ():
         return
 
     # Log    
-    print_log ('Commiting DB changes')
+    # print_log ('Commiting DB changes')
 
     # Commit changes to DB
     sql_connection.commit()
@@ -332,9 +332,6 @@ def importConfigs ():
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     # API
     global API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
-    
-    mySettings = [] # reset settings
-    mySettingsSQLsafe = [] # same as aboverr but safe to be passed into a SQL query
 
     # get config file
     config_file = Path(fullConfPath)
@@ -342,6 +339,9 @@ def importConfigs ():
     # Skip import if last time of import is NEWER than file age 
     if (os.path.getmtime(config_file) < lastTimeImported) :
         return
+        
+    mySettings = [] # reset settings
+    mySettingsSQLsafe = [] # same as aboverr but safe to be passed into a SQL query
     
     # load the variables from  pialert.conf
     code = compile(config_file.read_text(), config_file.name, "exec")
@@ -498,6 +498,8 @@ def importConfigs ():
             collect_lang_strings(set,  pref + "_" + set["function"])
     # -----------------
     # Plugins END
+
+    
            
     plugins_once_run = False
 
@@ -565,6 +567,8 @@ def main ():
         # re-load user configuration and plugins
         importConfigs()       
 
+        
+
         # Handle plugins executed ONCE
         if plugins_once_run == False:
             run_plugin_scripts('once')  
@@ -578,7 +582,7 @@ def main ():
 
             last_API_update = time_started                
             update_api()
-
+        
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
 
@@ -659,7 +663,7 @@ def main ():
                 if run:
                     apiSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     update_api()
-
+            
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
@@ -693,7 +697,7 @@ def main ():
 
             # Commit SQL
             commitDB()            
-
+            
             # Final message
             if cycle != "":
                 action = str(cycle)
@@ -701,7 +705,7 @@ def main ():
                     action = "network_scan"
                 mylog('verbose', ['[', timeNow(), '] Last action: ', action])
                 cycle = ""
-
+            
             # Footer
             updateState("Process: Wait")
             mylog('verbose', ['[', timeNow(), '] Process: Wait'])            
@@ -3528,10 +3532,15 @@ def handle_test(testType):
 #  Return whole setting touple
 def get_setting(key):
     result = None
-    # mySettings.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    # index order: key, name, desc, inputtype, options, regex, result, group, events
     for set in mySettings:
         if set[0] == key:
             result = set
+    
+    if result is None:
+        mylog('info', [' Error - setting_missing - Setting not found for key: ', key])           
+        mylog('info', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
+        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : mySettings}))    
 
     return result
 
@@ -3692,7 +3701,7 @@ def execute_plugin(plugin):
     
 
     # ------- prepare params --------
-    # prepare command from plugin settings, custom parameters TODO HERE    
+    # prepare command from plugin settings, custom parameters  
     command = resolve_wildcards(set_CMD, params).split()
 
     # Execute command
@@ -3728,18 +3737,18 @@ def execute_plugin(plugin):
         append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
     
     # build SQL query parameters to insert into the DB
-    params = []
+    sqlParams = []
 
     for line in newLines:
         columns = line.split("|")
         # There has to be always 8 columns
         if len(columns) == 8:
-            params.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], columns[7]))
+            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], columns[7]))
         else:
             mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
 
-    if len(params) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_State ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", params) 
+    if len(sqlParams) > 0:                
+        sql.executemany ("""INSERT INTO Plugins_State ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
 
 
@@ -3750,6 +3759,8 @@ def resolve_wildcards(command, params):
     mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])
 
     for param in params:
+        mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
+        mylog('debug', ['        [Plugins]: resolved: ', param[1]])
         command = command.replace('{' + param[0] + '}', param[1])
 
     mylog('debug', ['        [Plugins]: Resolved CMD: ', command])
@@ -3760,8 +3771,8 @@ def resolve_wildcards(command, params):
 # Flattens a setting to make it passable to a script
 def plugin_param_from_glob_set(globalSetting):
 
-    setVal = globalSetting[6]
-    setTyp = globalSetting[3]
+    setVal = globalSetting[6] # setting value
+    setTyp = globalSetting[3] # setting type
 
 
     noConversion = ['text', 'integer', 'boolean', 'password', 'readonly', 'selectinteger', 'selecttext' ]
