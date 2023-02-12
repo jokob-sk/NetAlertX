@@ -29,29 +29,28 @@
         "type"  : "setting",
         "value" : "WEBMON_SQL_internet_ip"
     }],  
-    "database_column_aliases":{
-        "Plugins_Events":{
-            "Index":[{
-                "language_code":"en_us",
-                "string" : "Index"
-            }],
-            "Object_PrimaryID":[{
-                "language_code":"en_us",
-                "string" : "Monitored URL"
-            }],
-            "DateTime":[{
-                "language_code":"en_us",
-                "string" : "Checked on"
-            }],
-            "Watched_Value1":[{
-                "language_code":"en_us",
-                "string" : "Status code"
-            }],
-            "Watched_Value2":[{
-                "language_code":"en_us",
-                "string" : "Latency"
-            }]
-        }
+    "database_column_aliases":{  
+        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
+        "Index":[{
+            "language_code":"en_us",
+            "string" : "Index"
+        }],
+        "Object_PrimaryID":[{
+            "language_code":"en_us",
+            "string" : "Monitored URL"
+        }],
+        "DateTime":[{
+            "language_code":"en_us",
+            "string" : "Checked on"
+        }],
+        "Watched_Value1":[{
+            "language_code":"en_us",
+            "string" : "Status code"
+        }],
+        "Watched_Value2":[{
+            "language_code":"en_us",
+            "string" : "Latency"
+        }]        
     },
     "settings":[
         {
@@ -66,7 +65,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_TIMEOUT\"><code>WEBMON_TIMEOUT</code> setting</a>."
+                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
             }]
         },
         {

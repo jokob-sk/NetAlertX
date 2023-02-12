@@ -747,6 +747,13 @@ height: 50px;
     margin-bottom: 6px;
 }
 
+.pageHelp{
+    position: absolute;
+    font-size: x-small;
+    margin-bottom: 6px;
+}
+
+
 #networkTree .box
 {
     padding:2px;

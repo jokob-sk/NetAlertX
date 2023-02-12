@@ -66,45 +66,100 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ### config.json 
 
-##### Setting object struncture
+#### params
+
+- `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
+- `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
+  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD`setting.  
+  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting dispaly name, e.g. `SCAN_CYCLE_MINUTES`. 
+- `"value" : "param_value"` - Needs to contain a setting code name or sql query without wildcards.
+
+
+Example:
 
 ```json
 {
-            "type": "RUN",
-            "default_value":"disabled",
-            "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
-            "localized": ["name", "description"],
-            "name" :[{
-                "language_code":"en_us",
-                "string" : "Run condition"
-            },
-            {
-                "language_code":"de_de",
-                "string" : "Ausführungsbedingung"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_TIMEOUT\"><code>WEBMON_TIMEOUT</code> setting</a>."
-            }]
-        }
+    "params" : [{
+            "name"  : "macs",
+            "type"  : "sql",
+            "value" : "SELECT dev_MAC from DEVICES"
+        },
+        {
+            "name"  : "urls",
+            "type"  : "setting",
+            "value" : "WEBMON_urls_to_check"
+        },
+        {
+            "name"  : "internet_ip",
+            "type"  : "setting",
+            "value" : "WEBMON_SQL_internet_ip"
+        }]
+}
 ```
-###### Supported settings types
+
+
+#### Setting object struncture
+
+- `"function": "<see Supported settings function values>"` - What function the setting drives or a simple unique code name
+- `"type": "<text|integer|boolean|password|readonly|selectinteger|selecttext|multiselect|list>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
+- `"localized"` - a list of properties on the current JSON level which need to be localized
+- `"name"` and `"description"` - Displayed in the Settings page. An array of localized strings. (see Localized strings below).
+    
+##### Supported settings `function` values
 
 - `RUN` - (required) Specifies when the service is executed
     - Supported Options: "disabled", "once", "schedule" (if included then a `RUN_SCHD` setting needs to be specified), "always_after_scan", "on_new_device"
 - `RUN_SCHD` - (required if you include the  `RUN`) Cron-like scheduling used if the `RUN` setting set to `schedule`
 - `CMD` - (required) What command should be executed. 
-- `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per (API docs)[https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md].
-- `TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.
-- `WATCH` - (optional) Which database columns are watched for changes. If not specified no notifications are sent. 
+- `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
+- `RUN_TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.
+- `WATCH` - (optional) Which database columns are watched for changes for this particular plugin. If not specified no notifications are sent. 
 
 
-#### Example
+Example:
 
 ```json
 {
+    "function": "RUN",            
+    "type": "selecttext",            
+    "default_value":"disabled",
+    "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+    "localized": ["name", "description"],
+    "name" :[{
+        "language_code":"en_us",
+        "string" : "When to run"
+    }],
+    "description": [{
+        "language_code":"en_us",
+        "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+    }]
+}
+```
+##### Localized strings
+
+
+- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three currently supported.
+- `"string"`  - The string to be displayed in the given language.
+
+Example:
+
+```json
+
+    {
+        "language_code":"en_us",
+        "string" : "When to run"
+    }
+
+```
+
+
+## Full Example
+
+```json
+{
+    {
     "code_name": "website_monitor",
-    "settings_short_prefix": "WEBMON",
+    "unique_prefix": "WEBMON",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",
@@ -113,82 +168,103 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
     "icon":[{
         "language_code":"en_us",
         "string" : "<i class=\"fa-solid fa-globe\"></i>"
-    }],
-    "argument" : "urls",   
+    }],     
     "description": [{
         "language_code":"en_us",
         "string" : "This plugin is to monitor status changes of different services or websites."
     }],
-    "database_column_aliases":{
-        "Plugins_Events":{
-            "Index":[{
-                "language_code":"en_us",
-                "string" : "Index"
-            }],
-            "Object_PrimaryID":[{
-                "language_code":"en_us",
-                "string" : "Monitored URL"
-            }],
-            "DateTime":[{
-                "language_code":"en_us",
-                "string" : "Checked on"
-            }],
-            "Watched_Value1":[{
-                "language_code":"en_us",
-                "string" : "Status code"
-            }],
-            "Watched_Value2":[{
-                "language_code":"en_us",
-                "string" : "Latency"
-            }]
-        }
+    "params" : [{
+        "name"  : "macs",
+        "type"  : "sql",
+        "value" : "SELECT dev_MAC from DEVICES"
+    },
+    {
+        "name"  : "urls",
+        "type"  : "setting",
+        "value" : "WEBMON_urls_to_check"
+    },
+    {
+        "name"  : "internet_ip",
+        "type"  : "setting",
+        "value" : "WEBMON_SQL_internet_ip"
+    }],  
+    "database_column_aliases":{  
+        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
+        "Index":[{
+            "language_code":"en_us",
+            "string" : "Index"
+        }],
+        "Object_PrimaryID":[{
+            "language_code":"en_us",
+            "string" : "Monitored URL"
+        }],
+        "DateTime":[{
+            "language_code":"en_us",
+            "string" : "Checked on"
+        }],
+        "Watched_Value1":[{
+            "language_code":"en_us",
+            "string" : "Status code"
+        }],
+        "Watched_Value2":[{
+            "language_code":"en_us",
+            "string" : "Latency"
+        }]        
     },
     "settings":[
         {
-            "type": "ENABLE",
-            "default_value":"False",
+            "function": "RUN",            
+            "type": "selecttext",            
+            "default_value":"disabled",
+            "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "When to run"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+            }]
+        },
+        {
+            "function": "CMD",
+            "type": "text",
+            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code":"en_us",
-                "string" : "Enable plugin"
+                "string" : "Command"
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. You need to enable this setting for anything to be executed regarding this plugin."
-            }]            
-        },
-        {
-            "type": "RUN",
-            "default_value":"none",
-            "options": ["none","once","schedule"],
-            "localized": ["name", "description"],
-            "name" :[{
-                "language_code":"en_us",
-                "string" : "Schedule"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_TIMEOUT\"><code>WEBMON_TIMEOUT</code> setting</a>."
+                "string" : "Comamnd to run"
             }]
         },
         {
-            "type": "FORCE_REPORT",
+            "function": "FORCE_REPORT",
+            "type": "boolean",
             "default_value": false,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Force report"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Zwing Bericht"
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Force a notification message even if there are nochanges detected."
+                "string" : "Force a notification message even if there are no changes detected."
             }]
             
         },
         {
-            "type": "RUN_SCHD",
+            "function": "RUN_SCHD",
+            "type": "text",
             "default_value":"0 2 * * *",
             "options": [],
             "localized": ["name", "description"],
@@ -202,7 +278,8 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
             }]
         },
         {
-            "type": "API_SQL",
+            "function": "API_SQL",
+            "type": "text",
             "default_value":"SELECT * FROM plugin_website_monitor",
             "options": [],
             "localized": ["name", "description"],
@@ -216,7 +293,8 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
             }]            
         },
         {
-            "type": "RUN_TIMEOUT",
+            "function": "RUN_TIMEOUT",
+            "type": "integer",
             "default_value":5,
             "options": [],
             "localized": ["name", "description"],
@@ -230,7 +308,8 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
             }]
         },
         {
-            "type": "WATCH",
+            "function": "WATCH",
+            "type": "multiselect",
             "default_value":["Watched_Value1"],
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
@@ -244,8 +323,9 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
             }] 
         },
         {
-            "type": "ARGS",
-            "default_value":"",
+            "function": "urls_to_check",
+            "type": "list",
+            "default_value":[],
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -254,14 +334,26 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>."
+                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>."
+            }]
+        },
+        {
+            "function": "SQL_internet_ip",
+            "type": "readonly",
+            "default_value":"SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Helper variable"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Getting the IP address of the Router / Internet"
             }]
         }
 
     ]
 }
-
-
-
 
 ```

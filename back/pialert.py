@@ -51,6 +51,8 @@ sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
 sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
+sql_plugins_entries = "SELECT  * FROM Plugins_Entries"
+sql_plugins_unprocessed_entries = "SELECT  * FROM Plugins_Unprocessed_Entries"
 sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                                                                 WHERE eve_PendingAlertEmail = 1
                                                                 AND eve_EventType = 'New Device'
@@ -295,7 +297,7 @@ def ccd(key, default, config, name, inputtype, options, group, events=[], desc =
     global mySettings
 
     if inputtype == 'text':
-        result = result.replace('\'', "_single_quote_")
+        result = result.replace('\'', "{s-quote}")
 
     mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
     mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
@@ -3130,7 +3132,7 @@ def upgradeDB ():
         """)
 
     # Plugin state
-    sql_Plugins_State = """ CREATE TABLE IF NOT EXISTS Plugins_State(
+    sql_Plugins_Entries = """ CREATE TABLE IF NOT EXISTS Plugins_Entries(
                         "Index"	          INTEGER,
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
@@ -3143,10 +3145,10 @@ def upgradeDB ():
                         Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    sql.execute(sql_Plugins_State)
+    sql.execute(sql_Plugins_Entries)
 
     # Plugin execution results
-    sql_Plugin_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
+    sql_Plugins_Unprocessed_Entries = """ CREATE TABLE IF NOT EXISTS Plugins_Unprocessed_Entries(
                         "Index"	          INTEGER,
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
@@ -3156,22 +3158,23 @@ def upgradeDB ():
                         Watched_Value2 TEXT NOT NULL,
                         Watched_Value3 TEXT NOT NULL,
                         Watched_Value4 TEXT NOT NULL,
-                        Processed TEXT NOT NULL,                        
+                        Processed TEXT NOT NULL,              
+                        Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    sql.execute(sql_Plugin_Events)
+    sql.execute(sql_Plugins_Unprocessed_Entries)
 
     # Dynamically generated language strings
     # indicates, if Language_Strings table is available 
     languageStringsMissing = sql.execute("""
     SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Language_Strings'; 
+    AND name='Plugins_Language_Strings'; 
     """).fetchone() == None
     
     if languageStringsMissing == False:
-        sql.execute("DROP TABLE Language_Strings;") 
+        sql.execute("DROP TABLE Plugins_Language_Strings;") 
 
-    sql.execute(""" CREATE TABLE IF NOT EXISTS Language_Strings(
+    sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
                         "Index"	          INTEGER,
                         Language_Code TEXT NOT NULL,
                         String_Key TEXT NOT NULL,
@@ -3234,14 +3237,16 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         write_file(folder + 'notification_text.html'  , mail_html)
         write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
-    #  prepare databse tables we want to expose
+    #  prepare databse tables we want to expose 
     dataSourcesSQLs = [
         ["devices", sql_devices_all],
         ["nmap_scan", sql_nmap_scan_all],
         ["pholus_scan", sql_pholus_scan_all],
         ["events_pending_alert", sql_events_pending_alert],
         ["settings", sql_settings],
-        ["custom_endpoint", API_CUSTOM_SQL]
+        ["plugins_unprocessed_entries", sql_plugins_unprocessed_entries],
+        ["plugins_entries", sql_plugins_entries],
+        ["custom_endpoint", API_CUSTOM_SQL],
     ]
 
     # Save selected database tables
@@ -3448,6 +3453,25 @@ def get_all_devices():
     commitDB()
     return row
 
+#-------------------------------------------------------------------------------
+def get_sql_array(query):    
+
+    sql.execute(query)
+
+    rows = sql.fetchall()
+
+    commitDB()
+
+    #  convert result into list of lists
+    arr = []
+    for row in rows:
+        r_temp = []
+        for column in row:
+            r_temp.append(column)
+        arr.append(r_temp)
+
+    return arr
+
 
 #-------------------------------------------------------------------------------
 def removeDuplicateNewLines(text):
@@ -3611,7 +3635,7 @@ def collect_lang_strings(json, pref):
 #-------------------------------------------------------------------------------
 def import_language_string(code, key, value, extra = ""):
 
-    sql.execute ("""INSERT INTO Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra))) 
+    sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra))) 
 
     commitDB ()
 
@@ -3669,11 +3693,11 @@ def execute_plugin(plugin):
 
     set = get_plugin_setting(plugin, "RUN_TIMEOUT")
 
-    #  handle missing "function":"RUN_TIMEOUT" setting
+    #  handle missing "function":"<unique_prefix>_TIMEOUT" setting
     if set == None:   
-        return 
-    
-    set_RUN_TIMEOUT = set["value"] 
+        set_RUN_TIMEOUT = 10
+    else:     
+        set_RUN_TIMEOUT = set["value"] 
 
     #  Prepare custom params
     params = []
@@ -3689,9 +3713,9 @@ def execute_plugin(plugin):
                 if resolved != None:
                     resolved = plugin_param_from_glob_set(resolved)
 
-            #  TODO HERE
-            # if param["type"] == "sql":
-            #     resolved = get_sql(param["value"])
+            #  Get Sql result
+            if param["type"] == "sql":
+                resolved = flatten_array(get_sql_array(param["value"]))
 
             if resolved == None:
                 mylog('none', ['     [Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
@@ -3732,9 +3756,9 @@ def execute_plugin(plugin):
     else: 
         mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries'])      
 
-    # regular logging
-    for line in newLines:
-        append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+    # # regular logging
+    # for line in newLines:
+    #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
     
     # build SQL query parameters to insert into the DB
     sqlParams = []
@@ -3743,13 +3767,16 @@ def execute_plugin(plugin):
         columns = line.split("|")
         # There has to be always 8 columns
         if len(columns) == 8:
-            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], columns[7]))
+            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], False, columns[7]))
         else:
             mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
 
     if len(sqlParams) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_State ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        sql.executemany ("""INSERT INTO Plugins_Unprocessed_Entries ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Processed" ,"Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
+
+        # update API endpoints
+        update_api(False, ["plugins_unprocessed_entries","plugins_entries"])
 
 
 #-------------------------------------------------------------------------------
@@ -3782,13 +3809,7 @@ def plugin_param_from_glob_set(globalSetting):
         return setVal
 
     if setTyp in arrayConversion:
-        tmp = ''
-        for arrayItem in setVal:        
-
-            tmp += arrayItem + ','
-            tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
-
-        return tmp[:-1] # Remove last comma ','
+        return flatten_array(setVal)
 
 
 #-------------------------------------------------------------------------------
@@ -3834,6 +3855,23 @@ def print_plugin_info(plugin, elements = ['display_name']):
     for el in elements:
         res = get_plugin_string(plugin, el)
         mylog('verbose', ['     [Plugins] ', el ,': ', res]) 
+
+#-------------------------------------------------------------------------------
+def flatten_array(arr):
+    
+    tmp = ''
+
+    for arrayItem in arr:        
+        # only one column flattening is supported
+        if isinstance(arrayItem, list):            
+            arrayItem = str(arrayItem[0])
+
+        tmp += arrayItem + ','
+        tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
+
+    return tmp[:-1] # Remove last comma ','
+
+    
 
 #-------------------------------------------------------------------------------
 # Cron-like Scheduling

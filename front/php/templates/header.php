@@ -222,6 +222,10 @@ if ($ENABLED_DARKMODE === True) {
           <a href="network.php"><span><i class="fa fa-fw fa-network-wired"></i>  <?= lang('Navigation_Network');?></span></a>
         </li>
 
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php') ) ){ echo 'active'; } ?>">
+          <a href="plugins.php"><span><i class="fa fa-fw fa-plug"></i>  <?= lang('Navigation_Plugins');?></span></a>
+        </li>
+
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
           <div class="new-version myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
           <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?= lang('Navigation_Maintenance');?></span></a>

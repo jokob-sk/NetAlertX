@@ -345,7 +345,7 @@ function getString ($codeName, $default) {
 
 function encode_single_quotes ($val) {
 
-  $result = str_replace ('\'','_single_quote_',$val);
+  $result = str_replace ('\'','{s-quote}',$val);
 
   return $result;
 }
