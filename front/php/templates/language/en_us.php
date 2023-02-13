@@ -24,6 +24,7 @@ $lang['en_us'] = array(
 'Gen_AreYouSure' => 'Are you sure?',
 'Gen_Upd' => 'Updated successfully',
 'Gen_Upd_Fail' => 'Update failed',
+'Gen_Help' => 'Need help?',
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022
@@ -472,6 +473,12 @@ $lang['en_us'] = array(
 
 
 //////////////////////////////////////////////////////////////////
+// Plugins
+//////////////////////////////////////////////////////////////////
+
+'Plugins_Unprocessed_Events' => 'Unprocessed events',
+
+//////////////////////////////////////////////////////////////////
 // Settings
 //////////////////////////////////////////////////////////////////
 
@@ -670,6 +677,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'API_RUN_INTERVAL_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>interval</code>. The minimum cycle is <code>5</code> seconds.',
 'API_CUSTOM_SQL_name' => 'Custom endpoint',
 'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href="/api/table_custom_endpoint.json" target="_blank"><code>table_custom_endpoint.json</code> file endpoint</a>.',
+
+
 
 
 

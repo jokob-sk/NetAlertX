@@ -6,9 +6,12 @@ Highly experimental feature. Follow the below very carefully and check example p
 
 PiAlert comes with a simple plugin system to feed events from third-party scripts into the UI and then send notifications if desired.
 
-If you wish to develop a plugin, please check the existing plugin structure.
+If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of teh plugin.
 
 ## Plugin file structure overview 
+
+> Folder name must be the same as the code name value in: `"code_name": "<value>"`
+> Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use. 
 
   | File | Required | Description | 
   |----------------------|----------------------|----------------------| 
@@ -142,7 +145,8 @@ Example:
 ##### Localized strings
 
 
-- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three currently supported.
+
+- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
 
 Example:
@@ -155,13 +159,40 @@ Example:
     }
 
 ```
+##### database_column_aliases
 
+- Only columns specified in the `"localized"` parameter and also with at least an english translation will be shown in the UI.
+
+```json
+{  
+        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
+        "Index":[{
+            "language_code":"en_us",
+            "string" : "Index"
+        }],
+        "Object_PrimaryID":[{
+            "language_code":"en_us",
+            "string" : "Monitored URL"
+        }],
+        "DateTime":[{
+            "language_code":"en_us",
+            "string" : "Checked on"
+        }],
+        "Watched_Value1":[{
+            "language_code":"en_us",
+            "string" : "Status code"
+        }],
+        "Watched_Value2":[{
+            "language_code":"en_us",
+            "string" : "Latency"
+        }]        
+    }
+```
 
 ## Full Example
 
 ```json
 {
-    {
     "code_name": "website_monitor",
     "unique_prefix": "WEBMON",
     "localized": ["display_name", "description", "icon"],
@@ -359,5 +390,7 @@ Example:
 
     ]
 }
+
+
 
 ```

@@ -52,6 +52,7 @@ sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
 sql_plugins_entries = "SELECT  * FROM Plugins_Entries"
+sql_language_strings = "SELECT  * FROM Language_Strings"
 sql_plugins_unprocessed_entries = "SELECT  * FROM Plugins_Unprocessed_Entries"
 sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                                                                 WHERE eve_PendingAlertEmail = 1
@@ -3237,6 +3238,9 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         write_file(folder + 'notification_text.html'  , mail_html)
         write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
+    # Save plugins
+    write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins.list}))  
+
     #  prepare databse tables we want to expose 
     dataSourcesSQLs = [
         ["devices", sql_devices_all],
@@ -3246,6 +3250,7 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         ["settings", sql_settings],
         ["plugins_unprocessed_entries", sql_plugins_unprocessed_entries],
         ["plugins_entries", sql_plugins_entries],
+        ["language_strings", sql_language_strings],
         ["custom_endpoint", API_CUSTOM_SQL],
     ]
 
@@ -3648,6 +3653,9 @@ def custom_plugin_decoder(pluginDict):
 def run_plugin_scripts(runType):
     
     global plugins, tz, mySchedules
+
+    # Header
+    updateState("Run: Plugins")
 
     mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 
