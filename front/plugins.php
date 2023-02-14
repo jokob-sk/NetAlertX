@@ -74,6 +74,7 @@ function localize (obj, key) {
 // -----------------------------------------------------------------------------
 pluginDefinitions = []
 pluginUnprocessedEvents = []
+pluginObjects = []
 
 function getData(){
 
@@ -81,11 +82,17 @@ function getData(){
         
         pluginDefinitions = res["data"];
 
-        $.get('api/table_plugins_unprocessed_entries.json', function(res) {
+        $.get('api/table_plugins_events.json', function(res) {
 
             pluginUnprocessedEvents = res["data"];
 
-            generateTabs()
+            $.get('api/table_plugins_objects.json', function(res) {
+
+                pluginObjects = res["data"];
+
+                generateTabs()
+
+            });
         });
 
     });
@@ -113,7 +120,8 @@ function generateTabs()
 
         headersHtml = ""
         headers = []
-        rows = ""
+        evRows = ""
+        obRows = ""
 
         // Generate the header
         $.each(obj["database_column_aliases"]["localized"], function(index, locItem){
@@ -122,7 +130,7 @@ function generateTabs()
 
         });
 
-        // Generate the entry rows
+        // Generate the event rows
         for(i=0;i<pluginUnprocessedEvents.length;i++)
         {
             if(pluginUnprocessedEvents[i].Plugin == obj.unique_prefix)
@@ -133,7 +141,22 @@ function generateTabs()
                 {   
                     clm += '<td>'+ pluginUnprocessedEvents[i][headers[j]] +'</td>'
                 }                   
-                rows += '<tr>' + clm + '</tr>'
+                evRows += '<tr>' + clm + '</tr>'
+            }            
+        }
+
+        // Generate the object rows
+        for(i=0;i<pluginObjects.length;i++)
+        {
+            if(pluginObjects[i].Plugin == obj.unique_prefix)
+            {
+                clm = ""
+
+                for(j=0;j<headers.length;j++) 
+                {   
+                    clm += '<td>'+ pluginObjects[i][headers[j]] +'</td>'
+                }                   
+                obRows += '<tr>' + clm + '</tr>'
             }            
         }
 
@@ -156,9 +179,24 @@ function generateTabs()
                         <tr>
                             ${headersHtml}                            
                         </tr>  
-                        ${rows}
+                        ${evRows}
                     </tbody>
                 </table>
+
+                <h5>
+                    <i class="fa fa-clock"></i> <?= lang('Plugins_Objects');?> 
+                </h5>
+                <hr>
+
+                <table class="table table-striped">
+                
+                <tbody>
+                    <tr>
+                        ${headersHtml}                            
+                    </tr>  
+                    ${obRows}
+                </tbody>
+            </table>
             </div>
         `);
 

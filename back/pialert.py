@@ -51,9 +51,9 @@ sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
 sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
-sql_plugins_entries = "SELECT  * FROM Plugins_Entries"
+sql_plugins_objects = "SELECT  * FROM Plugins_Objects"
 sql_language_strings = "SELECT  * FROM Language_Strings"
-sql_plugins_unprocessed_entries = "SELECT  * FROM Plugins_Unprocessed_Entries"
+sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                                                                 WHERE eve_PendingAlertEmail = 1
                                                                 AND eve_EventType = 'New Device'
@@ -157,7 +157,7 @@ def print_log (pText):
 
     # Print line + time + elapsed time + text
     file_print ('[LOG_LEVEL=debug] ',
-        log_timestamp2, ' ',
+        # log_timestamp2, ' ',
         log_timestamp2.replace(microsecond=0) - log_timestamp.replace(microsecond=0), ' ',
         pText)
 
@@ -727,31 +727,31 @@ def check_internet_IP ():
 
     # Header
     updateState("Scan: Internet IP")
-    mylog('info', ['[', startTime, '] Check Internet IP:'])    
+    mylog('verbose', ['[', startTime, '] Check Internet IP:'])    
 
     # Get Internet IP
-    mylog('info', ['    Retrieving Internet IP:'])
+    mylog('verbose', ['    Retrieving Internet IP:'])
     internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
     # Check result = IP
     if internet_IP == "" :
-        mylog('info', ['    Error retrieving Internet IP'])
-        mylog('info', ['    Exiting...'])
+        mylog('none', ['    Error retrieving Internet IP'])
+        mylog('none', ['    Exiting...'])
         return False
-    mylog('info', ['      ', internet_IP])
+    mylog('verbose', ['      ', internet_IP])
 
     # Get previous stored IP
-    mylog('info', ['    Retrieving previous IP:'])    
+    mylog('verbose', ['    Retrieving previous IP:'])    
     previous_IP = get_previous_internet_IP ()
-    mylog('info', ['      ', previous_IP])
+    mylog('verbose', ['      ', previous_IP])
 
     # Check IP Change
     if internet_IP != previous_IP :
-        mylog('info', ['    Saving new IP'])
+        mylog('info', ['    New internet IP: ', internet_IP])
         save_new_internet_IP (internet_IP)
-        mylog('info', ['        IP updated'])        
+        
     else :
         mylog('verbose', ['    No changes to perform'])    
 
@@ -2235,6 +2235,7 @@ def send_notifications ():
     json_down_devices = []
     json_events = []
     json_ports = []
+    json_plugins = []
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
@@ -2344,12 +2345,26 @@ def send_notifications ():
 
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
 
+    if 'plugins' in INCLUDED_SECTIONS:  
+        # Compose Plugins Section   
+        sqlQuery = """SELECT * from Plugins_Events where Status == 'new'"""
+
+        notiStruc = construct_notifications(sqlQuery, "Plugins")
+
+        # collect "plugins" for the webhook json 
+        json_plugins = notiStruc.json["data"]
+
+        mail_text = mail_text.replace ('<PLUGINS_TABLE>', notiStruc.text + '\n')
+        mail_html = mail_html.replace ('<PLUGINS_TABLE>', notiStruc.html)
+
+
     json_final = {
                     "internet": json_internet,                        
                     "new_devices": json_new_devices,
                     "down_devices": json_down_devices,                        
                     "events": json_events,
                     "ports": json_ports,
+                    "plugins": json_plugins,
                     }    
 
     mail_text = removeDuplicateNewLines(mail_text)
@@ -3133,7 +3148,7 @@ def upgradeDB ():
         """)
 
     # Plugin state
-    sql_Plugins_Entries = """ CREATE TABLE IF NOT EXISTS Plugins_Entries(
+    sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
                         "Index"	          INTEGER,
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
@@ -3143,13 +3158,14 @@ def upgradeDB ():
                         Watched_Value2 TEXT NOT NULL,
                         Watched_Value3 TEXT NOT NULL,
                         Watched_Value4 TEXT NOT NULL,
+                        Status TEXT NOT NULL,  
                         Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    sql.execute(sql_Plugins_Entries)
+    sql.execute(sql_Plugins_Objects)
 
     # Plugin execution results
-    sql_Plugins_Unprocessed_Entries = """ CREATE TABLE IF NOT EXISTS Plugins_Unprocessed_Entries(
+    sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
                         "Index"	          INTEGER,
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
@@ -3159,11 +3175,11 @@ def upgradeDB ():
                         Watched_Value2 TEXT NOT NULL,
                         Watched_Value3 TEXT NOT NULL,
                         Watched_Value4 TEXT NOT NULL,
-                        Processed TEXT NOT NULL,              
+                        Status TEXT NOT NULL,              
                         Extra TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
-    sql.execute(sql_Plugins_Unprocessed_Entries)
+    sql.execute(sql_Plugins_Events)
 
     # Dynamically generated language strings
     # indicates, if Language_Strings table is available 
@@ -3248,8 +3264,8 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         ["pholus_scan", sql_pholus_scan_all],
         ["events_pending_alert", sql_events_pending_alert],
         ["settings", sql_settings],
-        ["plugins_unprocessed_entries", sql_plugins_unprocessed_entries],
-        ["plugins_entries", sql_plugins_entries],
+        ["plugins_events", sql_plugins_events],
+        ["plugins_objects", sql_plugins_objects],
         ["language_strings", sql_language_strings],
         ["custom_endpoint", API_CUSTOM_SQL],
     ]
@@ -3775,20 +3791,164 @@ def execute_plugin(plugin):
         columns = line.split("|")
         # There has to be always 8 columns
         if len(columns) == 8:
-            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], False, columns[7]))
+            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7]))
         else:
             mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
 
     if len(sqlParams) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_Unprocessed_Entries ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Processed" ,"Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
 
+        process_plugin_events(plugin)
+
         # update API endpoints
-        update_api(False, ["plugins_unprocessed_entries","plugins_entries"])
+        update_api(False, ["plugins_events","plugins_objects"])
 
 
 #-------------------------------------------------------------------------------
-# Flattens a setting to make it passable to a script
+# Check if watched values changed for the given plugin
+def process_plugin_events(plugin):    
+
+    pluginPref = plugin["unique_prefix"]
+
+    plugObjectsArr = get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
+    plugEventsArr  = get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
+
+    pluginObjects = []
+
+    for obj in plugObjectsArr: 
+        pluginObjects.append(plugin_object_class(plugin, obj))
+
+    mylog('debug', ['     [Plugins] Existing objects: ', len(pluginObjects)])
+
+    existingPluginObjects = len(pluginObjects)
+
+    
+    #  Collect new entries
+    index = 0
+    for eve in plugEventsArr:
+
+        tmpObject = plugin_object_class(plugin, eve)
+
+        #  compare hash of the IDs for uniqueness
+        if any(x.idsHash != tmpObject.idsHash for x in pluginObjects):
+            mylog('debug', ['     [Plugins] Collecting a new object'])
+            tmpObject.status = "new"
+            pluginObjects.append(tmpObject)
+
+            plugEventsArr.pop(index) # remove processed entry
+
+        index += 1
+
+    # mylog('debug', ['     [Plugins] New objects: ', index])
+
+    # Collect entries with changed watched columns
+    index = 0
+    for eve in plugEventsArr:
+
+        tmpObject = plugin_object_class(plugin, eve)
+
+        #  compare hash of the changed watched columns for uniqueness
+        if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
+            tmpObject.status = "watched-changed"
+            pluginObjects.append(tmpObject)
+
+            plugEventsArr.pop(index) # remove processed entry
+
+        index += 1
+    
+    # mylog('debug', ['     [Plugins] Objects with changed watched columns: ', index])
+
+    # Collect remaining events    
+    for eve in plugEventsArr:
+
+        tmpObject = plugin_object_class(plugin, eve)
+
+        tmpObject.status = "watched-not-changed"
+        pluginObjects.append(tmpObject)
+
+    
+
+    # Update the DB
+    for plugObj in pluginObjects:
+        # Create new objects if detected
+        mylog('debug', ['     [Plugins] Object latest status: ', plugObj.status]) 
+
+        if plugObj.status == 'new':
+
+            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
+            
+            commitDB()
+
+        if plugObj.status == 'watched-not-changed' and existingPluginObjects == 0:
+
+            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
+            
+            commitDB()
+
+        if plugObj.status == "watched-changed":
+
+            sql.execute ("UPDATE Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?) WHERE Object_PrimaryID = '" +str(plugObj.primaryId)+"' and Object_SecondaryID = '" +str(plugObj.secondaryId)+"'", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
+            
+            commitDB()
+
+            # TODO HERE test on empty DB as well
+            # collect notifications here as well?
+            # deleye the events here or later? probably later - on notification fail 
+            # so the events can be reanalyzed and notification re-send                                
+
+
+
+#-------------------------------------------------------------------------------
+class plugin_object_class:
+    def __init__(self, plugin, objDbRow):
+        self.index        = objDbRow[0]
+        self.pluginPref   = objDbRow[1]
+        self.primaryId    = objDbRow[2]
+        self.secondaryId  = objDbRow[3]
+        self.dateTime     = objDbRow[4]
+        self.watched1     = objDbRow[5]
+        self.watched2     = objDbRow[6]
+        self.watched3     = objDbRow[7]
+        self.watched4     = objDbRow[8]
+        self.status       = objDbRow[9]
+        self.extra        = objDbRow[10]
+
+        self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
+
+        self.watchedClmns = []
+        self.watchedIndxs = []          
+
+        setObj = get_plugin_setting(plugin, 'WATCH')
+
+        indexNameColumnMapping = [(5, 'Watched_Value1' ), (6, 'Watched_Value2' ), (7, 'Watched_Value3' ), (8, 'Watched_Value4' )]
+
+        if setObj is not None:            
+            
+            self.watchedClmns = setObj["value"]
+
+            for clmName in self.watchedClmns:
+                for mapping in indexNameColumnMapping:
+                    if clmName == indexNameColumnMapping[1]:
+                        self.watchedIndxs.append(indexNameColumnMapping[0])
+
+        tmp = ''
+        for indx in self.watchedIndxs:
+            tmp += str(objDbRow[indx])
+
+        self.watchedHash  = str(hash(tmp))
+        
+
+        
+        
+        
+        
+    
+    
+
+
+#-------------------------------------------------------------------------------
+# Replace {wildcars} with parameters
 def resolve_wildcards(command, params):
 
     mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])

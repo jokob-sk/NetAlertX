@@ -476,7 +476,8 @@ $lang['en_us'] = array(
 // Plugins
 //////////////////////////////////////////////////////////////////
 
-'Plugins_Unprocessed_Events' => 'Unprocessed events',
+'Plugins_Unprocessed_Events' => 'Unprocessed Events',
+'Plugins_Objects' => 'Plugin Objects',
 
 //////////////////////////////////////////////////////////////////
 // Settings
