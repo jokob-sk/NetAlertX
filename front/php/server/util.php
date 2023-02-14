@@ -417,7 +417,8 @@ function getDevicesColumns(){
               "dev_Location",
               "dev_Archived",
               "dev_Network_Node_port",
-              "dev_Network_Node_MAC_ADDR"]; 
+              "dev_Network_Node_MAC_ADDR",
+              "dev_Icon"]; 
               
   return $columns;
 }
