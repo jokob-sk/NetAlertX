@@ -3153,13 +3153,15 @@ def upgradeDB ():
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
                         Object_SecondaryID TEXT NOT NULL,
-                        DateTime TEXT NOT NULL,                        
+                        DateTimeCreated TEXT NOT NULL,                        
+                        DateTimeChanged TEXT NOT NULL,                        
                         Watched_Value1 TEXT NOT NULL,
                         Watched_Value2 TEXT NOT NULL,
                         Watched_Value3 TEXT NOT NULL,
                         Watched_Value4 TEXT NOT NULL,
                         Status TEXT NOT NULL,  
                         Extra TEXT NOT NULL,
+                        UserData TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
     sql.execute(sql_Plugins_Objects)
@@ -3170,13 +3172,15 @@ def upgradeDB ():
                         Plugin TEXT NOT NULL,
                         Object_PrimaryID TEXT NOT NULL,
                         Object_SecondaryID TEXT NOT NULL,
-                        DateTime TEXT NOT NULL,                        
+                        DateTimeCreated TEXT NOT NULL,                        
+                        DateTimeChanged TEXT NOT NULL,                         
                         Watched_Value1 TEXT NOT NULL,
                         Watched_Value2 TEXT NOT NULL,
                         Watched_Value3 TEXT NOT NULL,
                         Watched_Value4 TEXT NOT NULL,
                         Status TEXT NOT NULL,              
                         Extra TEXT NOT NULL,
+                        UserData TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
     sql.execute(sql_Plugins_Events)
@@ -3791,12 +3795,12 @@ def execute_plugin(plugin):
         columns = line.split("|")
         # There has to be always 8 columns
         if len(columns) == 8:
-            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7]))
+            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null'))
         else:
             mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
 
     if len(sqlParams) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTime", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
 
         process_plugin_events(plugin)
@@ -3815,87 +3819,102 @@ def process_plugin_events(plugin):
     plugEventsArr  = get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
 
     pluginObjects = []
+    pluginEvents  = []
 
     for obj in plugObjectsArr: 
         pluginObjects.append(plugin_object_class(plugin, obj))
 
-    mylog('debug', ['     [Plugins] Existing objects: ', len(pluginObjects)])
+    existingPluginObjectsCount = len(pluginObjects)
 
-    existingPluginObjects = len(pluginObjects)
+    mylog('debug', ['     [Plugins] Existing objects: ', existingPluginObjectsCount])
+
+    # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
+    for eve in plugEventsArr:
+        tmpObject = plugin_object_class(plugin, eve)        
+        tmpObject.status = "new"
+        pluginEvents.append(tmpObject)
 
     
-    #  Collect new entries
+    #  Update the status to "exists"
     index = 0
-    for eve in plugEventsArr:
-
-        tmpObject = plugin_object_class(plugin, eve)
+    for tmpObjFromEvent in pluginEvents:        
 
         #  compare hash of the IDs for uniqueness
-        if any(x.idsHash != tmpObject.idsHash for x in pluginObjects):
-            mylog('debug', ['     [Plugins] Collecting a new object'])
-            tmpObject.status = "new"
-            pluginObjects.append(tmpObject)
+        if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
+            mylog('debug', ['     [Plugins] Found existing object'])
+            pluginEvents[index].status = "exists"            
 
-            plugEventsArr.pop(index) # remove processed entry
+            # plugEventsArr.pop(index) # remove processed entry
 
         index += 1
 
-    # mylog('debug', ['     [Plugins] New objects: ', index])
-
-    # Collect entries with changed watched columns
+    # Loop thru events and update the one that exist to determine if watched columns changed
     index = 0
-    for eve in plugEventsArr:
+    for tmpObjFromEvent in pluginEvents:  
 
-        tmpObject = plugin_object_class(plugin, eve)
+        if tmpObjFromEvent.status == "exists": 
 
-        #  compare hash of the changed watched columns for uniqueness
-        if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
-            tmpObject.status = "watched-changed"
-            pluginObjects.append(tmpObject)
+            #  compare hash of the changed watched columns for uniqueness
+            if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
+                pluginEvents[index].status = "watched-changed"                            
 
-            plugEventsArr.pop(index) # remove processed entry
+                # plugEventsArr.pop(index) # remove processed entry
+            else:
+                pluginEvents[index].status = "watched-not-changed"  
 
         index += 1
     
-    # mylog('debug', ['     [Plugins] Objects with changed watched columns: ', index])
 
-    # Collect remaining events    
-    for eve in plugEventsArr:
 
-        tmpObject = plugin_object_class(plugin, eve)
+    # Merge existing plugin objects with newly discovered ones and update existin ones with new values
+    for eveObj in pluginEvents:
+        if eveObj.status == 'new':
+            pluginObjects.append(eveObj)
+        else:
+            index = 0
+            for plugObj in pluginObjects:
+                # find corresponding object for the event and merge
+                if plugObj.idsHash == eveObj.idsHash:
+                    pluginObjects[index] =  combine_plugin_objects(plugObj, eveObj)
 
-        tmpObject.status = "watched-not-changed"
-        pluginObjects.append(tmpObject)
-
-    
+                index += 1
 
     # Update the DB
-    for plugObj in pluginObjects:
-        # Create new objects if detected
-        mylog('debug', ['     [Plugins] Object latest status: ', plugObj.status]) 
+    # ----------------------------
+
+    # Update the Plugin_Objects    
+    
+    sql.execute ("DELETE FROM Plugins_Objects")
+
+    for plugObj in pluginObjects: 
+
+        createdTime = plugObj.created
 
         if plugObj.status == 'new':
+            createdTime = plugObj.changed        
 
-            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
-            
-            commitDB()
+        sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
 
-        if plugObj.status == 'watched-not-changed' and existingPluginObjects == 0:
+    # Update the Plugins_Events with the new statuses    
+    
+    sql.execute ("DELETE FROM Plugins_Events")
 
-            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
-            
-            commitDB()
+    for plugObj in pluginEvents: 
 
-        if plugObj.status == "watched-changed":
+        createdTime = plugObj.created
 
-            sql.execute ("UPDATE Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTime, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra) VALUES (?,?,?,?,?,?,?,?,?,?) WHERE Object_PrimaryID = '" +str(plugObj.primaryId)+"' and Object_SecondaryID = '" +str(plugObj.secondaryId)+"'", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , plugObj.dateTime , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra ))    
-            
-            commitDB()
+        if plugObj.status == 'new':
+            createdTime = plugObj.changed        
+
+        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+
+        commitDB()
 
             # TODO HERE test on empty DB as well
             # collect notifications here as well?
-            # deleye the events here or later? probably later - on notification fail 
-            # so the events can be reanalyzed and notification re-send                                
+            # delete the events here or later? probably later - on notification fail 
+            # so the events can be reanalyzed and notification re-send    
+            # enable form controls on table columns                            
 
 
 
@@ -3906,13 +3925,15 @@ class plugin_object_class:
         self.pluginPref   = objDbRow[1]
         self.primaryId    = objDbRow[2]
         self.secondaryId  = objDbRow[3]
-        self.dateTime     = objDbRow[4]
-        self.watched1     = objDbRow[5]
-        self.watched2     = objDbRow[6]
-        self.watched3     = objDbRow[7]
-        self.watched4     = objDbRow[8]
-        self.status       = objDbRow[9]
-        self.extra        = objDbRow[10]
+        self.created      = objDbRow[4]
+        self.changed      = objDbRow[5]
+        self.watched1     = objDbRow[6]
+        self.watched2     = objDbRow[7]
+        self.watched3     = objDbRow[8]
+        self.watched4     = objDbRow[9]
+        self.status       = objDbRow[10]
+        self.extra        = objDbRow[11]
+        self.userData     = objDbRow[12]
 
         self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
 
@@ -3921,7 +3942,7 @@ class plugin_object_class:
 
         setObj = get_plugin_setting(plugin, 'WATCH')
 
-        indexNameColumnMapping = [(5, 'Watched_Value1' ), (6, 'Watched_Value2' ), (7, 'Watched_Value3' ), (8, 'Watched_Value4' )]
+        indexNameColumnMapping = [(6, 'Watched_Value1' ), (7, 'Watched_Value2' ), (8, 'Watched_Value3' ), (9, 'Watched_Value4' )]
 
         if setObj is not None:            
             
@@ -3937,15 +3958,15 @@ class plugin_object_class:
             tmp += str(objDbRow[indx])
 
         self.watchedHash  = str(hash(tmp))
-        
 
-        
-        
-        
-        
-    
-    
 
+#-------------------------------------------------------------------------------
+# Combine plugin objects, keep user-defined values, created time
+def combine_plugin_objects(old, new):    
+    
+    new.userData = old.userData 
+    new.created = old.created 
+    return new
 
 #-------------------------------------------------------------------------------
 # Replace {wildcars} with parameters

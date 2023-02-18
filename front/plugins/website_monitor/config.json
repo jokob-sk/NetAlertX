@@ -30,18 +30,18 @@
         "value" : "WEBMON_SQL_internet_ip"
     }],  
     "database_column_aliases":{  
-        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
-        "Index":[{
-            "language_code":"en_us",
-            "string" : "Index"
-        }],
+        "localized": ["Object_PrimaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "UserData", "Status"],
         "Object_PrimaryID":[{
             "language_code":"en_us",
             "string" : "Monitored URL"
         }],
-        "DateTime":[{
+        "DateTimeCreated":[{
             "language_code":"en_us",
-            "string" : "Checked on"
+            "string" : "Created"
+        }],
+        "DateTimeChanged":[{
+            "language_code":"en_us",
+            "string" : "Changed"
         }],
         "Watched_Value1":[{
             "language_code":"en_us",
@@ -50,6 +50,14 @@
         "Watched_Value2":[{
             "language_code":"en_us",
             "string" : "Latency"
+        }],       
+        "UserData":[{
+            "language_code":"en_us",
+            "string" : "Comments"
+        }],        
+        "Status":[{
+            "language_code":"en_us",
+            "string" : "Status"
         }]        
     },
     "settings":[
