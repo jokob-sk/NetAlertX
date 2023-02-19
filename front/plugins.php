@@ -119,16 +119,21 @@ function generateTabs()
     $.each(pluginDefinitions, function(index, obj) {
 
         headersHtml = ""
-        headers = []
+        // headers = []
+        colDefinitions = []
         evRows = ""
         obRows = ""
 
         // Generate the header
-        $.each(obj["database_column_aliases"]["localized"], function(index, locItem){
-            headers.push(locItem)
-            headersHtml += `<th class="col-sm-2" >${localize(obj["database_column_aliases"], locItem )}</th>`
-
+        $.each(obj["database_column_definitions"], function(index, colDef){
+            if(colDef.show == true)
+            {
+                colDefinitions.push(colDef)            
+                headersHtml += `<th class="col-sm-2" >${localize(colDef, "name" )}</th>`
+            }
         });
+
+
 
         // Generate the event rows
         for(i=0;i<pluginUnprocessedEvents.length;i++)
@@ -137,13 +142,15 @@ function generateTabs()
             {
                 clm = ""
 
-                for(j=0;j<headers.length;j++) 
+                for(j=0;j<colDefinitions.length;j++) 
                 {   
-                    clm += '<td>'+ pluginUnprocessedEvents[i][headers[j]] +'</td>'
+                    clm += '<td>'+ pluginUnprocessedEvents[i][colDefinitions[j].column] +'</td>'
                 }                   
                 evRows += '<tr>' + clm + '</tr>'
             }            
         }
+
+        
 
         // Generate the object rows
         for(i=0;i<pluginObjects.length;i++)
@@ -152,9 +159,9 @@ function generateTabs()
             {
                 clm = ""
 
-                for(j=0;j<headers.length;j++) 
+                for(j=0;j<colDefinitions.length;j++) 
                 {   
-                    clm += '<td>'+ pluginObjects[i][headers[j]] +'</td>'
+                    clm += '<td>'+ pluginObjects[i][colDefinitions[j].column] +'</td>'
                 }                   
                 obRows += '<tr>' + clm + '</tr>'
             }            

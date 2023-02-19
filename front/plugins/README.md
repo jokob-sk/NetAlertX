@@ -159,34 +159,23 @@ Example:
     }
 
 ```
-##### database_column_aliases
+##### database_column_definitions
 
-- Only columns specified in the `"localized"` parameter and also with at least an english translation will be shown in the UI.
+- Only columns with `"show": true` and also with at least an english translation will be shown in the UI.
 
 ```json
-{  
-        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
-        "Index":[{
-            "language_code":"en_us",
-            "string" : "Index"
-        }],
-        "Object_PrimaryID":[{
-            "language_code":"en_us",
-            "string" : "Monitored URL"
-        }],
-        "DateTime":[{
-            "language_code":"en_us",
-            "string" : "Checked on"
-        }],
-        "Watched_Value1":[{
-            "language_code":"en_us",
-            "string" : "Status code"
-        }],
-        "Watched_Value2":[{
-            "language_code":"en_us",
-            "string" : "Latency"
-        }]        
-    }
+{
+            "column": "Index",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        }
 ```
 
 ## Full Example
@@ -223,29 +212,165 @@ Example:
         "type"  : "setting",
         "value" : "WEBMON_SQL_internet_ip"
     }],  
-    "database_column_aliases":{  
-        "localized": ["Index", "Object_PrimaryID", "DateTime", "Watched_Value1", "Watched_Value2"],      
-        "Index":[{
-            "language_code":"en_us",
-            "string" : "Index"
-        }],
-        "Object_PrimaryID":[{
-            "language_code":"en_us",
-            "string" : "Monitored URL"
-        }],
-        "DateTime":[{
-            "language_code":"en_us",
-            "string" : "Checked on"
-        }],
-        "Watched_Value1":[{
-            "language_code":"en_us",
-            "string" : "Status code"
-        }],
-        "Watched_Value2":[{
-            "language_code":"en_us",
-            "string" : "Latency"
-        }]        
-    },
+    "database_column_definitions":
+    [          
+        {
+            "column": "Index",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,
+        {
+            "column": "Plugin",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        },
+        {
+            "column": "Object_PrimaryID",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Monitored URL"
+                }]
+        },
+        {
+            "column": "Object_SecondaryD",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,
+        {
+            "column": "DateTimeCreated",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Created"
+                }]
+        },
+        {
+            "column": "DateTimeChanged",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Changed"
+                }]
+        },
+        {
+            "column": "Watched_Value1",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Status code"
+                }]
+        },
+        {
+            "column": "Watched_Value2",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Latency"
+                }]
+        },
+        {
+            "column": "Watched_Value3",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,
+        {
+            "column": "Watched_Value4",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,       
+        {
+            "column": "UserData",
+            "show": true,
+            "type": "text",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Comments"
+                }]
+        },        
+        {
+            "column": "Status",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Status"
+                }]
+        },        
+        {
+            "column": "Extra",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Extra"
+                }]
+        }            
+    ],
     "settings":[
         {
             "function": "RUN",            
@@ -274,28 +399,8 @@ Example:
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Comamnd to run"
+                "string" : "Command to run"
             }]
-        },
-        {
-            "function": "FORCE_REPORT",
-            "type": "boolean",
-            "default_value": false,
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Force report"
-            },
-            {
-                "language_code":"de_de",
-                "string" : "Zwing Bericht"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Force a notification message even if there are no changes detected."
-            }]
-            
         },
         {
             "function": "RUN_SCHD",
@@ -336,6 +441,10 @@ Example:
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Run timeout"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Wartezeit"
             }],
             "description": [{
                 "language_code":"en_us",
@@ -350,11 +459,26 @@ Example:
             "localized": ["name", "description"],
             "name" :[{
                 "language_code":"en_us",
-                "string" : "Notify on"
+                "string" : "Watched"
             }] ,
             "description":[{
                 "language_code":"en_us",
                 "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+            }] 
+        },
+        {
+            "function": "REPORT_ON",
+            "type": "multiselect",
+            "default_value":["new","watched-changed"],
+            "options": ["new","watched-changed","watched-not-changed"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Report on"
+            }] ,
+            "description":[{
+                "language_code":"en_us",
+                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             }] 
         },
         {
@@ -384,12 +508,14 @@ Example:
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Getting the IP address of the Router / Internet"
+                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet. "
             }]
         }
 
     ]
 }
+
+
 
 
 

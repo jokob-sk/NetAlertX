@@ -2347,7 +2347,7 @@ def send_notifications ():
 
     if 'plugins' in INCLUDED_SECTIONS:  
         # Compose Plugins Section   
-        sqlQuery = """SELECT * from Plugins_Events where Status == 'new'"""
+        sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 
         notiStruc = construct_notifications(sqlQuery, "Plugins")
 
@@ -2356,6 +2356,9 @@ def send_notifications ():
 
         mail_text = mail_text.replace ('<PLUGINS_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<PLUGINS_TABLE>', notiStruc.html)
+
+        # check if we need to report something
+        plugins_report = plugin_check_smth_to_report(json_plugins)
 
 
     json_final = {
@@ -2373,11 +2376,12 @@ def send_notifications ():
     mail_html = generate_mac_links (mail_html, deviceUrl)
 
     #  Write output emails for debug    
+    write_file (logPath + '/report_output.json', json.dumps(json_final)) 
     write_file (logPath + '/report_output.txt', mail_text) 
     write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or debug_force_notification:        
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or debug_force_notification or plugins_report:        
 
         update_api(True)
 
@@ -2430,6 +2434,9 @@ def send_notifications ():
                  """, (datetime.datetime.now(),) )
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1""")
+
+    # clear plugin events
+    sql.execute ("DELETE FROM Plugins_Events")
     
     changedPorts_json_struc = None
 
@@ -2457,22 +2464,22 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
     else:
         json_struc = suppliedJsonStruct
 
-    json = json_struc.json
+    jsn  = json_struc.json
     html = ""    
     text = ""
 
-    if json["data"] != []:
+    if len(jsn["data"]) > 0:
         text = tableTitle + "\n---------\n"
 
-        html = convert(json, build_direction=build_direction, table_attributes=table_attributes)
-
+        html = convert(jsn, build_direction=build_direction, table_attributes=table_attributes)
         html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">')
 
         headers = json_struc.columnNames
 
         # prepare text-only message
         if skipText == False:
-            for device in json["data"]:
+            
+            for device in jsn["data"]:
                 for header in headers:
                     padding = ""
                     if len(header) < 4:
@@ -2484,7 +2491,7 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
         for header in headers:
             html = format_table(html, header, thProps)
 
-    return noti_struc(json, text, html)
+    return noti_struc(jsn, text, html)
 
 #-------------------------------------------------------------------------------
 class noti_struc:
@@ -3295,19 +3302,20 @@ def get_table_as_json(sqlQuery):
     result = {"data":[]}
 
     for row in rows: 
-        tmp = fill_row(columnNames, row)
-    
+        tmp = row_to_json(columnNames, row)
         result["data"].append(tmp)
     return json_struc(result, columnNames)
 
 #-------------------------------------------------------------------------------
 class json_struc:
-    def __init__(self, json, columnNames):
-        self.json = json
+    def __init__(self, jsn, columnNames):
+        # mylog('verbose', ['     [] tmp: ', str(json.dumps(jsn))]) 
+        self.json = jsn
         self.columnNames = columnNames       
 
 #-------------------------------------------------------------------------------
-def fill_row(names, row):  
+#  Creates a JSON object from a DB row
+def row_to_json(names, row):  
     
     rowEntry = {}
 
@@ -3578,6 +3586,21 @@ def handle_test(testType):
 
 
 #-------------------------------------------------------------------------------
+#  Return setting value
+def get_setting_value(key):
+    
+    set = get_setting(key)
+
+    if get_setting(key) is not None:
+
+        setVal = set[6] # setting value
+        setTyp = set[3] # setting type
+
+        return setVal
+
+    return ''
+
+#-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
     result = None
@@ -3813,6 +3836,8 @@ def execute_plugin(plugin):
 # Check if watched values changed for the given plugin
 def process_plugin_events(plugin):    
 
+    global pluginObjects, pluginEvents
+
     pluginPref = plugin["unique_prefix"]
 
     plugObjectsArr = get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
@@ -3982,6 +4007,27 @@ def resolve_wildcards(command, params):
     mylog('debug', ['        [Plugins]: Resolved CMD: ', command])
 
     return command
+
+#-------------------------------------------------------------------------------
+# Check if there are events which need to be reported on based on settings
+def plugin_check_smth_to_report(notifs):
+    
+    for notJsn in notifs:
+        
+        pref = notJsn['Plugin'] #"Plugin" column 
+        stat = notJsn['Status'] #"Status" column 
+                 
+        val = get_setting_value(pref + '_REPORT_ON')
+
+        if set is not None:
+            
+            # report if there is at least one value in teh events to be reported on
+            # future improvement - selectively remove events based on this
+            if stat in val: 
+                return True
+
+    return False
+
 
 #-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
