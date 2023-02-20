@@ -23,7 +23,7 @@
             <ul id="tabs-location" class="nav nav-tabs">
                 <!-- PLACEHOLDER -->
             </ul>  
-        <div id="tabs-content-location" class="tab-content"> 
+        <div id="tabs-content-location" class="nav nav-tabs"> 
             <!-- PLACEHOLDER -->
         </div>   
         
@@ -170,40 +170,61 @@ function generateTabs()
 
         $('#tabs-content-location').append(
             `    
-            <div id="${obj.unique_prefix}" class="tab-pane ${activetab}"> 
-                <div>
-                    <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${obj.code_name}" target="_blank"><?= lang('Gen_Help');?></a>
+            <div id="${obj.unique_prefix}" class="tab-pane ${activetab}">
+                <div class="nav-tabs-custom" style="margin-bottom: 0px">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#objectsTarget" data-toggle="tab" >
+                                
+                                <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${pluginObjects.length})
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#eventsTarget" data-toggle="tab" >
+                                
+                                <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${pluginUnprocessedEvents.length})
+                                
+                            </a>
+                        </li>
+
+                    <ul>
                 </div>
+                
+
+                <div class="tab-content">
+
+                    <div id="objectsTarget" class="tab-pane active">
+                        <table class="table table-striped">                    
+                            <tbody>
+                                <tr>
+                                    ${headersHtml}                            
+                                </tr>  
+                                ${obRows}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="eventsTarget" class="tab-pane">
+                        <table class="table table-striped">
+                        
+                            <tbody>
+                                <tr>
+                                    ${headersHtml}                            
+                                </tr>  
+                                ${evRows}
+                            </tbody>
+                        </table>
+                    </div>    
+
+                </div>
+
                 ${localize(obj, 'description')} 
-                <h5>
-                    <i class="fa fa-clock"></i> <?= lang('Plugins_Unprocessed_Events');?> 
-                </h5>
-                <hr>
             
-                <table class="table table-striped">
+                <span>
+                    <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${obj.code_name}" target="_blank"><?= lang('Gen_Help');?></a>
+                </span>
                 
-                    <tbody>
-                        <tr>
-                            ${headersHtml}                            
-                        </tr>  
-                        ${evRows}
-                    </tbody>
-                </table>
-
-                <h5>
-                    <i class="fa fa-clock"></i> <?= lang('Plugins_Objects');?> 
-                </h5>
-                <hr>
-
-                <table class="table table-striped">
-                
-                <tbody>
-                    <tr>
-                        ${headersHtml}                            
-                    </tr>  
-                    ${obRows}
-                </tbody>
-            </table>
             </div>
         `);
 

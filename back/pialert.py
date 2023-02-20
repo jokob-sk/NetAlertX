@@ -2440,8 +2440,8 @@ def send_notifications ():
     
     changedPorts_json_struc = None
 
-    # DEBUG - print number of rows updated
-    mylog('info', ['    Notifications: ', sql.rowcount])
+    # DEBUG - print number of rows updated    
+    mylog('info', ['[', timeNow(), '] Notifications: ', sql.rowcount])
 
     # Commit changes    
     commitDB()
@@ -3888,8 +3888,6 @@ def process_plugin_events(plugin):
                 pluginEvents[index].status = "watched-not-changed"  
 
         index += 1
-    
-
 
     # Merge existing plugin objects with newly discovered ones and update existin ones with new values
     for eveObj in pluginEvents:
@@ -3934,14 +3932,6 @@ def process_plugin_events(plugin):
         sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
 
         commitDB()
-
-            # TODO HERE test on empty DB as well
-            # collect notifications here as well?
-            # delete the events here or later? probably later - on notification fail 
-            # so the events can be reanalyzed and notification re-send    
-            # enable form controls on table columns                            
-
-
 
 #-------------------------------------------------------------------------------
 class plugin_object_class:

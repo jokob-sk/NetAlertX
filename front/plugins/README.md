@@ -121,10 +121,10 @@ Example:
 - `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
 - `RUN_TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.
 - `WATCH` - (optional) Which database columns are watched for changes for this particular plugin. If not specified no notifications are sent. 
-- `REPORT_ON` - (optional) Send a notification only on these statuses. Supprted options are: 
- - `new` means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. 
- - `watched-changed` - means that selected `Watched_ValueN` columns changed
- - `watched-not-changed` - reports even on events where selected `Watched_ValueN` did not change
+- `REPORT_ON` - (optional) Send a notification only on these statuses. Supported options are: 
+  - `new` means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. 
+  - `watched-changed` - means that selected `Watched_ValueN` columns changed
+  - `watched-not-changed` - reports even on events where selected `Watched_ValueN` did not change
 
 
 Example:
