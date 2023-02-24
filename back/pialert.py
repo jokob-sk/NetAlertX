@@ -3929,7 +3929,7 @@ def process_plugin_events(plugin):
         if plugObj.status == 'new':
             createdTime = plugObj.changed        
 
-        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+        sql.execute ("INSERT INTO Plugins_Events (Index, Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.index, plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
 
         commitDB()
 
@@ -3976,11 +3976,18 @@ class plugin_object_class:
 
 
 #-------------------------------------------------------------------------------
-# Combine plugin objects, keep user-defined values, created time
+# Combine plugin objects, keep user-defined values, created time, changed time if nothing changed and the index
 def combine_plugin_objects(old, new):    
     
     new.userData = old.userData 
+    new.index = old.index 
     new.created = old.created 
+
+    # Keep changed time if nothing changed
+    if new.status in ['watched-not-changed']:
+        new.changed = old.changed
+
+    #  return the new object, with some of the old values
     return new
 
 #-------------------------------------------------------------------------------

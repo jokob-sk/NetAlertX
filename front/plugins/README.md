@@ -166,18 +166,68 @@ Example:
 ##### database_column_definitions
 
 - Only columns with `"show": true` and also with at least an english translation will be shown in the UI.
+- The `options` property is used in conjunction with these types:
+  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's les sthan the specified `maximum`, but more than the previous one in the `options` array
+  - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
+
 
 ```json
 {
-            "column": "Index",
-            "show": false,
-            "type": "label",            
+            "column": "Watched_Value1",
+            "show": true,
+            "type": "threshold",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "maximum": 199,
+                    "hexColor": "#792D86"                
+                },
+                {
+                    "maximum": 299,
+                    "hexColor": "#5B862D"
+                },
+                {
+                    "maximum": 399,
+                    "hexColor": "#7D862D"
+                },
+                {
+                    "maximum": 499,
+                    "hexColor": "#BF6440"
+                },
+                {
+                    "maximum": 599,
+                    "hexColor": "#D33115"
+                }
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "Status code"
+                }]
+        },        
+        {
+            "column": "Status",
+            "show": true,
+            "type": "replace",            
+            "default_value":"",
+            "options": [
+                {
+                    "equals": "watched-not-changed",
+                    "replacement": "<i class='fa-solid fa-square-check'></i>"
+                },
+                {
+                    "equals": "watched-changed",
+                    "replacement": "<i class='fa-solid fa-triangle-exclamation'></i>"
+                },
+                {
+                    "equals": "new",
+                    "replacement": "<i class='fa-solid fa-circle-plus'></i>"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Status"
                 }]
         }
 ```
@@ -353,7 +403,7 @@ Example:
         {
             "column": "Status",
             "show": true,
-            "type": "label",            
+            "type": "equals",            
             "default_value":"",
             "options": [],
             "localized": ["name"],

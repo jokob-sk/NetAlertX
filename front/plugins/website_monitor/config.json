@@ -58,7 +58,7 @@
         {
             "column": "Object_PrimaryID",
             "show": true,
-            "type": "text",            
+            "type": "url",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -82,7 +82,7 @@
         {
             "column": "DateTimeCreated",
             "show": true,
-            "type": "text",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -94,7 +94,7 @@
         {
             "column": "DateTimeChanged",
             "show": true,
-            "type": "text",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -106,9 +106,30 @@
         {
             "column": "Watched_Value1",
             "show": true,
-            "type": "text",            
+            "type": "threshold",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "maximum": 199,
+                    "hexColor": "#792D86"                
+                },
+                {
+                    "maximum": 299,
+                    "hexColor": "#5B862D"
+                },
+                {
+                    "maximum": 399,
+                    "hexColor": "#7D862D"
+                },
+                {
+                    "maximum": 499,
+                    "hexColor": "#BF6440"
+                },
+                {
+                    "maximum": 599,
+                    "hexColor": "#D33115"
+                }
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
@@ -118,7 +139,7 @@
         {
             "column": "Watched_Value2",
             "show": true,
-            "type": "text",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -166,9 +187,22 @@
         {
             "column": "Status",
             "show": true,
-            "type": "label",            
+            "type": "replace",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "equals": "watched-not-changed",
+                    "replacement": "<i class='fa-solid fa-square-check'></i>"
+                },
+                {
+                    "equals": "watched-changed",
+                    "replacement": "<i class='fa-solid fa-triangle-exclamation'></i>"
+                },
+                {
+                    "equals": "new",
+                    "replacement": "<i class='fa-solid fa-circle-plus'></i>"
+                }
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",

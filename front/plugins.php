@@ -37,6 +37,47 @@
 <script defer>
 
 // -----------------------------------------------------------------------------
+// Get form control according to the column definition from config.json > database_column_definitions
+function getFormControl(index, dbColumnDef, value) {    
+
+    result = ''
+
+    switch(dbColumnDef.type)
+    {
+        case 'label':
+            result = `<span>${value}<span>`;
+            break;
+        case 'text':
+            result = `<span><input type="text" value="${value}" id="${dbColumnDef.column}_${index}" name="${dbColumnDef.column}"><span>`;
+            break;
+        case 'url':
+            result = `<span><a href="${value}" target="_blank">${value}</a><span>`;
+            break;
+        case 'threshold': 
+            $.each(dbColumnDef.options, function(index, obj) {
+                if(Number(value) < obj.maximum && result == '')
+                {
+                    result = `<div style="background-color:${obj.hexColor}">${value}</div>`
+                    // return;
+                }
+            });
+            break;
+        case 'replace': 
+            $.each(dbColumnDef.options, function(index, obj) {
+                if(value == obj.equals)
+                {
+                    result = `<span>${obj.replacement}</span>`
+                }
+            });
+            break;
+        default:
+            result = value;           
+    }
+
+    return result;
+}
+
+// -----------------------------------------------------------------------------
 // Get translated string
 function localize (obj, key) {
 
@@ -51,7 +92,7 @@ function localize (obj, key) {
         {
             code = obj[key][i]["language_code"]
 
-            console.log(code)
+            // console.log(code)
 
             if( code == 'en_us')
             {
@@ -126,7 +167,7 @@ function generateTabs()
 
         // Generate the header
         $.each(obj["database_column_definitions"], function(index, colDef){
-            if(colDef.show == true)
+            if(colDef.show == true) // select only the ones to show
             {
                 colDefinitions.push(colDef)            
                 headersHtml += `<th class="col-sm-2" >${localize(colDef, "name" )}</th>`
@@ -161,7 +202,8 @@ function generateTabs()
 
                 for(j=0;j<colDefinitions.length;j++) 
                 {   
-                    clm += '<td>'+ pluginObjects[i][colDefinitions[j].column] +'</td>'
+                    
+                    clm += '<td>'+ getFormControl(i, colDefinitions[j], pluginObjects[i][colDefinitions[j].column]) +'</td>'
                 }                   
                 obRows += '<tr>' + clm + '</tr>'
             }            
