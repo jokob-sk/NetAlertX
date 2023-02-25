@@ -2,28 +2,39 @@
 require dirname(__FILE__).'/php/server/init.php';
 require 'php/templates/security.php';
 
+
+
 if ($Pia_WebProtection != 'true')
-  {
-      header('Location: devices.php');
-      $_SESSION["login"] = 1;
-      exit;
-  }
+{
+    header('Location: devices.php');
+    $_SESSION["login"] = 1;
+    exit;
+}
+
+// Logout
+if (isset ($_GET["action"]) && $_GET["action"] == 'logout')
+{
+  setcookie("PiAlert_SaveLogin", '', time()+1); // reset cookie
+  $_SESSION["login"] = 0;
+  header('Location: index.php');
+  exit;
+}
 
 // Password without Cookie check -> pass and set initial cookie
 if (isset ($_POST["loginpassword"]) && $Pia_Password == hash('sha256',$_POST["loginpassword"]))
-  {
-      header('Location: devices.php');
-      $_SESSION["login"] = 1;
-      if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
-  }
+{
+    header('Location: devices.php');
+    $_SESSION["login"] = 1;
+    if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+}
 
 // active Session or valid cookie (cookie not extends)
 if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE["PiAlert_SaveLogin"]) && $Pia_Password == $_COOKIE["PiAlert_SaveLogin"]))
-  {
-      header('Location: devices.php');
-      $_SESSION["login"] = 1;
-      if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
-  }
+{
+    header('Location: devices.php');
+    $_SESSION["login"] = 1;
+    if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+}
 
 $login_headline = lang('Login_Toggle_Info_headline');
 $login_info = "";
@@ -33,22 +44,22 @@ $login_icon = 'fa-info';
 
 // no active session, cookie not checked
 if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
+{
+  if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
   {
-    if ($Pia_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
-    {
-      $login_info = lang('Login_Default_PWD');
-      $login_mode = 'danger';
-      $login_display_mode = 'display: block;';
-      $login_headline = lang('Login_Toggle_Alert_headline');
-      $login_icon = 'fa-ban';
-    } 
-    else 
-    {
-      $login_mode = 'info';
-      $login_display_mode = 'display: none;';
-      $login_headline = lang('Login_Toggle_Info_headline');
-      $login_icon = 'fa-info';
-    }
+    $login_info = lang('Login_Default_PWD');
+    $login_mode = 'danger';
+    $login_display_mode = 'display: block;';
+    $login_headline = lang('Login_Toggle_Alert_headline');
+    $login_icon = 'fa-ban';
+  } 
+  else 
+  {
+    $login_mode = 'info';
+    $login_display_mode = 'display: none;';
+    $login_headline = lang('Login_Toggle_Info_headline');
+    $login_icon = 'fa-info';
+  }
 }
 
 // ##################################################
