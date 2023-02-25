@@ -38,7 +38,7 @@
 
 // -----------------------------------------------------------------------------
 // Get form control according to the column definition from config.json > database_column_definitions
-function getFormControl(index, dbColumnDef, value) {    
+function getFormControl(dbColumnDef, value, index) {    
 
     result = ''
 
@@ -47,8 +47,13 @@ function getFormControl(index, dbColumnDef, value) {
         case 'label':
             result = `<span>${value}<span>`;
             break;
-        case 'text':
-            result = `<span><input type="text" value="${value}" id="${dbColumnDef.column}_${index}" name="${dbColumnDef.column}"><span>`;
+        case 'textboxsave':
+            result =    `<span class="form-group">
+                            <div class="input-group">
+                                <input class="form-control" type="text" value="${value}" id="${dbColumnDef.column}_${index}" name="${dbColumnDef.column}">
+                                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="alert('${dbColumnDef.column}_${index}');"></i></span>
+                            </div>
+                        <span>`;
             break;
         case 'url':
             result = `<span><a href="${value}" target="_blank">${value}</a><span>`;
@@ -66,7 +71,7 @@ function getFormControl(index, dbColumnDef, value) {
             $.each(dbColumnDef.options, function(index, obj) {
                 if(value == obj.equals)
                 {
-                    result = `<span>${obj.replacement}</span>`
+                    result = `<span title="${value}">${obj.replacement}</span>`
                 }
             });
             break;
@@ -203,7 +208,7 @@ function generateTabs()
                 for(j=0;j<colDefinitions.length;j++) 
                 {   
                     
-                    clm += '<td>'+ getFormControl(i, colDefinitions[j], pluginObjects[i][colDefinitions[j].column]) +'</td>'
+                    clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
                 }                   
                 obRows += '<tr>' + clm + '</tr>'
             }            

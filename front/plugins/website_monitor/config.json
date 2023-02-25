@@ -175,7 +175,7 @@
         {
             "column": "UserData",
             "show": true,
-            "type": "text",            
+            "type": "textboxsave",            
             "default_value":"",
             "options": [],
             "localized": ["name"],

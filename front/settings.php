@@ -121,7 +121,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             // text - textbox
             if($set['Type'] == 'text' ) 
             {
-              $input = '<input class="form-control" onChange="settingsChanged()" input" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
+              $input = '<input class="form-control" onChange="settingsChanged()" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
             } 
             // password - hidden text
             elseif ($set['Type'] == 'password')

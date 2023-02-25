@@ -3906,8 +3906,6 @@ def process_plugin_events(plugin):
     # ----------------------------
 
     # Update the Plugin_Objects    
-    
-    sql.execute ("DELETE FROM Plugins_Objects")
 
     for plugObj in pluginObjects: 
 
@@ -3915,8 +3913,10 @@ def process_plugin_events(plugin):
 
         if plugObj.status == 'new':
             createdTime = plugObj.changed        
+        
+        q = f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}' WHERE 'Index' = {plugObj.index}"
 
-        sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+        sql.execute (q)
 
     # Update the Plugins_Events with the new statuses    
     
@@ -3929,7 +3929,7 @@ def process_plugin_events(plugin):
         if plugObj.status == 'new':
             createdTime = plugObj.changed        
 
-        sql.execute ("INSERT INTO Plugins_Events (Index, Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.index, plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
 
         commitDB()
 
