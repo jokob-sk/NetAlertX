@@ -1,6 +1,6 @@
 <?php
 
-  require 'php/templates/header.php';
+  require 'php/templates/header.php';  
 ?>
 
 <script src="js/pialert_common.js"></script>
@@ -48,10 +48,15 @@ function getFormControl(dbColumnDef, value, index) {
             result = `<span>${value}<span>`;
             break;
         case 'textboxsave':
+
+            value = value == 'null' ? '' : value; // hide 'null' values
+
+            id = `${dbColumnDef.column}_${index}`
+
             result =    `<span class="form-group">
                             <div class="input-group">
-                                <input class="form-control" type="text" value="${value}" id="${dbColumnDef.column}_${index}" name="${dbColumnDef.column}">
-                                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="alert('${dbColumnDef.column}_${index}');"></i></span>
+                                <input class="form-control" type="text" value="${value}" id="${id}" data-my-column="${dbColumnDef.column}"  data-my-index="${index}" name="${dbColumnDef.column}">
+                                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="saveData('${id}');"></i></span>
                             </div>
                         <span>`;
             break;
@@ -80,6 +85,26 @@ function getFormControl(dbColumnDef, value, index) {
     }
 
     return result;
+}
+
+// -----------------------------------------------------------------------------
+// Update the coresponding DB column and entry
+function saveData (id) {
+    columnName  = $(`#${id}`).attr('data-my-column')
+    index  = $(`#${id}`).attr('data-my-index')
+    columnValue = $(`#${id}`).val()
+
+    $.get(`php/server/dbHelper.php?action=update&dbtable=Plugins_Objects&key=Index&id=${index}&columns=UserData&values=${columnValue}`, function(data) {
+    
+        // var result = JSON.parse(data);
+        console.log(data)
+    
+    // if (result) {
+    //   period = result;
+    //   $('#period').val(period);
+    // }
+
+    });    
 }
 
 // -----------------------------------------------------------------------------

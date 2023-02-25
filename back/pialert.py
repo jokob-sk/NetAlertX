@@ -334,7 +334,7 @@ def importConfigs ():
     # Nmap
     global NMAP_ACTIVE, NMAP_TIMEOUT, NMAP_RUN, NMAP_RUN_SCHD, NMAP_ARGS 
     # API
-    global API_RUN, API_RUN_SCHD, API_RUN_INTERVAL, API_CUSTOM_SQL
+    global API_CUSTOM_SQL
 
     # get config file
     config_file = Path(fullConfPath)
@@ -438,9 +438,6 @@ def importConfigs ():
     NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
 
     # API     
-    API_RUN = ccd('API_RUN', 'schedule' , c_d, 'API execution', 'selecttext', "['none', 'interval', 'schedule']", 'API')
-    API_RUN_SCHD = ccd('API_RUN_SCHD', '*/3 * * * *' , c_d, 'API schedule', 'text', '', 'API')    
-    API_RUN_INTERVAL = ccd('API_RUN_INTERVAL', 10 , c_d, 'API update interval', 'integer', '', 'API')   
     API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
 
     # Prepare scheduler
@@ -459,10 +456,6 @@ def importConfigs ():
     # init nmap schedule
     nmapSchedule = Cron(NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
     mySchedules.append(schedule_class("nmap", nmapSchedule, nmapSchedule.next(), False))
-
-    # init API schedule
-    apiSchedule = Cron(API_RUN_SCHD).schedule(start_date=datetime.datetime.now(tz))
-    mySchedules.append(schedule_class("api", apiSchedule, apiSchedule.next(), False))
 
     # Format and prepare the list of subnets
     updateSubnets()
@@ -537,7 +530,6 @@ now_minus_24h = time_started - datetime.timedelta(hours = 24)
 
 last_network_scan = now_minus_24h
 last_internet_IP_scan = now_minus_24h
-last_API_update = now_minus_24h
 last_run = now_minus_24h
 last_cleanup = now_minus_24h
 last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
@@ -547,7 +539,7 @@ newVersionAvailable = False
 
 def main ():
     # Initialize global variables
-    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors, last_API_update
+    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
     # second set of global variables
     global startTime, log_timestamp, sql_connection, sql, plugins_once_run
 
@@ -580,11 +572,8 @@ def main ():
         # check if there is a front end initiated event which needs to be executed
         check_and_run_event()
 
-        # Execute API update if enabled via the interval schedule settings and if enough time passed
-        if API_RUN == "interval" and last_API_update + datetime.timedelta(seconds = API_RUN_INTERVAL) < time_started:
-
-            last_API_update = time_started                
-            update_api()
+        # Update API endpoints              
+        update_api()
         
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
@@ -653,19 +642,6 @@ def main ():
                 if run:
                     nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
                     performNmapScan(get_all_devices())
-
-            # Execute scheduled API update if enabled
-            if API_RUN == "schedule":
-
-                apiSchedule = [sch for sch in mySchedules if sch.service == "api"][0]
-                run = False
-
-                # run if overdue scheduled time
-                run = apiSchedule.runScheduleCheck()
-
-                if run:
-                    apiSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
-                    update_api()
             
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
