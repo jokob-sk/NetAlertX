@@ -88,6 +88,28 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 If the datasource is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important.
 
+#### Examples
+
+SQL query example:
+
+```SQL
+SELECT  dv.dev_Name as Object_PrimaryID, 
+    cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
+    datetime() as DateTime,  
+    ns.Service as Watched_Value1,        
+    ns.State as Watched_Value2,
+    'null' as Watched_Value3,
+    'null' as Watched_Value4,
+    ns.Extra as Extra
+FROM 
+    (SELECT * FROM Nmap_Scan) ns 
+LEFT JOIN 
+    (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv 
+ON ns.MAC = dv.dev_MAC
+```
+
+Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
+
 ```json
 {
             "function": "CMD",
@@ -183,8 +205,6 @@ Example:
 }
 ```
 ##### Localized strings
-
-
 
 - `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
