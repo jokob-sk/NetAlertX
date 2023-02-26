@@ -806,5 +806,18 @@ height: 50px;
     text-overflow: ellipsis;
 }
 
+.plugin-content
+{
+    padding-bottom: 7px;
+}
+.plugin-content #tabs-content-location
+{
+    margin-top: 20px;
+    margin-left: 7px;
+    margin-right: 7px;
+    margin-bottom: 9px;
+    padding-bottom: 8px;
+}
+
 
   

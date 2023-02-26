@@ -19,13 +19,13 @@
 
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
-        <div class="nav-tabs-custom" style="margin-bottom: 0px;">
+        <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
             <ul id="tabs-location" class="nav nav-tabs">
                 <!-- PLACEHOLDER -->
             </ul>  
-        <div id="tabs-content-location" class="nav nav-tabs"> 
-            <!-- PLACEHOLDER -->
-        </div>   
+            <div id="tabs-content-location" class="nav nav-tabs"> 
+                <!-- PLACEHOLDER -->
+            </div>   
         
     </section>    
 </div>
@@ -146,6 +146,7 @@ function localize (obj, key) {
 pluginDefinitions = []
 pluginUnprocessedEvents = []
 pluginObjects = []
+pluginHistory = []
 
 function getData(){
 
@@ -160,9 +161,14 @@ function getData(){
             $.get('api/table_plugins_objects.json', function(res) {
 
                 pluginObjects = res["data"];
+                
+                $.get('api/table_plugins_history.json', function(res) {                
 
-                generateTabs()
+                    pluginHistory = res["data"];
 
+                    generateTabs()
+
+                });
             });
         });
 
@@ -194,6 +200,7 @@ function generateTabs()
         colDefinitions = []
         evRows = ""
         obRows = ""
+        hiRows = ""
 
         // Generate the header
         $.each(obj["database_column_definitions"], function(index, colDef){
@@ -219,9 +226,22 @@ function generateTabs()
                 }                   
                 evRows += '<tr>' + clm + '</tr>'
             }            
-        }
+        }      
 
-        
+        // Generate the history rows
+        for(i=0;i<pluginHistory.length;i++)
+        {
+            if(pluginHistory[i].Plugin == obj.unique_prefix)
+            {
+                clm = ""
+
+                for(j=0;j<colDefinitions.length;j++) 
+                {   
+                    clm += '<td>'+ pluginHistory[i][colDefinitions[j].column] +'</td>'
+                }                   
+                hiRows += '<tr>' + clm + '</tr>'
+            }            
+        }        
 
         // Generate the object rows
         for(i=0;i<pluginObjects.length;i++)
@@ -261,6 +281,14 @@ function generateTabs()
                             </a>
                         </li>
 
+                        <li>
+                            <a href="#historyTarget" data-toggle="tab" >
+                                
+                                <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${pluginHistory.length})
+                                
+                            </a>
+                        </li>
+
                     <ul>
                 </div>
                 
@@ -285,6 +313,17 @@ function generateTabs()
                                     ${headersHtml}                            
                                 </tr>  
                                 ${evRows}
+                            </tbody>
+                        </table>
+                    </div>    
+                    <div id="historyTarget" class="tab-pane">
+                        <table class="table table-striped">
+                        
+                            <tbody>
+                                <tr>
+                                    ${headersHtml}                            
+                                </tr>  
+                                ${hiRows}
                             </tbody>
                         </table>
                     </div>    

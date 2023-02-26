@@ -19,7 +19,7 @@ switch($result){
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = $defaultLang;}
 
 //Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra")
-$result = $db->query("SELECT * FROM Language_Strings");  
+$result = $db->query("SELECT * FROM Plugins_Language_Strings");  
 
 // array 
 $strings = array();

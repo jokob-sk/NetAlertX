@@ -1,35 +1,21 @@
 {
-    "code_name": "website_monitor",
-    "unique_prefix": "WEBMON",    
-    "data_source":  "python-script",
+    "code_name": "nmap_services",
+    "unique_prefix": "NMAPSRV",    
+    "data_source":  "pialert-db-query",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "Website monitor"
+        "string" : "Services"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-globe\"></i>"
+        "string" : "<i class=\"fa-solid fa-search\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is to monitor status changes of different services or websites."
+        "string" : "This plugin shows all services discovered by NMAP scans."
     }],
-    "params" : [{
-        "name"  : "macs",
-        "type"  : "sql",
-        "value" : "SELECT dev_MAC from DEVICES"
-    },
-    {
-        "name"  : "urls",
-        "type"  : "setting",
-        "value" : "WEBMON_urls_to_check"
-    },
-    {
-        "name"  : "internet_ip",
-        "type"  : "setting",
-        "value" : "WEBMON_SQL_internet_ip"
-    }],  
+    "params" : [],  
     "database_column_definitions":
     [          
         {
@@ -65,19 +51,19 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Monitored URL"
+                "string" : "Device name"
                 }]
         },
         {
             "column": "Object_SecondaryD",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "Ip and Port"
                 }]
         } ,
         {
@@ -107,34 +93,12 @@
         {
             "column": "Watched_Value1",
             "show": true,
-            "type": "threshold",            
+            "type": "label",            
             "default_value":"",
-            "options": [
-                {
-                    "maximum": 199,
-                    "hexColor": "#792D86"                
-                },
-                {
-                    "maximum": 299,
-                    "hexColor": "#5B862D"
-                },
-                {
-                    "maximum": 399,
-                    "hexColor": "#7D862D"
-                },
-                {
-                    "maximum": 499,
-                    "hexColor": "#BF6440"
-                },
-                {
-                    "maximum": 599,
-                    "hexColor": "#D33115"
-                }
-            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Status code"
+                "string" : "Service"
                 }]
         },
         {
@@ -146,7 +110,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Latency"
+                "string" : "State"
                 }]
         },
         {
@@ -174,15 +138,15 @@
                 }]
         } ,       
         {
-            "column": "UserData",
+            "column": "Extra",
             "show": true,
-            "type": "textboxsave",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Comments"
+                "string" : "Extra"
                 }]
         },        
         {
@@ -209,18 +173,6 @@
                 "language_code":"en_us",
                 "string" : "Status"
                 }]
-        },        
-        {
-            "column": "Extra",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "Extra"
-                }]
         }            
     ],
     "settings":[
@@ -236,22 +188,22 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+                "string" : "Specify when the SQL query is executed."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code":"en_us",
-                "string" : "Command"
+                "string" : "SQL to run"
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Command to run"
+                "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
             }]
         },
         {
@@ -266,23 +218,8 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#NMAPSRV_RUN\"><code>NMAPSRV_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
-        },
-        {
-            "function": "API_SQL",
-            "type": "text",
-            "default_value":"SELECT * FROM plugin_website_monitor",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "API endpoint (not implemented)"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> file endpoint</a>."
-            }]            
         },
         {
             "function": "RUN_TIMEOUT",
@@ -300,7 +237,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+                "string" : "Maximum time in seconds to wait for the call to finish. If this time is exceeded the script is aborted."
             }]
         },
         {
@@ -315,7 +252,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is service type (e.g.: http, ssh)</li><li><code>Watched_Value2</code> is Status (open or closed)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
             }] 
         },
         {
@@ -332,38 +269,7 @@
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             }] 
-        },
-        {
-            "function": "urls_to_check",
-            "type": "list",
-            "default_value":["https://google.com", "https://duck.com"],
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Arguments"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>."
-            }]
-        },
-        {
-            "function": "SQL_internet_ip",
-            "type": "readonly",
-            "default_value":"SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Helper variable"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet. "
-            }]
         }
-
     ]
 }
 

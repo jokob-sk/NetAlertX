@@ -478,6 +478,7 @@ $lang['en_us'] = array(
 
 'Plugins_Unprocessed_Events' => 'Unprocessed Events',
 'Plugins_Objects' => 'Plugin Objects',
+'Plugins_History' => 'Events History',
 
 //////////////////////////////////////////////////////////////////
 // Settings
@@ -513,7 +514,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'SCAN_CYCLE_MINUTES_name' => 'Scan cycle delay',
 'SCAN_CYCLE_MINUTES_description' => 'The delay between scans in minutes. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This is influenced by the network mask set in the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a> at the top. Every IP takes a couple seconds to scan.',
 'DAYS_TO_KEEP_EVENTS_name' => 'Delete events older than',
-'DAYS_TO_KEEP_EVENTS_description' => 'This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically.',
+'DAYS_TO_KEEP_EVENTS_description' => 'This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically. Also applies on Plugin Events History.',
 'REPORT_DASHBOARD_URL_name' => 'Pi.Alert URL',
 'REPORT_DASHBOARD_URL_description' => 'This URL is used as the base for generating links in the emails. Enter full URL starting with <code>http://</code> including the port number (no trailig slash <code>/</code>).',
 'DIG_GET_IP_ARG_name' => 'Internet IP discovery',

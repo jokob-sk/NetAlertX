@@ -52,8 +52,9 @@ sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
 sql_plugins_objects = "SELECT  * FROM Plugins_Objects"
-sql_language_strings = "SELECT  * FROM Language_Strings"
+sql_language_strings = "SELECT  * FROM Plugins_Language_Strings"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
+sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY 'Index' DESC LIMIT 50"
 sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                                                                 WHERE eve_PendingAlertEmail = 1
                                                                 AND eve_EventType = 'New Device'
@@ -878,6 +879,10 @@ def cleanup_database ():
     # Cleanup Events
     mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
+
+    # Cleanup Plugin Events History
+    mylog('verbose', ['    Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+    sql.execute ("DELETE FROM Plugins_History WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
 
     # Cleanup Pholus_Scan
     if PHOLUS_DAYS_DATA != 0:
@@ -2201,6 +2206,7 @@ def send_notifications ():
     global mail_text, mail_html, json_final, changedPorts_json_struc, partial_html, partial_txt, partial_json
 
     deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
+    plugins_report         = False
 
     # Reporting section
     mylog('verbose', ['  Check if something to report'])    
@@ -3168,6 +3174,25 @@ def upgradeDB ():
                     ); """
     sql.execute(sql_Plugins_Events)
 
+    # Plugin execution history
+    sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
+                        "Index"	          INTEGER,
+                        Plugin TEXT NOT NULL,
+                        Object_PrimaryID TEXT NOT NULL,
+                        Object_SecondaryID TEXT NOT NULL,
+                        DateTimeCreated TEXT NOT NULL,                        
+                        DateTimeChanged TEXT NOT NULL,                         
+                        Watched_Value1 TEXT NOT NULL,
+                        Watched_Value2 TEXT NOT NULL,
+                        Watched_Value3 TEXT NOT NULL,
+                        Watched_Value4 TEXT NOT NULL,
+                        Status TEXT NOT NULL,              
+                        Extra TEXT NOT NULL,
+                        UserData TEXT NOT NULL,
+                        PRIMARY KEY("Index" AUTOINCREMENT)
+                    ); """                    
+    sql.execute(sql_Plugins_History)
+
     # Dynamically generated language strings
     # indicates, if Language_Strings table is available 
     languageStringsMissing = sql.execute("""
@@ -3252,6 +3277,7 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         ["events_pending_alert", sql_events_pending_alert],
         ["settings", sql_settings],
         ["plugins_events", sql_plugins_events],
+        ["plugins_history", sql_plugins_history],
         ["plugins_objects", sql_plugins_objects],
         ["language_strings", sql_language_strings],
         ["custom_endpoint", API_CUSTOM_SQL],
@@ -3758,48 +3784,68 @@ def execute_plugin(plugin):
     # Execute command
     mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
 
-    try:
-        # try runnning a subprocess with a forced timeout in case the subprocess hangs
-        output = subprocess.check_output (command, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
-    except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        mylog('none', [e.output])
-        mylog('none', ['        [Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
-    except subprocess.TimeoutExpired as timeErr:
-        mylog('none', ['        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
+    # python-script 
+    if plugin['data_source'] == 'python-script':
+
+        try:
+            # try runnning a subprocess with a forced timeout in case the subprocess hangs
+            output = subprocess.check_output (command, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            mylog('none', [e.output])
+            mylog('none', ['        [Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
+        except subprocess.TimeoutExpired as timeErr:
+            mylog('none', ['        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
 
-    #  check the last run output
-    f = open(pluginsPath + '/' + plugin["code_name"] + '/last_result.log', 'r+')
-    newLines = f.read().split('\n')
-    f.close()        
+        #  check the last run output
+        f = open(pluginsPath + '/' + plugin["code_name"] + '/last_result.log', 'r+')
+        newLines = f.read().split('\n')
+        f.close()        
 
-    # cleanup - select only lines containing a separator to filter out unnecessary data
-    newLines = list(filter(lambda x: '|' in x, newLines))  
+        # cleanup - select only lines containing a separator to filter out unnecessary data
+        newLines = list(filter(lambda x: '|' in x, newLines))  
 
-    if len(newLines) == 0: # check if the subprocess failed / there was no valid output
-        mylog('none', ['        [Plugins] No output received from the plugin - enable LOG_LEVEL=debug and check logs'])
-        return  
-    else: 
-        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries'])      
+        if len(newLines) == 0: # check if the subprocess failed / there was no valid output
+            mylog('none', ['        [Plugins] No output received from the plugin - enable LOG_LEVEL=debug and check logs'])
+            return  
+        else: 
+            mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries'])      
 
-    # # regular logging
-    # for line in newLines:
-    #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+        # # regular logging
+        # for line in newLines:
+        #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+        
+        # build SQL query parameters to insert into the DB
+        sqlParams = []
+
+        for line in newLines:
+            columns = line.split("|")
+            # There has to be always 8 columns
+            if len(columns) == 8:
+                sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null'))
+            else:
+                mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
     
-    # build SQL query parameters to insert into the DB
-    sqlParams = []
+    # pialert-db-query
+    if plugin['data_source'] == 'pialert-db-query':
+        # build SQL query parameters to insert into the DB
+        sqlParams = []
 
-    for line in newLines:
-        columns = line.split("|")
-        # There has to be always 8 columns
-        if len(columns) == 8:
-            sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null'))
-        else:
-            mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
+        # set_CMD should contain a SQL query
+        arr = get_sql_array (set_CMD) 
+
+        for row in arr:
+            # There has to be always 8 columns
+            if len(row) == 8:
+                sqlParams.append((plugin["unique_prefix"], row[0], row[1], 'null', row[2], row[3], row[4], row[5], row[6], 0, row[7], 'null'))
+            else:
+                mylog('none', ['        [Plugins]: Skipped invalid sql result'])
 
     if len(sqlParams) > 0:                
         sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        commitDB ()
+        sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
 
         process_plugin_events(plugin)
@@ -3828,6 +3874,7 @@ def process_plugin_events(plugin):
     existingPluginObjectsCount = len(pluginObjects)
 
     mylog('debug', ['     [Plugins] Existing objects: ', existingPluginObjectsCount])
+    mylog('debug', ['     [Plugins] Events objects: ', len(plugEventsArr)])
 
     # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
     for eve in plugEventsArr:
@@ -3844,9 +3891,6 @@ def process_plugin_events(plugin):
         if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
             mylog('debug', ['     [Plugins] Found existing object'])
             pluginEvents[index].status = "exists"            
-
-            # plugEventsArr.pop(index) # remove processed entry
-
         index += 1
 
     # Loop thru events and update the one that exist to determine if watched columns changed
@@ -3858,11 +3902,8 @@ def process_plugin_events(plugin):
             #  compare hash of the changed watched columns for uniqueness
             if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
                 pluginEvents[index].status = "watched-changed"                            
-
-                # plugEventsArr.pop(index) # remove processed entry
             else:
                 pluginEvents[index].status = "watched-not-changed"  
-
         index += 1
 
     # Merge existing plugin objects with newly discovered ones and update existin ones with new values
@@ -3882,20 +3923,21 @@ def process_plugin_events(plugin):
     # ----------------------------
 
     # Update the Plugin_Objects    
-
     for plugObj in pluginObjects: 
 
         createdTime = plugObj.created
 
         if plugObj.status == 'new':
-            createdTime = plugObj.changed        
-        
-        q = f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}' WHERE 'Index' = {plugObj.index}"
+            
+            createdTime = plugObj.changed
 
-        sql.execute (q)
+            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+        else:
+            q = f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}' WHERE 'Index' = {plugObj.index}"
+
+            sql.execute (q)
 
     # Update the Plugins_Events with the new statuses    
-    
     sql.execute ("DELETE FROM Plugins_Events")
 
     for plugObj in pluginEvents: 
