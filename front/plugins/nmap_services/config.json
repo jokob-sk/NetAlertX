@@ -222,25 +222,6 @@
             }]
         },
         {
-            "function": "RUN_TIMEOUT",
-            "type": "integer",
-            "default_value":5,
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Run timeout"
-            },
-            {
-                "language_code":"de_de",
-                "string" : "Wartezeit"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Maximum time in seconds to wait for the call to finish. If this time is exceeded the script is aborted."
-            }]
-        },
-        {
             "function": "WATCH",
             "type": "multiselect",
             "default_value":["Watched_Value1"],

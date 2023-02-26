@@ -1764,6 +1764,8 @@ def performNmapScan(devicesToScan):
 
             # previous Nmap Entries
             oldEntries = []
+
+            mylog('verbose', ['[', timeNow(), '] Scan: Ports found by NMAP: ', len(newEntries)])
             
             if len(newEntries) > 0:   
 
@@ -1779,16 +1781,18 @@ def performNmapScan(devicesToScan):
 
                 # Remove all entries already available in the database
                 for newEntry in newEntries:
-                    #  Check if available in oldEntries
+                    #  Check if available in oldEntries and remove if yes
                     if any(x.hash == newEntry.hash for x in oldEntries):
                         newEntries.pop(index)
 
-                mylog('verbose', ['[', timeNow(), '] Scan: Nmap found ', len(newEntries), ' new or changed ports'])
+                mylog('verbose', ['[', timeNow(), '] Scan: Nmap new or changed ports: ', len(newEntries)])
+                mylog('verbose', ['[', timeNow(), '] Scan: Nmap old entries:          ', len(oldEntries)])
 
                 # collect new ports, find the corresponding old entry and return for notification purposes
                 # also update the DB with the new values after deleting the old ones
                 if len(newEntries) > 0:
-
+                    
+                    # params to build the SQL query
                     params = []
                     indexesToDelete = ""
 
@@ -1799,15 +1803,16 @@ def performNmapScan(devicesToScan):
 
                         for oldEntry in oldEntries:
                             if oldEntry.hash == newEntry.hash:
-
-                                params.append(newEntry.mac, newEntry.time, newEntry.port, newEntry.state, newEntry.service, oldEntry.extra)
-
                                 indexesToDelete = indexesToDelete + str(oldEntry.index) + ','
-
-                                foundEntry = oldEntry
+                                foundEntry = oldEntry                        
 
                         columnNames = ["Name", "MAC", "Port", "State", "Service", "Extra", "NewOrOld"  ]
+
+                        # Old entry found
                         if foundEntry is not None:
+                            # Build params for sql query
+                            params.append((newEntry.mac, newEntry.time, newEntry.port, newEntry.state, newEntry.service, oldEntry.extra))
+                            # Build JSON for API and notifications
                             changedPortsTmp.append({       
                                                     "Name"      : foundEntry.name, 
                                                     "MAC"       : newEntry.mac, 
@@ -1826,7 +1831,11 @@ def performNmapScan(devicesToScan):
                                                     "Extra"     : foundEntry.extra,
                                                     "NewOrOld"  : "Old values"
                                                 })                            
+                        # New entry - no matching Old entry found
                         else:
+                            # Build params for sql query
+                            params.append((newEntry.mac, newEntry.time, newEntry.port, newEntry.state, newEntry.service, ''))
+                            # Build JSON for API and notifications
                             changedPortsTmp.append({
                                                     "Name"      : "New device", 
                                                     "MAC"       : newEntry.mac, 
@@ -3806,11 +3815,7 @@ def execute_plugin(plugin):
         # cleanup - select only lines containing a separator to filter out unnecessary data
         newLines = list(filter(lambda x: '|' in x, newLines))  
 
-        if len(newLines) == 0: # check if the subprocess failed / there was no valid output
-            mylog('none', ['        [Plugins] No output received from the plugin - enable LOG_LEVEL=debug and check logs'])
-            return  
-        else: 
-            mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(newLines), ' entries'])      
+        pluginEventCount = len(newLines)
 
         # # regular logging
         # for line in newLines:
@@ -3832,8 +3837,8 @@ def execute_plugin(plugin):
         # build SQL query parameters to insert into the DB
         sqlParams = []
 
-        # set_CMD should contain a SQL query
-        arr = get_sql_array (set_CMD) 
+        # set_CMD should contain a SQL query        
+        arr = get_sql_array (set_CMD.replace("{s-quote}", '\'')) 
 
         for row in arr:
             # There has to be always 8 columns
@@ -3842,6 +3847,15 @@ def execute_plugin(plugin):
             else:
                 mylog('none', ['        [Plugins]: Skipped invalid sql result'])
 
+
+    # check if the subprocess / SQL query failed / there was no valid output
+    if len(sqlParams) == 0: 
+        mylog('none', ['        [Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
+        return  
+    else: 
+        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', pluginEventCount, ' entries'])  
+
+    # process results if any
     if len(sqlParams) > 0:                
         sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()

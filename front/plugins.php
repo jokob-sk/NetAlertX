@@ -182,7 +182,7 @@ function generateTabs()
 
     $.each(pluginDefinitions, function(index, obj) {
         $('#tabs-location').append(
-            `<li class="${activetab}">
+            `<li class=" ${activetab}">
                 <a href="#${obj.unique_prefix}" data-plugin-prefix="${obj.unique_prefix}" id="${obj.unique_prefix}_id" data-toggle="tab" >
                 ${localize(obj, 'icon')} ${localize(obj, 'display_name')}
                 </a>

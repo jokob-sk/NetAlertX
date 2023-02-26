@@ -1775,7 +1775,7 @@ function initializeTabsNew () {
 
 function loadNmap()
 {
-    $(".deviceSpecific").remove(); // remove any previous data listed in teh table
+    $(".deviceSpecific").remove(); // remove any previous data listed in the table
     
     $.get('php/server/devices.php?action=getNmap&mac='+ mac, function(data) {
       
