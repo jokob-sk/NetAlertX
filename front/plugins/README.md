@@ -268,6 +268,7 @@ Example:
         }
 ```
 
-## Full Example
+## Full Examples
 
-Check the [website_monitor WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
+- Script based plugin: Check the [website_monitor WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
+- SQL query nased plugin: Check the [nmap_services NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) file for details.  
