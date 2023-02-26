@@ -16,24 +16,26 @@ If you wish to develop a plugin, please check the existing plugin structure. Onc
   | File | Required | Description | 
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
-  | `script.py` |  yes | The Python script itself |
-  | `last_result.log` | yes | The file used to interface between PiAlert and the plugin (script).  |
+  | `script.py` |  yes (script) | The Python script itself |
+  | `last_result.log` | yes (script) | The file used to interface between PiAlert and the plugin (script).  |
   | `script.log` | no | Logging output (recommended) |
   | `README.md` | no | Any setup considerations or overview (recommended) |
 
+More on specifics below.
 
-More on specific files below.
+## Supported data sources
 
-### script.log
+Currently only two data sources are supported:
 
-Used to interface between PiAlert and the plugin (script). After every scan it should contain only the results from the latest scan/execution. 
+- Script
+- SQL query on the PiAlert database
 
-- The format is a `csv`-like file with the pipe `|` separator. 8 (eight) values need to be supplied, so every line needs to contain 7 pipe separators. Empty values are represented by `null`  
-- Don't render "headers" for these "columns"
-- Every scan result / event entry needs to be on a new line
-- You can find which "columns" need to be present in the script results and if the value is required below. 
-- The order of these "columns" can't be changed
+You need to set the `data_source` to either `pialert-db-query` or `python-script`:
 
+```json
+"data_source":  "pialert-db-query"
+```
+### Column order and values
 
   | Order | Represented Column | Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
@@ -44,7 +46,18 @@ Used to interface between PiAlert and the plugin (script). After every scan it s
   | 4 | `Watched_Value2` | no | As above |
   | 5 | `Watched_Value3` | no | As above  |
   | 6 | `Watched_Value4` | no | As above  |
-  | 7 | `Extra` | no | Any other data you want to pass and display in PiAlert and the notifcations |
+  | 7 | `Extra` | no | Any other data you want to pass and display in PiAlert and the notifications |
+
+### "data_source":  "python-script"
+
+Used to interface between PiAlert and the plugin (script). After every scan it should contain only the results from the latest scan/execution. 
+
+- The format is a `csv`-like file with the pipe `|` separator. 8 (eight) values need to be supplied, so every line needs to contain 7 pipe separators. Empty values are represented by `null`  
+- Don't render "headers" for these "columns"
+- Every scan result / event entry needs to be on a new line
+- You can find which "columns" need to be present in the script results and if the value is required below. 
+- The order of these "columns" can't be changed
+
 
 #### Examples
 
@@ -70,6 +83,29 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|||
 https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ```
+
+### "data_source":  "pialert-db-query"
+
+If the datasource is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important.
+
+```json
+{
+            "function": "CMD",
+            "type": "text",
+            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "SQL to run"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
+            }]
+        }
+```
+
 
 ### config.json 
 

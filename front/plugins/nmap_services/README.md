@@ -1,12 +1,11 @@
 ## Overview
 
-A simple sample plugin allowing for monitoring web services or urls. The status code corresponds to the commonly used [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). 
+This plugin shows all Services discovered by regular NMAP scans. It's also a sample plugin showcasing how to use a SQL Query to show existing data from the PiAlert database. 
 
 ### Usage
 
-- The user can specify which services (websites) to monitor via the `WEBMON_urls_to_check` setting. 
+- The sql query from the `NMAPSRV_CMD` setting is used to create source data for this plugin. Column order and values need to adhere to the ones specified in the [documentation](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins).
 
 ### Notes
 
-- Setting `(WEBMON_)SQL_internet_ip` is not used and specified for demonstration purposes only.
-- Parameters `macs` and `internet_ip` in the `config.json` file are not used and specified for demonstration purposes only.
+- N/A
