@@ -1013,8 +1013,7 @@ def scan_network ():
     updateState("Scan: Network")
     mylog('verbose', ['[', startTime, '] Scan Devices:' ])       
 
-    # # Query ScanCycle properties
-    print_log ('Query ScanCycle confinguration')
+    # Query ScanCycle properties    
     scanCycle_data = query_ScanCycle_Data (True)
     if scanCycle_data is None:
         mylog('none', ['\n*************** ERROR ***************'])
@@ -3790,11 +3789,11 @@ def execute_plugin(plugin):
     # prepare command from plugin settings, custom parameters  
     command = resolve_wildcards(set_CMD, params).split()
 
-    # Execute command
-    mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
-
     # python-script 
     if plugin['data_source'] == 'python-script':
+
+        # Execute command
+        mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
 
         try:
             # try runnning a subprocess with a forced timeout in case the subprocess hangs
@@ -3815,8 +3814,6 @@ def execute_plugin(plugin):
         # cleanup - select only lines containing a separator to filter out unnecessary data
         newLines = list(filter(lambda x: '|' in x, newLines))  
 
-        pluginEventCount = len(newLines)
-
         # # regular logging
         # for line in newLines:
         #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
@@ -3834,11 +3831,17 @@ def execute_plugin(plugin):
     
     # pialert-db-query
     if plugin['data_source'] == 'pialert-db-query':
+        # replace single quotes wildcards
+        q = set_CMD.replace("{s-quote}", '\'')
+
+        # Execute command
+        mylog('verbose', ['     [Plugins] Executing: ', q])
+
         # build SQL query parameters to insert into the DB
         sqlParams = []
 
         # set_CMD should contain a SQL query        
-        arr = get_sql_array (set_CMD.replace("{s-quote}", '\'')) 
+        arr = get_sql_array (q) 
 
         for row in arr:
             # There has to be always 8 columns
@@ -3853,7 +3856,7 @@ def execute_plugin(plugin):
         mylog('none', ['        [Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
         return  
     else: 
-        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', pluginEventCount, ' entries'])  
+        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(sqlParams), ' entries'])  
 
     # process results if any
     if len(sqlParams) > 0:                

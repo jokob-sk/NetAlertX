@@ -44,7 +44,7 @@ function getFormControl(dbColumnDef, value, index) {
 
     switch(dbColumnDef.type)
     {
-        case 'label':
+        case 'label':            
             result = `<span>${value}<span>`;
             break;
         case 'textboxsave':
@@ -97,7 +97,7 @@ function saveData (id) {
     $.get(`php/server/dbHelper.php?action=update&dbtable=Plugins_Objects&key=Index&id=${index}&columns=UserData&values=${columnValue}`, function(data) {
     
         // var result = JSON.parse(data);
-        console.log(data)
+        console.log(data) 
     
     // if (result) {
     //   period = result;
@@ -211,8 +211,6 @@ function generateTabs()
             }
         });
 
-
-
         // Generate the event rows
         for(i=0;i<pluginUnprocessedEvents.length;i++)
         {
@@ -243,18 +241,19 @@ function generateTabs()
             }            
         }        
 
+        
+
         // Generate the object rows
-        for(i=0;i<pluginObjects.length;i++)
+        for(var i=0;i<pluginObjects.length;i++)
         {
             if(pluginObjects[i].Plugin == obj.unique_prefix)
             {
                 clm = ""
 
-                for(j=0;j<colDefinitions.length;j++) 
+                for(var j=0;j<colDefinitions.length;j++) 
                 {   
-                    
                     clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
-                }                   
+                }                                   
                 obRows += '<tr>' + clm + '</tr>'
             }            
         }

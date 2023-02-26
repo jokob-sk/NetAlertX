@@ -55,7 +55,7 @@
                 }]
         },
         {
-            "column": "Object_SecondaryD",
+            "column": "Object_SecondaryID",
             "show": true,
             "type": "label",            
             "default_value":"",
