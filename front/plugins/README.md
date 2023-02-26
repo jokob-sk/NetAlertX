@@ -219,11 +219,17 @@ Example:
     }
 
 ```
-##### database_column_definitions
+##### UI settings in database_column_definitions
+
+The UI will adjust how columns are displayed in the UI based on teh definition of the `database_column_definitions` object.
 
 - Only columns with `"show": true` and also with at least an english translation will be shown in the UI.
+- Supported types: `label`, `text`, `threshold`, `replace`
+  - `label` makes a column display only
+  - `text` makes a column editable
+  - See below for information on `threshold`, `replace`
 - The `options` property is used in conjunction with these types:
-  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's les sthan the specified `maximum`, but more than the previous one in the `options` array
+  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
 
 
