@@ -364,25 +364,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                 </div>
                               </div>
                             </div>
-                        </div>
-                        <div class="log-area">
-                             
-                             <div class="row logs-row">
-                               <textarea id="pialert_pholus_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus.log" ); ?>
-                               </textarea>                              
-                             </div>                          
-                             <div class="row logs-row" >
-                               <div> 
-                                 <div class="log-file">pialert_pholus.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_pholus.log") / 1000000),2,",",".") . ' MB';?> 
-                                 <span class="span-padding"><a href="./log/pialert_pholus.log"><i class="fa fa-download"></i> </a></span> 
-                                </div></div>                         
-                                 <div class="log-purge">
-                                   <button class="btn btn-primary" onclick="logManage('pialert_pholus.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                 </div>                            
-                               </div>                            
-                             </div>                            
- 
-                         </div>    
+                        </div>                           
                          <div class="log-area">
                              
                              <div class="row logs-row">

@@ -173,8 +173,6 @@ function getData(){
             $.get('api/table_plugins_objects.json', function(res) {
 
                 pluginObjects = res["data"];
-
-                console.log(pluginObjects)
                 
                 $.get('api/table_plugins_history.json', function(res) {                
 
@@ -259,8 +257,6 @@ function generateTabs()
             }            
         }        
 
-        console.log(pluginObjects)
-
         // Generate the object rows
         var obCount = 0;
         for(var i=0;i<pluginObjects.length;i++)
@@ -271,12 +267,6 @@ function generateTabs()
 
                 for(var j=0;j<colDefinitions.length;j++) 
                 {   
-                    if(colDefinitions[j].column == 'UserData' )
-                    {
-                        console.log(colDefinitions[j].column)
-                        console.log(pluginObjects[i][colDefinitions[j].column])
-                        console.log(pluginObjects[i])
-                    }
                     clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
                 }                                   
                 obRows += '<tr>' + clm + '</tr>'

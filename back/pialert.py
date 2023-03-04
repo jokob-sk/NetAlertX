@@ -1920,10 +1920,6 @@ def performPholusScan (timeoutSec):
 
         # cleanup - select only lines containing a separator to filter out unnecessary data
         newLines = list(filter(lambda x: '|' in x, newLines))        
-
-        # regular logging
-        for line in newLines:
-            append_line_to_file (logPath + '/pialert_pholus.log', line +'\n')         
         
         # build SQL query parameters to insert into the DB
         params = []

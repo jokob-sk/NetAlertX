@@ -650,7 +650,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'PHOLUS_RUN_SCHD_description' => 'Only enabled if you select <code>schedule</code> in the <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format 
 (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick="toggleAllSettings()" href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
-'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!). The <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> file is not touched. Enter <code>0</code> to disable.',
+'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!) Enter <code>0</code> to disable.',
 
 // Nmap
 'Nmap_display_name' => 'Nmap',

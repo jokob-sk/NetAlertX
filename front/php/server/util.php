@@ -202,7 +202,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus.log", "pialert_pholus_lastrun.log"];
+  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus_lastrun.log"];
   
   if(in_array($logFile, $allowedFiles))
   {
