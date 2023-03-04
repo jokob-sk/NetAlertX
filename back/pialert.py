@@ -3760,6 +3760,8 @@ def execute_plugin(plugin):
     else:     
         set_RUN_TIMEOUT = set["value"] 
 
+    mylog('debug', ['     [Plugins] Timeout: ', set_RUN_TIMEOUT])    
+
     #  Prepare custom params
     params = []
 

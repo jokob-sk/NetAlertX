@@ -105,6 +105,16 @@ Instructions for [pucherot's original code can be found here](https://github.com
       - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
       - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
 
+## ☕ Support me
+
+Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
+
+<a href="https://github.com/sponsors/jokob-sk" target="_blank"><img src="https://i.imgur.com/X6p5ACK.png" alt="Sponsor Me on GitHub" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
+<a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="117px" height="30px" ></a>
+<a href="https://www.patreon.com/user?u=84385063" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Patreon_logo_with_wordmark.svg/512px-Patreon_logo_with_wordmark.svg.png" alt="Support me on patreon" style="height: 30px !important;width: 117px !important;" width="117px" ></a>
+
+BTC: 1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM
+
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/devices_split.png       "Main screen"
 [screen1]: ./docs/img/device_details.png      "Screen 1"

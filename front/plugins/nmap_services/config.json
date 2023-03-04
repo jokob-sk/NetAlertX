@@ -9,7 +9,7 @@
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-search\"></i>"
+        "string" : "<i class=\"fa-solid fa-satellite-dish\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
@@ -45,7 +45,7 @@
         {
             "column": "Object_PrimaryID",
             "show": true,
-            "type": "url",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -57,7 +57,7 @@
         {
             "column": "Object_SecondaryID",
             "show": true,
-            "type": "label",            
+            "type": "url",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -194,7 +194,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
+            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast('http://' || dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

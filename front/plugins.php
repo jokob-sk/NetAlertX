@@ -23,7 +23,7 @@
             <ul id="tabs-location" class="nav nav-tabs">
                 <!-- PLACEHOLDER -->
             </ul>  
-            <div id="tabs-content-location" class="nav nav-tabs"> 
+            <div id="tabs-content-location" class="tab-content"> 
                 <!-- PLACEHOLDER -->
             </div>   
         
@@ -48,6 +48,8 @@ function getFormControl(dbColumnDef, value, index) {
             result = `<span>${value}<span>`;
             break;
         case 'textboxsave':
+
+            console.log(value)
 
             value = value == 'null' ? '' : value; // hide 'null' values
 
@@ -98,6 +100,16 @@ function saveData (id) {
     
         // var result = JSON.parse(data);
         console.log(data) 
+
+        if(sanitize(data) == 'OK')
+        {
+          showMessage("Saved")
+          // Remove navigation prompt "Are you sure you want to leave..."
+          window.onbeforeunload = null;
+        } else
+        {
+          showMessage("ERROR")
+        }        
     
     // if (result) {
     //   period = result;
@@ -161,6 +173,8 @@ function getData(){
             $.get('api/table_plugins_objects.json', function(res) {
 
                 pluginObjects = res["data"];
+
+                console.log(pluginObjects)
                 
                 $.get('api/table_plugins_history.json', function(res) {                
 
@@ -212,6 +226,7 @@ function generateTabs()
         });
 
         // Generate the event rows
+        var eveCount = 0;
         for(i=0;i<pluginUnprocessedEvents.length;i++)
         {
             if(pluginUnprocessedEvents[i].Plugin == obj.unique_prefix)
@@ -223,10 +238,12 @@ function generateTabs()
                     clm += '<td>'+ pluginUnprocessedEvents[i][colDefinitions[j].column] +'</td>'
                 }                   
                 evRows += '<tr>' + clm + '</tr>'
+                eveCount++;
             }            
         }      
 
-        // Generate the history rows
+        // Generate the history rows        
+        var histCount = 0
         for(i=0;i<pluginHistory.length;i++)
         {
             if(pluginHistory[i].Plugin == obj.unique_prefix)
@@ -238,12 +255,14 @@ function generateTabs()
                     clm += '<td>'+ pluginHistory[i][colDefinitions[j].column] +'</td>'
                 }                   
                 hiRows += '<tr>' + clm + '</tr>'
+                histCount++;
             }            
         }        
 
-        
+        console.log(pluginObjects)
 
         // Generate the object rows
+        var obCount = 0;
         for(var i=0;i<pluginObjects.length;i++)
         {
             if(pluginObjects[i].Plugin == obj.unique_prefix)
@@ -252,9 +271,16 @@ function generateTabs()
 
                 for(var j=0;j<colDefinitions.length;j++) 
                 {   
+                    if(colDefinitions[j].column == 'UserData' )
+                    {
+                        console.log(colDefinitions[j].column)
+                        console.log(pluginObjects[i][colDefinitions[j].column])
+                        console.log(pluginObjects[i])
+                    }
                     clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
                 }                                   
                 obRows += '<tr>' + clm + '</tr>'
+                obCount++;
             }            
         }
 
@@ -265,25 +291,25 @@ function generateTabs()
                 <div class="nav-tabs-custom" style="margin-bottom: 0px">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#objectsTarget" data-toggle="tab" >
+                            <a href="#objectsTarget_${obj.unique_prefix}" data-toggle="tab" >
                                 
-                                <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${pluginObjects.length})
-                                
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="#eventsTarget" data-toggle="tab" >
-                                
-                                <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${pluginUnprocessedEvents.length})
+                                <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${obCount})
                                 
                             </a>
                         </li>
 
                         <li>
-                            <a href="#historyTarget" data-toggle="tab" >
+                            <a href="#eventsTarget_${obj.unique_prefix}" data-toggle="tab" >
                                 
-                                <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${pluginHistory.length})
+                                <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${eveCount})
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#historyTarget_${obj.unique_prefix}" data-toggle="tab" >
+                                
+                                <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCount})
                                 
                             </a>
                         </li>
@@ -294,7 +320,7 @@ function generateTabs()
 
                 <div class="tab-content">
 
-                    <div id="objectsTarget" class="tab-pane active">
+                    <div id="objectsTarget_${obj.unique_prefix}" class="tab-pane ${activetab}">
                         <table class="table table-striped">                    
                             <tbody>
                                 <tr>
@@ -304,7 +330,7 @@ function generateTabs()
                             </tbody>
                         </table>
                     </div>
-                    <div id="eventsTarget" class="tab-pane">
+                    <div id="eventsTarget_${obj.unique_prefix}" class="tab-pane">
                         <table class="table table-striped">
                         
                             <tbody>
@@ -315,7 +341,7 @@ function generateTabs()
                             </tbody>
                         </table>
                     </div>    
-                    <div id="historyTarget" class="tab-pane">
+                    <div id="historyTarget_${obj.unique_prefix}" class="tab-pane">
                         <table class="table table-striped">
                         
                             <tbody>

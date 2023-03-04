@@ -244,7 +244,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                 <option value="16"><?= lang('Device_TableHead_Location');?></option>
                                 <option value="17"><?= lang('Device_TableHead_Vendor');?></option>
                               </select>
-                              <span class="input-group-addon"><i title="<?= lang('DevDetail_GoToNetworkNode');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
+                              <span class="input-group-addon"><i title="<?= lang('Gen_Save');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
                             </div>
                           </div>
 
