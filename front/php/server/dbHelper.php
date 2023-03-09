@@ -67,7 +67,7 @@
       case 'create':    create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values ); break;
       // case 'read'  :    read($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);    break;
       case 'update':    update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
-      // case 'delete':    delete($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
+      case 'delete':    delete($key, $id, $dbtable);  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -80,6 +80,7 @@ function update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, 
 
   global $db;  
 
+  // handle one or multiple columns
   if(strpos($columns, ',') !== false) 
   {
     $columnsArr = explode(",", $columns);
@@ -88,6 +89,7 @@ function update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, 
     $columnsArr = array($columns);
   }
 
+  // handle one or multiple values
   if(strpos($values, ',') !== false)
   {
     $valuesArr = explode(",", $values);
@@ -145,7 +147,33 @@ function create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $
   $result = $db->query($sql);
 
   if (! $result == TRUE) {
-    echo "Error creating etry\n\n$sql \n\n". $db->lastErrorMsg();
+    echo "Error creating entry\n\n$sql \n\n". $db->lastErrorMsg();
+    return;
+  }
+}
+
+//------------------------------------------------------------------------------
+//  delete
+//------------------------------------------------------------------------------
+function delete($key, $id, $dbtable)
+{
+  global $db;
+
+   // handle one or multiple ids
+   if(strpos($id, ',') !== false) 
+   {
+     $idsArr = explode(",", $id);
+   }else
+   {
+     $idsArr = array($id);
+   }
+
+  // Insert new value
+  $sql = 'DELETE FROM '.$dbtable.' WHERE "'.$key.'" IN ('. $id .')';
+  $result = $db->query($sql);
+
+  if (! $result == TRUE) {
+    echo "Error deleting entry\n\n$sql \n\n". $db->lastErrorMsg();
     return;
   }
 }

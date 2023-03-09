@@ -49,8 +49,6 @@ function getFormControl(dbColumnDef, value, index) {
             break;
         case 'textboxsave':
 
-            console.log(value)
-
             value = value == 'null' ? '' : value; // hide 'null' values
 
             id = `${dbColumnDef.column}_${index}`
@@ -207,6 +205,8 @@ function generateTabs()
     
     $.each(pluginDefinitions, function(index, obj) {
 
+        
+
         headersHtml = ""
         // headers = []
         colDefinitions = []
@@ -235,7 +235,7 @@ function generateTabs()
                 {   
                     clm += '<td>'+ pluginUnprocessedEvents[i][colDefinitions[j].column] +'</td>'
                 }                   
-                evRows += '<tr>' + clm + '</tr>'
+                evRows += `<tr data-my-index="${pluginUnprocessedEvents[i]["Index"]}" >${clm}</tr>`
                 eveCount++;
             }            
         }      
@@ -252,7 +252,7 @@ function generateTabs()
                 {   
                     clm += '<td>'+ pluginHistory[i][colDefinitions[j].column] +'</td>'
                 }                   
-                hiRows += '<tr>' + clm + '</tr>'
+                hiRows += `<tr data-my-index="${pluginHistory[i]["Index"]}" >${clm}</tr>`
                 histCount++;
             }            
         }        
@@ -269,7 +269,7 @@ function generateTabs()
                 {   
                     clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
                 }                                   
-                obRows += '<tr>' + clm + '</tr>'
+                obRows += `<tr data-my-index="${pluginObjects[i]["Index"]}" >${clm}</tr>`
                 obCount++;
             }            
         }
@@ -280,7 +280,7 @@ function generateTabs()
             <div id="${obj.unique_prefix}" class="tab-pane ${activetab}">
                 <div class="nav-tabs-custom" style="margin-bottom: 0px">
                     <ul class="nav nav-tabs">
-                        <li class="active">
+                        <li class="active" >
                             <a href="#objectsTarget_${obj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${obCount})
@@ -288,7 +288,7 @@ function generateTabs()
                             </a>
                         </li>
 
-                        <li>
+                        <li >
                             <a href="#eventsTarget_${obj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${eveCount})
@@ -296,7 +296,7 @@ function generateTabs()
                             </a>
                         </li>
 
-                        <li>
+                        <li >
                             <a href="#historyTarget_${obj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCount})
@@ -311,7 +311,7 @@ function generateTabs()
                 <div class="tab-content">
 
                     <div id="objectsTarget_${obj.unique_prefix}" class="tab-pane ${activetab}">
-                        <table class="table table-striped">                    
+                        <table class="table table-striped" data-my-dbtable="Plugins_Objects"> 
                             <tbody>
                                 <tr>
                                     ${headersHtml}                            
@@ -319,9 +319,12 @@ function generateTabs()
                                 ${obRows}
                             </tbody>
                         </table>
+                        <div class="plugin-obj-purge">                                 
+                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Gen_Purge');?></button> 
+                        </div> 
                     </div>
                     <div id="eventsTarget_${obj.unique_prefix}" class="tab-pane">
-                        <table class="table table-striped">
+                        <table class="table table-striped" data-my-dbtable="Plugins_Events">
                         
                             <tbody>
                                 <tr>
@@ -330,9 +333,12 @@ function generateTabs()
                                 ${evRows}
                             </tbody>
                         </table>
+                        <div class="plugin-obj-purge">                                 
+                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_Events' )"><?= lang('Gen_Purge');?></button> 
+                        </div> 
                     </div>    
                     <div id="historyTarget_${obj.unique_prefix}" class="tab-pane">
-                        <table class="table table-striped">
+                        <table class="table table-striped" data-my-dbtable="Plugins_History">
                         
                             <tbody>
                                 <tr>
@@ -341,7 +347,11 @@ function generateTabs()
                                 ${hiRows}
                             </tbody>
                         </table>
-                    </div>    
+                        <div class="plugin-obj-purge">                                 
+                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_History' )"><?= lang('Gen_Purge');?></button> 
+                        </div> 
+                    </div>                   
+
 
                 </div>
 
@@ -356,7 +366,71 @@ function generateTabs()
 
         activetab = '' // only first tab is active
     });
+
+    initTabs()
+    
 }
+
+// --------------------------------------------------------
+var lastPrefix = ''
+function initTabs()
+{
+    // events on tab change
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+       
+        // save the last prefix
+        if(target.includes('_') == false )
+        {
+            lastPrefix = target.split('#')[1]
+        } 
+
+        // show the objectsTarget if no specific pane selected or if selected is
+
+        if($('#objectsTarget_'+ lastPrefix).is(":hidden") && $('#eventsTarget_'+ lastPrefix).is(":hidden") && $('#historyTarget_'+ lastPrefix).is(":hidden"))
+        { 
+            $('#objectsTarget_'+ lastPrefix).show();            
+        } else
+        {
+            $('#objectsTarget_'+ lastPrefix).hide();
+        }
+
+    });
+}
+// --------------------------------------------------------
+plugPrefix = ''
+dbTable    = ''
+
+function purgeAll(callback) {
+  plugPrefix = arguments[0];  // plugin prefix
+  dbTable    = arguments[1];  // DB table
+  // Ask 
+  showModalWarning('<?= lang('Gen_Purge');?>' + ' ' + plugPrefix + ' ' + dbTable , '<?= lang('Gen_AreYouSure');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', "purgeAllExecute");
+}
+
+// --------------------------------------------------------
+dbIndexes = ''
+
+function purgeAllExecute() {
+
+    // Execute
+    // console.log("targetLogFile:" + targetLogFile)
+    // console.log("logFileAction:" + logFileAction)
+
+    idArr = $('#NMAPSRV table[data-my-dbtable="Plugins_Objects"] tr[data-my-index]').map(function(){return $(this).attr("data-my-index");}).get();
+
+    $.ajax({
+        method: "POST",
+        url: "php/server/dbHelper.php",
+        data: { action: "delete", dbtable: 'Plugins_Objects', key: 'Index', id:idArr.toString() },
+        success: function(data, textStatus) {
+            showModalOk ('Result', data );
+        }
+    })
+
+}
+
 
 // -----------------------------------------------------------------------------
 

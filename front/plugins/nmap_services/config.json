@@ -1,11 +1,12 @@
 {
     "code_name": "nmap_services",
-    "unique_prefix": "NMAPSRV",    
+    "unique_prefix": "NMAPSRV",
+    "enabled": true,    
     "data_source":  "pialert-db-query",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "Services"
+        "string" : "Services (NMAP)"
     }],
     "icon":[{
         "language_code":"en_us",

@@ -465,13 +465,15 @@ def importConfigs ():
     # -----------------
     plugins = get_plugins_configs()
 
-    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.dict)])
+    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.list)])
 
     #  handle plugins
     for plugin in plugins.list:
         print_plugin_info(plugin, ['display_name','description'])
         
-        pref = plugin["unique_prefix"]    
+        pref = plugin["unique_prefix"]   
+
+        # if plugin["enabled"] == 'true': 
         
         # collect plugin level language strings
         collect_lang_strings(plugin, pref)
@@ -3658,7 +3660,9 @@ def isNewVersion():
 
 
 #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Plugins
+#-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
 
@@ -3666,16 +3670,14 @@ def get_plugins_configs():
     pluginsList = []
 
     for root, dirs, files in os.walk(pluginsPath):
-        for d in dirs:            # Loop over directories, not files
-            pluginsDict.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json'), object_hook=custom_plugin_decoder))   
+        for d in dirs:            # Loop over directories, not files            
             pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
     return plugins_class(pluginsDict, pluginsList)
 
 #-------------------------------------------------------------------------------
 class plugins_class:
-    def __init__(self, dict, list):
-        self.dict = dict
+    def __init__(self, list):
         self.list = list
 
 #-------------------------------------------------------------------------------
