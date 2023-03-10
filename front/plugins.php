@@ -100,13 +100,13 @@ function saveData (id) {
         console.log(data) 
 
         if(sanitize(data) == 'OK')
-        {
-          showMessage("Saved")
+        {          
+          showMessage('<?= lang('Gen_DataUpdatedUITakesTime');?>')          
           // Remove navigation prompt "Are you sure you want to leave..."
           window.onbeforeunload = null;
         } else
         {
-          showMessage("ERROR")
+          showMessage('<?= lang('Gen_LockedDB');?>')           
         }        
     
     // if (result) {
@@ -372,7 +372,9 @@ function generateTabs()
 }
 
 // --------------------------------------------------------
+// handle first tab (objectsTarget_) display 
 var lastPrefix = ''
+
 function initTabs()
 {
     // events on tab change
@@ -384,19 +386,29 @@ function initTabs()
         {
             lastPrefix = target.split('#')[1]
         } 
+        
+        everythingHidden = false;
 
-        // show the objectsTarget if no specific pane selected or if selected is
-
-        if($('#objectsTarget_'+ lastPrefix).is(":hidden") && $('#eventsTarget_'+ lastPrefix).is(":hidden") && $('#historyTarget_'+ lastPrefix).is(":hidden"))
-        { 
-            $('#objectsTarget_'+ lastPrefix).show();            
-        } else
+        if($('#objectsTarget_'+ lastPrefix) && $('#historyTarget_'+ lastPrefix) && $('#eventsTarget_'+ lastPrefix))
         {
-            $('#objectsTarget_'+ lastPrefix).hide();
+            everythingHidden = $('#objectsTarget_'+ lastPrefix).attr('class').includes('active') == false && $('#historyTarget_'+ lastPrefix).attr('class').includes('active') == false && $('#eventsTarget_'+ lastPrefix).attr('class').includes('active') == false;
         }
 
+        // show the objectsTarget if no specific pane selected or if selected is hidden        
+        if((target == '#'+lastPrefix ) && everythingHidden) //|| target == '#objectsTarget_'+ lastPrefix
+        {
+            var classTmp = $('#objectsTarget_'+ lastPrefix).attr('class');
+
+            if($('#objectsTarget_'+ lastPrefix).attr('class').includes('active') == false)
+            {             
+                console.log('show')
+                classTmp += ' active';            
+                $('#objectsTarget_'+ lastPrefix).attr('class', classTmp)
+            }
+        } 
     });
 }
+
 // --------------------------------------------------------
 plugPrefix = ''
 dbTable    = ''

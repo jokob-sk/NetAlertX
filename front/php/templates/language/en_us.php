@@ -25,6 +25,8 @@ $lang['en_us'] = array(
 'Gen_Upd' => 'Updated successfully',
 'Gen_Upd_Fail' => 'Update failed',
 'Gen_Help' => 'Need help?',
+'Gen_DataUpdatedUITakesTime' => 'OK - It may take a while for the UI to update if a scan is runnig.',
+'Gen_LockedDB' => 'ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.',
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022
@@ -667,16 +669,6 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
 // API
-'API_display_name' => 'API',
-'API_icon' => '<i class="fa fa-arrow-down-up-across-line"></i>',
-'ENABLE_API_name' => 'Enable API',
-'ENABLE_API_description' => 'If enabled the app will start publishing and updating <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md" target="_blank">simple API endpoints</a> under the <code>/home/pi/pialert/front/api/</code> folder and thus on the <code>pialert_url/api/File_name</code> url.',
-'API_RUN_name' => 'Scheduling updates',
-'API_RUN_description' => 'Scheduling settings to specify when the API endpoints should be updated. If set to <code>schedule</code> then endpoints will be updated on a specified cron-like schedule specified by the <code>API_RUN_SCHD</code> setting. Otherwise if set to <code>interval</code> endpoints will be updated every N seconds specified by the <code>API_RUN_INTERVAL</code> setting.',
-'API_RUN_SCHD_name' => 'Schedule',
-'API_RUN_SCHD_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>schedule</code>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>).',
-'API_RUN_INTERVAL_name' => 'Update interval',
-'API_RUN_INTERVAL_description' => 'Depends on the <code>API_RUN</code> settings to be set to <code>interval</code>. The minimum cycle is <code>5</code> seconds.',
 'API_CUSTOM_SQL_name' => 'Custom endpoint',
 'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href="/api/table_custom_endpoint.json" target="_blank"><code>table_custom_endpoint.json</code> file endpoint</a>.',
 
