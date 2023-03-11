@@ -319,8 +319,11 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 
 ### Screenshots 
 
-  | ![Screen 1][screen1] | ![Screen 2][screen2] | 
- |----------------------|----------------------| 
+| ![Screen 1][screen1] | ![Screen 2][screen2] | 
+|----------------------|----------------------| 
+| ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
 [screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png    "Screen 1"
 [screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png             "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png             "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_ui.png             "Screen 4"
