@@ -38,8 +38,13 @@ The system continuously scans the network for, **New devices**, **New connection
    - [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md)
    - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom script monitoring
 
+# 📥 Installation
+<!--- --------------------------------------------------------------------- --->
 
-## 📑 Features   
+ ⚠ Only tested as a [docker container - follow these instructuions here](dockerfiles/README.md). 
+ > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+
+# 📑 Features   
   - Display:
     - Sessions, Connected devices, Favorites, Events, Presence, Concurrent devices, Down alerts, IP's
     - Manual Nmap scans, Optional speedtest for Device "Internet"
@@ -63,12 +68,6 @@ The system continuously scans the network for, **New devices**, **New connection
   | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  | 
  
 
-# 📥 Installation
-<!--- --------------------------------------------------------------------- --->
-
- ⚠ Only tested as a [docker container - follow these instructuions here](dockerfiles/README.md). 
- > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
-
 ### 🔗 Other Alternatives
 
   - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
@@ -89,8 +88,7 @@ The system continuously scans the network for, **New devices**, **New connection
       - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
       - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
       - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
-      - [TeroRERO](https://github.com/terorero): Spanish translation
-      - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
+      - [TeroRERO](https://github.com/terorero): Spanish translation      
       - Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 ## ☕ Support me
