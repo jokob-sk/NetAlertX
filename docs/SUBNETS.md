@@ -12,3 +12,10 @@ For example, a `/24` mask results in 256 IPs to check, where as a `/16` mask che
 ### Example:
 
 ![Vlan configuration example](/docs/img/SUBNETS/subnets_vlan.png)
+
+### Support for VLANS
+
+Please note about the accessibility of the macvlans when they are configured on the same computer. My understanding this is a general networking behavior, but feel free to clarify via a PR/issue.
+
+- Pi.Alert does not detect the macvlan container when it is running on the same computer.
+- Pi.Alert recognizes the macvlan container when it is running on a different computer.

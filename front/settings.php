@@ -209,12 +209,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             {
               $input = $input.
               '<div class="row form-group">
-                <div class="col-xs-6">
+                <div class="col-xs-5">
                   <input class="form-control" id="ipMask" type="text" placeholder="192.168.1.0/24"/>
                 </div>';
               // Add interface button
               $input = $input.
-                '<div class="col-xs-3">
+                '<div class="col-xs-4">
                   <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
                 </div>
                 <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>

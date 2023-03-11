@@ -637,7 +637,7 @@ height: 50px;
     display: block;
 }
 .setting_input{
-    width:35%;        
+    width:40%;        
     /* background-color: green; */
 }
 .setting_name
@@ -671,7 +671,7 @@ height: 50px;
 
 .setting_description
 {
-    width:46%;
+    width:40%;
 }
 
 .myhidden
