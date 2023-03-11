@@ -252,6 +252,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 ```json
 {
             "column": "Watched_Value1",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "threshold",            
             "default_value":"",
@@ -314,3 +315,12 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 
 - Script based plugin: Check the [website_monitor WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
 - SQL query nased plugin: Check the [nmap_services NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) file for details.  
+
+
+### Screenshots 
+
+  | ![Screen 1][screen1] | ![Screen 2][screen3] | 
+ |----------------------|----------------------| 
+
+[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png    "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png             "Screen 2"
