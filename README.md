@@ -41,7 +41,7 @@ The system continuously scans the network for, **New devices**, **New connection
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
 
- ⚠ Only tested as a [docker container - follow these instructuions here](dockerfiles/README.md). 
+ ⚠ Only tested as a [docker container - follow these instructions here](dockerfiles/README.md). 
  > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
 
 # 📑 Features   
@@ -75,7 +75,7 @@ The system continuously scans the network for, **New devices**, **New connection
 
 ### Old docs
 
-[Device Management instructions](docs/DEVICE_MANAGEMENT.md) | [Versions History](docs/VERSIONS_HISTORY.md)
+Device Management [instructions](docs/DEVICE_MANAGEMENT.md) | Old Versions [History](docs/VERSIONS_HISTORY.md)
 
 ### License
   GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
