@@ -39,10 +39,6 @@ The system continuously scans the network for, **New devices**, **New connection
    - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom script monitoring
 
 
-## 🔐 Security
-
-- Configurable login to prevent unauthorized use. 
-
 ## 📑 Features   
   - Display:
     - Sessions, Connected devices, Favorites, Events, Presence, Concurrent devices, Down alerts, IP's
@@ -54,8 +50,11 @@ The system continuously scans the network for, **New devices**, **New connection
     - Language Selection (English, German, Spanish)    
     - Pause arp-scan
     - DB maintenance, Backup, Restore tools and CSV Export / Import
+    - Configurable login to prevent unauthorized use. 
   - 🌟(Experimental) [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
-    - allows you to create custom plugins with automatically generated settings and UI. Check the instructions carefully if you are up for a challenge!
+    - Create custom plugins with automatically generated settings and UI. 
+    - Monitor anything for changes
+    - Check the instructions carefully if you are up for a challenge!
   - Help/FAQ Section 
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
@@ -67,18 +66,10 @@ The system continuously scans the network for, **New devices**, **New connection
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
 
- ⚠ This [fork (jokob-sk)](https://github.com/jokob-sk/Pi.Alert) is only tested as a [docker container](dockerfiles/README.md). Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly.
+ ⚠ Only tested as a [docker container - follow these instructuions here](dockerfiles/README.md). 
+ > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
 
-Instructions for [pucherot's original code can be found here](https://github.com/pucherot/Pi.Alert/)
-
-
-## 🔗 Other
-
-
-<!--- --------------------------------------------------------------------- --->
-
-<!--- --------------------------------------------------------------------- --->
-### Alternatives
+### 🔗 Other Alternatives
 
   - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
   - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
@@ -100,7 +91,7 @@ Instructions for [pucherot's original code can be found here](https://github.com
       - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
       - [TeroRERO](https://github.com/terorero): Spanish translation
       - [jokob-sk](https://github.com/jokob-sk/Pi.Alert): DB Maintenance tools
-      - Please see the [Git commit history](https://github.com/jokob-sk/Pi.Alert/commits/main) for a full list of people and their contributions to the project
+      - Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 ## ☕ Support me
 
