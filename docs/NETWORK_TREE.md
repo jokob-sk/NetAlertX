@@ -15,7 +15,7 @@ To setup a device named `rapberrypi` as a `Switch` in our network.
 > Note: Only the following device types will show up as selectable Network nodes ( = devices you can connect other devices to):
 > AP, Firewall, Gateway, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN.
 
-- Assign a device to your root device from the `Node` (5) dropdown whitch has the MAC `Internet` (6) (Your name may differ, but the MAC needs to be set to `Internet` - this is done by default). 
+- Assign a device to your root device from the `Node` (5) dropdown which has the MAC `Internet` (6) (Your name may differ, but the MAC needs to be set to `Internet` - this is done by default). 
 
 - Save your changes (7)
 
