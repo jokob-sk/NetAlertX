@@ -314,7 +314,7 @@ def importConfigs ():
     # Specify globals so they can be overwritten with the new config
     global lastTimeImported, mySettings, mySettingsSQLsafe, plugins, plugins_once_run
     # General
-    global ENABLE_ARPSCAN, SCAN_SUBNETS, LOG_LEVEL, TIMEZONE, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
+    global ENABLE_ARPSCAN, SCAN_SUBNETS, LOG_LEVEL, TIMEZONE, ENABLE_PLUGINS, PIALERT_WEB_PROTECTION, PIALERT_WEB_PASSWORD, INCLUDED_SECTIONS, SCAN_CYCLE_MINUTES, DAYS_TO_KEEP_EVENTS, REPORT_DASHBOARD_URL, DIG_GET_IP_ARG, UI_LANG
     # Email
     global REPORT_MAIL, SMTP_SERVER, SMTP_PORT, REPORT_TO, REPORT_FROM, SMTP_SKIP_LOGIN, SMTP_USER, SMTP_PASS, SMTP_SKIP_TLS, SMTP_FORCE_SSL
     # Webhooks
@@ -359,6 +359,7 @@ def importConfigs ():
     SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
     LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'selecttext', "['none', 'minimal', 'verbose', 'debug']", 'General')
     TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
+    ENABLE_PLUGINS = ccd('ENABLE_PLUGINS', True , c_d, 'Enable plugins', 'boolean', '', 'General') 
     PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
     INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports', 'plugins']", 'General')
@@ -464,44 +465,47 @@ def importConfigs ():
 
     # Plugins START
     # -----------------
-    plugins = get_plugins_configs()
+    if ENABLE_PLUGINS:
+        plugins = get_plugins_configs()
 
-    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins)])
+        mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins)])
 
-    #  handle plugins
-    for plugin in plugins:
-        print_plugin_info(plugin, ['display_name','description'])
-        
-        pref = plugin["unique_prefix"]   
+        #  handle plugins
+        for plugin in plugins:
+            print_plugin_info(plugin, ['display_name','description'])
+            
+            pref = plugin["unique_prefix"]   
 
-        # if plugin["enabled"] == 'true': 
-        
-        # collect plugin level language strings
-        collect_lang_strings(plugin, pref)
-        
-        for set in plugin["settings"]:
-            setFunction = set["function"]
-            # Setting code name / key  
-            key = pref + "_" + setFunction 
+            # if plugin["enabled"] == 'true': 
+            
+            # collect plugin level language strings
+            collect_lang_strings(plugin, pref)
+            
+            for set in plugin["settings"]:
+                setFunction = set["function"]
+                # Setting code name / key  
+                key = pref + "_" + setFunction 
 
-            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
+                v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
 
-            # Save the user defined value into the object
-            set["value"] = v
+                # Save the user defined value into the object
+                set["value"] = v
 
-            # Setup schedules
-            if setFunction == 'RUN_SCHD':
-                newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(tz))
-                mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+                # Setup schedules
+                if setFunction == 'RUN_SCHD':
+                    newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(tz))
+                    mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
-            # Collect settings related language strings
-            collect_lang_strings(set,  pref + "_" + set["function"])
+                # Collect settings related language strings
+                collect_lang_strings(set,  pref + "_" + set["function"])
+
+        plugins_once_run = False
     # -----------------
     # Plugins END
 
     
            
-    plugins_once_run = False
+    
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -565,11 +569,9 @@ def main ():
 
         # re-load user configuration and plugins
         importConfigs()       
-
         
-
         # Handle plugins executed ONCE
-        if plugins_once_run == False:
+        if ENABLE_PLUGINS and plugins_once_run == False:
             run_plugin_scripts('once')  
             plugins_once_run = True
 
@@ -594,7 +596,8 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            run_plugin_scripts('schedule') 
+            if ENABLE_PLUGINS:
+                run_plugin_scripts('schedule') 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
@@ -663,7 +666,8 @@ def main ():
                 #  new devices were found
                 if len(newDevices) > 0:
                     #  run all plugins registered to be run when new devices are found
-                    run_plugin_scripts('on_new_device')
+                    if ENABLE_PLUGINS:
+                        run_plugin_scripts('on_new_device')
 
                     #  Scan newly found devices with Nmap if enabled
                     if NMAP_ACTIVE and len(newDevices) > 0:
@@ -1099,7 +1103,8 @@ def scan_network ():
     commitDB()
 
     # Run splugin scripts which are set to run every timne after a scan finished
-    run_plugin_scripts('always_after_scan')
+    if ENABLE_PLUGINS:
+        run_plugin_scripts('always_after_scan')
 
     return reporting
 

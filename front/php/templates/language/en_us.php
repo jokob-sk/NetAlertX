@@ -508,6 +508,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'LOG_LEVEL_description' => 'This setting will enable more verbose logging. Useful for debugging events writing into the database.',
 'TIMEZONE_name' => 'Time zone',
 'TIMEZONE_description' => 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.',
+'ENABLE_PLUGINS_name' => 'Enable Plugins',
+'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',
 'PIALERT_WEB_PROTECTION_description' => 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.',
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
