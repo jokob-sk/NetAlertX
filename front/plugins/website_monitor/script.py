@@ -51,13 +51,14 @@ def service_monitoring_log(site, status, latency):
                                                 )
                              )
     with open(last_run, 'a') as last_run_logfile:
-        # https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine
-        last_run_logfile.write("{}|{}|{}|{}|{}|{}|{}|{}\n".format(
+        # https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|null
+        last_run_logfile.write("{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
                                                 site,
                                                 'null',
                                                 strftime("%Y-%m-%d %H:%M:%S"),                                                
                                                 status,
                                                 latency,
+                                                'null',
                                                 'null',
                                                 'null',
                                                 'null',

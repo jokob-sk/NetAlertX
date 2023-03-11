@@ -40,6 +40,7 @@ from pathlib import Path
 from cron_converter import Cron
 from pytz import timezone
 from json2table import convert
+import hashlib
 
 #===============================================================================
 # SQL queries
@@ -54,7 +55,7 @@ sql_settings = "SELECT  * FROM Settings"
 sql_plugins_objects = "SELECT  * FROM Plugins_Objects"
 sql_language_strings = "SELECT  * FROM Plugins_Language_Strings"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
-sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY 'Index' DESC LIMIT 50"
+sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY 'Index' DESC"
 sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev_MAC FROM Events_Devices
                                                                 WHERE eve_PendingAlertEmail = 1
                                                                 AND eve_EventType = 'New Device'
@@ -159,7 +160,7 @@ def print_log (pText):
     # Print line + time + elapsed time + text
     file_print ('[LOG_LEVEL=debug] ',
         # log_timestamp2, ' ',
-        log_timestamp2.replace(microsecond=0) - log_timestamp.replace(microsecond=0), ' ',
+        log_timestamp2.strftime ('%H:%M:%S'), ' ',
         pText)
 
     # Save current time to calculate elapsed time until next log
@@ -465,10 +466,10 @@ def importConfigs ():
     # -----------------
     plugins = get_plugins_configs()
 
-    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins.list)])
+    mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(plugins)])
 
     #  handle plugins
-    for plugin in plugins.list:
+    for plugin in plugins:
         print_plugin_info(plugin, ['display_name','description'])
         
         pref = plugin["unique_prefix"]   
@@ -3157,6 +3158,7 @@ def upgradeDB ():
                         Status TEXT NOT NULL,  
                         Extra TEXT NOT NULL,
                         UserData TEXT NOT NULL,
+                        ForeignKey TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
     sql.execute(sql_Plugins_Objects)
@@ -3176,6 +3178,7 @@ def upgradeDB ():
                         Status TEXT NOT NULL,              
                         Extra TEXT NOT NULL,
                         UserData TEXT NOT NULL,
+                        ForeignKey TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """
     sql.execute(sql_Plugins_Events)
@@ -3195,6 +3198,7 @@ def upgradeDB ():
                         Status TEXT NOT NULL,              
                         Extra TEXT NOT NULL,
                         UserData TEXT NOT NULL,
+                        ForeignKey TEXT NOT NULL,
                         PRIMARY KEY("Index" AUTOINCREMENT)
                     ); """                    
     sql.execute(sql_Plugins_History)
@@ -3273,7 +3277,7 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
     # Save plugins
-    write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins.list}))  
+    write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins}))  
 
     #  prepare databse tables we want to expose 
     dataSourcesSQLs = [
@@ -3665,20 +3669,14 @@ def isNewVersion():
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
-
-    pluginsDict = []
+    
     pluginsList = []
 
     for root, dirs, files in os.walk(pluginsPath):
         for d in dirs:            # Loop over directories, not files            
             pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
-    return plugins_class(pluginsDict, pluginsList)
-
-#-------------------------------------------------------------------------------
-class plugins_class:
-    def __init__(self, list):
-        self.list = list
+    return pluginsList
 
 #-------------------------------------------------------------------------------
 def collect_lang_strings(json, pref):
@@ -3710,7 +3708,7 @@ def run_plugin_scripts(runType):
 
     mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 
-    for plugin in plugins.list:
+    for plugin in plugins:
 
         shouldRun = False
 
@@ -3823,9 +3821,9 @@ def execute_plugin(plugin):
 
         for line in newLines:
             columns = line.split("|")
-            # There has to be always 8 columns
-            if len(columns) == 8:
-                sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null'))
+            # There has to be always 9 columns
+            if len(columns) == 9:
+                sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
             else:
                 mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
     
@@ -3844,9 +3842,9 @@ def execute_plugin(plugin):
         arr = get_sql_array (q) 
 
         for row in arr:
-            # There has to be always 8 columns
-            if len(row) == 8:
-                sqlParams.append((plugin["unique_prefix"], row[0], row[1], 'null', row[2], row[3], row[4], row[5], row[6], 0, row[7], 'null'))
+            # There has to be always 9 columns
+            if len(row) == 9:
+                sqlParams.append((plugin["unique_prefix"], row[0], row[1], 'null', row[2], row[3], row[4], row[5], row[6], 0, row[7], 'null', row[8]))
             else:
                 mylog('none', ['        [Plugins]: Skipped invalid sql result'])
 
@@ -3860,9 +3858,9 @@ def execute_plugin(plugin):
 
     # process results if any
     if len(sqlParams) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
-        sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
+        sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         commitDB ()
 
         process_plugin_events(plugin)
@@ -3948,9 +3946,9 @@ def process_plugin_events(plugin):
             
             createdTime = plugObj.changed
 
-            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
         else:
-            q = f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}' WHERE 'Index' = {plugObj.index}"
+            q = f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}', ForeignKey = '{plugObj.foreignKey}' WHERE 'Index' = {plugObj.index}"
 
             sql.execute (q)
 
@@ -3964,7 +3962,7 @@ def process_plugin_events(plugin):
         if plugObj.status == 'new':
             createdTime = plugObj.changed        
 
-        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData ))    
+        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
 
         commitDB()
 
@@ -3984,8 +3982,10 @@ class plugin_object_class:
         self.status       = objDbRow[10]
         self.extra        = objDbRow[11]
         self.userData     = objDbRow[12]
+        self.foreignKey   = objDbRow[13]
 
-        self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
+        # self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
+        self.idsHash      = str(self.primaryId) + str(self.secondaryId)
 
         self.watchedClmns = []
         self.watchedIndxs = []          

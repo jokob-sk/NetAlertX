@@ -13,6 +13,7 @@ $lang['en_us'] = array(
 // General
 //////////////////////////////////////////////////////////////////
 'Gen_Delete' => 'Delete',
+'Gen_DeleteAll' => 'Delete all',
 'Gen_Cancel' => 'Cancel',
 'Gen_Okay' => 'Ok',
 'Gen_Save' => 'Save',
@@ -669,6 +670,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'NMAP_ARGS_description' => 'Arguments used to run the Nmap scan. Be careful to specify <a href="https://linux.die.net/man/1/nmap" target="_blank">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000.',
 
 // API
+'API_display_name' => 'API',
+'API_icon' => '<i class="fa fa-arrow-down-up-across-line"></i>',
 'API_CUSTOM_SQL_name' => 'Custom endpoint',
 'API_CUSTOM_SQL_description' => 'You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href="/api/table_custom_endpoint.json" target="_blank"><code>table_custom_endpoint.json</code> file endpoint</a>.',
 

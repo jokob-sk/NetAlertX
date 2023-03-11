@@ -1,12 +1,22 @@
 # ⚠ Disclaimer
 
-Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. 
+Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience (e.g. making the tables sortable/filterable). 
+
+## ❗ Known issues:
+
+These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
+
+* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in dupliucat entries.
+* Occasional (experienced twice) hanging of processing plugin script file.
+* UI displaying outdated values until the API endpoints get refreshed. 
 
 ## Overview
 
-PiAlert comes with a simple plugin system to feed events from third-party scripts into the UI and then send notifications if desired.
+PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications if desired.
 
-If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of teh plugin.
+If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
+
+Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double check the sample plugins as well. 
 
 ## Plugin file structure overview 
 
@@ -35,6 +45,8 @@ You need to set the `data_source` to either `pialert-db-query` or `python-script
 ```json
 "data_source":  "pialert-db-query"
 ```
+Any of the above datasources have to return a "table" of the exact structure as outlined below.
+
 ### Column order and values
 
   | Order | Represented Column | Required | Description | 
@@ -47,6 +59,7 @@ You need to set the `data_source` to either `pialert-db-query` or `python-script
   | 5 | `Watched_Value3` | no | As above  |
   | 6 | `Watched_Value4` | no | As above  |
   | 7 | `Extra` | no | Any other data you want to pass and display in PiAlert and the notifications |
+  | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
 
 ### "data_source":  "python-script"
 
@@ -65,8 +78,8 @@ Valid CSV:
 
 ```csv
 
-https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|null|null|null
-https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|null|null|null|null
+https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|ff:ee:ff:11:ff:11
 
 ```
 
@@ -74,9 +87,9 @@ Invalid CSV with different errors on each line:
 
 ```csv
 
-https://www.google.com|null|2023-01-02 15:56:30|200|0.7898||null|null
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898||null|null|null
 https://www.duckduckgo.com|null|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|
-|https://www.duckduckgo.com|null|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine
+|https://www.duckduckgo.com|null|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|null
 null|192.168.1.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine
 https://www.duckduckgo.com|192.168.1.1|2023-01-02 15:56:30|null|0.9898|null|null|Best search engine
 https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|||
@@ -100,7 +113,8 @@ SELECT  dv.dev_Name as Object_PrimaryID,
     ns.State as Watched_Value2,
     'null' as Watched_Value3,
     'null' as Watched_Value4,
-    ns.Extra as Extra
+    ns.Extra as Extra,
+    dv.dev_MAC as ForeignKey 
 FROM 
     (SELECT * FROM Nmap_Scan) ns 
 LEFT JOIN 
@@ -221,7 +235,7 @@ Example:
 ```
 ##### UI settings in database_column_definitions
 
-The UI will adjust how columns are displayed in the UI based on teh definition of the `database_column_definitions` object.
+The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. Thease are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an english translation will be shown in the UI.
 - Supported types: `label`, `text`, `threshold`, `replace`
@@ -231,6 +245,8 @@ The UI will adjust how columns are displayed in the UI based on teh definition o
 - The `options` property is used in conjunction with these types:
   - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
+  - `devicemac` - The value is considered to be a mac adress and a link pointing to the device with teh given mac address is generated.
+  - `url` - The value is considered to be a url so a link is generated.
 
 
 ```json

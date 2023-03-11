@@ -40,8 +40,8 @@
     $expireMinutes = $_REQUEST['expireMinutes'];    
   }
 
-  if (isset ($_REQUEST['key'])) {
-    $key = $_REQUEST['key'];    
+  if (isset ($_REQUEST['columnName'])) {
+    $columnName = $_REQUEST['columnName'];    
   }
 
   if (isset ($_REQUEST['id'])) {
@@ -66,8 +66,8 @@
     switch ($action) {
       case 'create':    create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values ); break;
       // case 'read'  :    read($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);    break;
-      case 'update':    update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
-      case 'delete':    delete($key, $id, $dbtable);  break;
+      case 'update':    update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
+      case 'delete':    delete($columnName, $id, $dbtable);  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -76,7 +76,7 @@
 //------------------------------------------------------------------------------
 //  update
 //------------------------------------------------------------------------------
-function update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values) {
+function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values) {
 
   global $db;  
 
@@ -111,7 +111,7 @@ function update($key, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, 
  
   // Update value
   $sql = 'UPDATE '.$dbtable.' SET '. $columnValues .'
-          WHERE "'. $key .'"="'. $id.'"';
+          WHERE "'. $columnName .'"="'. $id.'"';
   $result = $db->query($sql);
 
   if (! $result == TRUE) {
@@ -155,25 +155,36 @@ function create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $
 //------------------------------------------------------------------------------
 //  delete
 //------------------------------------------------------------------------------
-function delete($key, $id, $dbtable)
+function delete($columnName, $id, $dbtable)
 {
   global $db;
 
-   // handle one or multiple ids
-   if(strpos($id, ',') !== false) 
-   {
-     $idsArr = explode(",", $id);
-   }else
-   {
-     $idsArr = array($id);
-   }
+  // handle one or multiple ids
+  if(strpos($id, ',') !== false) 
+  {
+    $idsArr = explode(",", $id);
+  }else
+  {
+    $idsArr = array($id);
+  }
+
+  $idsStr = "";
+  
+  foreach ($idsArr as $item) 
+  {
+    $idsStr = $idsStr . '"' .$item.'"';
+  }
 
   // Insert new value
-  $sql = 'DELETE FROM '.$dbtable.' WHERE "'.$key.'" IN ('. $id .')';
+  $sql = 'DELETE FROM '.$dbtable.' WHERE "'.$columnName.'" IN ('. $idsStr .')';
   $result = $db->query($sql);
 
   if (! $result == TRUE) {
     echo "Error deleting entry\n\n$sql \n\n". $db->lastErrorMsg();
+    return;
+  } else
+  {
+    echo lang('Gen_DataUpdatedUITakesTime');
     return;
   }
 }
