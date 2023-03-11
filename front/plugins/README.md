@@ -6,7 +6,7 @@ Highly experimental feature. Follow the below very carefully and check example p
 
 These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
 
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in dupliucat entries.
+* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries.
 * Occasional (experienced twice) hanging of processing plugin script file.
 * UI displaying outdated values until the API endpoints get refreshed. 
 
@@ -245,7 +245,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - The `options` property is used in conjunction with these types:
   - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
-  - `devicemac` - The value is considered to be a mac adress and a link pointing to the device with teh given mac address is generated.
+  - `devicemac` - The value is considered to be a mac adress and a link pointing to the device with the given mac address is generated.
   - `url` - The value is considered to be a url so a link is generated.
 
 

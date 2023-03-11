@@ -21,6 +21,7 @@
     [          
         {
             "column": "Index",
+            "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
             "default_value":"",
@@ -33,6 +34,7 @@
         } ,
         {
             "column": "Plugin",
+            "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
             "default_value":"",
@@ -45,6 +47,7 @@
         },
         {
             "column": "Object_PrimaryID",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -57,6 +60,7 @@
         },
         {
             "column": "Object_SecondaryID",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "url",            
             "default_value":"",
@@ -69,6 +73,7 @@
         } ,
         {
             "column": "DateTimeCreated",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -81,6 +86,7 @@
         },
         {
             "column": "DateTimeChanged",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -93,6 +99,7 @@
         },
         {
             "column": "Watched_Value1",
+            "css_classes": "col-sm-1",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -104,6 +111,7 @@
         },
         {
             "column": "Watched_Value2",
+            "css_classes": "col-sm-1",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -116,6 +124,7 @@
         },
         {
             "column": "Watched_Value3",
+            "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
             "default_value":"",
@@ -128,6 +137,7 @@
         } ,
         {
             "column": "Watched_Value4",
+            "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
             "default_value":"",
@@ -140,6 +150,7 @@
         } ,       
         {
             "column": "Extra",
+            "css_classes": "col-sm-3",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -152,6 +163,7 @@
         },       
         {
             "column": "ForeignKey",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "devicemac",            
             "default_value":"",
@@ -164,6 +176,7 @@
         },        
         {
             "column": "Status",
+            "css_classes": "col-sm-1",
             "show": true,
             "type": "replace",            
             "default_value":"",

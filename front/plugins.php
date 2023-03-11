@@ -64,7 +64,7 @@ function getFormControl(dbColumnDef, value, index) {
             result = `<span><a href="${value}" target="_blank">${value}</a><span>`;
             break;
         case 'devicemac':
-            result = `<span><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
+            result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
             break;
         case 'threshold': 
             $.each(dbColumnDef.options, function(index, obj) {
@@ -111,11 +111,6 @@ function saveData (id) {
         {
           showMessage('<?= lang('Gen_LockedDB');?>')           
         }        
-    
-    // if (result) {
-    //   period = result;
-    //   $('#period').val(period);
-    // }
 
     });    
 }
@@ -208,10 +203,7 @@ function generateTabs()
     
     $.each(pluginDefinitions, function(index, obj) {
 
-        
-
-        headersHtml = ""
-        // headers = []
+        headersHtml = ""        
         colDefinitions = []
         evRows = ""
         obRows = ""
@@ -222,7 +214,7 @@ function generateTabs()
             if(colDef.show == true) // select only the ones to show
             {
                 colDefinitions.push(colDef)            
-                headersHtml += `<th class="col-sm-2" >${localize(colDef, "name" )}</th>`
+                headersHtml += `<th class="${colDef.css_classes}" >${localize(colDef, "name" )}</th>`
             }
         });
 
@@ -247,7 +239,7 @@ function generateTabs()
         var histCount = 0
         var histCountDisplayed = 0
         
-        for(i=0;i<pluginHistory.length;i++)
+        for(i=pluginHistory.length-1;i >= 0;i--) // from latest to the oldest
         {
             if(pluginHistory[i].Plugin == obj.unique_prefix)
             {
@@ -377,8 +369,7 @@ function generateTabs()
         activetab = '' // only first tab is active
     });
 
-    initTabs()
-    
+    initTabs()    
 }
 
 // --------------------------------------------------------
