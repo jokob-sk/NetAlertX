@@ -7,4 +7,8 @@ For example, a `/24` mask results in 256 IPs to check, where as a `/16` mask che
 
 - Specify the network mask. For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255
 - Run `iwconfig` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
-- Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [issue](https://github.com/jokob-sk/Pi.Alert/issues/170)
+- Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [comment in this issue](https://github.com/jokob-sk/Pi.Alert/issues/170#issuecomment-1419902988)
+
+### Example:
+
+![Vlan configuration example](/docs/img/SUBNETS/subnets_vlan.png)

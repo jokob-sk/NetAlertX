@@ -242,6 +242,7 @@ $lang['en_us'] = array(
 'DevDetail_Tools_WOL' => 'Send Wol command to ',
 'DevDetail_WOL_Title' => '<i class="fa fa-power-off"></i> Wake-on-LAN',
 'DevDetail_Run_Actions_Title' => '<i class="fa fa-play"></i> Run action on device',
+'DevDetail_Run_Actions_Tooltip' => 'Run an action on the current device from the dropdown list.',
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page

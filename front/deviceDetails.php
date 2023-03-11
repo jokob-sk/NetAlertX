@@ -452,7 +452,7 @@
                   </label>
                   <div class="col-sm-9">
                     <div class="input-group">
-                      <input class="form-control" title="<?= lang('DevDetail_Icon_Descr');?>" id="txtAction" type="text" value="--">
+                      <input class="form-control" title="<?= lang('DevDetail_Run_Actions_Tooltip');?>" id="txtAction" type="text" value="--">
                       <span class="input-group-addon" title='<?= lang('Gen_Run');?>'><i class="fa fa-play pointer" onclick="askRunAction();"></i></span>
                       
                       <div class="input-group-btn">
