@@ -56,11 +56,10 @@ The system continuously scans the network for, **New devices**, **New connection
     - DB maintenance, Backup, Restore tools and CSV Export / Import
   - Help/FAQ Section 
 
-  | ![Screen 1][screen1] | ![Screen 2][screen2] | 
-  |----------------------|----------------------| 
-  | ![Screen 3][screen3] | ![Screen 4][screen4] |
-  | ![Screen 5][screen5] | ![Screen 6][screen6] |
-  | ![Report 1][report1] | ![Report 2][report2] |
+  | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
+  |----------------------|----------------------| ----------------------| 
+  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |  
+  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  | 
  
 
 # 📥 Installation
@@ -84,14 +83,10 @@ Instructions for [pucherot's original code can be found here](https://github.com
 
 ### Old docs
 
-  - [Device Management instructions](docs/DEVICE_MANAGEMENT.md)
-  - [Versions History](docs/VERSIONS_HISTORY.md)
+[Device Management instructions](docs/DEVICE_MANAGEMENT.md) | [Versions History](docs/VERSIONS_HISTORY.md)
 
 ### License
-  GPL 3.0
-  - [Read more here](LICENSE.txt)
-  - Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif)  
-  - Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
+  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
   
 ### 🥇 Special thanks 
 
@@ -123,7 +118,9 @@ BTC: 1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM
 [screen4]: ./docs/img/maintenance.png         "Screen 4"
 [screen5]: ./docs/img/network.png             "Screen 5"
 [screen6]: ./docs/img/settings.png            "Screen 6"
-[screen7]: ./docs/img/help_faq.png            "Screen 6"
+[screen7]: ./docs/img/help_faq.png            "Screen 7"
+[screen8]: ./docs/img/plugins.png             "Screen 8"
+[screen9]: ./docs/img/device_nmap.png         "Screen 9"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
 [main_dark]: /docs/img/1_devices_dark.jpg     "Main screen dark"
