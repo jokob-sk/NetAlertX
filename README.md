@@ -54,6 +54,8 @@ The system continuously scans the network for, **New devices**, **New connection
     - Language Selection (English, German, Spanish)    
     - Pause arp-scan
     - DB maintenance, Backup, Restore tools and CSV Export / Import
+  - 🌟(Experimental) [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
+    - allows you to create custom plugins with automatically generated settings and UI. Check the instructions carefully if you are up for a challenge!
   - Help/FAQ Section 
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
