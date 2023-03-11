@@ -591,7 +591,14 @@ height: 50px;
 }
 
 .nav-tabs-custom .tab-content {
-  background-color: white;
+  background-color: white;  
+  
+}
+
+@media (max-width: 767px) {
+    .nav-tabs-custom .tab-content {          
+        overflow: scroll;
+      }
 }
 
 .top_small_box_gray_text {
@@ -623,20 +630,21 @@ height: 50px;
         width:30%;         
     }
   }
-  @media (min-width: 768px) {
-    .setting_description {        
-        /* color: green; */
-        display: block;
-    }
-    .setting_input{
-        width:35%;        
-        /* background-color: green; */
-    }
-    .setting_name
-    {
-        width:19%;         
-    }
-  }
+
+@media (min-width: 768px) {
+.setting_description {        
+    /* color: green; */
+    display: block;
+}
+.setting_input{
+    width:35%;        
+    /* background-color: green; */
+}
+.setting_name
+{
+    width:19%;         
+}
+}
 
 .table_row {    
     padding: 3px;    
