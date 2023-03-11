@@ -57,6 +57,8 @@
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
       case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
+      case 'getActions':              getActions();                            break;
+      case 'wakeonlan':               wakeonlan();                             break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -869,6 +871,18 @@ function getIcons() {
   echo (json_encode ($tableData));
 }
 
+//------------------------------------------------------------------------------
+function getActions() {
+  
+  $tableData = array(
+    array('id'    => 'wake-on-lan', 
+          'name'  =>  lang('DevDetail_WOL_Title'))
+  );
+
+  // Return json
+  echo (json_encode ($tableData));
+}
+
 
 //------------------------------------------------------------------------------
 //  Query the List of types
@@ -1196,6 +1210,27 @@ function overwriteIconType()
     }
   }
 
+}
+
+//------------------------------------------------------------------------------
+//  Wake-on-LAN 
+// Inspired by @leiweibau: https://github.com/leiweibau/Pi.Alert/commit/30427c7fea180670c71a2b790699e5d9e9e88ffd
+//------------------------------------------------------------------------------
+function wakeonlan() {  
+
+  $WOL_HOST_IP = $_REQUEST['ip'];
+  $WOL_HOST_MAC = $_REQUEST['mac'];
+
+  if (!filter_var($WOL_HOST_IP, FILTER_VALIDATE_IP)) {            
+      echo "Invalid IP! ". lang('BackDevDetail_Tools_WOL_error'); exit;
+  } 
+  elseif (!filter_var($WOL_HOST_MAC, FILTER_VALIDATE_MAC)) {      
+      echo "Invalid MAC! ". lang('BackDevDetail_Tools_WOL_error'); exit;      
+  }
+
+  exec('wakeonlan '.$WOL_HOST_MAC , $output);
+
+  echo lang('BackDevDetail_Tools_WOL_okay');
 }
 
 //------------------------------------------------------------------------------

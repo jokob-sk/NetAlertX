@@ -441,9 +441,32 @@
                             <i class="fa fa-info-circle"></i> </a>
                         </div>
                       </div>
-
                     </div>
+                </div>
+
+                <div class="col-lg-4 col-sm-6 col-xs-12">
+                  <h4 class="bottom-border-aqua"><?= lang('DevDetail_Run_Actions_Title');?></h4>
+                  <div class="box-body form-horizontal">
+                  <label class="col-sm-3 control-label">
+                    <?= lang('Gen_Action');?>                   
+                  </label>
+                  <div class="col-sm-9">
+                    <div class="input-group">
+                      <input class="form-control" title="<?= lang('DevDetail_Icon_Descr');?>" id="txtAction" type="text" value="--">
+                      <span class="input-group-addon" title='<?= lang('Gen_Run');?>'><i class="fa fa-play pointer" onclick="askRunAction();"></i></span>
+                      
+                      <div class="input-group-btn">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                          <span class="fa fa-caret-down"></span>
+                        </button>
+                        <ul id="dropdownAction" class="dropdown-menu dropdown-menu-right">
+                        </ul>
+                      </div>
+                    </div>
+                  </div>  
+
                   </div>
+                </div>
 
                   <!-- Buttons -->
                   <div class="col-xs-12">
@@ -924,7 +947,8 @@ function initializeCombos () {
   initializeCombo ( '#dropdownGroup',          'getGroups',       'txtGroup', true);
   initializeCombo ( '#dropdownLocation',       'getLocations',    'txtLocation', true);
   initializeCombo ( '#dropdownNetworkNodeMac', 'getNetworkNodes', 'txtNetworkNodeMac', false);
-  initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);
+  initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
+  initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -1547,8 +1571,6 @@ function setDeviceData (direction='', refreshCallback='') {
   });
 }
 
-
-
 // -----------------------------------------------------------------------------
 function askSkipNotifications () {
   // Check MAC
@@ -1599,6 +1621,39 @@ function deleteDeviceEvents () {
 
   // Deactivate controls
   $('#panDetails :input').attr('disabled', true);
+}
+
+// -----------------------------------------------------------------------------
+function askRunAction() {
+    // Ask 
+    showModalWarning('<?= lang('BackDevDetail_Actions_Title_Run');?>', '<?= lang('BackDevDetail_Actions_Ask_Run');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Run');?>', 'runAction');
+}
+
+function runAction() {
+
+  action = $('#txtAction').val();
+
+  switch(action)
+  {
+    case 'wake-on-lan': 
+      wakeonlan();
+      break;
+    default: 
+      showMessage (`<?= lang('BackDevDetail_Actions_Not_Registered');?> ${action} `);
+      break;
+  }
+
+}
+
+function wakeonlan() {
+  // Execute
+  $.get('php/server/devices.php?action=wakeonlan&'
+    + '&mac='         + $('#txtMAC').val()
+    + '&ip='          + $('#txtLastIP').val()
+    , function(msg) {
+    showMessage (msg);
+  });
 }
 
 // -----------------------------------------------------------------------------

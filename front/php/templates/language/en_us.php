@@ -18,6 +18,8 @@ $lang['en_us'] = array(
 'Gen_Okay' => 'Ok',
 'Gen_Save' => 'Save',
 'Gen_Saved' => 'Saved',
+'Gen_Run' => 'Run',
+'Gen_Action' => 'Action',
 'Gen_Purge' => 'Purge',
 'Gen_Backup' => 'Run Backup',
 'Gen_Restore' => 'Run Restore',
@@ -230,6 +232,16 @@ $lang['en_us'] = array(
 'DevDetail_Nmap_buttonSkipDiscovery' => 'Skip host discovery',
 'DevDetail_Nmap_buttonSkipDiscovery_text' => 'Skip host discovery (-Pn option): Default scan without host discovery',
 'DevDetail_Nmap_resultsLink' => 'You can leave this page after starting a scan. Results will be also available in the <code>pialert_front.log</code> file.',
+'BackDevDetail_Actions_Title_Run' => 'Run action',
+'BackDevDetail_Actions_Not_Registered' => 'Action not registered: ',
+'BackDevDetail_Actions_Ask_Run' => 'Do you want to execute the action?',
+'BackDevDetail_Tools_WOL_okay' => 'The command was executed.',
+'BackDevDetail_Tools_WOL_error' => 'The command was NOT executed.',
+'DevDetail_Tools_WOL_noti' => 'Wake-on-LAN',
+'DevDetail_Tools_WOL_noti_text' => 'The Wake-on-LAN command is sent to the broadcast address. If the target is not in the subnet/vlan of Pi.Alert, the target device will not respond.',
+'DevDetail_Tools_WOL' => 'Send Wol command to ',
+'DevDetail_WOL_Title' => '<i class="fa fa-power-off"></i> Wake-on-LAN',
+'DevDetail_Run_Actions_Title' => '<i class="fa fa-play"></i> Run action on device',
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
