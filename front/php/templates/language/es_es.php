@@ -412,8 +412,196 @@ $lang['es_es'] = array(
 											 puertos (agrupación de puertos), así como múltiples dispositivos a un puerto (máquinas virtuales).',
 
 //////////////////////////////////////////////////////////////////
-// Settings
+// Settings (based on work of https://github.com/mariorodriguezlopez/Pi.Alert/)
 //////////////////////////////////////////////////////////////////
+
+'API_settings_group' => '<i class="fa fa-arrow-down-up-across-line"></i> API',	
+
+// General
+
+'DAYS_TO_KEEP_EVENTS_description' => 'Esta es una configuración de mantenimiento. Esto especifica el número de días de entradas de eventos que se guardarán. Todos los eventos anteriores se eliminarán periódicamente.',
+'DAYS_TO_KEEP_EVENTS_name' => 'Eliminar eventos anteriores a',
+'PIALERT_WEB_PASSWORD_description' => 'La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/home/pi/pialert/back/pialert-cli</code> en el contenedor',
+'PIALERT_WEB_PASSWORD_name' => 'Contraseña de inicio de sesión',
+'PIALERT_WEB_PROTECTION_description' => 'Cuando está habilitado, se muestra un cuadro de diálogo de inicio de sesión. Lea detenidamente a continuación si se le bloquea el acceso a su instancia.',
+'PIALERT_WEB_PROTECTION_name' => 'Habilitar inicio de sesión',
+'REPORT_DASHBOARD_URL_description' => 'Esta URL se utiliza como base para generar enlaces en los correos electrónicos. Ingrese la URL completa que comienza con <code>http://</code>, incluido el número de puerto (sin barra inclinada al final <code>/</code>).',
+'REPORT_DASHBOARD_URL_name' => 'Pi.Alert URL',
+'REPORT_FROM_description' => 'Asunto del correo electrónico de notificación.',
+'REPORT_FROM_name' => 'Asunto del email',
+'REPORT_MAIL_description' => 'Si está habilitado, se envía un correo electrónico con una lista de cambios a los que se ha suscrito. Complete también todas las configuraciones restantes relacionadas con la configuración de SMTP a continuación',
+'REPORT_MAIL_name' => 'Habilitar email',
+'REPORT_TO_description' => 'Dirección de correo electrónico a la que se enviará la notificación.',
+	'REPORT_TO_name' => 'Enviar el email a',
+	'SCAN_CYCLE_MINUTES_description' => 'El retraso entre escaneos. Si usa arp-scan, el tiempo de escaneo en sí depende de la cantidad de direcciones IP para verificar. Esto está influenciado por la máscara de red configurada en la configuración <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code></a> en la parte superior. Cada IP toma un par de segundos para escanear.',
+	'SCAN_CYCLE_MINUTES_name' => 'Retraso del ciclo de escaneo',
+	'SCAN_SUBNETS_description' => 'El tiempo de escaneo arp en sí depende de la cantidad de direcciones IP para verificar.
+El número de direcciones IP para comprobar depende de la <a target="_blank" href="https://www.calculator.net/ip-subnet-calculator.html">máscara de red</a> que establezca aquí.
+Por ejemplo, una máscara <code>/24</code> da como resultado 256 IP para verificar, mientras que <code>/16</code>
+controles de máscara alrededor de 65,536. Cada IP toma un par de segundos. Esto significa que con una configuración incorrecta
+el arp-scan tardará horas en completarse en lugar de segundos.
+<ol>
+<li>Especifique la máscara de red. Por ejemplo, el filtro <code>192.168.1.0/24</code> cubre los rangos de IP 192.168.1.0 a 192.168.1.255.</li>
+<li>Ejecute <code>ifconfig</code> en su contenedor para encontrar los nombres de su interfaz (por ejemplo: <code>eth0</code>, <code>eth1</code>)</li>
+</ol>
+	',
+'SCAN_SUBNETS_name' => 'Subredes para escanear',
+'TIMEZONE_description' => 'Zona horaria para mostrar las estadísticas correctamente. Encuentra tu zona horaria<a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">aquí</a>.',
+'TIMEZONE_name' => 'Zona horaria',
+'UI_LANG_description' => 'Seleccione el idioma de interfaz de usuario preferido.',
+'UI_LANG_name' => 'Idioma de interfaz',
+
+// Email
+
+'SMTP_FORCE_SSL_description' => 'Forzar SSL al conectarse a su servidor SMTP',
+'SMTP_FORCE_SSL_name' => 'Forzar SSL',
+'SMTP_PASS_description' => 'La contraseña del servidor SMTP.',
+'SMTP_PASS_name' => 'SMTP password',
+'SMTP_PORT_description' => 'Número de puerto utilizado para la conexión SMTP. Establézcalo en <code>0</code> si no desea utilizar un puerto al conectarse al servidor SMTP.',
+'SMTP_PORT_name' => 'SMTP server PORT',
+'SMTP_SERVER_description' => 'La URL del host del servidor SMTP. Por ejemplo, <code>smtp-relay.sendinblue.com</code>. Para utilizar Gmail como servidor SMTP <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SMTP_GMAIL.md">siga esta guía</a >',
+'SMTP_SERVER_name' => 'SMTP server URL',
+'SMTP_SKIP_LOGIN_description' => 'No utilice la autenticación cuando se conecte al servidor SMTP.',
+'SMTP_SKIP_LOGIN_name' => 'Omitir autenticación',
+'SMTP_SKIP_TLS_description' => 'Deshabilite TLS cuando se conecte a su servidor SMTP.',
+'SMTP_SKIP_TLS_name' => 'No usar TLS',
+'SMTP_USER_description' => 'El nombre de usuario utilizado para iniciar sesión en el servidor SMTP (a veces, una dirección de correo electrónico completa).',
+'SMTP_USER_name' => 'SMTP user',
+
+//API
+
+'API_CUSTOM_SQL_description' => 'Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través del <a href="/api/table_custom_endpoint.json" target="_blank">archivo <code>table_custom_endpoint.json</code ></a>.',
+'API_CUSTOM_SQL_name' => 'Endpoint personalizado',
+
+
+// Apprise
+
+'APPRISE_HOST_description' => 'Apprise host URL que comienza con <code>http://</code> o <code>https://</code>. (no olvide incluir <code>/notify</code> al final)',
+'APPRISE_HOST_name' => 'Apprise host URL',
+'APPRISE_PAYLOAD_description' => 'Seleccione el tipo de carga útil enviada a Apprise. Por ejemplo, <code>html</code> funciona bien con correos electrónicos, <code>text</code> con aplicaciones de chat, como Telegram.',
+'APPRISE_PAYLOAD_name' => 'Tipo de carga',
+'APPRISE_URL_description' => 'Informar de la URL de destino de la notificación. Por ejemplo, para Telegram sería <code>tgram://{bot_token}/{chat_id}</code>.',
+'APPRISE_URL_name' => 'URL de notificación de Apprise',
+
+// Pushsafer
+'REPORT_PUSHSAFER_description' => 'Habilitar el envío de notificaciones a través de <a target="_blank" href="https://www.pushsafer.com/">Pushsafer</a>.',
+'REPORT_PUSHSAFER_name' => 'Habilitar Pushsafer',
+
+
+//DYNDNS
+
+
+'DDNS_ACTIVE_name' => 'Habilitar DynDNS',
+'DDNS_DOMAIN_name' => 'URL del dominio DynDNS',
+'DDNS_PASSWORD_name' => 'DynDNS password',
+'DDNS_UPDATE_URL_description' => 'Actualice la URL que comienza con <code>http://</code> o <code>https://</code>.',
+'DDNS_UPDATE_URL_name' => 'DynDNS update URL',
+'DDNS_USER_name' => 'DynDNS user',
+'DHCP_ACTIVE_description' => 'Debe asignar <code>:/etc/pihole/dhcp.leases</code> en el archivo <code>docker-compose.yml</code> si habilita esta configuración.',
+'DHCP_ACTIVE_name' => 'Habilitar PiHole DHCP',
+'DIG_GET_IP_ARG_description' => 'Cambie los argumentos de la <a href="https://linux.die.net/man/1/dig" target="_blank">utilidad de dig</a> si tiene problemas para resolver su IP de Internet. Los argumentos se agregan al final del siguiente comando: <code>dig +short </code>.',
+'DIG_GET_IP_ARG_name' => 'Descubrir de IP de Internet',
+
+// MQTT
+'REPORT_MQTT_description' => 'Habilitar el envío de notificaciones a través de <a target="_blank" href="https://www.home-assistant.io/integrations/mqtt/">MQTT</a> a su Home Assistance.',
+'REPORT_MQTT_name' => 'Habilitar MQTT',
+'MQTT_BROKER_description' => 'URL del host MQTT (no incluya <code>http://</code> o <code>https://</code>).',
+'MQTT_BROKER_name' => 'MQTT broker URL',
+'MQTT_DELAY_SEC_description' => 'Un pequeño truco: retrase la adición a la cola en caso de que el proceso se reinicie y los procesos de publicación anteriores se anulen (se necesitan ~<code>2</code>s para actualizar la configuración de un sensor en el intermediario). Probado con <code>2</code>-<code>3</code> segundos de retraso. Este retraso solo se aplica cuando se crean dispositivos (durante el primer bucle de notificación). No afecta los escaneos o notificaciones posteriores.',
+'MQTT_DELAY_SEC_name' => 'Retraso de MQTT por dispositivo',
+'MQTT_PASSWORD_description' => 'Contraseña utilizada para iniciar sesión en su instancia de agente de MQTT.',
+'MQTT_PASSWORD_name' => 'MQTT password',
+'MQTT_PORT_description' => 'Puerto donde escucha el broker MQTT. Normalmente <code>1883</code>.',
+'MQTT_PORT_name' => 'MQTT broker puerto',
+'MQTT_QOS_description' => 'Configuración de calidad de servicio para el envío de mensajes MQTT. <code>0</code>: baja calidad a <code>2</code>: alta calidad. Cuanto mayor sea la calidad, mayor será el retraso.',
+'MQTT_QOS_name' => 'Calidad de servicio MQTT',
+'MQTT_USER_description' => 'Nombre de usuario utilizado para iniciar sesión en su instancia de agente de MQTT.',
+'MQTT_USER_name' => 'MQTT user',
+'MQTT_settings_group' => '<i class="fa fa-square-rss"></i> MQTT',
+
+// NMAP 
+
+'NMAP_ACTIVE_description' => 'Si está habilitado, ejecutará un escaneo en un dispositivo recién encontrado. Para un análisis programado o único, verifique la configuración de <a href="#NMAP_RUN"><code>NMAP_RUN</code></a>.',
+'NMAP_ACTIVE_name' => 'Ejecución del ciclo',
+'NMAP_ARGS_description' => 'Argumentos utilizados para ejecutar el análisis de Nmap. Tenga cuidado de especificar <a href="https://linux.die.net/man/1/nmap" target="_blank">los argumentos</a> correctamente. Por ejemplo, <code>-p -10000</code> escanea los puertos del 1 al 10000.',
+'NMAP_ARGS_name' => 'Argumentos',
+'NMAP_RUN_SCHD_description' => 'Solo está habilitado si selecciona <code>programar</code> en la configuración de <a href="#NMAP_RUN"><code>NMAP_RUN</code></a>. Asegúrese de ingresar el cronograma en el formato tipo cron correcto.',
+'NMAP_RUN_SCHD_name' => 'Programar',
+'NMAP_RUN_description' => 'Habilite un escaneo regular de Nmap en su red en todos los dispositivos. Los ajustes de programación se pueden encontrar a continuación. Si selecciona <code>una vez</code>, Nmap se ejecuta solo una vez al inicio durante el tiempo especificado en la configuración de <a href="#NMAP_TIMEOUT"><code>NMAP_TIMEOUT</code></a>.',
+'NMAP_RUN_name' => 'Ejecución programada',
+'NMAP_TIMEOUT_description' => 'Tiempo máximo en segundos para esperar a que finalice un escaneo de Nmap en cualquier dispositivo.',
+
+// NTFY
+'REPORT_NTFY_description' => 'Habilitar el envío de notificaciones a través de <a target="_blank" href="https://ntfy.sh/">NTFY</a>.',
+'REPORT_NTFY_name' => 'Habilitar NTFY',
+'NTFY_HOST_description' => 'URL de host NTFY que comienza con <code>http://</code> o <code>https://</code>. Puede usar la instancia alojada en <a target="_blank" href="https://ntfy.sh/">https://ntfy.sh</a> simplemente ingresando <code>https://ntfy. sh</código>.',
+'NTFY_HOST_name' => 'NTFY host URL',
+'NTFY_PASSWORD_description' => 'Ingrese la contraseña si necesita (host) una instancia con autenticación habilitada.',
+'NTFY_PASSWORD_name' => 'NTFY password',
+'NTFY_TOPIC_name' => 'NTFY topic',
+'NTFY_USER_description' => 'Ingrese usuario si necesita (alojar) una instancia con autenticación habilitada.',
+'NTFY_USER_name' => 'NTFY user',
+'NTFY_settings_group' => '<i class="fa fa-terminal"></i> NTFY',
+
+// Pholus
+
+'Pholus_settings_group' => '<i class="fa fa-search"></i> Pholus',
+'PHOLUS_ACTIVE_description' => '<a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pholus" target="_blank" >Pholus</a> es una herramienta de rastreo para descubrir información adicional sobre los dispositivos en la red, incluido el nombre del dispositivo. Si está habilitado, ejecutará el escaneo antes de cada ciclo de escaneo de red hasta que no haya dispositivos <code>(unknown)</code> o <code>(name not found)</code>. Tenga en cuenta que puede enviar spam a la red con tráfico innecesario. Depende de la configuración de <a onclick="toggleAllSettings()" href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code></a>. Para un análisis programado o único, verifique la configuración de <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code></a>.',
+'PHOLUS_ACTIVE_name' => 'Ejecución del ciclo',
+'PHOLUS_DAYS_DATA_description' => 'Cuántos días de entradas de escaneo de Pholus deben conservarse (globalmente, ¡no específico del dispositivo!). El archivo <a href="/maintenance.php#tab_Logging">pialert_pholus.log</a> no se modifica. Introduzca <code>0</code> para desactivar.',
+'PHOLUS_DAYS_DATA_name' => 'Retención de datos',
+'PHOLUS_FORCE_description' => 'Fuerce el escaneo de cada escaneo de red, incluso si no hay dispositivos <code>(unknown)</code> o <code>(name not found)</code>. Tenga cuidado al habilitar esto, ya que la detección puede inundar fácilmente su red.',
+'PHOLUS_FORCE_name' => 'Escaneo de fuerza de ciclo',
+'PHOLUS_RUN_SCHD_description' => 'Solo está habilitado si selecciona <code>programar</code> en la configuración de <a href="#PHOLUS_RUN"><code>PHOLUS_RUN</code></a>. Asegúrese de ingresar el horario en el formato similar a cron correcto
+(por ejemplo, validar en <a href="https://crontab.guru/" target="_blank">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 am en el <a onclick="toggleAllSettings()" href="#TIMEZONE"><code>TIMEZONE</code> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo.',
+'PHOLUS_RUN_SCHD_name' => 'Programar',
+'PHOLUS_RUN_TIMEOUT_description' => 'El tiempo de espera en segundos para el escaneo Pholus programado. Se aplican las mismas notas con respecto a la duración que en la configuración de <a href="#PHOLUS_TIMEOUT"><code>PHOLUS_TIMEOUT</code></a>. Un escaneo programado no verifica si hay dispositivos <code>(unknown)</code> o <code>(name not found)</code>, el escaneo se ejecuta de cualquier manera.',
+'PHOLUS_RUN_TIMEOUT_name' => 'Tiempo de espera de ejecución programado',
+'PHOLUS_RUN_description' => 'Habilite un escaneo regular de Pholus en su red. Los ajustes de programación se pueden encontrar a continuación. Si selecciona <code>una vez</code>, Pholus se ejecuta solo una vez al inicio durante el tiempo especificado en la configuración de <a href="#PHOLUS_RUN_TIMEOUT"><code>PHOLUS_RUN_TIMEOUT</code></a>.',
+'PHOLUS_RUN_name' => 'Ejecución programada',
+'PHOLUS_TIMEOUT_description' => '¿Cuánto tiempo en segundos debe rastrear Pholus en cada interfaz si se cumple la condición anterior? Cuanto más tiempo lo deje encendido, es más probable que los dispositivos transmitan más información. Este tiempo de espera se suma al tiempo que lleva realizar un escaneo arp en su red.',
+'PHOLUS_TIMEOUT_name' => 'Tiempo de espera de ciclo',
+
+// PiHole
+
+'PiHole_settings_group' => '<i class="fa fa-seedling"></i> PiHole',
+'PIHOLE_ACTIVE_description' => 'Debe mapear <code>:/etc/pihole/pihole-FTL.db</code> en el archivo <code>docker-compose.yml</code> si habilita esta configuración.',
+'PIHOLE_ACTIVE_name' => 'Habilitar el mapeo de PiHole',
+'PRINT_LOG_description' => 'Esta configuración habilitará un registro más detallado. Útil para depurar eventos que se escriben en la base de datos.',
+'PRINT_LOG_name' => 'Imprimir registro adicional',
+'PUSHSAFER_TOKEN_description' => 'Su clave secreta de la API de Pushsafer (token).',
+'PUSHSAFER_TOKEN_name' => 'Pushsafer token',
+'PUSHSAFER_settings_group' => '<i class="fa fa-bell"></i> Pushsafer',
+
+//Apprise
+
+'REPORT_APPRISE_description' => 'Habilitar el envío de notificaciones a través de <a target="_blank" href="https://hub.docker.com/r/caronc/apprise">Apprise</a>.',
+'REPORT_APPRISE_name' => 'Habilitar Apprise',
+
+// Webhooks
+'REPORT_WEBHOOK_description' => 'Habilite webhooks para notificaciones. Los webhooks lo ayudan a conectarse a muchas herramientas de terceros, como IFTTT, Zapier o <a href="https://n8n.io/" target="_blank">n8n</a>, por nombrar algunas. Consulte esta sencilla <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md" target="_blank">guía de n8n aquí</a> para obtener comenzó. Si está habilitado, configure los ajustes relacionados a continuación.',
+'REPORT_WEBHOOK_name' => 'Habilitar webhooks',
+'WEBHOOK_PAYLOAD_description' => 'El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">aquí</a>. (por ejemplo: para discord use <code>html</code>)',
+'WEBHOOK_PAYLOAD_name' => 'Tipo de carga',
+'WEBHOOK_REQUEST_METHOD_description' => 'El método de solicitud HTTP que se utilizará para la llamada de webhook.',
+'WEBHOOK_REQUEST_METHOD_name' => 'Método de solicitud',
+'WEBHOOK_URL_description' => 'URL de destino comienza con <code>http://</code> o <code>https://</code>.',
+'WEBHOOK_URL_name' => 'URL de destino',
+'Webhooks_settings_group' => '<i class="fa fa-circle-nodes"></i> Webhooks',	
+	
+// Other
+
+'general_event_description' => 'El evento que ha activado puede tardar un tiempo hasta que finalicen los procesos en segundo plano. La ejecución terminó una vez que vea <code>finished</code> a continuación. Consulte el <a onclick=\'setCache("activeMaintenanceTab", "tab_Logging_id")\' href="/maintenance.php#tab_Logging">registro de errores</a> si no obtuvo el resultado esperado. <br/> <br/> Estado:',
+'general_event_title' => 'Ejecución de un evento ad-hoc',
+'run_event_icon' => 'fa-play',
+'run_event_tooltip' => 'Habilite la configuración y guarde sus cambios al principio antes de ejecutarlo.',
+'settings_expand_all' => 'Expandir todo',
+'settings_imported' => 'La última vez que se importó la configuración desde el archivo pialert.conf:',
+'settings_missing' => 'No se han cargado todos los ajustes, actualice la página. Esto probablemente se deba a una gran carga en la base de datos.',
+'settings_missing_block' => 'No puede guardar su configuración sin especificar todas las claves de configuración. Recarga la página. Esto probablemente se deba a una gran carga en la base de datos.',
+'settings_old' => 'La configuración en la base de datos (que se muestra en esta página) está desactualizada. Esto probablemente se deba a un análisis en ejecución. La configuración se guardó en el archivo <code>pialert.conf</code>, pero el proceso en segundo plano aún no tuvo tiempo de importarlo a la base de datos. Puede esperar hasta que la configuración se actualice para no sobrescribir sus valores anteriores. Siéntase libre de guardar su configuración de cualquier manera si no le importa perder la configuración entre la última vez que guardó y ahora. También se crean archivos de respaldo si necesita comparar su configuración más adelante.',
+'test_event_icon' => 'fa-vial-circle-check',
+'test_event_tooltip' => 'Guarde sus cambios antes de probar su configuración.',
 
 );
 ?>
