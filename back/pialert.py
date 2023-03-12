@@ -3656,7 +3656,7 @@ def isNewVersion():
             data = ""
         
         # make sure we received a valid response and not an API rate limit exceeded message
-        if len(data) > 0 and "published_at" in data[0]:        
+        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:        
 
             dateTimeStr = data[0]["published_at"]            
 
@@ -3850,7 +3850,7 @@ def execute_plugin(plugin):
 
         for row in arr:
             # There has to be always 9 columns
-            if len(row) == 9:
+            if len(row) == 9 and (row[0] in ['','null']) == False :
                 sqlParams.append((plugin["unique_prefix"], row[0], row[1], 'null', row[2], row[3], row[4], row[5], row[6], 0, row[7], 'null', row[8]))
             else:
                 mylog('none', ['        [Plugins]: Skipped invalid sql result'])
@@ -3896,7 +3896,7 @@ def process_plugin_events(plugin):
     existingPluginObjectsCount = len(pluginObjects)
 
     mylog('debug', ['     [Plugins] Existing objects: ', existingPluginObjectsCount])
-    mylog('debug', ['     [Plugins] Events objects: ', len(plugEventsArr)])
+    mylog('debug', ['     [Plugins] Objects events  : ', len(plugEventsArr)])
 
     # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
     for eve in plugEventsArr:
@@ -4035,13 +4035,14 @@ def combine_plugin_objects(old, new):
 def resolve_wildcards(command, params):
 
     mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])
+    
 
     for param in params:
         mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
         mylog('debug', ['        [Plugins]: resolved: ', param[1]])
         command = command.replace('{' + param[0] + '}', param[1])
 
-    mylog('debug', ['        [Plugins]: Resolved CMD: ', command])
+    mylog('debug', ['        [Plugins]: Resolved     CMD: ', command])
 
     return command
 

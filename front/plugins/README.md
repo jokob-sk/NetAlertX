@@ -313,8 +313,8 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 
 ## Full Examples
 
-- Script based plugin: Check the [website_monitor WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
-- SQL query nased plugin: Check the [nmap_services NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) file for details.  
+- Script based plugin: Check the [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
+- SQL query nased plugin: Check the [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) file for details.  
 
 
 ### Screenshots 

@@ -345,5 +345,30 @@ function openInNewTab (url) {
 }
 
 
+// -----------------------------------------------------------------------------
+function navigateToDeviceWithIp (ip) {
+
+  $.get('api/table_devices.json', function(res) {    
+        
+    devices = res["data"];
+
+    mac = ""
+    
+    $.each(devices, function(index, obj) {
+      
+      if(obj.dev_LastIP.trim() == ip.trim())
+      {
+        mac = obj.dev_MAC;
+
+        window.open(window.location.origin +'/deviceDetails.php?mac=' + mac , "_blank");
+      }
+    });
+
+
+    
+  });
+}
+
+
 
 

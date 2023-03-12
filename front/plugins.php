@@ -30,9 +30,7 @@
     </section>    
 </div>
 
-<?php
-  require 'php/templates/footer.php';
-?>
+
 
 <script defer>
 
@@ -65,6 +63,9 @@ function getFormControl(dbColumnDef, value, index) {
             break;
         case 'devicemac':
             result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
+            break;
+        case 'deviceip':
+            result = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
             break;
         case 'threshold': 
             $.each(dbColumnDef.options, function(index, obj) {
@@ -357,12 +358,15 @@ function generateTabs()
 
                 </div>
 
-                ${localize(obj, 'description')} 
-            
-                <span>
-                    <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${obj.code_name}" target="_blank"><?= lang('Gen_Help');?></a>
-                </span>
+                <div class='plugins-description'>
+
+                    ${localize(obj, 'description')} 
                 
+                    <span>
+                        <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${obj.code_name}" target="_blank"><?= lang('Gen_Help');?></a>
+                    </span>
+                
+                </div>
             </div>
         `);
 
@@ -458,5 +462,7 @@ getData()
 
 </script>
 
-
+<?php
+  require 'php/templates/footer.php';
+?>
 
