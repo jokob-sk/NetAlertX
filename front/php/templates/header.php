@@ -112,7 +112,7 @@ if ($ENABLED_DARKMODE === True) {
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition <?php echo $pia_skin_selected;?> layout-boxed sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

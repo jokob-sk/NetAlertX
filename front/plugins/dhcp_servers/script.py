@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
-# /home/pi/pialert/front/plugins/website_monitor/script.py urls=http://google.com,http://bing.com
 from __future__ import unicode_literals
 from time import sleep, time, strftime
 import requests
@@ -9,14 +8,10 @@ import pathlib
 import threading
 import subprocess
 import socket
-
 import argparse
 import io
-#import smtplib
 import sys
-#from smtp_config import sender, password, receivers, host, port
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
 import pwd
 import os
 
@@ -43,10 +38,6 @@ def main():
     #dhcp_server_list_time = []
     for _ in range(dhcp_probes):
         output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec ))
-        # stream = os.popen('sudo nmap --script broadcast-dhcp-discover 2>/dev/null')
-        # output = stream.read()
-        # last_run_logfile.write(output)
-        
         newLines = newLines + output.split("\n")
 
     # parse output
@@ -60,14 +51,10 @@ def main():
         else:    
             index = len(newEntries) - 1 
 
-        if 'Response ' in line and ' of ' in line:
-            
-            newEntries.append(plugin_object_class())            
-            
+        if 'Response ' in line and ' of ' in line:            
+            newEntries.append(plugin_object_class())                        
         elif 'Server Identifier' in line :
             newEntries[index].primaryId = line.split(':')[1].strip()   
-
-
         elif 'Domain Name' in line :
             newEntries[index].secondaryId = line.split(':')[1].strip()
         elif 'Domain Name Server' in line :
@@ -80,12 +67,10 @@ def main():
             newEntries[index].watched4   = line.split(':')[1].strip()
             newEntries[index].foreignKey = line.split(':')[1].strip()
         elif ('IP Address Lease Time' in line or 'Subnet Mask' in line or 'Broadcast Address' in line) :
-            newEntries[index].extra  = newEntries[index].extra + ',' + line.split(':')[1].strip()
-    
+            newEntries[index].extra  = newEntries[index].extra + ',' + line.split(':')[1].strip()    
 
     for e in newEntries:        
-        # Insert list into the log    
-        
+        # Insert list into the log            
         service_monitoring_log(e.primaryId, e.secondaryId, e.created, e.watched1, e.watched2, e.watched3, e.watched4, e.extra, e.foreignKey )
 
 # -----------------------------------------------------------------------------

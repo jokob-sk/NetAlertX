@@ -620,7 +620,7 @@
     
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
-    $("#networkTree").attr('style', "height:"+treeAreaHeight+"px; width:1070px")
+    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${$('.content-header').width()}px`)
 
     myTree = Treeviz.create({
       htmlId: "networkTree",

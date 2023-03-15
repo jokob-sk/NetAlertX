@@ -313,9 +313,13 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 
 ## Full Examples
 
-- Script based plugin: Check the [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) file for details.  
-- SQL query nased plugin: Check the [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) file for details.  
+### Script based plugins
 
+- [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) 
+- [dhcp_servers (DHCPSRVS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/config.json) 
+
+### SQL query based plugins
+- [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
 
 ### Screenshots 
 
@@ -323,7 +327,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 |----------------------|----------------------| 
 | ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png    "Screen 1"
-[screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png             "Screen 2"
-[screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png             "Screen 3"
-[screen4]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_ui.png             "Screen 4"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png                "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png       "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png  "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_ui.png        "Screen 4"
