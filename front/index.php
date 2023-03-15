@@ -1,3 +1,6 @@
+<!-- Pi.Alert CSS -->
+<link rel="stylesheet" href="css/pialert.css">
+
 <?php
 require dirname(__FILE__).'/php/server/init.php';
 require 'php/templates/security.php';
@@ -100,7 +103,7 @@ if ($ENABLED_DARKMODE === True) {
   <link rel="stylesheet" href="/front/css/offline-font.css">
 </head>
 <body class="hold-transition login-page">
-<div class="login-box">
+<div class="login-box login-custom">
   <div class="login-logo">
     <a href="/index2.php">Pi.<b>Alert</b></a>
   </div>
@@ -145,7 +148,7 @@ if ($ENABLED_DARKMODE === True) {
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">�</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
-          <p><?= lang('Login_Psw_run');?><br><span style="border: solid 1px yellow; padding: 2px;">./reset_password.sh <?= lang('Login_Psw_new');?></span><br><?= lang('Login_Psw_folder');?></p>
+          <p><?= lang('Login_Psw_run');?><br><span style="border: solid 1px yellow; padding: 2px;"> /home/pi/pialert/back/pialert-cli set_password <?= lang('Login_Psw_new');?></span><br><?= lang('Login_Psw_folder');?></p>
       </div>
   </div>
 
