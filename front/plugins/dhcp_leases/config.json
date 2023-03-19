@@ -1,0 +1,322 @@
+{
+    "code_name": "dhcp_leases",
+    "unique_prefix": "DHCPLSS",
+    "enabled": true,    
+    "data_source":  "python-script",
+    "localized": ["display_name", "description", "icon"],
+    "display_name" : [{
+        "language_code":"en_us",
+        "string" : "DHCP Leases"
+    }],
+    "icon":[{
+        "language_code":"en_us",
+        "string" : "<i class=\"fa-solid fa-hourglass-half\"></i>"
+    }],     
+    "description": [{
+        "language_code":"en_us",
+        "string" : "This plugin is to import devices from dhcp.leases files."
+    }],
+    "params" : [
+        {
+            "name"  : "paths",
+            "type"  : "setting",
+            "value" : "DHCPLSS_paths_to_check"
+        }], 
+    "database_column_definitions":
+    [          
+        {
+            "column": "Index",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,
+        {
+            "column": "Plugin",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        },
+        {
+            "column": "Object_PrimaryID",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "devicemac",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "IP"
+                }]
+        },
+        {
+            "column": "Object_SecondaryID",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "deviceip",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "MAC address"
+                }]
+        } ,
+        {
+            "column": "DateTimeCreated",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Created"
+                }]
+        },
+        {
+            "column": "DateTimeChanged",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Changed"
+                }]
+        },
+        {
+            "column": "Watched_Value1",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Is active"
+                }]
+        },
+        {
+            "column": "Watched_Value2",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Hostname"
+                }]
+        },
+        {
+            "column": "Watched_Value3",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Hardware"
+                }]
+        } ,
+        {
+            "column": "Watched_Value4",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "State"
+                }]
+        } ,       
+        {
+            "column": "UserData",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "textboxsave",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Comments"
+                }]
+        },        
+        {
+            "column": "Extra",
+            "css_classes": "col-sm-3",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "DHCP leases file"
+                }]
+        },        
+        {
+            "column": "Status",
+            "css_classes": "col-sm-1",
+            "show": true,
+            "type": "replace",            
+            "default_value":"",
+            "options": [
+                {
+                    "equals": "watched-not-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+                },
+                {
+                    "equals": "watched-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+                },
+                {
+                    "equals": "new",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Status"
+                }]
+        }            
+    ],
+    "settings":[
+        {
+            "function": "RUN",            
+            "type": "selecttext",            
+            "default_value":"disabled",
+            "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "When to run"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Enable import of devices from <code>dhcp.leases</code> files. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+            }]
+        },
+        {
+            "function": "CMD",
+            "type": "text",
+            "default_value":"python3 /home/pi/pialert/front/plugins/dhcp_leases/script.py paths={paths}",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Command"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Command to run"
+            }]
+        },
+        {
+            "function": "paths_to_check",
+            "type": "list",
+            "default_value":["/mnt/dhcp1.leases", "/mnt/dhcp2.leases"],
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Files"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file."
+            }]
+        },
+        {
+            "function": "RUN_SCHD",
+            "type": "text",
+            "default_value":"0 2 * * *",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Schedule"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+            }]
+        },
+        {
+            "function": "RUN_TIMEOUT",
+            "type": "integer",
+            "default_value":5,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Run timeout"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Wartezeit"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+            }]
+        },
+        {
+            "function": "WATCH",
+            "type": "multiselect",
+            "default_value":["Watched_Value1", "Watched_Value4"],
+            "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Watched"
+            }] ,
+            "description":[{
+                "language_code":"en_us",
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Active </li><li><code>Watched_Value2</code> is Hostname </li><li><code>Watched_Value3</code> is hardware </li><li><code>Watched_Value4</code> is State </li></ul>"
+            }] 
+        },
+        {
+            "function": "REPORT_ON",
+            "type": "multiselect",
+            "default_value":["new","watched-changed"],
+            "options": ["new","watched-changed","watched-not-changed"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Report on"
+            }] ,
+            "description":[{
+                "language_code":"en_us",
+                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+            }] 
+        }
+    ]
+}
+

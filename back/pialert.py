@@ -3356,7 +3356,6 @@ class api_endpoint_class:
                 apiEndpoints[changedIndex].hash = self.hash
             else:
                 mylog('info', [f'     [API] ERROR Updating {self.fileName}'])
-
             
 
 #-------------------------------------------------------------------------------
