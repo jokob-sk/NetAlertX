@@ -53,13 +53,15 @@ docker run -d --rm --network=host \
 
 ### Config (`pialert.conf`)
 
-- Modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) or manage the configuration via Settings.  
-- ❗ Set the `SCAN_SUBNETS` variable. 
+- The preferred wy is to manage the configuration via Settings 
+- YOu can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly if needed
+- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. ()
    * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
    * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
    * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
      * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
      * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']` 
+   * More documentation on how to [setup vlans](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
 
 
 ### 🛑 **Common issues** 
@@ -113,6 +115,27 @@ To run the container execute: `sudo docker-compose up -d`
 
 ### Example 2
 
+Example by [SeimuS](https://github.com/SeimusS).
+
+```yaml
+  pialert:
+    container_name: PiAlert
+    hostname: PiAlert
+    privileged: true
+    image: jokobsk/pi.alert:latest
+    environment:
+      - TZ=Europe/Bratislava
+    restart: always
+    volumes:
+      - ./pialert/pialert_db:/home/pi/pialert/db
+      - ./pialert/pialert_config:/home/pi/pialert/config
+    network_mode: host
+```
+
+To run the container execute: `sudo docker-compose up -d`
+
+### Example 3
+
 `docker-compose.yml` 
 
 ```yaml
@@ -158,7 +181,7 @@ DEV_LOCATION=/path/to/local/source/code
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
 
-### Example 3
+### Example 4
 
 Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
 
