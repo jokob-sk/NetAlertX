@@ -585,7 +585,7 @@ def main ():
         # proceed if 1 minute passed
         if last_run + datetime.timedelta(minutes=1) < time_started :
 
-             # last time any scan or maintenance/Upkeep was run
+             # last time any scan or maintenance/upkeep was run
             last_run = time_started
 
             # Header
@@ -872,7 +872,7 @@ def check_IP_format (pIP):
 
 
 #===============================================================================
-# Cleanup Online History chart
+# Cleanup / upkeep database
 #===============================================================================
 def cleanup_database ():
     # Header    
@@ -880,10 +880,10 @@ def cleanup_database ():
     mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
 
     # Cleanup Online History
-    mylog('verbose', ['    Online_History: Delete all older than 3 days'])
-    sql.execute ("DELETE FROM Online_History WHERE Scan_Date <= date('now', '-3 day')")
-    mylog('verbose', ['    Optimize Database'])
+    mylog('verbose', ['    Online_History: Delete all but keep latest 150 entries'])    
+    sql.execute ("""DELETE from Online_History where "Index" not in ( SELECT "Index" from Online_History order by Scan_Date desc limit 150)""")
 
+    mylog('verbose', ['    Optimize Database'])
     # Cleanup Events
     mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
     sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
@@ -1751,7 +1751,7 @@ def performNmapScan(devicesToScan):
                 append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
             
             # collect ports / new Nmap Entries
-            newEntries = []
+            newEntriesTmp = []
 
             index = 0
             startCollecting = False
@@ -1765,7 +1765,7 @@ def performNmapScan(devicesToScan):
                 elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                     startCollecting = False # end reached
                 elif startCollecting and len(line.split()) == 3:                                    
-                    newEntries.append(nmap_entry(device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], device["dev_Name"]))
+                    newEntriesTmp.append(nmap_entry(device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], device["dev_Name"]))
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             index += 1
@@ -1773,9 +1773,9 @@ def performNmapScan(devicesToScan):
             # previous Nmap Entries
             oldEntries = []
 
-            mylog('verbose', ['[', timeNow(), '] Scan: Ports found by NMAP: ', len(newEntries)])
+            mylog('verbose', ['[', timeNow(), '] Scan: Ports found by NMAP: ', len(newEntriesTmp)])
             
-            if len(newEntries) > 0:   
+            if len(newEntriesTmp) > 0:   
 
                 #  get all current NMAP ports from the DB
                 sql.execute(sql_nmap_scan_all) 
@@ -1783,18 +1783,28 @@ def performNmapScan(devicesToScan):
                 rows = sql.fetchall()
 
                 for row in rows: 
-                    oldEntries.append(nmap_entry(row["MAC"], row["Port"], row["State"], row["Service"], device["dev_Name"], row["Extra"], row["Index"]))
+                    # only collect entries matching the current MAC address
+                    if row["MAC"] == device["dev_MAC"]:
+                        oldEntries.append(nmap_entry(row["MAC"], row["Time"], row["Port"], row["State"], row["Service"], device["dev_Name"], row["Extra"], row["Index"]))
 
-                indexesToRemove = []
 
-                # Remove all entries already available in the database
-                for newEntry in newEntries:
-                    #  Check if available in oldEntries and remove if yes
-                    if any(x.hash == newEntry.hash for x in oldEntries):
-                        newEntries.pop(index)
+                newEntries = []
 
-                mylog('verbose', ['[', timeNow(), '] Scan: Nmap new or changed ports: ', len(newEntries)])
-                mylog('verbose', ['[', timeNow(), '] Scan: Nmap old entries:          ', len(oldEntries)])
+                # Collect all entries that don't match the ones in the DB               
+                for newTmpEntry in newEntriesTmp:
+
+                    found = False
+                    
+                    #  Check the new entry is already available in oldEntries and remove from processing if yes
+                    for oldEntry in oldEntries: 
+                        if newTmpEntry.hash == oldEntry.hash:
+                            found = True
+
+                    if not found:
+                        newEntries.append(newTmpEntry)
+
+
+                mylog('verbose', ['[', timeNow(), '] Scan: Nmap newly discovered or changed ports: ', len(newEntries)])                
 
                 # collect new ports, find the corresponding old entry and return for notification purposes
                 # also update the DB with the new values after deleting the old ones
@@ -1858,7 +1868,7 @@ def performNmapScan(devicesToScan):
 
                     #  Delete old entries if available
                     if len(indexesToDelete) > 0:
-                        sql.execute ("DELETE FROM Nmap_Scan where Index in (" + indexesToDelete[:-1] +")")
+                        sql.execute ("DELETE FROM Nmap_Scan where \"Index\" in (" + indexesToDelete[:-1] +")")
                         commitDB ()
 
                     # Insert new values into the DB 
@@ -1876,7 +1886,7 @@ class nmap_entry:
         self.name = name
         self.extra = extra
         self.index = index
-        self.hash = str(hash(str(mac) + str(port)+ str(state)+ str(service)))
+        self.hash = str(mac) + str(port)+ str(state)+ str(service)
 
 #-------------------------------------------------------------------------------
 def performPholusScan (timeoutSec):
@@ -2342,8 +2352,16 @@ def send_notifications ():
 
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
 
-    if 'plugins' in INCLUDED_SECTIONS:  
+    if 'plugins' in INCLUDED_SECTIONS and ENABLE_PLUGINS:  
         # Compose Plugins Section   
+        # sqlQuery = get_plugin_events_to_report_on_SQL()
+
+        #         #  handle plugins
+        # for plugin in plugins:
+        #     print_plugin_info(plugin, ['display_name','description'])
+            
+        #     pref = plugin["unique_prefix"]   
+        
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 
         notiStruc = construct_notifications(sqlQuery, "Plugins")
@@ -2355,7 +2373,7 @@ def send_notifications ():
         mail_html = mail_html.replace ('<PLUGINS_TABLE>', notiStruc.html)
 
         # check if we need to report something
-        plugins_report = plugin_check_smth_to_report(json_plugins)
+        plugins_report = len(json_plugins) > 0
 
 
     json_final = {
@@ -2744,6 +2762,7 @@ def send_webhook (_json, _html):
     # execute CURL call
     try:
         # try runnning a subprocess
+        mylog('debug', curlParams) 
         p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         stdout, stderr = p.communicate()
@@ -3842,6 +3861,9 @@ def execute_plugin(plugin):
     # prepare command from plugin settings, custom parameters  
     command = resolve_wildcards(set_CMD, params).split()
 
+    # build SQL query parameters to insert into the DB
+    sqlParams = []
+
     # python-script 
     if plugin['data_source'] == 'python-script':
 
@@ -3871,9 +3893,6 @@ def execute_plugin(plugin):
         # for line in newLines:
         #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
         
-        # build SQL query parameters to insert into the DB
-        sqlParams = []
-
         for line in newLines:
             columns = line.split("|")
             # There has to be always 9 columns
@@ -3889,9 +3908,6 @@ def execute_plugin(plugin):
 
         # Execute command
         mylog('verbose', ['     [Plugins] Executing: ', q])
-
-        # build SQL query parameters to insert into the DB
-        sqlParams = []
 
         # set_CMD should contain a SQL query        
         arr = get_sql_array (q) 
@@ -3932,6 +3948,8 @@ def process_plugin_events(plugin):
 
     pluginPref = plugin["unique_prefix"]
 
+    mylog('debug', ['     [Plugins] Processing        : ', pluginPref])
+
     plugObjectsArr = get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
     plugEventsArr  = get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
 
@@ -3943,8 +3961,8 @@ def process_plugin_events(plugin):
 
     existingPluginObjectsCount = len(pluginObjects)
 
-    mylog('debug', ['     [Plugins] Existing objects: ', existingPluginObjectsCount])
-    mylog('debug', ['     [Plugins] Objects events  : ', len(plugEventsArr)])
+    mylog('debug', ['     [Plugins] Existing objects        : ', existingPluginObjectsCount])
+    mylog('debug', ['     [Plugins] New and existing events : ', len(plugEventsArr)])
 
     # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
     for eve in plugEventsArr:
@@ -4006,16 +4024,20 @@ def process_plugin_events(plugin):
             sql.execute (f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}', ForeignKey = '{plugObj.foreignKey}' WHERE \"Index\" = {plugObj.index}")            
 
     # Update the Plugins_Events with the new statuses    
-    sql.execute ("DELETE FROM Plugins_Events")
+    sql.execute (f'DELETE FROM Plugins_Events where Plugin = "{pluginPref}"')
 
     for plugObj in pluginEvents: 
 
         createdTime = plugObj.created
 
+        # use the same datetime for created and changed if a new entry
         if plugObj.status == 'new':
-            createdTime = plugObj.changed        
+            createdTime = plugObj.changed  
 
-        sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
+        #  insert only events if they are to be reported on
+        if plugObj.status in  get_plugin_setting_value(plugin, "REPORT_ON"):  
+
+            sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
 
     commitDB()
 
@@ -4095,27 +4117,6 @@ def resolve_wildcards(command, params):
     return command
 
 #-------------------------------------------------------------------------------
-# Check if there are events which need to be reported on based on settings
-def plugin_check_smth_to_report(notifs):
-    
-    for notJsn in notifs:
-        
-        pref = notJsn['Plugin'] #"Plugin" column 
-        stat = notJsn['Status'] #"Status" column 
-                 
-        val = get_setting_value(pref + '_REPORT_ON')
-
-        if set is not None:
-            
-            # report if there is at least one value in teh events to be reported on
-            # future improvement - selectively remove events based on this
-            if stat in val: 
-                return True
-
-    return False
-
-
-#-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
 def plugin_param_from_glob_set(globalSetting):
 
@@ -4147,6 +4148,17 @@ def get_plugin_setting(plugin, function_key):
         mylog('none', ['     [Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
 
     return result
+
+#-------------------------------------------------------------------------------
+# Gets the setting value
+def get_plugin_setting_value(plugin, function_key):
+    
+    resultObj = get_plugin_setting(plugin, function_key)
+
+    if resultObj != None:
+        return resultObj["value"]
+
+    return None
 
 
 #-------------------------------------------------------------------------------
@@ -4219,11 +4231,11 @@ class schedule_class:
         #               (maybe the following check is unnecessary:)
         # if the last run is past the last time we run a scheduled Pholus scan
         if nowTime > self.last_next_schedule and self.last_run < self.last_next_schedule:
-            print_log("Scheduler run: YES")
+            print_log(f'Scheduler run for {self.service}: YES')
             self.was_last_schedule_used = True
             result = True
         else:
-            print_log("Scheduler run: NO")
+            print_log(f'Scheduler run for {self.service}: NO')
         
         if self.was_last_schedule_used:
             self.was_last_schedule_used = False

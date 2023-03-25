@@ -67,7 +67,15 @@ def main():
             newEntries[index].watched4   = line.split(':')[1].strip()
             newEntries[index].foreignKey = line.split(':')[1].strip()
         elif ('IP Address Lease Time' in line or 'Subnet Mask' in line or 'Broadcast Address' in line) :
-            newEntries[index].extra  = newEntries[index].extra + ',' + line.split(':')[1].strip()    
+
+            newVal = line.split(':')[1].strip()
+
+            if newEntries[index].extra == '':
+                newEntries[index].extra  =  newVal   
+            else: 
+                newEntries[index].extra  = newEntries[index].extra + ',' + newVal    
+
+            
 
     for e in newEntries:        
         # Insert list into the log            
