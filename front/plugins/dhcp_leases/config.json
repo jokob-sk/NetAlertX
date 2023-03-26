@@ -4,6 +4,7 @@
     "enabled": true,    
     "data_source":  "python-script",
     "localized": ["display_name", "description", "icon"],
+    "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
         "string" : "DHCP Leases"
@@ -25,7 +26,7 @@
     "database_column_definitions":
     [          
         {
-            "column": "Index",
+            "column": "Index",            
             "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
@@ -52,6 +53,7 @@
         },
         {
             "column": "Object_PrimaryID",
+            "mapped_to_column": "DHCP_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "devicemac",            
@@ -60,11 +62,12 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "IP"
+                "string" : "MAC address"
                 }]
         },
         {
             "column": "Object_SecondaryID",
+            "mapped_to_column": "DHCP_IP", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "deviceip",            
@@ -73,7 +76,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "MAC address"
+                "string" : "IP"
                 }]
         } ,
         {
@@ -91,6 +94,7 @@
         },
         {
             "column": "DateTimeChanged",
+            "mapped_to_column": "DHCP_DateTime", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -117,6 +121,7 @@
         },
         {
             "column": "Watched_Value2",
+            "mapped_to_column": "DHCP_Name", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            

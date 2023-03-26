@@ -7,7 +7,6 @@ Scans for devices connected to your WIFI / LAN and alerts you if new and unknown
 
 ![Main screen][main]
 
-
 # 🐳 Docker image 
 [![Docker](https://img.shields.io/github/actions/workflow/status/jokob-sk/Pi.Alert/docker_prod.yml?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker_prod.yml)
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
@@ -30,7 +29,6 @@ The system continuously scans the network for, **New devices**, **New connection
         examines the DHCP leases (addresses assigned) to find active devices
         that were not discovered by the other methods.
 
-
 ## 🧩 Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
    - [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) ([sample JSON](docs/webhook_json_sample.json))
@@ -49,18 +47,16 @@ The system continuously scans the network for, **New devices**, **New connection
     - Sessions, Connected devices, Favorites, Events, Presence, Concurrent devices, Down alerts, IP's
     - Manual Nmap scans, Optional speedtest for Device "Internet"
     - Simple Network relationship display
-  - Maintenance tasks and Settings like:
-    - Status Infos (active scans, database size, backup counter)
-    - Theme Selection (blue, red, green, yellow, black, purple) and Light/Dark-Mode Switch
-    - Language Selection (English, German, Spanish)    
-    - Pause arp-scan
+  - Maintenance tasks and Settings like:    
+    - Theme Selection (blue, red, green, yellow, black, purple) and Light/Dark-Mode Switch        
     - DB maintenance, Backup, Restore tools and CSV Export / Import
-    - Configurable login to prevent unauthorized use. 
+    - Simple login Support
   - 🌟(Experimental) [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
     - Create custom plugins with automatically generated settings and UI. 
     - Monitor anything for changes
-    - Check the instructions carefully if you are up for a challenge!
-  - Help/FAQ Section 
+    - Check the instructions carefully if you are up for a challenge! Current plugins include:
+      - Detecting Rogue DHCP servers
+      - Monitoring HTTP status changes of domains/URLs        
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
   |----------------------|----------------------| ----------------------| 
@@ -92,8 +88,6 @@ Device Management [instructions](docs/DEVICE_MANAGEMENT.md) | Old Versions [Hist
       - Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 ## ☕ Support me
-
-Disclaimer: Please only donate if you don't have any debt yourself. Support yourself first, then others.
 
 <a href="https://github.com/sponsors/jokob-sk" target="_blank"><img src="https://i.imgur.com/X6p5ACK.png" alt="Sponsor Me on GitHub" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
 <a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="117px" height="30px" ></a>

@@ -1197,8 +1197,6 @@ def copy_pihole_network ():
 
 #-------------------------------------------------------------------------------
 def read_DHCP_leases ():
-    reporting = False
-            
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
     data = []
@@ -1209,14 +1207,13 @@ def read_DHCP_leases ():
             if len(row) == 5 :
                 data.append (row)
 
-    # Insert into PiAlert table
-    sql.execute ("DELETE FROM DHCP_Leases")
+    # Insert into PiAlert table    
     sql.executemany ("""INSERT INTO DHCP_Leases (DHCP_DateTime, DHCP_MAC,
                             DHCP_IP, DHCP_Name, DHCP_MAC2)
                         VALUES (?, ?, ?, ?, ?)
                      """, data)
 
-    return reporting
+    
 
 #-------------------------------------------------------------------------------
 def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
@@ -1591,8 +1588,7 @@ def update_devices_data_from_scan ():
     sql.execute ("""UPDATE Devices
                     SET dev_NAME = (SELECT PH_Name FROM PiHole_Network
                                     WHERE PH_MAC = dev_MAC)
-                    WHERE (dev_Name = "(unknown)"
-                           OR dev_Name = ""
+                    WHERE (dev_Name in ("(unknown)", "(name not found)", "" )
                            OR dev_Name IS NULL)
                       AND EXISTS (SELECT 1 FROM PiHole_Network
                                   WHERE PH_MAC = dev_MAC
@@ -1603,8 +1599,7 @@ def update_devices_data_from_scan ():
     sql.execute ("""UPDATE Devices
                     SET dev_NAME = (SELECT DHCP_Name FROM DHCP_Leases
                                     WHERE DHCP_MAC = dev_MAC)
-                    WHERE (dev_Name = "(unknown)"
-                           OR dev_Name = ""
+                    WHERE (dev_Name in ("(unknown)", "(name not found)", "" )                           
                            OR dev_Name IS NULL)
                       AND EXISTS (SELECT 1 FROM DHCP_Leases
                                   WHERE DHCP_MAC = dev_MAC)""")
@@ -1625,6 +1620,8 @@ def update_devices_data_from_scan ():
     sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
         recordsToUpdate )
 
+    # clean-up device leases table
+    sql.execute ("DELETE FROM DHCP_Leases")
     print_log ('Update devices end')
 
 #-------------------------------------------------------------------------------
@@ -2353,15 +2350,7 @@ def send_notifications ():
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
 
     if 'plugins' in INCLUDED_SECTIONS and ENABLE_PLUGINS:  
-        # Compose Plugins Section   
-        # sqlQuery = get_plugin_events_to_report_on_SQL()
-
-        #         #  handle plugins
-        # for plugin in plugins:
-        #     print_plugin_info(plugin, ['display_name','description'])
-            
-        #     pref = plugin["unique_prefix"]   
-        
+        # Compose Plugins Section           
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 
         notiStruc = construct_notifications(sqlQuery, "Plugins")
@@ -3994,7 +3983,7 @@ def process_plugin_events(plugin):
                 pluginEvents[index].status = "watched-not-changed"  
         index += 1
 
-    # Merge existing plugin objects with newly discovered ones and update existin ones with new values
+    # Merge existing plugin objects with newly discovered ones and update existing ones with new values
     for eveObj in pluginEvents:
         if eveObj.status == 'new':
             pluginObjects.append(eveObj)
@@ -4037,7 +4026,74 @@ def process_plugin_events(plugin):
         #  insert only events if they are to be reported on
         if plugObj.status in  get_plugin_setting_value(plugin, "REPORT_ON"):  
 
-            sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
+            sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
+
+    # Perform databse table mapping if enabled for the plugin
+    # "mapped_to_table": "DHCP_Leases", 
+    
+    if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
+
+        sqlParams = []        
+
+        dbTable = plugin['mapped_to_table']
+
+        mylog('debug', ['     [Plugins] Mapping objects to database table: ', dbTable])
+
+        #  collect all columns to be mapped
+        mappedCols = []        
+        columnsStr = ''
+        valuesStr = ''
+
+        for clmn in plugin['database_column_definitions']:            
+            if 'mapped_to_column' in clmn:                
+                mappedCols.append(clmn)
+                columnsStr = f'{columnsStr}, "{clmn["mapped_to_column"]}"'
+                valuesStr = f'{valuesStr}, ?'
+
+        if len(columnsStr) > 0:
+            columnsStr = columnsStr[1:] # remove first ','
+            valuesStr = valuesStr[1:] # remove first ','
+
+        # map the column names to plugin object event values
+        for plgEv in pluginEvents:
+
+            tmpList = []
+
+            for col in mappedCols:
+                if col['column'] == 'Index':
+                    tmpList.append(plgEv.index)
+                elif col['column'] == 'Plugin':
+                    tmpList.append(plgEv.pluginPref)
+                elif col['column'] == 'Object_PrimaryID':
+                    tmpList.append(plgEv.primaryId)
+                elif col['column'] == 'Object_SecondaryID':
+                    tmpList.append(plgEv.secondaryId)
+                elif col['column'] == 'DateTimeCreated':
+                    tmpList.append(plgEv.created)
+                elif col['column'] == 'DateTimeChanged':
+                    tmpList.append(plgEv.changed)
+                elif col['column'] == 'Watched_Value1':
+                    tmpList.append(plgEv.watched1)
+                elif col['column'] == 'Watched_Value2':
+                    tmpList.append(plgEv.watched2)
+                elif col['column'] == 'Watched_Value3':
+                    tmpList.append(plgEv.watched3)
+                elif col['column'] == 'Watched_Value4':
+                    tmpList.append(plgEv.watched4)
+                elif col['column'] == 'UserData':
+                    tmpList.append(plgEv.userData)
+                elif col['column'] == 'Extra':
+                    tmpList.append(plgEv.extra)
+                elif col['column'] == 'Status':
+                    tmpList.append(plgEv.status)               
+                
+            sqlParams.append(tuple(tmpList))
+
+        q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
+
+        mylog('debug', ['     [Plugins] SQL query for mapping: ', q ])
+
+        sql.executemany (q, sqlParams) 
 
     commitDB()
 
@@ -4084,7 +4140,7 @@ class plugin_object_class:
 
         self.watchedHash  = str(hash(tmp))
 
-
+  
 #-------------------------------------------------------------------------------
 # Combine plugin objects, keep user-defined values, created time, changed time if nothing changed and the index
 def combine_plugin_objects(old, new):    
