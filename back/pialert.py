@@ -1265,6 +1265,8 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
     local_ip_cmd = ["ip -o route get 1 | sed 's/^.*src \\([^ ]*\\).*$/\\1/;q'"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
+    mylog('debug', ['    Saving this IP into the CurrentScan table:', local_ip])
+
     # Check if local mac has been detected with other methods
     sql.execute ("SELECT COUNT(*) FROM CurrentScan WHERE cur_ScanCycle = ? AND cur_MAC = ? ", (cycle, local_mac) )
     if sql.fetchone()[0] == 0 :

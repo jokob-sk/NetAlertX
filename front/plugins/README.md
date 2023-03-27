@@ -52,7 +52,7 @@ Any of the above datasources have to return a "table" of the exact structure as 
   | Order | Represented Column | Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
   | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
-  | 1 | `Object_SecondaryID` | no | Optionalsecondary ID to create a relationship beween other entities, such as a MAC address |
+  | 1 | `Object_SecondaryID` | no | Optional secondary ID to create a relationship beween other entities, such as a MAC address |
   | 2 | `DateTime` | yes | When the event occured in the format `2023-01-02 15:56:30` |
   | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For example IP address |
   | 4 | `Watched_Value2` | no | As above |
@@ -63,14 +63,16 @@ Any of the above datasources have to return a "table" of the exact structure as 
 
 ### "data_source":  "python-script"
 
-Used to interface between PiAlert and the plugin (script). After every scan it should contain only the results from the latest scan/execution. 
+ If the datasource is set to `python-script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain a executable linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
+ 
+ The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
-- The format is a `csv`-like file with the pipe `|` separator. 8 (eight) values need to be supplied, so every line needs to contain 7 pipe separators. Empty values are represented by `null`  
-- Don't render "headers" for these "columns"
-- Every scan result / event entry needs to be on a new line
-- You can find which "columns" need to be present in the script results and if the value is required below. 
-- The order of these "columns" can't be changed
-
+- The format of the `last_result.log` is a `csv`-like file with the pipe `|` as a separator. 
+- 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.  
+- Don't render "headers" for these "columns".
+- Every scan result / event entry needs to be on a new line.
+- You can find which "columns" need to be present, and if the value is required or optional, below. 
+- The order of these "columns" can't be changed.
 
 #### Examples
 
@@ -147,9 +149,69 @@ Required `CMD` setting example with above query (you can set `"type": "label"` i
 
 #### params
 
+The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
+
+##### Example:
+
+Passing user defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
+
+```bash
+root@server# python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
+```
+
+* You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below). 
+* You specify the parameter `urls` in the `params` section of the `config.json` the following way (`WEBMON_` is the plugin prefix automatically added to all the settings):
+```json
+{
+    "params" : [
+        {
+            "name"  : "urls",
+            "type"  : "setting",
+            "value" : "WEBMON_urls_to_check"
+        }]
+}
+```
+* Then you use this setting as an input parameter for your command in the `CMD` setting. Notice `urls={urls}` in the below json:
+
+```json
+ {
+            "function": "CMD",
+            "type": "text",
+            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Command"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Command to run"
+            }]
+        }
+```
+
+During script execution, the app will take the command `"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it by with the value from the `WEBMON_urls_to_check` setting. This is because:
+
+1) The app checks the `params` entries
+2) It finds `"name"  : "urls"`
+3) Checks the type of the `urls` params and finds `"type"  : "setting"`
+4) Gets the setting name from  `"value" : "WEBMON_urls_to_check"` 
+  - IMPORTANT: in the `config.json` this setting is identified by `"function":"urls_to_check"`, not `"function":"WEBMON_urls_to_check"`
+  - You can also use a global setting, or a setting from a different plugin  
+5) The app gets the user defined value from the setting with the code name `WEBMON_urls_to_check`
+  - let's say the setting with the code name  `WEBMON_urls_to_check` containes 2 values entered by the user: 
+  - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
+6) The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
+  - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
+  - to
+  - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
+
+Below are some general additional notes, when definig `params`: 
+
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
-  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD`setting.  
+  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
   - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting dispaly name, e.g. `SCAN_CYCLE_MINUTES`. 
 - `"value" : "param_value"` - Needs to contain a setting code name or sql query without wildcards.
 
@@ -186,9 +248,11 @@ Example:
     
 ##### Supported settings `function` values
 
+You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functiona attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
+
 - `RUN` - (required) Specifies when the service is executed
     - Supported Options: "disabled", "once", "schedule" (if included then a `RUN_SCHD` setting needs to be specified), "always_after_scan", "on_new_device"
-- `RUN_SCHD` - (required if you include the  `RUN`) Cron-like scheduling used if the `RUN` setting set to `schedule`
+- `RUN_SCHD` - (required if you include the above `RUN` function) Cron-like scheduling used if the `RUN` setting set to `schedule`
 - `CMD` - (required) What command should be executed. 
 - `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
 - `RUN_TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.
