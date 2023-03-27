@@ -197,15 +197,15 @@ During script execution, the app will take the command `"python3 /home/pi/pialer
 2) It finds `"name"  : "urls"`
 3) Checks the type of the `urls` params and finds `"type"  : "setting"`
 4) Gets the setting name from  `"value" : "WEBMON_urls_to_check"` 
-  - IMPORTANT: in the `config.json` this setting is identified by `"function":"urls_to_check"`, not `"function":"WEBMON_urls_to_check"`
-  - You can also use a global setting, or a setting from a different plugin  
+   - IMPORTANT: in the `config.json` this setting is identified by `"function":"urls_to_check"`, not `"function":"WEBMON_urls_to_check"`
+   - You can also use a global setting, or a setting from a different plugin  
 5) The app gets the user defined value from the setting with the code name `WEBMON_urls_to_check`
-  - let's say the setting with the code name  `WEBMON_urls_to_check` containes 2 values entered by the user: 
-  - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
+   - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user: 
+   - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
 6) The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
-  - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
-  - to
-  - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
+   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
+   - to
+   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
 
 Below are some general additional notes, when definig `params`: 
 

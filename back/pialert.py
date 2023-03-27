@@ -1267,6 +1267,9 @@ def save_scanned_devices (p_arpscan_devices, p_cycle_interval):
 
     mylog('debug', ['    Saving this IP into the CurrentScan table:', local_ip])
 
+    if check_IP_format(local_ip) == '':
+        local_ip = '0.0.0.0'
+
     # Check if local mac has been detected with other methods
     sql.execute ("SELECT COUNT(*) FROM CurrentScan WHERE cur_ScanCycle = ? AND cur_MAC = ? ", (cycle, local_mac) )
     if sql.fetchone()[0] == 0 :
