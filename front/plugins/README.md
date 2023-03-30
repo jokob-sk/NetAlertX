@@ -85,7 +85,7 @@ Any of the above datasources have to return a "table" of the exact structure as 
 - 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.  
 - Don't render "headers" for these "columns".
 - Every scan result / event entry needs to be on a new line.
-- You can find which "columns" need to be present, and if the value is required or optional, below. 
+- You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
 - The order of these "columns" can't be changed.
 
 #### Examples
@@ -432,6 +432,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 
 - [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) 
 - [dhcp_servers (DHCPSRVS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/config.json) 
+- [dhcp_leases (DHCPLSS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/config.json) 
 
 ### SQL query based plugins
 - [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
