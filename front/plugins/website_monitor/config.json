@@ -359,7 +359,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>."
+                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>. The values from this setting will be used to replace the <code>{urls}</code> wildcard in the <code>WEBMON_CMD</code> setting."
             }]
         },
         {
