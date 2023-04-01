@@ -146,7 +146,7 @@ function localize (obj, key) {
         }
     }
 
-    result == "" ? en_us : result ;
+    result == "" ? result = en_us : result ;
 
     return result;
 }
@@ -190,6 +190,9 @@ function generateTabs()
     activetab = 'active'
 
     $.each(pluginDefinitions, function(index, obj) {
+
+        // console.log(obj)
+
         $('#tabs-location').append(
             `<li class=" ${activetab}">
                 <a href="#${obj.unique_prefix}" data-plugin-prefix="${obj.unique_prefix}" id="${obj.unique_prefix}_id" data-toggle="tab" >
