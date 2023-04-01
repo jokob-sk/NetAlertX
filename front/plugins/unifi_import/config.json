@@ -1,0 +1,428 @@
+{
+    "code_name": "unifi_import",
+    "unique_prefix": "UNFIMP",
+    "enabled": true,    
+    "data_source":  "python-script",
+    "localized": ["display_name", "description", "icon"],
+    "mapped_to_table": "DHCP_Leases",    
+    "display_name" : [{
+        "language_code":"en_us",
+        "string" : "UniFi import"
+    }],
+    "icon":[{
+        "language_code":"en_us",
+        "string" : "<i class=\"fa-solid fa-upload\"></i>"
+    }],     
+    "description": [{
+        "language_code":"en_us",
+        "string" : "This plugin is used to import devices from an UNIFI controller."
+    }],
+    "params" : [
+        {
+            "name"  : "username",
+            "type"  : "setting",
+            "value" : "UNFIMP_username"
+        },
+        {
+            "name"  : "password",
+            "type"  : "setting",
+            "value" : "UNFIMP_password"
+        },
+        {
+            "name"  : "host",
+            "type"  : "setting",
+            "value" : "UNFIMP_host"
+        },
+        {
+            "name"  : "sites",
+            "type"  : "setting",
+            "value" : "UNFIMP_sites"
+        },
+        {
+            "name"  : "protocol",
+            "type"  : "setting",
+            "value" : "UNFIMP_protocol"
+        },
+        {
+            "name"  : "port",
+            "type"  : "setting",
+            "value" : "UNFIMP_port"
+        }
+    ], 
+    "database_column_definitions":
+    [          
+        {
+            "column": "Index",            
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        } ,
+        {
+            "column": "Plugin",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "N/A"
+                }]
+        },
+        {
+            "column": "Object_PrimaryID",
+            "mapped_to_column": "DHCP_MAC", 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "devicemac",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "MAC address"
+                }]
+        },
+        {
+            "column": "Object_SecondaryID",
+            "mapped_to_column": "DHCP_IP", 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "deviceip",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "IP"
+                }]
+        } ,
+        {
+            "column": "DateTimeCreated",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Created"
+                }]
+        },
+        {
+            "column": "DateTimeChanged",
+            "mapped_to_column": "DHCP_DateTime", 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Changed"
+                }]
+        },
+        {
+            "column": "Watched_Value1",
+            "mapped_to_column": "DHCP_Name", 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Hostname"
+                }]
+        },
+        {
+            "column": "Watched_Value2",            
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Vendor"
+                }]
+        },
+        {
+            "column": "Watched_Value3",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Type"
+                }]
+        } ,
+        {
+            "column": "Watched_Value4",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Network"
+                }]
+        } ,       
+        {
+            "column": "UserData",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "textboxsave",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Comments"
+                }]
+        },        
+        {
+            "column": "Extra",
+            "css_classes": "col-sm-3",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Hostname"
+                }]
+        },        
+        {
+            "column": "Status",
+            "css_classes": "col-sm-1",
+            "show": true,
+            "type": "replace",            
+            "default_value":"",
+            "options": [
+                {
+                    "equals": "watched-not-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+                },
+                {
+                    "equals": "watched-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+                },
+                {
+                    "equals": "new",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Status"
+                }]
+        }            
+    ],
+    "settings":[
+        {
+            "function": "RUN",            
+            "type": "selecttext",            
+            "default_value":"disabled",
+            "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "When to run"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Enable import of devices from a UNIFI controller. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+            }]
+        },
+        {
+            "function": "CMD",
+            "type": "text",
+            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port}",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Command"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Command to run. Not recommended to change."
+            }]
+        },
+        {
+            "function": "username",
+            "type": "text",
+            "default_value":"",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Username"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The username used to login into your UNIFI controller. It is recommended to create a read-only user account."
+            }]
+        },
+        {
+            "function": "password",
+            "type": "password",
+            "default_value":"",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Password"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The password used to login into your UNIFI controller."
+            }]
+        },
+        {
+            "function": "protocol",
+            "type": "selecttext",
+            "default_value":"https://",
+            "options": ["https://", "http://"],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Protocol"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The protocol to use to access the controller."
+            }]
+        },
+        {
+            "function": "host",
+            "type": "text",
+            "default_value":"192.168.1.1",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Host"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The host (IP) where the UNIFI controller is runnig. Do NOT include the protocol (e.g. <code>https://</code>)"
+            }]
+        },
+        {
+            "function": "port",
+            "type": "text",
+            "default_value":"8443",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Port number"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>."
+            }]
+        },
+        {
+            "function": "sites",
+            "type": "list",
+            "default_value":["default"],
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "UNIFI sites"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The sites you want to connect to. Usually it is only one and the name is <code>default</code>. Check the URL in your UniFi controller UI if unsure."
+            }]
+        },
+        {
+            "function": "RUN_SCHD",
+            "type": "text",
+            "default_value":"0 2 * * *",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Schedule"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+            }]
+        },
+        {
+            "function": "RUN_TIMEOUT",
+            "type": "integer",
+            "default_value":5,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Run timeout"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Wartezeit"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+            }]
+        },
+        {
+            "function": "WATCH",
+            "type": "multiselect",
+            "default_value":["Watched_Value1", "Watched_Value4"],
+            "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Watched"
+            }] ,
+            "description":[{
+                "language_code":"en_us",
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Vendor </li><li><code>Watched_Value3</code> is Type </li><li><code>Watched_Value4</code> is Network </li></ul>"
+            }] 
+        },
+        {
+            "function": "REPORT_ON",
+            "type": "multiselect",
+            "default_value":["new","watched-changed"],
+            "options": ["new","watched-changed","watched-not-changed"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Report on"
+            }] ,
+            "description":[{
+                "language_code":"en_us",
+                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+            }] 
+        }
+    ]
+}
+

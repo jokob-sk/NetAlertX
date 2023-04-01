@@ -32,6 +32,7 @@ $result = $db->query("SELECT * FROM Settings");
 
 // array 
 $settingKeyOfLists = array();
+$settingCoreGroups = array('General', 'Email', 'Webhooks', 'Apprise', 'NTFY', 'PUSHSAFER', 'MQTT', 'DynDNS', 'PiHole', 'Pholus', 'Nmap', 'API');
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      
@@ -82,10 +83,18 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       $isIn = ' in ';
       foreach ($groups as $group) 
       { 
+        if (in_array($group, $settingCoreGroups))
+        {
+          $settingGroupTypeHtml = "";
+        } else
+        {
+          $settingGroupTypeHtml = ' (<i class="fa-regular fa-plug fa-sm"></i>) ';
+        }
+
         $html = $html.'<div  class=" box panel panel-default">
                           <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
                             <div class="panel-heading">                              
-                                <h4 class="panel-title">'.lang($group.'_icon')." ".lang($group.'_display_name').'</h4>                              
+                                <h4 class="panel-title">'.lang($group.'_icon')." ".lang($group.'_display_name').$settingGroupTypeHtml.'</h4>                              
                             </div>
                           </a>
                           <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 

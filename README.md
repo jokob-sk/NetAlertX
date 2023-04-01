@@ -56,7 +56,8 @@ The system continuously scans the network for, **New devices**, **New connection
     - Monitor anything for changes
     - Check the instructions carefully if you are up for a challenge! Current plugins include:
       - Detecting Rogue DHCP servers
-      - Monitoring HTTP status changes of domains/URLs        
+      - Monitoring HTTP status changes of domains/URLs 
+      - Import devices from DHCP.leases files or a UniFi controller
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
   |----------------------|----------------------| ----------------------| 

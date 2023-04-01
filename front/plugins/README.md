@@ -12,7 +12,7 @@ These issues will be hopefully fixed with time, so please don't report them. Ins
 
 ## Overview
 
-PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. 
+PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. (Currently update/overwriting of existing objects is not supported.)
 
 Example use cases for plugins could be:
 
@@ -42,8 +42,6 @@ Again, please read the below carefully if you'd like to contribute with a plugin
 
 More on specifics below.
 
-
-
 ### Column order and values
 
   | Order | Represented Column | Required | Description | 
@@ -59,7 +57,7 @@ More on specifics below.
   | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
 
 
-### config.json 
+# config.json structure
 
 ## Supported data sources
 
@@ -433,6 +431,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) 
 - [dhcp_servers (DHCPSRVS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/config.json) 
 - [dhcp_leases (DHCPLSS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/config.json) 
+- [unifi_import (UNFIMP) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/config.json) 
 
 ### SQL query based plugins
 - [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
