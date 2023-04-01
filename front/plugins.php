@@ -129,9 +129,7 @@ function localize (obj, key) {
     {
         for(i=0;i<obj[key].length;i++)
         {
-            code = obj[key][i]["language_code"]
-
-            // console.log(code)
+            code = obj[key][i]["language_code"]            
 
             if( code == 'en_us')
             {

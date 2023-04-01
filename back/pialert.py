@@ -3299,7 +3299,8 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
     # Save plugins
-    write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins}))  
+    if ENABLE_PLUGINS: 
+        write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins}))  
 
     #  prepare database tables we want to expose 
     dataSourcesSQLs = [

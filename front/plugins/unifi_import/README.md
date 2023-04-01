@@ -4,7 +4,7 @@ A plugin allowing for importing devices from a UniFi controller.
 
 ### Usage
 
-Spedify the following settings in the Settings section of PiAlert:
+Specify the following settings in the Settings section of PiAlert:
 
 - `UNFIMP_username` - Username used to login into the UNIFI controller.
 - `UNFIMP_password` - Password used to login into the UNIFI controller.
@@ -16,3 +16,4 @@ Spedify the following settings in the Settings section of PiAlert:
 ### Notes
 
 - Currently only used to import devices, not their status, type or network map.
+- It is recommend to create a read-only user in your UniFi controller 
