@@ -1,6 +1,6 @@
 ## Overview
 
-A plugin allowing for importing devices from an UniFi controller.  
+A plugin allowing for importing devices from a UniFi controller.  
 
 ### Usage
 

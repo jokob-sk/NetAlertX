@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Based on the work of https://github.com/stevehoek/Pi.Alert
+# Inspired by https://github.com/stevehoek/Pi.Alert
 
 # Example call
 # python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd  host=192.168.1.1 site=default  protocol=https:// port=8443
@@ -19,7 +19,6 @@ import sys
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import pwd
 import os
-from unificontrol   import UnifiClient
 from pyunifi.controller import Controller
 
 
@@ -110,7 +109,7 @@ def get_entries(newEntries):
 
             tmpPlugObj = plugin_object_class(
                 ap['mac'], 
-                ap['ip'], 
+                get_unifi_val(ap, 'ip'), 
                 name, 
                 'Ubiquiti Networks Inc.', 
                 deviceType, 
@@ -134,7 +133,7 @@ def get_entries(newEntries):
 
             tmpPlugObj = plugin_object_class(
                 cl['mac'], 
-                cl['ip'], 
+                get_unifi_val(cl, 'ip'), 
                 name, 
                 get_unifi_val(cl, 'oui'), 
                 'Other', 
@@ -156,7 +155,7 @@ def get_entries(newEntries):
 
             tmpPlugObj = plugin_object_class(
                 us['mac'], 
-                us['ip'], 
+                get_unifi_val(us, 'ip'), 
                 name, 
                 get_unifi_val(us, 'oui'), 
                 'Other', 
