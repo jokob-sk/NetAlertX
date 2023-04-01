@@ -33,7 +33,7 @@ def main():
 
     # init global variables
     global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST
-    global UNIFI_REQUIRE_PRIVATE_IP, UNIFI_SKIP_NAMED_GUESTS, UNIFI_SKIP_GUESTS, UNIFI_SITES, PORT, PROTOCOL
+    global UNIFI_SITES, PORT, PROTOCOL
 
     last_run_logfile = open(last_run, 'a') 
 
@@ -221,8 +221,7 @@ def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 =
     if foreignKey == '':
         foreignKey = 'null'
 
-    with open(last_run, 'a') as last_run_logfile:
-        # https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|null
+    with open(last_run, 'a') as last_run_logfile:        
         last_run_logfile.write("{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
                                                 primaryId,
                                                 secondaryId,
