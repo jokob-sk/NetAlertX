@@ -53,16 +53,28 @@ docker run -d --rm --network=host \
 
 ### Config (`pialert.conf`)
 
-- The preferred wy is to manage the configuration via Settings 
-- YOu can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly if needed
-- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. ()
+- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file om teh first run.
+- The preferred way is to manage the configuration via Settings in the UI.
+- You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
+
+#### Important settings
+
+These are the most important settings to get at least some output in your Devices screen. Usually, only one approach is used, but you should be able to combine these approaches.
+
+##### For arp-scan: ENABLE_ARPSCAN, SCAN_SUBNETS
+
+- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable.
    * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
    * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
    * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
      * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
-     * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1']` 
-   * More documentation on how to [setup vlans](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
+     * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1 -vlan=107']` 
+   * More documentation on how to e.g. [setup vlans & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
 
+##### For pihole: PIHOLE_ACTIVE, DHCP_ACTIVE
+
+* `PIHOLE_ACTIVE`: You need to map `:/etc/pihole/pihole-FTL.db in the docker-compose.yml` file if you enable this setting.
+* `DHCP_ACTIVE` : You need to map `:/etc/pihole/dhcp.leases in the docker-compose.yml` file if you enable this setting.
 
 ### 🛑 **Common issues** 
 
@@ -71,10 +83,9 @@ docker run -d --rm --network=host \
 **Permissions**
 
 * If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
-* To solve permission issues you can also try to create a DB backup and then run a DB Restore via the **Maintenance > Backup/Restore** section.
-* You can try also setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
+* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
 * Map to local User and Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
-* Map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
+* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
 
 **Container restarts / crashes**
 

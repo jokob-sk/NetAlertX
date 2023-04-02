@@ -12,35 +12,31 @@ assignees: ''
 
 **Paste last few lines from `pialert.log`**
 
+> You can use `tail -20 /home/pi/pialert/front/log/pialert.log`
+
 ```
-
-paste here
-
+paste_here
 ```
 
 **Paste your `pialert.conf` (remove personal info)**
 
 ```
-
-paste here
-
+paste_here
 ```
 
 **Paste your `docker-compose.yml` and `.env` (remove personal info)**
 
 `docker-compose.yml` 
-```
-
-paste here
 
 ```
-
+paste_here
+```
 
 `.env` 
-```
-
-paste here
 
 ```
+paste_here
+```
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.

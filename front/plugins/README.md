@@ -21,7 +21,12 @@ Again, please read the below carefully if you'd like to contribute with a plugin
 
 ## ⚠ Disclaimer
 
-Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience (e.g. making the tables sortable/filterable). 
+Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. Example improvements for the taking:
+
+* Making the tables sortable/filterable
+* Using the same approach to display table  data as in the Devices section (solves above)
+* Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
+* ...
 
 ## ❗ Known issues:
 
