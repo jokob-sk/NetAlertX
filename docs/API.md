@@ -5,12 +5,7 @@ PiAlert comes with a simple API. These API endpoints are static files, that are 
 
 ### When are the endpoints updated
 
-Once you enable the API (`ENABLE_API` setting), the endpoints are updated during these events:
-
-1) Always during a notification event.
-2) (optional) If `API_RUN` is set to `schedule` on a specified cron-like schedule specified by the `API_RUN_SCHD` setting.
-3) (optional) If `API_RUN` is set to `interval` every N seconds specified by the `API_RUN_INTERVAL` setting (minimum 5).
-
+Once you enable the API (`ENABLE_API` setting), the endpoints are updated when objects in the API endpoints are changed:
 
 ### Location of the endpoints
 

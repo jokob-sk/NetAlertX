@@ -1,16 +1,8 @@
-# ⚠ Disclaimer
-
-Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience (e.g. making the tables sortable/filterable). 
-
-## ❗ Known issues:
-
-These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
-
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries.
-* Occasional (experienced twice) hanging of processing plugin script file.
-* UI displaying outdated values until the API endpoints get refreshed. 
-
 ## Overview
+
+| ![Screen 1][screen1] | ![Screen 2][screen2] | 
+|----------------------|----------------------| 
+| ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
 PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. (Currently update/overwriting of existing objects is not supported.)
 
@@ -26,6 +18,18 @@ Example use cases for plugins could be:
 If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
 
 Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double check the sample plugins as well. 
+
+## ⚠ Disclaimer
+
+Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience (e.g. making the tables sortable/filterable). 
+
+## ❗ Known issues:
+
+These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
+
+* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries.
+* Occasional (experienced twice) hanging of processing plugin script file.
+* UI displaying outdated values until the API endpoints get refreshed. 
 
 ## Plugin file structure overview 
 
@@ -436,11 +440,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 ### SQL query based plugins
 - [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
 
-### Screenshots 
 
-| ![Screen 1][screen1] | ![Screen 2][screen2] | 
-|----------------------|----------------------| 
-| ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
 [screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png                "Screen 1"
 [screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png       "Screen 2"

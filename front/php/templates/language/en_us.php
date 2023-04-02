@@ -515,7 +515,7 @@ $lang['en_us'] = array(
 'ENABLE_ARPSCAN_description' => 'Arp-scan is a command-line tool that uses the ARP protocol to discover and fingerprint IP hosts on the local network. An alternative to ARP scan is to enable the <a onclick="toggleAllSettings()" href="#PIHOLE_ACTIVE"><code>PIHOLE_ACTIVE</code>PiHole integration settings</a>.',
 'SCAN_SUBNETS_name' => 'Subnets to scan',
 'SCAN_SUBNETS_description' => '
-The arp-scan time itself depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface. Check the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md" target="_blank">subnets documentation</a> for details.
+The arp-scan time itself depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface. Check the <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md" target="_blank">subnets documentation</a> for help on setting up VLANs, what VLANs are supported, or how to figure out the network mask and your interface.
 ',
 'LOG_LEVEL_name' => 'Print additional logging',
 'LOG_LEVEL_description' => 'This setting will enable more verbose logging. Useful for debugging events writing into the database.',
