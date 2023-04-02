@@ -1,8 +1,19 @@
 ## How to setup your Network page
 
-Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently support as root)
+Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node).
 
-To setup a device named `rapberrypi` as a `Switch` in our network. 
+## ⚡Quick setup:
+
+* Go to Devices > Device Details. 
+* Find the device(s) you want to use as network devices (network nodes). 
+* Set the Type of such a device to one of the following: AP, Firewall, Gateway, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN.
+* Save and go to Network where the devices you've marked as network devices (by selecting the Type as mentioned above) will show up as tabs.
+* You can now assign the Unassigend devices to the correct network node.
+
+
+## 🔍Detailed example:
+
+In this example you will setup a device named `rapberrypi` as a `Switch` in our network. 
 
 ### 1) Device details page
 

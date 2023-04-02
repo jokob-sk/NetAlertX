@@ -53,8 +53,8 @@ docker run -d --rm --network=host \
 
 ### Config (`pialert.conf`)
 
-- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file om teh first run.
-- The preferred way is to manage the configuration via Settings in the UI.
+- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
+- The preferred way is to manage the configuration via the Settings section in the UI.
 - You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
 
 #### Important settings
@@ -76,7 +76,7 @@ These are the most important settings to get at least some output in your Device
 * `PIHOLE_ACTIVE`: You need to map `:/etc/pihole/pihole-FTL.db in the docker-compose.yml` file if you enable this setting.
 * `DHCP_ACTIVE` : You need to map `:/etc/pihole/dhcp.leases in the docker-compose.yml` file if you enable this setting.
 
-### 🛑 **Common issues** 
+### **Common issues** 
 
 💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed). 
 
