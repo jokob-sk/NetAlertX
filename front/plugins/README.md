@@ -21,7 +21,7 @@ Again, please read the below carefully if you'd like to contribute with a plugin
 
 ## ⚠ Disclaimer
 
-Highly experimental feature. Follow the below very carefully and check example plugin(s). Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. Example improvements for the taking:
+Experimental feature used also to speed up development  and to make the app more maintainable. Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. Example improvements for the taking:
 
 * Making the tables sortable/filterable
 * Using the same approach to display table  data as in the Devices section (solves above)
@@ -360,15 +360,16 @@ Example:
 The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. Thease are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an English translation will be shown in the UI.
-- Supported types: `label`, `text`, `threshold`, `replace`
+- Supported types: `label`, `text`, `threshold`, `replace`, `deviceip`, `devicemac`, `url`. Check for details below, how columns behave based on the type.
   - `label` makes a column display only
-  - `text` makes a column editable
+  - `text` makes a column editable and a save icon is displayed next to it.
   - See below for information on `threshold`, `replace`
 - The `options` property is used in conjunction with these types:
   - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
-  - `devicemac` - The value is considered to be a mac adress and a link pointing to the device with the given mac address is generated.
-  - `url` - The value is considered to be a url so a link is generated.
+- `devicemac` - The value is considered to be a mac address and a link pointing to the device with the given mac address is generated.
+- `deviceip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is cheked against the last detected IP addresses and translated into a mac address that is then used for the link itself.
+- `url` - The value is considered to be a url so a link is generated.
 
 
 ```json
