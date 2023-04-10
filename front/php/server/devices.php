@@ -573,72 +573,6 @@ function getDevicesTotals() {
 //------------------------------------------------------------------------------
 //  Query the List of devices in a determined Status
 //------------------------------------------------------------------------------
-// function getDevicesListForNetworkTree() {
-//   global $db;
-
-//   $sql = 'SELECT *, CASE
-//               WHEN t1.dev_AlertDeviceDown=1 AND t1.dev_PresentLastScan=0 THEN "Down"
-//               WHEN t1.dev_NewDevice=1 THEN "New"
-//               WHEN t1.dev_PresentLastScan=1 THEN "On-line"
-//               ELSE "Off-line"  END AS dev_Status
-//               FROM (Devices ) t1
-//           LEFT JOIN
-//                       (
-//                             SELECT *,
-//                                   count() as connected_devices 
-//                             FROM Devices b 
-//                             WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
-//                       ) t2
-//                       ON (t1.dev_MAC = t2.dev_MAC); ';
-
-//   $result = $db->query($sql);
-
-//   // arrays of rows
-//   $tableData = array();
-//   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-
-//   $defaultOrder = array ($row['dev_Name'],
-//                     $row['dev_Owner'],
-//                     handleNull($row['dev_DeviceType']),
-//                     handleNull($row['dev_Icon'], "laptop"),
-//                     $row['dev_Favorite'],
-//                     $row['dev_Group'],
-//                     formatDate ($row['dev_FirstConnection']),
-//                     formatDate ($row['dev_LastConnection']),
-//                     $row['dev_LastIP'],
-//                     ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
-//                     $row['dev_Status'],
-//                     $row['dev_MAC'], // MAC (hidden)
-//                     formatIPlong ($row['dev_LastIP']), // IP orderable
-//                     $row['rowid'], // Rowid (hidden)      
-//                     handleNull($row['dev_Network_Node_MAC_ADDR']), // 
-//                     handleNull($row['connected_devices']) // 
-//                     );
-
-//   $newOrder = array();
-
-//   // reorder columns based on user settings
-//   for($index = 0; $index  < count($columnOrderMapping); $index++)
-//   {
-//   array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
-//   }
-
-//   $tableData['data'][] = $newOrder;
-//   }
-
-//   // Control no rows
-//   if (empty($tableData['data'])) {
-//   $tableData['data'] = '';
-//   }
-
-//   // Return json
-//   echo (json_encode ($tableData));
-
-// }
-
-//------------------------------------------------------------------------------
-//  Query the List of devices in a determined Status
-//------------------------------------------------------------------------------
 function getDevicesList() {
   global $db;
 
@@ -649,7 +583,7 @@ function getDevicesList() {
     $forceDefaultOrder = TRUE;
   }
 
-  // This object is used to map from the old order ( second parameter, first number) to the 3rd parameter (Second number (here initialized to -1))
+  // This object is used to map from the old order ( second parameter, first number) to the new mapping, that is represented by the 3rd parameter (Second number)
   $columnOrderMapping = array(
     array("dev_Name", 0, 0),               
     array("dev_Owner", 1, 1),              
@@ -684,9 +618,13 @@ function getDevicesList() {
       $orderedColumns = createArray($row[0]);
 
       // init ordered columns    
-      for($i = 0; $i < count($orderedColumns); $i++) {           
-        $columnOrderMapping[$i][2] = $orderedColumns[$i];      
+      for($i = 0; $i < count($orderedColumns); $i++) { 
+        
+        $oldVal = $columnOrderMapping[$i][2];
+
+        $columnOrderMapping[$i][2] = $orderedColumns[$i];        
       }
+
     }
   }
 

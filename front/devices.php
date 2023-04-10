@@ -225,6 +225,8 @@ function main () {
       // save the columns order in the Devices page 
       tableColumnOrder = numberArrayFromString(data);
 
+
+
       //initialize the table headers in the correct order
       var headersDefaultOrder = [ '<?= lang('Device_TableHead_Name');?>',
                                   '<?= lang('Device_TableHead_Owner');?>',
@@ -308,7 +310,7 @@ function mapIndx(oldIndex)
 function initializeDatatable () {
   for(i = 0; i < tableColumnOrder.length; i++)
   {    
-    // hide this column if not in the tableColumnVisible variable
+    // hide this column if not in the tableColumnVisible variable (we need to keep the MAC address (index 11) for functionality reasons)    
     if(tableColumnVisible.includes(tableColumnOrder[i]) == false)
     {
       tableColumnHide.push(mapIndx(tableColumnOrder[i]));
@@ -348,7 +350,7 @@ function initializeDatatable () {
 
       // Device Name
       {targets: [mapIndx(0)],
-        'createdCell': function (td, cellData, rowData, row, col) {
+        'createdCell': function (td, cellData, rowData, row, col) {            
             $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
       } },
 

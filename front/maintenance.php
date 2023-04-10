@@ -707,7 +707,11 @@ function scrollDown()
   for (let i = 0; i < areaIDs.length; i++) {
 
     var tempArea = $('#' + areaIDs[i]);
-    $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+    
+    if (tempArea.length > 0)
+    {
+      $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+    }
 
   }
 }
@@ -715,8 +719,8 @@ function scrollDown()
 // --------------------------------------------------------
 // Manage displayed columns
 // --------------------------------------------------------
-colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','12','13','14','15','16','17'];
-colDefaultOrderTxt = '[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17]';
+colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'];
+colDefaultOrderTxt = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]';
 
 
 function saveSelectedColumns () { 
@@ -724,9 +728,7 @@ function saveSelectedColumns () {
     // save full order of all columns to simplify mapping later on
     
     colDisplayed = $('#columnsSelect').val();
-
     
-
     colNewOrder = colDisplayed;
 
     // append the remaining columns in the previous order
