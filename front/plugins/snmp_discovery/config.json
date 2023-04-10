@@ -232,7 +232,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers={routers} ",
+            "default_value":"python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers='{routers}' ",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -247,7 +247,7 @@
         {
             "function": "routers",
             "type": "list",
-            "default_value":["192.168.1.1"],
+            "default_value":["snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2"],
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -256,7 +256,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "The router IP addresses you want to connect to. SNMP has to be enabled on the target devices."
+                "string" : "A list of <code>snmpwalk</code> commands to execute against IP addresses of roputers/switches with SNMP turned on. <br/> <br/> Example: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported."
             }]
         },
         {

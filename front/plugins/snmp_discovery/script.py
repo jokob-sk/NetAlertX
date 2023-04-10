@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Example call
-# python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers=192.168.1.1
+# python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers='snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2'
 
 from __future__ import unicode_literals
 from time import sleep, time, strftime
@@ -47,7 +47,7 @@ def main():
 
     if values.routers:        
 
-        ROUTERS = values.routers.split('=')[1]  
+        ROUTERS = values.routers.split('=')[1].replace('\'','')  
         
         newEntries = get_entries(newEntries)  
    
@@ -73,7 +73,8 @@ def get_entries(newEntries):
 
         timeoutSec = 10
 
-        snmpwalkArgs = ['snmpwalk', '-v', '2c', '-c', 'public', '-OXsq', router, '.1.3.6.1.2.1.3.1.1.2']
+        # snmpwalkArgs = ['snmpwalk', '-v', '2c', '-c', 'public', '-OXsq', router, '.1.3.6.1.2.1.3.1.1.2']
+        snmpwalkArgs = router.split(' ')
 
         # Execute N probes and insert in list
         probes = 1 #  N probes
