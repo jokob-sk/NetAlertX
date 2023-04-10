@@ -110,7 +110,7 @@ def get_entries(newEntries):
                             f'{macStr[0]}:{macStr[1]}:{macStr[2]}:{macStr[3]}:{macStr[4]}:{macStr[5]}',
                             f'{ipStr[12]}.{ipStr[13]}.{ipStr[14]}.{ipStr[15]}'.strip(),
                             watched1='(unknown)',
-                            watched2=router,
+                            watched2=snmpwalkArgs[6], # router IP
                             extra=line
                         )
                         newEntries.append(tmpEntry) 
