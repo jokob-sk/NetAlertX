@@ -71,6 +71,8 @@ def get_entries(newEntries):
     for router in routers:
         # snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2
 
+        print(router)
+
         timeoutSec = 10
 
         # snmpwalkArgs = ['snmpwalk', '-v', '2c', '-c', 'public', '-OXsq', router, '.1.3.6.1.2.1.3.1.1.2']

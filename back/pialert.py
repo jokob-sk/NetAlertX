@@ -294,7 +294,7 @@ def commitDB ():
 def ccd(key, default, config, name, inputtype, options, group, events=[], desc = "", regex = ""):
     result = default
 
-    # use existing value if already supplied, otehrwise default value is used
+    # use existing value if already supplied, otherwise default value is used
     if key in config:
         result =  config[key]
 
@@ -3825,7 +3825,7 @@ def execute_plugin(plugin):
     else:     
         set_RUN_TIMEOUT = set["value"] 
 
-    mylog('debug', ['     [Plugins] Timeout: ', set_RUN_TIMEOUT])    
+    mylog('debug', ['     [Plugins] Timeout: ', set_RUN_TIMEOUT])     
 
     #  Prepare custom params
     params = []
@@ -3852,18 +3852,18 @@ def execute_plugin(plugin):
                 params.append( [param["name"], resolved] )
     
 
-    # ------- prepare params --------
-    # prepare command from plugin settings, custom parameters  
-    command = resolve_wildcards(set_CMD, params).split()
-
     # build SQL query parameters to insert into the DB
     sqlParams = []
 
     # python-script 
     if plugin['data_source'] == 'python-script':
+        # ------- prepare params --------
+        # prepare command from plugin settings, custom parameters  
+        command = resolve_wildcards_arr(set_CMD.split(), params)        
 
         # Execute command
         mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
+        mylog('debug',   ['     [Plugins] Resolved : ', command])        
 
         try:
             # try runnning a subprocess with a forced timeout in case the subprocess hangs
@@ -4164,8 +4164,7 @@ def combine_plugin_objects(old, new):
 # Replace {wildcars} with parameters
 def resolve_wildcards(command, params):
 
-    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])
-    
+    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])    
 
     for param in params:
         mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
@@ -4175,6 +4174,26 @@ def resolve_wildcards(command, params):
     mylog('debug', ['        [Plugins]: Resolved     CMD: ', command])
 
     return command
+
+#-------------------------------------------------------------------------------
+# Replace {wildcars} with parameters
+def resolve_wildcards_arr(commandArr, params):
+
+    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: '] + commandArr)   
+
+    for param in params:
+        # mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
+        # mylog('debug', ['        [Plugins]: resolved: ', param[1]])
+
+        i = 0
+        
+        for comPart in commandArr:
+
+            commandArr[i] = comPart.replace('{' + param[0] + '}', param[1]).replace('{s-quote}',"'")
+
+            i += 1
+
+    return commandArr
 
 #-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
@@ -4254,13 +4273,16 @@ def flatten_array(arr):
     
     tmp = ''
 
+    mylog('debug', arr)
+
     for arrayItem in arr:        
         # only one column flattening is supported
         if isinstance(arrayItem, list):            
             arrayItem = str(arrayItem[0])
 
         tmp += arrayItem + ','
-        tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
+        # tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
+        tmp = tmp.replace("'","") # No single quotes allowed
 
     return tmp[:-1] # Remove last comma ','
 

@@ -619,8 +619,6 @@ function getDevicesList() {
 
       // init ordered columns    
       for($i = 0; $i < count($orderedColumns); $i++) { 
-        
-        $oldVal = $columnOrderMapping[$i][2];
 
         $columnOrderMapping[$i][2] = $orderedColumns[$i];        
       }
