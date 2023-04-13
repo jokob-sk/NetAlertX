@@ -4162,21 +4162,6 @@ def combine_plugin_objects(old, new):
 
 #-------------------------------------------------------------------------------
 # Replace {wildcars} with parameters
-def resolve_wildcards(command, params):
-
-    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: ', command])    
-
-    for param in params:
-        mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
-        mylog('debug', ['        [Plugins]: resolved: ', param[1]])
-        command = command.replace('{' + param[0] + '}', param[1])
-
-    mylog('debug', ['        [Plugins]: Resolved     CMD: ', command])
-
-    return command
-
-#-------------------------------------------------------------------------------
-# Replace {wildcars} with parameters
 def resolve_wildcards_arr(commandArr, params):
 
     mylog('debug', ['        [Plugins]: Pre-Resolved CMD: '] + commandArr)   

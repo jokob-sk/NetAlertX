@@ -182,7 +182,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Network"
+                "string" : "Is online?"
                 }]
         } ,       
         {
@@ -208,7 +208,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Hostname"
+                "string" : "Network"
                 }]
         },        
         {

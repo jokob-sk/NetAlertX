@@ -75,7 +75,6 @@ def get_entries(newEntries):
 
         timeoutSec = 10
 
-        # snmpwalkArgs = ['snmpwalk', '-v', '2c', '-c', 'public', '-OXsq', router, '.1.3.6.1.2.1.3.1.1.2']
         snmpwalkArgs = router.split(' ')
 
         # Execute N probes and insert in list
@@ -93,17 +92,11 @@ def get_entries(newEntries):
                 # debug
                 run_logfile.write(line)
 
-                # print(line)
-
                 tmpSplt = line.split('"')   
 
                 if len(tmpSplt) == 3:
 
                     ipStr   = tmpSplt[0].split('.') # contains IP
-
-                    # print(len(tmpSplt))
-                    # print(tmpSplt[0])
-                    # print(tmpSplt[1])
 
                     macStr  = tmpSplt[1].split(' ') # contains MAC
 
