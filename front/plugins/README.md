@@ -441,7 +441,8 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - [website_monitor (WEBMON) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/config.json) 
 - [dhcp_servers (DHCPSRVS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/config.json) 
 - [dhcp_leases (DHCPLSS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/config.json) 
-- [unifi_import (UNFIMP) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/config.json) 
+- [unifi_import (UNFIMP) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/config.json)
+- [snmp_discovery (SNMPDSC) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/snmp_discovery/config.json)
 
 ### SQL query based plugins
 - [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
