@@ -54,10 +54,10 @@ The system continuously scans the network for, **New devices**, **New connection
   - 🌟(Experimental) [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
     - Create custom plugins with automatically generated settings and UI. 
     - Monitor anything for changes
-    - Check the instructions carefully if you are up for a challenge! Current plugins include:
-      - Detecting Rogue DHCP servers
+    - Check the [instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) carefully if you are up for a challenge! Current plugins include:
+      - Detecting Rogue DHCP servers via NMAP
       - Monitoring HTTP status changes of domains/URLs 
-      - Import devices from DHCP.leases files or a UniFi controller
+      - Import devices from DHCP.leases files, a UniFi controller, or an SNMP enabled router
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
   |----------------------|----------------------| ----------------------| 

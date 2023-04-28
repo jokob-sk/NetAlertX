@@ -9,7 +9,7 @@ For example, a `/24` mask results in 256 IPs to check, where as a `/16` mask che
 - Run `iwconfig` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
 - Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [comment in this issue](https://github.com/jokob-sk/Pi.Alert/issues/170#issuecomment-1419902988)
 
-### Example:
+### 🔍Example:
 
 ![Vlan configuration example](/docs/img/SUBNETS/subnets_vlan.png)
 

@@ -194,7 +194,7 @@
                       <div class="form-group">
                         <label class="col-sm-3 control-label">
                           <?= lang('DevDetail_Icon');?> 
-                          <a href="https://fontawesome.com/search?q=laptop&o=r&m=free" target="_blank"> <span><i class="fa fa-fw fa-arrow-up-right-from-square"></i></a><span>
+                          <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
