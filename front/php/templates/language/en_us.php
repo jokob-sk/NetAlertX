@@ -604,7 +604,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'PUSHOVER_display_name' => 'Pusover',
 'PUSHOVER_icon' => '<i class="fa p"></i>',
 'REPORT_PUSHOVER_name' => 'Enable Pushover',
-'REPORT_PUSHOVER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushover.com/">Pushover</a>.',
+'REPORT_PUSHOVER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushover.net/">Pushover</a>.',
 'PUSHOVER_USER_KEY_name' => 'Pushover user key',
 'PUSHOVER_USER_KEY_description' => 'Your Pushover user key.',
 'PUSHOVER_APP_TOKEN_name' => 'Pushover app API token',
