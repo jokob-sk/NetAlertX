@@ -2782,7 +2782,7 @@ def check_config(service):
     if service == 'pushover':
         if PUSHOVER_USER_KEY == '' or PUSHOVER_APP_TOKEN == '':
             mylog('none', [
-                  '    Error: Pusover service not set up correctly. Check your pialert.conf PUSHOVER_USER_KEY/PUSHOVER_APP_TOKEN variable.'])
+                  '    Error: Pushover service not set up correctly. Check your pialert.conf PUSHOVER_USER_KEY/PUSHOVER_APP_TOKEN variable.'])
             return False
         else:
             return True
