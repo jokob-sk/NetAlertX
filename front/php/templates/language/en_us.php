@@ -601,8 +601,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'NTFY_PASSWORD_description' => 'Enter password if you need (host) an instance with enabled authetication.',
 
 // Pushpver
-'PUSHOVER_display_name' => 'Pusover',
-'PUSHOVER_icon' => '<i class="fa p"></i>',
+'PUSHOVER_display_name' => 'Pushover',
+'PUSHOVER_icon' => '<i class="fa-solid fa-p"></i>',
 'REPORT_PUSHOVER_name' => 'Enable Pushover',
 'REPORT_PUSHOVER_description' => 'Enable sending notifications via <a target="_blank" href="https://www.pushover.net/">Pushover</a>.',
 'PUSHOVER_USER_KEY_name' => 'Pushover user key',

@@ -353,7 +353,7 @@ def importConfigs():
     # NTFY
     global REPORT_NTFY, NTFY_HOST, NTFY_TOPIC, NTFY_USER, NTFY_PASSWORD
     # PUSHOVER
-    global REPO_PUSHOVER, PUSHOVER_USER_KEY, PUSHOVER_APP_TOKEN
+    global REPORT_PUSHOVER, PUSHOVER_USER_KEY, PUSHOVER_APP_TOKEN
     # PUSHSAFER
     global REPORT_PUSHSAFER, PUSHSAFER_TOKEN
     # MQTT
@@ -466,9 +466,9 @@ def importConfigs():
     # PUSHOVER
     REPORT_PUSHOVER = ccd('REPORT_PUSHOVER', False, c_d,
                           'Enable Pushover', 'boolean', '', 'PUSHOVER', ['test'])
-    PUSHOVER_USER_KEY = ccd('PUSHOVER_USER_KEY', '', c_d,
+    PUSHOVER_USER_KEY = ccd('PUSHOVER_USER_KEY', 'UserKey', c_d,
                             'Pushover User Key', 'text', '', 'PUSHOVER')
-    PUSHOVER_APP_TOKEN = ccd('PUSHOVER_APP_TOKEN', '',
+    PUSHOVER_APP_TOKEN = ccd('PUSHOVER_APP_TOKEN', 'AppToken',
                             c_d, 'Pushover App Token', 'text', '', 'PUSHOVER')
 
     # PUSHSAFER
@@ -2779,8 +2779,9 @@ def check_config(service):
             return False
         else:
             return True
+
     if service == 'pushover':
-        if PUSHOVER_USER_KEY == '' or PUSHOVER_APP_TOKEN == '':
+        if PUSHOVER_USER_KEY == 'UserKey' or PUSHOVER_APP_TOKEN == 'AppToken':
             mylog('none', [
                   '    Error: Pushover service not set up correctly. Check your pialert.conf PUSHOVER_USER_KEY/PUSHOVER_APP_TOKEN variable.'])
             return False
@@ -2976,13 +2977,23 @@ def send_ntfy(_Text):
 
 
 def send_pushover(_Text):
-    url='https://api.pushover.net/1/messages.json'
-    post_fields={
-        "message": _Text,
-        "token": PUSHOVER_APP_TOKEN,
-        "user": PUSHOVER_USER_KEY
-    }
-    requests.post(url, data=post_fields)
+    if PUSHOVER_USER_KEY != 'UserKey' and PUSHOVER_APP_TOKEN != 'AppToken':
+        url = 'https://api.pushover.net/1/messages.json'
+        post_fields = {
+            "message": _Text,
+            "token": PUSHOVER_APP_TOKEN,
+            "user": PUSHOVER_USER_KEY,
+        }
+        try:
+            requests.post(url, data=post_fields)
+        except requests.exceptions.RequestException as err:
+            print ("Oops: Something Else",err)
+        except requests.exceptions.HTTPError as errh:
+            print ("Http Error:",errh)
+        except requests.exceptions.ConnectionError as errc:
+            print ("Error Connecting:",errc)
+        except requests.exceptions.Timeout as errt:
+            print ("Timeout Error:",errt)
 
 def send_pushsafer(_Text):
     url = 'https://www.pushsafer.com/api'
