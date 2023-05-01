@@ -468,7 +468,7 @@ def importConfigs():
                           'Enable Pushover', 'boolean', '', 'PUSHOVER', ['test'])
     PUSHOVER_USER_KEY = ccd('PUSHOVER_USER_KEY', '', c_d,
                             'Pushover User Key', 'text', '', 'PUSHOVER')
-    PUSHOVER_APP_TOKEN = cd('PUSHOVER_APP_TOKEN', '',
+    PUSHOVER_APP_TOKEN = ccd('PUSHOVER_APP_TOKEN', '',
                             c_d, 'Pushover App Token', 'text', '', 'PUSHOVER')
 
     # PUSHSAFER
@@ -2975,12 +2975,12 @@ def send_ntfy(_Text):
                   headers=headers)
 
 
-def send_pushover_Text):
+def send_pushover(_Text):
     url='https://api.pushover.net/1/messages.json'
     post_fields={
         "message": _Text,
         "token": PUSHOVER_APP_TOKEN,
-        "user": PUSHOVER_USER_KEY,
+        "user": PUSHOVER_USER_KEY
     }
     requests.post(url, data=post_fields)
 
