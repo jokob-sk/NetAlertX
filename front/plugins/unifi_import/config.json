@@ -47,6 +47,11 @@
             "name"  : "port",
             "type"  : "setting",
             "value" : "UNFIMP_port"
+        },
+        {
+            "name"  : "version",
+            "type"  : "setting",
+            "value" : "UNFIMP_version"
         }
     ], 
     "database_column_definitions":
@@ -257,7 +262,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port} version={version}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -342,6 +347,21 @@
             "description": [{
                 "language_code":"en_us",
                 "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>."
+            }]
+        },
+        {
+            "function": "version",
+            "type": "text",
+            "default_value":"",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "API version"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The base version of the Unify controller API. Supported values as of time of writing are <code>v4|v5|unifiOS|UDMP-unifiOS</code>."
             }]
         },
         {

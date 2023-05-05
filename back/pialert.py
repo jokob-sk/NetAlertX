@@ -670,7 +670,7 @@ def main ():
 
                 # If thread is still active
                 if p.is_alive():
-                    print "DEBUG scan_network running too long - let's kill it"
+                    print("DEBUG scan_network running too long - let\'s kill it")
                     mylog('info', ['    DEBUG scan_network running too long - let\'s kill it'])
 
                     # Terminate - may not work if process is stuck for good

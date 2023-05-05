@@ -32,7 +32,7 @@ def main():
 
     # init global variables
     global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST
-    global UNIFI_SITES, PORT, PROTOCOL
+    global UNIFI_SITES, PORT, PROTOCOL, VERSION
 
     last_run_logfile = open(last_run, 'a') 
 
@@ -47,6 +47,7 @@ def main():
     parser.add_argument('sites',  action="store",  help="Name of the sites (usually 'default', check the URL in your UniFi controller UI). Separated by comma (,) if passing multiple sites")      
     parser.add_argument('protocol',  action="store",  help="https:// or http://")  
     parser.add_argument('port',  action="store",  help="Usually 8443")  
+    parser.add_argument('version',  action="store",  help="The base version of the controller API [v4|v5|unifiOS|UDMP-unifiOS]")  
 
     values = parser.parse_args()
 
@@ -61,6 +62,7 @@ def main():
         UNIFI_SITES = values.sites.split('=')[1]  
         PROTOCOL = values.protocol.split('=')[1]
         PORT = values.port.split('=')[1]
+        VERSION = values.version.split('=')[1]
         
         newEntries = get_entries(newEntries)  
 
@@ -85,7 +87,7 @@ def get_entries(newEntries):
 
     for site in sites:
 
-        c = Controller(UNIFI_HOST, UNIFI_USERNAME, UNIFI_PASSWORD, ssl_verify=False, site_id=site )
+        c = Controller(UNIFI_HOST, UNIFI_USERNAME, UNIFI_PASSWORD, version=VERSION, ssl_verify=False, site_id=site )
 
         for ap in c.get_aps():
 

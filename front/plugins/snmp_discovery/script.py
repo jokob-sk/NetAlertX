@@ -31,10 +31,11 @@ def main():
     # init global variables
     global ROUTERS
 
-    last_run_logfile = open(last_run, 'a') 
-
     # empty file
-    last_run_logfile.write("")
+    open(last_run , 'w').close()   
+
+    last_run_logfile = open(last_run, 'a') 
+    
 
     parser = argparse.ArgumentParser(description='This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch.')
     
