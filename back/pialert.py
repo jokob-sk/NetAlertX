@@ -41,6 +41,7 @@ from cron_converter import Cron
 from pytz import timezone
 from json2table import convert
 import hashlib
+import multiprocessing
 
 #===============================================================================
 # SQL queries
@@ -124,12 +125,13 @@ def mylog(requestedDebugLevel, n):
 #-------------------------------------------------------------------------------
 def file_print (*args):
 
-    result = ''
-    
-    file = open(logPath + "/pialert.log", "a")    
+    result = ''    
+       
     for arg in args:                
         result += str(arg)
     print(result)
+
+    file = open(logPath + "/pialert.log", "a") 
     file.write(result + '\n')
     file.close()
 
@@ -655,7 +657,31 @@ def main ():
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 cycle = 1 # network scan
-                scan_network() 
+                # scan_network() 
+
+                #  DEBUG start ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                # Start scan_network as a process                
+
+                p = multiprocessing.Process(target=scan_network)
+                p.start()
+
+                # Wait for 3600 seconds (max 1h) or until process finishes
+                p.join(3600)
+
+                # If thread is still active
+                if p.is_alive():
+                    print "DEBUG scan_network running too long - let's kill it"
+                    mylog('info', ['    DEBUG scan_network running too long - let\'s kill it'])
+
+                    # Terminate - may not work if process is stuck for good
+                    p.terminate()
+                    # OR Kill - will work for sure, no chance for process to finish nicely however
+                    # p.kill()
+
+                    p.join()
+
+                #  DEBUG end ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                
             
             # Reporting   
             if cycle in check_report:
@@ -951,7 +977,10 @@ def update_devices_MAC_vendors (pArg = ''):
 
     # All devices loop
     mylog('verbose', ['    Searching devices vendor'])    
-    for device in sql.execute ("SELECT * FROM Devices") :
+    for device in sql.execute ("""SELECT * FROM Devices
+                                  WHERE dev_Vendor = '(unknown)' 
+                                     OR dev_Vendor =''
+                                     OR dev_Vendor IS NULL""") :
         # Search vendor in HW Vendors DB
         vendor = query_MAC_vendor (device['dev_MAC'])
         if vendor == -1 :
@@ -1081,9 +1110,9 @@ def scan_network ():
     update_devices_names()
 
     # Void false connection - disconnections
-    mylog('verbose', ['    Voiding false (ghost) disconnections'])
+    mylog('verbose', ['    Voiding false (ghost) disconnections'])    
     void_ghost_disconnections ()
-  
+
     # Pair session events (Connection / Disconnection)
     mylog('verbose', ['    Pairing session events (connection / disconnection) '])
     pair_sessions_events()  
