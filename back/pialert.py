@@ -3939,7 +3939,7 @@ def execute_plugin(plugin):
         for row in arr:
             # There has to be always 9 columns
             if len(row) == 9 and (row[0] in ['','null']) == False :
-                sqlParams.append((plugin["unique_prefix"], row[0], row[1], 'null', row[2], row[3], row[4], row[5], row[6], 0, row[7], 'null', row[8]))
+                sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
             else:
                 mylog('none', ['        [Plugins]: Skipped invalid sql result'])
 
@@ -3963,6 +3963,14 @@ def execute_plugin(plugin):
         # update API endpoints
         update_api(False, ["plugins_events","plugins_objects"])
 
+
+#-------------------------------------------------------------------------------
+# Handle empty value 
+def handle_empty(value):    
+    if value == '' or value is None:
+        value = 'null'
+
+    return value
 
 #-------------------------------------------------------------------------------
 # Check if watched values changed for the given plugin

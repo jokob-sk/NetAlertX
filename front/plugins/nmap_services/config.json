@@ -49,7 +49,7 @@
             "column": "Object_PrimaryID",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "devicemac",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
