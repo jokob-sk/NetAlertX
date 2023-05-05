@@ -18,7 +18,7 @@ To edit device information:
   - **Owner**: Device owner (The list is self-populated with existing owners)
   - **Type**: Select a device type from the dropdown list (Smartphone, Table,
       Laptop, TV, router, ....) or type a new device type
-  - **Vendor**: Automatically updated by Pi.Alert
+  - **Vendor**: Automatically updated by Pi.Alert when empty or unknown
   - **Favorite**: Mark the device as favorite and then it will appears at the
       begining of the device list
   - **Group**: Select a grouper ('Always on', 'Personal', Friends') or type
