@@ -131,8 +131,11 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
               </div>
               <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?></div>
+                    <div class="db_info_table_row">                      
+                        <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?>
+                          <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
+
+                        </div>
                         <div class="db_info_table_cell">
                         <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>"><?php echo '<span id="new-version-text" class="myhidden">' .lang('Maintenance_new_version').'</span>'.'<span id="current-version-text" class="myhidden">' .lang('Maintenance_current_version').'</span>';?></div>
                         </div>
