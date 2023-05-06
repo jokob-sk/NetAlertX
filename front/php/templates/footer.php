@@ -12,9 +12,14 @@
     <!-- Default to the left -->
 
     <!-- &copy; 2020 Puche -->
-    <?php
-      echo '<span style="display:inline-block; transform: rotate(180deg)">&copy;</span> 2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>)';
-    ?>
+    <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>
+    
+       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>)  
+
+      <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/docs" target="_blank"> 
+        <span>Docs <i class="fa fa-circle-question"></i>
+      </a><span>
+    
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
 

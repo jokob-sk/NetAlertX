@@ -1,0 +1,85 @@
+## Documentation overview
+
+In the app hover-over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.
+
+![In-app help](/docs/img/GENERAL/in-app-help.png)
+
+There is also an in-app Help / FAQ section that should be answering frequently asked questions.
+
+### 📚 Table of contents
+
+#### Popular/Suggested
+
+- [API endpoints details](/docs/API.md)
+- [Plugin system details and how to develop your own](/front/plugins/README.md)
+- [Network tree map configuration](/docs/NETWORK_TREE.md)
+- [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
+- [Subnets and vlans configuration for arp-scan](/docs/SUBNETS.md)
+
+#### System Management
+
+- [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
+- [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
+- [Custom Icons configuration and support](/docs/ICONS.md)
+
+#### Examples
+
+- [N8N webhook example](/docs/WEBHOOK_N8N.md)
+
+#### Misc
+
+- [New Version notifications](/docs/VERSIONS.md)
+- [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
+- [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
+
+Feel free to suggest or submit new docs via a PR. 
+
+## 👨‍💻 Development priorities
+
+Highest to lowest:
+
+* Fixing core functionality bugs not solvable with workarounds
+* New core functionality unlocking other opportunities (e.g.: plugins) 
+* Refactoring enabling faster implementation of future functionality 
+* UI improvements
+
+Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integratable into other workflows. 
+
+Examples: 
+
+    1. Supporting apprise makes more sense than implementing multiple individual notification gateways
+    2. Implementing regular expressions support across settings for validation makes more sense than validating one setting with a specific expression. 
+
+UI specific requests are low priority as the framework picked by the original developer is not very extensible (and afaik doesn't support components) and has limited mobile support. Also I argue the value proposition is smaller than working on something else.
+
+Feel free to submit PRs if interested. try to **keep the PRs small/on topic** so they are easier to review and approve. 
+
+That being said, I'd reconsider if more people and or recurring sponsors file a request 😉.
+
+## 🙏 Feature requests
+
+Please be as detailed as possible with **workarounds** you considered and why a native feature is the better way. This gives me better context and will make it more likely to be implemented. Ideally a feature request should be in the format "I want to be able to do XYZ so that ZYX. I considered these approaches XYZ".
+
+## ➕ Pull-requests (PRs)
+
+If you submit a PR please:
+
+1. Check that your changes are backward compatible with existing installations and with a blank setup. 
+2. Existing features should always be preserved. 
+3. Keep the PR small, on-topic and don't change code that is not necessary for the PR to work
+4. New features code should ideally be re-usable for different purposes, not be for a very narrow use-case.
+5. New functionality should ideally be implemented via the Plugins system, if possible.
+
+Soem additional context:
+
+* Permanent settings/config is stored in the `pialert.conf` file
+* Currently temporary (session?) settings are stored in the `Parameters` DB table as key - value pairs. This table is wiped during a container rebuild/restart and it's values re-initialized from cookies / session data from the browser. 
+
+## 🐛 Submitting an issue or bug
+
+Before submitting a new issue please spend a couple of minutes on research:
+
+* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-common-issues) 
+* Check [💡 Closed issues](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
+
+⚠ Please follow the pre-defined issue template to resolve your issue faster.
