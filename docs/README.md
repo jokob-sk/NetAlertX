@@ -6,6 +6,12 @@ In the app hover-over settings or fields/labels or click blue in-app ❔ (questi
 
 There is also an in-app Help / FAQ section that should be answering frequently asked questions.
 
+### 📥 Installation
+
+ ⚠ Only tested as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
+ > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+
+
 ### 📚 Table of contents
 
 #### Popular/Suggested

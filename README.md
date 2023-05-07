@@ -70,9 +70,10 @@ The system continuously scans the network for, **New devices**, **New connection
   - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
   - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
 
-### Old docs
+### 📚 Documentation
 
-Device Management [instructions](docs/DEVICE_MANAGEMENT.md) | Old Versions [History](docs/VERSIONS_HISTORY.md)
+- Initial Docker Setup: [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md)
+- App Usage and Configuration: [All Documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/README.md)
 
 ### License
   GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
