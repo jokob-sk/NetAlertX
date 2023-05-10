@@ -316,15 +316,7 @@ function initializeDatatable () {
       tableColumnHide.push(mapIndx(tableColumnOrder[i]));
     }    
   }
-
-  // If the device has a small width (mobile) only show name, ip, and status columns. 
-  if (window.screen.width < 400) {        
-    tableColumnHide = [11,12,13,1,2,4,5,6,7,9];
-  } 
-  // else {  
-  //   // var tableColumnHide = [11, 12, 13];
-  //   tableColumnHide = [11, 12, 13];
-  // };
+  
   var table=
   $('#tableDevices').DataTable({
     'paging'       : true,
