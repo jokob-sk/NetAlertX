@@ -14,7 +14,7 @@
     <!-- &copy; 2020 Puche -->
     <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>
     
-       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>)  
+       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) - Buildtime: <?php echo file_get_contents( "buildtimestamp.txt");?> - Version <?php echo file_get_contents( ".VERSION");?>
 
       <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/docs" target="_blank"> 
         <span>Docs <i class="fa fa-circle-question"></i>
