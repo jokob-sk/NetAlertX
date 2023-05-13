@@ -46,7 +46,6 @@ jobs:
             type=ref,event=branch,suffix=-{{ sha }}
             type=ref,event=pr
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') }}
-          - uses: actions/checkout@master
 
       - name: Update version
         uses: brettdorrans/write-version-to-file@master

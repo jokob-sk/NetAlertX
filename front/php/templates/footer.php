@@ -81,9 +81,6 @@
 <!-- Pi.Alert -------------------------------------------------------------- -->
   <script src="js/pialert_common.js"></script>
   <script src="js/handle_version.js"></script>
-  <script>
-    let time = new Date().toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
-  </script>
 
 </body>
 </html>
