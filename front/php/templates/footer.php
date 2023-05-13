@@ -13,9 +13,33 @@
 
     <!-- &copy; 2020 Puche -->
     <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>
-    
-       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) - Buildtime: <?php echo file_get_contents( "buildtimestamp.txt");?> - Version <?php echo file_get_contents( ".VERSION");?>
 
+       
+    
+       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) | <b>Built on: </b> 
+       
+       <?php 
+        
+        echo date("Y-m-d", ((int)file_get_contents( "buildtimestamp.txt")));        
+       
+       ?> 
+       
+       | <b> Version: </b>
+       
+       <?php      
+
+        $filename = "/.VERSION";
+       
+        if(file_exists($filename))
+        {
+          echo file_get_contents($filename);
+        }
+        else{
+          echo "File not found";
+        }               
+       
+       ?>
+        |
       <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/docs" target="_blank"> 
         <span>Docs <i class="fa fa-circle-question"></i>
       </a><span>
@@ -57,6 +81,9 @@
 <!-- Pi.Alert -------------------------------------------------------------- -->
   <script src="js/pialert_common.js"></script>
   <script src="js/handle_version.js"></script>
+  <script>
+    let time = new Date().toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+  </script>
 
 </body>
 </html>
