@@ -1,0 +1,158 @@
+{
+  "code_name": "undiscoverables",
+  "unique_prefix": "UNDIS",
+  "enabled": true,
+  "data_source": "python-script",
+  "localized": ["display_name", "description", "icon"],
+
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Un-Discoverable Devices"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-binoculars\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "This plugin is to import undiscoverable devices from a file."
+    }
+  ],
+
+  "settings": [
+    {
+      "function": "RUN",
+      "type": "selecttext",
+      "default_value": "once",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan",
+        "on_new_device"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enable import of devices from a file. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": "text",
+      "default_value": "python3 /home/pi/pialert/front/plugins/undiscoverables/script.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run"
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": "text",
+      "default_value": "0 2 * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 5,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wartezeit"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        }
+      ]
+    },
+    {
+      "function": "WATCH",
+      "type": "multiselect",
+      "default_value": ["Watched_Value1", "Watched_Value4"],
+      "options": [
+        "Watched_Value1",
+        "Watched_Value2",
+        "Watched_Value3",
+        "Watched_Value4"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Watched"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Active </li><li><code>Watched_Value2</code> is Hostname </li><li><code>Watched_Value3</code> is hardware </li><li><code>Watched_Value4</code> is State </li></ul>"
+        }
+      ]
+    },
+    {
+      "function": "REPORT_ON",
+      "type": "multiselect",
+      "default_value": ["new", "watched-changed"],
+      "options": ["new", "watched-changed", "watched-not-changed"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        }
+      ]
+    }
+  ]
+}
