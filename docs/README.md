@@ -37,6 +37,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [New Version notifications](/docs/VERSIONS.md)
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
+- [Database structure](/docs/DATABASE.md)
 
 Feel free to suggest or submit new docs via a PR. 
 
