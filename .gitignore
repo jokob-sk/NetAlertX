@@ -6,3 +6,7 @@ front/log/*
 front/plugins/**/*.log
 **/%40eaDir/
 **/@eaDir/
+
+__pycache__/
+*.py[cod]
+*$py.class
