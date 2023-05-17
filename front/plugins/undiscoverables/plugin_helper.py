@@ -73,7 +73,7 @@ class Plugin_Objects:
 
 
     def write_result_file(self):
-
+        # print ("writing file: "+self.result_file)
         with open(self.result_file, mode='w') as fp:
             for obj in self.objects:
                 fp.write ( obj.write() )

@@ -6,13 +6,13 @@
 import sys
 import pathlib
 
-from plugin_helper import Plugin_Objects, Plugin_Object
+from plugin_helper import Plugin_Objects
 
 sys.dont_write_bytecode = True
 
 curPath = str(pathlib.Path(__file__).parent.resolve())
 log_file = curPath + '/script.log'
-result_file = curPath + '\last_result.log'
+result_file = curPath + '/last_result.log'
 
 FAKE_DEVICES = ["routerXX","hubZZ"]
 
@@ -25,14 +25,17 @@ def main():
 
   for fake_dev in FAKE_DEVICES:
     devices.add_object(fake_dev, fake_dev, fake_dev, fake_dev, "", "", "", "")
+    
+  #for obj in devices.objects:
+  #   print(obj.write())
 
   devices.write_result_file()
 
-  return devices
+  return 0
     
 
 #===============================================================================
 # BEGIN
 #===============================================================================
 if __name__ == '__main__':
-    d = main()
+    main()
