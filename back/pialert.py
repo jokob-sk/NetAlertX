@@ -3770,9 +3770,12 @@ def get_plugins_configs():
     
     pluginsList = []
 
-    for root, dirs, files in os.walk(pluginsPath):
-        for d in dirs:            # Loop over directories, not files            
-            pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
+    # only top level directories required. No need for the loop
+    # for root, dirs, files in os.walk(pluginsPath):
+    
+    dirs = next(os.walk(pluginsPath))[1]
+    for d in dirs:            # Loop over directories, not files            
+        pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
     return pluginsList
 
