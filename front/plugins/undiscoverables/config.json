@@ -3,6 +3,8 @@
   "unique_prefix": "UNDIS",
   "enabled": true,
   "data_source": "python-script",
+  "mapped_to_table": "DHCP_Leases", 
+
   "localized": ["display_name", "description", "icon"],
 
   "display_name": [
@@ -23,37 +25,33 @@
       "string": "This plugin is to import undiscoverable devices from a file."
     }
   ],
+    "params" : [
+    {
+        "name"  : "devices",
+        "type"  : "setting",
+        "value" : "UNDIS_devices_to_import"
+    }],  
 
   "settings": [
     {
-      "function": "RUN",
-      "type": "selecttext",
-      "default_value": "once",
-      "options": [
-        "disabled",
-        "once",
-        "schedule",
-        "always_after_scan",
-        "on_new_device"
-      ],
+      "function": "RUN",            
+      "type": "selecttext",            
+      "default_value":"disabled",
+      "options": ["disabled", "once", "always_after_scan"],
       "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "When to run"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Enable import of devices from a file. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
-        }
-      ]
-    },
+      "name" :[{
+          "language_code":"en_us",
+          "string" : "When to run"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "When enabled, once is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices after the next scan!"
+      }]
+  },    
     {
       "function": "CMD",
-      "type": "text",
-      "default_value": "python3 /home/pi/pialert/front/plugins/undiscoverables/script.py",
+      "type": "readonly",
+      "default_value": "python3 /home/pi/pialert/front/plugins/undiscoverables/script.py devices={devices}",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -65,43 +63,21 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Command to run"
+          "string": "Command to run. This can not be changed"
         }
       ]
     },
-    {
-      "function": "RUN_SCHD",
-      "type": "text",
-      "default_value": "0 2 * * *",
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Schedule"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-        }
-      ]
-    },
+    
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
-      "default_value": 5,
+      "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
           "string": "Run timeout"
-        },
-        {
-          "language_code": "de_de",
-          "string": "Wartezeit"
         }
       ],
       "description": [
@@ -113,14 +89,9 @@
     },
     {
       "function": "WATCH",
-      "type": "multiselect",
-      "default_value": ["Watched_Value1", "Watched_Value4"],
-      "options": [
-        "Watched_Value1",
-        "Watched_Value2",
-        "Watched_Value3",
-        "Watched_Value4"
-      ],
+      "type": "lable",
+      "default_value": [],
+      "options": [],
       "localized": ["name", "description"],
       "name": [
         {
@@ -131,14 +102,14 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Active </li><li><code>Watched_Value2</code> is Hostname </li><li><code>Watched_Value3</code> is hardware </li><li><code>Watched_Value4</code> is State </li></ul>"
+          "string": "Undiscoverable Devices can not change their status, no watch is enabled."
         }
       ]
     },
     {
       "function": "REPORT_ON",
-      "type": "multiselect",
-      "default_value": ["new", "watched-changed"],
+      "type": "lable",
+      "default_value": [],
       "options": ["new", "watched-changed", "watched-not-changed"],
       "localized": ["name", "description"],
       "name": [
@@ -150,9 +121,97 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+          "string": "No notifications will be sent."
         }
       ]
-    }
+    },
+    {
+      "function": "devices_to_import",
+      "type": "list",
+      "default_value":["dummy_router"],
+      "options": [],
+      "localized": ["name", "description"],
+      "name" : [{
+          "language_code":"en_us",
+          "string" : "UnDiscoverable Devices"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "Devices to be added to the devices list."
+      }]
+  }
+  ],
+
+  "database_column_definitions": 
+  [          
+    {
+      "column": "Watched_Value1",
+      "mapped_to_column": "DHCP_Name",         
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Device Name"
+          }]
+    }, 
+    {
+        "column": "Object_PrimaryID",
+        "mapped_to_column": "DHCP_MAC", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "devicemac",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "MAC address"
+            }]
+    },
+    {
+        "column": "Object_SecondaryID",
+        "mapped_to_column": "DHCP_IP", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "deviceip",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "IP"
+            }]
+    } ,
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Created"
+          }]
+    },   
+    {
+        "column": "DateTimeChanged",
+        "mapped_to_column": "DHCP_DateTime", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "label",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Changed"
+            }]
+    }        
   ]
 }
