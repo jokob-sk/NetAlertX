@@ -5,7 +5,7 @@
 
   The MAC address is used as a foreign key in most cases. 
 
-  ## Tables overview
+  ## 🔍Tables overview
   
   | Table name | Description  | Sample data |
   |----------------------|----------------------| ----------------------| 
