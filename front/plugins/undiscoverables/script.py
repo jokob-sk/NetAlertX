@@ -7,36 +7,36 @@ import argparse
 
 from plugin_helper import Plugin_Objects
 
-curPath = str(pathlib.Path(__file__).parent.resolve())
-log_file = os.path.join(curPath , 'script.log')
-result_file = os.path.join(curPath , 'last_result.log')
+CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
+LOG_FILE = os.path.join(CUR_PATH , 'script.log')
+RESULT_FILE = os.path.join(CUR_PATH , 'last_result.log')
 
 
 
 def main():
 
-  parser = argparse.ArgumentParser(description='Import devices from dhcp.leases files')
-  parser.add_argument('devices',  action="store",  help="absolute dhcp.leases file paths to check separated by ','")  
-  values = parser.parse_args()
+    # the script expects a parameter in the format of devices=device1,device2,...
+    parser = argparse.ArgumentParser(description='Import devices from settings')
+    parser.add_argument('devices',  action="store",  help="list of device names separated by ','")
+    values = parser.parse_args()
 
-  undis_devices = Plugin_Objects( result_file )
-  
-  if values.devices:
+    UNDIS_devices = Plugin_Objects( RESULT_FILE )
+
+    if values.devices:
         for fake_dev in values.devices.split('=')[1].split(','):
-            undis_devices.add_object(
-                primaryId=fake_dev,    # MAC 
-                secondaryId="0.0.0.0", # IP Address 
+            UNDIS_devices.add_object(
+                primaryId=fake_dev,    # MAC (Device Name)
+                secondaryId="0.0.0.0", # IP Address (always 0.0.0.0)
                 watched1=fake_dev,     # Device Name
                 watched2="",
                 watched3="",
-                watched4="UNDIS",      # used as ScanMethod
-                extra="1",             # used as dummy ScanCycle
+                watched4="",
+                extra="",
                 foreignKey="")
 
-  undis_devices.write_result_file()
+    UNDIS_devices.write_result_file()
 
-  return 0
-    
+    return 0
 
 #===============================================================================
 # BEGIN
