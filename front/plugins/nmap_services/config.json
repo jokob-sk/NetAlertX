@@ -55,7 +55,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Device name"
+                "string" : "Device MAC"
                 }]
         },
         {
