@@ -772,9 +772,8 @@ def check_internet_IP ():
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
-        if dns_IP == "" :
-            mylog('info', ['    Error retrieving Dynamic DNS IP'])
-            mylog('info', ['    Exiting...'])
+        if dns_IP == "" or dns_IP == "0.0.0.0" :
+            mylog('info', ['    Error retrieving Dynamic DNS IP'])            
         mylog('info', ['   ', dns_IP])
 
         # Check DNS Change
@@ -802,6 +801,11 @@ def get_internet_IP ():
 
     # Check result is an IP
     IP = check_IP_format (cmd_output)
+
+    # Handle invalid response
+    if IP == '':
+        IP = '0.0.0.0'
+
     return IP
 
 #-------------------------------------------------------------------------------
@@ -822,6 +826,11 @@ def get_dynamic_DNS_IP ():
 
     # Check result is an IP
     IP = check_IP_format (dig_output)
+
+    # Handle invalid response
+    if IP == '':
+        IP = '0.0.0.0'
+
     return IP
 
 #-------------------------------------------------------------------------------
