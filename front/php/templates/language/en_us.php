@@ -528,7 +528,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
 'PIALERT_WEB_PASSWORD_description' => 'The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli</code> in the container',
 'INCLUDED_SECTIONS_name' => 'Notify on',
-'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select / deselect).',
+'INCLUDED_SECTIONS_description' => 'Specifies which events trigger notifications. Remove the event type(s) you don\'t want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select/deselect).',
 'SCAN_CYCLE_MINUTES_name' => 'Scan cycle delay',
 'SCAN_CYCLE_MINUTES_description' => 'The delay between scans in minutes. If using arp-scan, the scan time itself depends on the number of IP addresses to check. This is influenced by the network mask set in the <a href="#SCAN_SUBNETS"><code>SCAN_SUBNETS</code> setting</a> at the top. Every IP takes a couple seconds to scan.',
 'DAYS_TO_KEEP_EVENTS_name' => 'Delete events older than',
@@ -539,6 +539,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'DIG_GET_IP_ARG_description' => 'Change the <a href="https://linux.die.net/man/1/dig" target="_blank">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>.',
 'UI_LANG_name' => 'UI Language',
 'UI_LANG_description' => 'Select the preferred UI language.',
+'UI_PRESENCE_name' => 'Show in presence chart',
+'UI_PRESENCE_description' => 'Select what statuses should be shown in the <b>Device presence over time</b>  chart in the <a href="/devices.php" target="_blank">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)',
 
 //Email
 'Email_display_name' => 'Email',
