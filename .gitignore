@@ -10,3 +10,4 @@ front/plugins/**/*.log
 __pycache__/
 *.py[cod]
 *$py.class
+db/pialert.db

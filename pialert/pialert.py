@@ -45,8 +45,9 @@ import multiprocessing
 
 from const import *
 from logger import mylog, print_log, logResult
-from helper import checkPermissionsOK, fixPermissions, timeNow, updateSubnets
+from helper import  filePermissions, timeNow, updateSubnets
 from database import *
+from config import ccd
 
 
 # Global variables
@@ -63,45 +64,8 @@ sql_connection = None
 
 
 
-#-------------------------------------------------------------------------------
-def initialiseFile(pathToCheck, defaultFile):
-    # if file not readable (missing?) try to copy over the backed-up (default) one
-    if str(os.access(pathToCheck, os.R_OK)) == "False":
-        mylog('none', ["[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one."])
-        try:
-            # try runnning a subprocess
-            p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            stdout, stderr = p.communicate()
 
-            if str(os.access(pathToCheck, os.R_OK)) == "False":
-                mylog('none', ["[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
-            else:
-                mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
 
-            # write stdout and stderr into .log files for debugging if needed
-            logResult (stdout, stderr)  # TO-DO should be changed to mylog
-            
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
-            mylog('none', [e.output])
-
-#===============================================================================
-# Basic checks and Setup
-#===============================================================================
-
-# check and initialize pialert.conf
-(confR_access, dbR_access) = checkPermissionsOK() # Initial check
-
-if confR_access == False:
-    initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
-
-# check and initialize pialert.db
-if dbR_access == False:
-    initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
-
-# last attempt
-fixPermissions()
 
 #===============================================================================
 # Initialise user defined values
@@ -109,27 +73,6 @@ fixPermissions()
 # We need access to the DB to save new values so need to define DB access methods first
 #-------------------------------------------------------------------------------
 
-
-
-#-------------------------------------------------------------------------------
-# Import user values
-# Check config dictionary
-def ccd(key, default, config, name, inputtype, options, group, events=[], desc = "", regex = ""):
-    result = default
-
-    # use existing value if already supplied, otherwise default value is used
-    if key in config:
-        result =  config[key]
-
-    global mySettings
-
-    if inputtype == 'text':
-        result = result.replace('\'', "{s-quote}")
-
-    mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
-    mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
-
-    return result
 
 #-------------------------------------------------------------------------------
 
@@ -170,7 +113,7 @@ def importConfigs (db):
         return
         
     mySettings = [] # reset settings
-    mySettingsSQLsafe = [] # same as aboverr but safe to be passed into a SQL query
+    mySettingsSQLsafe = [] # same as above but safe to be passed into a SQL query
     
     # load the variables from  pialert.conf
     code = compile(config_file.read_text(), config_file.name, "exec")
@@ -288,6 +231,8 @@ def importConfigs (db):
     # Format and prepare the list of subnets
     userSubnets = updateSubnets(SCAN_SUBNETS)
 
+
+
     # Plugins START
     # -----------------
     if ENABLE_PLUGINS:
@@ -341,7 +286,7 @@ def importConfigs (db):
     lastTimeImported = time.time()
 
     # Is used to display a message in the UI when old (outdated) settings are loaded    
-    initOrSetParam("Back_Settings_Imported",(round(time.time() * 1000),) )    
+    initOrSetParam(db, "Back_Settings_Imported",(round(time.time() * 1000),) )    
     
     #commitDB(sql_connection)
     db.commitDB()
@@ -351,8 +296,15 @@ def importConfigs (db):
 
     mylog('info', ['[', timeNow(), '] Config: Imported new config'])  
 
+
+
+
+
+
 #===============================================================================
-# MAIN
+#===============================================================================
+#                              MAIN
+#===============================================================================
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
@@ -375,37 +327,47 @@ def main ():
     # Initialize global variables
     global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
     # second set of global variables
-    global startTime, log_timestamp, sql_connection, sql, plugins_once_run
+    global startTime, log_timestamp, plugins_once_run 
+
+    # To-Do all these DB Globals need to be removed
+    global db, sql, sql_connection
+
+    # check file permissions and fix if required
+    filePermissions()
 
     # Open DB once and keep open
     # Opening / closing DB frequently actually casues more issues
-    db = DB()
-    print(db, db.sql, db.sql_connection )
+    db = DB()  # instance of class DB
     db.openDB()
-    print(db, db.sql, db.sql_connection )
 
-    # To-Do replace the following to lines with the db dict or class
+    # To-Do replace the following to lines with the db class
     sql_connection = db.sql_connection
     sql = db.sql
 
     # Upgrade DB if needed
     upgradeDB(db)
 
+
+    #===============================================================================
+    # This is the mail loop of Pi.Alert 
+    #===============================================================================
+
     while True:
 
         # update time started
         time_started = datetime.datetime.now()
+        mylog('debug', ['[', timeNow(), '] [MAIN] Stating loop'])
 
         # re-load user configuration and plugins
         importConfigs(db)       
         
         # Handle plugins executed ONCE
         if ENABLE_PLUGINS and plugins_once_run == False:
-            run_plugin_scripts('once')  
+            run_plugin_scripts(db, 'once')  
             plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
-        check_and_run_event()
+        check_and_run_event(db)
 
         # Update API endpoints              
         update_api()
@@ -417,8 +379,7 @@ def main ():
             last_run = time_started
 
             # Header
-            updateState(db,"Process: Start")
-            mylog('verbose', ['[', timeNow(), '] Process: Start'])                
+            updateState(db,"Process: Start")      
 
             # Timestamp
             startTime = time_started
@@ -426,7 +387,7 @@ def main ():
 
             # Check if any plugins need to run on schedule
             if ENABLE_PLUGINS:
-                run_plugin_scripts('schedule') 
+                run_plugin_scripts(db,'schedule') 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
@@ -441,6 +402,7 @@ def main ():
             if last_update_vendors + datetime.timedelta(days = 7) < time_started:
                 last_update_vendors = time_started
                 cycle = 'update_vendors'
+                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])                  
                 update_devices_MAC_vendors()
 
             # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
@@ -459,7 +421,7 @@ def main ():
 
                 if run:
                     pholusSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
-                    performPholusScan(PHOLUS_RUN_TIMEOUT)
+                    performPholusScan(db, PHOLUS_RUN_TIMEOUT)
             
             # Execute scheduled or one-off Nmap scan if enabled and run conditions fulfilled
             if NMAP_RUN == "schedule" or NMAP_RUN == "once":
@@ -483,6 +445,8 @@ def main ():
             if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 cycle = 1 # network scan
+                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
+    
                 # scan_network() 
 
                 #  DEBUG start ++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -520,20 +484,21 @@ def main ():
                 if len(newDevices) > 0:
                     #  run all plugins registered to be run when new devices are found
                     if ENABLE_PLUGINS:
-                        run_plugin_scripts('on_new_device')
+                        run_plugin_scripts(db, 'on_new_device')
 
                     #  Scan newly found devices with Nmap if enabled
                     if NMAP_ACTIVE and len(newDevices) > 0:
-                        performNmapScan(newDevices)
+                        performNmapScan( newDevices)
 
                 # send all configured notifications
-                send_notifications()
+                send_notifications(db)
 
             # clean up the DB once a day
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
                 last_cleanup = time_started
                 cycle = 'cleanup'  
-                cleanup_database()   
+                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
+                db.cleanup_database(startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA)   
 
             # Commit SQL
             db.commitDB()          
@@ -545,13 +510,15 @@ def main ():
                     action = "network_scan"
                 mylog('verbose', ['[', timeNow(), '] Last action: ', action])
                 cycle = ""
+                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
             
             # Footer
             updateState(db,"Process: Wait")
             mylog('verbose', ['[', timeNow(), '] Process: Wait'])            
         else:
             # do something
-            cycle = ""           
+            cycle = "" 
+            mylog('verbose', ['[', timeNow(), '] [MAIN] waiting to start next loop'])          
 
         #loop     
         time.sleep(5) # wait for N seconds      
@@ -563,7 +530,7 @@ def main ():
 def check_internet_IP ():   
 
     # Header
-    updateState(sql_connection,"Scan: Internet IP")
+    updateState(db,"Scan: Internet IP")
     mylog('verbose', ['[', startTime, '] Check Internet IP:'])    
 
     # Get Internet IP
@@ -581,13 +548,13 @@ def check_internet_IP ():
 
     # Get previous stored IP
     mylog('verbose', ['    Retrieving previous IP:'])    
-    previous_IP = get_previous_internet_IP ()
+    previous_IP = get_previous_internet_IP (db)
     mylog('verbose', ['      ', previous_IP])
 
     # Check IP Change
     if internet_IP != previous_IP :
         mylog('info', ['    New internet IP: ', internet_IP])
-        save_new_internet_IP (internet_IP)
+        save_new_internet_IP (db, internet_IP)
         
     else :
         mylog('verbose', ['    No changes to perform'])    
@@ -700,7 +667,7 @@ def save_new_internet_IP (db, pNewIP):
     append_line_to_file (logPath + '/IP_changes.log',
         '['+str(startTime) +']\t'+ pNewIP +'\n')
 
-    prevIp = get_previous_internet_IP()     
+    prevIp = get_previous_internet_IP(db)     
     # Save event
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
@@ -732,65 +699,13 @@ def check_IP_format (pIP):
     return IP.group(0)
 
 
-#===============================================================================
-# Cleanup / upkeep database
-#===============================================================================
-def cleanup_database (db):
-    # Header    
-    updateState(sql_connection,"Upkeep: Clean DB") 
-    mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
-
-    # Cleanup Online History
-    mylog('verbose', ['    Online_History: Delete all but keep latest 150 entries'])    
-    sql.execute ("""DELETE from Online_History where "Index" not in ( SELECT "Index" from Online_History order by Scan_Date desc limit 150)""")
-
-    mylog('verbose', ['    Optimize Database'])
-    # Cleanup Events
-    mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-    sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
-
-    # Cleanup Plugin Events History
-    mylog('verbose', ['    Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-    sql.execute ("DELETE FROM Plugins_History WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
-
-    # Cleanup Pholus_Scan
-    if PHOLUS_DAYS_DATA != 0:
-        mylog('verbose', ['    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
-        sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
-    
-    # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table    
-    mylog('verbose', ['    Pholus_Scan: Delete all duplicates'])
-    sql.execute ("""DELETE  FROM Pholus_Scan
-                    WHERE rowid > (
-                    SELECT MIN(rowid) FROM Pholus_Scan p2  
-                    WHERE Pholus_Scan.MAC = p2.MAC
-                    AND Pholus_Scan.Value = p2.Value
-                    AND Pholus_Scan.Record_Type = p2.Record_Type
-                    );""") 
-
-    # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table    
-    mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
-    sql.execute ("""DELETE  FROM Nmap_Scan
-                    WHERE rowid > (
-                    SELECT MIN(rowid) FROM Nmap_Scan p2  
-                    WHERE Nmap_Scan.MAC = p2.MAC
-                    AND Nmap_Scan.Port = p2.Port
-                    AND Nmap_Scan.State = p2.State
-                    AND Nmap_Scan.Service = p2.Service
-                    );""") 
-    
-    # Shrink DB
-    mylog('verbose', ['    Shrink Database'])
-    sql.execute ("VACUUM;")
-
-    db.commitDB()
 
 #===============================================================================
 # UPDATE DEVICE MAC VENDORS
 #===============================================================================
 def update_devices_MAC_vendors (db, pArg = ''):
     # Header    
-    updateState(sql_connection,"Upkeep: Vendors")
+    updateState(db,"Upkeep: Vendors")
     mylog('verbose', ['[', startTime, '] Upkeep - Update HW Vendors:' ])
 
     # Update vendors DB (iab oui)
@@ -878,11 +793,11 @@ def query_MAC_vendor (pMAC):
 #===============================================================================
 # SCAN NETWORK
 #===============================================================================
-def scan_network (db):
+def scan_network ():
     reporting = False
 
     # Header
-    updateState(sql_connection,"Scan: Network")
+    updateState(db,"Scan: Network")
     mylog('verbose', ['[', startTime, '] Scan Devices:' ])       
 
     # Query ScanCycle properties    
@@ -942,19 +857,19 @@ def scan_network (db):
 
     # Resolve devices names
     print_log ('    Resolve devices names')
-    update_devices_names()
+    update_devices_names(db)
 
     # Void false connection - disconnections
     mylog('verbose', ['    Voiding false (ghost) disconnections'])    
-    void_ghost_disconnections ()
+    void_ghost_disconnections (db)
 
     # Pair session events (Connection / Disconnection)
     mylog('verbose', ['    Pairing session events (connection / disconnection) '])
-    pair_sessions_events()  
+    pair_sessions_events(db)  
   
     # Sessions snapshot
     mylog('verbose', ['    Creating sessions snapshot'])
-    create_sessions_snapshot ()
+    create_sessions_snapshot (db)
 
     # Sessions snapshot
     mylog('verbose', ['    Inserting scan results into Online_History'])
@@ -962,14 +877,14 @@ def scan_network (db):
   
     # Skip repeated notifications
     mylog('verbose', ['    Skipping repeated notifications'])
-    skip_repeated_notifications ()
+    skip_repeated_notifications (db)
   
     # Commit changes    
     db.commitDB()
 
     # Run splugin scripts which are set to run every timne after a scan finished
     if ENABLE_PLUGINS:
-        run_plugin_scripts('always_after_scan')
+        run_plugin_scripts(db,'always_after_scan')
 
     return reporting
 
@@ -1565,7 +1480,7 @@ def update_devices_names (db):
 
 
 #-------------------------------------------------------------------------------
-def performNmapScan(db, devicesToScan):
+def performNmapScan( devicesToScan):
 
     global changedPorts_json_struc     
 
@@ -1577,7 +1492,7 @@ def performNmapScan(db, devicesToScan):
 
         devTotal = len(devicesToScan)
 
-        updateState(sql_connection,"Scan: Nmap")
+        updateState(db,"Scan: Nmap")
 
         mylog('verbose', ['[', timeNow(), '] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
 
@@ -1770,7 +1685,7 @@ def performPholusScan (db, timeoutSec):
         interface = temp[1].strip()
 
         # logging & updating app state        
-        updateState(sql_connection,"Scan: Pholus")        
+        updateState(db,"Scan: Pholus")        
         mylog('info', ['[', timeNow(), '] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
         mylog('verbose', ["        Pholus scan on [interface] ", interface, " [mask] " , mask])
         
@@ -2129,7 +2044,7 @@ def send_notifications (db):
 
     # Open html Template
     template_file = open(pialertPath + '/back/report_template.html', 'r') 
-    if isNewVersion():
+    if isNewVersion(db):
         template_file = open(pialertPath + '/back/report_template_new_version.html', 'r') 
 
     mail_html = template_file.read() 
@@ -2261,38 +2176,38 @@ def send_notifications (db):
         mylog('none', ['    Changes detected, sending reports'])
 
         if REPORT_MAIL and check_config('email'):  
-            updateState(sql_connection,"Send: Email")
+            updateState(db,"Send: Email")
             mylog('info', ['      Sending report by Email'])
             send_email (mail_text, mail_html)
         else :
             mylog('verbose', ['      Skip email'])
         if REPORT_APPRISE and check_config('apprise'):
-            updateState(sql_connection,"Send: Apprise")
+            updateState(db,"Send: Apprise")
             mylog('info', ['      Sending report by Apprise'])
             send_apprise (mail_html, mail_text)
         else :
             mylog('verbose', ['      Skip Apprise'])
         if REPORT_WEBHOOK and check_config('webhook'):
-            updateState(sql_connection,"Send: Webhook")
+            updateState(db,"Send: Webhook")
             mylog('info', ['      Sending report by Webhook'])
             send_webhook (json_final, mail_text)
         else :
             mylog('verbose', ['      Skip webhook'])
         if REPORT_NTFY and check_config('ntfy'):
-            updateState(sql_connection,"Send: NTFY")
+            updateState(db,"Send: NTFY")
             mylog('info', ['      Sending report by NTFY'])
             send_ntfy (mail_text)
         else :
             mylog('verbose', ['      Skip NTFY'])
         if REPORT_PUSHSAFER and check_config('pushsafer'):
-            updateState(sql_connection,"Send: PUSHSAFER")
+            updateState(db,"Send: PUSHSAFER")
             mylog('info', ['      Sending report by PUSHSAFER'])
             send_pushsafer (mail_text)
         else :
             mylog('verbose', ['      Skip PUSHSAFER'])
         # Update MQTT entities
         if REPORT_MQTT and check_config('mqtt'):
-            updateState(sql_connection,"Send: MQTT")
+            updateState(db,"Send: MQTT")
             mylog('info', ['      Establishing MQTT thread'])                          
             mqtt_start()        
         else :
@@ -3347,12 +3262,12 @@ def custom_plugin_decoder(pluginDict):
     return namedtuple('X', pluginDict.keys())(*pluginDict.values())
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(runType):
+def run_plugin_scripts(db, runType):
     
     global plugins, tz, mySchedules
 
     # Header
-    updateState(sql_connection,"Run: Plugins")
+    updateState(db,"Run: Plugins")
 
     mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 

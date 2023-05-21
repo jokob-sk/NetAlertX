@@ -5,6 +5,7 @@ import sqlite3
 from const import fullDbPath
 from logger import print_log, mylog
 
+
 #===============================================================================
 # SQL queries
 #===============================================================================
@@ -34,7 +35,8 @@ class DB():
     def __init__(self):
         self.sql = None
         self.sql_connection = None
-       
+        
+    #-------------------------------------------------------------------------------   
     def openDB (self):
         # Check if DB is open
         if self.sql_connection != None :
@@ -55,7 +57,8 @@ class DB():
         if self.sql_connection == None :
             mylog('debug','commitDB: databse is not open')
             return
-        mylog('debug','commitDB: comiting DB changes')
+        
+        # mylog('debug','commitDB: comiting DB changes')
 
         # Commit changes to DB
         self.sql_connection.commit()
@@ -81,6 +84,58 @@ class DB():
         return arr
 
 
+    #===============================================================================
+    # Cleanup / upkeep database
+    #===============================================================================
+    def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA):
+          # Header    
+          updateState(self,"Upkeep: Clean DB") 
+          mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
+
+          # Cleanup Online History
+          mylog('verbose', ['    Online_History: Delete all but keep latest 150 entries'])    
+          self.sql.execute ("""DELETE from Online_History where "Index" not in ( SELECT "Index" from Online_History order by Scan_Date desc limit 150)""")
+
+          mylog('verbose', ['    Optimize Database'])
+          # Cleanup Events
+          mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+          self.sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
+
+          # Cleanup Plugin Events History
+          mylog('verbose', ['    Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+          self.sql.execute ("DELETE FROM Plugins_History WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
+
+          # Cleanup Pholus_Scan
+          if PHOLUS_DAYS_DATA != 0:
+              mylog('verbose', ['    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
+              self.sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
+          
+          # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table    
+          mylog('verbose', ['    Pholus_Scan: Delete all duplicates'])
+          self.sql.execute ("""DELETE  FROM Pholus_Scan
+                          WHERE rowid > (
+                          SELECT MIN(rowid) FROM Pholus_Scan p2  
+                          WHERE Pholus_Scan.MAC = p2.MAC
+                          AND Pholus_Scan.Value = p2.Value
+                          AND Pholus_Scan.Record_Type = p2.Record_Type
+                          );""") 
+
+          # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table    
+          mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
+          self.sql.execute ("""DELETE  FROM Nmap_Scan
+                          WHERE rowid > (
+                          SELECT MIN(rowid) FROM Nmap_Scan p2  
+                          WHERE Nmap_Scan.MAC = p2.MAC
+                          AND Nmap_Scan.Port = p2.Port
+                          AND Nmap_Scan.State = p2.State
+                          AND Nmap_Scan.Service = p2.Service
+                          );""") 
+          
+          # Shrink DB
+          mylog('verbose', ['    Shrink Database'])
+          self.sql.execute ("VACUUM;")
+
+          self.commitDB()
 
 
 
@@ -97,7 +152,9 @@ def initOrSetParam(db, parID, parValue):
 
 #-------------------------------------------------------------------------------
 def updateState(db, newState):    
+    #sql = db.sql
 
+    mylog('debug', '       [updateState] changing state to: "' + newState +'"')
     db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
 
     db.commitDB()

@@ -4,7 +4,7 @@ import os
 import subprocess
 
 from const import *
-from logger import mylog
+from logger import mylog, logResult
 
 #-------------------------------------------------------------------------------
 def timeNow():
@@ -65,3 +65,42 @@ def fixPermissions():
             # An error occured, handle it
             mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)]) 
             mylog('none', [e.output])
+
+
+#-------------------------------------------------------------------------------
+def initialiseFile(pathToCheck, defaultFile):
+    # if file not readable (missing?) try to copy over the backed-up (default) one
+    if str(os.access(pathToCheck, os.R_OK)) == "False":
+        mylog('none', ["[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one."])
+        try:
+            # try runnning a subprocess
+            p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = p.communicate()
+
+            if str(os.access(pathToCheck, os.R_OK)) == "False":
+                mylog('none', ["[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
+            else:
+                mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
+
+            # write stdout and stderr into .log files for debugging if needed
+            logResult (stdout, stderr)  # TO-DO should be changed to mylog
+            
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
+            mylog('none', [e.output])
+
+
+def filePermissions():
+    # check and initialize pialert.conf
+    (confR_access, dbR_access) = checkPermissionsOK() # Initial check
+
+    if confR_access == False:
+        initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
+
+    # check and initialize pialert.db
+    if dbR_access == False:
+        initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
+
+    # last attempt
+    fixPermissions()            
