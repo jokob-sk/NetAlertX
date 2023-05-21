@@ -29,7 +29,7 @@ def updateSubnets(SCAN_SUBNETS):
 #-------------------------------------------------------------------------------
 # check RW access of DB and config file
 def checkPermissionsOK():
-    global confR_access, confW_access, dbR_access, dbW_access
+    #global confR_access, confW_access, dbR_access, dbW_access
     
     confR_access = (os.access(fullConfPath, os.R_OK))
     confW_access = (os.access(fullConfPath, os.W_OK))
