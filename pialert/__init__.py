@@ -1,0 +1,1 @@
+""" __init__ for Pi.Alert """

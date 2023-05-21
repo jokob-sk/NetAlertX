@@ -43,6 +43,12 @@ from json2table import convert
 import hashlib
 import multiprocessing
 
+from const import *
+from logger import mylog, print_log, logResult
+from helper import checkPermissionsOK, fixPermissions, timeNow, updateSubnets
+
+
+
 #===============================================================================
 # SQL queries
 #===============================================================================
@@ -67,22 +73,7 @@ sql_new_devices = """SELECT * FROM ( SELECT eve_IP as dev_LastIP, eve_MAC as dev
                                     ) t2 
                                     ON t1.dev_MAC = t2.dev_MAC_t2"""
 
-#===============================================================================
-# PATHS
-#===============================================================================
-pialertPath = '/home/pi/pialert'
 
-confPath = "/config/pialert.conf"
-dbPath = '/db/pialert.db'
-
-pluginsPath  = pialertPath + '/front/plugins'
-logPath      = pialertPath + '/front/log'
-fullConfPath = pialertPath + confPath
-fullDbPath   = pialertPath + dbPath
-
-vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
-piholeDB               = '/etc/pihole/pihole-FTL.db'
-piholeDhcpleases       = '/etc/pihole/dhcp.leases'
 
 # Global variables
 
@@ -97,121 +88,6 @@ lastTimeImported = 0
 sql_connection = None
 
 
-#-------------------------------------------------------------------------------
-def timeNow():
-    return datetime.datetime.now().replace(microsecond=0)
-
-#-------------------------------------------------------------------------------
-debugLevels =   [
-                    ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3)
-                ]
-LOG_LEVEL = 'debug'
-
-def mylog(requestedDebugLevel, n):
-
-    setLvl = 0  
-    reqLvl = 0  
-
-    #  Get debug urgency/relative weight
-    for lvl in debugLevels:
-        if LOG_LEVEL == lvl[0]:
-            setLvl = lvl[1]
-        if requestedDebugLevel == lvl[0]:
-            reqLvl = lvl[1]
-
-    if reqLvl <= setLvl:
-        file_print (*n)
-
-#-------------------------------------------------------------------------------
-def file_print (*args):
-
-    result = ''    
-       
-    for arg in args:                
-        result += str(arg)
-    print(result)
-
-    file = open(logPath + "/pialert.log", "a") 
-    file.write(result + '\n')
-    file.close()
-
-
-#-------------------------------------------------------------------------------
-def append_file_binary (pPath, input):    
-    file = open (pPath, 'ab') 
-    file.write (input) 
-    file.close() 
-
-#-------------------------------------------------------------------------------
-def logResult (stdout, stderr):
-    if stderr != None:
-        append_file_binary (logPath + '/stderr.log', stderr)
-    if stdout != None:
-        append_file_binary (logPath + '/stdout.log', stdout)  
-
-#-------------------------------------------------------------------------------
-def print_log (pText):
-    global log_timestamp
-
-    # Check LOG actived
-    if not LOG_LEVEL == 'debug' :
-        return
-
-    # Current Time    
-    log_timestamp2 = datetime.datetime.now().replace(microsecond=0)
-
-    # Print line + time + elapsed time + text
-    file_print ('[LOG_LEVEL=debug] ',
-        # log_timestamp2, ' ',
-        log_timestamp2.strftime ('%H:%M:%S'), ' ',
-        pText)
-
-    # Save current time to calculate elapsed time until next log
-    log_timestamp = log_timestamp2 
-
-    return pText
-    
-#-------------------------------------------------------------------------------
-# check RW access of DB and config file
-def checkPermissionsOK():
-    global confR_access, confW_access, dbR_access, dbW_access
-    
-    confR_access = (os.access(fullConfPath, os.R_OK))
-    confW_access = (os.access(fullConfPath, os.W_OK))
-    dbR_access = (os.access(fullDbPath, os.R_OK))
-    dbW_access = (os.access(fullDbPath, os.W_OK))
-
-
-    mylog('none', ['\n Permissions check (All should be True)'])
-    mylog('none', ['------------------------------------------------'])
-    mylog('none', [ "  " , confPath ,     " | " , " READ  | " , confR_access])
-    mylog('none', [ "  " , confPath ,     " | " , " WRITE | " , confW_access])
-    mylog('none', [ "  " , dbPath , "       | " , " READ  | " , dbR_access])
-    mylog('none', [ "  " , dbPath , "       | " , " WRITE | " , dbW_access])
-    mylog('none', ['------------------------------------------------'])
-
-    return dbR_access and dbW_access and confR_access and confW_access 
-#-------------------------------------------------------------------------------
-def fixPermissions():
-    # Try fixing access rights if needed
-    chmodCommands = []
-    
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])    
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
-
-    for com in chmodCommands:
-        # Execute command
-        mylog('none', ["[Setup] Attempting to fix permissions."])
-        try:
-            # try runnning a subprocess
-            result = subprocess.check_output (com, universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)]) 
-            mylog('none', [e.output])
-
-
-checkPermissionsOK() # Initial check
 
 #-------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
@@ -229,7 +105,7 @@ def initialiseFile(pathToCheck, defaultFile):
                 mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
 
             # write stdout and stderr into .log files for debugging if needed
-            logResult (stdout, stderr)
+            logResult (stdout, stderr)  # TO-DO should be changed to mylog
             
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
@@ -241,6 +117,7 @@ def initialiseFile(pathToCheck, defaultFile):
 #===============================================================================
 
 # check and initialize pialert.conf
+(confR_access, dbR_access) = checkPermissionsOK() # Initial check
 if confR_access == False:
     initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
 
@@ -266,7 +143,7 @@ def openDB ():
         return
 
     # Log    
-    print_log ('Opening DB')
+    print_log ('Opening DB')  # TO-DO should be changed to mylog
 
     # Open DB and Cursor
     sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
@@ -464,7 +341,7 @@ def importConfigs ():
     mySchedules.append(schedule_class("nmap", nmapSchedule, nmapSchedule.next(), False))
 
     # Format and prepare the list of subnets
-    updateSubnets()
+    userSubnets = updateSubnets(SCAN_SUBNETS)
 
     # Plugins START
     # -----------------
@@ -1943,7 +1820,7 @@ def performPholusScan (timeoutSec):
         adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
 
         #  python3 -m trace --trace /home/pi/pialert/pholus/pholus3.py eth1 -rdns_scanning  192.168.1.0/24 -stimeout 600
-        pholus_args = ['python3', '/home/pi/pialert/pholus/pholus3.py', interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
+        pholus_args = ['python3', fullPholusPath, interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
 
         # Execute command
         output = ""
@@ -2791,7 +2668,7 @@ def send_webhook (_json, _html):
         stdout, stderr = p.communicate()
 
         # write stdout and stderr into .log files for debugging if needed
-        logResult (stdout, stderr)    
+        logResult (stdout, stderr)     # TO-DO should be changed to mylog
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         mylog('none', [e.output])
@@ -2816,7 +2693,7 @@ def send_apprise (html, text):
         p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = p.communicate()
         # write stdout and stderr into .log files for debugging if needed
-        logResult (stdout, stderr)      
+        logResult (stdout, stderr)      # TO-DO should be changed to mylog
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         mylog('none', [e.output])    
@@ -3049,7 +2926,7 @@ def upgradeDB ():
     
     # Drop table if available, but incompatible
     if onlineHistoryAvailable and isIncompatible:      
-      file_print ('[upgradeDB] Table is incompatible, Dropping the Online_History table)')
+      mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
       sql.execute("DROP TABLE Online_History;")
       onlineHistoryAvailable = False
 
@@ -3492,19 +3369,7 @@ def get_file_content(path):
 
 #-------------------------------------------------------------------------------
 
-def updateSubnets():
-    global userSubnets
-    
-    #  remove old list
-    userSubnets = []  
 
-    # multiple interfaces
-    if type(SCAN_SUBNETS) is list:        
-        for interface in SCAN_SUBNETS :            
-            userSubnets.append(interface)
-    # one interface only
-    else:        
-        userSubnets.append(SCAN_SUBNETS)
     
 
 #-------------------------------------------------------------------------------
