@@ -367,7 +367,24 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                                 </div>
                               </div>
                             </div>
-                        </div>                           
+                        </div> 
+                        <div class="log-area">
+                            <div class="row logs-row">
+                              <textarea id="pialert_php_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert.php_errors.log" ); ?>
+                              </textarea>
+                            </div>
+                            <div class="row logs-row" >                            
+                              <div>
+                                <div class="log-file">pialert.php_errors.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert.php_errors.log") / 1000000),2,",",".") . ' MB';?> 
+                                <span class="span-padding"><a href="./log/pialert.php_errors.log"><i class="fa fa-download"></i> </a></span>
+                              </div></div>
+                                <div class="log-purge">
+                                  <button class="btn btn-primary" onclick="logManage('pialert.php_errors.log','cleanLog')"><?= lang('Gen_Purge');?></button>
+                                </div>
+                              </div>
+                            </div>
+                        </div>                         
+                        
                          <div class="log-area">
                              
                              <div class="row logs-row">
@@ -705,7 +722,7 @@ function performLogManage() {
 // --------------------------------------------------------
 function scrollDown()
 {
-  var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log'];
+  var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
   
   for (let i = 0; i < areaIDs.length; i++) {
 
