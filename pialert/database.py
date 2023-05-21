@@ -2,8 +2,10 @@
 
 import sqlite3
 
+# pialert modules
 from const import fullDbPath
-from logger import print_log, mylog
+from logger import mylog
+from helper import initOrSetParam, json_struc, row_to_json
 
 
 #===============================================================================
@@ -141,14 +143,7 @@ class DB():
 
 
 
-#-------------------------------------------------------------------------------
-def initOrSetParam(db, parID, parValue):    
-    sql_connection = db.sql_connection
-    sql = db.sql
 
-    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")        
-
-    db.commitDB()
 
 #-------------------------------------------------------------------------------
 def updateState(db, newState):    
@@ -158,6 +153,26 @@ def updateState(db, newState):
     db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
 
     db.commitDB()
+
+#-------------------------------------------------------------------------------
+def get_table_as_json(db, sqlQuery):
+
+    db.sql.execute(sqlQuery) 
+
+    columnNames = list(map(lambda x: x[0], db.sql.description)) 
+
+    rows = db.sql.fetchall()    
+
+    result = {"data":[]}
+
+    for row in rows: 
+        tmp = row_to_json(columnNames, row)
+        result["data"].append(tmp)
+    return json_struc(result, columnNames)
+
+
+ 
+
 
 
 

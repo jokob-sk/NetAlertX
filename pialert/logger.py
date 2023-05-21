@@ -1,6 +1,8 @@
 """ Colection of functions to support all logging for Pi.Alert """
-
+import sys
+import io
 import datetime
+
 from const import *
 
 
@@ -77,3 +79,14 @@ def logResult (stdout, stderr):
     if stdout != None:
         append_file_binary (logPath + '/stdout.log', stdout)  
 
+#-------------------------------------------------------------------------------
+def append_line_to_file (pPath, pText):
+    # append the line depending using the correct python version
+    if sys.version_info < (3, 0):
+        file = io.open (pPath , mode='a', encoding='utf-8')
+        file.write ( pText.decode('unicode_escape') ) 
+        file.close() 
+    else:
+        file = open (pPath, 'a', encoding='utf-8') 
+        file.write (pText) 
+        file.close() 
