@@ -2552,7 +2552,7 @@ class noti_struc:
 def check_config(service):
 
     if service == 'email':
-        if SMTP_PASS == '' or SMTP_SERVER == '' or SMTP_USER == '' or REPORT_FROM == '' or REPORT_TO == '':
+        if SMTP_SERVER == '' or REPORT_FROM == '' or REPORT_TO == '':
             mylog('none', ['    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
             return False
         else:
