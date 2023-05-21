@@ -536,6 +536,8 @@ $lang['es_es'] = array(
 'DIG_GET_IP_ARG_description' => 'Cambie los argumentos de la <a href="https://linux.die.net/man/1/dig" target="_blank">utilidad de dig</a> si tiene problemas para resolver su IP de Internet. Los argumentos se agregan al final del siguiente comando: <code>dig +short </code>.',
 'UI_LANG_name' => 'Idioma de interfaz',
 'UI_LANG_description' => 'Seleccione el idioma de interfaz de usuario preferido.',
+'UI_PRESENCE_name' => 'Mostrar en el gráfico de presencia',
+'UI_PRESENCE_description' => 'Elige que estados del dispositivo deben mostrarse en la gráfica de <b>Presencia del dispositivo a lo largo del tiempo</b>  de la página de <a href="/devices.php" target="_blank">Dispositivos</a>. (<code>CTRL + Clic</code> para seleccionar / deseleccionar)',
 
 // Email
 'Email_display_name' => 'Email',
