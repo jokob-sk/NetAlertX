@@ -95,7 +95,11 @@ Any of the above datasources have to return a "table" of the exact structure as 
 - You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
 - The order of these "columns" can't be changed.
 
-#### Examples
+### 👍 Python script.py tips
+
+The [Undicoverables plugins `script.py` file](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
+
+#### last_result.log examples
 
 Valid CSV:
 
@@ -122,7 +126,9 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ### "data_source":  "pialert-db-query"
 
-If the datasource is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important.
+If the datasource is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
+
+This SQL query is executed on the `pialert.db` SQLite database file. 
 
 #### Examples
 
@@ -443,6 +449,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - [dhcp_leases (DHCPLSS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/config.json) 
 - [unifi_import (UNFIMP) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/config.json)
 - [snmp_discovery (SNMPDSC) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/snmp_discovery/config.json)
+- [undiscoverables (UNDIS) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/config.json)
 
 ### SQL query based plugins
 - [nmap_services (NMAPSERV) config.json](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/config.json) 
