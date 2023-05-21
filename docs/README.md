@@ -77,7 +77,7 @@ If you submit a PR please:
 4. New features code should ideally be re-usable for different purposes, not be for a very narrow use-case.
 5. New functionality should ideally be implemented via the Plugins system, if possible.
 
-Soem additional context:
+Some additional context:
 
 * Permanent settings/config is stored in the `pialert.conf` file
 * Currently temporary (session?) settings are stored in the `Parameters` DB table as key - value pairs. This table is wiped during a container rebuild/restart and it's values re-initialized from cookies / session data from the browser. 

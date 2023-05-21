@@ -1,7 +1,7 @@
 .vscode
 .DS_Store
 config/pialert.conf
-db/*
+# db/*
 front/log/*
 front/plugins/**/*.log
 **/%40eaDir/
