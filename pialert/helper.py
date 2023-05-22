@@ -2,8 +2,6 @@
 
 import datetime
 import os
-import sys
-import io
 import re
 import subprocess
 from cron_converter import Cron
@@ -12,6 +10,7 @@ from datetime import timedelta
 import json
 import time
 from pathlib import Path
+import requests
 
 
 
@@ -489,3 +488,86 @@ def checkIPV4(ip):
         return False
 
 
+#-------------------------------------------------------------------------------
+def isNewVersion(db):   
+    global newVersionAvailable
+
+    if newVersionAvailable == False:    
+
+        f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
+        buildTimestamp = int(f.read().strip())
+        f.close() 
+
+        data = ""
+
+        try:
+            url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+            text = url.text
+            data = json.loads(text)
+        except requests.exceptions.ConnectionError as e:
+            mylog('info', ["    Couldn't check for new release."]) 
+            data = ""
+        
+        # make sure we received a valid response and not an API rate limit exceeded message
+        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:        
+
+            dateTimeStr = data[0]["published_at"]            
+
+            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))            
+
+            if realeaseTimestamp > buildTimestamp + 600:        
+                mylog('none', ["    New version of the container available!"])
+                newVersionAvailable = True 
+                # updateState(db, 'Back_New_Version_Available', str(newVersionAvailable))     ## TO DO add this back in but avoid circular ref with database
+
+    return newVersionAvailable
+
+#-------------------------------------------------------------------------------
+def hide_email(email):
+    m = email.split('@')
+
+    if len(m) == 2:
+        return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+
+    return email    
+
+#-------------------------------------------------------------------------------
+def removeDuplicateNewLines(text):
+    if "\n\n\n" in text:
+        return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
+    else:
+        return text
+
+#-------------------------------------------------------------------------------
+
+def add_json_list (row, list):
+    new_row = []
+    for column in row :        
+        column = bytes_to_string(column)
+
+        new_row.append(column)
+
+    list.append(new_row)    
+
+    return list        
+
+#-------------------------------------------------------------------------------
+
+def sanitize_string(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+    value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return value
+
+
+#-------------------------------------------------------------------------------
+def generate_mac_links (html, deviceUrl):
+
+    p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
+
+    MACs = re.findall(p, html)
+
+    for mac in MACs:        
+        html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
+
+    return html

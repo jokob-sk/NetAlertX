@@ -1,6 +1,10 @@
 """ config related functions for Pi.Alert """
 
 mySettings = []
+debug_force_notification = False
+cycle = 1
+userSubnets = []
+mySchedules = [] 
 
 # General
 ENABLE_ARPSCAN = True 

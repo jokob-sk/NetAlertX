@@ -6,9 +6,10 @@ from collections import namedtuple
 
 # pialert modules
 from const import pluginsPath, logPath
+from conf import mySettings
 from files import get_file_content, write_file
 from logger import mylog
-from conf import mySettings
+from database import updateState
 #from api import update_api
 
 
@@ -17,6 +18,48 @@ from conf import mySettings
 #-------------------------------------------------------------------------------
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
+
+
+#-------------------------------------------------------------------------------
+def run_plugin_scripts(db, runType):
+    
+    global plugins, tz, mySchedules
+
+    # Header
+    updateState(db,"Run: Plugins")
+
+    mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
+
+    for plugin in plugins:
+
+        shouldRun = False
+
+        set = get_plugin_setting(plugin, "RUN")
+        if set != None and set['value'] == runType:
+            if runType != "schedule":
+                shouldRun = True
+            elif  runType == "schedule":
+                # run if overdue scheduled time   
+                prefix = plugin["unique_prefix"]
+
+                #  check scheduels if any contains a unique plugin prefix matching the current plugin
+                for schd in mySchedules:
+                    if schd.service == prefix:          
+                        # Check if schedule overdue
+                        shouldRun = schd.runScheduleCheck()  
+                        if shouldRun:
+                            # note the last time the scheduled plugin run was executed
+                            schd.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+
+        if shouldRun:            
+                        
+            print_plugin_info(plugin, ['display_name'])
+            mylog('debug', ['     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
+            execute_plugin(plugin) 
+
+
+
+
 
 #-------------------------------------------------------------------------------
 def get_plugins_configs():

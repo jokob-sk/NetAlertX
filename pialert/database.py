@@ -5,7 +5,7 @@ import sqlite3
 # pialert modules
 from const import fullDbPath
 from logger import mylog
-from helper import initOrSetParam, json_struc, row_to_json
+from helper import initOrSetParam, json_struc, row_to_json, timeNow
 
 
 #===============================================================================
@@ -422,3 +422,46 @@ def upgradeDB(db: DB()):
     db.commitDB()    
 
 
+#-------------------------------------------------------------------------------
+def get_device_stats(db):
+    sql = db.sql  #TO-DO 
+    # columns = ["online","down","all","archived","new","unknown"]
+    sql.execute(sql_devices_stats)
+
+    row = sql.fetchone()
+    db.commitDB()
+
+    return row
+#-------------------------------------------------------------------------------
+def get_all_devices(db):    
+    sql = db.sql  #TO-DO 
+    sql.execute(sql_devices_all)
+
+    row = sql.fetchall()
+
+    db.commitDB()
+    return row
+
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+def insertOnlineHistory(db, cycle):
+    sql = db.sql #TO-DO
+    startTime = timeNow()
+    # Add to History
+    sql.execute("SELECT * FROM Devices")
+    History_All = sql.fetchall()
+    History_All_Devices  = len(History_All)
+
+    sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
+    History_Archived = sql.fetchall()
+    History_Archived_Devices  = len(History_Archived)
+
+    sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
+    History_Online = sql.fetchall()
+    History_Online_Devices  = len(History_Online)
+    History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
+    
+    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
+                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
+    db.commit()
