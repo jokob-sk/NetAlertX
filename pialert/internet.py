@@ -4,8 +4,8 @@ import subprocess
 import re
 
 # pialert modules
-from database import updateState
-from helper import timeNow
+
+from helper import timeNow, updateState
 from logger import append_line_to_file, mylog
 from const import logPath
 from conf import DDNS_ACTIVE, DDNS_DOMAIN, DDNS_UPDATE_URL, DDNS_PASSWORD, DDNS_USER

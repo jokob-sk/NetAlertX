@@ -4,8 +4,11 @@ import sqlite3
 
 # pialert modules
 from const import fullDbPath
+
 from logger import mylog
-from helper import initOrSetParam, json_struc, row_to_json, timeNow
+from helper import json_struc, initOrSetParam, row_to_json, timeNow #, updateState
+
+
 
 
 #===============================================================================
@@ -91,7 +94,7 @@ class DB():
     #===============================================================================
     def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA):
           # Header    
-          updateState(self,"Upkeep: Clean DB") 
+          #updateState(self,"Upkeep: Clean DB") 
           mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
 
           # Cleanup Online History
@@ -145,14 +148,7 @@ class DB():
 
 
 
-#-------------------------------------------------------------------------------
-def updateState(db, newState):    
-    #sql = db.sql
 
-    mylog('debug', '       [updateState] changing state to: "' + newState +'"')
-    db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
-
-    db.commitDB()
 
 #-------------------------------------------------------------------------------
 def get_table_as_json(db, sqlQuery):
@@ -465,3 +461,4 @@ def insertOnlineHistory(db, cycle):
     sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
                  "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
     db.commit()
+

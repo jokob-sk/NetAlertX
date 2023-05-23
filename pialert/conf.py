@@ -4,7 +4,8 @@ mySettings = []
 debug_force_notification = False
 cycle = 1
 userSubnets = []
-mySchedules = [] 
+mySchedules = [] # bad solution for global - TO-DO
+plugins = []  # bad solution for global - TO-DO
 
 # General
 ENABLE_ARPSCAN = True 

@@ -6,11 +6,11 @@ from collections import namedtuple
 
 # pialert modules
 from const import pluginsPath, logPath
-from conf import mySettings
+from conf import mySettings, plugins
 from files import get_file_content, write_file
 from logger import mylog
-from database import updateState
-#from api import update_api
+from helper import updateState
+
 
 
 #-------------------------------------------------------------------------------

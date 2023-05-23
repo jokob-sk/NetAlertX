@@ -3,8 +3,8 @@ import subprocess
 
 from const import logPath
 from conf import NMAP_ARGS, NMAP_TIMEOUT
-from database import updateState, sql_nmap_scan_all
-from helper import json_struc, timeNow
+from database import sql_nmap_scan_all
+from helper import json_struc, timeNow, updateState
 from logger import append_line_to_file, mylog
 #-------------------------------------------------------------------------------
 

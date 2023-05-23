@@ -2,9 +2,8 @@ import subprocess
 import re
 
 from const import fullPholusPath, logPath
-from pialert.database import updateState
-from pialert.helper import checkIPV4, timeNow
-from pialert.logger import mylog
+from helper import checkIPV4, timeNow, updateState
+from logger import mylog
 
 #-------------------------------------------------------------------------------
 

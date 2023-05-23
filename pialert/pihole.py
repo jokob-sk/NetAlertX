@@ -1,8 +1,11 @@
-
 from const import piholeDB, piholeDhcpleases
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network (db):
+    """
+    attach the PiHole Database and copy the PiHole_Network table accross into the PiAlert DB
+    """
+    
     sql = db.sql # TO-DO
     # Open Pi-hole DB
     sql.execute ("ATTACH DATABASE '"+ piholeDB +"' AS PH")
@@ -29,6 +32,10 @@ def copy_pihole_network (db):
 
 #-------------------------------------------------------------------------------
 def read_DHCP_leases (db):
+    """
+    read the PiHole DHCP file and insert all records into the DHCP_Leases table.
+    """
+
     sql = db.sql # TO-DO    
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
@@ -45,4 +52,4 @@ def read_DHCP_leases (db):
                             DHCP_IP, DHCP_Name, DHCP_MAC2)
                         VALUES (?, ?, ?, ?, ?)
                      """, data)
-
+    db.commit()

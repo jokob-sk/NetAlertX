@@ -1,15 +1,17 @@
 
 
+
+from conf import DHCP_ACTIVE, PIHOLE_ACTIVE, cycle, ENABLE_ARPSCAN
 from arpscan import execute_arpscan
-from conf import DHCP_ACTIVE, ENABLE_PLUGINS, PIHOLE_ACTIVE, cycle, ENABLE_ARPSCAN
-from database import insertOnlineHistory, updateState
+from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
 from helper import timeNow
 from logger import mylog, print_log
-from pialert.plugin import run_plugin_scripts
 from pihole import copy_pihole_network, read_DHCP_leases
 from reporting import skip_repeated_notifications
-          
+
+
+
 #===============================================================================
 # SCAN NETWORK
 #===============================================================================
@@ -20,7 +22,8 @@ def scan_network (db):
     reporting = False
 
     # Header
-    updateState(db,"Scan: Network")
+    # moved updateState to main loop
+    # updateState(db,"Scan: Network")
     mylog('verbose', ['[', timeNow(), '] Scan Devices:' ])       
 
     # Query ScanCycle properties    
@@ -105,9 +108,9 @@ def scan_network (db):
     # Commit changes    
     db.commitDB()
 
-    # Run splugin scripts which are set to run every timne after a scan finished
-    if ENABLE_PLUGINS:
-        run_plugin_scripts(db,'always_after_scan')
+    # moved plugin execution to main loop
+    # if ENABLE_PLUGINS:
+    #    run_plugin_scripts(db,'always_after_scan')
 
     return reporting
 

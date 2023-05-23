@@ -4,12 +4,12 @@
 
 import subprocess
 
-from pialert.conf import PHOLUS_ACTIVE, PHOLUS_FORCE, PHOLUS_TIMEOUT, cycle, DIG_GET_IP_ARG, userSubnets
-from pialert.helper import timeNow
-from pialert.internet import check_IP_format, get_internet_IP
-from pialert.logger import mylog, print_log
-from pialert.mac_vendor import query_MAC_vendor
-from pialert.pholusscan import performPholusScan, resolve_device_name_pholus
+from conf import PHOLUS_ACTIVE, PHOLUS_FORCE, PHOLUS_TIMEOUT, cycle, DIG_GET_IP_ARG, userSubnets
+from helper import timeNow
+from internet import check_IP_format, get_internet_IP
+from logger import mylog, print_log
+from mac_vendor import query_MAC_vendor
+from pholusscan import performPholusScan, resolve_device_name_pholus
 #-------------------------------------------------------------------------------
 
 

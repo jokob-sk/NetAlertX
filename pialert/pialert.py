@@ -44,24 +44,21 @@ import multiprocessing
 # pialert modules
 from const import *
 from conf import *
-# from config import DIG_GET_IP_ARG, ENABLE_PLUGINS
-from logger import append_line_to_file, mylog, print_log, logResult
-from helper import checkIPV4, filePermissions,   importConfigs, isNewVersion, removeDuplicateNewLines, timeNow,  write_file
-from database import *
-from internet import check_IP_format, check_internet_IP, get_internet_IP
+from logger import  mylog
+from helper import  filePermissions,  timeNow, updateState
 from api import update_api
 from files import get_file_content
-from mqtt import mqtt_start
-from pialert.arpscan import execute_arpscan
-from pialert.mac_vendor import query_MAC_vendor, update_devices_MAC_vendors
-from pialert.networkscan import scan_network
-from pialert.nmapscan import performNmapScan
-from pialert.pholusscan import performPholusScan, resolve_device_name_pholus
-from pialert.pihole import copy_pihole_network, read_DHCP_leases
-from pialert.reporting import send_apprise, send_email, send_notifications, send_ntfy, send_pushsafer, send_webhook, skip_repeated_notifications
-from plugin import execute_plugin, get_plugin_setting, print_plugin_info, run_plugin_scripts 
+from networkscan import scan_network
+from initialise import importConfigs
+from mac_vendor import update_devices_MAC_vendors
+from database import DB, get_all_devices, upgradeDB, sql_new_devices
+from reporting import send_apprise, send_email, send_notifications, send_ntfy, send_pushsafer, send_webhook
+from plugin import run_plugin_scripts 
 
-
+# different scanners
+from pholusscan import performPholusScan
+from nmapscan import performNmapScan
+from internet import check_internet_IP
 
 
 # Global variables
@@ -224,13 +221,14 @@ def main ():
                 last_network_scan = time_started
                 cycle = 1 # network scan
                 mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
-    
+                updateState(db,"Scan: Network")
+
                 # scan_network() 
 
                 #  DEBUG start ++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 # Start scan_network as a process                
 
-                p = multiprocessing.Process(target=scan_network)
+                p = multiprocessing.Process(target=scan_network(db))
                 p.start()
 
                 # Wait for 3600 seconds (max 1h) or until process finishes
@@ -249,7 +247,10 @@ def main ():
                     p.join()
 
                 #  DEBUG end ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                
+                # Run splugin scripts which are set to run every timne after a scan finished
+                if ENABLE_PLUGINS:
+                    run_plugin_scripts(db,'always_after_scan')
+
             
             # Reporting   
             if cycle in check_report:

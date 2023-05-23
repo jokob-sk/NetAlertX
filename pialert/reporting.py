@@ -13,9 +13,9 @@ from json2table import convert
 from const import pialertPath, logPath
 # from pialert.api import update_api
 from conf import *
-from database import get_table_as_json, updateState
+from database import get_table_as_json
 from files import write_file
-from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email
+from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState
 from logger import logResult, mylog, print_log
 from mqtt import mqtt_start
 
