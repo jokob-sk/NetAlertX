@@ -42,10 +42,10 @@ import multiprocessing
 
 
 # pialert modules
+import conf
 from const import *
-from conf import *
 from logger import  mylog
-from helper import  filePermissions,  timeNow, updateState
+from helper import  filePermissions, isNewVersion,  timeNow, updateState
 from api import update_api
 from files import get_file_content
 from networkscan import scan_network
@@ -62,10 +62,6 @@ from internet import check_internet_IP
 
 
 # Global variables
-
-
-
-userSubnets = []
 changedPorts_json_struc = None
 time_started = datetime.datetime.now()
 cron_instance = Cron()
@@ -83,7 +79,7 @@ sql_connection = None
 #===============================================================================
 cycle = ""
 check_report = [1, "internet_IP", "update_vendors_silent"]
-plugins_once_run = False
+conf.plugins_once_run = False
 
 # timestamps of last execution times
 startTime = time_started
@@ -103,9 +99,7 @@ def main ():
     global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
     # second set of global variables
     global startTime, log_timestamp, plugins_once_run 
-
-    # To-Do all these DB Globals need to be removed
-    global db, sql, sql_connection
+    
 
     # check file permissions and fix if required
     filePermissions()
@@ -116,7 +110,7 @@ def main ():
     db.openDB()
 
     # To-Do replace the following to lines with the db class
-    sql_connection = db.sql_connection
+    # sql_connection = db.sql_connection
     sql = db.sql
 
     # Upgrade DB if needed
@@ -134,10 +128,15 @@ def main ():
         mylog('debug', ['[', timeNow(), '] [MAIN] Stating loop'])
 
         # re-load user configuration and plugins
+        mylog('debug', "tz before config : " + str(conf.tz))        
         importConfigs(db)       
-        
+        mylog('debug', "tz after config : " + str(conf.tz))  
+
+        # check if new version is available
+        conf.newVersionAvailable = isNewVersion(False)
+
         # Handle plugins executed ONCE
-        if ENABLE_PLUGINS and plugins_once_run == False:
+        if conf.ENABLE_PLUGINS and conf.plugins_once_run == False:
             run_plugin_scripts(db, 'once')  
             plugins_once_run = True
 
@@ -161,7 +160,7 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            if ENABLE_PLUGINS:
+            if conf.ENABLE_PLUGINS:
                 run_plugin_scripts(db,'schedule') 
 
             # determine run/scan type based on passed time
@@ -171,7 +170,7 @@ def main ():
             if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
                 cycle = 'internet_IP'                
                 last_internet_IP_scan = time_started
-                check_internet_IP(db,DIG_GET_IP_ARG)
+                check_internet_IP(db)
 
             # Update vendors once a week
             if last_update_vendors + datetime.timedelta(days = 7) < time_started:
@@ -181,43 +180,48 @@ def main ():
                 update_devices_MAC_vendors()
 
             # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
-            if PHOLUS_RUN == "schedule" or PHOLUS_RUN == "once":
+            if conf.PHOLUS_RUN == "schedule" or conf.PHOLUS_RUN == "once":
 
-                pholusSchedule = [sch for sch in mySchedules if sch.service == "pholus"][0]
+                mylog('debug', "PHOLUS_RUN_SCHD: " + conf.PHOLUS_RUN_SCHD)
+                mylog('debug', "schedules : " + str(conf.mySchedules))
+
+                pholusSchedule = [sch for sch in conf.mySchedules if sch.service == "pholus"][0]
                 run = False
 
                 # run once after application starts
-                if PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
+
+
+                if conf.PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
                     run = True
 
                 # run if overdue scheduled time
-                if PHOLUS_RUN == "schedule":
+                if conf.PHOLUS_RUN == "schedule":
                     run = pholusSchedule.runScheduleCheck()                    
 
                 if run:
-                    pholusSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
-                    performPholusScan(db, PHOLUS_RUN_TIMEOUT, userSubnets)
+                    pholusSchedule.last_run = datetime.datetime.now(conf.tz).replace(microsecond=0)
+                    performPholusScan(db, conf.PHOLUS_RUN_TIMEOUT, conf.userSubnets)
             
             # Execute scheduled or one-off Nmap scan if enabled and run conditions fulfilled
-            if NMAP_RUN == "schedule" or NMAP_RUN == "once":
+            if conf.NMAP_RUN == "schedule" or conf.NMAP_RUN == "once":
 
-                nmapSchedule = [sch for sch in mySchedules if sch.service == "nmap"][0]
+                nmapSchedule = [sch for sch in conf.mySchedules if sch.service == "nmap"][0]
                 run = False
 
                 # run once after application starts
-                if NMAP_RUN == "once" and nmapSchedule.last_run == 0:
+                if conf.NMAP_RUN == "once" and conf.nmapSchedule.last_run == 0:
                     run = True
 
                 # run if overdue scheduled time
-                if NMAP_RUN == "schedule":
+                if conf.NMAP_RUN == "schedule":
                     run = nmapSchedule.runScheduleCheck()                    
 
                 if run:
-                    nmapSchedule.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+                    conf.nmapSchedule.last_run = datetime.datetime.now(conf.tz).replace(microsecond=0)
                     performNmapScan(db, get_all_devices(db))
             
             # Perform a network scan via arp-scan or pihole
-            if last_network_scan + datetime.timedelta(minutes=SCAN_CYCLE_MINUTES) < time_started:
+            if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 cycle = 1 # network scan
                 mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
@@ -248,7 +252,7 @@ def main ():
 
                 #  DEBUG end ++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 # Run splugin scripts which are set to run every timne after a scan finished
-                if ENABLE_PLUGINS:
+                if conf.ENABLE_PLUGINS:
                     run_plugin_scripts(db,'always_after_scan')
 
             
@@ -262,11 +266,11 @@ def main ():
                 #  new devices were found
                 if len(newDevices) > 0:
                     #  run all plugins registered to be run when new devices are found
-                    if ENABLE_PLUGINS:
+                    if conf.ENABLE_PLUGINS:
                         run_plugin_scripts(db, 'on_new_device')
 
                     #  Scan newly found devices with Nmap if enabled
-                    if NMAP_ACTIVE and len(newDevices) > 0:
+                    if conf.NMAP_ACTIVE and len(newDevices) > 0:
                         performNmapScan( db, newDevices)
 
                 # send all configured notifications
@@ -277,7 +281,7 @@ def main ():
                 last_cleanup = time_started
                 cycle = 'cleanup'  
                 mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
-                db.cleanup_database(startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA)   
+                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA)   
 
             # Commit SQL
             db.commitDB()          
@@ -314,6 +318,7 @@ def main ():
 
 #-------------------------------------------------------------------------------
 def check_and_run_event(db):
+    sql = db.sql # TO-DO
     sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
     rows = sql.fetchall()    
 

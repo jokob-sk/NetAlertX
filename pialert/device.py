@@ -4,7 +4,7 @@
 
 import subprocess
 
-from conf import PHOLUS_ACTIVE, PHOLUS_FORCE, PHOLUS_TIMEOUT, cycle, DIG_GET_IP_ARG, userSubnets
+import conf
 from helper import timeNow
 from internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
@@ -43,7 +43,7 @@ def save_scanned_devices (db, p_arpscan_devices, p_cycle_interval):
                      cycle) )
 
     # Check Internet connectivity
-    internet_IP = get_internet_IP(DIG_GET_IP_ARG)
+    internet_IP = get_internet_IP( conf.DIG_GET_IP_ARG )
         # TESTING - Force IP
         # internet_IP = ""
     if internet_IP != "" :
@@ -81,19 +81,19 @@ def print_scan_stats (db):
     # Devices Detected
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanCycle = ? """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['    Devices Detected.......: ', str (sql.fetchone()[0]) ])
 
     # Devices arp-scan
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        arp-scan detected..: ', str (sql.fetchone()[0]) ])
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        Pi-hole detected...: +' + str (sql.fetchone()[0]) ])
 
     # New Devices
@@ -101,14 +101,14 @@ def print_scan_stats (db):
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        New Devices........: ' + str (sql.fetchone()[0]) ])
 
     # Devices in this ScanCycle
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_ScanCycle = ? """,
-                    (cycle,))
+                    (conf.cycle,))
     
     mylog('verbose', ['    Devices in this cycle..: ' + str (sql.fetchone()[0]) ])
 
@@ -119,7 +119,7 @@ def print_scan_stats (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        Down Alerts........: ' + str (sql.fetchone()[0]) ])
 
     # New Down Alerts
@@ -130,7 +130,7 @@ def print_scan_stats (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        New Down Alerts....: ' + str (sql.fetchone()[0]) ])
 
     # New Connections
@@ -138,7 +138,7 @@ def print_scan_stats (db):
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_PresentLastScan = 0
                       AND dev_ScanCycle = ? """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        New Connections....: ' + str ( sql.fetchone()[0]) ])
 
     # Disconnections
@@ -148,7 +148,7 @@ def print_scan_stats (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        Disconnections.....: ' + str ( sql.fetchone()[0]) ])
 
     # IP Changes
@@ -156,7 +156,7 @@ def print_scan_stats (db):
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
-                    (cycle,))
+                    (conf.cycle,))
     mylog('verbose', ['        IP Changes.........: ' + str ( sql.fetchone()[0]) ])
 
 
@@ -176,7 +176,7 @@ def create_new_devices (db):
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
-                    (startTime, cycle) ) 
+                    (startTime, conf.cycle) ) 
 
     print_log ('New devices - Insert Connection into session table')
     sql.execute ("""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
@@ -186,7 +186,7 @@ def create_new_devices (db):
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Sessions
                                       WHERE ses_MAC = cur_MAC) """,
-                    (startTime, cycle) ) 
+                    (startTime, conf.cycle) ) 
                     
     # arpscan - Create new devices
     print_log ('New devices - 2 Create devices')
@@ -200,7 +200,7 @@ def create_new_devices (db):
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
-                    (startTime, startTime, cycle) ) 
+                    (startTime, startTime, conf.cycle) ) 
 
     # Pi-hole - Insert events for new devices
     # NOT STRICYLY NECESARY (Devices can be created through Current_Scan)
@@ -277,7 +277,7 @@ def create_new_devices (db):
     #                                   WHERE dev_MAC = DHCP_MAC) """,
     #                 (startTime, startTime) ) 
     print_log ('New Devices end')
-    db.commit()
+    db.commitDB()
 
 
 #-------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ def update_devices_data_from_scan (db):
                       AND EXISTS (SELECT 1 FROM CurrentScan 
                                   WHERE dev_MAC = cur_MAC
                                     AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, cycle))
+                    (startTime, conf.cycle))
 
     # Clean no active devices
     print_log ('Update devices - 2 Clean no active devices')
@@ -302,7 +302,7 @@ def update_devices_data_from_scan (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan 
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (cycle,))
+                    (conf.cycle,))
 
     # Update IP & Vendor
     print_log ('Update devices - 3 LastIP & Vendor')
@@ -317,7 +317,7 @@ def update_devices_data_from_scan (db):
                       AND EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE dev_MAC = cur_MAC
                                     AND dev_ScanCycle = cur_ScanCycle) """,
-                    (cycle,)) 
+                    (conf.cycle,)) 
 
     # Pi-hole Network - Update (unknown) Name
     print_log ('Update devices - 4 Unknown Name')
@@ -379,11 +379,11 @@ def update_devices_names (db):
     db.commitDB()
 
     # perform Pholus scan if (unknown) devices found
-    if PHOLUS_ACTIVE and (len(unknownDevices) > 0 or PHOLUS_FORCE):        
-        performPholusScan(db, PHOLUS_TIMEOUT, userSubnets)
+    if conf.PHOLUS_ACTIVE and (len(unknownDevices) > 0 or conf.PHOLUS_FORCE):        
+        performPholusScan(db, conf.PHOLUS_TIMEOUT, conf.userSubnets)
 
     # skip checks if no unknown devices
-    if len(unknownDevices) == 0 and PHOLUS_FORCE == False:
+    if len(unknownDevices) == 0 and conf.PHOLUS_FORCE == False:
         return
 
     # Devices without name

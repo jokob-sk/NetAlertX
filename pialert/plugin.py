@@ -5,11 +5,11 @@ import datetime
 from collections import namedtuple
 
 # pialert modules
+import conf
 from const import pluginsPath, logPath
-from conf import mySettings, plugins
 from files import get_file_content, write_file
 from logger import mylog
-from helper import updateState
+from helper import timeNowTZ, updateState
 
 
 
@@ -23,14 +23,14 @@ def timeNow():
 #-------------------------------------------------------------------------------
 def run_plugin_scripts(db, runType):
     
-    global plugins, tz, mySchedules
+    # global plugins, tz, mySchedules
 
     # Header
     updateState(db,"Run: Plugins")
 
     mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 
-    for plugin in plugins:
+    for plugin in conf.plugins:
 
         shouldRun = False
 
@@ -43,13 +43,13 @@ def run_plugin_scripts(db, runType):
                 prefix = plugin["unique_prefix"]
 
                 #  check scheduels if any contains a unique plugin prefix matching the current plugin
-                for schd in mySchedules:
+                for schd in conf.mySchedules:
                     if schd.service == prefix:          
                         # Check if schedule overdue
                         shouldRun = schd.runScheduleCheck()  
                         if shouldRun:
                             # note the last time the scheduled plugin run was executed
-                            schd.last_run = datetime.datetime.now(tz).replace(microsecond=0)
+                            schd.last_run = timeNowTZ()
 
         if shouldRun:            
                         
@@ -107,14 +107,14 @@ def get_plugin_setting(plugin, function_key):
 def get_setting(key):
     result = None
     # index order: key, name, desc, inputtype, options, regex, result, group, events
-    for set in mySettings:
+    for set in conf.mySettings:
         if set[0] == key:
             result = set
     
     if result is None:
         mylog('info', [' Error - setting_missing - Setting not found for key: ', key])           
         mylog('info', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
-        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : mySettings}))    
+        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
     return result
         

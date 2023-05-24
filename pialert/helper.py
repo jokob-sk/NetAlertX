@@ -12,11 +12,8 @@ import time
 from pathlib import Path
 import requests
 
-
-
-
+import conf 
 from const import *
-from conf import tz
 from logger import mylog, logResult, print_log
 # from api import update_api  # to avoid circular reference
 
@@ -25,9 +22,15 @@ from logger import mylog, logResult, print_log
 #-------------------------------------------------------------------------------
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
+#-------------------------------------------------------------------------------
+def timeNowTZ():
+    return datetime.datetime.now(conf.tz).replace(microsecond=0)
 
 #-------------------------------------------------------------------------------
-def updateState(db, newState):    
+def updateState(db, newState):   
+
+    # ?? Why is the state written to the DB?
+     
     #sql = db.sql
 
     mylog('debug', '       [updateState] changing state to: "' + newState +'"')
@@ -35,18 +38,20 @@ def updateState(db, newState):
 
     db.commitDB()
 #-------------------------------------------------------------------------------
-def updateSubnets(SCAN_SUBNETS):
+def updateSubnets(scan_subnets):
 
     #  remove old list
-    userSubnets = []  
+    subnets = []  
 
     # multiple interfaces
-    if type(SCAN_SUBNETS) is list:        
-        for interface in SCAN_SUBNETS :            
-            userSubnets.append(interface)
+    if type(scan_subnets) is list:        
+        for interface in scan_subnets :            
+            subnets.append(interface)
     # one interface only
     else:        
-        userSubnets.append(SCAN_SUBNETS)    
+        subnets.append(scan_subnets)  
+
+    return subnets  
 
 
 
@@ -129,43 +134,6 @@ def filePermissions():
     # last attempt
     fixPermissions()            
 
-#-------------------------------------------------------------------------------
-class schedule_class:
-    def __init__(self, service, scheduleObject, last_next_schedule, was_last_schedule_used, last_run = 0):
-        self.service = service
-        self.scheduleObject = scheduleObject
-        self.last_next_schedule = last_next_schedule
-        self.last_run = last_run
-        self.was_last_schedule_used = was_last_schedule_used          
-    def runScheduleCheck(self):
-
-        result = False 
-
-        # Initialize the last run time if never run before
-        if self.last_run == 0:
-            self.last_run =  (datetime.datetime.now(tz) - timedelta(days=365)).replace(microsecond=0)
-
-        # get the current time with the currently specified timezone
-        nowTime = datetime.datetime.now(tz).replace(microsecond=0)
-
-        # Run the schedule if the current time is past the schedule time we saved last time and 
-        #               (maybe the following check is unnecessary:)
-        # if the last run is past the last time we run a scheduled Pholus scan
-        if nowTime > self.last_next_schedule and self.last_run < self.last_next_schedule:
-            print_log(f'Scheduler run for {self.service}: YES')
-            self.was_last_schedule_used = True
-            result = True
-        else:
-            print_log(f'Scheduler run for {self.service}: NO')
-        
-        if self.was_last_schedule_used:
-            self.was_last_schedule_used = False
-            self.last_next_schedule = self.scheduleObject.next()            
-
-        return result
-    
-  
-
 
 #-------------------------------------------------------------------------------
 
@@ -220,15 +188,11 @@ def import_language_string(db, code, key, value, extra = ""):
 
 
 #-------------------------------------------------------------------------------
-# Make a regular expression
-# for validating an Ip-address
-ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-
-# Define a function to
-# validate an Ip address
 def checkIPV4(ip):
-    # pass the regular expression
-    # and the string in search() method
+    """ Define a function to validate an Ip address
+    """
+    ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+
     if(re.search(ipRegex, ip)):
         return True
     else:
@@ -236,10 +200,9 @@ def checkIPV4(ip):
 
 
 #-------------------------------------------------------------------------------
-def isNewVersion(db):   
-    global newVersionAvailable
+def isNewVersion(newVersion: bool):   
 
-    if newVersionAvailable == False:    
+    if newVersion == False:    
 
         f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
         buildTimestamp = int(f.read().strip())
@@ -264,10 +227,10 @@ def isNewVersion(db):
 
             if realeaseTimestamp > buildTimestamp + 600:        
                 mylog('none', ["    New version of the container available!"])
-                newVersionAvailable = True 
+                newVersion = True 
                 # updateState(db, 'Back_New_Version_Available', str(newVersionAvailable))     ## TO DO add this back in but avoid circular ref with database
 
-    return newVersionAvailable
+    return newVersion
 
 #-------------------------------------------------------------------------------
 def hide_email(email):

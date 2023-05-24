@@ -5,10 +5,10 @@ import re
 
 # pialert modules
 
+import conf
 from helper import timeNow, updateState
 from logger import append_line_to_file, mylog
 from const import logPath
-from conf import DDNS_ACTIVE, DDNS_DOMAIN, DDNS_UPDATE_URL, DDNS_PASSWORD, DDNS_USER
 
 
 
@@ -19,7 +19,7 @@ from conf import DDNS_ACTIVE, DDNS_DOMAIN, DDNS_UPDATE_URL, DDNS_PASSWORD, DDNS_
 #===============================================================================
 # INTERNET IP CHANGE
 #===============================================================================
-def check_internet_IP (db, DIG_GET_IP_ARG):   
+def check_internet_IP ( db ):   
 
     # Header
     updateState(db,"Scan: Internet IP")
@@ -27,7 +27,7 @@ def check_internet_IP (db, DIG_GET_IP_ARG):
 
     # Get Internet IP
     mylog('verbose', ['    Retrieving Internet IP:'])
-    internet_IP = get_internet_IP(DIG_GET_IP_ARG)
+    internet_IP = get_internet_IP(conf.DIG_GET_IP_ARG)
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
@@ -52,7 +52,7 @@ def check_internet_IP (db, DIG_GET_IP_ARG):
         mylog('verbose', ['    No changes to perform'])    
 
     # Get Dynamic DNS IP
-    if DDNS_ACTIVE :
+    if conf.DDNS_ACTIVE :
         mylog('verbose', ['    Retrieving Dynamic DNS IP'])
         dns_IP = get_dynamic_DNS_IP()
 
@@ -157,7 +157,7 @@ def get_dynamic_DNS_IP ():
         # dig_args = ['dig', '+short', DDNS_DOMAIN, '@resolver1.opendns.com']
 
     # Using default DNS server
-    dig_args = ['dig', '+short', DDNS_DOMAIN]
+    dig_args = ['dig', '+short', conf.DDNS_DOMAIN]
 
     try:
         # try runnning a subprocess
@@ -182,10 +182,10 @@ def set_dynamic_DNS_IP ():
         # try runnning a subprocess
         # Update Dynamic IP
         curl_output = subprocess.check_output (['curl', '-s',
-            DDNS_UPDATE_URL +
-            'username='  + DDNS_USER +
-            '&password=' + DDNS_PASSWORD +
-            '&hostname=' + DDNS_DOMAIN],
+            conf.DDNS_UPDATE_URL +
+            'username='  + conf.DDNS_USER +
+            '&password=' + conf.DDNS_PASSWORD +
+            '&hostname=' + conf.DDNS_DOMAIN],
             universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it

@@ -1,7 +1,6 @@
 
 
-
-from conf import DHCP_ACTIVE, PIHOLE_ACTIVE, cycle, ENABLE_ARPSCAN
+import conf
 from arpscan import execute_arpscan
 from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
@@ -27,10 +26,10 @@ def scan_network (db):
     mylog('verbose', ['[', timeNow(), '] Scan Devices:' ])       
 
     # Query ScanCycle properties    
-    scanCycle_data = query_ScanCycle_Data (True)
+    scanCycle_data = query_ScanCycle_Data (db, True)
     if scanCycle_data is None:
         mylog('none', ['\n*************** ERROR ***************'])
-        mylog('none', ['ScanCycle %s not found' % cycle ])
+        mylog('none', ['ScanCycle %s not found' % conf.cycle ])
         mylog('none', ['    Exiting...\n'])
         return False
 
@@ -41,45 +40,45 @@ def scan_network (db):
     
     # arp-scan command
     arpscan_devices = []
-    if ENABLE_ARPSCAN:    
+    if conf.ENABLE_ARPSCAN:    
         mylog('verbose', ['    arp-scan start'])    
-        arpscan_devices = execute_arpscan ()
+        arpscan_devices = execute_arpscan (conf.userSubnets)
         print_log ('arp-scan ends')
 
     # Pi-hole method    
-    if PIHOLE_ACTIVE :       
+    if conf.PIHOLE_ACTIVE :       
         mylog('verbose', ['    Pi-hole start'])        
         copy_pihole_network(db) 
         db.commitDB() 
 
     # DHCP Leases method    
-    if DHCP_ACTIVE :        
+    if conf.DHCP_ACTIVE :        
         mylog('verbose', ['    DHCP Leases start'])        
         read_DHCP_leases (db) 
         db.commitDB()
 
     # Load current scan data
     mylog('verbose', ['  Processing scan results'])     
-    save_scanned_devices (arpscan_devices, cycle_interval)    
+    save_scanned_devices (db, arpscan_devices, cycle_interval)    
     
     # Print stats
-    print_log ('Print Stats')
-    print_scan_stats()
-    print_log ('Stats end')
+    mylog ('none', 'Print Stats')
+    print_scan_stats(db)
+    mylog ('none', 'Stats end')
 
     # Create Events
     mylog('verbose', ['  Updating DB Info'])
     mylog('verbose', ['    Sessions Events (connect / discconnect)'])
-    insert_events()
+    insert_events(db)
 
     # Create New Devices
     # after create events -> avoid 'connection' event
     mylog('verbose', ['    Creating new devices'])
-    create_new_devices ()
+    create_new_devices (db)
 
     # Update devices info
     mylog('verbose', ['    Updating Devices Info'])
-    update_devices_data_from_scan ()
+    update_devices_data_from_scan (db)
 
     # Resolve devices names
     print_log ('    Resolve devices names')
@@ -99,7 +98,7 @@ def scan_network (db):
 
     # Sessions snapshot
     mylog('verbose', ['    Inserting scan results into Online_History'])
-    insertOnlineHistory(db,cycle)
+    insertOnlineHistory(db,conf.cycle)
   
     # Skip repeated notifications
     mylog('verbose', ['    Skipping repeated notifications'])
@@ -150,7 +149,7 @@ def void_ghost_disconnections (db):
                             AND eve_DateTime >=
                                 DATETIME (?, '-' || cic_EveryXmin ||' minutes')
                           ) """,
-                    (startTime, cycle, startTime)   )
+                    (startTime, conf.cycle, startTime)   )
 
     # Void connect paired events
     print_log ('Void - 2 Paired events')
@@ -168,7 +167,7 @@ def void_ghost_disconnections (db):
                             AND eve_DateTime >=
                                 DATETIME (?, '-' || cic_EveryXmin ||' minutes')
                           ) """,
-                    (cycle, startTime)   )
+                    (conf.cycle, startTime)   )
 
     # Void disconnect ghost events 
     print_log ('Void - 3 Disconnect ghost events')
@@ -187,7 +186,7 @@ def void_ghost_disconnections (db):
                             AND eve_DateTime >=
                                 DATETIME (?, '-' || cic_EveryXmin ||' minutes')
                           ) """,
-                    (cycle, startTime)   )
+                    (conf.cycle, startTime)   )
     print_log ('Void end')
     db.commitDB()
 
@@ -267,7 +266,7 @@ def insert_events (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, cycle) )
+                    (startTime, conf.cycle) )
 
     # Check new connections
     print_log ('Events 2 - New Connections')
@@ -279,7 +278,7 @@ def insert_events (db):
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_PresentLastScan = 0
                       AND dev_ScanCycle = ? """,
-                    (startTime, cycle) )
+                    (startTime, conf.cycle) )
 
     # Check disconnections
     print_log ('Events 3 - Disconnections')
@@ -295,7 +294,7 @@ def insert_events (db):
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, cycle) )
+                    (startTime, conf.cycle) )
 
     # Check IP Changed
     print_log ('Events 4 - IP Changes')
@@ -308,7 +307,7 @@ def insert_events (db):
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
-                    (startTime, cycle) )
+                    (startTime, conf.cycle) )
     print_log ('Events end')
 
 

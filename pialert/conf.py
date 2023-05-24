@@ -1,17 +1,26 @@
 """ config related functions for Pi.Alert """
 
+
+# These are global variables, not config items and should not exist !
 mySettings = []
+mySettingsSQLsafe = []
 debug_force_notification = False
 cycle = 1
 userSubnets = []
 mySchedules = [] # bad solution for global - TO-DO
 plugins = []  # bad solution for global - TO-DO
+tz = ''
+lastTimeImported = '' # Time the config was last imported
+plugins_once_run = False
+newVersionAvailable = False
+
+# ACTUAL CONFIGRATION ITEMS set to defaults
 
 # General
 ENABLE_ARPSCAN = True 
 SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL = 'verbose' 
-TIMEZONE = 'Europe/Berlin' 
+TIMEZONE = 'Europe/Berlin'
 ENABLE_PLUGINS =  True 
 PIALERT_WEB_PROTECTION =  False 
 PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' 
@@ -23,7 +32,7 @@ DIG_GET_IP_ARG = '-4 myip.opendns.com @resolver1.opendns.com'
 UI_LANG = 'English' 
 UI_PRESENCE =  ['online', 'offline', 'archived']  
 
-tz = ''
+
 
 # Email
 REPORT_MAIL =  False 

@@ -1,8 +1,8 @@
 
 import subprocess
 
+import conf
 from const import logPath
-from conf import NMAP_ARGS, NMAP_TIMEOUT
 from database import sql_nmap_scan_all
 from helper import json_struc, timeNow, updateState
 from logger import append_line_to_file, mylog
@@ -33,7 +33,7 @@ def performNmapScan(db, devicesToScan):
 
     if len(devicesToScan) > 0:
 
-        timeoutSec = NMAP_TIMEOUT
+        timeoutSec = conf.NMAP_TIMEOUT
 
         devTotal = len(devicesToScan)
 
@@ -48,7 +48,7 @@ def performNmapScan(db, devicesToScan):
             # Execute command
             output = ""
             # prepare arguments from user supplied ones
-            nmapArgs = ['nmap'] + NMAP_ARGS.split() + [device["dev_LastIP"]]
+            nmapArgs = ['nmap'] + conf.NMAP_ARGS.split() + [device["dev_LastIP"]]
 
             progress = ' (' + str(devIndex+1) + '/' + str(devTotal) + ')'
 

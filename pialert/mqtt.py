@@ -3,8 +3,8 @@ import time
 import re
 from paho.mqtt import client as mqtt_client
 
+import conf
 from logger import mylog
-from conf import MQTT_BROKER, MQTT_DELAY_SEC, MQTT_PASSWORD, MQTT_PORT, MQTT_QOS, MQTT_USER
 from database import get_all_devices, get_device_stats
 from helper import bytes_to_string, sanitize_string
 
@@ -35,7 +35,7 @@ def publish_mqtt(client, topic, message):
         result = client.publish(
                 topic=topic,
                 payload=message,
-                qos=MQTT_QOS,
+                qos=conf.MQTT_QOS,
                 retain=True,
             )
 
@@ -106,7 +106,7 @@ def publish_sensor(client, sensorConf):
     # add the sensor to the global list to keep track of succesfully added sensors
     if publish_mqtt(client, topic, message):        
                                      # hack - delay adding to the queue in case the process is 
-        time.sleep(MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
+        time.sleep(conf.MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
         mqtt_sensors.append(sensorConf)
 
@@ -131,10 +131,10 @@ def mqtt_create_client():
 
 
     client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
-    client.username_pw_set(MQTT_USER, MQTT_PASSWORD)    
+    client.username_pw_set(conf.MQTT_USER, conf.MQTT_PASSWORD)    
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
-    client.connect(MQTT_BROKER, MQTT_PORT)
+    client.connect(conf.MQTT_BROKER, conf.MQTT_PORT)
     client.loop_start() 
 
     return client
@@ -177,7 +177,7 @@ def mqtt_start():
     # Get all devices
     devices = get_all_devices()
 
-    sec_delay = len(devices) * int(MQTT_DELAY_SEC)*5
+    sec_delay = len(devices) * int(conf.MQTT_DELAY_SEC)*5
 
     mylog('info', ["        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 

@@ -1,3 +1,5 @@
+""" module to import db and leases from PiHole """
+
 from const import piholeDB, piholeDhcpleases
 
 #-------------------------------------------------------------------------------

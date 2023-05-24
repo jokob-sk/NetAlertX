@@ -10,9 +10,9 @@ import subprocess
 import requests
 from json2table import convert
 
+# pialert modules
+import conf 
 from const import pialertPath, logPath
-# from pialert.api import update_api
-from conf import *
 from database import get_table_as_json
 from files import write_file
 from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState
@@ -39,7 +39,7 @@ class noti_struc:
 
 
 #-------------------------------------------------------------------------------
-def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
+def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
 
     if suppliedJsonStruct is None and sqlQuery == "":
         return noti_struc("", "", "")
@@ -52,7 +52,7 @@ def construct_notifications(sqlQuery, tableTitle, skipText = False, suppliedJson
     text_line = '{}\t{}\n'
 
     if suppliedJsonStruct is None:
-        json_struc = get_table_as_json(sqlQuery)
+        json_struc = get_table_as_json(db, sqlQuery)
     else:
         json_struc = suppliedJsonStruct
 
@@ -92,7 +92,7 @@ def send_notifications (db):
     sql = db.sql  #TO-DO
     global mail_text, mail_html, json_final, changedPorts_json_struc, partial_html, partial_txt, partial_json
 
-    deviceUrl              = REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
+    deviceUrl              = conf.REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
     plugins_report         = False
 
     # Reporting section
@@ -125,7 +125,7 @@ def send_notifications (db):
 
     # Open html Template
     template_file = open(pialertPath + '/back/report_template.html', 'r') 
-    if isNewVersion(db):
+    if conf.newVersionAvailable :
         template_file = open(pialertPath + '/back/report_template_new_version.html', 'r') 
 
     mail_html = template_file.read() 
@@ -139,13 +139,13 @@ def send_notifications (db):
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
-    if 'internet' in INCLUDED_SECTIONS:
+    if 'internet' in conf.INCLUDED_SECTIONS:
         # Compose Internet Section
         sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
                         WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(sqlQuery, "Internet IP change")
+        notiStruc = construct_notifications(db, sqlQuery, "Internet IP change")
 
         # collect "internet" (IP changes) for the webhook json          
         json_internet = notiStruc.json["data"]
@@ -153,14 +153,14 @@ def send_notifications (db):
         mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
 
-    if 'new_devices' in INCLUDED_SECTIONS:
+    if 'new_devices' in conf.INCLUDED_SECTIONS:
         # Compose New Devices Section 
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(sqlQuery, "New devices")
+        notiStruc = construct_notifications(db, sqlQuery, "New devices")
 
         # collect "new_devices" for the webhook json         
         json_new_devices = notiStruc.json["data"]
@@ -168,14 +168,14 @@ def send_notifications (db):
         mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
 
-    if 'down_devices' in INCLUDED_SECTIONS:
+    if 'down_devices' in conf.INCLUDED_SECTIONS:
         # Compose Devices Down Section   
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(sqlQuery, "Down devices")
+        notiStruc = construct_notifications(db, sqlQuery, "Down devices")
 
         # collect "new_devices" for the webhook json         
         json_down_devices = notiStruc.json["data"]
@@ -183,7 +183,7 @@ def send_notifications (db):
         mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
 
-    if 'events' in INCLUDED_SECTIONS:
+    if 'events' in conf.INCLUDED_SECTIONS:
         # Compose Events Section   
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -191,7 +191,7 @@ def send_notifications (db):
                             'IP Changed')
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(sqlQuery, "Events")
+        notiStruc = construct_notifications(db, sqlQuery, "Events")
 
         # collect "events" for the webhook json         
         json_events = notiStruc.json["data"]
@@ -199,12 +199,12 @@ def send_notifications (db):
         mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
     
-    if 'ports' in INCLUDED_SECTIONS:  
+    if 'ports' in conf.INCLUDED_SECTIONS:  
         # collect "ports" for the webhook json 
         if changedPorts_json_struc is not None:          
             json_ports =  changedPorts_json_struc.json["data"]       
 
-        notiStruc = construct_notifications("", "Ports", True, changedPorts_json_struc)
+        notiStruc = construct_notifications(db, "", "Ports", True, changedPorts_json_struc)
 
         mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
 
@@ -214,11 +214,11 @@ def send_notifications (db):
 
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
 
-    if 'plugins' in INCLUDED_SECTIONS and ENABLE_PLUGINS:  
+    if 'plugins' in conf.INCLUDED_SECTIONS and conf.ENABLE_PLUGINS:  
         # Compose Plugins Section           
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 
-        notiStruc = construct_notifications(sqlQuery, "Plugins")
+        notiStruc = construct_notifications(db, sqlQuery, "Plugins")
 
         # collect "plugins" for the webhook json 
         json_plugins = notiStruc.json["data"]
@@ -250,44 +250,44 @@ def send_notifications (db):
     write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or debug_force_notification or plugins_report:        
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or conf.debug_force_notification or plugins_report:        
 
         # update_api(True) # TO-DO
 
         mylog('none', ['    Changes detected, sending reports'])
 
-        if REPORT_MAIL and check_config('email'):  
+        if conf.REPORT_MAIL and check_config('email'):  
             updateState(db,"Send: Email")
             mylog('info', ['      Sending report by Email'])
             send_email (mail_text, mail_html)
         else :
             mylog('verbose', ['      Skip email'])
-        if REPORT_APPRISE and check_config('apprise'):
+        if conf.REPORT_APPRISE and check_config('apprise'):
             updateState(db,"Send: Apprise")
             mylog('info', ['      Sending report by Apprise'])
             send_apprise (mail_html, mail_text)
         else :
             mylog('verbose', ['      Skip Apprise'])
-        if REPORT_WEBHOOK and check_config('webhook'):
+        if conf.REPORT_WEBHOOK and check_config('webhook'):
             updateState(db,"Send: Webhook")
             mylog('info', ['      Sending report by Webhook'])
             send_webhook (json_final, mail_text)
         else :
             mylog('verbose', ['      Skip webhook'])
-        if REPORT_NTFY and check_config('ntfy'):
+        if conf.REPORT_NTFY and check_config('ntfy'):
             updateState(db,"Send: NTFY")
             mylog('info', ['      Sending report by NTFY'])
             send_ntfy (mail_text)
         else :
             mylog('verbose', ['      Skip NTFY'])
-        if REPORT_PUSHSAFER and check_config('pushsafer'):
+        if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
             updateState(db,"Send: PUSHSAFER")
             mylog('info', ['      Sending report by PUSHSAFER'])
             send_pushsafer (mail_text)
         else :
             mylog('verbose', ['      Skip PUSHSAFER'])
         # Update MQTT entities
-        if REPORT_MQTT and check_config('mqtt'):
+        if conf.REPORT_MQTT and check_config('mqtt'):
             updateState(db,"Send: MQTT")
             mylog('info', ['      Establishing MQTT thread'])                          
             mqtt_start()        
@@ -320,42 +320,42 @@ def send_notifications (db):
 def check_config(service):
 
     if service == 'email':
-        if SMTP_SERVER == '' or REPORT_FROM == '' or REPORT_TO == '':
+        if conf.SMTP_SERVER == '' or conf.REPORT_FROM == '' or conf.REPORT_TO == '':
             mylog('none', ['    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
             return False
         else:
             return True   
 
     if service == 'apprise':
-        if APPRISE_URL == '' or APPRISE_HOST == '':
+        if conf.APPRISE_URL == '' or conf.APPRISE_HOST == '':
             mylog('none', ['    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
             return False
         else:
             return True  
 
     if service == 'webhook':
-        if WEBHOOK_URL == '':
+        if conf.WEBHOOK_URL == '':
             mylog('none', ['    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.'])
             return False
         else:
             return True 
 
     if service == 'ntfy':
-        if NTFY_HOST == '' or NTFY_TOPIC == '':
+        if conf.NTFY_HOST == '' or conf.NTFY_TOPIC == '':
             mylog('none', ['    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.'])
             return False
         else:
             return True 
 
     if service == 'pushsafer':
-        if PUSHSAFER_TOKEN == 'ApiKey':
+        if conf.PUSHSAFER_TOKEN == 'ApiKey':
             mylog('none', ['    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.'])
             return False
         else:
             return True 
 
     if service == 'mqtt':
-        if MQTT_BROKER == '' or MQTT_PORT == '' or MQTT_USER == '' or MQTT_PASSWORD == '':
+        if conf.MQTT_BROKER == '' or conf.MQTT_PORT == '' or conf.MQTT_USER == '' or conf.MQTT_PASSWORD == '':
             mylog('none', ['    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
@@ -371,19 +371,18 @@ def format_table (html, thValue, props, newThValue = ''):
 
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
-    global mail_text
-    global mail_html
+
 
     # Replace section text
     if pActive :
-        mail_text = mail_text.replace ('<'+ pTable +'>', pText)
-        mail_html = mail_html.replace ('<'+ pTable +'>', pHTML)       
+        conf.mail_text = conf.mail_text.replace ('<'+ pTable +'>', pText)
+        conf.mail_html = conf.mail_html.replace ('<'+ pTable +'>', pHTML)       
 
-        mail_text = remove_tag (mail_text, pSection)       
-        mail_html = remove_tag (mail_html, pSection)
+        conf.mail_text = remove_tag (conf.mail_text, pSection)       
+        conf.mail_html = remove_tag (conf.mail_html, pSection)
     else:
-        mail_text = remove_section (mail_text, pSection)
-        mail_html = remove_section (mail_html, pSection)
+        conf.mail_text = remove_section (conf.mail_text, pSection)
+        conf.mail_html = remove_section (conf.mail_html, pSection)
 
 #-------------------------------------------------------------------------------
 def remove_section (pText, pSection):
@@ -409,14 +408,14 @@ def remove_tag (pText, pTag):
 def send_email (pText, pHTML):
 
     # Print more info for debugging if LOG_LEVEL == 'debug' 
-    if LOG_LEVEL == 'debug':
-        print_log ('REPORT_TO: ' + hide_email(str(REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(SMTP_USER))) 
+    if conf.LOG_LEVEL == 'debug':
+        print_log ('REPORT_TO: ' + hide_email(str(conf.REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(conf.SMTP_USER))) 
 
     # Compose email
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'Pi.Alert Report'
-    msg['From'] = REPORT_FROM
-    msg['To'] = REPORT_TO
+    msg['From'] = conf.REPORT_FROM
+    msg['To'] = conf.REPORT_TO
     msg.attach (MIMEText (pText, 'plain'))
     msg.attach (MIMEText (pHTML, 'html'))
 
@@ -426,46 +425,46 @@ def send_email (pText, pHTML):
 
     try:
         # Send mail
-        failedAt = print_log('Trying to open connection to ' + str(SMTP_SERVER) + ':' + str(SMTP_PORT))
+        failedAt = print_log('Trying to open connection to ' + str(conf.SMTP_SERVER) + ':' + str(conf.SMTP_PORT))
 
-        if SMTP_FORCE_SSL:
+        if conf.SMTP_FORCE_SSL:
             failedAt = print_log('SMTP_FORCE_SSL == True so using .SMTP_SSL()')
-            if SMTP_PORT == 0:            
+            if conf.SMTP_PORT == 0:            
                 failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER)')
-                smtp_connection = smtplib.SMTP_SSL(SMTP_SERVER)
+                smtp_connection = smtplib.SMTP_SSL(conf.SMTP_SERVER)
             else:
                 failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER, SMTP_PORT)')
-                smtp_connection = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
+                smtp_connection = smtplib.SMTP_SSL(conf.SMTP_SERVER, conf.SMTP_PORT)
             
         else:
             failedAt = print_log('SMTP_FORCE_SSL == False so using .SMTP()')
-            if SMTP_PORT == 0:
+            if conf.SMTP_PORT == 0:
                 failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER)')
-                smtp_connection = smtplib.SMTP (SMTP_SERVER)
+                smtp_connection = smtplib.SMTP (conf.SMTP_SERVER)
             else:
                 failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER, SMTP_PORT)')
-                smtp_connection = smtplib.SMTP (SMTP_SERVER, SMTP_PORT)
+                smtp_connection = smtplib.SMTP (conf.SMTP_SERVER, conf.SMTP_PORT)
 
         failedAt = print_log('Setting SMTP debug level')
 
         # Log level set to debug of the communication between SMTP server and client
-        if LOG_LEVEL == 'debug':
+        if conf.LOG_LEVEL == 'debug':
             smtp_connection.set_debuglevel(1) 
         
         failedAt = print_log( 'Sending .ehlo()')
         smtp_connection.ehlo()
 
-        if not SMTP_SKIP_TLS:       
+        if not conf.SMTP_SKIP_TLS:       
             failedAt = print_log('SMTP_SKIP_TLS == False so sending .starttls()')
             smtp_connection.starttls()
             failedAt = print_log('SMTP_SKIP_TLS == False so sending .ehlo()')
             smtp_connection.ehlo()
-        if not SMTP_SKIP_LOGIN:
+        if not conf.SMTP_SKIP_LOGIN:
             failedAt = print_log('SMTP_SKIP_LOGIN == False so sending .login()')
-            smtp_connection.login (SMTP_USER, SMTP_PASS)
+            smtp_connection.login (conf.SMTP_USER, conf.SMTP_PASS)
             
         failedAt = print_log('Sending .sendmail()')
-        smtp_connection.sendmail (REPORT_FROM, REPORT_TO, msg.as_string())
+        smtp_connection.sendmail (conf.REPORT_FROM, conf.REPORT_TO, msg.as_string())
         smtp_connection.quit()
     except smtplib.SMTPAuthenticationError as e: 
         mylog('none', ['      ERROR: Failed at - ', failedAt])
@@ -480,20 +479,20 @@ def send_email (pText, pHTML):
 def send_ntfy (_Text):
     headers = {
         "Title": "Pi.Alert Notification",
-        "Actions": "view, Open Dashboard, "+ REPORT_DASHBOARD_URL,
+        "Actions": "view, Open Dashboard, "+ conf.REPORT_DASHBOARD_URL,
         "Priority": "urgent",
         "Tags": "warning"
     }
     # if username and password are set generate hash and update header
-    if NTFY_USER != "" and NTFY_PASSWORD != "":
+    if conf.NTFY_USER != "" and conf.NTFY_PASSWORD != "":
 	# Generate hash for basic auth
-        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
-        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
+        usernamepassword = "{}:{}".format(conf.NTFY_USER,conf.NTFY_PASSWORD)
+        basichash = b64encode(bytes(conf.NTFY_USER + ':' + conf.NTFY_PASSWORD, "utf-8")).decode("ascii")
 
 	# add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
-    requests.post("{}/{}".format( NTFY_HOST, NTFY_TOPIC),
+    requests.post("{}/{}".format( conf.NTFY_HOST, conf.NTFY_TOPIC),
     data=_Text,
     headers=headers)
 
@@ -507,9 +506,9 @@ def send_pushsafer (_Text):
         "i" : 148,
         "c" : '#ef7f7f',
         "d" : 'a',
-        "u" : REPORT_DASHBOARD_URL,
+        "u" : conf.REPORT_DASHBOARD_URL,
         "ut" : 'Open Pi.Alert',
-        "k" : PUSHSAFER_TOKEN,
+        "k" : conf.PUSHSAFER_TOKEN,
         }
     requests.post(url, data=post_fields)
 
@@ -517,20 +516,20 @@ def send_pushsafer (_Text):
 def send_webhook (_json, _html):
 
     # use data type based on specified payload type
-    if WEBHOOK_PAYLOAD == 'json':
+    if conf.WEBHOOK_PAYLOAD == 'json':
         payloadData = _json        
-    if WEBHOOK_PAYLOAD == 'html':
+    if conf.WEBHOOK_PAYLOAD == 'html':
         payloadData = _html
-    if WEBHOOK_PAYLOAD == 'text':
+    if conf.WEBHOOK_PAYLOAD == 'text':
         payloadData = to_text(_json)
 
     # Define slack-compatible payload
-    _json_payload = { "text": payloadData } if WEBHOOK_PAYLOAD == 'text' else {
+    _json_payload = { "text": payloadData } if conf.WEBHOOK_PAYLOAD == 'text' else {
     "username": "Pi.Alert",
     "text": "There are new notifications",
     "attachments": [{
       "title": "Pi.Alert Notifications",
-      "title_link": REPORT_DASHBOARD_URL,
+      "title_link": conf.REPORT_DASHBOARD_URL,
       "text": payloadData
     }]
     } 
@@ -539,12 +538,12 @@ def send_webhook (_json, _html):
     write_file (logPath + '/webhook_payload.json', json.dumps(_json_payload))    
 
     # Using the Slack-Compatible Webhook endpoint for Discord so that the same payload can be used for both
-    if(WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not WEBHOOK_URL.endswith("/slack")):
-        _WEBHOOK_URL = f"{WEBHOOK_URL}/slack"
+    if(conf.WEBHOOK_URL.startswith('https://discord.com/api/webhooks/') and not conf.WEBHOOK_URL.endswith("/slack")):
+        _WEBHOOK_URL = f"{conf.WEBHOOK_URL}/slack"
         curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
-        _WEBHOOK_URL = WEBHOOK_URL
-        curlParams = ["curl","-i","-X", WEBHOOK_REQUEST_METHOD ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
+        _WEBHOOK_URL = conf.WEBHOOK_URL
+        curlParams = ["curl","-i","-X", conf.WEBHOOK_REQUEST_METHOD ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
 
     # execute CURL call
     try:
@@ -565,19 +564,19 @@ def send_apprise (html, text):
     #Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
     payload = html
 
-    if APPRISE_PAYLOAD == 'text':
+    if conf.APPRISE_PAYLOAD == 'text':
         payload = text
 
     _json_payload={
-    "urls": APPRISE_URL,
+    "urls": conf.APPRISE_URL,
     "title": "Pi.Alert Notifications",    
-    "format": APPRISE_PAYLOAD,
+    "format": conf.APPRISE_PAYLOAD,
     "body": payload    
     }
 
     try:
         # try runnning a subprocess        
-        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), conf.APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = p.communicate()
         # write stdout and stderr into .log files for debugging if needed
         logResult (stdout, stderr)      # TO-DO should be changed to mylog
@@ -588,19 +587,19 @@ def send_apprise (html, text):
 
 def to_text(_json):
     payloadData = ""
-    if len(_json['internet']) > 0 and 'internet' in INCLUDED_SECTIONS:
+    if len(_json['internet']) > 0 and 'internet' in conf.INCLUDED_SECTIONS:
         payloadData += "INTERNET\n"
         for event in _json['internet']:
             payloadData += event[3] + ' on ' + event[2] + '. ' + event[4] + '. New address:' + event[1] + '\n'
 
-    if len(_json['new_devices']) > 0 and 'new_devices' in INCLUDED_SECTIONS:
+    if len(_json['new_devices']) > 0 and 'new_devices' in conf.INCLUDED_SECTIONS:
         payloadData += "NEW DEVICES:\n"
         for event in _json['new_devices']:
             if event[4] is None:
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
 
-    if len(_json['down_devices']) > 0 and 'down_devices' in INCLUDED_SECTIONS:
+    if len(_json['down_devices']) > 0 and 'down_devices' in conf.INCLUDED_SECTIONS:
         write_file (logPath + '/down_devices_example.log', _json['down_devices'])
         payloadData += 'DOWN DEVICES:\n'
         for event in _json['down_devices']:
@@ -608,7 +607,7 @@ def to_text(_json):
                 event[4] = event[11]
             payloadData += event[1] + ' - ' + event[4] + '\n'
     
-    if len(_json['events']) > 0 and 'events' in INCLUDED_SECTIONS:
+    if len(_json['events']) > 0 and 'events' in conf.INCLUDED_SECTIONS:
         payloadData += "EVENTS:\n"
         for event in _json['events']:
             if event[8] != "Internet":

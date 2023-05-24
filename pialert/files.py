@@ -24,3 +24,14 @@ def get_file_content(path):
     f.close() 
 
     return content  
+
+#-------------------------------------------------------------------------------
+def read_config_file(filename):
+    """
+    retuns dict on the config file key:value pairs
+    """
+    # load the variables from  pialert.conf
+    code = compile(filename.read_text(), filename.name, "exec")
+    confDict = {} # config dictionary
+    exec(code, {"__builtins__": {}}, confDict)
+    return confDict 

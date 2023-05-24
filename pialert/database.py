@@ -460,5 +460,5 @@ def insertOnlineHistory(db, cycle):
     
     sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
                  "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
-    db.commit()
+    db.commitDB()
 
