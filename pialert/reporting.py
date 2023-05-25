@@ -14,7 +14,7 @@ from json2table import convert
 import conf 
 from const import pialertPath, logPath
 from database import get_table_as_json
-from files import write_file
+from files import get_file_content, write_file
 from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState
 from logger import logResult, mylog, print_log
 from mqtt import mqtt_start
@@ -637,3 +637,70 @@ def skip_repeated_notifications (db):
     print_log ('Skip Repeated end')
 
     db.commitDB()    
+
+
+#===============================================================================
+# UTIL
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+def check_and_run_event(db):
+    sql = db.sql # TO-DO
+    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
+    rows = sql.fetchall()    
+
+    event, param = ['','']
+    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':        
+        event = rows[0]['par_Value'].split('|')[0]
+        param = rows[0]['par_Value'].split('|')[1]
+    else:
+        return
+
+    if event == 'test':
+        handle_test(param)
+    if event == 'run':
+        handle_run(param)
+
+    # clear event execution flag
+    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")        
+
+    # commit to DB  
+    db.commitDB()
+
+#-------------------------------------------------------------------------------
+def handle_run(runType):
+    global last_network_scan
+
+    mylog('info', ['[', timeNow(), '] START Run: ', runType])  
+
+    if runType == 'ENABLE_ARPSCAN':
+        last_network_scan = conf.time_started - datetime.timedelta(hours = 24)     
+
+    mylog('info', ['[', timeNow(), '] END Run: ', runType])
+
+#-------------------------------------------------------------------------------
+def handle_test(testType):
+
+    mylog('info', ['[', timeNow(), '] START Test: ', testType])    
+
+    # Open text sample    
+    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
+
+    # Open html sample     
+    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
+
+    # Open json sample and get only the payload part      
+    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]      
+    
+    if testType == 'REPORT_MAIL':
+        send_email(sample_txt, sample_html)
+    if testType == 'REPORT_WEBHOOK':
+        send_webhook (sample_json_payload, sample_txt)
+    if testType == 'REPORT_APPRISE':
+        send_apprise (sample_html, sample_txt) 
+    if testType == 'REPORT_NTFY':
+        send_ntfy (sample_txt)
+    if testType == 'REPORT_PUSHSAFER':
+        send_pushsafer (sample_txt)
+
+    mylog('info', ['[', timeNow(), '] END Test: ', testType])

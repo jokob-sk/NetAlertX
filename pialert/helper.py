@@ -14,7 +14,7 @@ import requests
 
 import conf 
 from const import *
-from logger import mylog, logResult, print_log
+from logger import mylog, logResult
 # from api import update_api  # to avoid circular reference
 
 
@@ -297,3 +297,6 @@ class json_struc:
     def __init__(self, jsn, columnNames):        
         self.json = jsn
         self.columnNames = columnNames     
+
+
+

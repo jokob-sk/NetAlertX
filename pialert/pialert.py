@@ -18,26 +18,13 @@ from __future__ import print_function
 
 import sys
 from collections import namedtuple
-import subprocess
-import os
-import re
 import time
-import decimal
 import datetime
 from datetime import timedelta
-import sqlite3
-import socket
-import io
-import smtplib
-import csv
 import json
-import requests
-import threading
 from pathlib import Path
 from cron_converter import Cron
-
 from json2table import convert
-import hashlib
 import multiprocessing
 
 
@@ -45,14 +32,14 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import  filePermissions, isNewVersion,  timeNow, updateState
+from helper import   filePermissions, isNewVersion,  timeNow, updateState
 from api import update_api
 from files import get_file_content
 from networkscan import scan_network
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
 from database import DB, get_all_devices, upgradeDB, sql_new_devices
-from reporting import send_apprise, send_email, send_notifications, send_ntfy, send_pushsafer, send_webhook
+from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
 # different scanners
@@ -63,12 +50,6 @@ from internet import check_internet_IP
 
 # Global variables
 changedPorts_json_struc = None
-time_started = datetime.datetime.now()
-cron_instance = Cron()
-log_timestamp = time_started
-lastTimeImported = 0
-sql_connection = None
-
 
 
 
@@ -77,30 +58,36 @@ sql_connection = None
 #                              MAIN
 #===============================================================================
 #===============================================================================
-cycle = ""
-check_report = [1, "internet_IP", "update_vendors_silent"]
-conf.plugins_once_run = False
-
-# timestamps of last execution times
-startTime = time_started
-now_minus_24h = time_started - datetime.timedelta(hours = 24)
-
-last_network_scan = now_minus_24h
-last_internet_IP_scan = now_minus_24h
-last_run = now_minus_24h
-last_cleanup = now_minus_24h
-last_update_vendors = time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
-
-# indicates, if a new version is available
-newVersionAvailable = False
 
 def main ():
-    # Initialize global variables
-    global time_started, cycle, last_network_scan, last_internet_IP_scan, last_run, last_cleanup, last_update_vendors
-    # second set of global variables
-    global startTime, log_timestamp, plugins_once_run 
-    
 
+    conf.time_started = datetime.datetime.now()
+    conf.cycle = ""
+    conf.check_report = [1, "internet_IP", "update_vendors_silent"]
+    conf.plugins_once_run = False
+    
+    pialert_start_time = timeNow()
+
+
+    # to be deleted if not used 
+    log_timestamp = conf.time_started
+    cron_instance = Cron()
+
+    # timestamps of last execution times
+    startTime = conf.time_started
+    now_minus_24h = conf.time_started - datetime.timedelta(hours = 24)
+
+    # set these times to the past to force the first run 
+    last_network_scan = now_minus_24h
+    last_internet_IP_scan = now_minus_24h
+    last_scan_run = now_minus_24h
+    last_cleanup = now_minus_24h
+    last_update_vendors = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
+    last_version_check = now_minus_24h  
+
+    # indicates, if a new version is available
+    conf.newVersionAvailable = False
+    
     # check file permissions and fix if required
     filePermissions()
 
@@ -108,10 +95,7 @@ def main ():
     # Opening / closing DB frequently actually casues more issues
     db = DB()  # instance of class DB
     db.openDB()
-
-    # To-Do replace the following to lines with the db class
-    # sql_connection = db.sql_connection
-    sql = db.sql
+    sql = db.sql  # To-Do replace with the db class
 
     # Upgrade DB if needed
     upgradeDB(db)
@@ -124,21 +108,22 @@ def main ():
     while True:
 
         # update time started
-        time_started = datetime.datetime.now()
+        time_started = datetime.datetime.now()  # not sure why we need this ...
+        loop_start_time = timeNow()
         mylog('debug', ['[', timeNow(), '] [MAIN] Stating loop'])
 
-        # re-load user configuration and plugins
-        mylog('debug', "tz before config : " + str(conf.tz))        
-        importConfigs(db)       
-        mylog('debug', "tz after config : " + str(conf.tz))  
+        # re-load user configuration and plugins   
+        importConfigs(db)
 
-        # check if new version is available
-        conf.newVersionAvailable = isNewVersion(False)
+        # check if new version is available / only check once an hour
+        # if newVersionAvailable is already true the function does nothing and returns true again
+        if last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
+            conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
         if conf.ENABLE_PLUGINS and conf.plugins_once_run == False:
             run_plugin_scripts(db, 'once')  
-            plugins_once_run = True
+            conf.plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
         check_and_run_event(db)
@@ -147,10 +132,10 @@ def main ():
         update_api()
         
         # proceed if 1 minute passed
-        if last_run + datetime.timedelta(minutes=1) < time_started :
+        if last_scan_run + datetime.timedelta(minutes=1) < loop_start_time :
 
              # last time any scan or maintenance/upkeep was run
-            last_run = time_started
+            last_scan_run = time_started
 
             # Header
             updateState(db,"Process: Start")      
@@ -181,9 +166,6 @@ def main ():
 
             # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
             if conf.PHOLUS_RUN == "schedule" or conf.PHOLUS_RUN == "once":
-
-                mylog('debug', "PHOLUS_RUN_SCHD: " + conf.PHOLUS_RUN_SCHD)
-                mylog('debug', "schedules : " + str(conf.mySchedules))
 
                 pholusSchedule = [sch for sch in conf.mySchedules if sch.service == "pholus"][0]
                 run = False
@@ -257,7 +239,7 @@ def main ():
 
             
             # Reporting   
-            if cycle in check_report:
+            if conf.cycle in conf.check_report:
                 # Check if new devices found
                 sql.execute (sql_new_devices)
                 newDevices = sql.fetchall()
@@ -306,77 +288,6 @@ def main ():
         #loop     
         time.sleep(5) # wait for N seconds      
 
-
-
-
-
-
-
-#===============================================================================
-# UTIL
-#===============================================================================
-
-#-------------------------------------------------------------------------------
-def check_and_run_event(db):
-    sql = db.sql # TO-DO
-    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
-    rows = sql.fetchall()    
-
-    event, param = ['','']
-    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':        
-        event = rows[0]['par_Value'].split('|')[0]
-        param = rows[0]['par_Value'].split('|')[1]
-    else:
-        return
-
-    if event == 'test':
-        handle_test(param)
-    if event == 'run':
-        handle_run(param)
-
-    # clear event execution flag
-    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")        
-
-    # commit to DB  
-    db.commitDB()
-
-#-------------------------------------------------------------------------------
-def handle_run(runType):
-    global last_network_scan
-
-    mylog('info', ['[', timeNow(), '] START Run: ', runType])  
-
-    if runType == 'ENABLE_ARPSCAN':
-        last_network_scan = now_minus_24h        
-
-    mylog('info', ['[', timeNow(), '] END Run: ', runType])
-
-#-------------------------------------------------------------------------------
-def handle_test(testType):
-
-    mylog('info', ['[', timeNow(), '] START Test: ', testType])    
-
-    # Open text sample    
-    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
-
-    # Open html sample     
-    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
-
-    # Open json sample and get only the payload part      
-    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]      
-    
-    if testType == 'REPORT_MAIL':
-        send_email(sample_txt, sample_html)
-    if testType == 'REPORT_WEBHOOK':
-        send_webhook (sample_json_payload, sample_txt)
-    if testType == 'REPORT_APPRISE':
-        send_apprise (sample_html, sample_txt) 
-    if testType == 'REPORT_NTFY':
-        send_ntfy (sample_txt)
-    if testType == 'REPORT_PUSHSAFER':
-        send_pushsafer (sample_txt)
-
-    mylog('info', ['[', timeNow(), '] END Test: ', testType])
 
 
 
