@@ -153,6 +153,7 @@ def importConfigs (db):
 
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
+    
     # global mySchedules
     # reset schedules
     conf.mySchedules = [] 
@@ -161,7 +162,6 @@ def importConfigs (db):
     pholusSchedule = Cron(conf.PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(conf.tz))    
     
     conf.mySchedules.append(schedule_class("pholus", pholusSchedule, pholusSchedule.next(), False))
-    mylog('debug', "schedules (appended) : " + str(conf.mySchedules))
 
     # init nmap schedule
     nmapSchedule = Cron(conf.NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(conf.tz))
