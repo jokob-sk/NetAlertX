@@ -9,7 +9,7 @@ from helper import timeNow
 from internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
 from mac_vendor import query_MAC_vendor
-from pholusscan import performPholusScan, resolve_device_name_pholus
+from pholusscan import performPholusScan, resolve_device_name_dig, resolve_device_name_pholus
 #-------------------------------------------------------------------------------
 
 
@@ -167,7 +167,7 @@ def create_new_devices (db):
     startTime = timeNow()
 
     # arpscan - Insert events for new devices
-    print_log ('New devices - 1 Events')
+    mylog('debug','[New Devices] New devices - 1 Events')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -178,7 +178,7 @@ def create_new_devices (db):
                                       WHERE dev_MAC = cur_MAC) """,
                     (startTime, conf.cycle) ) 
 
-    print_log ('New devices - Insert Connection into session table')
+    mylog('debug','[New Devices] Insert Connection into session table')
     sql.execute ("""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
                         ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
                     SELECT cur_MAC, cur_IP,'Connected',?, NULL , NULL ,1, cur_Vendor
@@ -189,7 +189,7 @@ def create_new_devices (db):
                     (startTime, conf.cycle) ) 
                     
     # arpscan - Create new devices
-    print_log ('New devices - 2 Create devices')
+    mylog('debug','[New Devices] 2 Create devices')
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
@@ -205,7 +205,7 @@ def create_new_devices (db):
     # Pi-hole - Insert events for new devices
     # NOT STRICYLY NECESARY (Devices can be created through Current_Scan)
     # Bugfix #2 - Pi-hole devices w/o IP
-    print_log ('New devices - 3 Pi-hole Events')
+    mylog('debug','[New Devices] 3 Pi-hole Events')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -218,7 +218,7 @@ def create_new_devices (db):
 
     # Pi-hole - Create New Devices
     # Bugfix #2 - Pi-hole devices w/o IP
-    print_log ('New devices - 4 Pi-hole Create devices')
+    mylog('debug','[New Devices] 4 Pi-hole Create devices')
     sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
@@ -231,7 +231,7 @@ def create_new_devices (db):
                     (startTime, startTime) ) 
 
     # DHCP Leases - Insert events for new devices
-    print_log ('New devices - 5 DHCP Leases Events')
+    mylog('debug','[New Devices] 5 DHCP Leases Events')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -242,7 +242,7 @@ def create_new_devices (db):
                     (startTime, ) ) 
 
     # DHCP Leases - Create New Devices
-    print_log ('New devices - 6 DHCP Leases Create devices')
+    mylog('debug','[New Devices] 6 DHCP Leases Create devices')
     # BUGFIX #23 - Duplicated MAC in DHCP.Leases
     # TEST - Force Duplicated MAC
         # sql.execute ("""INSERT INTO DHCP_Leases VALUES
@@ -276,7 +276,7 @@ def create_new_devices (db):
     #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
     #                                   WHERE dev_MAC = DHCP_MAC) """,
     #                 (startTime, startTime) ) 
-    print_log ('New Devices end')
+    mylog('debug','[New Devices] New Devices end')
     db.commitDB()
 
 
@@ -285,7 +285,7 @@ def update_devices_data_from_scan (db):
     sql = db.sql #TO-DO    
     startTime = timeNow()
     # Update Last Connection
-    print_log ('Update devices - 1 Last Connection')
+    mylog('debug','[Update Devices] 1 Last Connection')
     sql.execute ("""UPDATE Devices SET dev_LastConnection = ?,
                         dev_PresentLastScan = 1
                     WHERE dev_ScanCycle = ?
@@ -296,7 +296,7 @@ def update_devices_data_from_scan (db):
                     (startTime, conf.cycle))
 
     # Clean no active devices
-    print_log ('Update devices - 2 Clean no active devices')
+    mylog('debug','[Update Devices] 2 Clean no active devices')
     sql.execute ("""UPDATE Devices SET dev_PresentLastScan = 0
                     WHERE dev_ScanCycle = ?
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan 
@@ -305,7 +305,7 @@ def update_devices_data_from_scan (db):
                     (conf.cycle,))
 
     # Update IP & Vendor
-    print_log ('Update devices - 3 LastIP & Vendor')
+    mylog('debug','[Update Devices] - 3 LastIP & Vendor')
     sql.execute ("""UPDATE Devices
                     SET dev_LastIP = (SELECT cur_IP FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
@@ -320,7 +320,7 @@ def update_devices_data_from_scan (db):
                     (conf.cycle,)) 
 
     # Pi-hole Network - Update (unknown) Name
-    print_log ('Update devices - 4 Unknown Name')
+    mylog('debug','[Update Devices] - 4 Unknown Name')
     sql.execute ("""UPDATE Devices
                     SET dev_NAME = (SELECT PH_Name FROM PiHole_Network
                                     WHERE PH_MAC = dev_MAC)
@@ -341,7 +341,7 @@ def update_devices_data_from_scan (db):
                                   WHERE DHCP_MAC = dev_MAC)""")
 
     # DHCP Leases - Vendor
-    print_log ('Update devices - 5 Vendor')
+    mylog('debug','[Update Devices] - 5 Vendor')
 
     recordsToUpdate = []
     query = """SELECT * FROM Devices
@@ -358,7 +358,7 @@ def update_devices_data_from_scan (db):
 
     # clean-up device leases table
     sql.execute ("DELETE FROM DHCP_Leases")
-    print_log ('Update devices end')
+    mylog('debug','[Update Devices] Update devices end')
 
 #-------------------------------------------------------------------------------
 def update_devices_names (db):
@@ -387,7 +387,7 @@ def update_devices_names (db):
         return
 
     # Devices without name
-    mylog('verbose', ['        Trying to resolve devices without name'])
+    mylog('verbose', '[Update Device Name] Trying to resolve devices without name')
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
@@ -395,13 +395,13 @@ def update_devices_names (db):
     db.commitDB()
 
     # Number of entries from previous Pholus scans
-    mylog('verbose', ["          Pholus entries from prev scans: ", len(pholusResults)])
+    mylog('verbose', '[Update Device Name] Pholus entries from prev scans: ', len(pholusResults))
 
     for device in unknownDevices:
         newName = -1
         
         # Resolve device name with DiG
-        newName = resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'])
+        newName = resolve_device_name_dig (device['dev_MAC'], device['dev_LastIP'])
         
         # count
         if newName != -1:
@@ -422,13 +422,11 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', ["        Names Found (DiG/Pholus): ", len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" ])                 
-    mylog('verbose', ["        Names Not Found         : ", len(recordsNotFound) ])    
+    mylog('verbose', '[Update Device Name] Names Found (DiG/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" )                 
+    mylog('verbose', '[Update Device Name] Names Not Found         : ', len(recordsNotFound) )    
      
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )
     # update names of devices which we were bale to resolve
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
     db.commitDB()
-
-

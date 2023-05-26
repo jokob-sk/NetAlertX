@@ -1,7 +1,7 @@
 """ class to manage schedules """
 import datetime
 
-from logger import print_log
+from logger import mylog, print_log
 import conf
 
 #-------------------------------------------------------------------------------
@@ -28,11 +28,11 @@ class schedule_class:
         #               (maybe the following check is unnecessary:)
         # if the last run is past the last time we run a scheduled Pholus scan
         if nowTime > self.last_next_schedule and self.last_run < self.last_next_schedule:
-            print_log(f'Scheduler run for {self.service}: YES')
+            mylog('debug',f'[Scheduler] - Scheduler run for {self.service}: YES')
             self.was_last_schedule_used = True
             result = True
         else:
-            print_log(f'Scheduler run for {self.service}: NO')
+            mylog('debug',f'[Scheduler] - Scheduler run for {self.service}: NO')
         
         if self.was_last_schedule_used:
             self.was_last_schedule_used = False

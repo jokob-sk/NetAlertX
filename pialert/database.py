@@ -56,7 +56,6 @@ class DB():
         self.sql_connection.row_factory = sqlite3.Row
         self.sql = self.sql_connection.cursor()
 
-  
     #-------------------------------------------------------------------------------
     def commitDB (self):
         if self.sql_connection == None :
@@ -87,7 +86,6 @@ class DB():
             arr.append(r_temp)
 
         return arr
-
 
     #===============================================================================
     # Cleanup / upkeep database
@@ -142,12 +140,250 @@ class DB():
 
           self.commitDB()
 
+    #-------------------------------------------------------------------------------
+    def upgradeDB(self):
+        sql = self.sql  #TO-DO 
 
+        # indicates, if Online_History table is available 
+        onlineHistoryAvailable = sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Online_History'; 
+        """).fetchall() != []
 
+        # Check if it is incompatible (Check if table has all required columns)
+        isIncompatible = False
+        
+        if onlineHistoryAvailable :
+          isIncompatible = sql.execute ("""
+          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+          """).fetchone()[0] == 0
+        
+        # Drop table if available, but incompatible
+        if onlineHistoryAvailable and isIncompatible:      
+          mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
+          sql.execute("DROP TABLE Online_History;")
+          onlineHistoryAvailable = False
 
+        if onlineHistoryAvailable == False :
+          sql.execute("""      
+          CREATE TABLE "Online_History" (
+            "Index"	INTEGER,
+            "Scan_Date"	TEXT,
+            "Online_Devices"	INTEGER,
+            "Down_Devices"	INTEGER,
+            "All_Devices"	INTEGER,
+            "Archived_Devices" INTEGER,
+            PRIMARY KEY("Index" AUTOINCREMENT)
+          );      
+          """)
 
+        # Alter Devices table
+        # dev_Network_Node_MAC_ADDR column
+        dev_Network_Node_MAC_ADDR_missing = sql.execute ("""
+          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
+          """).fetchone()[0] == 0
 
+        if dev_Network_Node_MAC_ADDR_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])   
+          sql.execute("""      
+          ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
+          """)
 
+        # dev_Network_Node_port column
+        dev_Network_Node_port_missing = sql.execute ("""
+          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
+          """).fetchone()[0] == 0
+
+        if dev_Network_Node_port_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])     
+          sql.execute("""      
+          ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
+          """)
+
+        # dev_Icon column
+        dev_Icon_missing = sql.execute ("""
+          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
+          """).fetchone()[0] == 0
+
+        if dev_Icon_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])     
+          sql.execute("""      
+          ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
+          """)
+
+        # indicates, if Settings table is available 
+        settingsMissing = sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Settings'; 
+        """).fetchone() == None
+
+        # Re-creating Settings table    
+        mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
+
+        if settingsMissing == False:   
+            sql.execute("DROP TABLE Settings;")       
+
+        sql.execute("""      
+        CREATE TABLE "Settings" (        
+        "Code_Name"	    TEXT,
+        "Display_Name"	TEXT,
+        "Description"	TEXT,        
+        "Type"          TEXT,
+        "Options"       TEXT,
+        "RegEx"         TEXT,
+        "Value"	        TEXT,
+        "Group"	        TEXT,
+        "Events"	    TEXT
+        );      
+        """)
+
+        # indicates, if Pholus_Scan table is available 
+        pholusScanMissing = sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Pholus_Scan'; 
+        """).fetchone() == None
+
+        # if pholusScanMissing == False:
+        #     # Re-creating Pholus_Scan table  
+        #     sql.execute("DROP TABLE Pholus_Scan;")       
+        #     pholusScanMissing = True  
+
+        if pholusScanMissing:
+            mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
+            sql.execute("""      
+            CREATE TABLE "Pholus_Scan" (        
+            "Index"	          INTEGER,
+            "Info"	          TEXT,
+            "Time"	          TEXT,
+            "MAC"	          TEXT,
+            "IP_v4_or_v6"	  TEXT,
+            "Record_Type"	  TEXT,
+            "Value"           TEXT,
+            "Extra"           TEXT,
+            PRIMARY KEY("Index" AUTOINCREMENT)
+            );      
+            """)
+
+        # indicates, if Nmap_Scan table is available 
+        nmapScanMissing = sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Nmap_Scan'; 
+        """).fetchone() == None
+
+        # Re-creating Parameters table
+        mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
+        sql.execute("DROP TABLE Parameters;")
+
+        sql.execute("""      
+          CREATE TABLE "Parameters" (
+            "par_ID" TEXT PRIMARY KEY,
+            "par_Value"	TEXT
+          );      
+          """)
+
+        # Initialize Parameters if unavailable
+        initOrSetParam(self, 'Back_App_State','Initializing')
+
+        # if nmapScanMissing == False:
+        #     # Re-creating Nmap_Scan table    
+        #     sql.execute("DROP TABLE Nmap_Scan;")       
+        #     nmapScanMissing = True  
+
+        if nmapScanMissing:
+            mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
+            sql.execute("""      
+            CREATE TABLE "Nmap_Scan" (        
+            "Index"	          INTEGER,
+            "MAC"	          TEXT,
+            "Port"	          TEXT,
+            "Time"	          TEXT,        
+            "State"	          TEXT,
+            "Service"	      TEXT,       
+            "Extra"           TEXT,
+            PRIMARY KEY("Index" AUTOINCREMENT)
+            );      
+            """)
+
+        # Plugin state
+        sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
+                            "Index"	          INTEGER,
+                            Plugin TEXT NOT NULL,
+                            Object_PrimaryID TEXT NOT NULL,
+                            Object_SecondaryID TEXT NOT NULL,
+                            DateTimeCreated TEXT NOT NULL,                        
+                            DateTimeChanged TEXT NOT NULL,                        
+                            Watched_Value1 TEXT NOT NULL,
+                            Watched_Value2 TEXT NOT NULL,
+                            Watched_Value3 TEXT NOT NULL,
+                            Watched_Value4 TEXT NOT NULL,
+                            Status TEXT NOT NULL,  
+                            Extra TEXT NOT NULL,
+                            UserData TEXT NOT NULL,
+                            ForeignKey TEXT NOT NULL,
+                            PRIMARY KEY("Index" AUTOINCREMENT)
+                        ); """
+        sql.execute(sql_Plugins_Objects)
+
+        # Plugin execution results
+        sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
+                            "Index"	          INTEGER,
+                            Plugin TEXT NOT NULL,
+                            Object_PrimaryID TEXT NOT NULL,
+                            Object_SecondaryID TEXT NOT NULL,
+                            DateTimeCreated TEXT NOT NULL,                        
+                            DateTimeChanged TEXT NOT NULL,                         
+                            Watched_Value1 TEXT NOT NULL,
+                            Watched_Value2 TEXT NOT NULL,
+                            Watched_Value3 TEXT NOT NULL,
+                            Watched_Value4 TEXT NOT NULL,
+                            Status TEXT NOT NULL,              
+                            Extra TEXT NOT NULL,
+                            UserData TEXT NOT NULL,
+                            ForeignKey TEXT NOT NULL,
+                            PRIMARY KEY("Index" AUTOINCREMENT)
+                        ); """
+        sql.execute(sql_Plugins_Events)
+
+        # Plugin execution history
+        sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
+                            "Index"	          INTEGER,
+                            Plugin TEXT NOT NULL,
+                            Object_PrimaryID TEXT NOT NULL,
+                            Object_SecondaryID TEXT NOT NULL,
+                            DateTimeCreated TEXT NOT NULL,                        
+                            DateTimeChanged TEXT NOT NULL,                         
+                            Watched_Value1 TEXT NOT NULL,
+                            Watched_Value2 TEXT NOT NULL,
+                            Watched_Value3 TEXT NOT NULL,
+                            Watched_Value4 TEXT NOT NULL,
+                            Status TEXT NOT NULL,              
+                            Extra TEXT NOT NULL,
+                            UserData TEXT NOT NULL,
+                            ForeignKey TEXT NOT NULL,
+                            PRIMARY KEY("Index" AUTOINCREMENT)
+                        ); """                    
+        sql.execute(sql_Plugins_History)
+
+        # Dynamically generated language strings
+        # indicates, if Language_Strings table is available 
+        languageStringsMissing = sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Plugins_Language_Strings'; 
+        """).fetchone() == None
+        
+        if languageStringsMissing == False:
+            sql.execute("DROP TABLE Plugins_Language_Strings;") 
+
+        sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
+                            "Index"	          INTEGER,
+                            Language_Code TEXT NOT NULL,
+                            String_Key TEXT NOT NULL,
+                            String_Value TEXT NOT NULL,
+                            Extra TEXT NOT NULL,                                                    
+                            PRIMARY KEY("Index" AUTOINCREMENT)
+                        ); """)   
+        
+        self.commitDB()    
 
 
 #-------------------------------------------------------------------------------

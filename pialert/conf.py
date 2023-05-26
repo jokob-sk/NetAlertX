@@ -15,6 +15,8 @@ plugins_once_run = False
 newVersionAvailable = False
 time_started = ''
 check_report = []
+log_timestamp = 0
+
 
 # ACTUAL CONFIGRATION ITEMS set to defaults
 
@@ -103,9 +105,9 @@ PHOLUS_DAYS_DATA = 0
 # Nmap
 NMAP_ACTIVE =  True 
 NMAP_TIMEOUT =  150 
-NMAP_RUN = 'none' 
+NMAP_RUN = 'once' 
 NMAP_RUN_SCHD =  '0 2 * * *'
-NMAP_ARGS = '-p -10000'
+NMAP_ARGS = '-p -10000 --max-parallelism 100'
 
 # API     
 API_CUSTOM_SQL = 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0'

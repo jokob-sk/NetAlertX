@@ -407,9 +407,7 @@ def remove_tag (pText, pTag):
 #-------------------------------------------------------------------------------
 def send_email (pText, pHTML):
 
-    # Print more info for debugging if LOG_LEVEL == 'debug' 
-    if conf.LOG_LEVEL == 'debug':
-        print_log ('REPORT_TO: ' + hide_email(str(conf.REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(conf.SMTP_USER))) 
+    mylog('debug', '[Send Email] REPORT_TO: ' + hide_email(str(conf.REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(conf.SMTP_USER))) 
 
     # Compose email
     msg = MIMEMultipart('alternative')
@@ -473,7 +471,7 @@ def send_email (pText, pHTML):
         mylog('none', ['      ERROR: Failed at - ', failedAt])
         mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable LOG_LEVEL=debug for more logging)'])
 
-    print_log('      DEBUG: Last executed - ' + str(failedAt))
+    mylog('debug', '[Send Email] Last executed - ' + str(failedAt))
 
 #-------------------------------------------------------------------------------
 def send_ntfy (_Text):
@@ -548,7 +546,7 @@ def send_webhook (_json, _html):
     # execute CURL call
     try:
         # try runnning a subprocess
-        mylog('debug', curlParams) 
+        mylog('debug', '[send_webhook] curlParams: '+  curlParams) 
         p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         stdout, stderr = p.communicate()
@@ -557,7 +555,7 @@ def send_webhook (_json, _html):
         logResult (stdout, stderr)     # TO-DO should be changed to mylog
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [e.output])
+        mylog('none', ['[send_webhook]', e.output])
 
 #-------------------------------------------------------------------------------
 def send_apprise (html, text):
@@ -622,7 +620,7 @@ def skip_repeated_notifications (db):
 
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"
-    print_log ('Skip Repeated')
+    mylog('verbose','[Skip Repeated Notifications] Skip Repeated')
     db.sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
                         (
@@ -634,7 +632,7 @@ def skip_repeated_notifications (db):
                               (strftime('%s','now','localtime')/60 )
                         )
                  """ )
-    print_log ('Skip Repeated end')
+    mylog('verbose','[Skip Repeated Notifications] Skip Repeated end')
 
     db.commitDB()    
 

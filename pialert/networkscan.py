@@ -41,67 +41,67 @@ def scan_network (db):
     # arp-scan command
     arpscan_devices = []
     if conf.ENABLE_ARPSCAN:    
-        mylog('verbose', ['    arp-scan start'])    
+        mylog('verbose','[Network Scan] arp-scan start')    
         arpscan_devices = execute_arpscan (conf.userSubnets)
-        print_log ('arp-scan ends')
+        mylog('verbose','[Network Scan] arp-scan ends')
 
     # Pi-hole method    
     if conf.PIHOLE_ACTIVE :       
-        mylog('verbose', ['    Pi-hole start'])        
+        mylog('verbose','[Network Scan] Pi-hole start')        
         copy_pihole_network(db) 
         db.commitDB() 
 
     # DHCP Leases method    
     if conf.DHCP_ACTIVE :        
-        mylog('verbose', ['    DHCP Leases start'])        
+        mylog('verbose','[Network Scan] DHCP Leases start')        
         read_DHCP_leases (db) 
         db.commitDB()
 
     # Load current scan data
-    mylog('verbose', ['  Processing scan results'])     
+    mylog('verbose','[Network Scan]  Processing scan results')     
     save_scanned_devices (db, arpscan_devices, cycle_interval)    
     
     # Print stats
-    mylog ('none', 'Print Stats')
+    mylog('none','[Network Scan] Print Stats')
     print_scan_stats(db)
-    mylog ('none', 'Stats end')
+    mylog('none','[Network Scan] Stats end')
 
     # Create Events
-    mylog('verbose', ['  Updating DB Info'])
-    mylog('verbose', ['    Sessions Events (connect / discconnect)'])
+    mylog('verbose','[Network Scan] Updating DB Info')
+    mylog('verbose','[Network Scan] Sessions Events (connect / discconnect)')
     insert_events(db)
 
     # Create New Devices
     # after create events -> avoid 'connection' event
-    mylog('verbose', ['    Creating new devices'])
+    mylog('verbose','[Network Scan] Creating new devices')
     create_new_devices (db)
 
     # Update devices info
-    mylog('verbose', ['    Updating Devices Info'])
+    mylog('verbose','[Network Scan] Updating Devices Info')
     update_devices_data_from_scan (db)
 
     # Resolve devices names
-    print_log ('    Resolve devices names')
+    mylog('verbose','[Network Scan] Resolve devices names')
     update_devices_names(db)
 
     # Void false connection - disconnections
-    mylog('verbose', ['    Voiding false (ghost) disconnections'])    
+    mylog('verbose','[Network Scan] Voiding false (ghost) disconnections')    
     void_ghost_disconnections (db)
 
     # Pair session events (Connection / Disconnection)
-    mylog('verbose', ['    Pairing session events (connection / disconnection) '])
+    mylog('verbose','[Network Scan] Pairing session events (connection / disconnection) ')
     pair_sessions_events(db)  
   
     # Sessions snapshot
-    mylog('verbose', ['    Creating sessions snapshot'])
+    mylog('verbose','[Network Scan] Creating sessions snapshot')
     create_sessions_snapshot (db)
 
     # Sessions snapshot
-    mylog('verbose', ['    Inserting scan results into Online_History'])
+    mylog('verbose','[Network Scan] Inserting scan results into Online_History')
     insertOnlineHistory(db,conf.cycle)
   
     # Skip repeated notifications
-    mylog('verbose', ['    Skipping repeated notifications'])
+    mylog('verbose','[Network Scan] Skipping repeated notifications')
     skip_repeated_notifications (db)
   
     # Commit changes    
@@ -131,7 +131,7 @@ def void_ghost_disconnections (db):
     sql = db.sql #TO-DO
     startTime = timeNow()
     # Void connect ghost events (disconnect event exists in last X min.) 
-    print_log ('Void - 1 Connect ghost events')
+    mylog('debug','[Void Ghost Con] - 1 Connect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
                         eve_EventType ='VOIDED - ' || eve_EventType
                     WHERE eve_MAC != 'Internet'
@@ -152,7 +152,7 @@ def void_ghost_disconnections (db):
                     (startTime, conf.cycle, startTime)   )
 
     # Void connect paired events
-    print_log ('Void - 2 Paired events')
+    mylog('debug','[Void Ghost Con] - 2 Paired events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null 
                     WHERE eve_MAC != 'Internet'
                       AND eve_PairEventRowid IN (
@@ -170,7 +170,7 @@ def void_ghost_disconnections (db):
                     (conf.cycle, startTime)   )
 
     # Void disconnect ghost events 
-    print_log ('Void - 3 Disconnect ghost events')
+    mylog('debug','[Void Ghost Con] - 3 Disconnect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null, 
                         eve_EventType = 'VOIDED - '|| eve_EventType
                     WHERE eve_MAC != 'Internet'
@@ -187,7 +187,7 @@ def void_ghost_disconnections (db):
                                 DATETIME (?, '-' || cic_EveryXmin ||' minutes')
                           ) """,
                     (conf.cycle, startTime)   )
-    print_log ('Void end')
+    mylog('debug','[Void Ghost Con] Void Ghost Connections end')
     db.commitDB()
 
 #-------------------------------------------------------------------------------
@@ -203,7 +203,7 @@ def pair_sessions_events (db):
     
 
     # Pair Connection / New Device events
-    print_log ('Pair session - 1 Connections / New Devices')
+    mylog('debug','[Pair Session] - 1 Connections / New Devices')
     sql.execute ("""UPDATE Events
                     SET eve_PairEventRowid =
                        (SELECT ROWID
@@ -218,7 +218,7 @@ def pair_sessions_events (db):
                  """ )
 
     # Pair Disconnection / Device Down
-    print_log ('Pair session - 2 Disconnections')
+    mylog('debug','[Pair Session] - 2 Disconnections')
     sql.execute ("""UPDATE Events
                     SET eve_PairEventRowid =
                         (SELECT ROWID
@@ -227,7 +227,7 @@ def pair_sessions_events (db):
                     WHERE eve_EventType IN ('Device Down', 'Disconnected')
                       AND eve_PairEventRowid IS NULL
                  """ )
-    print_log ('Pair session end')
+    mylog('debug','[Pair Session] Pair session end')
 
     db.commitDB()
 
@@ -236,15 +236,15 @@ def create_sessions_snapshot (db):
     sql = db.sql #TO-DO
 
     # Clean sessions snapshot
-    print_log ('Sessions Snapshot - 1 Clean')
+    mylog('debug','[Sessions Snapshot] - 1 Clean')
     sql.execute ("DELETE FROM SESSIONS" )
 
     # Insert sessions
-    print_log ('Sessions Snapshot - 2 Insert')
+    mylog('debug','[Sessions Snapshot] - 2 Insert')
     sql.execute ("""INSERT INTO Sessions
                     SELECT * FROM Convert_Events_to_Sessions""" )
 
-    print_log ('Sessions end')
+    mylog('debug','[Sessions Snapshot] Sessions end')
     db.commitDB()
 
 
@@ -254,7 +254,7 @@ def insert_events (db):
     startTime = timeNow()    
     
     # Check device down
-    print_log ('Events 1 - Devices down')
+    mylog('debug','[Events] - 1 - Devices down')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -269,7 +269,7 @@ def insert_events (db):
                     (startTime, conf.cycle) )
 
     # Check new connections
-    print_log ('Events 2 - New Connections')
+    mylog('debug','[Events] - 2 - New Connections')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -281,7 +281,7 @@ def insert_events (db):
                     (startTime, conf.cycle) )
 
     # Check disconnections
-    print_log ('Events 3 - Disconnections')
+    mylog('debug','[Events] - 3 - Disconnections')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -297,7 +297,7 @@ def insert_events (db):
                     (startTime, conf.cycle) )
 
     # Check IP Changed
-    print_log ('Events 4 - IP Changes')
+    mylog('debug','[Events] - 4 - IP Changes')
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -308,6 +308,4 @@ def insert_events (db):
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
                     (startTime, conf.cycle) )
-    print_log ('Events end')
-
-
+    mylog('debug','[Events] - Events end')

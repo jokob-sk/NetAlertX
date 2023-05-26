@@ -15,26 +15,18 @@
 #===============================================================================
 from __future__ import print_function
 
-
 import sys
 from collections import namedtuple
 import time
 import datetime
-from datetime import timedelta
-import json
-from pathlib import Path
-from cron_converter import Cron
-from json2table import convert
 import multiprocessing
-
 
 # pialert modules
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, isNewVersion,  timeNow, updateState
+from helper import   filePermissions, isNewVersion,  timeNow, timeNowTZ, updateState
 from api import update_api
-from files import get_file_content
 from networkscan import scan_network
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
@@ -70,8 +62,8 @@ def main ():
 
 
     # to be deleted if not used 
-    log_timestamp = conf.time_started
-    cron_instance = Cron()
+    conf.log_timestamp = conf.time_started
+    #cron_instance = Cron()
 
     # timestamps of last execution times
     startTime = conf.time_started
@@ -98,7 +90,7 @@ def main ():
     sql = db.sql  # To-Do replace with the db class
 
     # Upgrade DB if needed
-    upgradeDB(db)
+    db.upgradeDB()
 
 
     #===============================================================================
@@ -110,7 +102,7 @@ def main ():
         # update time started
         time_started = datetime.datetime.now()  # not sure why we need this ...
         loop_start_time = timeNow()
-        mylog('debug', ['[', timeNow(), '] [MAIN] Stating loop'])
+        mylog('debug', ['[ +++++++ ', timeNow(), '] [MAIN] Stating loop'])
 
         # re-load user configuration and plugins   
         importConfigs(db)
@@ -153,15 +145,15 @@ def main ():
 
             # check for changes in Internet IP
             if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
-                cycle = 'internet_IP'                
+                conf.cycle = 'internet_IP'                
                 last_internet_IP_scan = time_started
                 check_internet_IP(db)
 
             # Update vendors once a week
             if last_update_vendors + datetime.timedelta(days = 7) < time_started:
                 last_update_vendors = time_started
-                cycle = 'update_vendors'
-                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])                  
+                conf.cycle = 'update_vendors'
+                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])                  
                 update_devices_MAC_vendors()
 
             # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
@@ -199,14 +191,14 @@ def main ():
                     run = nmapSchedule.runScheduleCheck()                    
 
                 if run:
-                    conf.nmapSchedule.last_run = datetime.datetime.now(conf.tz).replace(microsecond=0)
+                    conf.nmapSchedule.last_run = timeNow()
                     performNmapScan(db, get_all_devices(db))
             
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
-                cycle = 1 # network scan
-                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
+                conf.cycle = 1 # network scan
+                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
                 updateState(db,"Scan: Network")
 
                 # scan_network() 
@@ -261,46 +253,32 @@ def main ():
             # clean up the DB once a day
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
                 last_cleanup = time_started
-                cycle = 'cleanup'  
-                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
+                conf.cycle = 'cleanup'  
+                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
                 db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA)   
 
             # Commit SQL
             db.commitDB()          
             
             # Final message
-            if cycle != "":
-                action = str(cycle)
+            if conf.cycle != "":
+                action = str(conf.cycle)
                 if action == "1":
                     action = "network_scan"
                 mylog('verbose', ['[', timeNow(), '] Last action: ', action])
-                cycle = ""
-                mylog('verbose', ['[', timeNow(), '] cycle:',cycle])
+                conf.cycle = ""
+                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
             
             # Footer
             updateState(db,"Process: Wait")
             mylog('verbose', ['[', timeNow(), '] Process: Wait'])            
         else:
             # do something
-            cycle = "" 
+            conf.cycle = "" 
             mylog('verbose', ['[', timeNow(), '] [MAIN] waiting to start next loop'])          
 
         #loop     
         time.sleep(5) # wait for N seconds      
-
-
-
-
-
-
-
-
-
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# Plugins
-#-------------------------------------------------------------------------------
 
 
 #===============================================================================

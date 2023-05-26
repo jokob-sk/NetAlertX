@@ -3,14 +3,22 @@ import sys
 import io
 import datetime
 
+import conf
 from const import *
 
+#-------------------------------------------------------------------------------
+# duplication from helper to avoid circle
+#-------------------------------------------------------------------------------
+def timeNowTZ():
+    if conf.tz == '': 
+        return datetime.datetime.now().replace(microsecond=0)
+    else:
+        return datetime.datetime.now(conf.tz).replace(microsecond=0)
 
 #-------------------------------------------------------------------------------
 debugLevels =   [
                     ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3)
                 ]
-LOG_LEVEL = 'debug'
 
 def mylog(requestedDebugLevel, n):
 
@@ -19,7 +27,7 @@ def mylog(requestedDebugLevel, n):
 
     #  Get debug urgency/relative weight
     for lvl in debugLevels:
-        if LOG_LEVEL == lvl[0]:
+        if conf.LOG_LEVEL == lvl[0]:
             setLvl = lvl[1]
         if requestedDebugLevel == lvl[0]:
             reqLvl = lvl[1]
@@ -30,7 +38,7 @@ def mylog(requestedDebugLevel, n):
 #-------------------------------------------------------------------------------
 def file_print (*args):
 
-    result = ''    
+    result = timeNowTZ().strftime ('%H:%M:%S') + ' '    
        
     for arg in args:                
         result += str(arg)
@@ -42,14 +50,13 @@ def file_print (*args):
 
 #-------------------------------------------------------------------------------
 def print_log (pText):
-    global log_timestamp
 
     # Check LOG actived
-    if not LOG_LEVEL == 'debug' :
+    if not conf.LOG_LEVEL == 'debug' :
         return
 
     # Current Time    
-    log_timestamp2 = datetime.datetime.now().replace(microsecond=0)
+    log_timestamp2 = datetime.datetime.now(conf.tz).replace(microsecond=0)
 
     # Print line + time + elapsed time + text
     file_print ('[LOG_LEVEL=debug] ',
@@ -59,7 +66,7 @@ def print_log (pText):
     
 
     # Save current time to calculate elapsed time until next log
-    log_timestamp = log_timestamp2 
+    conf.log_timestamp = log_timestamp2 
 
     return pText
 

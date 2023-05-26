@@ -3,8 +3,8 @@
 #===============================================================================
 # PATHS
 #===============================================================================
-# pialertPath = '/home/pi/pialert'
-pialertPath ='/home/roland/repos/Pi.Alert'
+pialertPath = '/home/pi/pialert'
+#pialertPath ='/home/roland/repos/Pi.Alert'
 
 confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'

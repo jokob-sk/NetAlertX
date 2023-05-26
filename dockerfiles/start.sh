@@ -28,4 +28,6 @@ chmod -R a+rw /home/pi/pialert/config
 /etc/init.d/nginx start
 
 # cron -f
-python /home/pi/pialert/back/pialert.py
+#python /home/pi/pialert/back/pialert.py
+echo "DATA MONKEY VERSION ..."
+python /home/pi/pialert/pialert/pialert.py

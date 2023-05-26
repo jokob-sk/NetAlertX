@@ -55,7 +55,7 @@ def run_plugin_scripts(db, runType):
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
-            execute_plugin(plugin) 
+            execute_plugin(db, plugin) 
 
 
 
@@ -70,8 +70,9 @@ def get_plugins_configs():
     # for root, dirs, files in os.walk(pluginsPath):
     
     dirs = next(os.walk(pluginsPath))[1]
-    for d in dirs:            # Loop over directories, not files            
-        pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
+    for d in dirs:            # Loop over directories, not files    
+        if not d.startswith( "__" ):        # ignore __pycache__ 
+            pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
 
     return pluginsList
 
@@ -126,9 +127,9 @@ def get_plugin_string(props, el):
     result = ''
 
     if el in props['localized']:
-        for str in props[el]:
-            if str['language_code'] == 'en_us':
-                result = str['string']
+        for val in props[el]:
+            if val['language_code'] == 'en_us':
+                result = val['string']
         
         if result == '':
             result = 'en_us string missing'
@@ -265,7 +266,7 @@ def execute_plugin(db, plugin):
         sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         db.commitDB()
 
-        process_plugin_events(plugin)
+        process_plugin_events(db, plugin)
 
         # update API endpoints
         # update_api(False, ["plugins_events","plugins_objects"])      # TO-DO - remover circular reference
@@ -304,7 +305,7 @@ def plugin_param_from_glob_set(globalSetting):
 # Gets the setting value
 def get_plugin_setting_value(plugin, function_key):
     
-    resultObj = get_plugin_string(plugin, function_key)
+    resultObj = get_plugin_setting(plugin, function_key)
 
     if resultObj != None:
         return resultObj["value"]
@@ -386,7 +387,7 @@ def combine_plugin_objects(old, new):
 def process_plugin_events(db, plugin):    
     sql = db.sql
     
-    global pluginObjects, pluginEvents
+    ##global pluginObjects, pluginEvents
 
     pluginPref = plugin["unique_prefix"]
 
@@ -449,9 +450,8 @@ def process_plugin_events(db, plugin):
 
                 index += 1
 
-# Update the DB
+    # Update the DB
     # ----------------------------
-
     # Update the Plugin_Objects    
     for plugObj in pluginObjects: 
 
@@ -477,7 +477,7 @@ def process_plugin_events(db, plugin):
             createdTime = plugObj.changed  
 
         #  insert only events if they are to be reported on
-        if plugObj.status in  get_plugin_setting_value(plugin, "REPORT_ON"):  
+        if plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):  
 
             sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
 
