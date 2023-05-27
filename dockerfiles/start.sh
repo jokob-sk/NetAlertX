@@ -1,15 +1,15 @@
 #!/bin/sh
 /home/pi/pialert/dockerfiles/user-mapping.sh
 
-# if custom variables not set we do not need to do anything
-if [ -n "${TZ}" ]; then    
-  FILECONF=/home/pi/pialert/config/pialert.conf 
-  if [ -f "$FILECONF" ]; then
-    sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/config/pialert.conf 
-  else 
-    sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/back/pialert.conf_bak 
-  fi
-fi
+# # if custom variables not set we do not need to do anything
+# if [ -n "${TZ}" ]; then    
+#   FILECONF=/home/pi/pialert/config/pialert.conf 
+#   if [ -f "$FILECONF" ]; then
+#     sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/config/pialert.conf 
+#   else 
+#     sed -ie "s|Europe/Berlin|${TZ}|g" /home/pi/pialert/back/pialert.conf_bak 
+#   fi
+# fi
 
 if [ -n "${PORT}" ]; then  
   sed -ie 's/listen 20211/listen '${PORT}'/g' /etc/nginx/sites-available/default
@@ -29,5 +29,5 @@ chmod -R a+rw /home/pi/pialert/config
 
 # cron -f
 #python /home/pi/pialert/back/pialert.py
-echo "DATA MONKEY VERSION ..."
-python /home/pi/pialert/pialert/pialert.py
+echo "[DEBUG] DATA MONKEY VERSION ..."
+python /home/pi/pialert/pialert/

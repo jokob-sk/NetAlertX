@@ -175,13 +175,12 @@ def importConfigs (db):
     if conf.ENABLE_PLUGINS:
         conf.plugins = get_plugins_configs()
 
-        mylog('none', ['[', timeNow(), '] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
+        mylog('none', ['[Config] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
 
         #  handle plugins
         for plugin in conf.plugins:
+            pref = plugin["unique_prefix"]  
             print_plugin_info(plugin, ['display_name','description'])
-            
-            pref = plugin["unique_prefix"]   
 
             # if plugin["enabled"] == 'true': 
             
@@ -232,5 +231,4 @@ def importConfigs (db):
     # update_api(False, ["settings"])  
     # TO DO this creates a circular reference between API and HELPER !
 
-    mylog('info', ['[', timeNow(), '] Config: Imported new config'])  
-
+    mylog('info', '[Config] Imported new config')

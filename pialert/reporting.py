@@ -13,7 +13,7 @@ from json2table import convert
 # pialert modules
 import conf 
 from const import pialertPath, logPath
-from database import get_table_as_json
+#from database import get_table_as_json
 from files import get_file_content, write_file
 from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState
 from logger import logResult, mylog, print_log
@@ -52,7 +52,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
     text_line = '{}\t{}\n'
 
     if suppliedJsonStruct is None:
-        json_struc = get_table_as_json(db, sqlQuery)
+        json_struc = db.get_table_as_json(sqlQuery)
     else:
         json_struc = suppliedJsonStruct
 
@@ -96,7 +96,7 @@ def send_notifications (db):
     plugins_report         = False
 
     # Reporting section
-    mylog('verbose', ['  Check if something to report'])    
+    mylog('verbose', ['[Notification] Check if something to report'])    
 
     # prepare variables for JSON construction
     json_internet = []
@@ -254,47 +254,47 @@ def send_notifications (db):
 
         # update_api(True) # TO-DO
 
-        mylog('none', ['    Changes detected, sending reports'])
+        mylog('none', ['[Notification] Changes detected, sending reports'])
 
         if conf.REPORT_MAIL and check_config('email'):  
             updateState(db,"Send: Email")
-            mylog('info', ['      Sending report by Email'])
+            mylog('info', ['[Notification] Sending report by Email'])
             send_email (mail_text, mail_html)
         else :
-            mylog('verbose', ['      Skip email'])
+            mylog('verbose', ['[Notification] Skip email'])
         if conf.REPORT_APPRISE and check_config('apprise'):
             updateState(db,"Send: Apprise")
-            mylog('info', ['      Sending report by Apprise'])
+            mylog('info', ['[Notification] Sending report by Apprise'])
             send_apprise (mail_html, mail_text)
         else :
-            mylog('verbose', ['      Skip Apprise'])
+            mylog('verbose', ['[Notification] Skip Apprise'])
         if conf.REPORT_WEBHOOK and check_config('webhook'):
             updateState(db,"Send: Webhook")
-            mylog('info', ['      Sending report by Webhook'])
+            mylog('info', ['[Notification] Sending report by Webhook'])
             send_webhook (json_final, mail_text)
         else :
-            mylog('verbose', ['      Skip webhook'])
+            mylog('verbose', ['[Notification] Skip webhook'])
         if conf.REPORT_NTFY and check_config('ntfy'):
             updateState(db,"Send: NTFY")
-            mylog('info', ['      Sending report by NTFY'])
+            mylog('info', ['[Notification] Sending report by NTFY'])
             send_ntfy (mail_text)
         else :
-            mylog('verbose', ['      Skip NTFY'])
+            mylog('verbose', ['[Notification] Skip NTFY'])
         if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
             updateState(db,"Send: PUSHSAFER")
-            mylog('info', ['      Sending report by PUSHSAFER'])
+            mylog('info', ['[Notification] Sending report by PUSHSAFER'])
             send_pushsafer (mail_text)
         else :
-            mylog('verbose', ['      Skip PUSHSAFER'])
+            mylog('verbose', ['[Notification] Skip PUSHSAFER'])
         # Update MQTT entities
         if conf.REPORT_MQTT and check_config('mqtt'):
             updateState(db,"Send: MQTT")
-            mylog('info', ['      Establishing MQTT thread'])                          
+            mylog('info', ['[Notification] Establishing MQTT thread'])                          
             mqtt_start()        
         else :
-            mylog('verbose', ['      Skip MQTT'])
+            mylog('verbose', ['[Notification] Skip MQTT'])
     else :
-        mylog('verbose', ['    No changes to report'])
+        mylog('verbose', ['[Notification] No changes to report'])
 
     # Clean Pending Alert Events
     sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
@@ -310,7 +310,7 @@ def send_notifications (db):
     changedPorts_json_struc = None
 
     # DEBUG - print number of rows updated    
-    mylog('info', ['[', timeNow(), '] Notifications: ', sql.rowcount])
+    mylog('info', ['[Notification] Notifications changes: ', sql.rowcount])
 
     # Commit changes    
     db.commitDB()
@@ -321,42 +321,42 @@ def check_config(service):
 
     if service == 'email':
         if conf.SMTP_SERVER == '' or conf.REPORT_FROM == '' or conf.REPORT_TO == '':
-            mylog('none', ['    Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
+            mylog('none', ['[Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
             return False
         else:
             return True   
 
     if service == 'apprise':
         if conf.APPRISE_URL == '' or conf.APPRISE_HOST == '':
-            mylog('none', ['    Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
+            mylog('none', ['[Check Config] Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
             return False
         else:
             return True  
 
     if service == 'webhook':
         if conf.WEBHOOK_URL == '':
-            mylog('none', ['    Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.'])
+            mylog('none', ['[Check Config] Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.'])
             return False
         else:
             return True 
 
     if service == 'ntfy':
         if conf.NTFY_HOST == '' or conf.NTFY_TOPIC == '':
-            mylog('none', ['    Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.'])
+            mylog('none', ['[Check Config] Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.'])
             return False
         else:
             return True 
 
     if service == 'pushsafer':
         if conf.PUSHSAFER_TOKEN == 'ApiKey':
-            mylog('none', ['    Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.'])
+            mylog('none', ['[Check Config] Error: Pushsafer service not set up correctly. Check your pialert.conf PUSHSAFER_TOKEN variable.'])
             return False
         else:
             return True 
 
     if service == 'mqtt':
         if conf.MQTT_BROKER == '' or conf.MQTT_PORT == '' or conf.MQTT_USER == '' or conf.MQTT_PASSWORD == '':
-            mylog('none', ['    Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
+            mylog('none', ['[Check Config] Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
             return True 

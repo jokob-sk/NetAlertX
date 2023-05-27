@@ -6,10 +6,10 @@ import subprocess
 
 import conf
 from helper import timeNow
-from internet import check_IP_format, get_internet_IP
+from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
 from mac_vendor import query_MAC_vendor
-from pholusscan import performPholusScan, resolve_device_name_dig, resolve_device_name_pholus
+from scanners.pholusscan import performPholusScan, resolve_device_name_dig, resolve_device_name_pholus
 #-------------------------------------------------------------------------------
 
 
@@ -64,7 +64,7 @@ def save_scanned_devices (db, p_arpscan_devices, p_cycle_interval):
     local_ip_cmd = ["ip -o route get 1 | sed 's/^.*src \\([^ ]*\\).*$/\\1/;q'"]
     local_ip = subprocess.Popen (local_ip_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].decode().strip()
 
-    mylog('debug', ['    Saving this IP into the CurrentScan table:', local_ip])
+    mylog('debug', ['[Save Devices] Saving this IP into the CurrentScan table:', local_ip])
 
     if check_IP_format(local_ip) == '':
         local_ip = '0.0.0.0'
@@ -82,19 +82,19 @@ def print_scan_stats (db):
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanCycle = ? """,
                     (conf.cycle,))
-    mylog('verbose', ['    Devices Detected.......: ', str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]    Devices Detected.......: ', str (sql.fetchone()[0]) ])
 
     # Devices arp-scan
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
                     (conf.cycle,))
-    mylog('verbose', ['        arp-scan detected..: ', str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        arp-scan detected..: ', str (sql.fetchone()[0]) ])
 
     # Devices Pi-hole
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
                     WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
                     (conf.cycle,))
-    mylog('verbose', ['        Pi-hole detected...: +' + str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        Pi-hole detected...: +' + str (sql.fetchone()[0]) ])
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
@@ -102,7 +102,7 @@ def print_scan_stats (db):
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
                     (conf.cycle,))
-    mylog('verbose', ['        New Devices........: ' + str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        New Devices........: ' + str (sql.fetchone()[0]) ])
 
     # Devices in this ScanCycle
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -110,7 +110,7 @@ def print_scan_stats (db):
                       AND dev_ScanCycle = ? """,
                     (conf.cycle,))
     
-    mylog('verbose', ['    Devices in this cycle..: ' + str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]    Devices in this cycle..: ' + str (sql.fetchone()[0]) ])
 
     # Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -120,7 +120,7 @@ def print_scan_stats (db):
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (conf.cycle,))
-    mylog('verbose', ['        Down Alerts........: ' + str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        Down Alerts........: ' + str (sql.fetchone()[0]) ])
 
     # New Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -131,7 +131,7 @@ def print_scan_stats (db):
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (conf.cycle,))
-    mylog('verbose', ['        New Down Alerts....: ' + str (sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        New Down Alerts....: ' + str (sql.fetchone()[0]) ])
 
     # New Connections
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -139,7 +139,7 @@ def print_scan_stats (db):
                       AND dev_PresentLastScan = 0
                       AND dev_ScanCycle = ? """,
                     (conf.cycle,))
-    mylog('verbose', ['        New Connections....: ' + str ( sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        New Connections....: ' + str ( sql.fetchone()[0]) ])
 
     # Disconnections
     sql.execute ("""SELECT COUNT(*) FROM Devices
@@ -149,7 +149,7 @@ def print_scan_stats (db):
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
                     (conf.cycle,))
-    mylog('verbose', ['        Disconnections.....: ' + str ( sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        Disconnections.....: ' + str ( sql.fetchone()[0]) ])
 
     # IP Changes
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
@@ -157,7 +157,7 @@ def print_scan_stats (db):
                       AND dev_ScanCycle = ?
                       AND dev_LastIP <> cur_IP """,
                     (conf.cycle,))
-    mylog('verbose', ['        IP Changes.........: ' + str ( sql.fetchone()[0]) ])
+    mylog('verbose', ['[Scan Stats]        IP Changes.........: ' + str ( sql.fetchone()[0]) ])
 
 
 
@@ -395,7 +395,7 @@ def update_devices_names (db):
     db.commitDB()
 
     # Number of entries from previous Pholus scans
-    mylog('verbose', '[Update Device Name] Pholus entries from prev scans: ', len(pholusResults))
+    mylog('verbose', ['[Update Device Name] Pholus entries from prev scans: ', len(pholusResults)])
 
     for device in unknownDevices:
         newName = -1
@@ -422,8 +422,8 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', '[Update Device Name] Names Found (DiG/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")" )                 
-    mylog('verbose', '[Update Device Name] Names Not Found         : ', len(recordsNotFound) )    
+    mylog('verbose', ['[Update Device Name] Names Found (DiG/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")"] )                 
+    mylog('verbose', ['[Update Device Name] Names Not Found         : ', len(recordsNotFound)] )    
      
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )

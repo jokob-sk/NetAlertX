@@ -23,53 +23,53 @@ def check_internet_IP ( db ):
 
     # Header
     updateState(db,"Scan: Internet IP")
-    mylog('verbose', ['[', timeNow(), '] Check Internet IP:'])    
+    mylog('verbose', ['[Internet IP] Check Internet IP started'])    
 
     # Get Internet IP
-    mylog('verbose', ['    Retrieving Internet IP:'])
+    mylog('verbose', ['[Internet IP] - Retrieving Internet IP'])
     internet_IP = get_internet_IP(conf.DIG_GET_IP_ARG)
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
     # Check result = IP
     if internet_IP == "" :
-        mylog('none', ['    Error retrieving Internet IP'])
-        mylog('none', ['    Exiting...'])
+        mylog('none', ['[Internet IP]    Error retrieving Internet IP'])
+        mylog('none', ['[Internet IP]    Exiting...'])
         return False
-    mylog('verbose', ['      ', internet_IP])
+    mylog('verbose', ['[Internet IP] IP:      ', internet_IP])
 
     # Get previous stored IP
-    mylog('verbose', ['    Retrieving previous IP:'])    
+    mylog('verbose', ['[Internet IP]    Retrieving previous IP:'])    
     previous_IP = get_previous_internet_IP (db)
-    mylog('verbose', ['      ', previous_IP])
+    mylog('verbose', ['[Internet IP]      ', previous_IP])
 
     # Check IP Change
     if internet_IP != previous_IP :
-        mylog('info', ['    New internet IP: ', internet_IP])
+        mylog('info', ['[Internet IP]    New internet IP: ', internet_IP])
         save_new_internet_IP (db, internet_IP)
         
     else :
-        mylog('verbose', ['    No changes to perform'])    
+        mylog('verbose', ['[Internet IP]    No changes to perform'])    
 
     # Get Dynamic DNS IP
     if conf.DDNS_ACTIVE :
-        mylog('verbose', ['    Retrieving Dynamic DNS IP'])
+        mylog('verbose', ['[DDNS]    Retrieving Dynamic DNS IP'])
         dns_IP = get_dynamic_DNS_IP()
 
         # Check Dynamic DNS IP
         if dns_IP == "" or dns_IP == "0.0.0.0" :
-            mylog('info', ['    Error retrieving Dynamic DNS IP'])            
-        mylog('info', ['   ', dns_IP])
+            mylog('none', ['[DDNS]     Error retrieving Dynamic DNS IP'])            
+        mylog('none', ['[DDNS]    ', dns_IP])
 
         # Check DNS Change
         if dns_IP != internet_IP :
-            mylog('info', ['    Updating Dynamic DNS IP'])
+            mylog('none', ['[DDNS]     Updating Dynamic DNS IP'])
             message = set_dynamic_DNS_IP ()
-            mylog('info', ['       ', message])            
+            mylog('none', ['[DDNS]        ', message])            
         else :
-            mylog('verbose', ['    No changes to perform'])
+            mylog('verbose', ['[DDNS]     No changes to perform'])
     else :
-        mylog('verbose', ['    Skipping Dynamic DNS update'])
+        mylog('verbose', ['[DDNS]     Skipping Dynamic DNS update'])
 
 
 
@@ -164,7 +164,7 @@ def get_dynamic_DNS_IP ():
         dig_output = subprocess.check_output (dig_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [e.output])
+        mylog('none', ['[DDNS] ERROR - ', e.output])
         dig_output = '' # probably no internet
 
     # Check result is an IP
@@ -189,7 +189,7 @@ def set_dynamic_DNS_IP ():
             universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [e.output])
+        mylog('none', ['[DDNS] ERROR - ',e.output])
         curl_output = ""    
     
     return curl_output

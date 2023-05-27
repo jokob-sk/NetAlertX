@@ -48,7 +48,7 @@ class DB():
             mylog('debug','openDB: databse already open')
             return
 
-        mylog('none', 'Opening DB' )
+        mylog('none', '[Database] Opening DB' )
         # Open DB and Cursor
         self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
         self.sql_connection.execute('pragma journal_mode=wal') #
@@ -60,12 +60,11 @@ class DB():
     def commitDB (self):
         if self.sql_connection == None :
             mylog('debug','commitDB: databse is not open')
-            return
-        
-        # mylog('debug','commitDB: comiting DB changes')
+            return False
 
         # Commit changes to DB
         self.sql_connection.commit()
+        return True
     
     #-------------------------------------------------------------------------------
     def get_sql_array(self, query):    
@@ -75,7 +74,7 @@ class DB():
         
         self.sql.execute(query)
         rows = self.sql.fetchall()
-        self.commitDB()
+        #self.commitDB()
 
         #  convert result into list of lists
         arr = []
@@ -386,293 +385,48 @@ class DB():
         self.commitDB()    
 
 
-#-------------------------------------------------------------------------------
-def get_table_as_json(db, sqlQuery):
+    #-------------------------------------------------------------------------------
+    def get_table_as_json(self, sqlQuery):
 
-    db.sql.execute(sqlQuery) 
+        self.sql.execute(sqlQuery) 
 
-    columnNames = list(map(lambda x: x[0], db.sql.description)) 
+        columnNames = list(map(lambda x: x[0], self.sql.description)) 
 
-    rows = db.sql.fetchall()    
+        rows = self.sql.fetchall()    
 
-    result = {"data":[]}
+        result = {"data":[]}
 
-    for row in rows: 
-        tmp = row_to_json(columnNames, row)
-        result["data"].append(tmp)
-    return json_struc(result, columnNames)
+        for row in rows: 
+            tmp = row_to_json(columnNames, row)
+            result["data"].append(tmp)
+        return json_struc(result, columnNames)
 
-
- 
-
-
-
-
-#-------------------------------------------------------------------------------
-def upgradeDB(db: DB()):
-    sql = db.sql  #TO-DO 
-
-    # indicates, if Online_History table is available 
-    onlineHistoryAvailable = db.sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Online_History'; 
-    """).fetchall() != []
-
-    # Check if it is incompatible (Check if table has all required columns)
-    isIncompatible = False
-    
-    if onlineHistoryAvailable :
-      isIncompatible = sql.execute ("""
-      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
-      """).fetchone()[0] == 0
-    
-    # Drop table if available, but incompatible
-    if onlineHistoryAvailable and isIncompatible:      
-      mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
-      sql.execute("DROP TABLE Online_History;")
-      onlineHistoryAvailable = False
-
-    if onlineHistoryAvailable == False :
-      sql.execute("""      
-      CREATE TABLE "Online_History" (
-        "Index"	INTEGER,
-        "Scan_Date"	TEXT,
-        "Online_Devices"	INTEGER,
-        "Down_Devices"	INTEGER,
-        "All_Devices"	INTEGER,
-        "Archived_Devices" INTEGER,
-        PRIMARY KEY("Index" AUTOINCREMENT)
-      );      
-      """)
-
-    # Alter Devices table
-    # dev_Network_Node_MAC_ADDR column
-    dev_Network_Node_MAC_ADDR_missing = sql.execute ("""
-      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
-      """).fetchone()[0] == 0
-
-    if dev_Network_Node_MAC_ADDR_missing :
-      mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])   
-      sql.execute("""      
-      ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
-      """)
-
-    # dev_Network_Node_port column
-    dev_Network_Node_port_missing = sql.execute ("""
-      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
-      """).fetchone()[0] == 0
-
-    if dev_Network_Node_port_missing :
-      mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])     
-      sql.execute("""      
-      ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
-      """)
-
-    # dev_Icon column
-    dev_Icon_missing = sql.execute ("""
-      SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
-      """).fetchone()[0] == 0
-
-    if dev_Icon_missing :
-      mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])     
-      sql.execute("""      
-      ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
-      """)
-
-    # indicates, if Settings table is available 
-    settingsMissing = sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Settings'; 
-    """).fetchone() == None
-
-    # Re-creating Settings table    
-    mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
-
-    if settingsMissing == False:   
-        sql.execute("DROP TABLE Settings;")       
-
-    sql.execute("""      
-    CREATE TABLE "Settings" (        
-    "Code_Name"	    TEXT,
-    "Display_Name"	TEXT,
-    "Description"	TEXT,        
-    "Type"          TEXT,
-    "Options"       TEXT,
-    "RegEx"         TEXT,
-    "Value"	        TEXT,
-    "Group"	        TEXT,
-    "Events"	    TEXT
-    );      
-    """)
-
-    # indicates, if Pholus_Scan table is available 
-    pholusScanMissing = sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Pholus_Scan'; 
-    """).fetchone() == None
-
-    # if pholusScanMissing == False:
-    #     # Re-creating Pholus_Scan table  
-    #     sql.execute("DROP TABLE Pholus_Scan;")       
-    #     pholusScanMissing = True  
-
-    if pholusScanMissing:
-        mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
-        sql.execute("""      
-        CREATE TABLE "Pholus_Scan" (        
-        "Index"	          INTEGER,
-        "Info"	          TEXT,
-        "Time"	          TEXT,
-        "MAC"	          TEXT,
-        "IP_v4_or_v6"	  TEXT,
-        "Record_Type"	  TEXT,
-        "Value"           TEXT,
-        "Extra"           TEXT,
-        PRIMARY KEY("Index" AUTOINCREMENT)
-        );      
-        """)
-
-    # indicates, if Nmap_Scan table is available 
-    nmapScanMissing = sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Nmap_Scan'; 
-    """).fetchone() == None
-
-     # Re-creating Parameters table
-    mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
-    sql.execute("DROP TABLE Parameters;")
-
-    sql.execute("""      
-      CREATE TABLE "Parameters" (
-        "par_ID" TEXT PRIMARY KEY,
-        "par_Value"	TEXT
-      );      
-      """)
-
-    # Initialize Parameters if unavailable
-    initOrSetParam(db, 'Back_App_State','Initializing')
-
-    # if nmapScanMissing == False:
-    #     # Re-creating Nmap_Scan table    
-    #     sql.execute("DROP TABLE Nmap_Scan;")       
-    #     nmapScanMissing = True  
-
-    if nmapScanMissing:
-        mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
-        sql.execute("""      
-        CREATE TABLE "Nmap_Scan" (        
-        "Index"	          INTEGER,
-        "MAC"	          TEXT,
-        "Port"	          TEXT,
-        "Time"	          TEXT,        
-        "State"	          TEXT,
-        "Service"	      TEXT,       
-        "Extra"           TEXT,
-        PRIMARY KEY("Index" AUTOINCREMENT)
-        );      
-        """)
-
-    # Plugin state
-    sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
-                        "Index"	          INTEGER,
-                        Plugin TEXT NOT NULL,
-                        Object_PrimaryID TEXT NOT NULL,
-                        Object_SecondaryID TEXT NOT NULL,
-                        DateTimeCreated TEXT NOT NULL,                        
-                        DateTimeChanged TEXT NOT NULL,                        
-                        Watched_Value1 TEXT NOT NULL,
-                        Watched_Value2 TEXT NOT NULL,
-                        Watched_Value3 TEXT NOT NULL,
-                        Watched_Value4 TEXT NOT NULL,
-                        Status TEXT NOT NULL,  
-                        Extra TEXT NOT NULL,
-                        UserData TEXT NOT NULL,
-                        ForeignKey TEXT NOT NULL,
-                        PRIMARY KEY("Index" AUTOINCREMENT)
-                    ); """
-    sql.execute(sql_Plugins_Objects)
-
-    # Plugin execution results
-    sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
-                        "Index"	          INTEGER,
-                        Plugin TEXT NOT NULL,
-                        Object_PrimaryID TEXT NOT NULL,
-                        Object_SecondaryID TEXT NOT NULL,
-                        DateTimeCreated TEXT NOT NULL,                        
-                        DateTimeChanged TEXT NOT NULL,                         
-                        Watched_Value1 TEXT NOT NULL,
-                        Watched_Value2 TEXT NOT NULL,
-                        Watched_Value3 TEXT NOT NULL,
-                        Watched_Value4 TEXT NOT NULL,
-                        Status TEXT NOT NULL,              
-                        Extra TEXT NOT NULL,
-                        UserData TEXT NOT NULL,
-                        ForeignKey TEXT NOT NULL,
-                        PRIMARY KEY("Index" AUTOINCREMENT)
-                    ); """
-    sql.execute(sql_Plugins_Events)
-
-    # Plugin execution history
-    sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
-                        "Index"	          INTEGER,
-                        Plugin TEXT NOT NULL,
-                        Object_PrimaryID TEXT NOT NULL,
-                        Object_SecondaryID TEXT NOT NULL,
-                        DateTimeCreated TEXT NOT NULL,                        
-                        DateTimeChanged TEXT NOT NULL,                         
-                        Watched_Value1 TEXT NOT NULL,
-                        Watched_Value2 TEXT NOT NULL,
-                        Watched_Value3 TEXT NOT NULL,
-                        Watched_Value4 TEXT NOT NULL,
-                        Status TEXT NOT NULL,              
-                        Extra TEXT NOT NULL,
-                        UserData TEXT NOT NULL,
-                        ForeignKey TEXT NOT NULL,
-                        PRIMARY KEY("Index" AUTOINCREMENT)
-                    ); """                    
-    sql.execute(sql_Plugins_History)
-
-    # Dynamically generated language strings
-    # indicates, if Language_Strings table is available 
-    languageStringsMissing = sql.execute("""
-    SELECT name FROM sqlite_master WHERE type='table'
-    AND name='Plugins_Language_Strings'; 
-    """).fetchone() == None
-    
-    if languageStringsMissing == False:
-        sql.execute("DROP TABLE Plugins_Language_Strings;") 
-
-    sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
-                        "Index"	          INTEGER,
-                        Language_Code TEXT NOT NULL,
-                        String_Key TEXT NOT NULL,
-                        String_Value TEXT NOT NULL,
-                        Extra TEXT NOT NULL,                                                    
-                        PRIMARY KEY("Index" AUTOINCREMENT)
-                    ); """)   
-    
-    db.commitDB()    
+    #-------------------------------------------------------------------------------
+    # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases
+    #-------------------------------------------------------------------------------   
+    def read(self, query, *args):
+        """check the query and arguments are aligned and are read only"""
+        mylog('debug',[ '[Database] - SELECT Query: ', query, " params: ", args])
+        try:
+          assert query.count('?') == len(args)
+          assert query.upper().strip().startswith('SELECT')
+          self.sql.execute(query, args)
+          rows = self.sql.fetchall()
+          return rows
+        except AssertionError:
+          mylog('none',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+        except sqlite3.Error as e:
+          mylog('none',[ '[Database] - SQL ERROR: ', e])
+        return None
 
 
 #-------------------------------------------------------------------------------
 def get_device_stats(db):
-    sql = db.sql  #TO-DO 
     # columns = ["online","down","all","archived","new","unknown"]
-    sql.execute(sql_devices_stats)
-
-    row = sql.fetchone()
-    db.commitDB()
-
-    return row
+    return db.read(sql_devices_stats)
 #-------------------------------------------------------------------------------
 def get_all_devices(db):    
-    sql = db.sql  #TO-DO 
-    sql.execute(sql_devices_all)
-
-    row = sql.fetchall()
-
-    db.commitDB()
-    return row
+    return db.read(sql_devices_all)
 
 #-------------------------------------------------------------------------------
 
@@ -681,20 +435,17 @@ def insertOnlineHistory(db, cycle):
     sql = db.sql #TO-DO
     startTime = timeNow()
     # Add to History
-    sql.execute("SELECT * FROM Devices")
-    History_All = sql.fetchall()
+  
+    History_All = db.read("SELECT * FROM Devices")
     History_All_Devices  = len(History_All)
 
-    sql.execute("SELECT * FROM Devices WHERE dev_Archived = 1")
-    History_Archived = sql.fetchall()
+    History_Archived = db.read("SELECT * FROM Devices WHERE dev_Archived = 1")
     History_Archived_Devices  = len(History_Archived)
 
-    sql.execute("""SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? """, (cycle,))
-    History_Online = sql.fetchall()
+    History_Online = db.read("SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? ", cycle)
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
     
     sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
                  "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
     db.commitDB()
-

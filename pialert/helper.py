@@ -32,14 +32,12 @@ def updateState(db, newState):
      
     #sql = db.sql
 
-    mylog('debug', '       [updateState] changing state to: "' + newState +'"')
+    mylog('debug', '[updateState] changing state to: "' + newState +'"')
     db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
 
     db.commitDB()
 #-------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
-
-    #  remove old list
     subnets = []  
 
     # multiple interfaces
@@ -64,8 +62,8 @@ def checkPermissionsOK():
     dbR_access = (os.access(fullDbPath, os.R_OK))
     dbW_access = (os.access(fullDbPath, os.W_OK))
 
-
-    mylog('none', ['\n Permissions check (All should be True)'])
+    mylog('none', ['\n'])
+    mylog('none', ['Permissions check (All should be True)'])
     mylog('none', ['------------------------------------------------'])
     mylog('none', [ "  " , confPath ,     " | " , " READ  | " , confR_access])
     mylog('none', [ "  " , confPath ,     " | " , " WRITE | " , confW_access])

@@ -15,7 +15,7 @@ def performPholusScan (db, timeoutSec, userSubnets):
         temp = subnet.split("--interface=")
 
         if len(temp) != 2:
-            mylog('none', ["        Skip scan (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet])
+            mylog('none', ["[PholusScan] Skip scan (need subnet in format '192.168.1.0/24 --inteface=eth0'), got: ", subnet])
             return
 
         mask = temp[0].strip()
@@ -23,8 +23,8 @@ def performPholusScan (db, timeoutSec, userSubnets):
 
         # logging & updating app state        
         updateState(db,"Scan: Pholus")        
-        mylog('info', ['[', timeNow(), '] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
-        mylog('verbose', ["        Pholus scan on [interface] ", interface, " [mask] " , mask])
+        mylog('none', ['[PholusScan] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
+        mylog('verbose', ["[PholusScan] Pholus scan on [interface] ", interface, " [mask] " , mask])
         
         # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
         adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
@@ -40,15 +40,15 @@ def performPholusScan (db, timeoutSec, userSubnets):
             output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', [e.output])
-            mylog('none', ["        Error - Pholus Scan - check logs"])            
+            mylog('none', [[PholusScan], e.output])
+            mylog('none', ["[PholusScan] Error - Pholus Scan - check logs"])            
         except subprocess.TimeoutExpired as timeErr:
-            mylog('none', ['        Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
+            mylog('none', ['[PholusScan] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
 
         if output == "": # check if the subprocess failed                    
-            mylog('none', ['[', timeNow(), '] Scan: Pholus FAIL - check logs']) 
+            mylog('none', ['[PholusScan] Scan: Pholus FAIL - check logs']) 
         else: 
-            mylog('verbose', ['[', timeNow(), '] Scan: Pholus SUCCESS'])
+            mylog('verbose', ['[PholusScan] Scan: Pholus SUCCESS'])
         
         #  check the last run output
         f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')
@@ -176,7 +176,7 @@ def resolve_device_name_dig (pMAC, pIP):
             newName = subprocess.check_output (dig_args, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', [e.output])            
+            mylog('none', ['[device_name_dig] ', e.output])            
             # newName = "Error - check logs"
             return -1
 

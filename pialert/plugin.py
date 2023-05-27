@@ -21,7 +21,7 @@ def timeNow():
 
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType):
+def run_plugin_scripts(db, runType, plugins = conf.plugins):
     
     # global plugins, tz, mySchedules
 
@@ -30,7 +30,7 @@ def run_plugin_scripts(db, runType):
 
     mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
 
-    for plugin in conf.plugins:
+    for plugin in plugins:
 
         shouldRun = False
 

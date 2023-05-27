@@ -2,11 +2,11 @@ import json
 
 
 # pialert modules
+import conf  
 from const import pialertPath
 from logger import mylog
 from files import write_file
 from database import *
-from conf import ENABLE_PLUGINS, API_CUSTOM_SQL
 
 apiEndpoints = []
 
@@ -14,7 +14,7 @@ apiEndpoints = []
 # API
 #===============================================================================
 def update_api(isNotification = False, updateOnlyDataSources = []):
-    mylog('verbose', ['     [API] Update API not ding anything for now !'])
+    mylog('verbose', ['     [API] Update API not doing anything for now !'])
     return
 
     folder = pialertPath + '/front/api/'
@@ -28,7 +28,7 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         write_file(folder + 'notification_json_final.json'  , json.dumps(json_final))  
 
     # Save plugins
-    if ENABLE_PLUGINS: 
+    if conf.ENABLE_PLUGINS: 
         write_file(folder + 'plugins.json'  , json.dumps({"data" : plugins}))  
 
     #  prepare database tables we want to expose 
@@ -42,7 +42,7 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
         ["plugins_history", sql_plugins_history],
         ["plugins_objects", sql_plugins_objects],
         ["language_strings", sql_language_strings],
-        ["custom_endpoint", API_CUSTOM_SQL],
+        ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 
     # Save selected database tables
@@ -57,12 +57,12 @@ def update_api(isNotification = False, updateOnlyDataSources = []):
 
 
 class api_endpoint_class:
-    def __init__(self, sql, path):        
+    def __init__(self, db, path):        
 
         global apiEndpoints
-
-        self.sql = sql
-        self.jsonData = get_table_as_json(sql).json
+        self.db = db
+        self.sql = db.sql
+        self.jsonData = db.get_table_as_json( self.sql).json
         self.path = path
         self.fileName = path.split('/')[-1]
         self.hash = hash(json.dumps(self.jsonData))

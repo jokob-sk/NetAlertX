@@ -1,6 +1,10 @@
 """ module to import db and leases from PiHole """
 
+import sqlite3
+
+import conf
 from const import piholeDB, piholeDhcpleases
+from logger import mylog
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network (db):
@@ -10,11 +14,20 @@ def copy_pihole_network (db):
     
     sql = db.sql # TO-DO
     # Open Pi-hole DB
-    sql.execute ("ATTACH DATABASE '"+ piholeDB +"' AS PH")
+    mylog('debug', '[PiHole Network] - attach PiHole DB')
+
+    try:
+        sql.execute ("ATTACH DATABASE '"+ piholeDB +"' AS PH")
+    except sqlite3.Error as e:
+        mylog('none',[ '[PiHole Network] - SQL ERROR: ', e])
+    
 
     # Copy Pi-hole Network table
-    sql.execute ("DELETE FROM PiHole_Network")
-    sql.execute ("""INSERT INTO PiHole_Network (PH_MAC, PH_Vendor, PH_LastQuery,
+
+    try:
+        sql.execute ("DELETE FROM PiHole_Network")
+
+        sql.execute ("""INSERT INTO PiHole_Network (PH_MAC, PH_Vendor, PH_LastQuery,
                         PH_Name, PH_IP)
                     SELECT hwaddr, macVendor, lastQuery,
                         (SELECT name FROM PH.network_addresses
@@ -24,24 +37,29 @@ def copy_pihole_network (db):
                     FROM PH.network
                     WHERE hwaddr NOT LIKE 'ip-%'
                       AND hwaddr <> '00:00:00:00:00:00' """)
-    sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
+        sql.execute ("""UPDATE PiHole_Network SET PH_Name = '(unknown)'
                     WHERE PH_Name IS NULL OR PH_Name = '' """)
-    # Close Pi-hole DB
-    sql.execute ("DETACH PH")
-    db.commit()
+        # Close Pi-hole DB
+        sql.execute ("DETACH PH")
 
+    except sqlite3.Error as e:
+        mylog('none',[ '[PiHole Network] - SQL ERROR: ', e])
+    
+    db.commitDB()
+    
+    mylog('debug',[ '[PiHole Network] - completed - found ',sql.rowcount, ' devices'])
     return str(sql.rowcount) != "0"
 
 #-------------------------------------------------------------------------------
 def read_DHCP_leases (db):
     """
     read the PiHole DHCP file and insert all records into the DHCP_Leases table.
-    """
-
-    sql = db.sql # TO-DO    
+    """ 
+    mylog('debug', '[PiHole DHCP] - read DHCP_Leases file')
     # Read DHCP Leases
     # Bugfix #1 - dhcp.leases: lines with different number of columns (5 col)
     data = []
+    reporting = False
     with open(piholeDhcpleases, 'r') as f:
         for line in f:
             reporting = True
@@ -50,8 +68,11 @@ def read_DHCP_leases (db):
                 data.append (row)
 
     # Insert into PiAlert table    
-    sql.executemany ("""INSERT INTO DHCP_Leases (DHCP_DateTime, DHCP_MAC,
+    db.sql.executemany ("""INSERT INTO DHCP_Leases (DHCP_DateTime, DHCP_MAC,
                             DHCP_IP, DHCP_Name, DHCP_MAC2)
                         VALUES (?, ?, ?, ?, ?)
                      """, data)
-    db.commit()
+    db.commitDB()
+
+    mylog('debug', ['[PiHole DHCP] - completed - added ',len(data), ' devices.'])
+    return reporting

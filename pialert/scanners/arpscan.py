@@ -3,7 +3,6 @@ import subprocess
 
 from logger import mylog
 
-
 #-------------------------------------------------------------------------------
 def execute_arpscan (userSubnets):
 
@@ -34,6 +33,7 @@ def execute_arpscan (userSubnets):
             unique_devices.append(device)    
 
     # return list
+    mylog('debug', ['[ARP Scan] Completed found ', len(unique_devices) ,' devices ' ])    
     return unique_devices
 
 #-------------------------------------------------------------------------------
@@ -41,6 +41,7 @@ def execute_arpscan_on_interface (interface):
     # Prepare command arguments
     subnets = interface.strip().split()
     # Retry is 6 to avoid false offline devices
+    mylog('debug', ['[ARP Scan] - arpscan command: sudo arp-scan --ignoredups --retry=6 ', str(subnets)])
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
 
     # Execute command
@@ -49,7 +50,8 @@ def execute_arpscan_on_interface (interface):
         result = subprocess.check_output (arpscan_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [e.output])
+        mylog('none', ['[ARP Scan]', e.output])
         result = ""
 
+    mylog('debug', ['[ARP Scan] on Interface Completed with results: ', result])
     return result

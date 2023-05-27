@@ -30,29 +30,53 @@ from api import update_api
 from networkscan import scan_network
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
-from database import DB, get_all_devices, upgradeDB, sql_new_devices
+from database import DB, get_all_devices, sql_new_devices
 from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
 # different scanners
-from pholusscan import performPholusScan
-from nmapscan import performNmapScan
-from internet import check_internet_IP
-
+from scanners.pholusscan import performPholusScan
+from scanners.nmapscan import performNmapScan
+from scanners.internet import check_internet_IP
 
 # Global variables
 changedPorts_json_struc = None
-
-
 
 #===============================================================================
 #===============================================================================
 #                              MAIN
 #===============================================================================
 #===============================================================================
+"""
+main structure of Pi Alert
+
+    Initialise All
+    start Loop forever
+        initialise loop 
+            (re)import config
+            (re)import plugin config
+        run plugins (once)
+        run frontend events
+        update API 
+        run scans
+            run plugins (scheduled)
+            check internet IP
+            check vendor
+            run PHOLUS
+            run NMAP
+            run "scan_network()"
+                ARP Scan
+                PiHole copy db
+                PiHole DHCP leases
+                processing scan results
+            run plugins (after Scan)
+        reporting
+        cleanup
+    end loop
+"""
 
 def main ():
-
+    
     conf.time_started = datetime.datetime.now()
     conf.cycle = ""
     conf.check_report = [1, "internet_IP", "update_vendors_silent"]
@@ -102,7 +126,7 @@ def main ():
         # update time started
         time_started = datetime.datetime.now()  # not sure why we need this ...
         loop_start_time = timeNow()
-        mylog('debug', ['[ +++++++ ', timeNow(), '] [MAIN] Stating loop'])
+        mylog('debug', '[MAIN] Stating loop')
 
         # re-load user configuration and plugins   
         importConfigs(db)
@@ -153,8 +177,8 @@ def main ():
             if last_update_vendors + datetime.timedelta(days = 7) < time_started:
                 last_update_vendors = time_started
                 conf.cycle = 'update_vendors'
-                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])                  
-                update_devices_MAC_vendors()
+                mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
+                update_devices_MAC_vendors(db)
 
             # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
             if conf.PHOLUS_RUN == "schedule" or conf.PHOLUS_RUN == "once":
@@ -183,7 +207,7 @@ def main ():
                 run = False
 
                 # run once after application starts
-                if conf.NMAP_RUN == "once" and conf.nmapSchedule.last_run == 0:
+                if conf.NMAP_RUN == "once" and nmapSchedule.last_run == 0:
                     run = True
 
                 # run if overdue scheduled time
@@ -191,14 +215,14 @@ def main ():
                     run = nmapSchedule.runScheduleCheck()                    
 
                 if run:
-                    conf.nmapSchedule.last_run = timeNow()
+                    nmapSchedule.last_run = timeNow()
                     performNmapScan(db, get_all_devices(db))
             
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < time_started:
                 last_network_scan = time_started
                 conf.cycle = 1 # network scan
-                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
+                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
                 updateState(db,"Scan: Network")
 
                 # scan_network() 
@@ -214,8 +238,7 @@ def main ():
 
                 # If thread is still active
                 if p.is_alive():
-                    print("DEBUG scan_network running too long - let\'s kill it")
-                    mylog('info', ['    DEBUG scan_network running too long - let\'s kill it'])
+                    mylog('none', "[MAIN]  scan_network running too long - let\'s kill it")
 
                     # Terminate - may not work if process is stuck for good
                     p.terminate()
@@ -254,7 +277,7 @@ def main ():
             if last_cleanup + datetime.timedelta(hours = 24) < time_started:
                 last_cleanup = time_started
                 conf.cycle = 'cleanup'  
-                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
+                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
                 db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA)   
 
             # Commit SQL
@@ -265,17 +288,17 @@ def main ():
                 action = str(conf.cycle)
                 if action == "1":
                     action = "network_scan"
-                mylog('verbose', ['[', timeNow(), '] Last action: ', action])
+                mylog('verbose', ['[MAIN] Last action: ', action])
                 conf.cycle = ""
-                mylog('verbose', ['[', timeNow(), '] cycle:',conf.cycle])
+                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
             
             # Footer
             updateState(db,"Process: Wait")
-            mylog('verbose', ['[', timeNow(), '] Process: Wait'])            
+            mylog('verbose', ['[MAIN] Process: Wait'])            
         else:
             # do something
             conf.cycle = "" 
-            mylog('verbose', ['[', timeNow(), '] [MAIN] waiting to start next loop'])          
+            mylog('verbose', ['[MAIN] waiting to start next loop'])          
 
         #loop     
         time.sleep(5) # wait for N seconds      

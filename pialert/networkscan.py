@@ -1,12 +1,12 @@
 
 
 import conf
-from arpscan import execute_arpscan
+from scanners.arpscan import execute_arpscan
+from scanners.pihole import copy_pihole_network, read_DHCP_leases
 from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
 from helper import timeNow
-from logger import mylog, print_log
-from pihole import copy_pihole_network, read_DHCP_leases
+from logger import mylog
 from reporting import skip_repeated_notifications
 
 
@@ -18,19 +18,20 @@ from reporting import skip_repeated_notifications
 
 def scan_network (db):
     sql = db.sql #TO-DO
-    reporting = False
+
 
     # Header
     # moved updateState to main loop
     # updateState(db,"Scan: Network")
-    mylog('verbose', ['[', timeNow(), '] Scan Devices:' ])       
+    mylog('verbose', ['[Network Scan] Scan Devices:' ])       
 
     # Query ScanCycle properties    
     scanCycle_data = query_ScanCycle_Data (db, True)
     if scanCycle_data is None:
-        mylog('none', ['\n*************** ERROR ***************'])
-        mylog('none', ['ScanCycle %s not found' % conf.cycle ])
-        mylog('none', ['    Exiting...\n'])
+        mylog('none', ['\n'])        
+        mylog('none', ['[Network Scan]*************** ERROR ***************'])
+        mylog('none', ['[Network Scan] ScanCycle %s not found' % conf.cycle ])
+        mylog('none', ['[Network Scan]    Exiting...\n'])
         return False
 
     db.commitDB()
@@ -56,6 +57,7 @@ def scan_network (db):
         mylog('verbose','[Network Scan] DHCP Leases start')        
         read_DHCP_leases (db) 
         db.commitDB()
+
 
     # Load current scan data
     mylog('verbose','[Network Scan]  Processing scan results')     
@@ -111,7 +113,6 @@ def scan_network (db):
     # if ENABLE_PLUGINS:
     #    run_plugin_scripts(db,'always_after_scan')
 
-    return reporting
 
 #-------------------------------------------------------------------------------
 def query_ScanCycle_Data (db, pOpenCloseDB = False, cycle = 1):
