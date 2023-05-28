@@ -12,10 +12,8 @@ from json2table import convert
 
 # pialert modules
 import conf 
-from const import pialertPath, logPath
-#from database import get_table_as_json
-from files import get_file_content, write_file
-from helper import generate_mac_links, isNewVersion, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState
+from const import pialertPath, logPath, apiPath
+from helper import generate_mac_links, removeDuplicateNewLines, timeNow, hide_email, json_struc, updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 from mqtt import mqtt_start
 
@@ -250,11 +248,12 @@ def send_notifications (db):
     write_file (logPath + '/report_output.html', mail_html) 
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or conf.debug_force_notification or plugins_report:        
-
-        # update_api(True) # TO-DO
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or conf.debug_force_notification or plugins_report: 
 
         mylog('none', ['[Notification] Changes detected, sending reports'])
+
+        mylog('info', ['[Notification] Udateing API files'])
+        send_api()
 
         if conf.REPORT_MAIL and check_config('email'):  
             updateState(db,"Send: Email")
@@ -613,6 +612,13 @@ def to_text(_json):
 
     return payloadData
 
+#-------------------------------------------------------------------------------
+def send_api():
+        mylog('verbose', ['[Send API] Updating notification_* files in ', apiPath])
+
+        write_file(apiPath + 'notification_text.txt'  , mail_text)
+        write_file(apiPath + 'notification_text.html'  , mail_html)
+        write_file(apiPath + 'notification_json_final.json'  , json.dumps(json_final))  
 
 
 #-------------------------------------------------------------------------------

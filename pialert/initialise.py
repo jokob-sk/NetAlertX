@@ -10,7 +10,7 @@ import conf
 from const import *
 from helper import collect_lang_strings, timeNow, updateSubnets, initOrSetParam
 from logger import mylog
-from files import read_config_file
+from api import update_api
 from scheduler import schedule_class
 from plugin import get_plugins_configs, print_plugin_info
 
@@ -148,9 +148,6 @@ def importConfigs (db):
     # API     
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'API')
 
-    # Prepare scheduler
-    #global tz, mySchedules, plugins
-
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
     
@@ -228,7 +225,20 @@ def importConfigs (db):
     db.commitDB()
 
     #  update only the settings datasource
-    # update_api(False, ["settings"])  
-    # TO DO this creates a circular reference between API and HELPER !
+    update_api(db, False, ["settings"])  
+    #TO DO this creates a circular reference between API and HELPER !
 
     mylog('info', '[Config] Imported new config')
+
+
+
+#-------------------------------------------------------------------------------
+def read_config_file(filename):
+    """
+    retuns dict on the config file key:value pairs
+    """
+    # load the variables from  pialert.conf
+    code = compile(filename.read_text(), filename.name, "exec")
+    confDict = {} # config dictionary
+    exec(code, {"__builtins__": {}}, confDict)
+    return confDict 

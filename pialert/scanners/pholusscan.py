@@ -40,7 +40,7 @@ def performPholusScan (db, timeoutSec, userSubnets):
             output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', [[PholusScan], e.output])
+            mylog('none', ['[PholusScan]', e.output])
             mylog('none', ["[PholusScan] Error - Pholus Scan - check logs"])            
         except subprocess.TimeoutExpired as timeErr:
             mylog('none', ['[PholusScan] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 

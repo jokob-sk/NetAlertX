@@ -36,14 +36,13 @@ def scan_network (db):
 
     db.commitDB()
 
-    # ScanCycle data        
-    cycle_interval  = scanCycle_data['cic_EveryXmin']
+
     
     # arp-scan command
-    arpscan_devices = []
+    conf.arpscan_devices = []
     if conf.ENABLE_ARPSCAN:    
         mylog('verbose','[Network Scan] arp-scan start')    
-        arpscan_devices = execute_arpscan (conf.userSubnets)
+        conf.arpscan_devices = execute_arpscan (conf.userSubnets)
         mylog('verbose','[Network Scan] arp-scan ends')
 
     # Pi-hole method    
@@ -59,51 +58,69 @@ def scan_network (db):
         db.commitDB()
 
 
+
+def process_scan (db, arpscan_devices = conf.arpscan_devices ):
+
+
+    # Query ScanCycle properties    
+    scanCycle_data = query_ScanCycle_Data (db, True)
+    if scanCycle_data is None:
+        mylog('none', ['\n'])        
+        mylog('none', ['[Process Scan]*************** ERROR ***************'])
+        mylog('none', ['[Process Scan] ScanCycle %s not found' % conf.cycle ])
+        mylog('none', ['[Process Scan]    Exiting...\n'])
+        return False
+
+    db.commitDB()
+
+    # ScanCycle data        
+    cycle_interval  = scanCycle_data['cic_EveryXmin']
+
     # Load current scan data
-    mylog('verbose','[Network Scan]  Processing scan results')     
+    mylog('verbose','[Process Scan]  Processing scan results')     
     save_scanned_devices (db, arpscan_devices, cycle_interval)    
     
     # Print stats
-    mylog('none','[Network Scan] Print Stats')
+    mylog('none','[Process Scan] Print Stats')
     print_scan_stats(db)
-    mylog('none','[Network Scan] Stats end')
+    mylog('none','[Process Scan] Stats end')
 
     # Create Events
-    mylog('verbose','[Network Scan] Updating DB Info')
-    mylog('verbose','[Network Scan] Sessions Events (connect / discconnect)')
+    mylog('verbose','[Process Scan] Updating DB Info')
+    mylog('verbose','[Process Scan] Sessions Events (connect / discconnect)')
     insert_events(db)
 
     # Create New Devices
     # after create events -> avoid 'connection' event
-    mylog('verbose','[Network Scan] Creating new devices')
+    mylog('verbose','[Process Scan] Creating new devices')
     create_new_devices (db)
 
     # Update devices info
-    mylog('verbose','[Network Scan] Updating Devices Info')
+    mylog('verbose','[Process Scan] Updating Devices Info')
     update_devices_data_from_scan (db)
 
     # Resolve devices names
-    mylog('verbose','[Network Scan] Resolve devices names')
+    mylog('verbose','[Process Scan] Resolve devices names')
     update_devices_names(db)
 
     # Void false connection - disconnections
-    mylog('verbose','[Network Scan] Voiding false (ghost) disconnections')    
+    mylog('verbose','[Process Scan] Voiding false (ghost) disconnections')    
     void_ghost_disconnections (db)
 
     # Pair session events (Connection / Disconnection)
-    mylog('verbose','[Network Scan] Pairing session events (connection / disconnection) ')
+    mylog('verbose','[Process Scan] Pairing session events (connection / disconnection) ')
     pair_sessions_events(db)  
   
     # Sessions snapshot
-    mylog('verbose','[Network Scan] Creating sessions snapshot')
+    mylog('verbose','[Process Scan] Creating sessions snapshot')
     create_sessions_snapshot (db)
 
     # Sessions snapshot
-    mylog('verbose','[Network Scan] Inserting scan results into Online_History')
+    mylog('verbose','[Process Scan] Inserting scan results into Online_History')
     insertOnlineHistory(db,conf.cycle)
   
     # Skip repeated notifications
-    mylog('verbose','[Network Scan] Skipping repeated notifications')
+    mylog('verbose','[Process Scan] Skipping repeated notifications')
     skip_repeated_notifications (db)
   
     # Commit changes    

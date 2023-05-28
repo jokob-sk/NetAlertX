@@ -16,7 +16,7 @@ newVersionAvailable = False
 time_started = ''
 check_report = []
 log_timestamp = 0
-
+arpscan_devices = []
 
 # ACTUAL CONFIGRATION ITEMS set to defaults
 

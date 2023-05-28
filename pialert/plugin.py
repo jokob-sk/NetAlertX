@@ -7,9 +7,9 @@ from collections import namedtuple
 # pialert modules
 import conf
 from const import pluginsPath, logPath
-from files import get_file_content, write_file
 from logger import mylog
-from helper import timeNowTZ, updateState
+from helper import timeNowTZ, updateState, get_file_content, write_file
+from api import update_api
 
 
 
@@ -269,7 +269,7 @@ def execute_plugin(db, plugin):
         process_plugin_events(db, plugin)
 
         # update API endpoints
-        # update_api(False, ["plugins_events","plugins_objects"])      # TO-DO - remover circular reference
+        update_api(db, False, ["plugins_events","plugins_objects"])   
 
 #-------------------------------------------------------------------------------
 def custom_plugin_decoder(pluginDict):

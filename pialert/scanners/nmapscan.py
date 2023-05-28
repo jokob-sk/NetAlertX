@@ -2,8 +2,7 @@
 import subprocess
 
 import conf
-from const import logPath
-from database import sql_nmap_scan_all
+from const import logPath, sql_nmap_scan_all
 from helper import json_struc, timeNow, updateState
 from logger import append_line_to_file, mylog
 #-------------------------------------------------------------------------------

@@ -50,6 +50,9 @@ def copy_pihole_network (db):
     mylog('debug',[ '[PiHole Network] - completed - found ',sql.rowcount, ' devices'])
     return str(sql.rowcount) != "0"
 
+
+#-------------------------------------------------------------------------------
+
 #-------------------------------------------------------------------------------
 def read_DHCP_leases (db):
     """

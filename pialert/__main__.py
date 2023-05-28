@@ -27,10 +27,10 @@ from const import *
 from logger import  mylog
 from helper import   filePermissions, isNewVersion,  timeNow, timeNowTZ, updateState
 from api import update_api
-from networkscan import scan_network
+from networkscan import process_scan, scan_network
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
-from database import DB, get_all_devices, sql_new_devices
+from database import DB, get_all_devices
 from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
@@ -145,7 +145,7 @@ def main ():
         check_and_run_event(db)
 
         # Update API endpoints              
-        update_api()
+        update_api(db)
         
         # proceed if 1 minute passed
         if last_scan_run + datetime.timedelta(minutes=1) < loop_start_time :
@@ -252,6 +252,10 @@ def main ():
                 if conf.ENABLE_PLUGINS:
                     run_plugin_scripts(db,'always_after_scan')
 
+            # --------------------------------------------------
+            # process all the scanned data into new devices
+            mylog('debug', "[MAIN] start processig scan results")
+            process_scan (db, conf.arpscan_devices )
             
             # Reporting   
             if conf.cycle in conf.check_report:

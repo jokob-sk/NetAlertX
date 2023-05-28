@@ -1,5 +1,7 @@
 """ Colection of generic functions to support Pi.Alert """
 
+import io
+import sys
 import datetime
 import os
 import re
@@ -14,7 +16,6 @@ import requests
 import conf 
 from const import *
 from logger import mylog, logResult
-# from api import update_api  # to avoid circular reference
 
 
 
@@ -297,3 +298,25 @@ class json_struc:
 
 
 
+#-------------------------------------------------------------------------------
+def get_file_content(path):
+
+    f = open(path, 'r') 
+    content = f.read() 
+    f.close() 
+
+    return content  
+
+#-------------------------------------------------------------------------------
+def write_file (pPath, pText):
+    # Write the text depending using the correct python version
+    if sys.version_info < (3, 0):
+        file = io.open (pPath , mode='w', encoding='utf-8')
+        file.write ( pText.decode('unicode_escape') ) 
+        file.close() 
+    else:
+        file = open (pPath, 'w', encoding='utf-8') 
+        if pText is None:
+            pText = ""
+        file.write (pText) 
+        file.close()     
