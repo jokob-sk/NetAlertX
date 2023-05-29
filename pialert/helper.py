@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 import requests
 
-import conf 
+import conf
 from const import *
 from logger import mylog, logResult
 
@@ -27,29 +27,29 @@ def timeNowTZ():
     return datetime.datetime.now(conf.tz).replace(microsecond=0)
 
 #-------------------------------------------------------------------------------
-def updateState(db, newState):   
+def updateState(db, newState):
 
     # ?? Why is the state written to the DB?
-     
+
     #sql = db.sql
 
     mylog('debug', '[updateState] changing state to: "' + newState +'"')
-    db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")        
+    db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")
 
     db.commitDB()
 #-------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
-    subnets = []  
+    subnets = []
 
     # multiple interfaces
-    if type(scan_subnets) is list:        
-        for interface in scan_subnets :            
+    if type(scan_subnets) is list:
+        for interface in scan_subnets :
             subnets.append(interface)
     # one interface only
-    else:        
-        subnets.append(scan_subnets)  
+    else:
+        subnets.append(scan_subnets)
 
-    return subnets  
+    return subnets
 
 
 
@@ -57,7 +57,7 @@ def updateSubnets(scan_subnets):
 # check RW access of DB and config file
 def checkPermissionsOK():
     #global confR_access, confW_access, dbR_access, dbW_access
-    
+
     confR_access = (os.access(fullConfPath, os.R_OK))
     confW_access = (os.access(fullConfPath, os.W_OK))
     dbR_access = (os.access(fullDbPath, os.R_OK))
@@ -72,14 +72,14 @@ def checkPermissionsOK():
     mylog('none', [ "  " , dbPath , "       | " , " WRITE | " , dbW_access])
     mylog('none', ['------------------------------------------------'])
 
-    #return dbR_access and dbW_access and confR_access and confW_access 
-    return (confR_access, dbR_access) 
+    #return dbR_access and dbW_access and confR_access and confW_access
+    return (confR_access, dbR_access)
 #-------------------------------------------------------------------------------
 def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
-    
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])    
+
+    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])
     chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
 
     for com in chmodCommands:
@@ -90,7 +90,7 @@ def fixPermissions():
             result = subprocess.check_output (com, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)]) 
+            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)])
             mylog('none', [e.output])
 
 
@@ -111,7 +111,7 @@ def initialiseFile(pathToCheck, defaultFile):
 
             # write stdout and stderr into .log files for debugging if needed
             logResult (stdout, stderr)  # TO-DO should be changed to mylog
-            
+
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
             mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
@@ -130,7 +130,7 @@ def filePermissions():
         initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
 
     # last attempt
-    fixPermissions()            
+    fixPermissions()
 
 
 #-------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ def bytes_to_string(value):
     # if value is of type bytes, convert to string
     if isinstance(value, bytes):
         value = value.decode('utf-8')
-    return value        
+    return value
 
 #-------------------------------------------------------------------------------
 
@@ -152,21 +152,15 @@ def if_byte_then_to_str(input):
 #-------------------------------------------------------------------------------
 def collect_lang_strings(db, json, pref):
 
-    for prop in json["localized"]:                   
+    for prop in json["localized"]:
         for language_string in json[prop]:
-            import_language_string(db, language_string["language_code"], pref + "_" + prop, language_string["string"])       
+            import_language_string(db, language_string["language_code"], pref + "_" + prop, language_string["string"])
 
-
-
-
-
-
-     
 
 #-------------------------------------------------------------------------------
 #  Creates a JSON object from a DB row
-def row_to_json(names, row):  
-    
+def row_to_json(names, row):
+
     rowEntry = {}
 
     index = 0
@@ -179,7 +173,7 @@ def row_to_json(names, row):
 #-------------------------------------------------------------------------------
 def import_language_string(db, code, key, value, extra = ""):
 
-    db.sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra))) 
+    db.sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra)))
 
     db.commitDB()
 
@@ -198,13 +192,13 @@ def checkIPV4(ip):
 
 
 #-------------------------------------------------------------------------------
-def isNewVersion(newVersion: bool):   
+def isNewVersion(newVersion: bool):
 
-    if newVersion == False:    
+    if newVersion == False:
 
-        f = open(pialertPath + '/front/buildtimestamp.txt', 'r') 
+        f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
         buildTimestamp = int(f.read().strip())
-        f.close() 
+        f.close()
 
         data = ""
 
@@ -213,19 +207,19 @@ def isNewVersion(newVersion: bool):
             text = url.text
             data = json.loads(text)
         except requests.exceptions.ConnectionError as e:
-            mylog('info', ["    Couldn't check for new release."]) 
+            mylog('info', ["    Couldn't check for new release."])
             data = ""
-        
+
         # make sure we received a valid response and not an API rate limit exceeded message
-        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:        
+        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
 
-            dateTimeStr = data[0]["published_at"]            
+            dateTimeStr = data[0]["published_at"]
 
-            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))            
+            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
-            if realeaseTimestamp > buildTimestamp + 600:        
+            if realeaseTimestamp > buildTimestamp + 600:
                 mylog('none', ["    New version of the container available!"])
-                newVersion = True 
+                newVersion = True
                 # updateState(db, 'Back_New_Version_Available', str(newVersionAvailable))     ## TO DO add this back in but avoid circular ref with database
 
     return newVersion
@@ -237,7 +231,7 @@ def hide_email(email):
     if len(m) == 2:
         return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
 
-    return email    
+    return email
 
 #-------------------------------------------------------------------------------
 def removeDuplicateNewLines(text):
@@ -250,14 +244,14 @@ def removeDuplicateNewLines(text):
 
 def add_json_list (row, list):
     new_row = []
-    for column in row :        
+    for column in row :
         column = bytes_to_string(column)
 
         new_row.append(column)
 
-    list.append(new_row)    
+    list.append(new_row)
 
-    return list        
+    return list
 
 #-------------------------------------------------------------------------------
 
@@ -275,7 +269,7 @@ def generate_mac_links (html, deviceUrl):
 
     MACs = re.findall(p, html)
 
-    for mac in MACs:        
+    for mac in MACs:
         html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
 
     return html
@@ -283,40 +277,47 @@ def generate_mac_links (html, deviceUrl):
 
 
 #-------------------------------------------------------------------------------
-def initOrSetParam(db, parID, parValue):    
+def initOrSetParam(db, parID, parValue):
     sql = db.sql
 
-    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")        
+    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")
 
-    db.commitDB()    
+    db.commitDB()
 
 #-------------------------------------------------------------------------------
 class json_struc:
-    def __init__(self, jsn, columnNames):        
+    def __init__(self, jsn, columnNames):
         self.json = jsn
-        self.columnNames = columnNames     
+        self.columnNames = columnNames
 
 
 
 #-------------------------------------------------------------------------------
 def get_file_content(path):
 
-    f = open(path, 'r') 
-    content = f.read() 
-    f.close() 
+    f = open(path, 'r')
+    content = f.read()
+    f.close()
 
-    return content  
+    return content
 
 #-------------------------------------------------------------------------------
 def write_file (pPath, pText):
     # Write the text depending using the correct python version
     if sys.version_info < (3, 0):
         file = io.open (pPath , mode='w', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') ) 
-        file.close() 
+        file.write ( pText.decode('unicode_escape') )
+        file.close()
     else:
-        file = open (pPath, 'w', encoding='utf-8') 
+        file = open (pPath, 'w', encoding='utf-8')
         if pText is None:
             pText = ""
-        file.write (pText) 
-        file.close()     
+        file.write (pText)
+        file.close()
+
+#-------------------------------------------------------------------------------
+class noti_struc:
+    def __init__(self, json, text, html):
+        self.json = json
+        self.text = text
+        self.html = html        
