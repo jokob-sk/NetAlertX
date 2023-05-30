@@ -28,6 +28,8 @@ from publishers.pushsafer import (check_config as pushsafer_check_config,
                                 send as send_pushsafer) 
 from publishers.mqtt import (check_config as mqtt_check_config,
                              mqtt_start )
+
+
 #===============================================================================
 # REPORTING
 #===============================================================================
@@ -119,11 +121,13 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 						)""")
 
     # Open text Template
+    mylog('verbose', ['[Notification] Open text Template'])
     template_file = open(pialertPath + '/back/report_template.txt', 'r')
     mail_text = template_file.read()
     template_file.close()
 
     # Open html Template
+    mylog('verbose', ['[Notification] Open html Template'])
     template_file = open(pialertPath + '/back/report_template.html', 'r')
     if conf.newVersionAvailable :
         template_file = open(pialertPath + '/back/report_template_new_version.html', 'r')
@@ -139,6 +143,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
+    mylog('verbose', ['[Notification] included sections: ',INCLUDED_SECTIONS])
     if 'internet' in INCLUDED_SECTIONS:
         # Compose Internet Section
         sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
@@ -152,6 +157,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 
         mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
+        mylog('verbose', ['[Notification] Internet sections done.'])
 
     if 'new_devices' in INCLUDED_SECTIONS:
         # Compose New Devices Section
@@ -167,6 +173,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 
         mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
+        mylog('verbose', ['[Notification] New Devices sections done.'])
 
     if 'down_devices' in INCLUDED_SECTIONS:
         # Compose Devices Down Section
@@ -182,6 +189,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 
         mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
+        mylog('verbose', ['[Notification] Down Devices sections done.'])
 
     if 'events' in INCLUDED_SECTIONS:
         # Compose Events Section
@@ -198,21 +206,24 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 
         mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
+        mylog('verbose', ['[Notification] Events sections done.'])
 
     if 'ports' in INCLUDED_SECTIONS:
         # collect "ports" for the webhook json
-        if changedPorts_json_struc is not None:
-            json_ports =  changedPorts_json_struc.json["data"]
+        mylog('verbose', ['[Notification] Ports: conf.changedPorts_json_struc:', conf.changedPorts_json_struc])
+        if conf.changedPorts_json_struc is not None:
+            json_ports =  conf.changedPorts_json_struc.json["data"]
 
-        notiStruc = construct_notifications(db, "", "Ports", True, changedPorts_json_struc)
-
+        notiStruc = construct_notifications(db, "", "Ports", True, conf.changedPorts_json_struc)
+        mylog('verbose', ['[Notification] Ports: notiStruc:', notiStruc ])
         mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
 
         portsTxt = ""
-        if changedPorts_json_struc is not None:
+        if conf.changedPorts_json_struc is not None:
             portsTxt = "Ports \n---------\n Ports changed! Check PiAlert for details!\n"
 
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
+        mylog('verbose', ['[Notification] Ports sections done.'])
 
     if 'plugins' in INCLUDED_SECTIONS and conf.ENABLE_PLUGINS:
         # Compose Plugins Section
@@ -228,7 +239,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
 
         # check if we need to report something
         plugins_report = len(json_plugins) > 0
-
+        mylog('verbose', ['[Notification] Plugins sections done.'])
 
     json_final = {
                     "internet": json_internet,
@@ -293,7 +304,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
         if conf.REPORT_MQTT and check_config('mqtt'):
             updateState(db,"Send: MQTT")
             mylog('info', ['[Notification] Establishing MQTT thread'])
-            mqtt_start()
+            mqtt_start(db)
         else :
             mylog('verbose', ['[Notification] Skip MQTT'])
     else :
@@ -310,7 +321,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
     # clear plugin events
     sql.execute ("DELETE FROM Plugins_Events")
 
-    changedPorts_json_struc = None
+    conf.changedPorts_json_struc = None
 
     # DEBUG - print number of rows updated
     mylog('info', ['[Notification] Notifications changes: ', sql.rowcount])
@@ -423,7 +434,7 @@ def skip_repeated_notifications (db):
 
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"
-    mylog('verbose','[Skip Repeated Notifications] Skip Repeated')
+    mylog('verbose','[Skip Repeated Notifications] Skip Repeated start')
     db.sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
                         (

@@ -8,27 +8,16 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath
 from logger import mylog
-from helper import timeNowTZ, updateState, get_file_content, write_file
+from helper import timeNow,  updateState, get_file_content, write_file
 from api import update_api
-
-
-
-#-------------------------------------------------------------------------------
-# this is duplicated from helper to avoid circular reference !! TO-DO
-#-------------------------------------------------------------------------------
-def timeNow():
-    return datetime.datetime.now().replace(microsecond=0)
-
 
 #-------------------------------------------------------------------------------
 def run_plugin_scripts(db, runType, plugins = conf.plugins):
-    
-    # global plugins, tz, mySchedules
 
     # Header
     updateState(db,"Run: Plugins")
 
-    mylog('debug', ['     [Plugins] Check if any plugins need to be executed on run type: ', runType])
+    mylog('debug', ['[Plugins] Check if any plugins need to be executed on run type: ', runType])
 
     for plugin in plugins:
 
@@ -49,12 +38,12 @@ def run_plugin_scripts(db, runType, plugins = conf.plugins):
                         shouldRun = schd.runScheduleCheck()  
                         if shouldRun:
                             # note the last time the scheduled plugin run was executed
-                            schd.last_run = timeNowTZ()
+                            schd.last_run = timeNow()
 
         if shouldRun:            
                         
             print_plugin_info(plugin, ['display_name'])
-            mylog('debug', ['     [Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
+            mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
             execute_plugin(db, plugin) 
 
 
@@ -81,11 +70,11 @@ def get_plugins_configs():
 #-------------------------------------------------------------------------------
 def print_plugin_info(plugin, elements = ['display_name']):
 
-    mylog('verbose', ['     [Plugins] ---------------------------------------------']) 
+    mylog('verbose', ['[Plugins] ---------------------------------------------']) 
 
     for el in elements:
         res = get_plugin_string(plugin, el)
-        mylog('verbose', ['     [Plugins] ', el ,': ', res]) 
+        mylog('verbose', ['[Plugins] ', el ,': ', res]) 
 
 
 #-------------------------------------------------------------------------------
@@ -99,7 +88,7 @@ def get_plugin_setting(plugin, function_key):
           result =  set 
 
     if result == None:
-        mylog('none', ['     [Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
+        mylog('none', ['[Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
 
     return result
 
@@ -162,7 +151,7 @@ def execute_plugin(db, plugin):
     else:     
         set_RUN_TIMEOUT = set["value"] 
 
-    mylog('debug', ['     [Plugins] Timeout: ', set_RUN_TIMEOUT])     
+    mylog('debug', ['[Plugins] Timeout: ', set_RUN_TIMEOUT])     
 
     #  Prepare custom params
     params = []
@@ -183,7 +172,7 @@ def execute_plugin(db, plugin):
                 resolved = flatten_array(db.get_sql_array(param["value"]))
 
             if resolved == None:
-                mylog('none', ['     [Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
+                mylog('none', ['[Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
 
             else:
                 params.append( [param["name"], resolved] )
@@ -199,8 +188,8 @@ def execute_plugin(db, plugin):
         command = resolve_wildcards_arr(set_CMD.split(), params)        
 
         # Execute command
-        mylog('verbose', ['     [Plugins] Executing: ', set_CMD])
-        mylog('debug',   ['     [Plugins] Resolved : ', command])        
+        mylog('verbose', ['[Plugins] Executing: ', set_CMD])
+        mylog('debug',   ['[Plugins] Resolved : ', command])        
 
         try:
             # try runnning a subprocess with a forced timeout in case the subprocess hangs
@@ -208,9 +197,9 @@ def execute_plugin(db, plugin):
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
             mylog('none', [e.output])
-            mylog('none', ['        [Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
+            mylog('none', ['[Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
         except subprocess.TimeoutExpired as timeErr:
-            mylog('none', ['        [Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
+            mylog('none', ['[Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
 
         #  check the last run output
@@ -231,7 +220,7 @@ def execute_plugin(db, plugin):
             if len(columns) == 9:
                 sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
             else:
-                mylog('none', ['        [Plugins]: Skipped invalid line in the output: ', line])
+                mylog('none', ['[Plugins]: Skipped invalid line in the output: ', line])
     
     # pialert-db-query
     if plugin['data_source'] == 'pialert-db-query':
@@ -239,7 +228,7 @@ def execute_plugin(db, plugin):
         q = set_CMD.replace("{s-quote}", '\'')
 
         # Execute command
-        mylog('verbose', ['     [Plugins] Executing: ', q])
+        mylog('verbose', ['[Plugins] Executing: ', q])
 
         # set_CMD should contain a SQL query        
         arr = db.get_sql_array (q) 
@@ -249,15 +238,15 @@ def execute_plugin(db, plugin):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
             else:
-                mylog('none', ['        [Plugins]: Skipped invalid sql result'])
+                mylog('none', ['[Plugins]: Skipped invalid sql result'])
 
 
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
-        mylog('none', ['        [Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
+        mylog('none', ['[Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
         return  
     else: 
-        mylog('verbose', ['[', timeNow(), '] [Plugins]: SUCCESS, received ', len(sqlParams), ' entries'])  
+        mylog('verbose', ['[Plugins]: SUCCESS, received ', len(sqlParams), ' entries'])  
 
     # process results if any
     if len(sqlParams) > 0:                
@@ -350,11 +339,11 @@ def flatten_array(arr):
 # Replace {wildcars} with parameters
 def resolve_wildcards_arr(commandArr, params):
 
-    mylog('debug', ['        [Plugins]: Pre-Resolved CMD: '] + commandArr)   
+    mylog('debug', ['[Plugins]: Pre-Resolved CMD: '] + commandArr)   
 
     for param in params:
-        # mylog('debug', ['        [Plugins]: key     : {', param[0], '}'])
-        # mylog('debug', ['        [Plugins]: resolved: ', param[1]])
+        # mylog('debug', ['[Plugins]: key     : {', param[0], '}'])
+        # mylog('debug', ['[Plugins]: resolved: ', param[1]])
 
         i = 0
         
@@ -391,7 +380,7 @@ def process_plugin_events(db, plugin):
 
     pluginPref = plugin["unique_prefix"]
 
-    mylog('debug', ['     [Plugins] Processing        : ', pluginPref])
+    mylog('debug', ['[Plugins] Processing        : ', pluginPref])
 
     plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
     plugEventsArr  = db.get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
@@ -404,8 +393,8 @@ def process_plugin_events(db, plugin):
 
     existingPluginObjectsCount = len(pluginObjects)
 
-    mylog('debug', ['     [Plugins] Existing objects        : ', existingPluginObjectsCount])
-    mylog('debug', ['     [Plugins] New and existing events : ', len(plugEventsArr)])
+    mylog('debug', ['[Plugins] Existing objects        : ', existingPluginObjectsCount])
+    mylog('debug', ['[Plugins] New and existing events : ', len(plugEventsArr)])
 
     # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
     for eve in plugEventsArr:
@@ -420,7 +409,7 @@ def process_plugin_events(db, plugin):
 
         #  compare hash of the IDs for uniqueness
         if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
-            mylog('debug', ['     [Plugins] Found existing object'])
+            mylog('debug', ['[Plugins] Found existing object'])
             pluginEvents[index].status = "exists"            
         index += 1
 
@@ -488,7 +477,7 @@ def process_plugin_events(db, plugin):
 
         dbTable = plugin['mapped_to_table']
 
-        mylog('debug', ['     [Plugins] Mapping objects to database table: ', dbTable])
+        mylog('debug', ['[Plugins] Mapping objects to database table: ', dbTable])
 
         #  collect all columns to be mapped
         mappedCols = []        
@@ -542,7 +531,7 @@ def process_plugin_events(db, plugin):
 
         q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
 
-        mylog('debug', ['     [Plugins] SQL query for mapping: ', q ])
+        mylog('debug', ['[Plugins] SQL query for mapping: ', q ])
 
         sql.executemany (q, sqlParams) 
 

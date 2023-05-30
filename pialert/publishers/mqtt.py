@@ -14,10 +14,6 @@ from helper import bytes_to_string, sanitize_string
 # MQTT
 #-------------------------------------------------------------------------------
 
-mqtt_connected_to_broker = False
-mqtt_sensors = []
-
-
 #-------------------------------------------------------------------------------
 def check_config():
         if conf.MQTT_BROKER == '' or conf.MQTT_PORT == '' or conf.MQTT_USER == '' or conf.MQTT_PASSWORD == '':
@@ -76,11 +72,9 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
     new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
 
     # check if config already in list and if not, add it, otherwise skip
-    global mqtt_sensors, uniqueSensorCount
-
     is_unique = True
 
-    for sensor in mqtt_sensors:
+    for sensor in conf.mqtt_sensors:
         if sensor.hash == new_sensor_config.hash:
             is_unique = False
             break
@@ -93,9 +87,7 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
 
 
 #-------------------------------------------------------------------------------
-def publish_sensor(client, sensorConf): 
-
-    global mqtt_sensors             
+def publish_sensor(client, sensorConf):         
 
     message = '{ \
                 "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
@@ -118,26 +110,24 @@ def publish_sensor(client, sensorConf):
                                      # hack - delay adding to the queue in case the process is 
         time.sleep(conf.MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
-        mqtt_sensors.append(sensorConf)
+        conf.mqtt_sensors.append(sensorConf)
 
 #-------------------------------------------------------------------------------
 def mqtt_create_client():
     def on_disconnect(client, userdata, rc):
-        global mqtt_connected_to_broker
-        mqtt_connected_to_broker = False
+        conf.mqtt_connected_to_broker = False
         
         # not sure is below line is correct / necessary        
         # client = mqtt_create_client() 
 
     def on_connect(client, userdata, flags, rc):
-        global mqtt_connected_to_broker
         
         if rc == 0: 
             mylog('verbose', ["        Connected to broker"])            
-            mqtt_connected_to_broker = True     # Signal connection 
+            conf.mqtt_connected_to_broker = True     # Signal connection 
         else: 
             mylog('none', ["        Connection failed"])
-            mqtt_connected_to_broker = False
+            conf.mqtt_connected_to_broker = False
 
 
     client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
@@ -150,12 +140,12 @@ def mqtt_create_client():
     return client
 
 #-------------------------------------------------------------------------------
-def mqtt_start():    
+def mqtt_start(db):    
 
-    global client, mqtt_connected_to_broker
+    #global client
 
-    if mqtt_connected_to_broker == False:
-        mqtt_connected_to_broker = True           
+    if conf.mqtt_connected_to_broker == False:
+        conf.mqtt_connected_to_broker = True           
         client = mqtt_create_client() 
     
     # General stats    
@@ -164,7 +154,7 @@ def mqtt_start():
     create_generic_device(client)
 
     # Get the data
-    row = get_device_stats()   
+    row = get_device_stats(db)   
 
     columns = ["online","down","all","archived","new","unknown"]
 

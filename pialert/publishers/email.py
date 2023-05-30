@@ -1,3 +1,5 @@
+""" Pi.Alert module to send notification emails """
+
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
@@ -20,7 +22,7 @@ def send (msg: noti_struc):
 
     pText = msg.text
     pHTML = msg.html
-    
+
     mylog('debug', '[Send Email] REPORT_TO: ' + hide_email(str(conf.REPORT_TO)) + '  SMTP_USER: ' + hide_email(str(conf.SMTP_USER)))
 
     # Compose email

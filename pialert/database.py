@@ -367,17 +367,21 @@ class DB():
     #-------------------------------------------------------------------------------
     def get_table_as_json(self, sqlQuery):
 
-        self.sql.execute(sqlQuery) 
-
-        columnNames = list(map(lambda x: x[0], self.sql.description)) 
-
-        rows = self.sql.fetchall()    
-
+        mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+        try:
+            self.sql.execute(sqlQuery) 
+            columnNames = list(map(lambda x: x[0], self.sql.description)) 
+            rows = self.sql.fetchall()    
+        except sqlite3.Error as e:
+            mylog('none',[ '[Database] - SQL ERROR: ', e])
+            return None
+        
         result = {"data":[]}
-
         for row in rows: 
             tmp = row_to_json(columnNames, row)
             result["data"].append(tmp)
+
+        mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
         return json_struc(result, columnNames)
 
     #-------------------------------------------------------------------------------
@@ -387,15 +391,15 @@ class DB():
         """check the query and arguments are aligned and are read only"""
         mylog('debug',[ '[Database] - SELECT Query: ', query, " params: ", args])
         try:
-          assert query.count('?') == len(args)
-          assert query.upper().strip().startswith('SELECT')
-          self.sql.execute(query, args)
-          rows = self.sql.fetchall()
-          return rows
+            assert query.count('?') == len(args)
+            assert query.upper().strip().startswith('SELECT')
+            self.sql.execute(query, args)
+            rows = self.sql.fetchall()
+            return rows
         except AssertionError:
-          mylog('none',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+            mylog('none',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
         except sqlite3.Error as e:
-          mylog('none',[ '[Database] - SQL ERROR: ', e])
+            mylog('none',[ '[Database] - SQL ERROR: ', e])
         return None
 
 

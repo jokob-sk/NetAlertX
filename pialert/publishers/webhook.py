@@ -16,7 +16,7 @@ def check_config():
         
 #-------------------------------------------------------------------------------        
 
-def send_webhook (msg: noti_struc):
+def send (msg: noti_struc):
 
     # use data type based on specified payload type
     if conf.WEBHOOK_PAYLOAD == 'json':

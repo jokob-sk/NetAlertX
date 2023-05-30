@@ -39,8 +39,7 @@ from scanners.pholusscan import performPholusScan
 from scanners.nmapscan import performNmapScan
 from scanners.internet import check_internet_IP
 
-# Global variables
-changedPorts_json_struc = None
+
 
 #===============================================================================
 #===============================================================================

@@ -3,7 +3,8 @@ import conf
 import requests
 from base64 import b64encode
 
-from logger import mylog, noti_struc
+from logger import mylog
+from helper import noti_struc
 
 #-------------------------------------------------------------------------------
 def check_config():
@@ -15,7 +16,7 @@ def check_config():
     
 #-------------------------------------------------------------------------------
 def send  (msg: noti_struc):
-    _Text = msg.html
+
     headers = {
         "Title": "Pi.Alert Notification",
         "Actions": "view, Open Dashboard, "+ conf.REPORT_DASHBOARD_URL,
@@ -32,5 +33,5 @@ def send  (msg: noti_struc):
         headers["Authorization"] = "Basic {}".format(basichash)
 
     requests.post("{}/{}".format( conf.NTFY_HOST, conf.NTFY_TOPIC),
-    data=_Text,
+    data=msg.html,
     headers=headers)

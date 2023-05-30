@@ -17,6 +17,12 @@ time_started = ''
 check_report = []
 log_timestamp = 0
 arpscan_devices = []
+# for MQTT
+mqtt_connected_to_broker = False
+mqtt_sensors = []
+# for notifications
+changedPorts_json_struc = None
+
 
 # ACTUAL CONFIGRATION ITEMS set to defaults
 
