@@ -45,7 +45,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "When enabled, \"once\" is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+          "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
       }]
   },    
     {
