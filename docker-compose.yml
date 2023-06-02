@@ -15,10 +15,11 @@ services:
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases
-      - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
-      - ${DEV_LOCATION}/back/report_template.html:/home/pi/pialert/back/report_template.html
-      - ${DEV_LOCATION}/back/report_template_new_version.html:/home/pi/pialert/back/report_template_new_version.html
-      - ${DEV_LOCATION}/back/report_template.txt:/home/pi/pialert/back/report_template.txt
+      # - ${DEV_LOCATION}/back/pialert.py:/home/pi/pialert/back/pialert.py
+      - ${DEV_LOCATION}/back:/home/pi/pialert/back
+      # - ${DEV_LOCATION}/back/report_template.html:/home/pi/pialert/back/report_template.html
+      # - ${DEV_LOCATION}/back/report_template_new_version.html:/home/pi/pialert/back/report_template_new_version.html
+      # - ${DEV_LOCATION}/back/report_template.txt:/home/pi/pialert/back/report_template.txt
       - ${DEV_LOCATION}/pholus:/home/pi/pialert/pholus
       - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      
