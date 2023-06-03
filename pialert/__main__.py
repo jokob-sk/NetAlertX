@@ -13,10 +13,9 @@
 #===============================================================================
 # IMPORTS
 #===============================================================================
-from __future__ import print_function
+#from __future__ import print_function
 
 import sys
-from collections import namedtuple
 import time
 import datetime
 import multiprocessing
@@ -25,7 +24,7 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, isNewVersion,  timeNow, timeNowTZ, updateState
+from helper import   filePermissions, isNewVersion,  timeNow, updateState
 from api import update_api
 from networkscan import process_scan, scan_network
 from initialise import importConfigs
@@ -75,7 +74,8 @@ main structure of Pi Alert
 """
 
 def main ():
-    
+    mylog('debug', ['[MAIN] Setting up ...'])
+
     conf.time_started = datetime.datetime.now()
     conf.cycle = ""
     conf.check_report = [1, "internet_IP", "update_vendors_silent"]
@@ -109,7 +109,7 @@ def main ():
     # Open DB once and keep open
     # Opening / closing DB frequently actually casues more issues
     db = DB()  # instance of class DB
-    db.openDB()
+    db.open()
     sql = db.sql  # To-Do replace with the db class
 
     # Upgrade DB if needed
@@ -119,13 +119,12 @@ def main ():
     #===============================================================================
     # This is the main loop of Pi.Alert 
     #===============================================================================
-
     while True:
 
         # update time started
         time_started = datetime.datetime.now()  # not sure why we need this ...
         loop_start_time = timeNow()
-        mylog('debug', '[MAIN] Stating loop')
+        mylog('debug', '[MAIN] Starting loop')
 
         # re-load user configuration and plugins   
         importConfigs(db)
@@ -311,4 +310,5 @@ def main ():
 # BEGIN
 #===============================================================================
 if __name__ == '__main__':
+    mylog('debug', ['[__main__] Welcome to Pi.Alert'])
     sys.exit(main())       

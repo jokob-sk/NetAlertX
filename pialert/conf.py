@@ -10,7 +10,11 @@ userSubnets = []
 mySchedules = [] # bad solution for global - TO-DO
 plugins = []  # bad solution for global - TO-DO
 tz = ''
-lastTimeImported = 0  # Time the config was last imported
+
+# modified time of the most recently imported config file
+# set to a small value to force import at first run
+lastImportedConfFile = 1.1 
+
 plugins_once_run = False
 newVersionAvailable = False
 time_started = ''

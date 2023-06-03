@@ -7,8 +7,8 @@ from pathlib import Path
 import datetime
 
 import conf 
-from const import *
-from helper import collect_lang_strings, timeNow, updateSubnets, initOrSetParam
+from const import fullConfPath
+from helper import collect_lang_strings, updateSubnets, initOrSetParam
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
@@ -43,15 +43,26 @@ def importConfigs (db):
 
     sql = db.sql
 
-    lastTimeImported = 0
-
-    # get config file
+    # get config file name
     config_file = Path(fullConfPath)
 
-    # Skip import if last time of import is NEWER than file age 
-    if (os.path.getmtime(config_file) < lastTimeImported) :
+    # Only import file if the file was modifed since last import.
+    # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
+    mylog('debug', ['[Import Config] checking config file '])
+    mylog('debug', ['[Import Config] lastImportedConfFile     :', conf.lastImportedConfFile])
+    mylog('debug', ['[Import Config] file modified time       :', os.path.getmtime(config_file)])
+    
+
+    if (os.path.getmtime(config_file) == conf.lastImportedConfFile) :
+        mylog('debug', ['[Import Config] skipping config file import'])
         return
-        
+
+    conf.lastImportedConfFile = os.path.getmtime(config_file)  
+
+
+
+    
+    mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
     conf.mySettingsSQLsafe = [] # same as above but safe to be passed into a SQL query
 
@@ -237,6 +248,7 @@ def read_config_file(filename):
     """
     retuns dict on the config file key:value pairs
     """
+    mylog('info', '[Config] reading config file')
     # load the variables from  pialert.conf
     code = compile(filename.read_text(), filename.name, "exec")
     confDict = {} # config dictionary
