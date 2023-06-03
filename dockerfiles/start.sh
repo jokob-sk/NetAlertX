@@ -29,5 +29,5 @@ chmod -R a+rw /home/pi/pialert/config
 
 # cron -f
 #python /home/pi/pialert/back/pialert.py
-echo "[DEBUG] DATA MONKEY VERSION ..."
+# echo "[DEBUG] DATA MONKEY VERSION ..."
 python /home/pi/pialert/pialert/
