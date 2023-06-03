@@ -75,7 +75,7 @@ main structure of Pi Alert
 
 def main ():
     mylog('debug', ['[MAIN] Setting up ...'])
-    
+
     conf.time_started = datetime.datetime.now()
     conf.cycle = ""
     conf.check_report = [1, "internet_IP", "update_vendors_silent"]
@@ -119,17 +119,14 @@ def main ():
     #===============================================================================
     # This is the main loop of Pi.Alert 
     #===============================================================================
-    mylog('debug', ['[Import Config TEST outside loop] lastImportedConfFile     :', conf.lastImportedConfFile])
-
     while True:
 
         # update time started
         time_started = datetime.datetime.now()  # not sure why we need this ...
         loop_start_time = timeNow()
-        mylog('debug', '[MAIN] Stating loop')
+        mylog('debug', '[MAIN] Starting loop')
 
         # re-load user configuration and plugins   
-        mylog('debug', ['[Import Config TEST inside loop] lastImportedConfFile     :', conf.lastImportedConfFile])
         importConfigs(db)
 
         # check if new version is available / only check once an hour
