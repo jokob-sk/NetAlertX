@@ -116,6 +116,7 @@ $lang['en_us'] = array(
 'Presence_CalHead_quarter' => 'quarter',
 'Presence_CalHead_month' => 'month',
 'Presence_CalHead_week' => 'week',
+'Presence_CalHead_day' => 'day',
 
 //////////////////////////////////////////////////////////////////
 // Events Page
