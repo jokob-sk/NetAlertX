@@ -15,13 +15,17 @@ from helper import json_struc, initOrSetParam, row_to_json, timeNow #, updateSta
 
 
 class DB():
+    """
+    DB Class to provide the basic database interactions.
+    Open / Commit / Close / read / write
+    """
 
     def __init__(self):
         self.sql = None
         self.sql_connection = None
-        
-    #-------------------------------------------------------------------------------   
-    def openDB (self):
+
+    #-------------------------------------------------------------------------------
+    def open (self):
         # Check if DB is open
         if self.sql_connection != None :
             mylog('debug','openDB: databse already open')
@@ -44,13 +48,13 @@ class DB():
         # Commit changes to DB
         self.sql_connection.commit()
         return True
-    
+
     #-------------------------------------------------------------------------------
-    def get_sql_array(self, query):    
+    def get_sql_array(self, query):
         if self.sql_connection == None :
             mylog('debug','getQueryArray: databse is not open')
             return
-        
+
         self.sql.execute(query)
         rows = self.sql.fetchall()
         #self.commitDB()
@@ -69,81 +73,88 @@ class DB():
     # Cleanup / upkeep database
     #===============================================================================
     def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA):
-          # Header    
-          #updateState(self,"Upkeep: Clean DB") 
-          mylog('verbose', ['[', startTime, '] Upkeep Database:' ])
+        """
+        Cleaning out old records from the tables that don't need to keep all data.
+        """
+        # Header
+        #updateState(self,"Upkeep: Clean DB")
+        mylog('verbose', ['[DB Cleanup] Upkeep Database:' ])
 
-          # Cleanup Online History
-          mylog('verbose', ['    Online_History: Delete all but keep latest 150 entries'])    
-          self.sql.execute ("""DELETE from Online_History where "Index" not in ( SELECT "Index" from Online_History order by Scan_Date desc limit 150)""")
+        # Cleanup Online History
+        mylog('verbose', ['[DB Cleanup] Online_History: Delete all but keep latest 150 entries'])
+        self.sql.execute ("""DELETE from Online_History where "Index" not in (
+                             SELECT "Index" from Online_History 
+                             order by Scan_Date desc limit 150)""")
+        mylog('verbose', ['[DB Cleanup] Optimize Database'])
+        # Cleanup Events
+        mylog('verbose', ['[DB Cleanup] Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+        self.sql.execute ("""DELETE FROM Events 
+                             WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')""")
+        # Cleanup Plugin Events History
+        mylog('verbose', ['[DB Cleanup] Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+        self.sql.execute ("""DELETE FROM Plugins_History 
+                             WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')""")
+        # Cleanup Pholus_Scan
+        if PHOLUS_DAYS_DATA != 0:
+            mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
+            # improvement possibility: keep at least N per mac
+            self.sql.execute ("""DELETE FROM Pholus_Scan 
+                                 WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')""") 
 
-          mylog('verbose', ['    Optimize Database'])
-          # Cleanup Events
-          mylog('verbose', ['    Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-          self.sql.execute ("DELETE FROM Events WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
+        # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
+        mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all duplicates'])
+        self.sql.execute ("""DELETE  FROM Pholus_Scan
+                        WHERE rowid > (
+                        SELECT MIN(rowid) FROM Pholus_Scan p2
+                        WHERE Pholus_Scan.MAC = p2.MAC
+                        AND Pholus_Scan.Value = p2.Value
+                        AND Pholus_Scan.Record_Type = p2.Record_Type
+                        );""")
+        # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table
+        mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
+        self.sql.execute ("""DELETE  FROM Nmap_Scan
+                        WHERE rowid > (
+                        SELECT MIN(rowid) FROM Nmap_Scan p2
+                        WHERE Nmap_Scan.MAC = p2.MAC
+                        AND Nmap_Scan.Port = p2.Port
+                        AND Nmap_Scan.State = p2.State
+                        AND Nmap_Scan.Service = p2.Service
+                        );""")
 
-          # Cleanup Plugin Events History
-          mylog('verbose', ['    Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-          self.sql.execute ("DELETE FROM Plugins_History WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')")
-
-          # Cleanup Pholus_Scan
-          if PHOLUS_DAYS_DATA != 0:
-              mylog('verbose', ['    Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
-              self.sql.execute ("DELETE FROM Pholus_Scan WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')") # improvement possibility: keep at least N per mac
-          
-          # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table    
-          mylog('verbose', ['    Pholus_Scan: Delete all duplicates'])
-          self.sql.execute ("""DELETE  FROM Pholus_Scan
-                          WHERE rowid > (
-                          SELECT MIN(rowid) FROM Pholus_Scan p2  
-                          WHERE Pholus_Scan.MAC = p2.MAC
-                          AND Pholus_Scan.Value = p2.Value
-                          AND Pholus_Scan.Record_Type = p2.Record_Type
-                          );""") 
-
-          # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table    
-          mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
-          self.sql.execute ("""DELETE  FROM Nmap_Scan
-                          WHERE rowid > (
-                          SELECT MIN(rowid) FROM Nmap_Scan p2  
-                          WHERE Nmap_Scan.MAC = p2.MAC
-                          AND Nmap_Scan.Port = p2.Port
-                          AND Nmap_Scan.State = p2.State
-                          AND Nmap_Scan.Service = p2.Service
-                          );""") 
-          
-          # Shrink DB
-          mylog('verbose', ['    Shrink Database'])
-          self.sql.execute ("VACUUM;")
-
-          self.commitDB()
+        # Shrink DB
+        mylog('verbose', ['    Shrink Database'])
+        self.sql.execute ("VACUUM;")
+        self.commitDB()
 
     #-------------------------------------------------------------------------------
     def upgradeDB(self):
-        sql = self.sql  #TO-DO 
+        """
+        Check the current tables in the DB and upgrade them if neccessary
+        """
+        sql = self.sql  #TO-DO
 
-        # indicates, if Online_History table is available 
+        # indicates, if Online_History table is available
         onlineHistoryAvailable = sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Online_History'; 
+        AND name='Online_History';
         """).fetchall() != []
 
         # Check if it is incompatible (Check if table has all required columns)
         isIncompatible = False
-        
+
         if onlineHistoryAvailable :
           isIncompatible = sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
           """).fetchone()[0] == 0
-        
+
         # Drop table if available, but incompatible
-        if onlineHistoryAvailable and isIncompatible:      
+        if onlineHistoryAvailable and isIncompatible:
           mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
           sql.execute("DROP TABLE Online_History;")
           onlineHistoryAvailable = False
 
         if onlineHistoryAvailable == False :
-          sql.execute("""      
+          sql.execute("""
           CREATE TABLE "Online_History" (
             "Index"	INTEGER,
             "Scan_Date"	TEXT,
@@ -152,7 +163,7 @@ class DB():
             "All_Devices"	INTEGER,
             "Archived_Devices" INTEGER,
             PRIMARY KEY("Index" AUTOINCREMENT)
-          );      
+          );
           """)
 
         # Alter Devices table
@@ -162,9 +173,9 @@ class DB():
           """).fetchone()[0] == 0
 
         if dev_Network_Node_MAC_ADDR_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])   
-          sql.execute("""      
-          ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT      
+          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
+          sql.execute("""
+          ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
           """)
 
         # dev_Network_Node_port column
@@ -173,9 +184,9 @@ class DB():
           """).fetchone()[0] == 0
 
         if dev_Network_Node_port_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])     
-          sql.execute("""      
-          ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER 
+          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
+          sql.execute("""
+          ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
           """)
 
         # dev_Icon column
@@ -184,52 +195,52 @@ class DB():
           """).fetchone()[0] == 0
 
         if dev_Icon_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])     
-          sql.execute("""      
-          ALTER TABLE "Devices" ADD "dev_Icon" TEXT 
+          mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
+          sql.execute("""
+          ALTER TABLE "Devices" ADD "dev_Icon" TEXT
           """)
 
-        # indicates, if Settings table is available 
+        # indicates, if Settings table is available
         settingsMissing = sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Settings'; 
+        AND name='Settings';
         """).fetchone() == None
 
-        # Re-creating Settings table    
+        # Re-creating Settings table
         mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
 
-        if settingsMissing == False:   
-            sql.execute("DROP TABLE Settings;")       
+        if settingsMissing == False:
+            sql.execute("DROP TABLE Settings;")
 
-        sql.execute("""      
-        CREATE TABLE "Settings" (        
+        sql.execute("""
+        CREATE TABLE "Settings" (
         "Code_Name"	    TEXT,
         "Display_Name"	TEXT,
-        "Description"	TEXT,        
+        "Description"	TEXT,
         "Type"          TEXT,
         "Options"       TEXT,
         "RegEx"         TEXT,
         "Value"	        TEXT,
         "Group"	        TEXT,
         "Events"	    TEXT
-        );      
+        );
         """)
 
-        # indicates, if Pholus_Scan table is available 
+        # indicates, if Pholus_Scan table is available
         pholusScanMissing = sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Pholus_Scan'; 
+        AND name='Pholus_Scan';
         """).fetchone() == None
 
         # if pholusScanMissing == False:
-        #     # Re-creating Pholus_Scan table  
-        #     sql.execute("DROP TABLE Pholus_Scan;")       
-        #     pholusScanMissing = True  
+        #     # Re-creating Pholus_Scan table
+        #     sql.execute("DROP TABLE Pholus_Scan;")
+        #     pholusScanMissing = True
 
         if pholusScanMissing:
             mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
-            sql.execute("""      
-            CREATE TABLE "Pholus_Scan" (        
+            sql.execute("""
+            CREATE TABLE "Pholus_Scan" (
             "Index"	          INTEGER,
             "Info"	          TEXT,
             "Time"	          TEXT,
@@ -239,47 +250,47 @@ class DB():
             "Value"           TEXT,
             "Extra"           TEXT,
             PRIMARY KEY("Index" AUTOINCREMENT)
-            );      
+            );
             """)
 
-        # indicates, if Nmap_Scan table is available 
+        # indicates, if Nmap_Scan table is available
         nmapScanMissing = sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Nmap_Scan'; 
+        AND name='Nmap_Scan';
         """).fetchone() == None
 
         # Re-creating Parameters table
         mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
         sql.execute("DROP TABLE Parameters;")
 
-        sql.execute("""      
+        sql.execute("""
           CREATE TABLE "Parameters" (
             "par_ID" TEXT PRIMARY KEY,
             "par_Value"	TEXT
-          );      
+          );
           """)
 
         # Initialize Parameters if unavailable
         initOrSetParam(self, 'Back_App_State','Initializing')
 
         # if nmapScanMissing == False:
-        #     # Re-creating Nmap_Scan table    
-        #     sql.execute("DROP TABLE Nmap_Scan;")       
-        #     nmapScanMissing = True  
+        #     # Re-creating Nmap_Scan table
+        #     sql.execute("DROP TABLE Nmap_Scan;")
+        #     nmapScanMissing = True
 
         if nmapScanMissing:
             mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
-            sql.execute("""      
-            CREATE TABLE "Nmap_Scan" (        
+            sql.execute("""
+            CREATE TABLE "Nmap_Scan" (
             "Index"	          INTEGER,
             "MAC"	          TEXT,
             "Port"	          TEXT,
-            "Time"	          TEXT,        
+            "Time"	          TEXT,
             "State"	          TEXT,
-            "Service"	      TEXT,       
+            "Service"	      TEXT,
             "Extra"           TEXT,
             PRIMARY KEY("Index" AUTOINCREMENT)
-            );      
+            );
             """)
 
         # Plugin state
@@ -288,13 +299,13 @@ class DB():
                             Plugin TEXT NOT NULL,
                             Object_PrimaryID TEXT NOT NULL,
                             Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,                        
-                            DateTimeChanged TEXT NOT NULL,                        
+                            DateTimeCreated TEXT NOT NULL,
+                            DateTimeChanged TEXT NOT NULL,
                             Watched_Value1 TEXT NOT NULL,
                             Watched_Value2 TEXT NOT NULL,
                             Watched_Value3 TEXT NOT NULL,
                             Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,  
+                            Status TEXT NOT NULL,
                             Extra TEXT NOT NULL,
                             UserData TEXT NOT NULL,
                             ForeignKey TEXT NOT NULL,
@@ -308,13 +319,13 @@ class DB():
                             Plugin TEXT NOT NULL,
                             Object_PrimaryID TEXT NOT NULL,
                             Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,                        
-                            DateTimeChanged TEXT NOT NULL,                         
+                            DateTimeCreated TEXT NOT NULL,
+                            DateTimeChanged TEXT NOT NULL,
                             Watched_Value1 TEXT NOT NULL,
                             Watched_Value2 TEXT NOT NULL,
                             Watched_Value3 TEXT NOT NULL,
                             Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,              
+                            Status TEXT NOT NULL,
                             Extra TEXT NOT NULL,
                             UserData TEXT NOT NULL,
                             ForeignKey TEXT NOT NULL,
@@ -328,40 +339,40 @@ class DB():
                             Plugin TEXT NOT NULL,
                             Object_PrimaryID TEXT NOT NULL,
                             Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,                        
-                            DateTimeChanged TEXT NOT NULL,                         
+                            DateTimeCreated TEXT NOT NULL,
+                            DateTimeChanged TEXT NOT NULL,
                             Watched_Value1 TEXT NOT NULL,
                             Watched_Value2 TEXT NOT NULL,
                             Watched_Value3 TEXT NOT NULL,
                             Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,              
+                            Status TEXT NOT NULL,
                             Extra TEXT NOT NULL,
                             UserData TEXT NOT NULL,
                             ForeignKey TEXT NOT NULL,
                             PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """                    
+                        ); """
         sql.execute(sql_Plugins_History)
 
         # Dynamically generated language strings
-        # indicates, if Language_Strings table is available 
+        # indicates, if Language_Strings table is available
         languageStringsMissing = sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Plugins_Language_Strings'; 
+        AND name='Plugins_Language_Strings';
         """).fetchone() == None
-        
+
         if languageStringsMissing == False:
-            sql.execute("DROP TABLE Plugins_Language_Strings;") 
+            sql.execute("DROP TABLE Plugins_Language_Strings;")
 
         sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
                             "Index"	          INTEGER,
                             Language_Code TEXT NOT NULL,
                             String_Key TEXT NOT NULL,
                             String_Value TEXT NOT NULL,
-                            Extra TEXT NOT NULL,                                                    
+                            Extra TEXT NOT NULL,
                             PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """)   
-        
-        self.commitDB()    
+                        ); """)
+
+        self.commitDB()
 
 
     #-------------------------------------------------------------------------------
@@ -369,15 +380,15 @@ class DB():
 
         mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
         try:
-            self.sql.execute(sqlQuery) 
-            columnNames = list(map(lambda x: x[0], self.sql.description)) 
-            rows = self.sql.fetchall()    
+            self.sql.execute(sqlQuery)
+            columnNames = list(map(lambda x: x[0], self.sql.description))
+            rows = self.sql.fetchall()
         except sqlite3.Error as e:
             mylog('none',[ '[Database] - SQL ERROR: ', e])
             return None
-        
+
         result = {"data":[]}
-        for row in rows: 
+        for row in rows:
             tmp = row_to_json(columnNames, row)
             result["data"].append(tmp)
 
@@ -386,7 +397,7 @@ class DB():
 
     #-------------------------------------------------------------------------------
     # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases
-    #-------------------------------------------------------------------------------   
+    #-------------------------------------------------------------------------------
     def read(self, query, *args):
         """check the query and arguments are aligned and are read only"""
         mylog('debug',[ '[Database] - SELECT Query: ', query, " params: ", args])
@@ -408,7 +419,7 @@ def get_device_stats(db):
     # columns = ["online","down","all","archived","new","unknown"]
     return db.read(sql_devices_stats)
 #-------------------------------------------------------------------------------
-def get_all_devices(db):    
+def get_all_devices(db):
     return db.read(sql_devices_all)
 
 #-------------------------------------------------------------------------------
@@ -418,7 +429,7 @@ def insertOnlineHistory(db, cycle):
     sql = db.sql #TO-DO
     startTime = timeNow()
     # Add to History
-  
+
     History_All = db.read("SELECT * FROM Devices")
     History_All_Devices  = len(History_All)
 
@@ -428,7 +439,7 @@ def insertOnlineHistory(db, cycle):
     History_Online = db.read("SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? ", cycle)
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
-    
+
     sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
                  "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
     db.commitDB()
