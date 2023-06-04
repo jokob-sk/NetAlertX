@@ -51,7 +51,7 @@ def send (msg: noti_struc):
     # execute CURL call
     try:
         # try runnning a subprocess
-        mylog('debug', '[send_webhook] curlParams: '+  curlParams)
+        mylog('debug', ['[send_webhook] curlParams: ', curlParams])
         p = subprocess.Popen(curlParams, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         stdout, stderr = p.communicate()
