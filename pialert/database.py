@@ -400,7 +400,7 @@ class DB():
     #-------------------------------------------------------------------------------
     def read(self, query, *args):
         """check the query and arguments are aligned and are read only"""
-        mylog('debug',[ '[Database] - SELECT Query: ', query, " params: ", args])
+        mylog('debug',[ '[Database] - Read All: SELECT Query: ', query, " params: ", args])
         try:
             assert query.count('?') == len(args)
             assert query.upper().strip().startswith('SELECT')
@@ -413,11 +413,25 @@ class DB():
             mylog('none',[ '[Database] - SQL ERROR: ', e])
         return None
 
+    def read_one(self, query, *args):
+        """ 
+        call read() with the same arguments but only returns the first row.
+        should only be used when there is a single row result expected
+        """
+
+        mylog('debug',[ '[Database] - Read One: ', query, " params: ", args])
+        rows = self.read(query, *args)
+        if len(rows) > 1: 
+            mylog('none',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
+            return rows[0]
+        return None
+
+
 
 #-------------------------------------------------------------------------------
 def get_device_stats(db):
     # columns = ["online","down","all","archived","new","unknown"]
-    return db.read(sql_devices_stats)
+    return db.read_one(sql_devices_stats)
 #-------------------------------------------------------------------------------
 def get_all_devices(db):
     return db.read(sql_devices_all)
