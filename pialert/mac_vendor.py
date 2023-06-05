@@ -88,7 +88,7 @@ def query_MAC_vendor (pMAC):
             grep_output = subprocess.check_output (grep_args)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', [e.output])
+            mylog('none', ["[Mac Vendor Check] Error: ", e.output])
             grep_output = "       There was an error, check logs for details"
 
         # Return Vendor
