@@ -300,7 +300,7 @@ def main ():
         else:
             # do something
             conf.cycle = "" 
-            mylog('verbose', ['[MAIN] waiting to start next loop'])          
+            mylog('verbose', ['[MAIN] waiting to start next loop'])
 
         #loop     
         time.sleep(5) # wait for N seconds      

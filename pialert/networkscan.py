@@ -36,8 +36,6 @@ def scan_network (db):
 
     db.commitDB()
 
-
-    
     # arp-scan command
     conf.arpscan_devices = []
     if conf.ENABLE_ARPSCAN:    
@@ -117,7 +115,7 @@ def process_scan (db, arpscan_devices = conf.arpscan_devices ):
 
     # Sessions snapshot
     mylog('verbose','[Process Scan] Inserting scan results into Online_History')
-    insertOnlineHistory(db,conf.cycle)
+    insertOnlineHistory(db)
   
     # Skip repeated notifications
     mylog('verbose','[Process Scan] Skipping repeated notifications')

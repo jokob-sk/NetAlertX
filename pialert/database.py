@@ -33,11 +33,15 @@ class DB():
 
         mylog('none', '[Database] Opening DB' )
         # Open DB and Cursor
-        self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
-        self.sql_connection.execute('pragma journal_mode=wal') #
-        self.sql_connection.text_factory = str
-        self.sql_connection.row_factory = sqlite3.Row
-        self.sql = self.sql_connection.cursor()
+        try:
+            self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
+            self.sql_connection.execute('pragma journal_mode=wal') #
+            self.sql_connection.text_factory = str
+            self.sql_connection.row_factory = sqlite3.Row
+            self.sql = self.sql_connection.cursor()
+        except sqlite3.Error as e:
+            mylog('none',[ '[Database] - Open DB Error: ', e])
+
 
     #-------------------------------------------------------------------------------
     def commitDB (self):
@@ -421,9 +425,13 @@ class DB():
 
         mylog('debug',[ '[Database] - Read One: ', query, " params: ", args])
         rows = self.read(query, *args)
+        if len(rows) == 1:
+            return rows[0]
+                
         if len(rows) > 1: 
             mylog('none',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
             return rows[0]
+        # empty result set
         return None
 
 
@@ -439,10 +447,16 @@ def get_all_devices(db):
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-def insertOnlineHistory(db, cycle):
+def insertOnlineHistory(db):
     sql = db.sql #TO-DO
     startTime = timeNow()
     # Add to History
+
+    # only run this if the scans have run
+    scanCount = db.read_one("SELECT count(*) FROM CurrentScan")
+    if scanCount[0] == 0 :
+        mylog('debug',[ '[insertOnlineHistory] - nothing to do, currentScan empty'])
+        return 0
 
     History_All = db.read("SELECT * FROM Devices")
     History_All_Devices  = len(History_All)
@@ -450,7 +464,7 @@ def insertOnlineHistory(db, cycle):
     History_Archived = db.read("SELECT * FROM Devices WHERE dev_Archived = 1")
     History_Archived_Devices  = len(History_Archived)
 
-    History_Online = db.read("SELECT * FROM CurrentScan WHERE cur_ScanCycle = ? ", cycle)
+    History_Online = db.read("SELECT * FROM CurrentScan")
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
 
