@@ -24,8 +24,10 @@ arpscan_devices = []
 # for MQTT
 mqtt_connected_to_broker = False
 mqtt_sensors = []
+client = None  # mqtt client
 # for notifications
 changedPorts_json_struc = None
+
 
 
 # ACTUAL CONFIGRATION ITEMS set to defaults
