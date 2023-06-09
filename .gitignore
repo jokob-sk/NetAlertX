@@ -2,6 +2,7 @@
 .DS_Store
 config/pialert.conf
 db/*
+db/pialert.db
 front/log/*
 front/plugins/**/*.log
 **/%40eaDir/

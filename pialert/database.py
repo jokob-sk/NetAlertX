@@ -135,10 +135,9 @@ class DB():
         """
         Check the current tables in the DB and upgrade them if neccessary
         """
-        sql = self.sql  #TO-DO
-
+        
         # indicates, if Online_History table is available
-        onlineHistoryAvailable = sql.execute("""
+        onlineHistoryAvailable = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
         AND name='Online_History';
         """).fetchall() != []
@@ -154,11 +153,11 @@ class DB():
         # Drop table if available, but incompatible
         if onlineHistoryAvailable and isIncompatible:
           mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
-          sql.execute("DROP TABLE Online_History;")
+          self.sql.execute("DROP TABLE Online_History;")
           onlineHistoryAvailable = False
 
         if onlineHistoryAvailable == False :
-          sql.execute("""
+          self.sql.execute("""
           CREATE TABLE "Online_History" (
             "Index"	INTEGER,
             "Scan_Date"	TEXT,
@@ -172,13 +171,13 @@ class DB():
 
         # Alter Devices table
         # dev_Network_Node_MAC_ADDR column
-        dev_Network_Node_MAC_ADDR_missing = sql.execute ("""
+        dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
           """).fetchone()[0] == 0
 
         if dev_Network_Node_MAC_ADDR_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
-          sql.execute("""
+          self.sql.execute("""
           ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
           """)
 
@@ -189,23 +188,23 @@ class DB():
 
         if dev_Network_Node_port_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
-          sql.execute("""
+          self.sql.execute("""
           ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
           """)
 
         # dev_Icon column
-        dev_Icon_missing = sql.execute ("""
+        dev_Icon_missing = self.sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
           """).fetchone()[0] == 0
 
         if dev_Icon_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
-          sql.execute("""
+          self.sql.execute("""
           ALTER TABLE "Devices" ADD "dev_Icon" TEXT
           """)
 
         # indicates, if Settings table is available
-        settingsMissing = sql.execute("""
+        settingsMissing = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
         AND name='Settings';
         """).fetchone() == None
@@ -214,9 +213,9 @@ class DB():
         mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
 
         if settingsMissing == False:
-            sql.execute("DROP TABLE Settings;")
+            self.sql.execute("DROP TABLE Settings;")
 
-        sql.execute("""
+        self.sql.execute("""
         CREATE TABLE "Settings" (
         "Code_Name"	    TEXT,
         "Display_Name"	TEXT,
@@ -231,19 +230,19 @@ class DB():
         """)
 
         # indicates, if Pholus_Scan table is available
-        pholusScanMissing = sql.execute("""
+        pholusScanMissing = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
         AND name='Pholus_Scan';
         """).fetchone() == None
 
         # if pholusScanMissing == False:
         #     # Re-creating Pholus_Scan table
-        #     sql.execute("DROP TABLE Pholus_Scan;")
+        #     self.sql.execute("DROP TABLE Pholus_Scan;")
         #     pholusScanMissing = True
 
         if pholusScanMissing:
             mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
-            sql.execute("""
+            self.sql.execute("""
             CREATE TABLE "Pholus_Scan" (
             "Index"	          INTEGER,
             "Info"	          TEXT,
@@ -258,16 +257,16 @@ class DB():
             """)
 
         # indicates, if Nmap_Scan table is available
-        nmapScanMissing = sql.execute("""
+        nmapScanMissing = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
         AND name='Nmap_Scan';
         """).fetchone() == None
 
         # Re-creating Parameters table
         mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
-        sql.execute("DROP TABLE Parameters;")
+        self.sql.execute("DROP TABLE Parameters;")
 
-        sql.execute("""
+        self.sql.execute("""
           CREATE TABLE "Parameters" (
             "par_ID" TEXT PRIMARY KEY,
             "par_Value"	TEXT
@@ -284,7 +283,7 @@ class DB():
 
         if nmapScanMissing:
             mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
-            sql.execute("""
+            self.sql.execute("""
             CREATE TABLE "Nmap_Scan" (
             "Index"	          INTEGER,
             "MAC"	          TEXT,
@@ -315,7 +314,7 @@ class DB():
                             ForeignKey TEXT NOT NULL,
                             PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_Objects)
+        self.sql.execute(sql_Plugins_Objects)
 
         # Plugin execution results
         sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
@@ -335,7 +334,7 @@ class DB():
                             ForeignKey TEXT NOT NULL,
                             PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_Events)
+        self.sql.execute(sql_Plugins_Events)
 
         # Plugin execution history
         sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
@@ -355,19 +354,19 @@ class DB():
                             ForeignKey TEXT NOT NULL,
                             PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_History)
+        self.sql.execute(sql_Plugins_History)
 
         # Dynamically generated language strings
         # indicates, if Language_Strings table is available
-        languageStringsMissing = sql.execute("""
+        languageStringsMissing = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
         AND name='Plugins_Language_Strings';
         """).fetchone() == None
 
         if languageStringsMissing == False:
-            sql.execute("DROP TABLE Plugins_Language_Strings;")
+            self.sql.execute("DROP TABLE Plugins_Language_Strings;")
 
-        sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
+        self.sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
                             "Index"	          INTEGER,
                             Language_Code TEXT NOT NULL,
                             String_Key TEXT NOT NULL,
