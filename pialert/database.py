@@ -278,7 +278,7 @@ class DB():
 
         # if nmapScanMissing == False:
         #     # Re-creating Nmap_Scan table
-        #     sql.execute("DROP TABLE Nmap_Scan;")
+        #     self.sql.execute("DROP TABLE Nmap_Scan;")
         #     nmapScanMissing = True
 
         if nmapScanMissing:
