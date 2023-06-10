@@ -77,6 +77,16 @@ If you submit a PR please:
 4. New features code should ideally be re-usable for different purposes, not be for a very narrow use-case.
 5. New functionality should ideally be implemented via the Plugins system, if possible.
 
+Suggested test cases:
+
+- Blank setup with no DB or config
+- Existing DB / config
+- Sending a notification (e. g. Delete a device and wait for a scan to run) and testing all notification gateways, especially:
+-   Email, Apprise (e.g. via Telegram), webhook (e.g. via Discord), MQTT (e.g. via HomeAssitant)
+- Saving settings
+- Test a couple of plugins
+- Check the Error log for anything unusual
+
 Some additional context:
 
 * Permanent settings/config is stored in the `pialert.conf` file

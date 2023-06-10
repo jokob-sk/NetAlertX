@@ -1,7 +1,8 @@
 FROM debian:bullseye-slim
 
 # default UID and GID
-ENV USER=pi USER_ID=1000 USER_GID=1000 TZ=Europe/London PORT=20211
+ENV USER=pi USER_ID=1000 USER_GID=1000  PORT=20211 
+#TZ=Europe/London
 
 # Todo, figure out why using a workdir instead of full paths don't work
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
@@ -46,3 +47,8 @@ RUN rm /etc/nginx/sites-available/default \
 ENTRYPOINT ["tini", "--"]
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
+
+
+
+
+## command to build docker:  DOCKER_BUILDKIT=1  docker build . --iidfile dockerID
