@@ -51,13 +51,14 @@ The system continuously scans the network for, **New devices**, **New connection
     - Theme Selection (blue, red, green, yellow, black, purple) and Light/Dark-Mode Switch        
     - DB maintenance, Backup, Restore tools and CSV Export / Import
     - Simple login Support
-  - 🌟(Experimental) [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
+  - 🌟[Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
     - Create custom plugins with automatically generated settings and UI. 
     - Monitor anything for changes
     - Check the [instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) carefully if you are up for a challenge! Current plugins include:
       - Detecting Rogue DHCP servers via NMAP
       - Monitoring HTTP status changes of domains/URLs 
       - Import devices from DHCP.leases files, a UniFi controller, or an SNMP enabled router
+      - Creation of dummy devices to visualize your [network map](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md)
 
   | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 5][screen5]  |
   |----------------------|----------------------| ----------------------| 
@@ -86,7 +87,8 @@ The system continuously scans the network for, **New devices**, **New connection
       - [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more)
       - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
       - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
-      - [TeroRERO](https://github.com/terorero): Spanish translation      
+      - [TeroRERO](https://github.com/terorero): Spanish translation
+      - [Data-Monkey] (https://github.com/Data-Monkey): Split-up of the python.py file and more     
       - Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 ## ☕ Support me

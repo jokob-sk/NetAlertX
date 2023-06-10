@@ -34,7 +34,7 @@ def send  (msg: noti_struc):
 
     try:
         requests.post("{}/{}".format( conf.NTFY_HOST, conf.NTFY_TOPIC),
-                                        data=msg.html,
+                                        data=msg.text,
                                         headers=headers)
     except requests.exceptions.RequestException as e:  
         mylog('none', ['[NTFY] Error: ', e])

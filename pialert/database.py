@@ -135,7 +135,7 @@ class DB():
         """
         Check the current tables in the DB and upgrade them if neccessary
         """
-        
+
         # indicates, if Online_History table is available
         onlineHistoryAvailable = self.sql.execute("""
         SELECT name FROM sqlite_master WHERE type='table'
@@ -146,7 +146,7 @@ class DB():
         isIncompatible = False
 
         if onlineHistoryAvailable :
-          isIncompatible = sql.execute ("""
+          isIncompatible = self.sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
           """).fetchone()[0] == 0
 
@@ -182,7 +182,7 @@ class DB():
           """)
 
         # dev_Network_Node_port column
-        dev_Network_Node_port_missing = sql.execute ("""
+        dev_Network_Node_port_missing = self.sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
           """).fetchone()[0] == 0
 
