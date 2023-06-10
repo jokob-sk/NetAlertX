@@ -12,14 +12,14 @@ from helper import timeNow,  updateState, get_file_content, write_file
 from api import update_api
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType, plugins = conf.plugins):
+def run_plugin_scripts(db, runType):
 
     # Header
     updateState(db,"Run: Plugins")
 
     mylog('debug', ['[Plugins] Check if any plugins need to be executed on run type: ', runType])
 
-    for plugin in plugins:
+    for plugin in conf.plugins:
 
         shouldRun = False
 

@@ -27,6 +27,19 @@ def copy_pihole_network (db):
     try:
         sql.execute ("DELETE FROM PiHole_Network")
 
+        # just for reporting
+        new_devices = []        
+        sql.execute ( """SELECT hwaddr, macVendor, lastQuery,
+                        (SELECT name FROM PH.network_addresses
+                         WHERE network_id = id ORDER BY lastseen DESC, ip),
+                        (SELECT ip FROM PH.network_addresses
+                         WHERE network_id = id ORDER BY lastseen DESC, ip)
+                    FROM PH.network
+                    WHERE hwaddr NOT LIKE 'ip-%'
+                      AND hwaddr <> '00:00:00:00:00:00' """)
+        new_devices = sql.fetchall()
+
+        # insert into PiAlert DB
         sql.execute ("""INSERT INTO PiHole_Network (PH_MAC, PH_Vendor, PH_LastQuery,
                         PH_Name, PH_IP)
                     SELECT hwaddr, macVendor, lastQuery,
@@ -47,7 +60,7 @@ def copy_pihole_network (db):
     
     db.commitDB()
     
-    mylog('debug',[ '[PiHole Network] - completed - found ',sql.rowcount, ' devices'])
+    mylog('debug',[ '[PiHole Network] - completed - found ', len(new_devices), ' devices'])
     return str(sql.rowcount) != "0"
 
 

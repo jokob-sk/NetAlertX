@@ -285,7 +285,7 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
         if conf.REPORT_WEBHOOK and check_config('webhook'):
             updateState(db,"Send: Webhook")
             mylog('info', ['[Notification] Sending report by Webhook'])
-            send_webhook (json_final, mail_text)
+            send_webhook (msg)
         else :
             mylog('verbose', ['[Notification] Skip webhook'])
         if conf.REPORT_NTFY and check_config('ntfy'):

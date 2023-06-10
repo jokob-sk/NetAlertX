@@ -146,8 +146,9 @@ def mqtt_start(db):
 
     if conf.mqtt_connected_to_broker == False:
         conf.mqtt_connected_to_broker = True           
-        client = mqtt_create_client() 
+        conf.client = mqtt_create_client() 
     
+    client = conf.client
     # General stats    
 
     # Create a generic device for overal stats
@@ -175,7 +176,7 @@ def mqtt_start(db):
     # Specific devices
 
     # Get all devices
-    devices = get_all_devices()
+    devices = get_all_devices(db)
 
     sec_delay = len(devices) * int(conf.MQTT_DELAY_SEC)*5
 

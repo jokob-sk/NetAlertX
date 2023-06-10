@@ -32,6 +32,12 @@ def send  (msg: noti_struc):
 	# add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
-    requests.post("{}/{}".format( conf.NTFY_HOST, conf.NTFY_TOPIC),
-    data=msg.html,
-    headers=headers)
+    try:
+        requests.post("{}/{}".format( conf.NTFY_HOST, conf.NTFY_TOPIC),
+                                        data=msg.text,
+                                        headers=headers)
+    except requests.exceptions.RequestException as e:  
+        mylog('none', ['[NTFY] Error: ', e])
+        return -1
+
+    return 0    
