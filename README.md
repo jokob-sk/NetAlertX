@@ -88,7 +88,7 @@ The system continuously scans the network for, **New devices**, **New connection
       - [Macleykun](https://github.com/Macleykun): Help with Dockerfile clean-up
       - [Final-Hawk](https://github.com/Final-Hawk): Help with NTFY, styling and other fixes
       - [TeroRERO](https://github.com/terorero): Spanish translation
-      - [Data-Monkey] (https://github.com/Data-Monkey): Split-up of the python.py file and more     
+      - [Data-Monkey](https://github.com/Data-Monkey): Split-up of the python.py file and more     
       - Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 ## ☕ Support me
