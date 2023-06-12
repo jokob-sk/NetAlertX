@@ -64,8 +64,11 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
     if len(jsn["data"]) > 0:
         text = tableTitle + "\n---------\n"
 
+        # Convert a JSON into an HTML table
         html = convert(jsn, build_direction=build_direction, table_attributes=table_attributes)
-        html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">')
+        
+        # Cleanup the generated HTML table notification
+        html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">').replace("<td>null</td>", "<td></td>")
 
         headers = json_struc.columnNames
 
@@ -143,8 +146,9 @@ def send_notifications (db):
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
-    mylog('verbose', ['[Notification] included sections: ',INCLUDED_SECTIONS])
-    if 'internet' in INCLUDED_SECTIONS:
+    mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
+
+    if 'internet' in conf.INCLUDED_SECTIONS :
         # Compose Internet Section
         sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
                         WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
@@ -159,7 +163,7 @@ def send_notifications (db):
         mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Internet sections done.'])
 
-    if 'new_devices' in INCLUDED_SECTIONS:
+    if 'new_devices' in conf.INCLUDED_SECTIONS :
         # Compose New Devices Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -175,7 +179,7 @@ def send_notifications (db):
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] New Devices sections done.'])
 
-    if 'down_devices' in INCLUDED_SECTIONS:
+    if 'down_devices' in conf.INCLUDED_SECTIONS :
         # Compose Devices Down Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -191,7 +195,7 @@ def send_notifications (db):
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Down Devices sections done.'])
 
-    if 'events' in INCLUDED_SECTIONS:
+    if 'events' in conf.INCLUDED_SECTIONS :
         # Compose Events Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -208,7 +212,7 @@ def send_notifications (db):
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Events sections done.'])
 
-    if 'ports' in INCLUDED_SECTIONS:
+    if 'ports' in conf.INCLUDED_SECTIONS :
         # collect "ports" for the webhook json
         mylog('verbose', ['[Notification] Ports: conf.changedPorts_json_struc:', conf.changedPorts_json_struc])
         if conf.changedPorts_json_struc is not None:
@@ -376,6 +380,7 @@ def check_config(service):
         return mqtt_check_config()
 
 #-------------------------------------------------------------------------------
+# Replacing table headers
 def format_table (html, thValue, props, newThValue = ''):
 
     if newThValue == '':
