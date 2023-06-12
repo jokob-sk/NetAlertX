@@ -7,13 +7,13 @@ services:
     network_mode: "host"
     restart: unless-stopped
     volumes:
-      # - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
-      - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
-      # - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db
-      # - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
-      - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db      
+      - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
+      # - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
+      # - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db           
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
+      # ---------------------------------------------------------------------------
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases
@@ -42,6 +42,7 @@ services:
       - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php
       - ${DEV_LOCATION}/front/plugins:/home/pi/pialert/front/plugins
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
+      # ---------------------------------------------------------------------------
     environment:
       - TZ=${TZ}
       - PORT=${PORT}

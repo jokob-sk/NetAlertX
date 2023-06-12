@@ -57,7 +57,7 @@ def scan_network (db):
 
 
 
-def process_scan (db, arpscan_devices = conf.arpscan_devices ):
+def process_scan (db, arpscan_devices):
 
 
     # Query ScanCycle properties    

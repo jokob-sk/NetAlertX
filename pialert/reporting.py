@@ -89,7 +89,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
 
 
 
-def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
+def send_notifications (db):
 
     sql = db.sql  #TO-DO
     global mail_text, mail_html, json_final, changedPorts_json_struc, partial_html, partial_txt, partial_json
@@ -223,9 +223,9 @@ def send_notifications (db, INCLUDED_SECTIONS = conf.INCLUDED_SECTIONS):
             portsTxt = "Ports \n---------\n Ports changed! Check PiAlert for details!\n"
 
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
-        mylog('verbose', ['[Notification] Ports sections done.'])
+        mylog('verbose', ['[Notification] Ports sections done.'])    
 
-    if 'plugins' in INCLUDED_SECTIONS and conf.ENABLE_PLUGINS:
+    if 'plugins' in conf.INCLUDED_SECTIONS and conf.ENABLE_PLUGINS:
         # Compose Plugins Section
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 
