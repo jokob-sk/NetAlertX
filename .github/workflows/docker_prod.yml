@@ -47,11 +47,11 @@ jobs:
             type=ref,event=pr
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') }}
 
-      - name: Update version
-        uses: brettdorrans/write-version-to-file@master
-        with:
-          filename: '.VERSION'
-          placeholder: '${VERSION}'
+
+
+
+
+
           
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
