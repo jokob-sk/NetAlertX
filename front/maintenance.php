@@ -338,7 +338,7 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                     <div class="db_info_table">
                         <div class="log-area">
                             <div class="row logs-row">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly ><?php echo file_get_contents( "./log/pialert.log" ); ?>
+                              <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly ><?php echo file_get_contents( "./log/pialert.log", false, null, -200000); ?>
                               </textarea>
                             </div>
                             <div class="row logs-row" >
