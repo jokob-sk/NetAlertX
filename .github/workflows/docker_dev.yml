@@ -14,6 +14,10 @@ on:
 jobs: 
   docker_dev:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
     if: contains(github.event.head_commit.message, 'PUSHPROD') != 'True'
     steps:
       - name: Checkout
@@ -62,3 +66,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
+          cache-to: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache,mode=max
