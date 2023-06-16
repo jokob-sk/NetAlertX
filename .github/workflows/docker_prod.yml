@@ -66,5 +66,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
-          cache-to: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache,mode=max
+          cache-from: type=registry,ref=docker.io/jokobsk/pi.alert:buildcache
+          cache-to: type=registry,ref=docker.io/jokobsk/pi.alert:buildcache,mode=max
