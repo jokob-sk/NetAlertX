@@ -2,9 +2,13 @@ version: "3"
 services:
   pialert:
     privileged: true
-    build: .
+    build:
+      dockerfile: Dockerfile
+      context: .
+      cache_from:
+        - type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
     container_name: pialert
-    network_mode: "host"
+    network_mode: host
     restart: unless-stopped
     volumes:
       - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
