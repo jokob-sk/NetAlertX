@@ -118,6 +118,30 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
     }    
   }
 }
+// Table sizes -----------------------------------------------------------------
+
+$tableSizesHTML = "";
+                        
+// Open a connection to the SQLite database
+$db = new SQLite3($pia_db);
+
+// Retrieve the table names from sqlite_master
+$query = "SELECT name FROM sqlite_master WHERE type='table'";
+$result = $db->query($query);
+
+// Iterate over the tables and get the row counts
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    $tableName = $row['name'];
+    $query = "SELECT COUNT(*) FROM $tableName";
+    $countResult = $db->querySingle($query);
+    $tableSizesHTML = $tableSizesHTML . "$tableName (<b>$countResult</b>), ";
+}
+
+// Close the database connection
+$db->close();
+                            
+
+                        
 
 // Language selector -----------------------------------------------------------------
 
@@ -150,7 +174,13 @@ if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
                         <div class="db_info_table_cell"><?= lang('Maintenance_database_size');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db_size;?>
-                        </div>
+                        </div>                        
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_info_table_cell"><?= lang('Maintenance_database_rows');?></div>
+                        <div class="db_info_table_cell">
+                            <?php echo $tableSizesHTML;?>
+                        </div>                        
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell"><?= lang('Maintenance_database_lastmod');?></div>

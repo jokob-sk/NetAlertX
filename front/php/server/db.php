@@ -65,7 +65,7 @@ function OpenDB (...$DBPath) {
     die ('<div style="padding-left:150px">Error connecting to the database</div>');
   }
 
-  $db->exec('PRAGMA journal_mode = wal;');
+  $db->exec('PRAGMA journal_mode = wal;');  
 }
 
 

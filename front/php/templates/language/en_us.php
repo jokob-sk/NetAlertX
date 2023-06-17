@@ -250,11 +250,12 @@ $lang['en_us'] = array(
 //////////////////////////////////////////////////////////////////
 
 'Maintenance_Title' => 'Maintenance tools',
-'Maintenance_version' => 'Application updates',
+'Maintenance_version' => 'App updates',
 'Maintenance_new_version' => '🆕 A new version is available. Check out the <a href="https://github.com/jokob-sk/Pi.Alert/releases" target="_blank">release notes</a>.',
 'Maintenance_current_version' => 'You are up-to-date. Check out what <a href="https://github.com/jokob-sk/Pi.Alert/issues/138" target="_blank">I\'m working on</a>.',
 'Maintenance_database_path' => 'Database-Path',
 'Maintenance_database_size' => 'Database-Size',
+'Maintenance_database_rows' => 'Table (Rows)',
 'Maintenance_database_lastmod' => 'Last Modification',
 'Maintenance_database_backup' => 'DB Backups',
 'Maintenance_database_backup_found' => 'backups were found',
