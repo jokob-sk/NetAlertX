@@ -35,18 +35,20 @@ function handleVersion(){
 
   function getVersion()
   {
-    release_timestamp = getCookie("release_timestamp")
+    release_timestamp = getCookie("release_timestamp")    
 
     // no cached value available
     if(release_timestamp == "")
     {
-      // get parameter value
-      $.get('https://api.github.com/repos/jokob-sk/Pi.Alert/releases', function(data) {
-        
+      $.get('https://api.github.com/repos/jokob-sk/Pi.Alert/releases').done(function(response) {
+        // Handle successful response
         var releases = data;
+
+        console.log(releases)
 
         if(releases.length > 0)
         {
+          
           release_datetime = releases[0].published_at;
           release_timestamp = new Date(release_datetime).getTime() / 1000;          
 
@@ -55,6 +57,11 @@ function handleVersion(){
 
           handleVersion();
         }
+        
+      }).fail(function(jqXHR, textStatus, errorThrown) {        
+       
+        $('.version').append(`<p>Github API: ${errorThrown} (${jqXHR.status}), ${jqXHR.responseJSON.message}</p>`)          
+
       });
     } else
     {
