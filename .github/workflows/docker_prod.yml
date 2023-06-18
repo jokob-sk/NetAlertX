@@ -35,6 +35,13 @@ jobs:
         id: getargs        
         run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
 
+      - name: Get release version
+        id: get_version
+        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+
+      - name: Create .VERSION file
+        run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4

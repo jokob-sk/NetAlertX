@@ -43,9 +43,7 @@ function handleVersion(){
       $.get('https://api.github.com/repos/jokob-sk/Pi.Alert/releases').done(function(response) {
         // Handle successful response
         var releases = data;
-
-        console.log(releases)
-
+        
         if(releases.length > 0)
         {
           
