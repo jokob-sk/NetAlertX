@@ -32,7 +32,7 @@ The system continuously scans the network for, **New devices**, **New connection
 ## 🧩 Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
    - [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) 
-   - [Home Assistant](https://github.com/jokob-sk/Pi.Alert/edit/main/docs/HOME_ASSISTANT.md) 
+   - [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) 
    - [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md)
    - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom script monitoring
 

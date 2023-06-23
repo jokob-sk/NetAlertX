@@ -21,6 +21,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Network tree map configuration](/docs/NETWORK_TREE.md)
 - [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
 - [Subnets and vlans configuration for arp-scan](/docs/SUBNETS.md)
+- [Home Assistant](/docs/HOME_ASSISTANT.md)
 
 #### System Management
 
