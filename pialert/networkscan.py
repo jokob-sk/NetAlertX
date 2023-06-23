@@ -77,6 +77,8 @@ def process_scan (db, arpscan_devices):
     # Load current scan data
     mylog('verbose','[Process Scan]  Processing scan results')     
     save_scanned_devices (db, arpscan_devices, cycle_interval)    
+
+    db.commitDB()
     
     # Print stats
     mylog('none','[Process Scan] Print Stats')

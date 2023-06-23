@@ -17,6 +17,12 @@ def save_scanned_devices (db, p_arpscan_devices, p_cycle_interval):
     sql = db.sql #TO-DO
     cycle = 1 # always 1, only one cycle supported
 
+    mylog('debug', ['[ARP Scan] Detected devices:', len(p_arpscan_devices)])
+
+    p_arpscan_devices = conf.arpscan_devices 
+
+    mylog('debug', ['[ARP Scan] Detected devices in conf:', len(p_arpscan_devices)])
+
     # Delete previous scan data
     sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
                 (cycle,))
