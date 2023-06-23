@@ -29,7 +29,7 @@ $lang['es_es'] = array(
 'Gen_AreYouSure' => '¿Estás seguro de',
 'Gen_Upd' => 'Actualizado correctamente',
 'Gen_Upd_Fail' => 'Fallo al actualizar',
-'Gen_Help' => 'Ayuda',
+'Gen_ReadDocs' => 'Ayuda',
 'Gen_DataUpdatedUITakesTime' => 'Correcto - La interfaz puede tardar en actualizarse si se está ejecutando un escaneo.',
 'Gen_LockedDB' => 'Fallo - La base de datos puede estar bloqueada - Pulsa F1 -> Ajustes de desarrolladores -> Consola o prueba más tarde.',		
 

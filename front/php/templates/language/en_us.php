@@ -27,7 +27,7 @@ $lang['en_us'] = array(
 'Gen_AreYouSure' => 'Are you sure?',
 'Gen_Upd' => 'Updated successfully',
 'Gen_Upd_Fail' => 'Update failed',
-'Gen_Help' => 'Need help?',
+'Gen_ReadDocs' => 'Read more in the docs.',
 'Gen_DataUpdatedUITakesTime' => 'OK - It may take a while for the UI to update if a scan is runnig.',
 'Gen_LockedDB' => 'ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.',
 

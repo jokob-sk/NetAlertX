@@ -82,13 +82,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       // create settings groups
       $isIn = ' in ';
       foreach ($groups as $group) 
-      { 
+      {
+        $isPlugin = FALSE;
+
         if (in_array($group, $settingCoreGroups))
         {
           $settingGroupTypeHtml = "";
         } else
         {
           $settingGroupTypeHtml = ' (<i class="fa-regular fa-plug fa-sm"></i>) ';
+          $isPlugin = TRUE;
         }
 
         $html = $html.'<div  class=" box panel panel-default">
@@ -100,6 +103,15 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                           <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 
                             <div class="panel-body">';
         $isIn = ' '; // open the first panel only by default on page load
+
+        if($isPlugin)
+        {
+          $html = $html.
+            '<div  class=" row table_row" >
+              <div class="table_cell bold">
+              <i class="fa-regular fa-book fa-sm"></i> <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">' . lang('Gen_ReadDocs').'</a></div> 
+              </div>';
+        }
 
         // populate settings for each group 
         foreach ($settings as $set) 
