@@ -2,6 +2,11 @@
 
 PiAlert comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
 
+## ⚠ Note 
+
+- Please note that discovery takes about ~10s per device.
+- Deleting of devices is not handled automatically. Please use [MQTT Explorer](https://mqtt-explorer.com/) to delete devices in the broker (Home Assistant), if needed. 
+
 
 ## 🧭 Guide
 
@@ -12,15 +17,15 @@ PiAlert comes with MQTT support, allowing you to show all detected devices as de
 2. Configure a user name and password on your broker.
 
 3. Note down the following details that you will need to configure PiAlert:
-  - MQTT host url (usually your Home Assistant IP)
-  - MQTT broker port
-  - User
-  - Password
+   - MQTT host url (usually your Home Assistant IP)
+   - MQTT broker port
+   - User
+   - Password
 
 4. Ope the `PiAlert` > `Settings` > `MQTT` settings group
-  - Enable MQTT
-  - Fill in the details from above
-  - Fill in remaining settings as per description
+   - Enable MQTT
+   - Fill in the details from above
+   - Fill in remaining settings as per description
 
 
 ## 📷 Screenshots
@@ -30,8 +35,8 @@ PiAlert comes with MQTT support, allowing you to show all detected devices as de
   | ![Screen 3][list] | ![Screen 4][overview] | 
   
 
-  [sensors]:  ./docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-as-Sensors.png    "sensors"
-  [history]:  ./docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-Presence-History  "history"
-  [list]:     ./docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Devices-List.png         "list"  
-  [overview]: ./docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Overview-Card.png        "overview"
+  [sensors]:  /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-as-Sensors.png       "sensors"
+  [history]:  /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-Presence-History.png "history"
+  [list]:     /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Devices-List.png            "list"  
+  [overview]: /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Overview-Card.png           "overview"
 
