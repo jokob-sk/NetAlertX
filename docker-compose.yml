@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       context: .
       cache_from:
-        - type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
+        - type=registry,ref=docker.io/jokob-sk/pi.alert:buildcache
     container_name: pialert
     network_mode: host
     restart: unless-stopped
