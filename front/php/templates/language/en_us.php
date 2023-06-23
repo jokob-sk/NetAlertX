@@ -452,7 +452,7 @@ $lang['en_us'] = array(
          									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there. 
          									If yes, delete them there as well. Now you can start Pi.Alert again. Now the device(s) should not show up anymore.',
 'HelpFAQ_Cat_Detail_300_head' => 'What means ',
-'HelpFAQ_Cat_Detail_300_text_a' => 'means a network device (a device of the type AP, Gateway, Firewall, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet).',
+'HelpFAQ_Cat_Detail_300_text_a' => 'means a network device (a device of the type AP, Gateway, Firewall, Hypervisor, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet).',
 'HelpFAQ_Cat_Detail_300_text_b' => 'designates the port number where the currently edited device is connected to this network device. Read <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md">this guide</a> for more info.',
 'HelpFAQ_Cat_Detail_301_head_a' => 'When is scanning now? At ',
 'HelpFAQ_Cat_Detail_301_head_b' => ' says 1min but the graph shows 5min intervals.',

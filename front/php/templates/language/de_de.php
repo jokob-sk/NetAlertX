@@ -380,7 +380,7 @@ $lang['de_de'] = array(
          									lösche ggf. die betreffende DHCP-Lease. Anschließend schaue, ebenfalls in Pi-hole, unter Tools -> Network, ob sich dort die immer wiederkehrenden Hosts finden lassen. 
          									Wenn ja, lösche diese dort ebenfalls. Nun kannst du Pi.Alert wieder starten. Jetzt sollte das Gerät/die Geräte nicht mehr auftauchen.',
 'HelpFAQ_Cat_Detail_300_head' => 'Was bedeutet ',
-'HelpFAQ_Cat_Detail_300_text_a' => 'meint ein Netzwerkgerät (welches den typ AP, Gateway, Firewall, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet eingestellt hat)',
+'HelpFAQ_Cat_Detail_300_text_a' => 'meint ein Netzwerkgerät (welches den typ AP, Gateway, Firewall, Hypervisor, Powerline, Switch, WLAN, PLC, Router,USB LAN Adapter, USB WIFI Adapter, or Internet eingestellt hat)',
 'HelpFAQ_Cat_Detail_300_text_b' => 'bezeichnet die Anschlussnummer/Portnummer, an der das gerade bearbeitete Gerät mit diesem Netzwerkgerät verbunden ist.',
 'HelpFAQ_Cat_Detail_301_head_a' => 'Wann wird nun gescannt? Bei ',
 'HelpFAQ_Cat_Detail_301_head_b' => ' steht 1min aber der Graph zeigt 5min - Abstände an.',

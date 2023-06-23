@@ -279,7 +279,7 @@
                         a.dev_Network_Node_MAC_ADDR as parent_mac,
                         a.dev_Icon as node_icon
                   FROM Devices a 
-                  WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Firewall', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
+                  WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
             ) t1
             LEFT JOIN
             (

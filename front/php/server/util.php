@@ -381,11 +381,11 @@ function handleNull ($text, $default = "") {
 }
 
 // -------------------------------------------------------------------------------------------
-
+// Currently unused - should be source of truth for network types (or define somewhere else?)
 function getNetworkTypes(){
 
   $array = array(
-    "AP", "Gateway", "Firewall", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
+    "AP", "Gateway", "Firewall", "Hypervisor", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
   );
 
   return $array;
