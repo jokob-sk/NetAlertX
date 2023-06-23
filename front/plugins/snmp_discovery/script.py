@@ -90,26 +90,28 @@ def get_entries(newEntries):
 
         with open(log_file, 'a') as run_logfile:
             for line in newLines:              
+                
                 # debug
                 run_logfile.write(line)
 
                 tmpSplt = line.split('"')   
 
                 if len(tmpSplt) == 3:
+                    ipStr = tmpSplt[0].split('.')[-4:]  # Get the last 4 elements to extract the IP
+                    macStr = tmpSplt[1].strip().split(' ')  # Remove leading/trailing spaces from MAC
 
-                    ipStr   = tmpSplt[0].split('.') # contains IP
+                    if 'iso.' in line and len(ipStr) == 4:
+                        macAddress = ':'.join(macStr)
+                        ipAddress = '.'.join(ipStr)
 
-                    macStr  = tmpSplt[1].split(' ') # contains MAC
-
-                    if 'iso.' in line and len(ipStr) == 16:
                         tmpEntry = plugin_object_class(
-                            f'{macStr[0]}:{macStr[1]}:{macStr[2]}:{macStr[3]}:{macStr[4]}:{macStr[5]}',
-                            f'{ipStr[12]}.{ipStr[13]}.{ipStr[14]}.{ipStr[15]}'.strip(),
+                            macAddress,
+                            ipAddress,
                             watched1='(unknown)',
-                            watched2=snmpwalkArgs[6], # router IP
+                            watched2=snmpwalkArgs[6],  # router IP
                             extra=line
                         )
-                        newEntries.append(tmpEntry) 
+                        newEntries.append(tmpEntry)
         
     return newEntries
 
