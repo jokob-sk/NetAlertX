@@ -77,4 +77,11 @@
   [Read more here](../LICENSE.txt)
 
 ### Contact
-  pi.alert.application@gmail.com
+  Always use the Issue tracker for the correct fork, for example: 
+  
+  [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert/issues). Please also follow the guidelines on:
+
+  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-pull-requests-prs) 
+  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-feature-requests) 
+  - 🐛 [Issue guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-submitting-an-issue-or-bug)
+
