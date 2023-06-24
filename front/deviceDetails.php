@@ -1350,7 +1350,7 @@ function getDeviceData (readAllData=false) {
 
       // Name
       if (deviceData['dev_Owner'] == null || deviceData['dev_Owner'] == '' ||
-      (deviceData['dev_Name']).indexOf (deviceData['dev_Owner']) != -1 )  {
+      (deviceData['dev_Name'].toString()).indexOf (deviceData['dev_Owner']) != -1 )  {
         $('#pageTitle').html (deviceData['dev_Name']);
       } else {
         $('#pageTitle').html (deviceData['dev_Name'] + ' ('+ deviceData['dev_Owner'] +')');

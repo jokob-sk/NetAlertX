@@ -85,7 +85,7 @@ def cleanResult(str):
     if str.endswith('.'):
         str = str[:-1]
 
-    return str
+    return str(str)
 
 
 # Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
