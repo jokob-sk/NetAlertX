@@ -85,7 +85,7 @@ def cleanResult(str):
     if str.endswith('.'):
         str = str[:-1]
 
-    return str(str)
+    return str
 
 
 # Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
@@ -157,7 +157,8 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
     # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
     for i in pholusMatchesIndexes:
         if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
+            if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
+                return cleanResult(allRes[i]["Value"].split('"')[1])
 
     return -1
     

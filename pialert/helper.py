@@ -302,17 +302,26 @@ def get_file_content(path):
     return content
 
 #-------------------------------------------------------------------------------
-def write_file (pPath, pText):
-    # Write the text depending using the correct python version
+def write_file(pPath, pText):
+    # Convert pText to a string if it's a dictionary
+    if isinstance(pText, dict):
+        pText = json.dumps(pText)
+
+    # Convert pText to a string if it's a list
+    if isinstance(pText, list):
+        for item in pText:
+            write_file(pPath, item)
+
+    # Write the text using the correct Python version
     if sys.version_info < (3, 0):
-        file = io.open (pPath , mode='w', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') )
+        file = io.open(pPath, mode='w', encoding='utf-8')
+        file.write(pText.decode('unicode_escape'))
         file.close()
     else:
-        file = open (pPath, 'w', encoding='utf-8')
+        file = open(pPath, 'w', encoding='utf-8')
         if pText is None:
             pText = ""
-        file.write (pText)
+        file.write(pText)
         file.close()
 
 #-------------------------------------------------------------------------------

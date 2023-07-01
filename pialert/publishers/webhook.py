@@ -60,7 +60,7 @@ def send (msg: noti_struc):
         logResult (stdout, stderr)     # TO-DO should be changed to mylog
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[send_webhook]', e.output])
+        mylog('none', ['[send_webhook] Error', e.output])
 
 
 

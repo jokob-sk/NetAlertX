@@ -271,7 +271,7 @@ def send_notifications (db):
 
         msg = noti_struc(json_final, mail_text, mail_html)
 
-        mylog('info', ['[Notification] Udateing API files'])
+        mylog('info', ['[Notification] Udating API files'])
         send_api()
 
         if conf.REPORT_MAIL and check_config('email'):
