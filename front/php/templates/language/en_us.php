@@ -579,6 +579,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'WEBHOOK_PAYLOAD_description' => 'The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>text</code>)',
 'WEBHOOK_REQUEST_METHOD_name' => 'Request method',
 'WEBHOOK_REQUEST_METHOD_description' => 'The HTTP request method to be used for the webhook call.',
+'WEBHOOK_SIZE_name' => 'Max payload size',
+'WEBHOOK_SIZE_description' => 'The maximum size of the webhook payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended.',
 
 // Apprise
 'Apprise_display_name' => 'Apprise',

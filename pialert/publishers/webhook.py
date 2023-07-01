@@ -19,7 +19,7 @@ def check_config():
 def send (msg: noti_struc):
 
     # limit = 1024 * 1024  # 1MB limit (1024 bytes * 1024 bytes = 1MB)
-    limit = 1024 * 1  # 1MB limit (1024 bytes * 1024 bytes = 1MB)
+    limit = conf.WEBHOOK_SIZE
 
     # use data type based on specified payload type
     if conf.WEBHOOK_PAYLOAD == 'json':
