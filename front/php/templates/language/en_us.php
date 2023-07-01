@@ -80,6 +80,7 @@ $lang['en_us'] = array(
 'Device_TableHead_Connected_Devices' => 'Connected Devices',
 'Device_TableHead_Location' => 'Location',
 'Device_TableHead_Vendor' => 'Vendor',
+'Device_TableHead_Port' => 'Port',
 'Device_TableHead_Favorite' => 'Favorite',
 'Device_TableHead_Group' => 'Group',
 'Device_TableHead_FirstSession' => 'First Session',

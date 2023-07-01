@@ -773,6 +773,12 @@ height: 50px;
     margin: 2px;    
     position: absolute;
 }
+#networkTree .netPort
+{
+    width: 8px;;
+    float:left;
+    display:inline;  
+}
 #networkTree
 {
     margin-left: 16px;

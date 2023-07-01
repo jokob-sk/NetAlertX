@@ -192,8 +192,8 @@
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
   
-  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]';
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17] ; 
+  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]';
+  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; 
   var tableColumnVisible = tableColumnOrder;
 
   // Read parameters & Initialize components

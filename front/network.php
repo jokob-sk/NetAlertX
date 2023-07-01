@@ -267,7 +267,7 @@
     //             /          \
     //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
     //                          \
-    //                          PC (leaf)
+    //                          PC (leaf) <------- leafs are not included in this SQL query
     
     $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
             FROM 
@@ -465,7 +465,8 @@
                                                               "parentMac":item[14], 
                                                               "rowid":item[13], 
                                                               "status":item[10],
-                                                              "childrenQty":item[15]
+                                                              "childrenQty":item[15],
+                                                              "port":item[18]                                                              
                                                               }})
 
       setCache('devicesListNew', JSON.stringify(devicesListnew))
@@ -541,6 +542,7 @@
       name: node.name,      
       path: path,
       mac: node.mac,
+      port: node.port,
       id: node.mac,
       parentMac: node.parentMac,
       icon: node.icon,
@@ -628,7 +630,9 @@
       renderNode:  nodeData =>  { 
         var fontSize = "font-size:"+emSize+"em;";
 
+        // Build HTML for individual nodes in the network diagram
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
+        devicePort = (!emptyArr.includes(nodeData.data.port )) ?  "<div class='netPort ' >"+nodeData.data.port +"</div>" : "";
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
         collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*2.5+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
         statusCss = " netStatus-" + nodeData.data.status;
@@ -648,7 +652,7 @@
                                  border-radius:5px;'\
                           >\
                           <div class='netNodeText '>\
-                            <strong>" + deviceIcon +
+                            <strong>" + devicePort + deviceIcon +
                               "<span class='spanNetworkTree anonymizeDev'>"+nodeData.data.name+"</span>\
                             </strong>"
                             +collapseExpandHtml+ 

@@ -602,7 +602,8 @@ function getDevicesList() {
     array("dev_Network_Node_MAC_ADDR", 14, 14),
     array("connected_devices", 15, 15),
     array("dev_Location", 16, 16),
-    array("dev_Vendor", 17, 17)           
+    array("dev_Vendor", 17, 17),           
+    array("dev_Network_Node_port", 18, 18)           
   );
 
   if($forceDefaultOrder == FALSE) 
@@ -668,7 +669,8 @@ function getDevicesList() {
                             handleNull($row['dev_Network_Node_MAC_ADDR']),
                             handleNull($row['connected_devices']),
                             handleNull($row['dev_Location']), 
-                            handleNull($row['dev_Vendor'])                            
+                            handleNull($row['dev_Vendor']),                            
+                            handleNull($row['dev_Network_Node_port'])                            
                           );
 
     $newOrder = array();

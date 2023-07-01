@@ -276,6 +276,7 @@ $db->close();
                                 <option value="15"><?= lang('Device_TableHead_Connected_Devices');?></option>
                                 <option value="16"><?= lang('Device_TableHead_Location');?></option>
                                 <option value="17"><?= lang('Device_TableHead_Vendor');?></option>
+                                <option value="18"><?= lang('Device_TableHead_Port');?></option>
                               </select>
                               <span class="input-group-addon"><i title="<?= lang('Gen_Save');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
                             </div>
