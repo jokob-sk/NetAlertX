@@ -576,7 +576,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'WEBHOOK_URL_name' => 'Target URL',
 'WEBHOOK_URL_description' => 'Target URL starting with <code>http://</code> or <code>https://</code>.',
 'WEBHOOK_PAYLOAD_name' => 'Payload type',
-'WEBHOOK_PAYLOAD_description' => 'The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>html</code>)',
+'WEBHOOK_PAYLOAD_description' => 'The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">here</a>. (e.g.: for discord use <code>text</code>)',
 'WEBHOOK_REQUEST_METHOD_name' => 'Request method',
 'WEBHOOK_REQUEST_METHOD_description' => 'The HTTP request method to be used for the webhook call.',
 

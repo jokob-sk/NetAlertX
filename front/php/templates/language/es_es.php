@@ -571,7 +571,7 @@ $lang['es_es'] = array(
 'WEBHOOK_URL_name' => 'URL de destino',
 'WEBHOOK_URL_description' => 'URL de destino comienza con <code>http://</code> o <code>https://</code>.',
 'WEBHOOK_PAYLOAD_name' => 'Tipo de carga',
-'WEBHOOK_PAYLOAD_description' => 'El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">aquí</a>. (por ejemplo: para discord use <code>html</code>)',
+'WEBHOOK_PAYLOAD_description' => 'El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json">aquí</a>. (por ejemplo: para discord use <code>text</code>)',
 'WEBHOOK_REQUEST_METHOD_name' => 'Método de solicitud',
 'WEBHOOK_REQUEST_METHOD_description' => 'El método de solicitud HTTP que se utilizará para la llamada de webhook.',
 'Webhooks_settings_group' => '<i class="fa fa-circle-nodes"></i> Webhooks',	

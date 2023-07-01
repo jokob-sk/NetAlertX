@@ -312,17 +312,18 @@ def write_file(pPath, pText):
         for item in pText:
             write_file(pPath, item)
 
-    # Write the text using the correct Python version
-    if sys.version_info < (3, 0):
-        file = io.open(pPath, mode='w', encoding='utf-8')
-        file.write(pText.decode('unicode_escape'))
-        file.close()
     else:
-        file = open(pPath, 'w', encoding='utf-8')
-        if pText is None:
-            pText = ""
-        file.write(pText)
-        file.close()
+        # Write the text using the correct Python version
+        if sys.version_info < (3, 0):
+            file = io.open(pPath, mode='w', encoding='utf-8')
+            file.write(pText.decode('unicode_escape'))
+            file.close()
+        else:
+            file = open(pPath, 'w', encoding='utf-8')
+            if pText is None:
+                pText = ""
+            file.write(pText)
+            file.close()
 
 #-------------------------------------------------------------------------------
 class noti_struc:
