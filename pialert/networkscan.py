@@ -277,7 +277,7 @@ def insert_events (db):
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
                     SELECT dev_MAC, dev_LastIP, ?, 'Device Down', '', 1
-                    FROM Devices
+                    FROM Devices 
                     WHERE dev_AlertDeviceDown = 1
                       AND dev_PresentLastScan = 1
                       AND dev_ScanCycle = ?

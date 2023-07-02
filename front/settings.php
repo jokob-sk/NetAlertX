@@ -32,7 +32,7 @@ $result = $db->query("SELECT * FROM Settings");
 
 // array 
 $settingKeyOfLists = array();
-$settingCoreGroups = array('General', 'Email', 'Webhooks', 'Apprise', 'NTFY', 'PUSHSAFER', 'MQTT', 'DynDNS', 'PiHole', 'Pholus', 'Nmap', 'API');
+$settingCoreGroups = array('General', 'NewDeviceDefaults', 'Email', 'Webhooks', 'Apprise', 'NTFY', 'PUSHSAFER', 'MQTT', 'DynDNS', 'PiHole', 'Pholus', 'Nmap', 'API');
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      

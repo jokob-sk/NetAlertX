@@ -545,6 +545,22 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'UI_PRESENCE_name' => 'Show in presence chart',
 'UI_PRESENCE_description' => 'Select what statuses should be shown in the <b>Device presence over time</b>  chart in the <a href="/devices.php" target="_blank">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)',
 
+// New device defaults
+'NewDeviceDefaults_display_name' => 'New device defaults',
+'NewDeviceDefaults_icon' => '<i class="fa fa-plus"></i>',
+'NEWDEV_SCAN_name' => 'Scan device',
+'NEWDEV_SCAN_description' => 'The default value of the <code>Scan device</code> dropdown. Select <code>1</code> if newly discovered devices should be scanned (this will result in <code>Yes</code> being selected in the dropdown) or <code>0</code>, if not.',
+'NEWDEV_ALERT_ALL_name' => 'Alert All Events',
+'NEWDEV_ALERT_ALL_description' => 'The default value of the <code>Alert All Events</code> checkbox. Select <code>1</code> if newly discovered devices should have this checkbox selected or <code>0</code>, if not.',
+'NEWDEV_ALERT_DWN_name' => 'Alert Down',
+'NEWDEV_ALERT_DWN_description' => 'The default value of the <code>Alert Down</code> checkbox. Select <code>1</code> if newly discovered devices should have this checkbox selected or <code>0</code>, if not.',
+'NEWDEV_NEWDEV_name' => 'New Device',
+'NEWDEV_NEWDEV_description' => 'The default value of the <code>New Device</code> checkbox. Select <code>1</code> if newly discovered devices should have this checkbox selected or <code>0</code>, if not.',
+'NEWDEV_ARCHIVED_name' => 'Archived',
+'NEWDEV_ARCHIVED_description' => 'The default value of the <code>Archived</code> checkbox. Select <code>1</code> if newly discovered devices should have this checkbox selected or <code>0</code>, if not.',
+'NEWDEV_SKIPNTF_name' => 'Skip repeated notifications for',
+'NEWDEV_SKIPNTF_description' => 'The default value of the <code>Skip repeated notifications for</code> dropdown. Select the number of <b>hours</b> for which repeated notifications should be ignored for.',
+
 //Email
 'Email_display_name' => 'Email',
 'Email_icon' => '<i class="fa fa-at"></i>',

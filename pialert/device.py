@@ -192,12 +192,11 @@ def create_new_devices (db):
                     
     # arpscan - Create new devices
     mylog('debug','[New Devices] 2 Create devices')
-    sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
+    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
-                        dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        1, 1, 0, 1
+                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}      
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
@@ -221,12 +220,12 @@ def create_new_devices (db):
     # Pi-hole - Create New Devices
     # Bugfix #2 - Pi-hole devices w/o IP
     mylog('debug','[New Devices] 4 Pi-hole Create devices')
-    sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
+    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
-                        dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
                     SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
-                        ?, ?, 1, 1, 0, 1
+                        ?, ?,
+                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}   
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """,
@@ -251,10 +250,9 @@ def create_new_devices (db):
         #                 (1610700000, 'TEST1', '10.10.10.1', 'Test 1', '*')""")
         # sql.execute ("""INSERT INTO DHCP_Leases VALUES
         #                 (1610700000, 'TEST2', '10.10.10.2', 'Test 2', '*')""")
-    sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
-                        dev_Vendor, dev_FirstConnection, dev_LastConnection,
-                        dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-                        dev_PresentLastScan)
+    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
+                        dev_Vendor, dev_FirstConnection, dev_LastConnection,                        
+                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
                     SELECT DISTINCT DHCP_MAC,
                         (SELECT DHCP_Name FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
@@ -262,7 +260,8 @@ def create_new_devices (db):
                         (SELECT DHCP_IP FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
                          ORDER BY DHCP_DateTime DESC LIMIT 1),
-                        '(unknown)', ?, ?, 1, 1, 0, 1
+                        '(unknown)', ?, ?, 
+                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}  
                     FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """,

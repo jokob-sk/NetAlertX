@@ -10,7 +10,7 @@
   | Table name | Description  | Sample data |
   |----------------------|----------------------| ----------------------| 
   | CurrentScan | Result of the current scan | ![Screen1][screen1]  |  
-  | Devices     | The main devices database that also contains the Network tree mappings. | ![Screen2][screen2]  | 
+  | Devices     | The main devices database that also contains the Network tree mappings. If `ScanCycle` is set to `0` device is not scanned. | ![Screen2][screen2]  | 
   | DHCP_Leases | Used for importing devices from DHCP_Leases files. Also leveraged by some plugins. | ![Screen3][screen3]  | 
   | Events | Used to collect connection/disconnection events. | ![Screen4][screen4]  | 
   | Nmap_Scan | Contains results of the scheduled Nmap scan, taht is also displayed in the Nmap tab on each device. | ![Screen5][screen5]  | 

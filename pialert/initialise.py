@@ -85,6 +85,14 @@ def importConfigs (db):
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'selecttext', "['English', 'German', 'Spanish']", 'General')
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'multiselect', "['online', 'offline', 'archived']", 'General')    
 
+    # New device defaults
+    conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
+    conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
+    conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'selectinteger', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
+
     # Email
     conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
     conf.SMTP_SERVER = ccd('SMTP_SERVER', '' , c_d,'SMTP server URL', 'text', '', 'Email')
