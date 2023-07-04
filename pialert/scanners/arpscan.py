@@ -14,7 +14,7 @@ def execute_arpscan (userSubnets):
     # scan each interface
     index = 0
     for interface in userSubnets :   
-        write_file (logPath + '/arp_scan_output_' + index + '.txt', arpscan_output)
+        write_file (logPath + '/arp_scan_output_' + str(index) + '.txt', arpscan_output)
         index += 1         
         arpscan_output += execute_arpscan_on_interface (interface)    
     
