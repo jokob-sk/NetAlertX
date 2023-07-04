@@ -2,6 +2,8 @@ import re
 import subprocess
 
 from logger import mylog
+from helper import write_file
+from const import logPath
 
 #-------------------------------------------------------------------------------
 def execute_arpscan (userSubnets):
@@ -10,8 +12,12 @@ def execute_arpscan (userSubnets):
     arpscan_output = ""
 
     # scan each interface
-    for interface in userSubnets :            
+    index = 0
+    for interface in userSubnets :   
+        write_file (logPath + '/arp_scan_output_', index ,'.txt', arpscan_output)
+        index += 1         
         arpscan_output += execute_arpscan_on_interface (interface)    
+    
     
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -22,6 +28,8 @@ def execute_arpscan (userSubnets):
     # Create Userdict of devices
     devices_list = [device.groupdict()
         for device in re.finditer (re_pattern, arpscan_output)]
+
+    mylog('debug', ['[ARP Scan] Found: Devices including duplicates ', len(devices_list) ]) 
     
     # Delete duplicate MAC
     unique_mac = [] 
@@ -33,7 +41,8 @@ def execute_arpscan (userSubnets):
             unique_devices.append(device)    
 
     # return list
-    mylog('debug', ['[ARP Scan] Completed found ', len(unique_devices) ,' devices ' ])    
+    mylog('debug', ['[ARP Scan] Found: Devices without duplicates ', len(unique_devices)  ]) 
+
     return unique_devices
 
 #-------------------------------------------------------------------------------
