@@ -14,9 +14,9 @@ def execute_arpscan (userSubnets):
     # scan each interface
     index = 0
     for interface in userSubnets :   
-        write_file (logPath + '/arp_scan_output_' + str(index) + '.txt', arpscan_output)
-        index += 1         
         arpscan_output += execute_arpscan_on_interface (interface)    
+        index += 1         
+        write_file (logPath + '/arp_scan_output_' + str(index) + '.txt', arpscan_output)
     
     
     # Search IP + MAC + Vendor as regular expresion
@@ -59,7 +59,11 @@ def execute_arpscan_on_interface (interface):
         result = subprocess.check_output (arpscan_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[ARP Scan] Error: ', e.output])
+        error_type = type(e).__name__  # Capture the error type
+
+        mylog('none', [f'[ARP Scan] Error type  : {error_type}'])
+        mylog('none', [f'[ARP Scan] Error output: {e.output}'])
+
         result = ""
 
     mylog('debug', ['[ARP Scan] on Interface Completed with results: ', result])
