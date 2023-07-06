@@ -487,7 +487,7 @@ $lang['en_us'] = array(
 'run_event_tooltip' => 'Enable the setting and save your changes at first before you run it.',
 'run_event_icon' => 'fa-play',
 'general_event_title' => 'Executing an ad-hoc event',
-'general_event_description' => 'The event you\'ve triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a  href="/maintenance.php#tab_Logging">error log</a> if you didn\'t get the expected result. <br/> <br/>  Status: ',
+'general_event_description' => ' The event you\'ve triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a  href=\"/maintenance.php#tab_Logging\">error log</a> if you didn\'t get the expected result. <br/> <br/>  Status: ',
 
 
 
@@ -565,7 +565,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'Email_display_name' => 'Email',
 'Email_icon' => '<i class="fa fa-at"></i>',
 'REPORT_MAIL_name' => 'Enable email',
-'REPORT_MAIL_description' => 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below. If facing issues, set <code>LOG_LEVEL</code> to <code>debug</code> and check the <a  href="/maintenance.php#tab_Logging">error log</a>.',
+'REPORT_MAIL_description' => 'If enabled an email is sent out with a list of changes you\'ve subscribed to. Please also fill out all remaining settings related to the SMTP setup below. If facing issues, set <code>LOG_LEVEL</code> to <code>debug</code> and check the <a  href=\"/maintenance.php#tab_Logging\">error log</a>.',
 'SMTP_SERVER_name' => 'SMTP server URL',
 'SMTP_SERVER_description' => 'The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>. To use Gmail as an SMTP server <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SMTP_GMAIL.md">follow this guide</a>',
 'SMTP_PORT_name' => 'SMTP server PORT',

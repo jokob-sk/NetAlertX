@@ -371,9 +371,9 @@ $db->close();
                             <div class="row logs-row">
                               <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly >
                                 <?php                               
-                                if(filesize("./log/pialert.log") > 200000)
+                                if(filesize("./log/pialert.log") > 2000000)
                                 {
-                                  echo file_get_contents( "./log/pialert.log", false, null, -200000); 
+                                  echo file_get_contents( "./log/pialert.log", false, null, -2000000); 
                                 }
                                 else{
                                   echo file_get_contents( "./log/pialert.log" );

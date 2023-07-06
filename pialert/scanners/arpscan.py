@@ -1,5 +1,6 @@
 import re
 import subprocess
+import conf
 
 from logger import mylog
 from helper import write_file
@@ -16,8 +17,6 @@ def execute_arpscan (userSubnets):
     for interface in userSubnets :   
         arpscan_output += execute_arpscan_on_interface (interface)    
         index += 1         
-        write_file (logPath + '/arp_scan_output_' + str(index) + '.txt', arpscan_output)
-    
     
     # Search IP + MAC + Vendor as regular expresion
     re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -54,17 +53,21 @@ def execute_arpscan_on_interface (interface):
     arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + subnets
 
     # Execute command
-    try:
+    if conf.LOG_LEVEL == 'debug':
         # try runnning a subprocess
         result = subprocess.check_output (arpscan_args, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        error_type = type(e).__name__  # Capture the error type
+    else:
+        try:
+            # try runnning a subprocess safely
+            result = subprocess.check_output (arpscan_args, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            error_type = type(e).__name__  # Capture the error type
 
-        mylog('none', [f'[ARP Scan] Error type  : {error_type}'])
-        mylog('none', [f'[ARP Scan] Error output: {e.output}'])
+            mylog('none', [f'[ARP Scan] Error type  : {error_type}'])
+            mylog('none', [f'[ARP Scan] Error output: {e.output}'])
 
-        result = ""
+            result = ""
 
     mylog('debug', ['[ARP Scan] on Interface Completed with results: ', result])
     return result
