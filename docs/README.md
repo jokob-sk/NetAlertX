@@ -16,6 +16,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### Popular/Suggested
 
+- [Debugging tips](/docs/DEBUG_TIPS.md)
 - [API endpoints details](/docs/API.md)
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
 - [Network tree map configuration](/docs/NETWORK_TREE.md)
@@ -39,6 +40,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
 - [Database structure](/docs/DATABASE.md)
+- [Reverse proxy with SWAG](/docs/REVERSE_PROXY.md)
 
 Feel free to suggest or submit new docs via a PR. 
 
