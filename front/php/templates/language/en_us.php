@@ -583,7 +583,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'REPORT_TO_name' => 'Send email to',
 'REPORT_TO_description' => 'Email address to which the notification will be send to.',
 'REPORT_FROM_name' => 'Email subject',
-'REPORT_FROM_description' => 'Notification email subject line.',
+'REPORT_FROM_description' => 'Notification email subject line. Some SMTP servers need this to be an email.',
 
 //Webhooks
 'Webhooks_display_name' => 'Webhooks',
