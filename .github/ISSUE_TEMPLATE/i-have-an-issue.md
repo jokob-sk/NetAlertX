@@ -7,24 +7,19 @@ assignees: ''
 
 ---
 
-**Describe the issue**
+## Describe the issue
 
+> When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗ and [have a look at the docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)
 
-**Paste last few lines from `pialert.log`**
+[describe your issue]
 
-> You can use `tail -20 /home/pi/pialert/front/log/pialert.log`
-
-```
-paste_here
-```
-
-**Paste your `pialert.conf` (remove personal info)**
+## Paste your `pialert.conf` (remove personal info)
 
 ```
 paste_here
 ```
 
-**Paste your `docker-compose.yml` and `.env` (remove personal info)**
+## Paste your `docker-compose.yml` and `.env` (remove personal info)**
 
 `docker-compose.yml` 
 
@@ -38,5 +33,14 @@ paste_here
 paste_here
 ```
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Screenshots
+
+[If applicable, add screenshots to help explain your problem.]
+
+## Paste last few lines from `pialert.log`
+
+> You can use `tail -100 /home/pi/pialert/front/log/pialert.log`
+
+```bash
+
+# paste_here

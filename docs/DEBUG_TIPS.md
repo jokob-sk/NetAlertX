@@ -62,6 +62,10 @@ services:
 
 * Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface` as outlined in the instructions above. 
 
+### Invalid JSON
+
+Check the [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md) docs on how to proceed.
+
 ### sudo execution failing (e.g.: on arpscan) on a Raspberry Pi 4 
 
 > sudo: unexpected child termination condition: 0
