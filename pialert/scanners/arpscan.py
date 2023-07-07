@@ -62,9 +62,10 @@ def execute_arpscan_on_interface (interface):
             result = subprocess.check_output (arpscan_args, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            error_type = type(e).__name__  # Capture the error type
-
+            error_type = type(e).__name__  # Capture the error type            
+            
             mylog('none', [f'[ARP Scan] Error type  : {error_type}'])
+            mylog('none', [f'[ARP Scan] Set LOG_LEVEL=debug for more details'])
             mylog('none', [f'[ARP Scan] Error output: {e.output}'])
 
             result = ""

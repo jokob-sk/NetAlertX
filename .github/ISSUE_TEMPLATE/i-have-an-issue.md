@@ -19,7 +19,7 @@ assignees: ''
 paste_here
 ```
 
-## Paste your `docker-compose.yml` and `.env` (remove personal info)**
+## Paste your `docker-compose.yml` and `.env` (remove personal info)
 
 `docker-compose.yml` 
 
@@ -28,8 +28,6 @@ paste_here
 ```
 
 `.env` 
-
-<textarea rows="10" placeholder="Insert your code here"></textarea>
 
 ```
 paste_here

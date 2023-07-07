@@ -1,5 +1,6 @@
 
 import subprocess
+import conf
 
 from const import pialertPath, vendorsDB
 from helper import timeNow, updateState
@@ -22,13 +23,18 @@ def update_devices_MAC_vendors (db, pArg = ''):
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
     update_args = ['sh', pialertPath + '/update_vendors.sh', pArg]
 
-    try:
+    # Execute command
+    if conf.LOG_LEVEL == 'debug':
         # try runnning a subprocess
         update_output = subprocess.check_output (update_args)
-    except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        mylog('none', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
-        mylog('none', [e.output])        
+    else:    
+        try:
+            # try runnning a subprocess safely
+            update_output = subprocess.check_output (update_args)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            mylog('none', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
+            mylog('none', [e.output])        
 
     # Initialize variables
     recordsToUpdate = []
@@ -82,14 +88,19 @@ def query_MAC_vendor (pMAC):
         # Search vendor in HW Vendors DB
         mac = mac[0:6]
         grep_args = ['grep', '-i', mac, vendorsDB]
+        
         # Execute command
-        try:
+        if conf.LOG_LEVEL == 'debug':
             # try runnning a subprocess
             grep_output = subprocess.check_output (grep_args)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ["[Mac Vendor Check] Error: ", e.output])
-            grep_output = "       There was an error, check logs for details"
+        else:
+            try:
+                # try runnning a subprocess
+                grep_output = subprocess.check_output (grep_args)
+            except subprocess.CalledProcessError as e:
+                # An error occured, handle it
+                mylog('none', ["[Mac Vendor Check] Error: ", e.output])
+                grep_output = "       There was an error, check logs for details"
 
         # Return Vendor
         vendor = grep_output[7:]
