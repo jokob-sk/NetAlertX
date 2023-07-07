@@ -29,6 +29,8 @@ paste_here
 
 `.env` 
 
+<textarea rows="10" placeholder="Insert your code here"></textarea>
+
 ```
 paste_here
 ```
@@ -43,4 +45,4 @@ paste_here
 
 ```bash
 
-# paste_here
+# paste code below 
