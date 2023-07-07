@@ -80,21 +80,7 @@ These are the most important settings to get at least some output in your Device
 
 💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed). 
 
-**Permissions**
-
-* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
-* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
-* Map to local User and Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
-* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
-
-**Container restarts / crashes**
-
-* Check the logs for details. Often a required setting for a notification method is missing. 
-
-**unable to resolve host**
-
-* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface` as outlined in the instructions above. 
- 
+Check also common issues and [debugging tips](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md). 
 
 Docker-compose examples can be found below.
 

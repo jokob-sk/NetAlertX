@@ -93,7 +93,7 @@ Suggested test cases:
 Some additional context:
 
 * Permanent settings/config is stored in the `pialert.conf` file
-* Currently temporary (session?) settings are stored in the `Parameters` DB table as key - value pairs. This table is wiped during a container rebuild/restart and it's values re-initialized from cookies / session data from the browser. 
+* Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and it's values re-initialized from cookies / session data from the browser. 
 
 ## 🐛 Submitting an issue or bug
 
@@ -101,5 +101,6 @@ Before submitting a new issue please spend a couple of minutes on research:
 
 * Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-common-issues) 
 * Check [💡 Closed issues](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
+* When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗
 
 ⚠ Please follow the pre-defined issue template to resolve your issue faster.

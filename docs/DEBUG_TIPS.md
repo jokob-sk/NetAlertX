@@ -13,7 +13,7 @@ If possible, check if your issue got fixed in the `_dev` image before opening a 
 
 > ⚠ Please backup your DB and config beforehand!
 
-PLease also search [open issues](https://github.com/jokob-sk/Pi.Alert/issues).
+Please also search [open issues](https://github.com/jokob-sk/Pi.Alert/issues).
 
 ## Surfacing errors when container restarts
 
@@ -45,3 +45,32 @@ services:
     # Other service configurations...
 ```
 
+## 📃Common issues
+
+### Permissions
+
+* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
+* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
+* Map to local User and Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
+* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
+
+### Container restarts / crashes
+
+* Check the logs for details. Often a required setting for a notification method is missing. 
+
+### unable to resolve host
+
+* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface` as outlined in the instructions above. 
+
+### sudo execution failing (e.g.: on arpscan) on a Raspberry Pi 4 
+
+> sudo: unexpected child termination condition: 0
+
+Resolution based on [this issue](https://github.com/linuxserver/docker-papermerge/issues/4#issuecomment-1003657581)
+
+```
+wget ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.3-2_armhf.deb
+sudo dpkg -i libseccomp2_2.5.3-2_armhf.deb
+```
+
+The link above will probably break in time too. Go to https://packages.debian.org/sid/armhf/libseccomp2/download to find the new version number and put that in the url.
