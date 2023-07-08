@@ -107,6 +107,7 @@
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
               <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
+              <li> <a id="tabPlugins"   href="#panPlugins" data-toggle="tab"> <?= lang('Navigation_Plugins');?>   </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -699,6 +700,17 @@
                   <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_PholusEmpty"); ?></span></td></tr>
                 </tbody>
               </table>
+              </div>
+
+<!-- tab page 7 ------------------------------------------------------------ -->
+              <div class="tab-pane fade table-responsive" id="panPlugins">
+              
+
+                <?php
+                  // Include the other page
+                  include 'pluginsCore.php';
+                ?>
+
               </div>
 
             </div>

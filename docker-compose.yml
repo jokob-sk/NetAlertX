@@ -38,6 +38,7 @@ services:
       - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php
       - ${DEV_LOCATION}/front/events.php:/home/pi/pialert/front/events.php
       - ${DEV_LOCATION}/front/plugins.php:/home/pi/pialert/front/plugins.php
+      - ${DEV_LOCATION}/front/pluginsCore.php:/home/pi/pialert/front/pluginsCore.php
       - ${DEV_LOCATION}/front/help_faq.php:/home/pi/pialert/front/help_faq.php
       - ${DEV_LOCATION}/front/index.php:/home/pi/pialert/front/index.php
       - ${DEV_LOCATION}/front/maintenance.php:/home/pi/pialert/front/maintenance.php
