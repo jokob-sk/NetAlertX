@@ -347,6 +347,8 @@
                           <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
                       </div>
+
+                      
       
                     </div>
                   </div>
@@ -463,10 +465,34 @@
                         </ul>
                       </div>
                     </div>
-                  </div>  
-
+                  </div> 
                   </div>
+
+                  <h4 class="bottom-border-aqua"><?= lang('DevDetail_Copy_Device_Title');?></h4>
+                      <div class="box-body form-horizontal">
+                      <label class="col-sm-3 control-label">
+                        <?= lang('Navigation_Devices');?>                   
+                      </label>
+                      <div class="col-sm-9">
+                        <div class="input-group">
+                          <input class="form-control" title="<?= lang('DevDetail_Copy_Device_Tooltip');?>" id="txtFromDevice" type="text" value="--">
+                          <span class="input-group-addon" title='<?= lang('Gen_Copy');?>'><i class="fa fa-copy pointer" onclick="askCopyFromDevice();"></i></span>
+                          
+                          <div class="input-group-btn">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                              <span class="fa fa-caret-down"></span>
+                            </button>
+                            <ul id="dropdownDevices" class="dropdown-menu dropdown-menu-right">
+                            </ul>
+                          </div>
+                        </div>
+                      </div> 
+                      </div> 
+
+                  
                 </div>
+
+                
 
                   <!-- Buttons -->
                   <div class="col-xs-12">
@@ -949,6 +975,7 @@ function initializeCombos () {
   initializeCombo ( '#dropdownNetworkNodeMac', 'getNetworkNodes', 'txtNetworkNodeMac', false);
   initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
   initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
+  initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -1621,6 +1648,29 @@ function deleteDeviceEvents () {
 
   // Deactivate controls
   $('#panDetails :input').attr('disabled', true);
+}
+
+// -----------------------------------------------------------------------------
+function askCopyFromDevice() {
+    // Ask 
+    showModalWarning('<?= lang('BackDevDetail_Copy_Title');?>', '<?= lang('BackDevDetail_Copy_Ask');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Run');?>', 'copyFromDevice');
+}
+
+function copyFromDevice() {
+
+  // Execute
+  $.get('php/server/devices.php?action=copyFromDevice&'
+    + '&macTo='         + $('#txtMAC').val()
+    + '&macFrom='          + $('#txtFromDevice').val()
+    , function(msg) {
+    showMessage (msg);
+
+    setTimeout(function() {
+      window.location.reload();
+    }, 2000);
+  });
+
 }
 
 // -----------------------------------------------------------------------------

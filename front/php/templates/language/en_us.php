@@ -19,6 +19,7 @@ $lang['en_us'] = array(
 'Gen_Save' => 'Save',
 'Gen_Saved' => 'Saved',
 'Gen_Run' => 'Run',
+'Gen_Copy' => 'Run',
 'Gen_Action' => 'Action',
 'Gen_Purge' => 'Purge',
 'Gen_Backup' => 'Run Backup',
@@ -245,6 +246,10 @@ $lang['en_us'] = array(
 'DevDetail_WOL_Title' => '<i class="fa fa-power-off"></i> Wake-on-LAN',
 'DevDetail_Run_Actions_Title' => '<i class="fa fa-play"></i> Run action on device',
 'DevDetail_Run_Actions_Tooltip' => 'Run an action on the current device from the dropdown list.',
+'DevDetail_Copy_Device_Title' => '<i class="fa fa-copy"></i> Copy details from device',
+'DevDetail_Copy_Device_Tooltip' => 'Copy details from device from the dropdown list. Everything on this page will be overwritten',
+'BackDevDetail_Copy_Title' => 'Copy details',
+'BackDevDetail_Copy_Ask' => 'Copy details from device from the dropdown list (Everything on this page will be overwritten)?',
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page
@@ -368,7 +373,7 @@ $lang['en_us'] = array(
 'BackDevices_DBTools_ImportCSV' => 'The devices from the CSV file were imported successfully.',
 'BackDevices_DBTools_ImportCSVError' => 'The CSV file couldn\'t be imported. Make sure the format is correct.',
 'BackDevices_DBTools_ImportCSVMissing' => 'The CSV file couldn\'t be found under <b>/config/devices.csv.</b>',
-'BackDevices_Device_UpdDevError' => 'Error updating devices, try later. The database is probable locked due to an ongoing task.',
+'BackDevices_Device_UpdDevError' => 'Error updating devices, try later. The database is probably locked due to an ongoing task.',
 
 
 //////////////////////////////////////////////////////////////////

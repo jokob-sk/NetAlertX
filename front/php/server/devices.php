@@ -58,6 +58,8 @@
       case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
       case 'getActions':              getActions();                            break;
+      case 'getDevices':              getDevices();                            break;
+      case 'copyFromDevice':          copyFromDevice();                        break;
       case 'wakeonlan':               wakeonlan();                             break;
 
       default:                        logServerConsole ('Action: '. $action);  break;
@@ -524,7 +526,7 @@ function ImportCSV() {
     if($error == "")
     {
       // import succesful
-      echo lang('BackDevices_DBTools_ImportCSV') . "(Skipped lines: " .$skipped .")";
+      echo lang('BackDevices_DBTools_ImportCSV') . " (Skipped lines: " .$skipped .") ";
 
     }
     else{
@@ -822,6 +824,36 @@ function getActions() {
   );
 
   // Return json
+  echo (json_encode ($tableData));
+}
+
+//------------------------------------------------------------------------------
+function getDevices() {
+  
+  global $db;
+
+  // Device Data
+  $sql = 'select dev_MAC, dev_Name from Devices';
+
+  $result = $db->query($sql);
+
+  // arrays of rows
+  $tableData = array();
+
+  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
+    $name = handleNull($row['dev_Name'], "(unknown)"); 
+    $mac = handleNull($row['dev_MAC'], "(unknown)"); 
+    // Push row data
+    $tableData[] = array('id'    => $mac, 
+                         'name'  => $name  );                          
+  }
+  
+  // Control no rows
+  if (empty($tableData)) {
+    $tableData = [];
+  }
+  
+    // Return json
   echo (json_encode ($tableData));
 }
 
@@ -1174,6 +1206,56 @@ function wakeonlan() {
   exec('wakeonlan '.$WOL_HOST_MAC , $output);
 
   echo lang('BackDevDetail_Tools_WOL_okay');
+}
+
+//------------------------------------------------------------------------------
+// Copy from device
+//------------------------------------------------------------------------------
+function copyFromDevice() {  
+
+  $MAC_FROM = $_REQUEST['macFrom'];
+  $MAC_TO   = $_REQUEST['macTo'];
+
+  if ((false === filter_var($MAC_FROM , FILTER_VALIDATE_MAC) && $MAC_FROM != "Internet" && $MAC_FROM != "")  ) {
+    throw new Exception('Invalid mac address');
+  }
+  if ((false === filter_var($MAC_TO , FILTER_VALIDATE_MAC) && $MAC_TO != "Internet" && $MAC_TO != "")  ) {
+    throw new Exception('Invalid mac address');
+  }
+  
+  global $db;
+
+  // clean-up temporary table  
+  $sql = "DROP TABLE temp_devices ";
+  $result = $db->query($sql);
+
+  // create temporary table with the source data
+  $sql = "CREATE  TABLE temp_devices AS SELECT * FROM Devices WHERE dev_MAC = '". $MAC_FROM . "';";
+  $result = $db->query($sql);
+
+  // update temporary table with the correct target MAC
+  $sql = "UPDATE temp_devices SET dev_MAC = '". $MAC_TO . "';";
+  $result = $db->query($sql);
+  
+  // delete previous entry
+  $sql = "DELETE FROM Devices WHERE dev_MAC = '". $MAC_TO . "';";
+  $result = $db->query($sql);
+
+  // insert new entry with the correct target MAC from the temporary table
+  $sql = "INSERT INTO Devices SELECT * FROM temp_devices WHERE dev_MAC = '".$MAC_TO."'";
+  $result = $db->query($sql);
+
+  // clean-up temporary table
+  $sql = "DROP TABLE temp_devices ";
+  $result = $db->query($sql);
+
+  // check result
+  if ($result == TRUE) {
+    echo 'OK';
+  } else {
+    echo lang('BackDevices_Device_UpdDevError');
+  }  
+  
 }
 
 //------------------------------------------------------------------------------
