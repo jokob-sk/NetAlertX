@@ -76,7 +76,7 @@ class DB():
     #===============================================================================
     # Cleanup / upkeep database
     #===============================================================================
-    def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA):
+    def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV):
         """
         Cleaning out old records from the tables that don't need to keep all data.
         """
@@ -91,19 +91,24 @@ class DB():
                              order by Scan_Date desc limit 150)""")
         mylog('verbose', ['[DB Cleanup] Optimize Database'])
         # Cleanup Events
-        mylog('verbose', ['[DB Cleanup] Events: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-        self.sql.execute ("""DELETE FROM Events 
-                             WHERE eve_DateTime <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')""")
+        mylog('verbose', [f'[DB Cleanup] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days'])
+        self.sql.execute (f"""DELETE FROM Events 
+                             WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
         # Cleanup Plugin Events History
         mylog('verbose', ['[DB Cleanup] Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
-        self.sql.execute ("""DELETE FROM Plugins_History 
-                             WHERE DateTimeChanged <= date('now', '-"+str(DAYS_TO_KEEP_EVENTS)+" day')""")
+        self.sql.execute (f"""DELETE FROM Plugins_History 
+                             WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
         # Cleanup Pholus_Scan
         if PHOLUS_DAYS_DATA != 0:
             mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
-            # improvement possibility: keep at least N per mac
-            self.sql.execute ("""DELETE FROM Pholus_Scan 
-                                 WHERE Time <= date('now', '-"+ str(PHOLUS_DAYS_DATA) +" day')""") 
+            # todo: improvement possibility: keep at least N per mac
+            self.sql.execute (f"""DELETE FROM Pholus_Scan 
+                                 WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
+        # Cleanup New Devices
+        if HRS_TO_KEEP_NEWDEV != 0:
+            mylog('verbose', [f'[DB Cleanup] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours'])            
+            self.sql.execute (f"""DELETE FROM Devices 
+                                  WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
 
         # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
         mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all duplicates'])

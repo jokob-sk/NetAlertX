@@ -280,7 +280,7 @@ def main ():
                 last_cleanup = time_started
                 conf.cycle = 'cleanup'  
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])
-                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA)   
+                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA, conf.HRS_TO_KEEP_NEWDEV)   
 
             # Commit SQL
             db.commitDB()          
