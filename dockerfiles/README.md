@@ -63,13 +63,7 @@ These are the most important settings to get at least some output in your Device
 
 ##### For arp-scan: ENABLE_ARPSCAN, SCAN_SUBNETS
 
-- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable.
-   * The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` to find your interface name(s)) 
-   * Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
-   * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
-     * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
-     * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1 -vlan=107']` 
-   * More documentation on how to e.g. [setup vlans & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
+- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
 
 ##### For pihole: PIHOLE_ACTIVE, DHCP_ACTIVE
 
