@@ -14,9 +14,13 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 ### 📚 Table of contents
 
-#### Popular/Suggested
+#### 🐛 Debugging help & tips
 
 - [Debugging tips](/docs/DEBUG_TIPS.md)
+- [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
+
+#### 🔝 Popular/Suggested
+
 - [API endpoints details](/docs/API.md)
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
@@ -24,21 +28,20 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [Home Assistant](/docs/HOME_ASSISTANT.md)
 
-#### System Management
+#### ⚙ System Management
 
 - [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
 - [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
 - [Custom Icons configuration and support](/docs/ICONS.md)
 
-#### Examples
+#### 🔎 Examples
 
 - [N8N webhook example](/docs/WEBHOOK_N8N.md)
 
-#### Misc
+#### ♻ Misc
 
 - [New Version notifications](/docs/VERSIONS.md)
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
-- [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
 - [Database structure](/docs/DATABASE.md)
 - [Reverse proxy with SWAG](/docs/REVERSE_PROXY.md)
 
