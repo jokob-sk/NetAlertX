@@ -1,6 +1,6 @@
 ## Documentation overview
 
-In the app hover-over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.
+In the app hover over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.
 
 ![In-app help](/docs/img/GENERAL/in-app-help.png)
 
@@ -19,9 +19,9 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Debugging tips](/docs/DEBUG_TIPS.md)
 - [API endpoints details](/docs/API.md)
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
-- [Network tree map configuration](/docs/NETWORK_TREE.md)
+- [Network treemap configuration](/docs/NETWORK_TREE.md)
 - [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
-- [Subnets and vlans configuration for arp-scan](/docs/SUBNETS.md)
+- [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [Home Assistant](/docs/HOME_ASSISTANT.md)
 
 #### System Management
@@ -48,29 +48,29 @@ Feel free to suggest or submit new docs via a PR.
 
 Highest to lowest:
 
-* Fixing core functionality bugs not solvable with workarounds
-* New core functionality unlocking other opportunities (e.g.: plugins) 
-* Refactoring enabling faster implementation of future functionality 
-* UI improvements
+* 🥇 Fixing core functionality bugs not solvable with workarounds
+* 🥈 New core functionality unlocking other opportunities (e.g.: plugins) 
+* 🥉 Refactoring enabling faster implementation of future functionality 
+* (low) UI functionality & improvements
 
 Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integrate into other workflows. 
 
 Examples: 
 
     1. Supporting apprise makes more sense than implementing multiple individual notification gateways
-    2. Implementing regular expressions support across settings for validation makes more sense than validating one setting with a specific expression. 
+    2. Implementing regular expression support across settings for validation makes more sense than validating one setting with a specific expression. 
 
-UI specific requests are low priority as the framework picked by the original developer is not very extensible (and afaik doesn't support components) and has limited mobile support. Also I argue the value proposition is smaller than working on something else.
+UI-specific requests are a low priority as the framework picked by the original developer is not very extensible (and afaik doesn't support components) and has limited mobile support. Also, I argue the value proposition is smaller than working on something else.
 
-Feel free to submit PRs if interested. try to **keep the PRs small/on topic** so they are easier to review and approve. 
+Feel free to submit PRs if interested. try to **keep the PRs small/on-topic** so they are easier to review and approve. 
 
 That being said, I'd reconsider if more people and or recurring sponsors file a request 😉.
 
 ## 🙏 Feature requests
 
-Please be as detailed as possible with **workarounds** you considered and why a native feature is the better way. This gives me better context and will make it more likely to be implemented. Ideally a feature request should be in the format "I want to be able to do XYZ so that ZYX. I considered these approaches XYZ".
+Please be as detailed as possible with **workarounds** you considered and why a native feature is the better way. This gives me better context and will make it more likely to be implemented. Ideally, a feature request should be in the format "I want to be able to do XYZ so that ZYX. I considered these approaches XYZ".
 
-## ➕ Pull-requests (PRs)
+## ➕ Pull requests (PRs)
 
 If you submit a PR please:
 
@@ -93,7 +93,7 @@ Suggested test cases:
 Some additional context:
 
 * Permanent settings/config is stored in the `pialert.conf` file
-* Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and it's values re-initialized from cookies / session data from the browser. 
+* Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and its values are re-initialized from cookies/session data from the browser. 
 
 ## 🐛 Submitting an issue or bug
 
