@@ -53,7 +53,7 @@ Highest to lowest:
 * Refactoring enabling faster implementation of future functionality 
 * UI improvements
 
-Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integratable into other workflows. 
+Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integrate into other workflows. 
 
 Examples: 
 

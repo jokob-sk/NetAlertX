@@ -477,6 +477,7 @@ function ImportCSV() {
 
     global $db;    
 
+    $skipped = "";
     $error = "";
 
     // sql
@@ -492,12 +493,13 @@ function ImportCSV() {
 
     
     // Parse data from CSV file line by line (max 10000 lines)    
+    $index = 0;
     foreach($data as $row)
     {
       // Check if not empty and skipping first line      
       $rowArray = explode(',',$row);
 
-      if(count($rowArray) > 20)
+      if(count($rowArray) > 23)
       {
         $cleanMac = str_replace("\"","",$rowArray[0]);
         
@@ -513,19 +515,21 @@ function ImportCSV() {
             break;
           } 
         }
+      } else{
+        $skipped = $skipped . ($index+1) . ",";
       }
-      
+      $index = $index + 1;
     }
    
     if($error == "")
     {
       // import succesful
-      echo lang('BackDevices_DBTools_ImportCSV');
+      echo lang('BackDevices_DBTools_ImportCSV') . "(Skipped lines: " .$skipped .")";
 
     }
     else{
       // an error occurred while writing to the DB, display the last error message 
-      echo lang('BackDevices_DBTools_ImportCSVError')."\n\n$sql \n\n".$result;
+      echo lang('BackDevices_DBTools_ImportCSVError')."\n".$error."\n$sql \n\n".$result;
     }
     
    } else {
