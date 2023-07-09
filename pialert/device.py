@@ -6,6 +6,7 @@ import subprocess
 
 import conf
 from helper import timeNow
+from plugin import get_setting_value
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
 from mac_vendor import query_MAC_vendor
@@ -192,15 +193,18 @@ def create_new_devices (db):
                     
     # arpscan - Create new devices
     mylog('debug','[New Devices] 2 Create devices')
-    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
+    
+    sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}      
+                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}      
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
-                                      WHERE dev_MAC = cur_MAC) """,
+                                      WHERE dev_MAC = cur_MAC) """
+    mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
+    sql.execute (sqlQuery,
                     (startTime, startTime, conf.cycle) ) 
 
     # Pi-hole - Insert events for new devices
@@ -225,7 +229,7 @@ def create_new_devices (db):
                         dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
                     SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
                         ?, ?,
-                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}   
+                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}  
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """,
@@ -261,7 +265,7 @@ def create_new_devices (db):
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
                          ORDER BY DHCP_DateTime DESC LIMIT 1),
                         '(unknown)', ?, ?, 
-                        {conf.NEWDEV_ALERT_ALL}, {conf.NEWDEV_ALERT_DWN}, 1, {conf.NEWDEV_ARCHIVED}, {conf.NEWDEV_NEWDEV}, {conf.NEWDEV_SKIPNTF}, {conf.NEWDEV_SCAN}  
+                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}    
                     FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """,

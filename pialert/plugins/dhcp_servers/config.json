@@ -1,36 +1,22 @@
 {
-    "code_name": "website_monitor",
-    "unique_prefix": "WEBMON",
+    "code_name": "dhcp_servers",
+    "unique_prefix": "DHCPSRVS",
     "enabled": true,    
     "data_source":  "python-script",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "Website monitor"
+        "string" : "Rogue DHCP"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-globe\"></i>"
+        "string" : "<i class=\"fa-solid fa-skull-crossbones\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is to monitor status changes of services or websites."
+        "string" : "This plugin is to use NMAP to monitor for rogue DHCP servers."
     }],
-    "params" : [{
-        "name"  : "macs",
-        "type"  : "sql",
-        "value" : "SELECT dev_MAC from DEVICES"
-    },
-    {
-        "name"  : "urls",
-        "type"  : "setting",
-        "value" : "WEBMON_urls_to_check"
-    },
-    {
-        "name"  : "internet_ip",
-        "type"  : "setting",
-        "value" : "WEBMON_SQL_internet_ip"
-    }],  
+    "params" : [],  
     "database_column_definitions":
     [          
         {
@@ -63,26 +49,26 @@
             "column": "Object_PrimaryID",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "url",            
+            "type": "deviceip",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Monitored URL"
+                "string" : "Server Identifier"
                 }]
         },
         {
             "column": "Object_SecondaryID",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "Domain Name"
                 }]
         } ,
         {
@@ -101,7 +87,7 @@
         {
             "column": "DateTimeChanged",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -114,35 +100,14 @@
         {
             "column": "Watched_Value1",
             "css_classes": "col-sm-2",
-            "show": true,
-            "type": "threshold",            
+            "show": false,
+            "type": "label",            
             "default_value":"",
-            "options": [
-                {
-                    "maximum": 199,
-                    "hexColor": "#792D86"                
-                },
-                {
-                    "maximum": 299,
-                    "hexColor": "#5B862D"
-                },
-                {
-                    "maximum": 399,
-                    "hexColor": "#7D862D"
-                },
-                {
-                    "maximum": 499,
-                    "hexColor": "#BF6440"
-                },
-                {
-                    "maximum": 599,
-                    "hexColor": "#D33115"
-                }
-            ],
+            "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Status code"
+                "string" : "Domain Name Server"
                 }]
         },
         {
@@ -155,7 +120,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Latency"
+                "string" : "IP Offered"
                 }]
         },
         {
@@ -168,20 +133,20 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "Interface"
                 }]
         } ,
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "Router"
                 }]
         } ,       
         {
@@ -226,14 +191,14 @@
         {
             "column": "Extra",
             "css_classes": "col-sm-3",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Extra"
+                "string" : "Extra info"
                 }]
         }            
     ],
@@ -250,13 +215,13 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+                "string" : "Enable a regular scan of rogue DHCP servers. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "default_value":"python3 /home/pi/pialert/pialert/plugins/dhcp_servers/script.py",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -280,23 +245,8 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPSRVS_RUN\"><code>DHCPSRVS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
-        },
-        {
-            "function": "API_SQL",
-            "type": "text",
-            "default_value":"SELECT * FROM plugin_website_monitor",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "API endpoint (not implemented)"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> file endpoint</a>."
-            }]            
         },
         {
             "function": "RUN_TIMEOUT",
@@ -329,7 +279,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Domain Name Server</li><li><code>Watched_Value2</code> is IP Offered</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is Router </li></ul>"
             }] 
         },
         {
@@ -346,38 +296,7 @@
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             }] 
-        },
-        {
-            "function": "urls_to_check",
-            "type": "list",
-            "default_value":["https://google.com", "https://duck.com"],
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Arguments"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>. The values from this setting will be used to replace the <code>{urls}</code> wildcard in the <code>WEBMON_CMD</code> setting."
-            }]
-        },
-        {
-            "function": "SQL_internet_ip",
-            "type": "readonly",
-            "default_value":"SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Helper variable"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet. "
-            }]
         }
-
     ]
 }
 

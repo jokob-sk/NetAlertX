@@ -14,7 +14,7 @@
         
         <h1 id="pageTitle">
             <i class="fa fa-fw fa-plug"></i> <?= lang('Navigation_Plugins');?>
-            <span class="pageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins"><i class="fa fa-circle-question"></i></a><span>
+            <span class="pageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins"><i class="fa fa-circle-question"></i></a><span>
         </h1>    
     </section>
 

@@ -1,0 +1,535 @@
+{    
+  "code_name": "Devices.new",
+  "template_type": "database-entry",
+  "unique_prefix": "NEWDEV",
+  "enabled": true,
+  "data_source": "template",  
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [{
+      "language_code": "en_us",
+      "string": "New Devices"
+    }],
+  "description": [{
+    "language_code": "en_us",
+    "string": "The template used for new devices."
+  }],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-plus\"></i>"
+    }
+  ],
+  "settings":[
+    {
+          "function": "dev_MAC",
+          "type": "string",
+          "maxLength": 50,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device MAC"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The MAC address of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_Name",
+          "type": "string",
+          "maxLength": 50,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Name"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The name of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_Owner",
+          "type": "string",
+          "maxLength": 30,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Owner"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The owner of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_DeviceType",
+          "type": "string",
+          "maxLength": 30,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Type"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The type of the device."
+            }
+          ]
+        },
+         {
+          "function": "dev_Vendor",
+          "type": "string",
+          "maxLength": 250,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Vendor"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The vendor of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_Favorite",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Favorite Device"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether the device is marked as a favorite."
+            }
+          ]
+        },
+        {
+          "function": "dev_Group",
+          "type": "string",
+          "maxLength": 10,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Group"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The group to which the device belongs."
+            }
+          ]
+        },
+         {
+          "function": "dev_Comments",
+          "type": "string",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Comments"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Additional comments or notes about the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_FirstConnection",
+          "type": "string",
+          "format": "date-time",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "First Connection"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The date and time of the first connection with the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_LastConnection",
+          "type": "string",
+          "format": "date-time",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Last Connection"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The date and time of the last connection with the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_LastIP",
+          "type": "string",
+          "maxLength": 50,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Last IP"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The last known IP address of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_StaticIP",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Static IP"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether the device has a static IP address."
+            }
+          ]
+        },
+        {
+          "function": "dev_ScanCycle",
+          "type": "integer",
+          "default_value": 1,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Scan Cycle"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The default value of the <code>Scan device</code> dropdown. Select <code>1</code> if newly discovered devices should be scanned (this will result in <code>Yes</code> being selected in the dropdown) or <code>0</code>, if not."
+            }
+          ]
+        },
+        {
+          "function": "dev_LogEvents",
+          "type": "integer",
+          "default_value": 1,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Log Events"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether events related to the device shouldbe logged."
+          }]
+        },
+        {
+          "function": "dev_AlertEvents",
+          "type": "integer",
+          "default_value": 1,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Alert Events"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+            }
+          ]
+        },
+        {
+          "function": "dev_AlertDeviceDown",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Alert Device Down"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+            }
+          ]
+        },
+        {
+          "function": "dev_SkipRepeated",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Skip Repeated"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Select the number of <b>hours</b> for which repeated notifications should be ignored for."
+            }
+          ]
+        },
+        {
+          "function": "dev_LastNotification",
+          "type": "string",
+          "format": "date-time",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Last Notification"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The date and time of the last notification sent for the device."
+            }
+          ]
+        },
+       {
+          "function": "dev_PresentLastScan",
+          "type": "integer",
+          "default_value": 1,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Present Last Scan"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether the device was present in the last scan."
+            }
+          ]
+        },
+        {
+          "function": "dev_NewDevice",
+          "type": "integer",
+          "default_value": true,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "New Device"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+            }
+          ]
+        },
+         {
+          "function": "dev_Location",
+          "type": "string",
+          "maxLength": 250,
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Location"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The location of the device."
+            }
+          ]
+        },
+        {
+          "function": "dev_Archived",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Archived"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "Indicates whether the device is archived. The default value of the <code>Archived</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+            }
+          ]
+        },
+        {
+          "function": "dev_Network_Node_MAC_ADDR",
+          "type": "string",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Network Node MAC Address"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The MAC address of the network node."
+            }
+          ]
+        },
+         {
+          "function": "dev_Network_Node_port",
+          "type": "integer",
+          "default_value": 0,
+          "options": [],
+          "localized": ["name", "description"],
+         "name": [
+            {
+              "language_code": "en_us",
+              "string": "Network Node Port"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The port number of the network node."
+            }
+          ]
+        },
+         {
+          "function": "dev_Icon",
+          "type": "string",
+          "default_value": "",
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Device Icon"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The icon associated with the device."
+            }
+          ]
+        }
+  ],
+    "required": [
+      "dev_MAC",
+      "dev_Name",
+      "dev_Owner",
+      "dev_FirstConnection",
+      "dev_LastConnection",
+      "dev_LastIP",
+      "dev_StaticIP",
+      "dev_ScanCycle",
+      "dev_LogEvents",
+      "dev_AlertEvents",
+      "dev_AlertDeviceDown",
+      "dev_SkipRepeated",
+      "dev_LastNotification",
+      "dev_PresentLastScan",
+      "dev_NewDevice",
+      "dev_Location",
+      "dev_Archived",
+      "dev_Network_Node_MAC_ADDR",
+      "dev_Network_Node_port",
+      "dev_Icon"
+    ],
+    "additionalProperties": false
+  }
+    
+
+  

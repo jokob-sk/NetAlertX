@@ -34,7 +34,7 @@ The system continuously scans the network for, **New devices**, **New connection
    - [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) 
    - [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) 
    - [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md)
-   - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom script monitoring
+   - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins) for custom script monitoring
 
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
@@ -51,10 +51,10 @@ The system continuously scans the network for, **New devices**, **New connection
     - Theme Selection (blue, red, green, yellow, black, purple) and Light/Dark-Mode Switch        
     - DB maintenance, Backup, Restore tools and CSV Export / Import
     - Simple login Support
-  - 🌟[Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins)
+  - 🌟[Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins)
     - Create custom plugins with automatically generated settings and UI. 
     - Monitor anything for changes
-    - Check the [instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) carefully if you are up for a challenge! Current plugins include:
+    - Check the [instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins) carefully if you are up for a challenge! Current plugins include:
       - Detecting Rogue DHCP servers via NMAP
       - Monitoring HTTP status changes of domains/URLs 
       - Import devices from DHCP.leases files, a UniFi controller, or an SNMP enabled router

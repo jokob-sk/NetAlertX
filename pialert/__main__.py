@@ -275,8 +275,8 @@ def main ():
                 # send all configured notifications
                 send_notifications(db)
 
-            # clean up the DB once a day
-            if last_cleanup + datetime.timedelta(hours = 24) < time_started:
+            # clean up the DB once an hour
+            if last_cleanup + datetime.timedelta(hours = 1) < time_started:
                 last_cleanup = time_started
                 conf.cycle = 'cleanup'  
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])

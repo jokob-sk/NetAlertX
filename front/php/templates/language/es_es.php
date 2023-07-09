@@ -519,7 +519,7 @@ $lang['es_es'] = array(
 'TIMEZONE_name' => 'Zona horaria',
 'TIMEZONE_description' => 'La zona horaria para mostrar las estadísticas correctamente. Encuentra tu zona horaria <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">aquí</a>.',
 'ENABLE_PLUGINS_name' => 'Habilitar complementos',
-'ENABLE_PLUGINS_description' => 'Habilita la funcionalidad de los <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins">complementos</a>. Cargar los complementos requiere más recursos de hardware, así que quizás quieras desactivarlo en hardware poco potente.',
+'ENABLE_PLUGINS_description' => 'Habilita la funcionalidad de los <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins">complementos</a>. Cargar los complementos requiere más recursos de hardware, así que quizás quieras desactivarlo en hardware poco potente.',
 'PIALERT_WEB_PROTECTION_name' => 'Habilitar inicio de sesión',
 'PIALERT_WEB_PROTECTION_description' => 'Cuando está habilitado, se muestra un cuadro de diálogo de inicio de sesión. Lea detenidamente a continuación si se le bloquea el acceso a su instancia.',
 'PIALERT_WEB_PASSWORD_name' => 'Contraseña de inicio de sesión',

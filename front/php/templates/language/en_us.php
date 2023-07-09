@@ -176,6 +176,7 @@ $lang['en_us'] = array(
 'DevDetail_Tab_Events' => '<i class="fa fa-bolt"></i> Events',
 'DevDetail_Tab_Pholus' => '<i class="fa fa-search"></i> Pholus',
 'DevDetail_Tab_PholusEmpty' => 'Nothing sniffed out with Pholus for this device.',
+'DevDetail_Tab_Plugins' => '<i class="fa fa-plug"></i> Plugins',
 'DevDetail_Tab_NmapTableHeader' => 'Scheduled scan results',
 'DevDetail_Tab_NmapTableText' => 'Set up a schedule in <a href="/settings.php#NMAP_ACTIVE">Settings</a>',
 'DevDetail_Tab_NmapEmpty' => 'No ports detected with Nmap on this device.',
@@ -482,6 +483,8 @@ $lang['en_us'] = array(
 'HelpFAQ_Cat_Network_600_head' => 'What is this page for?',
 'HelpFAQ_Cat_Network_600_text' => 'This page should offer you the possibility to map the assignment of your network devices. For this purpose, you can create one or more switches, WLANs, routers, etc., provide them with a port number if necessary and assign already detected 
 											 devices to them. This assignment is done in the detailed view of the device to be assigned. So it is possible for you to quickly determine to which port a host is connected and if it is online. Read <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md">this guide</a> for more info.',
+'HelpFAQ_Cat_Network_601_head' => 'Are there other docs?',
+'HelpFAQ_Cat_Network_601_text' => 'Yes, there are! Check <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/">all docs</a> for more info.',
 
 //////////////////////////////////////////////////////////////////
 // Front end events
@@ -530,7 +533,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'TIMEZONE_name' => 'Time zone',
 'TIMEZONE_description' => 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.',
 'ENABLE_PLUGINS_name' => 'Enable Plugins',
-'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
+'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',
 'PIALERT_WEB_PROTECTION_description' => 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.',
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
@@ -552,21 +555,6 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'UI_PRESENCE_name' => 'Show in presence chart',
 'UI_PRESENCE_description' => 'Select what statuses should be shown in the <b>Device presence over time</b>  chart in the <a href="/devices.php" target="_blank">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)',
 
-// New device defaults
-'NewDeviceDefaults_display_name' => 'New device defaults',
-'NewDeviceDefaults_icon' => '<i class="fa fa-plus"></i>',
-'NEWDEV_SCAN_name' => 'Scan device',
-'NEWDEV_SCAN_description' => 'The default value of the <code>Scan device</code> dropdown. Select <code>1</code> if newly discovered devices should be scanned (this will result in <code>Yes</code> being selected in the dropdown) or <code>0</code>, if not.',
-'NEWDEV_ALERT_ALL_name' => 'Alert All Events',
-'NEWDEV_ALERT_ALL_description' => 'The default value of the <code>Alert All Events</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked).',
-'NEWDEV_ALERT_DWN_name' => 'Alert Down',
-'NEWDEV_ALERT_DWN_description' => 'The default value of the <code>Alert Down</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked).',
-'NEWDEV_NEWDEV_name' => 'New Device',
-'NEWDEV_NEWDEV_description' => 'The default value of the <code>New Device</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked).',
-'NEWDEV_ARCHIVED_name' => 'Archived',
-'NEWDEV_ARCHIVED_description' => 'The default value of the <code>Archived</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked).',
-'NEWDEV_SKIPNTF_name' => 'Skip repeated notifications for',
-'NEWDEV_SKIPNTF_description' => 'The default value of the <code>Skip repeated notifications for</code> dropdown. Select the number of <b>hours</b> for which repeated notifications should be ignored for.',
 
 //Email
 'Email_display_name' => 'Email',

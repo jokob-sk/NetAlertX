@@ -86,13 +86,13 @@ def importConfigs (db):
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')
 
-    # New device defaults    
-    conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
-    conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
-    conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'selectinteger', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
+    # # New device defaults    
+    # conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
+    # conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
+    # conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'selectinteger', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
 
     # Email
     conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
@@ -227,7 +227,7 @@ def importConfigs (db):
     # -----------------
     # Plugins END
 
-    
+    # write_file(self.path, json.dumps(self.jsonData)) 
            
     
 

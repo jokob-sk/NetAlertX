@@ -89,6 +89,19 @@
               <?= lang('HelpFAQ_Cat_General_103_text');?>
             </div>
           </div>
+          <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion_net" href="#collapse601">
+              <?= lang('HelpFAQ_Cat_Network_601_head');?></a>
+            </h4>
+          </div>
+          <div id="collapse601" class="panel-collapse collapse" style="font-size: 16px;">
+            <div class="panel-body">
+              <?= lang('HelpFAQ_Cat_Network_601_text');?>
+            </div>
+          </div>
+        </div>
         </div>
       </div> 
 
@@ -164,6 +177,7 @@
         <?= lang('HelpFAQ_Cat_Detail_303_text');?>
       </div>
     </div>
+
   </div>
 </div> 
 
@@ -211,7 +225,7 @@
         <?= lang('HelpFAQ_Cat_Network_600_text');?>
       </div>
     </div>
-  </div>
+  
 </div> 
 
     </section>

@@ -1,26 +1,33 @@
 {
-    "code_name": "dhcp_servers",
-    "unique_prefix": "DHCPSRVS",
+    "code_name": "snmp_discovery",
+    "unique_prefix": "SNMPDSC",
     "enabled": true,    
     "data_source":  "python-script",
     "localized": ["display_name", "description", "icon"],
+    "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "Rogue DHCP"
+        "string" : "SNMP discovery"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-skull-crossbones\"></i>"
+        "string" : "<i class=\"fa-solid fa-s\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is to use NMAP to monitor for rogue DHCP servers."
+        "string" : "This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch."
     }],
-    "params" : [],  
+    "params" : [
+        {
+            "name"  : "routers",
+            "type"  : "setting",
+            "value" : "SNMPDSC_routers"
+        }
+    ], 
     "database_column_definitions":
     [          
         {
-            "column": "Index",
+            "column": "Index",            
             "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
@@ -47,6 +54,21 @@
         },
         {
             "column": "Object_PrimaryID",
+            "mapped_to_column": "DHCP_MAC", 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "devicemac",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "MAC address"
+                }]
+        },
+        {
+            "column": "Object_SecondaryID",
+            "mapped_to_column": "DHCP_IP", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "deviceip",            
@@ -55,20 +77,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Server Identifier"
-                }]
-        },
-        {
-            "column": "Object_SecondaryID",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "Domain Name"
+                "string" : "IP"
                 }]
         } ,
         {
@@ -86,8 +95,9 @@
         },
         {
             "column": "DateTimeChanged",
+            "mapped_to_column": "DHCP_DateTime", 
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -99,19 +109,20 @@
         },
         {
             "column": "Watched_Value1",
+            "mapped_to_column": "DHCP_Name", 
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
-            "default_value":"",
+            "default_value":"(unknown)",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Domain Name Server"
+                "string" : "Hostname"
                 }]
         },
         {
-            "column": "Watched_Value2",
+            "column": "Watched_Value2",            
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -120,7 +131,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "IP Offered"
+                "string" : "Router IP"
                 }]
         },
         {
@@ -133,26 +144,26 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Interface"
+                "string" : "Type"
                 }]
         } ,
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Router"
+                "string" : "Network"
                 }]
         } ,       
         {
             "column": "UserData",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "textboxsave",            
             "default_value":"",
             "options": [],
@@ -160,6 +171,19 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Comments"
+                }]
+        },        
+        {
+            "column": "Extra",
+            "css_classes": "col-sm-3",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "RAW output"
                 }]
         },        
         {
@@ -187,19 +211,6 @@
                 "language_code":"en_us",
                 "string" : "Status"
                 }]
-        },        
-        {
-            "column": "Extra",
-            "css_classes": "col-sm-3",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "Extra info"
-                }]
         }            
     ],
     "settings":[
@@ -215,13 +226,13 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of rogue DHCP servers. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+                "string" : "Enable import of devices from a SNMP enabled device. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/dhcp_servers/script.py",
+            "default_value":"python3 /home/pi/pialert/pialert/plugins/snmp_discovery/script.py routers={s-quote}{routers}{s-quote}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -230,7 +241,22 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Command to run"
+                "string" : "Command to run. Not recommended to change."
+            }]
+        },
+        {
+            "function": "routers",
+            "type": "list",
+            "default_value":["snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2"],
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Routers"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "A list of <code>snmpwalk</code> commands to execute against IP addresses of roputers/switches with SNMP turned on. <br/> <br/> Example with the router on the IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported. More info on the plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins/snmp_discovery' target='_blank'>here</a>."
             }]
         },
         {
@@ -245,7 +271,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPSRVS_RUN\"><code>DHCPSRVS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
         },
         {
@@ -279,7 +305,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Domain Name Server</li><li><code>Watched_Value2</code> is IP Offered</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is Router </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname (not discoverable) </li><li><code>Watched_Value2</code> is Router IP </li><li><code>Watched_Value3</code> is not used </li><li><code>Watched_Value4</code> is not used </li></ul>"
             }] 
         },
         {

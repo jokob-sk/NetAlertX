@@ -2,15 +2,15 @@
 
 ### Script based plugins
 
-- [website_monitor (WEBMON)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/) 
-- [dhcp_servers (DHCPSRVS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/) 
-- [dhcp_leases (DHCPLSS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/) 
-- [unifi_import (UNFIMP)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/)
-- [snmp_discovery (SNMPDSC)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/snmp_discovery/)
-- [undiscoverables (UNDIS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/)
+- [website_monitor (WEBMON)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/website_monitor/) 
+- [dhcp_servers (DHCPSRVS)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/dhcp_servers/) 
+- [dhcp_leases (DHCPLSS)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/dhcp_leases/) 
+- [unifi_import (UNFIMP)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/unifi_import/)
+- [snmp_discovery (SNMPDSC)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/snmp_discovery/)
+- [undiscoverables (UNDIS)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/undiscoverables/)
 
 ### SQL query based plugins
-- [nmap_services (NMAPSERV)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/) 
+- [nmap_services (NMAPSERV)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/nmap_services/) 
 
 ## 🌟 Create a custom plugin: Overview
 
@@ -111,7 +111,7 @@ Any of the above datasources have to return a "table" of the exact structure as 
 
 ### 👍 Python script.py tips
 
-The [Undicoverables plugins `script.py` file](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
+The [Undicoverables plugins `script.py` file](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
 
 #### last_result.log examples
 
@@ -234,7 +234,7 @@ The `params` array in the `config.json` is used to enable the user to change the
 Passing user defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
 
 ```bash
-root@server# python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
+root@server# python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
 ```
 
 * You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below). 
@@ -255,7 +255,7 @@ root@server# python3 /home/pi/pialert/front/plugins/website_monitor/script.py ur
  {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "default_value":"python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -269,7 +269,7 @@ root@server# python3 /home/pi/pialert/front/plugins/website_monitor/script.py ur
         }
 ```
 
-During script execution, the app will take the command `"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it by with the value from the `WEBMON_urls_to_check` setting. This is because:
+During script execution, the app will take the command `"python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it by with the value from the `WEBMON_urls_to_check` setting. This is because:
 
 1) The app checks the `params` entries
 2) It finds `"name"  : "urls"`
@@ -281,9 +281,9 @@ During script execution, the app will take the command `"python3 /home/pi/pialer
    - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user: 
    - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
 6) The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
-   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
+   - `python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls={urls}`
    - to
-   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
+   - `python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
 
 Below are some general additional notes, when definig `params`: 
 
