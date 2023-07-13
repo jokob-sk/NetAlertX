@@ -22,7 +22,7 @@
   "settings":[
     {
           "function": "dev_MAC",
-          "type": "string",
+          "type": "label",
           "maxLength": 50,
           "default_value": "",
           "options": [],
@@ -36,15 +36,15 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The MAC address of the device."
+              "string": "The MAC address of the device. Uneditable - Autodetected."
             }
           ]
         },
         {
           "function": "dev_Name",
-          "type": "string",
+          "type": "label",
           "maxLength": 50,
-          "default_value": "",
+          "default_value": "(unknown)",
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -56,7 +56,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The name of the device."
+              "string": "The name of the device. Uneditable as internal functionality is dependent on specific new device names."
             }
           ]
         },
@@ -64,7 +64,7 @@
           "function": "dev_Owner",
           "type": "string",
           "maxLength": 30,
-          "default_value": "",
+          "default_value": "House",
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -102,7 +102,7 @@
         },
          {
           "function": "dev_Vendor",
-          "type": "string",
+          "type": "label",
           "maxLength": 250,
           "default_value": "",
           "options": [],
@@ -116,7 +116,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The vendor of the device."
+              "string": "The vendor of the device. Uneditable - Autodetected."
             }
           ]
         },
@@ -180,7 +180,7 @@
         },
         {
           "function": "dev_FirstConnection",
-          "type": "string",
+          "type": "label",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -194,13 +194,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The date and time of the first connection with the device."
+              "string": "The date and time of the first connection with the device. Uneditable - Autodetected."
             }
           ]
         },
         {
           "function": "dev_LastConnection",
-          "type": "string",
+          "type": "label",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -214,13 +214,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The date and time of the last connection with the device."
+              "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
             }
           ]
         },
         {
           "function": "dev_LastIP",
-          "type": "string",
+          "type": "label",
           "maxLength": 50,
           "default_value": "",
           "options": [],
@@ -234,13 +234,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The last known IP address of the device."
+              "string": "The last known IP address of the device. Uneditable - Autodetected."
             }
           ]
         },
         {
           "function": "dev_StaticIP",
-          "type": "integer",
+          "type": "label",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -253,7 +253,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device has a static IP address."
+              "string": "Indicates whether the device has a static IP address. Uneditable - Autodetected."
             }
           ]
         },
@@ -353,7 +353,7 @@
         },
         {
           "function": "dev_LastNotification",
-          "type": "string",
+          "type": "label",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -367,13 +367,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The date and time of the last notification sent for the device."
+              "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected."
             }
           ]
         },
        {
           "function": "dev_PresentLastScan",
-          "type": "integer",
+          "type": "label",
           "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
@@ -386,7 +386,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device was present in the last scan."
+              "string": "Indicates whether the device was present in the last scan. Uneditable - Autodetected."
             }
           ]
         },
@@ -469,7 +469,7 @@
         },
          {
           "function": "dev_Network_Node_port",
-          "type": "integer",
+          "type": "label",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -482,7 +482,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The port number of the network node."
+              "string": "The port number of the network node. Uneditable."
             }
           ]
         },

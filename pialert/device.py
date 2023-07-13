@@ -196,9 +196,9 @@ def create_new_devices (db):
     
     sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
-                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
+                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle, dev_Owner, dev_DeviceType, dev_Favorite, dev_Group, dev_Comments, dev_LogEvents, dev_Location, dev_Network_Node_MAC_ADDR, dev_Icon)
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}      
+                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}, '{get_setting_value('NEWDEV_dev_Owner')}', '{get_setting_value('NEWDEV_dev_DeviceType')}',{get_setting_value('NEWDEV_dev_Favorite')}, '{get_setting_value('NEWDEV_dev_Group')}', '{get_setting_value('NEWDEV_dev_Comments')}', {get_setting_value('NEWDEV_dev_LogEvents')}, '{get_setting_value('NEWDEV_dev_Location')}',  '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}',  '{get_setting_value('NEWDEV_dev_Icon')}'
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
