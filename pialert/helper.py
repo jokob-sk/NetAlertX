@@ -194,6 +194,8 @@ def checkIPV4(ip):
 #-------------------------------------------------------------------------------
 def isNewVersion(newVersion: bool):
 
+    mylog('debug', [f"[Version check] New version available? {newVersion}"])
+
     if newVersion == False:
 
         f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
@@ -218,7 +220,7 @@ def isNewVersion(newVersion: bool):
             realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
             if realeaseTimestamp > buildTimestamp + 600:
-                mylog('none', ["    New version of the container available!"])
+                mylog('none', ["[Version check] New version of the container available!"])
                 newVersion = True
                 # updateState(db, 'Back_New_Version_Available', str(newVersionAvailable))     ## TO DO add this back in but avoid circular ref with database
 

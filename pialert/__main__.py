@@ -131,6 +131,7 @@ def main ():
 
         # check if new version is available / only check once an hour
         # if newVersionAvailable is already true the function does nothing and returns true again
+        mylog('debug', [f"[Version check] Last version check timestamp: {last_version_check}"])
         if last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
