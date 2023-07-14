@@ -281,8 +281,8 @@ def plugin_param_from_glob_set(globalSetting):
     setTyp = globalSetting[3] # setting type
 
 
-    noConversion = ['text', 'integer', 'boolean', 'password', 'readonly', 'selectinteger', 'selecttext' ]
-    arrayConversion = ['multiselect', 'list'] 
+    noConversion = ['text', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
+    arrayConversion = ['text.multiselect', 'list'] 
 
     if setTyp in noConversion:
         return setVal

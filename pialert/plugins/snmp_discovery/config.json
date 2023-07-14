@@ -216,7 +216,7 @@
     "settings":[
         {
             "function": "RUN",            
-            "type": "selecttext",            
+            "type": "text.select",            
             "default_value":"disabled",
             "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
             "localized": ["name", "description"],
@@ -295,7 +295,7 @@
         },
         {
             "function": "WATCH",
-            "type": "multiselect",
+            "type": "text.multiselect",
             "default_value":["Watched_Value1"],
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
@@ -310,7 +310,7 @@
         },
         {
             "function": "REPORT_ON",
-            "type": "multiselect",
+            "type": "text.multiselect",
             "default_value":["new","watched-changed"],
             "options": ["new","watched-changed","watched-not-changed"],
             "localized": ["name", "description"],

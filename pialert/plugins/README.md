@@ -12,13 +12,16 @@
 ### SQL query based plugins
 - [nmap_services (NMAPSERV)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/nmap_services/) 
 
+### template based plugins
+- [newdev_template (NEWDEV)](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/newdev_template/) 
+
 ## 🌟 Create a custom plugin: Overview
 
 | ![Screen 1][screen1] | ![Screen 2][screen2] | 
 |----------------------|----------------------| 
 | ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
-PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. (Currently update/overwriting of existing objects is not supported.)
+PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. (Currently, update/overwriting of existing objects is not supported.)
 
 Example use cases for plugins could be:
 
@@ -27,15 +30,15 @@ Example use cases for plugins could be:
 * Creating ad-hoc UI tables from existing data in the PiAlert database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.
 * Using other device discovery methods on the network and importing the data as new devices
 * Creating a script to create FAKE devices based on user input via custom settings
-* ...at this point the limitation is mostly the creativity than the capability (there might be edge cases and need to support more form controls for user input off custom settings, but you probably get the idea)
+* ...at this point the limitation is mostly the creativity than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
 
 If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
 
-Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double check the sample plugins as well. 
+Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
 
 ## ⚠ Disclaimer
 
-Experimental feature used also to speed up development  and to make the app more maintainable. Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improvintg the UI experience. Example improvements for the taking:
+Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improving the UI experience. Example improvements for the taking:
 
 * Making the tables sortable/filterable
 * Using the same approach to display table  data as in the Devices section (solves above)
@@ -48,7 +51,7 @@ These issues will be hopefully fixed with time, so please don't report them. Ins
 
 * Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries.
 * Occasional (experienced twice) hanging of processing plugin script file.
-* UI displaying outdated values until the API endpoints get refreshed. 
+UI displays outdated values until the API endpoints get refreshed. 
 
 ## Plugin file structure overview 
 
@@ -84,21 +87,22 @@ More on specifics below.
 
 ## Supported data sources
 
-Currently only two data sources are supported:
+Currently, only 3 data sources are supported:
 
 - Script
 - SQL query on the PiAlert database
+- Template
 
-You need to set the `data_source` to either `pialert-db-query` or `python-script`:
+You need to set the `data_source` to `pialert-db-query`, `python-script`, or `template`:
 
 ```json
 "data_source":  "pialert-db-query"
 ```
-Any of the above datasources have to return a "table" of the exact structure as outlined above.
+Any of the above data sources have to return a "table" of the exact structure as outlined above.
 
 ### "data_source":  "python-script"
 
- If the datasource is set to `python-script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain a executable linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
+ If the `data_source` is set to `python-script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain an executable Linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
  
  The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
@@ -140,7 +144,7 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ### "data_source":  "pialert-db-query"
 
-If the datasource is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
+If the `data_source` is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
 
 This SQL query is executed on the `pialert.db` SQLite database file. 
 
@@ -184,6 +188,10 @@ Required `CMD` setting example with above query (you can set `"type": "label"` i
             }]
         }
 ```
+
+### "data_source":  "template"
+
+Used to initialize internal settings. Check the `newdev_template` plugin for details.
 
 ### Mapping the plugin results into a database table
 
@@ -230,8 +238,7 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
 The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
 
 ##### Example:
-
-Passing user defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
+Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
 
 ```bash
 root@server# python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
@@ -290,8 +297,8 @@ Below are some general additional notes, when definig `params`:
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
   - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
-  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting dispaly name, e.g. `SCAN_CYCLE_MINUTES`. 
-- `"value" : "param_value"` - Needs to contain a setting code name or sql query without wildcards.
+  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `SCAN_CYCLE_MINUTES`. 
+- `"value" : "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
 
 
 Example:
@@ -317,10 +324,10 @@ Example:
 ```
 
 
-#### Setting object struncture
+#### Setting object structure
 
 - `"function": "<see Supported settings function values>"` - What function the setting drives or a simple unique code name
-- `"type": "<text|integer|boolean|password|readonly|selectinteger|selecttext|multiselect|list>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
+- `"type": "<text|integer|boolean|password|readonly|integer.select|text.select|text.multiselect|list|integer.checkbox>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
 - `"localized"` - a list of properties on the current JSON level which need to be localized
 - `"name"` and `"description"` - Displayed in the Settings page. An array of localized strings. (see Localized strings below).
     
@@ -346,7 +353,7 @@ Example:
 ```json
 {
     "function": "RUN",            
-    "type": "selecttext",            
+    "type": "text.select",            
     "default_value":"disabled",
     "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
     "localized": ["name", "description"],
@@ -362,7 +369,7 @@ Example:
 ```
 ##### Localized strings
 
-- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
+- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
 
 Example:
@@ -377,7 +384,7 @@ Example:
 ```
 ##### UI settings in database_column_definitions
 
-The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. Thease are the supported form controls and related functionality:
+The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an English translation will be shown in the UI.
 - Supported types: `label`, `text`, `threshold`, `replace`, `deviceip`, `devicemac`, `url`. Check for details below, how columns behave based on the type.
@@ -387,9 +394,9 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - The `options` property is used in conjunction with these types:
   - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
-- `devicemac` - The value is considered to be a mac address and a link pointing to the device with the given mac address is generated.
-- `deviceip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is cheked against the last detected IP addresses and translated into a mac address that is then used for the link itself.
-- `url` - The value is considered to be a url so a link is generated.
+- `devicemac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
+- `deviceip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP addresses and translated into a Mac address that is then used for the link itself.
+- `url` - The value is considered to be a URL so a link is generated.
 
 
 ```json

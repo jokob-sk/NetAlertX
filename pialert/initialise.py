@@ -72,27 +72,27 @@ def importConfigs (db):
     # General
     conf.ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General', ['run']) 
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
-    conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'selecttext', "['none', 'minimal', 'verbose', 'debug']", 'General')
+    conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
     conf.ENABLE_PLUGINS = ccd('ENABLE_PLUGINS', True , c_d, 'Enable plugins', 'boolean', '', 'General') 
     conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports', 'plugins']", 'General')
+    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'text.multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports', 'plugins']", 'General')
     conf.SCAN_CYCLE_MINUTES = ccd('SCAN_CYCLE_MINUTES', 5 , c_d, 'Scan cycle delay (m)', 'integer', '', 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
     conf.DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'selecttext', "['English', 'German', 'Spanish']", 'General')
-    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'multiselect', "['online', 'offline', 'archived']", 'General')    
+    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'German', 'Spanish']", 'General')
+    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')
 
     # # New device defaults    
-    # conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
-    # conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'selectinteger', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'selectinteger', "['0', '1']", 'NewDeviceDefaults')
-    # conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'selectinteger', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
+    # conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'integer.select', "['0', '1']", 'NewDeviceDefaults')
+    # conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
+    # conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'integer.select', "['0', '1']", 'NewDeviceDefaults')
+    # conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'integer.select', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
 
     # Email
     conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
@@ -109,15 +109,15 @@ def importConfigs (db):
     # Webhooks
     conf.REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
     conf.WEBHOOK_URL = ccd('WEBHOOK_URL', '' , c_d, 'Target URL', 'text', '', 'Webhooks')
-    conf.WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'selecttext', "['json', 'html', 'text']", 'Webhooks')
-    conf.WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'selecttext', "['GET', 'POST', 'PUT']", 'Webhooks')
+    conf.WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'text.select', "['json', 'html', 'text']", 'Webhooks')
+    conf.WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'text.select', "['GET', 'POST', 'PUT']", 'Webhooks')
     conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
 
     # Apprise
     conf.REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise', ['test'])
     conf.APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
     conf.APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
-    conf.APPRISE_PAYLOAD = ccd('APPRISE_PAYLOAD', 'html' , c_d, 'Payload type', 'selecttext', "['html', 'text']", 'Apprise')
+    conf.APPRISE_PAYLOAD = ccd('APPRISE_PAYLOAD', 'html' , c_d, 'Payload type', 'text.select', "['html', 'text']", 'Apprise')
 
     # NTFY
     conf.REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
@@ -136,8 +136,8 @@ def importConfigs (db):
     conf.MQTT_PORT = ccd('MQTT_PORT', 1883 , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
     conf.MQTT_USER = ccd('MQTT_USER', '' , c_d, 'MQTT user', 'text', '', 'MQTT')
     conf.MQTT_PASSWORD = ccd('MQTT_PASSWORD', '' , c_d, 'MQTT password', 'password', '', 'MQTT')
-    conf.MQTT_QOS = ccd('MQTT_QOS', 0 , c_d, 'MQTT Quality of Service', 'selectinteger', "['0', '1', '2']", 'MQTT')
-    conf.MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', 2 , c_d, 'MQTT delay', 'selectinteger', "['2', '3', '4', '5']", 'MQTT')
+    conf.MQTT_QOS = ccd('MQTT_QOS', 0 , c_d, 'MQTT Quality of Service', 'integer.select', "['0', '1', '2']", 'MQTT')
+    conf.MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', 2 , c_d, 'MQTT delay', 'integer.select', "['2', '3', '4', '5']", 'MQTT')
 
     # DynDNS
     conf.DDNS_ACTIVE = ccd('DDNS_ACTIVE', False , c_d, 'Enable DynDNS', 'boolean', '', 'DynDNS')
@@ -154,7 +154,7 @@ def importConfigs (db):
     conf.PHOLUS_ACTIVE = ccd('PHOLUS_ACTIVE', False , c_d, 'Enable Pholus scans', 'boolean', '', 'Pholus')
     conf.PHOLUS_TIMEOUT = ccd('PHOLUS_TIMEOUT', 20 , c_d, 'Pholus timeout', 'integer', '', 'Pholus')
     conf.PHOLUS_FORCE = ccd('PHOLUS_FORCE', False , c_d, 'Pholus force check', 'boolean', '', 'Pholus')
-    conf.PHOLUS_RUN = ccd('PHOLUS_RUN', 'once' , c_d, 'Pholus enable schedule', 'selecttext', "['disabled', 'once', 'schedule']", 'Pholus')
+    conf.PHOLUS_RUN = ccd('PHOLUS_RUN', 'once' , c_d, 'Pholus enable schedule', 'text.select', "['disabled', 'once', 'schedule']", 'Pholus')
     conf.PHOLUS_RUN_TIMEOUT = ccd('PHOLUS_RUN_TIMEOUT', 600 , c_d, 'Pholus timeout schedule', 'integer', '', 'Pholus')   
     conf.PHOLUS_RUN_SCHD = ccd('PHOLUS_RUN_SCHD', '0 4 * * *' , c_d, 'Pholus schedule', 'text', '', 'Pholus')
     conf.PHOLUS_DAYS_DATA = ccd('PHOLUS_DAYS_DATA', 0 , c_d, 'Pholus keep days', 'integer', '', 'Pholus')
@@ -162,7 +162,7 @@ def importConfigs (db):
     # Nmap
     conf.NMAP_ACTIVE = ccd('NMAP_ACTIVE', True , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
     conf.NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', 150 , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
-    conf.NMAP_RUN = ccd('NMAP_RUN', 'disabled' , c_d, 'Nmap enable schedule', 'selecttext', "['disabled', 'once', 'schedule']", 'Nmap')
+    conf.NMAP_RUN = ccd('NMAP_RUN', 'disabled' , c_d, 'Nmap enable schedule', 'text.select', "['disabled', 'once', 'schedule']", 'Nmap')
     conf.NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', '0 2 * * *' , c_d, 'Nmap schedule', 'text', '', 'Nmap')
     conf.NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')
 
@@ -190,40 +190,39 @@ def importConfigs (db):
 
     # Plugins START
     # -----------------
-    if conf.ENABLE_PLUGINS:
-        conf.plugins = get_plugins_configs()
+    conf.plugins = get_plugins_configs()
 
-        mylog('none', ['[Config] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
+    mylog('none', ['[Config] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
 
-        #  handle plugins
-        for plugin in conf.plugins:
-            pref = plugin["unique_prefix"]  
-            print_plugin_info(plugin, ['display_name','description'])
+    #  handle plugins
+    for plugin in conf.plugins:
+        pref = plugin["unique_prefix"]  
+        print_plugin_info(plugin, ['display_name','description'])
 
-            # if plugin["enabled"] == 'true': 
-            
-            # collect plugin level language strings
-            collect_lang_strings(db, plugin, pref)
-            
-            for set in plugin["settings"]:
-                setFunction = set["function"]
-                # Setting code name / key  
-                key = pref + "_" + setFunction 
+        # if plugin["enabled"] == 'true': 
+        
+        # collect plugin level language strings
+        collect_lang_strings(db, plugin, pref)
+        
+        for set in plugin["settings"]:
+            setFunction = set["function"]
+            # Setting code name / key  
+            key = pref + "_" + setFunction 
 
-                v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
+            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
 
-                # Save the user defined value into the object
-                set["value"] = v
+            # Save the user defined value into the object
+            set["value"] = v
 
-                # Setup schedules
-                if setFunction == 'RUN_SCHD':
-                    newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(conf.tz))
-                    conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+            # Setup schedules
+            if setFunction == 'RUN_SCHD':
+                newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(conf.tz))
+                conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
-                # Collect settings related language strings
-                collect_lang_strings(db, set,  pref + "_" + set["function"])
+            # Collect settings related language strings
+            collect_lang_strings(db, set,  pref + "_" + set["function"])
 
-        conf.plugins_once_run = False
+    conf.plugins_once_run = False
     # -----------------
     # Plugins END
 

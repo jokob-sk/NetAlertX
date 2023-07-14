@@ -22,7 +22,7 @@
   "settings":[
     {
           "function": "dev_MAC",
-          "type": "label",
+          "type": "readonly",
           "maxLength": 50,
           "default_value": "",
           "options": [],
@@ -42,7 +42,7 @@
         },
         {
           "function": "dev_Name",
-          "type": "label",
+          "type": "readonly",
           "maxLength": 50,
           "default_value": "(unknown)",
           "options": [],
@@ -102,7 +102,7 @@
         },
          {
           "function": "dev_Vendor",
-          "type": "label",
+          "type": "readonly",
           "maxLength": 250,
           "default_value": "",
           "options": [],
@@ -122,7 +122,7 @@
         },
         {
           "function": "dev_Favorite",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -180,7 +180,7 @@
         },
         {
           "function": "dev_FirstConnection",
-          "type": "label",
+          "type": "readonly",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -200,7 +200,7 @@
         },
         {
           "function": "dev_LastConnection",
-          "type": "label",
+          "type": "readonly",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -220,7 +220,7 @@
         },
         {
           "function": "dev_LastIP",
-          "type": "label",
+          "type": "readonly",
           "maxLength": 50,
           "default_value": "",
           "options": [],
@@ -240,7 +240,7 @@
         },
         {
           "function": "dev_StaticIP",
-          "type": "label",
+          "type": "integer.checkbox",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -253,13 +253,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device has a static IP address. Uneditable - Autodetected."
+              "string": "Indicates whether the device has a static IP address."
             }
           ]
         },
         {
           "function": "dev_ScanCycle",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
@@ -272,13 +272,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The default value of the <code>Scan device</code> dropdown. Select <code>1</code> if newly discovered devices should be scanned (this will result in <code>Yes</code> being selected in the dropdown) or <code>0</code>, if not."
+              "string": "The default value of the <code>Scan device</code> dropdown. Enable if newly discovered devices should be scanned."
             }
           ]
         },
         {
           "function": "dev_LogEvents",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
@@ -296,7 +296,7 @@
         },
         {
           "function": "dev_AlertEvents",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
@@ -309,13 +309,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+              "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox."
             }
           ]
         },
         {
           "function": "dev_AlertDeviceDown",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -328,7 +328,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+              "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox."
             }
           ]
         },
@@ -347,13 +347,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Select the number of <b>hours</b> for which repeated notifications should be ignored for."
+              "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you enter <code>0</code> then you get notified on all events."
             }
           ]
         },
         {
           "function": "dev_LastNotification",
-          "type": "label",
+          "type": "readonly",
           "format": "date-time",
           "default_value": "",
           "options": [],
@@ -373,7 +373,7 @@
         },
        {
           "function": "dev_PresentLastScan",
-          "type": "label",
+          "type": "integer.checkbox",
           "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
@@ -386,13 +386,13 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device was present in the last scan. Uneditable - Autodetected."
+              "string": "Indicates whether the device should be marked as present after detected in a scan."
             }
           ]
         },
         {
           "function": "dev_NewDevice",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": true,
           "options": [],
           "localized": ["name", "description"],
@@ -405,7 +405,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox."
             }
           ]
         },
@@ -431,7 +431,7 @@
         },
         {
           "function": "dev_Archived",
-          "type": "integer",
+          "type": "integer.checkbox",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -444,7 +444,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device is archived. The default value of the <code>Archived</code> checkbox (<code>1</code> is checked, <code>0</code> is unchecked)."
+              "string": "Indicates whether the device is archived. The default value of the <code>Archived</code> checkbox."
             }
           ]
         },
@@ -469,7 +469,7 @@
         },
          {
           "function": "dev_Network_Node_port",
-          "type": "label",
+          "type": "readonly",
           "default_value": 0,
           "options": [],
           "localized": ["name", "description"],
@@ -501,7 +501,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The icon associated with the device."
+              "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
             }
           ]
         }

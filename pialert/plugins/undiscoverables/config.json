@@ -35,7 +35,7 @@
   "settings": [
     {
       "function": "RUN",            
-      "type": "selecttext",            
+      "type": "text.select",            
       "default_value":"disabled",
       "options": ["disabled", "once", "always_after_scan"],
       "localized": ["name", "description"],

@@ -193,19 +193,56 @@ def create_new_devices (db):
                     
     # arpscan - Create new devices
     mylog('debug','[New Devices] 2 Create devices')
+
+    # default New Device values preparation
+    newDevColumns  =   """dev_AlertEvents, 
+                          dev_AlertDeviceDown, 
+                          dev_PresentLastScan, 
+                          dev_Archived, 
+                          dev_NewDevice, 
+                          dev_SkipRepeated, 
+                          dev_ScanCycle, 
+                          dev_Owner, 
+                          dev_DeviceType, 
+                          dev_Favorite, 
+                          dev_Group, 
+                          dev_Comments, 
+                          dev_LogEvents, 
+                          dev_Location, 
+                          dev_Network_Node_MAC_ADDR, 
+                          dev_Icon"""
+
+    newDevDefaults =  f"""{get_setting_value('NEWDEV_dev_AlertEvents')}, 
+                          {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 
+                          {get_setting_value('NEWDEV_dev_PresentLastScan')}, 
+                          {get_setting_value('NEWDEV_dev_Archived')}, 
+                          {get_setting_value('NEWDEV_dev_NewDevice')}, 
+                          {get_setting_value('NEWDEV_dev_SkipRepeated')}, 
+                          {get_setting_value('NEWDEV_dev_ScanCycle')}, 
+                          '{get_setting_value('NEWDEV_dev_Owner')}', 
+                          '{get_setting_value('NEWDEV_dev_DeviceType')}',
+                          {get_setting_value('NEWDEV_dev_Favorite')}, 
+                          '{get_setting_value('NEWDEV_dev_Group')}', 
+                          '{get_setting_value('NEWDEV_dev_Comments')}', 
+                          {get_setting_value('NEWDEV_dev_LogEvents')}, 
+                          '{get_setting_value('NEWDEV_dev_Location')}',  
+                          '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}',  
+                          '{get_setting_value('NEWDEV_dev_Icon')}'
+                    """
     
     sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
-                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle, dev_Owner, dev_DeviceType, dev_Favorite, dev_Group, dev_Comments, dev_LogEvents, dev_Location, dev_Network_Node_MAC_ADDR, dev_Icon)
+                        {newDevColumns})
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
-                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}, '{get_setting_value('NEWDEV_dev_Owner')}', '{get_setting_value('NEWDEV_dev_DeviceType')}',{get_setting_value('NEWDEV_dev_Favorite')}, '{get_setting_value('NEWDEV_dev_Group')}', '{get_setting_value('NEWDEV_dev_Comments')}', {get_setting_value('NEWDEV_dev_LogEvents')}, '{get_setting_value('NEWDEV_dev_Location')}',  '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}',  '{get_setting_value('NEWDEV_dev_Icon')}'
+                        {newDevDefaults}
                     FROM CurrentScan
                     WHERE cur_ScanCycle = ? 
                       AND NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """
+
     mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
-    sql.execute (sqlQuery,
-                    (startTime, startTime, conf.cycle) ) 
+
+    sql.execute (sqlQuery, (startTime, startTime, conf.cycle) ) 
 
     # Pi-hole - Insert events for new devices
     # NOT STRICYLY NECESARY (Devices can be created through Current_Scan)
@@ -224,19 +261,24 @@ def create_new_devices (db):
     # Pi-hole - Create New Devices
     # Bugfix #2 - Pi-hole devices w/o IP
     mylog('debug','[New Devices] 4 Pi-hole Create devices')
-    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
+
+    sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
-                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
+                        {newDevColumns})
                     SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
                         ?, ?,
-                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}  
+                        {newDevDefaults}
                     FROM PiHole_Network
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
-                                      WHERE dev_MAC = PH_MAC) """,
-                    (startTime, startTime) ) 
+                                      WHERE dev_MAC = PH_MAC) """
+    
+    mylog('debug',f'[New Devices] 4 Create devices SQL: {sqlQuery}')
+
+    sql.execute (sqlQuery, (startTime, startTime) ) 
 
     # DHCP Leases - Insert events for new devices
     mylog('debug','[New Devices] 5 DHCP Leases Events')
+
     sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
@@ -248,15 +290,10 @@ def create_new_devices (db):
 
     # DHCP Leases - Create New Devices
     mylog('debug','[New Devices] 6 DHCP Leases Create devices')
-    # BUGFIX #23 - Duplicated MAC in DHCP.Leases
-    # TEST - Force Duplicated MAC
-        # sql.execute ("""INSERT INTO DHCP_Leases VALUES
-        #                 (1610700000, 'TEST1', '10.10.10.1', 'Test 1', '*')""")
-        # sql.execute ("""INSERT INTO DHCP_Leases VALUES
-        #                 (1610700000, 'TEST2', '10.10.10.2', 'Test 2', '*')""")
-    sql.execute (f"""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
+
+    sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
                         dev_Vendor, dev_FirstConnection, dev_LastConnection,                        
-                        dev_AlertEvents, dev_AlertDeviceDown, dev_PresentLastScan, dev_Archived, dev_NewDevice, dev_SkipRepeated, dev_ScanCycle)
+                        {newDevColumns})
                     SELECT DISTINCT DHCP_MAC,
                         (SELECT DHCP_Name FROM DHCP_Leases AS D2
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
@@ -265,22 +302,15 @@ def create_new_devices (db):
                          WHERE D2.DHCP_MAC = D1.DHCP_MAC
                          ORDER BY DHCP_DateTime DESC LIMIT 1),
                         '(unknown)', ?, ?, 
-                        {get_setting_value('NEWDEV_dev_AlertEvents')}, {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 1, {get_setting_value('NEWDEV_dev_Archived')}, {get_setting_value('NEWDEV_dev_NewDevice')}, {get_setting_value('NEWDEV_dev_SkipRepeated')}, {get_setting_value('NEWDEV_dev_ScanCycle')}    
+                        {newDevDefaults}    
                     FROM DHCP_Leases AS D1
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
-                                      WHERE dev_MAC = DHCP_MAC) """,
-                    (startTime, startTime) ) 
+                                      WHERE dev_MAC = DHCP_MAC) """
 
-    # sql.execute ("""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
-    #                     dev_LastIP, dev_FirstConnection, dev_LastConnection,
-    #                     dev_ScanCycle, dev_AlertEvents, dev_AlertDeviceDown,
-    #                     dev_PresentLastScan)
-    #                 SELECT DHCP_MAC, DHCP_Name, '(unknown)', DHCP_IP, ?, ?,
-    #                     1, 1, 0, 1
-    #                 FROM DHCP_Leases
-    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
-    #                                   WHERE dev_MAC = DHCP_MAC) """,
-    #                 (startTime, startTime) ) 
+    mylog('debug',f'[New Devices] 6 Create devices SQL: {sqlQuery}')
+
+    sql.execute (sqlQuery, (startTime, startTime) ) 
+
     mylog('debug','[New Devices] New Devices end')
     db.commitDB()
 

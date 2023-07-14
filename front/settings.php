@@ -142,35 +142,35 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             // text - textbox
             if($set['Type'] == 'text' || $set['Type'] == 'string' || $set['Type'] == 'date-time'  ) 
             {
-              $input = '<input class="form-control" onChange="settingsChanged()" id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
+              $input = '<input class="form-control" onChange="settingsChanged()"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
             } 
             // password - hidden text
             elseif ($set['Type'] == 'password')
             {
-              $input = '<input onChange="settingsChanged()" class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
+              $input = '<input onChange="settingsChanged()"  my-data-type="'.$set['Type'].'"  class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
             }
             // readonly 
             elseif ($set['Type'] == 'readonly')
             {
-              $input = '<input class="form-control input" id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
+              $input = '<input class="form-control input"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
             }
             // boolean - checkbox
-            elseif ($set['Type'] == 'boolean')
+            elseif ($set['Type'] == 'boolean' || $set['Type'] == 'integer.checkbox')
             {
               $checked = "";
-              if ($set['Value'] == "True") { $checked = "checked";};
-              $input = '<input onChange="settingsChanged()" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';              
+              if ($set['Value'] == "True" || $set['Value'] == "1") { $checked = "checked";};
+              $input = '<input onChange="settingsChanged()" my-data-type="'.$set['Type'].'" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';              
               
             }
             // integer - number input
             elseif ($set['Type'] == 'integer')
             {
-              $input = '<input onChange="settingsChanged()" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
+              $input = '<input onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
             }
-            // selecttext - dropdown
-            elseif ($set['Type'] == 'selecttext')
+            // text.select - dropdown
+            elseif ($set['Type'] == 'text.select')
             {
-              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
               
               $values = createArray($set['Value']);
               $options = createArray($set['Options']);
@@ -186,10 +186,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               }                
               $input = $input.'</select>';
             }
-            // selectinteger - dropdown
-            elseif ($set['Type'] == 'selectinteger')
+            // integer.select - dropdown
+            elseif ($set['Type'] == 'integer.select')
             {
-              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
+              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
 
               $values = createArray($set['Value']);
               $options = createArray($set['Options']);
@@ -206,10 +206,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               }                
               $input = $input.'</select>';
             }
-            // multiselect
-            elseif ($set['Type'] == 'multiselect')
+            // text.multiselect
+            elseif ($set['Type'] == 'text.multiselect')
             {
-              $input = '<select onChange="settingsChanged()" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
+              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
 
               $values = createArray($set['Value']);
               $options = createArray($set['Options']);
@@ -231,7 +231,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               $input = $input.
               '<div class="row form-group">
                 <div class="col-xs-5">
-                  <input class="form-control" id="ipMask" type="text" placeholder="192.168.1.0/24"/>
+                  <input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>
                 </div>';
               // Add interface button
               $input = $input.
@@ -243,7 +243,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               
               // list all interfaces as options
               $input = $input.'<div class="form-group">
-                <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
+                <select class="form-control"  my-data-type="'.$set['Type'].'" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
                 
               $options = createArray($set['Value']);                
 
@@ -274,7 +274,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               
               // list all interfaces as options
               $input = $input.'<div class="form-group">
-                <select class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
+                <select class="form-control"  my-data-type="'.$set['Type'].'"  name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
                 
               $options = createArray($set['Value']);                
 
@@ -423,7 +423,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     // generate javascript to collect values    
     <?php 
 
-    $noConversion = array('text', 'integer', 'password', 'readonly', 'selecttext', 'selectinteger', 'multiselect'); 
+    $noConversion = array('text', 'integer', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'); 
 
     foreach ($settings as $set) { 
       if(in_array($set['Type'] , $noConversion))
@@ -434,6 +434,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       elseif ($set['Type'] == "boolean")
       {
         echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
+        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temp ]);';  
+      }
+      elseif ($set['Type'] == "integer.checkbox")
+      {
+        echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
+        echo 'temp ? temp = 1 : temp = 0;';
         echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temp ]);';  
       }
       elseif ($set["Code_Name"] == "SCAN_SUBNETS")
