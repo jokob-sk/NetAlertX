@@ -81,9 +81,6 @@ def main ():
     conf.check_report = [1, "internet_IP", "update_vendors_silent"]
     conf.plugins_once_run = False
     
-    pialert_start_time = timeNow()
-
-
     # to be deleted if not used 
     conf.log_timestamp = conf.time_started
     #cron_instance = Cron()
@@ -115,14 +112,12 @@ def main ():
     # Upgrade DB if needed
     db.upgradeDB()
 
-
     #===============================================================================
     # This is the main loop of Pi.Alert 
     #===============================================================================
     while True:
 
         # update time started
-        time_started = datetime.datetime.now()  # not sure why we need this ...
         loop_start_time = timeNow()
         mylog('debug', '[MAIN] Starting loop')
 
@@ -133,6 +128,7 @@ def main ():
         # if newVersionAvailable is already true the function does nothing and returns true again
         mylog('debug', [f"[Version check] Last version check timestamp: {last_version_check}"])
         if last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
+            last_version_check = loop_start_time
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
@@ -150,13 +146,13 @@ def main ():
         if last_scan_run + datetime.timedelta(minutes=1) < loop_start_time :
 
              # last time any scan or maintenance/upkeep was run
-            last_scan_run = time_started
+            last_scan_run = loop_start_time
 
             # Header
             updateState(db,"Process: Start")      
 
             # Timestamp
-            startTime = time_started
+            startTime = loop_start_time
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
@@ -167,14 +163,14 @@ def main ():
             # --------------------------------------------
 
             # check for changes in Internet IP
-            if last_internet_IP_scan + datetime.timedelta(minutes=3) < time_started:
+            if last_internet_IP_scan + datetime.timedelta(minutes=3) < loop_start_time:
                 conf.cycle = 'internet_IP'                
-                last_internet_IP_scan = time_started
+                last_internet_IP_scan = loop_start_time
                 check_internet_IP(db)
 
             # Update vendors once a week
-            if last_update_vendors + datetime.timedelta(days = 7) < time_started:
-                last_update_vendors = time_started
+            if last_update_vendors + datetime.timedelta(days = 7) < loop_start_time:
+                last_update_vendors = loop_start_time
                 conf.cycle = 'update_vendors'
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
                 update_devices_MAC_vendors(db)
@@ -218,8 +214,8 @@ def main ():
                     performNmapScan(db, get_all_devices(db))
             
             # Perform a network scan via arp-scan or pihole
-            if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < time_started:
-                last_network_scan = time_started
+            if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < loop_start_time:
+                last_network_scan = loop_start_time
                 conf.cycle = 1 # network scan
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])
                 updateState(db,"Scan: Network")
@@ -277,8 +273,8 @@ def main ():
                 send_notifications(db)
 
             # clean up the DB once an hour
-            if last_cleanup + datetime.timedelta(hours = 1) < time_started:
-                last_cleanup = time_started
+            if last_cleanup + datetime.timedelta(hours = 1) < loop_start_time:
+                last_cleanup = loop_start_time
                 conf.cycle = 'cleanup'  
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])
                 db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA, conf.HRS_TO_KEEP_NEWDEV)   
