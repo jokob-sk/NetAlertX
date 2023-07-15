@@ -2,25 +2,54 @@
 
 
 
-    <!-- Main content ---------------------------------------------------------- -->
-    <section class="content">
-        <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
-            <ul id="tabs-location" class="nav nav-tabs">
-                <!-- PLACEHOLDER -->
-            </ul>  
-            <div id="tabs-content-location" class="tab-content"> 
-                <!-- PLACEHOLDER -->
-            </div>   
-        
-    </section>
+<!-- Main content ---------------------------------------------------------- -->
+<section class="content">
+    <div>
+        <div class="input-group">
+            <input class="form-control" id="txtMacFilter" type="text" value="--">
+        </div>
+    </div>
+    <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
+        <ul id="tabs-location" class="nav nav-tabs">
+            <!-- PLACEHOLDER -->
+        </ul>  
+        <div id="tabs-content-location" class="tab-content"> 
+            <!-- PLACEHOLDER -->
+        </div>   
+    
+</section>
 
 
 <script defer>
 
-var urlParams = new URLSearchParams(window.location.search);
-mac = urlParams.get ('mac');
+// -----------------------------------------------------------------------------
+// Initializes fields based on current MAC
+function initFields() {   
 
-console.log(mac)
+    var urlParams = new URLSearchParams(window.location.search);
+    mac = urlParams.get ('mac');    
+
+    // if the current mac has changed, reinitialize the data
+    if(mac != undefined && $("#txtMacFilter").val() != mac)
+    {
+        $("#txtMacFilter").val(mac);
+        console.log("UPDATE");
+
+        getData();
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Checking if current MAC has changed and triggering an updated if needed
+function updater() {   
+
+    initFields()
+
+    // loop
+    setTimeout(function() {
+        updater();
+    }, 500);   
+}
 
 // -----------------------------------------------------------------------------
 // Get form control according to the column definition from config.json > database_column_definitions
@@ -80,7 +109,7 @@ function getFormControl(dbColumnDef, value, index) {
 }
 
 // -----------------------------------------------------------------------------
-// Update the coresponding DB column and entry
+// Update the corresponding DB column and entry
 function saveData (id) {
     columnName  = $(`#${id}`).attr('data-my-column')
     index  = $(`#${id}`).attr('data-my-index')
@@ -175,23 +204,31 @@ function generateTabs()
 {
     activetab = 'active'
 
-    $.each(pluginDefinitions, function(index, obj) {
+    //  clear previous headers data
+    $('#tabs-location').html("");
+    //  clear previous content data
+    $('#tabs-content-location').html("");
 
-        // console.log(obj)
+    $.each(pluginDefinitions, function(index, pluginObj) {
 
-        $('#tabs-location').append(
-            `<li class=" ${activetab}">
-                <a href="#${obj.unique_prefix}" data-plugin-prefix="${obj.unique_prefix}" id="${obj.unique_prefix}_id" data-toggle="tab" >
-                ${localize(obj, 'icon')} ${localize(obj, 'display_name')}
-                </a>
-            </li>`
-        );
-        activetab = '' // only first tab is active
+        // console.log(pluginObj)
+
+        if(pluginObj.data_source != "template") // hiding template-based plugins as they don't produce any output
+        {
+            $('#tabs-location').append(
+                `<li class=" ${activetab}">
+                    <a href="#${pluginObj.unique_prefix}" data-plugin-prefix="${pluginObj.unique_prefix}" id="${pluginObj.unique_prefix}_id" data-toggle="tab" >
+                    ${localize(pluginObj, 'icon')} ${localize(pluginObj, 'display_name')}
+                    </a>
+                </li>`
+            );
+            activetab = '' // only first tab is active
+        }
     });
 
     activetab = 'active'
     
-    $.each(pluginDefinitions, function(index, obj) {
+    $.each(pluginDefinitions, function(index, pluginObj) {
 
         headersHtml = ""        
         colDefinitions = []
@@ -200,7 +237,7 @@ function generateTabs()
         hiRows = ""
 
         // Generate the header
-        $.each(obj["database_column_definitions"], function(index, colDef){
+        $.each(pluginObj["database_column_definitions"], function(index, colDef){
             if(colDef.show == true) // select only the ones to show
             {
                 colDefinitions.push(colDef)            
@@ -212,7 +249,7 @@ function generateTabs()
         var eveCount = 0;
         for(i=0;i<pluginUnprocessedEvents.length;i++)
         {
-            if(pluginUnprocessedEvents[i].Plugin == obj.unique_prefix)
+            if(pluginUnprocessedEvents[i].Plugin == pluginObj.unique_prefix)
             {
                 clm = ""
 
@@ -231,7 +268,7 @@ function generateTabs()
         
         for(i=pluginHistory.length-1;i >= 0;i--) // from latest to the oldest
         {
-            if(pluginHistory[i].Plugin == obj.unique_prefix)
+            if(pluginHistory[i].Plugin == pluginObj.unique_prefix)
             {
                 if(histCount < 50) // only display 50 entries to optimize performance
                 {       
@@ -253,27 +290,31 @@ function generateTabs()
         var obCount = 0;
         for(var i=0;i<pluginObjects.length;i++)
         {
-            if(pluginObjects[i].Plugin == obj.unique_prefix)
+            if(pluginObjects[i].Plugin == pluginObj.unique_prefix)
             {
-                clm = ""
+                if(shouldBeShown(pluginObjects[i], pluginObj)) // filter TODO
+                {
+                    clm = ""
 
-                for(var j=0;j<colDefinitions.length;j++) 
-                {   
-                    clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
-                }                                   
-                obRows += `<tr data-my-index="${pluginObjects[i]["Index"]}" >${clm}</tr>`
-                obCount++;
+                    for(var j=0;j<colDefinitions.length;j++) 
+                    {   
+                        clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
+                    }                                   
+                    obRows += `<tr data-my-index="${pluginObjects[i]["Index"]}" >${clm}</tr>`
+                    obCount++;
+                }
             }            
         }
 
+        // Generate the HTML
 
         $('#tabs-content-location').append(
             `    
-            <div id="${obj.unique_prefix}" class="tab-pane ${activetab}">
+            <div id="${pluginObj.unique_prefix}" class="tab-pane ${activetab}">
                 <div class="nav-tabs-custom" style="margin-bottom: 0px">
                     <ul class="nav nav-tabs">
                         <li class="active" >
-                            <a href="#objectsTarget_${obj.unique_prefix}" data-toggle="tab" >
+                            <a href="#objectsTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${obCount})
                                 
@@ -281,7 +322,7 @@ function generateTabs()
                         </li>
 
                         <li >
-                            <a href="#eventsTarget_${obj.unique_prefix}" data-toggle="tab" >
+                            <a href="#eventsTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${eveCount})
                                 
@@ -289,7 +330,7 @@ function generateTabs()
                         </li>
 
                         <li >
-                            <a href="#historyTarget_${obj.unique_prefix}" data-toggle="tab" >
+                            <a href="#historyTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCountDisplayed} out of ${histCount} )
                                 
@@ -302,7 +343,7 @@ function generateTabs()
 
                 <div class="tab-content">
 
-                    <div id="objectsTarget_${obj.unique_prefix}" class="tab-pane ${activetab}">
+                    <div id="objectsTarget_${pluginObj.unique_prefix}" class="tab-pane ${activetab}">
                         <table class="table table-striped" data-my-dbtable="Plugins_Objects"> 
                             <tbody>
                                 <tr>
@@ -312,10 +353,10 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Gen_DeleteAll');?></button> 
                         </div> 
                     </div>
-                    <div id="eventsTarget_${obj.unique_prefix}" class="tab-pane">
+                    <div id="eventsTarget_${pluginObj.unique_prefix}" class="tab-pane">
                         <table class="table table-striped" data-my-dbtable="Plugins_Events">
                         
                             <tbody>
@@ -326,10 +367,10 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_Events' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Events' )"><?= lang('Gen_DeleteAll');?></button> 
                         </div> 
                     </div>    
-                    <div id="historyTarget_${obj.unique_prefix}" class="tab-pane">
+                    <div id="historyTarget_${pluginObj.unique_prefix}" class="tab-pane">
                         <table class="table table-striped" data-my-dbtable="Plugins_History">
                         
                             <tbody>
@@ -340,7 +381,7 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${obj.unique_prefix}', 'Plugins_History' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_History' )"><?= lang('Gen_DeleteAll');?></button> 
                         </div> 
                     </div>                   
 
@@ -349,10 +390,10 @@ function generateTabs()
 
                 <div class='plugins-description'>
 
-                    ${localize(obj, 'description')} 
+                    ${localize(pluginObj, 'description')} 
                 
                     <span>
-                        <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins/${obj.code_name}" target="_blank"><?= lang('Gen_ReadDocs');?></a>
+                        <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins/${pluginObj.code_name}" target="_blank"><?= lang('Gen_ReadDocs');?></a>
                     </span>
                 
                 </div>
@@ -366,6 +407,7 @@ function generateTabs()
 }
 
 // --------------------------------------------------------
+// Handle active / selected tabs
 // handle first tab (objectsTarget_) display 
 function initTabs()
 {
@@ -404,6 +446,14 @@ function initTabs()
 }
 
 // --------------------------------------------------------
+// Data cleanup/purge functionality
+function shouldBeShown(entry, pluginObj)
+{
+    return true;
+}
+
+// --------------------------------------------------------
+// Data cleanup/purge functionality
 plugPrefix = ''
 dbTable    = ''
 
@@ -446,7 +496,9 @@ function purgeVisible() {
 
 
 // -----------------------------------------------------------------------------
+// Main sequence
 
 getData()
+updater()
 
 </script>

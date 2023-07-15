@@ -13,7 +13,7 @@
   | Devices     | The main devices database that also contains the Network tree mappings. If `ScanCycle` is set to `0` device is not scanned. | ![Screen2][screen2]  | 
   | DHCP_Leases | Used for importing devices from DHCP_Leases files. Also leveraged by some plugins. | ![Screen3][screen3]  | 
   | Events | Used to collect connection/disconnection events. | ![Screen4][screen4]  | 
-  | Nmap_Scan | Contains results of the scheduled Nmap scan, taht is also displayed in the Nmap tab on each device. | ![Screen5][screen5]  | 
+  | Nmap_Scan | Contains results of the scheduled Nmap scan, that is also displayed in the Nmap tab on each device. | ![Screen5][screen5]  | 
   | Online_History   | Used to display the `Device presence over time` chart  | ![Screen6][screen6]  | 
   | Parameters       | Used to pass values between the frontend and backend. | ![Screen7][screen7]  | 
   | Pholus_Scan      | Scan results of the Pholus python network penetration script. | ![Screen8][screen8]  | 

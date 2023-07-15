@@ -852,6 +852,7 @@ function main () {
   var urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has ('mac') == true) {
     mac = urlParams.get ('mac');
+    setCache("piaDeviceDetailsMac", mac); // set cookie
   } else {
     $('#pageTitle').html ('Device not found');
   }
@@ -1544,7 +1545,10 @@ function performSwitch(direction)
 
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
+  
   mac = devicesList[pos].mac.toString();
+
+  setCache("piaDeviceDetailsMac", mac);
     
   getDeviceData (true); 
 

@@ -58,9 +58,6 @@ def importConfigs (db):
         return
 
     conf.lastImportedConfFile = os.path.getmtime(config_file)  
-
-
-
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -85,14 +82,6 @@ def importConfigs (db):
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')
-
-    # # New device defaults    
-    # conf.NEWDEV_SCAN = ccd('NEWDEV_SCAN', 1 , c_d, 'Scan Device', 'integer.select', "['0', '1']", 'NewDeviceDefaults')
-    # conf.NEWDEV_ALERT_ALL = ccd('NEWDEV_ALERT_ALL', 0 , c_d, 'Alert All Events', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_ALERT_DWN = ccd('NEWDEV_ALERT_DWN', 0 , c_d, 'Alert Down', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_NEWDEV = ccd('NEWDEV_NEWDEV', 1 , c_d, 'New Device', 'integer.select', "['0', '1']",  'NewDeviceDefaults')
-    # conf.NEWDEV_ARCHIVED = ccd('NEWDEV_ARCHIVED', 0 , c_d, 'Archived', 'integer.select', "['0', '1']", 'NewDeviceDefaults')
-    # conf.NEWDEV_SKIPNTF = ccd('NEWDEV_SKIPNTF', 0 , c_d, 'Skip repeated notifications for', 'integer.select', "['0', '1', '8', '24', '168']", 'NewDeviceDefaults')
 
     # Email
     conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])

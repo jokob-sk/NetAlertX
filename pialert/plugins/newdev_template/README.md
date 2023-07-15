@@ -8,4 +8,4 @@ A simple template-based plugin for new devices. You can change the default value
 
 ### Notes
 
-- This plugin generates editable settings taht are then used in the `device.py` script to initialize new values.
+- This plugin generates editable settings that are then used in the `device.py` script to initialize new values.
