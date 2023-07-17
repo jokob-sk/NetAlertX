@@ -1,0 +1,1 @@
+Content moved to: https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins 
