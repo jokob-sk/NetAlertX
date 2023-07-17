@@ -30,6 +30,8 @@ def timeNowTZ():
 def updateState(db, newState):
 
     # ?? Why is the state written to the DB?
+    # The state is written to the DB so the front-end can use the value to display the current state in the header of the app
+    # The Parameters DB table is used to communicate with the front end. 
 
     #sql = db.sql
 
@@ -63,6 +65,8 @@ def checkPermissionsOK():
     dbR_access = (os.access(fullDbPath, os.R_OK))
     dbW_access = (os.access(fullDbPath, os.W_OK))
 
+    mylog('none', ['\n'])
+    mylog('none', ['The container restarted (started). If this is unexpected check bit.ly/PiAlertDebug for troubleshooting tips.'])
     mylog('none', ['\n'])
     mylog('none', ['Permissions check (All should be True)'])
     mylog('none', ['------------------------------------------------'])
