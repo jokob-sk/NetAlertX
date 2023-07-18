@@ -448,7 +448,37 @@ function initTabs()
 // --------------------------------------------------------
 // Data cleanup/purge functionality
 function shouldBeShown(entry, pluginObj)
-{
+{    
+    if (pluginObj.hasOwnProperty('data_filters')) {
+        let dataFilters = pluginObj.data_filters;
+        // Loop through 'data_filters' array
+        for (let i = 0; i < dataFilters.length; i++) {
+
+            // console.log(dataFilters[i])
+            compare_field_id = dataFilters[i].compare_field_id;
+            compare_column = dataFilters[i].compare_column;
+            compare_operator = dataFilters[i].compare_operator;
+            compare_field_id_value = $(`#${compare_field_id}`).val();            
+
+ 
+
+            if(compare_field_id_value != undefined && compare_field_id_value != '--') 
+            {
+                // valid value
+                console.log(compare_field_id_value)
+                console.log(compare_column)
+                console.log(compare_operator)
+
+                console.log(entry[compare_column])    
+                console.log(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`)    
+
+
+
+                return eval(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`);
+                              
+            }
+        }
+    }
     return true;
 }
 
