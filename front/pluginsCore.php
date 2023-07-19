@@ -458,7 +458,8 @@ function shouldBeShown(entry, pluginObj)
             compare_field_id = dataFilters[i].compare_field_id;
             compare_column = dataFilters[i].compare_column;
             compare_operator = dataFilters[i].compare_operator;
-            compare_field_id_value = $(`#${compare_field_id}`).val();            
+            compare_js_wrapper = dataFilters[i].compare_js_wrapper;
+            compare_field_id_value = $(`#${compare_field_id}`).val();           
 
  
 
@@ -468,13 +469,26 @@ function shouldBeShown(entry, pluginObj)
                 console.log(compare_field_id_value)
                 console.log(compare_column)
                 console.log(compare_operator)
+                console.log(entry[compare_column])
 
-                console.log(entry[compare_column])    
-                console.log(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`)    
+                // console.log(entry[compare_column])    
+                // console.log(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`)    
+                // console.log(`${compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)} ${compare_operator} ${compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)}`)    
+                // console.log(eval(`${compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)} ${compare_operator} ${compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)}`))    
+                let left = compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)
+                let right = compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)
 
+                console.log(`${eval(left)}` +
+                            ` ${compare_operator} ` + 
+                    `${eval(right)}`)
 
+                result =  eval(
+                            `${eval(left)}` +
+                                    ` ${compare_operator} ` + 
+                            `${eval(right)}`
+                            ); 
 
-                return eval(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`);
+                return result;
                               
             }
         }
