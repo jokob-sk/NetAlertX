@@ -3,6 +3,14 @@
     "unique_prefix": "UNFIMP",
     "enabled": true,    
     "data_source":  "python-script",
+    "data_filters": [
+        {
+            "compare_column" : "Object_PrimaryID",
+            "compare_operator" : "==",
+            "compare_field_id": "txtMacFilter",
+            "compare_js_wrapper": "'{value}.toString()'" 
+        }
+    ],
     "localized": ["display_name", "description", "icon"],
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{

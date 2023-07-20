@@ -193,6 +193,29 @@ Required `CMD` setting example with above query (you can set `"type": "label"` i
 
 Used to initialize internal settings. Check the `newdev_template` plugin for details.
 
+## Filters
+
+Plugin entries can be filtered based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a mac address that's available in the `mac` query string. 
+
+  | Property | Required | Description | 
+  |----------------------|----------------------|----------------------| 
+  | `compare_column` | yes | Plugin column name that's value is used for comparison (**Left** side of the equation) |
+  | `compare_operator` |  yes | JavaScript comparison operator |
+  | `compare_field_id` | yes | The `id` of a input text field containing a value is used for comparison (**Right** side of the equation)|
+  | `compare_js_wrapper` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
+  
+
+```json
+    "data_filters": [
+        {
+            "compare_column" : "Object_PrimaryID",
+            "compare_operator" : "==",
+            "compare_field_id": "txtMacFilter",
+            "compare_js_wrapper": "'{value}.toString()'" 
+        }
+    ],
+```
+
 ### Mapping the plugin results into a database table
 
 PiAlert will take the results of the plugin execution and insert these results into a database table, if a plugin contains the property `"mapped_to_table"` in the `config.json` root. The mapping of the columns is defined in the `database_column_definitions` array.

@@ -446,22 +446,21 @@ function initTabs()
 }
 
 // --------------------------------------------------------
-// Data cleanup/purge functionality
+// Filter method taht determines if an entry should be shown
 function shouldBeShown(entry, pluginObj)
 {    
     if (pluginObj.hasOwnProperty('data_filters')) {
+        
         let dataFilters = pluginObj.data_filters;
+
         // Loop through 'data_filters' array
         for (let i = 0; i < dataFilters.length; i++) {
-
-            // console.log(dataFilters[i])
+            
             compare_field_id = dataFilters[i].compare_field_id;
             compare_column = dataFilters[i].compare_column;
             compare_operator = dataFilters[i].compare_operator;
             compare_js_wrapper = dataFilters[i].compare_js_wrapper;
-            compare_field_id_value = $(`#${compare_field_id}`).val();           
-
- 
+            compare_field_id_value = $(`#${compare_field_id}`).val();            
 
             if(compare_field_id_value != undefined && compare_field_id_value != '--') 
             {
@@ -470,17 +469,10 @@ function shouldBeShown(entry, pluginObj)
                 console.log(compare_column)
                 console.log(compare_operator)
                 console.log(entry[compare_column])
-
-                // console.log(entry[compare_column])    
-                // console.log(`"${compare_field_id_value}" ${compare_operator} "${entry[compare_column]}"`)    
-                // console.log(`${compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)} ${compare_operator} ${compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)}`)    
-                // console.log(eval(`${compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)} ${compare_operator} ${compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)}`))    
+                
+                // resolve the left and right part of the comparison 
                 let left = compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)
                 let right = compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)
-
-                console.log(`${eval(left)}` +
-                            ` ${compare_operator} ` + 
-                    `${eval(right)}`)
 
                 result =  eval(
                             `${eval(left)}` +
@@ -488,8 +480,7 @@ function shouldBeShown(entry, pluginObj)
                             `${eval(right)}`
                             ); 
 
-                return result;
-                              
+                return result;                              
             }
         }
     }
