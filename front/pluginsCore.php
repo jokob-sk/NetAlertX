@@ -37,6 +37,7 @@ function initFields() {
 
         getData();
     }
+
 }
 
 // -----------------------------------------------------------------------------
@@ -353,7 +354,7 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>
                     <div id="eventsTarget_${pluginObj.unique_prefix}" class="tab-pane">
@@ -367,7 +368,7 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Events' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Events' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>    
                     <div id="historyTarget_${pluginObj.unique_prefix}" class="tab-pane">
@@ -381,7 +382,7 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_History' )"><?= lang('Gen_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_History' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>                   
 
@@ -446,38 +447,37 @@ function initTabs()
 }
 
 // --------------------------------------------------------
-// Filter method taht determines if an entry should be shown
+// Filter method that determines if an entry should be shown
 function shouldBeShown(entry, pluginObj)
 {    
     if (pluginObj.hasOwnProperty('data_filters')) {
         
         let dataFilters = pluginObj.data_filters;
 
-        // Loop through 'data_filters' array
+        // Loop through 'data_filters' array and appply filters on individual plugin entries
         for (let i = 0; i < dataFilters.length; i++) {
             
             compare_field_id = dataFilters[i].compare_field_id;
             compare_column = dataFilters[i].compare_column;
             compare_operator = dataFilters[i].compare_operator;
-            compare_js_wrapper = dataFilters[i].compare_js_wrapper;
+            compare_js_template = dataFilters[i].compare_js_template;
+            compare_use_quotes = dataFilters[i].compare_use_quotes;
             compare_field_id_value = $(`#${compare_field_id}`).val();            
 
             if(compare_field_id_value != undefined && compare_field_id_value != '--') 
             {
-                // valid value
-                console.log(compare_field_id_value)
-                console.log(compare_column)
-                console.log(compare_operator)
-                console.log(entry[compare_column])
-                
+                // valid value                
                 // resolve the left and right part of the comparison 
-                let left = compare_js_wrapper.replace('{value}', `"${compare_field_id_value}"`)
-                let right = compare_js_wrapper.replace('{value}', `"${entry[compare_column]}"`)
+                let left = compare_js_template.replace('{value}', `${compare_field_id_value}`)
+                let right = compare_js_template.replace('{value}', `${entry[compare_column]}`)
+
+                // include wrapper quotes if specified
+                compare_use_quotes ? quotes = '"' : quotes = ''                 
 
                 result =  eval(
-                            `${eval(left)}` +
-                                    ` ${compare_operator} ` + 
-                            `${eval(right)}`
+                                quotes +  `${eval(left)}` + quotes + 
+                                                ` ${compare_operator} ` + 
+                                quotes +  `${eval(right)}` + quotes 
                             ); 
 
                 return result;                              

@@ -8,7 +8,8 @@
             "compare_column" : "Object_PrimaryID",
             "compare_operator" : "==",
             "compare_field_id": "txtMacFilter",
-            "compare_js_wrapper": "'{value}.toString()'" 
+            "compare_js_template": "'{value}'.toString()", 
+            "compare_use_quotes": true 
         }
     ],
     "localized": ["display_name", "description", "icon"],

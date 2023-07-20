@@ -76,7 +76,7 @@ class DB():
     #===============================================================================
     # Cleanup / upkeep database
     #===============================================================================
-    def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV):
+    def cleanup_database (self, startTime, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST):
         """
         Cleaning out old records from the tables that don't need to keep all data.
         """
@@ -129,6 +129,11 @@ class DB():
                         AND Nmap_Scan.State = p2.State
                         AND Nmap_Scan.Service = p2.Service
                         );""")
+
+        # Delete all Plugins_History entries older than PLUGINS_KEEP_HIST setting 
+        mylog('verbose', [f'    Plugins_History: Delete all Plugins_History entries older than {str(PLUGINS_KEEP_HIST)} (PLUGINS_KEEP_HIST setting) days'])
+        self.sql.execute (f"""DELETE FROM Plugins_History 
+                                 WHERE DateTimeChanged <= date('now', '-{str(PLUGINS_KEEP_HIST)} day')""")
 
         # Shrink DB
         mylog('verbose', ['    Shrink Database'])

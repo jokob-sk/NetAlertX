@@ -505,6 +505,7 @@ $lang['en_us'] = array(
 
 'Plugins_Unprocessed_Events' => 'Unprocessed Events',
 'Plugins_Objects' => 'Plugin Objects',
+'Plugins_DeleteAll' => 'Delete all (filters are ignored)',
 'Plugins_History' => 'Events History',
 
 //////////////////////////////////////////////////////////////////
@@ -534,6 +535,8 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'TIMEZONE_description' => 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.',
 'ENABLE_PLUGINS_name' => 'Enable Plugins',
 'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
+'PLUGINS_KEEP_HIST_name' => 'Plugins History',
+'PLUGINS_KEEP_HIST_description' => 'How many days of Plugins History scan entries should be kept (globally, not device specific!).',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',
 'PIALERT_WEB_PROTECTION_description' => 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.',
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
@@ -687,6 +690,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 (e.g. validate at <a  href="https://crontab.guru/" target="_blank">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick="toggleAllSettings()" href="#TIMEZONE"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes.',
 'PHOLUS_DAYS_DATA_name' => 'Data retention',
 'PHOLUS_DAYS_DATA_description' => 'How many days of Pholus scan entries should be kept (globally, not device specific!) Enter <code>0</code> to disable.',
+
 
 // Nmap
 'Nmap_display_name' => 'Nmap',

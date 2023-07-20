@@ -195,15 +195,18 @@ Used to initialize internal settings. Check the `newdev_template` plugin for det
 
 ## Filters
 
-Plugin entries can be filtered based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a mac address that's available in the `mac` query string. 
+Plugin entries can be filtered based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
 
   | Property | Required | Description | 
   |----------------------|----------------------|----------------------| 
   | `compare_column` | yes | Plugin column name that's value is used for comparison (**Left** side of the equation) |
   | `compare_operator` |  yes | JavaScript comparison operator |
   | `compare_field_id` | yes | The `id` of a input text field containing a value is used for comparison (**Right** side of the equation)|
-  | `compare_js_wrapper` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
+  | `compare_js_template` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
+  | `compare_use_quotes` | yes | If `true` then the end result of the `compare_js_template` i swrapped in `"` quotes. Use to compare strings. |
   
+
+### Example Filter
 
 ```json
     "data_filters": [
@@ -211,10 +214,35 @@ Plugin entries can be filtered based on values entered into filter fields. The `
             "compare_column" : "Object_PrimaryID",
             "compare_operator" : "==",
             "compare_field_id": "txtMacFilter",
-            "compare_js_wrapper": "'{value}.toString()'" 
+            "compare_js_template": "'{value}'.toString()", 
+            "compare_use_quotes": true 
         }
     ],
 ```
+
+1. On the `pluginsCore.php` page is an input field with the `txtMacFilter` id:
+
+```html
+<input class="form-control" id="txtMacFilter" type="text" value="--">
+```
+
+2. This input field is initialized via the `&mac=` query string.
+
+3. The app then proceeds to use this Mac value from this field and compares it to the value of the `Object_PrimaryID` database field. The `compare_operator` is `==`.
+
+4. Both values, from the database field `Object_PrimaryID` and from the `txtMacFilter` are wrapped and evaluated with the `compare_js_template`, that is `'{value}.toString()'`.
+
+5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
+
+6. This results in for example this code: 
+
+```javascript
+    // left part of teh expression coming from compare_column and right from the input field
+    // notice the added quotes ()") around the left and right part of teh expression
+    "eval('ac:82:ac:82:ac:82".toString()')" == "eval('ac:82:ac:82:ac:82".toString()')"
+```
+
+7. Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
 ### Mapping the plugin results into a database table
 
