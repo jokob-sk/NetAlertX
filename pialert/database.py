@@ -10,10 +10,6 @@ from helper import json_struc, initOrSetParam, row_to_json, timeNow #, updateSta
 
 
 
-
-
-
-
 class DB():
     """
     DB Class to provide the basic database interactions.
@@ -96,7 +92,7 @@ class DB():
                              WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
                              
         # Cleanup Plugin Events History
-        mylog('verbose', ['[DB Cleanup] Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
+        mylog('verbose', ['[DB Cleanup] Plugins_History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
         self.sql.execute (f"""DELETE FROM Plugins_History 
                              WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
 
@@ -137,7 +133,6 @@ class DB():
                         AND Nmap_Scan.State = p2.State
                         AND Nmap_Scan.Service = p2.Service
                         );""")
-
 
 
         # Shrink DB

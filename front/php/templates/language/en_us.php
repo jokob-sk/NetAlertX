@@ -507,6 +507,7 @@ $lang['en_us'] = array(
 'Plugins_Objects' => 'Plugin Objects',
 'Plugins_DeleteAll' => 'Delete all (filters are ignored)',
 'Plugins_History' => 'Events History',
+'Plugins_Filters_Mac' => 'Mac Filter',
 
 //////////////////////////////////////////////////////////////////
 // Settings

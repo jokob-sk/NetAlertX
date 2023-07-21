@@ -4,16 +4,18 @@
 
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
-    <div>
-        <div class="input-group">
-            <input class="form-control" id="txtMacFilter" type="text" value="--">
+    <div class="plugin-filters">
+        <div class="input-group col-sm-4">
+            <label class="control-label col-sm-3"><?= lang('Plugins_Filters_Mac');?></label>
+            <input class="form-control col-sm-3" id="txtMacFilter" type="text" value="--" readonly>
         </div>
     </div>
     <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
-        <ul id="tabs-location" class="nav nav-tabs">
+        
+        <ul id="tabs-location" class="nav nav-tabs col-sm-2 ">
             <!-- PLACEHOLDER -->
         </ul>  
-        <div id="tabs-content-location" class="tab-content"> 
+        <div id="tabs-content-location" class="tab-content col-sm-10"> 
             <!-- PLACEHOLDER -->
         </div>   
     
@@ -217,8 +219,8 @@ function generateTabs()
         if(pluginObj.data_source != "template") // hiding template-based plugins as they don't produce any output
         {
             $('#tabs-location').append(
-                `<li class=" ${activetab}">
-                    <a href="#${pluginObj.unique_prefix}" data-plugin-prefix="${pluginObj.unique_prefix}" id="${pluginObj.unique_prefix}_id" data-toggle="tab" >
+                `<li class=" left-nav ${activetab}">
+                    <a class=" col-sm-12  " href="#${pluginObj.unique_prefix}" data-plugin-prefix="${pluginObj.unique_prefix}" id="${pluginObj.unique_prefix}_id" data-toggle="tab" >
                     ${localize(pluginObj, 'icon')} ${localize(pluginObj, 'display_name')}
                     </a>
                 </li>`

@@ -196,7 +196,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Is online?"
+                "string" : "Online?"
                 }]
         } ,       
         {
