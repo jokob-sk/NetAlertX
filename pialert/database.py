@@ -91,22 +91,30 @@ class DB():
                              order by Scan_Date desc limit 150)""")
         mylog('verbose', ['[DB Cleanup] Optimize Database'])
         # Cleanup Events
-        mylog('verbose', [f'[DB Cleanup] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days'])
+        mylog('verbose', [f'[DB Cleanup] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)'])
         self.sql.execute (f"""DELETE FROM Events 
                              WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
+                             
         # Cleanup Plugin Events History
-        mylog('verbose', ['[DB Cleanup] Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days'])
+        mylog('verbose', ['[DB Cleanup] Plugin Events History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
         self.sql.execute (f"""DELETE FROM Plugins_History 
                              WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
+
+        # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting 
+        mylog('verbose', [f'[DB Cleanup] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} (PLUGINS_KEEP_HIST setting)'])
+        self.sql.execute (f"""DELETE from Plugins_History where "Index" not in (
+                        SELECT "Index" from Plugins_History 
+                        order by "Index" desc limit {str(PLUGINS_KEEP_HIST)})""")
+
         # Cleanup Pholus_Scan
         if PHOLUS_DAYS_DATA != 0:
-            mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days'])
+            mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
             # todo: improvement possibility: keep at least N per mac
             self.sql.execute (f"""DELETE FROM Pholus_Scan 
                                  WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
         # Cleanup New Devices
         if HRS_TO_KEEP_NEWDEV != 0:
-            mylog('verbose', [f'[DB Cleanup] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours'])            
+            mylog('verbose', [f'[DB Cleanup] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
             self.sql.execute (f"""DELETE FROM Devices 
                                   WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
 
@@ -120,7 +128,7 @@ class DB():
                         AND Pholus_Scan.Record_Type = p2.Record_Type
                         );""")
         # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table
-        mylog('verbose', ['    Nmap_Scan: Delete all duplicates'])
+        mylog('verbose', ['[DB Cleanup] Nmap_Scan: Delete all duplicates'])
         self.sql.execute ("""DELETE  FROM Nmap_Scan
                         WHERE rowid > (
                         SELECT MIN(rowid) FROM Nmap_Scan p2
@@ -130,13 +138,10 @@ class DB():
                         AND Nmap_Scan.Service = p2.Service
                         );""")
 
-        # Delete all Plugins_History entries older than PLUGINS_KEEP_HIST setting 
-        mylog('verbose', [f'    Plugins_History: Delete all Plugins_History entries older than {str(PLUGINS_KEEP_HIST)} (PLUGINS_KEEP_HIST setting) days'])
-        self.sql.execute (f"""DELETE FROM Plugins_History 
-                                 WHERE DateTimeChanged <= date('now', '-{str(PLUGINS_KEEP_HIST)} day')""")
+
 
         # Shrink DB
-        mylog('verbose', ['    Shrink Database'])
+        mylog('verbose', ['[DB Cleanup] Shrink Database'])
         self.sql.execute ("VACUUM;")
         self.commitDB()
 

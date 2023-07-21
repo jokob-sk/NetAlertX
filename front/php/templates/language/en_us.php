@@ -536,7 +536,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'ENABLE_PLUGINS_name' => 'Enable Plugins',
 'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
 'PLUGINS_KEEP_HIST_name' => 'Plugins History',
-'PLUGINS_KEEP_HIST_description' => 'How many days of Plugins History scan entries should be kept (globally, not device specific!).',
+'PLUGINS_KEEP_HIST_description' => 'How many entries of Plugins History scan results should be kept (globally, not device specific!).',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',
 'PIALERT_WEB_PROTECTION_description' => 'When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.',
 'PIALERT_WEB_PASSWORD_name' => 'Login password',
