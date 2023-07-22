@@ -11,3 +11,5 @@ pialert/plugins/**/*.log
 __pycache__/
 *.py[cod]
 *$py.class
+
+**/last_result.log
