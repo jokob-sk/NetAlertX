@@ -4,7 +4,7 @@ config/pialert.conf
 db/*
 db/pialert.db
 front/log/*
-# **/plugins/**/*.log
+**/plugins/**/*.log
 **/%40eaDir/
 **/@eaDir/
 
@@ -12,5 +12,5 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# **/last_result.log
-# **/script.log
+**/last_result.log
+**/script.log
