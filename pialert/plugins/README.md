@@ -21,7 +21,15 @@
 |----------------------|----------------------| 
 | ![Screen 3][screen3] | ![Screen 4][screen4] | 
 
-PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted functionality this plugin system supports, is dynamic creation of a simple UI to interact with the discovered objects, a mechanism to surface settings of plugins in the UI, or to import objects into existing PiAlert database tables. (Currently, update/overwriting of existing objects is not supported.)
+PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
+
+* dynamic creation of a simple UI to interact with the discovered objects,
+* filtering of displayed values in the Devices UI
+* surface settings of plugins in the UI, 
+* different column types for reported values to e.g. link back to a device
+* import objects into existing PiAlert database tables 
+
+> (Currently, update/overwriting of existing objects is not supported.)
 
 Example use cases for plugins could be:
 
@@ -58,7 +66,7 @@ UI displays outdated values until the API endpoints get refreshed.
 > Folder name must be the same as the code name value in: `"code_name": "<value>"`
 > Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use. 
 
-  | File | Required | Description | 
+  | File | Required (plugin type) | Description | 
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
   | `script.py` |  yes (script) | The Python script itself |
@@ -87,17 +95,16 @@ More on specifics below.
 
 ## Supported data sources
 
-Currently, only 3 data sources are supported:
+Currently, only 3 data sources are supported (valid `data_source` value). 
 
-- Script
-- SQL query on the PiAlert database
-- Template
+- Script (`python-script`)
+- SQL query on the PiAlert database (`pialert-db-query`)
+- Template (`template`)
 
-You need to set the `data_source` to `pialert-db-query`, `python-script`, or `template`:
-
-```json
-"data_source":  "pialert-db-query"
-```
+> 🔎Example
+>```json
+>"data_source":  "pialert-db-query"
+>```
 Any of the above data sources have to return a "table" of the exact structure as outlined above.
 
 ### "data_source":  "python-script"
@@ -117,7 +124,7 @@ Any of the above data sources have to return a "table" of the exact structure as
 
 The [Undicoverables plugins `script.py` file](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](https://github.com/jokob-sk/Pi.Alert/blob/main/pialert/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
 
-#### last_result.log examples
+#### 🔎 last_result.log examples
 
 Valid CSV:
 
@@ -148,46 +155,46 @@ If the `data_source` is set to `pialert-db-query` the `CMD` setting needs to con
 
 This SQL query is executed on the `pialert.db` SQLite database file. 
 
-#### Examples
-
-SQL query example:
-
-```SQL
-SELECT  dv.dev_Name as Object_PrimaryID, 
-    cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
-    datetime() as DateTime,  
-    ns.Service as Watched_Value1,        
-    ns.State as Watched_Value2,
-    'null' as Watched_Value3,
-    'null' as Watched_Value4,
-    ns.Extra as Extra,
-    dv.dev_MAC as ForeignKey 
-FROM 
-    (SELECT * FROM Nmap_Scan) ns 
-LEFT JOIN 
-    (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv 
-ON ns.MAC = dv.dev_MAC
-```
-
-Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
-
-```json
-{
-            "function": "CMD",
-            "type": "text",
-            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "SQL to run"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
-            }]
-        }
-```
+>  🔎Example
+> 
+> SQL query example:
+> 
+> ```SQL
+> SELECT  dv.dev_Name as Object_PrimaryID, 
+>     cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
+>     datetime() as DateTime,  
+>     ns.Service as Watched_Value1,        
+>     ns.State as Watched_Value2,
+>     'null' as Watched_Value3,
+>     'null' as Watched_Value4,
+>     ns.Extra as Extra,
+>     dv.dev_MAC as ForeignKey 
+> FROM 
+>     (SELECT * FROM Nmap_Scan) ns 
+> LEFT JOIN 
+>     (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv 
+> ON ns.MAC = dv.dev_MAC
+> ```
+> 
+> Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
+> 
+> ```json
+> {
+>             "function": "CMD",
+>            "type": "text",
+>            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
+>            "options": [],
+>            "localized": ["name", "description"],
+>            "name" : [{
+>                "language_code":"en_us",
+>                "string" : "SQL to run"
+>            }],
+>             "description": [{
+>                 "language_code":"en_us",
+>                 "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
+>             }]
+>         }
+> ```
 
 ### "data_source":  "template"
 
@@ -206,19 +213,19 @@ Plugin entries can be filtered based on values entered into filter fields. The `
   | `compare_use_quotes` | yes | If `true` then the end result of the `compare_js_template` i swrapped in `"` quotes. Use to compare strings. |
   
 
-### Example Filter
-
-```json
-    "data_filters": [
-        {
-            "compare_column" : "Object_PrimaryID",
-            "compare_operator" : "==",
-            "compare_field_id": "txtMacFilter",
-            "compare_js_template": "'{value}'.toString()", 
-            "compare_use_quotes": true 
-        }
-    ],
-```
+> 🔎Example:
+> 
+> ```json
+>     "data_filters": [
+>         {
+>             "compare_column" : "Object_PrimaryID",
+>             "compare_operator" : "==",
+>             "compare_field_id": "txtMacFilter",
+>             "compare_js_template": "'{value}'.toString()", 
+>             "compare_use_quotes": true 
+>         }
+>     ],
+> ```
 
 1. On the `pluginsCore.php` page is an input field with the `txtMacFilter` id:
 
@@ -288,12 +295,12 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
 
 The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
 
-##### Example:
-Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
-
-```bash
-root@server# python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
-```
+> 🔎 Example:
+> Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
+> 
+> ```bash
+> root@server# python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
+> ```
 
 * You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below). 
 * You specify the parameter `urls` in the `params` section of the `config.json` the following way (`WEBMON_` is the plugin prefix automatically added to all the settings):
@@ -343,7 +350,7 @@ During script execution, the app will take the command `"python3 /home/pi/pialer
    - to
    - `python3 /home/pi/pialert/pialert/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
 
-Below are some general additional notes, when definig `params`: 
+Below are some general additional notes, when defining `params`: 
 
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
@@ -352,27 +359,27 @@ Below are some general additional notes, when definig `params`:
 - `"value" : "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
 
 
-Example:
-
-```json
-{
-    "params" : [{
-            "name"  : "macs",
-            "type"  : "sql",
-            "value" : "SELECT dev_MAC from DEVICES"
-        },
-        {
-            "name"  : "urls",
-            "type"  : "setting",
-            "value" : "WEBMON_urls_to_check"
-        },
-        {
-            "name"  : "internet_ip",
-            "type"  : "setting",
-            "value" : "WEBMON_SQL_internet_ip"
-        }]
-}
-```
+> 🔎Example:
+> 
+> ```json
+> {
+>     "params" : [{
+>             "name"  : "macs",
+>             "type"  : "sql",
+>             "value" : "SELECT dev_MAC from DEVICES"
+>         },
+>         {
+>             "name"  : "urls",
+>             "type"  : "setting",
+>             "value" : "WEBMON_urls_to_check"
+>         },
+>         {
+>             "name"  : "internet_ip",
+>             "type"  : "setting",
+>             "value" : "WEBMON_SQL_internet_ip"
+>         }]
+> }
+> ```
 
 
 #### Setting object structure
@@ -399,40 +406,42 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
   - `watched-not-changed` - reports even on events where selected `Watched_ValueN` did not change
 
 
-Example:
+> 🔎 Example:
+> 
+> ```json
+> {
+>     "function": "RUN",            
+>     "type": "text.select",            
+>     "default_value":"disabled",
+>     "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+>     "localized": ["name", "description"],
+>     "name" :[{
+>         "language_code":"en_us",
+>         "string" : "When to run"
+>     }],
+>     "description": [{
+>         "language_code":"en_us",
+>         "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+>     }]
+> }
+> ```
 
-```json
-{
-    "function": "RUN",            
-    "type": "text.select",            
-    "default_value":"disabled",
-    "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
-    "localized": ["name", "description"],
-    "name" :[{
-        "language_code":"en_us",
-        "string" : "When to run"
-    }],
-    "description": [{
-        "language_code":"en_us",
-        "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
-    }]
-}
-```
 ##### Localized strings
 
 - `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
 
-Example:
+> 🔎 Example:
+> 
+> ```json
+> 
+>     {
+>         "language_code":"en_us",
+>         "string" : "When to run"
+>     }
+> 
+> ```
 
-```json
-
-    {
-        "language_code":"en_us",
-        "string" : "When to run"
-    }
-
-```
 ##### UI settings in database_column_definitions
 
 The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
