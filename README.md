@@ -14,7 +14,7 @@ Scans for devices connected to your WIFI / LAN and alerts you if new and unknown
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📑 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) | 🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)
+🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) | 🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)
 
 ## 🔍 Scan Methods
 The system continuously scans the network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Scanning methods are:
@@ -34,13 +34,13 @@ The system continuously scans the network for, **New devices**, **New connection
    - [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) 
    - [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) 
    - [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md)
-   - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom script monitoring
+   - [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) for custom scripts monitoring and framework for extending the app
 
 # 📥 Installation
 <!--- --------------------------------------------------------------------- --->
 
- ⚠ Only tested as a [docker container - follow these instructions here](dockerfiles/README.md). 
- > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+ ⚠ Only tested as a [docker container - follow the guide here](dockerfiles/README.md). 
+ > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or check instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
 
 # 📑 Features   
   - Display:
