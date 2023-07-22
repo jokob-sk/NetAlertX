@@ -1,0 +1,61 @@
+{
+    "name":"unmark_new",    
+    "triggers": [
+        {
+            "type": "new",            
+            "object": 
+            {
+                "type": "db.row",
+                "target": "Devices"
+            }
+        }
+    ],
+    "steps": [
+        {
+            "step_type":"wait",
+            "params": [
+                {
+                    "days": 3,
+                    "hours": 0,
+                    "minutes": 0,
+                    "seconds": 0
+                }
+            ]
+        },
+        {
+            "step_type":"condition",
+            "params": [
+                {
+                    "left": {
+                        "value": "triggers[0].object['dev_NewDevice']",
+                        "use_quotes": true,
+                        "js_template": "'{value}'.toString()"
+                    },
+                    "operator": {
+                        "value" : "==",
+                        "data_type": "boolean"
+                    },
+                    "right": {
+                        "value": true,
+                        "use_quotes": false,
+                        "js_template": "'{value}'.toString()"
+                    }
+                }
+            ]
+        },
+        {
+            "step_type":"action",
+            "params": [
+                {
+                    "type": "plugin",            
+                    "params": 
+                    {
+                        "name": "UNMRK_NEW",
+                        "CMD": "db.row"                        
+                    }
+
+                }
+            ]
+        }
+    ]
+}

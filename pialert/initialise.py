@@ -5,6 +5,7 @@ from pytz import timezone
 from cron_converter import Cron
 from pathlib import Path
 import datetime
+import json
 
 import conf 
 from const import fullConfPath
@@ -23,7 +24,7 @@ from plugin import get_plugins_configs, print_plugin_info
 #-------------------------------------------------------------------------------
 # Import user values
 # Check config dictionary
-def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = ""):
+def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
     result = default
 
     # use existing value if already supplied, otherwise default value is used
@@ -33,8 +34,16 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=[], de
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
 
+    # # store setting metadata as a JSON
+    # ccd(f'{key}__metadata', set, c_d, "", "json" , "", pref)
+    # if inputtype == 'json':
+    #     result = json.dumps(result)
+
     conf.mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    conf.mySettingsSQLsafe.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
+
     conf.mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
+    conf.mySettings.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
 
     return result
 #-------------------------------------------------------------------------------
@@ -199,7 +208,7 @@ def importConfigs (db):
             # Setting code name / key  
             key = pref + "_" + setFunction 
 
-            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref)
+            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref, set)
 
             # Save the user defined value into the object
             set["value"] = v

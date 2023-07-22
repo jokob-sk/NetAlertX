@@ -286,7 +286,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               // Remove all interfaces button               
               $input = $input.'<div><button class="btn btn-primary" onclick="removeFromList'.$set['Code_Name'].'()">Remove last</button></div>';
               
-            }               
+            }          
+            //  json
+            elseif ($set['Type'] == 'json')
+            {
+              $input = '<input class="form-control input"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
+            }     
 
             $html = $html.$input;
 
@@ -427,8 +432,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     foreach ($settings as $set) { 
       if(in_array($set['Type'] , $noConversion))
-      {         
-        
+      { 
         echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", $("#'.$set["Code_Name"].'").val() ]);';
       } 
       elseif ($set['Type'] == "boolean")
@@ -468,6 +472,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         console.log(temps);
         ";
         echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
+      }
+      elseif ($set['Type'] == "json")
+      {
+        // todo
       }
     }
     

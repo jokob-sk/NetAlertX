@@ -35,7 +35,12 @@ function handleVersion(){
 
   function getVersion()
   {
-    release_timestamp = getCookie("release_timestamp")    
+    release_timestamp = getCookie("release_timestamp") 
+
+    release_timestampNum = Number(release_timestamp)
+
+    // logging    
+    console.log(`Latest release in cookie: ${new Date(release_timestampNum*1000)}`)
 
     // no cached value available
     if(release_timestamp == "")
@@ -43,11 +48,13 @@ function handleVersion(){
       $.get('https://api.github.com/repos/jokob-sk/Pi.Alert/releases').done(function(response) {
         // Handle successful response
         var releases = response;
+
+        console.log(response)
         
         if(releases.length > 0)
         {
           
-          release_datetime = releases[0].published_at;
+          release_datetime = releases[0].published_at; // get latest release
           release_timestamp = new Date(release_datetime).getTime() / 1000;          
 
           // cache value
