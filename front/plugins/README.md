@@ -251,7 +251,7 @@ Plugin entries can be filtered based on values entered into filter fields. The `
 
 7. Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
-### Mapping the plugin results into a database table
+### 🗺 Mapping the plugin results into a database table
 
 PiAlert will take the results of the plugin execution and insert these results into a database table, if a plugin contains the property `"mapped_to_table"` in the `config.json` root. The mapping of the columns is defined in the `database_column_definitions` array.
 
@@ -426,7 +426,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > }
 > ```
 
-##### Localized strings
+##### 🌍Localized strings
 
 - `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
