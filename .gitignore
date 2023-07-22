@@ -13,3 +13,4 @@ __pycache__/
 *$py.class
 
 **/last_result.log
+**/script.log
