@@ -200,7 +200,7 @@ This SQL query is executed on the `pialert.db` SQLite database file.
 
 Used to initialize internal settings. Check the `newdev_template` plugin for details.
 
-## Filters
+## 🕳 Filters
 
 Plugin entries can be filtered based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
 
