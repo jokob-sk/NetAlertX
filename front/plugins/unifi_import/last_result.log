@@ -1,0 +1,469 @@
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-08 13:24:42|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-08 13:24:42|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-08 13:24:42|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-08 13:24:42|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-08 13:24:42|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-08 13:24:42|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-08 13:24:42|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-08 13:24:42|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-08 13:24:42|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-08 13:24:42|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-08 13:24:42|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-08 13:24:42|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-08 13:24:42|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-08 13:24:42|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-08 13:24:42|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-08 13:24:42|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-08 13:24:42|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-08 13:24:42|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-08 13:24:42|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-08 13:24:42|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-08 13:24:42|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-08 13:24:42|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-08 13:24:42|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-08 13:24:42|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-08 13:24:42|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-08 13:24:42|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-08 13:24:42|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-08 13:24:42|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-08 13:24:42|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-08 13:30:49|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-08 13:30:49|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-08 13:30:49|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-08 13:30:49|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-08 13:30:49|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-08 13:30:49|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-08 13:30:49|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-08 13:30:49|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-08 13:30:49|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-08 13:30:49|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-08 13:30:49|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-08 13:30:49|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-08 13:30:49|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-08 13:30:49|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-08 13:30:49|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-08 13:30:49|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-08 13:30:49|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-08 13:30:49|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-08 13:30:49|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-08 13:30:49|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-08 13:30:49|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-08 13:30:49|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-08 13:30:49|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-08 13:30:49|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-08 13:30:49|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-08 13:30:49|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-08 13:30:49|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-08 13:30:49|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-08 13:30:49|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-08 13:39:07|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-08 13:39:07|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-08 13:39:07|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-08 13:39:07|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-08 13:39:07|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-08 13:39:07|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-08 13:39:07|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-08 13:39:07|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-08 13:39:07|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-08 13:39:07|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-08 13:39:07|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-08 13:39:07|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-08 13:39:07|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-08 13:39:07|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-08 13:39:07|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-08 13:39:07|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-08 13:39:07|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-08 13:39:07|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-08 13:39:07|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-08 13:39:07|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-08 13:39:07|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-08 13:39:07|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-08 13:39:07|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-08 13:39:07|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-08 13:39:07|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-08 13:39:07|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-08 13:39:07|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-08 13:39:07|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-08 13:39:07|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-08 13:39:07|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-10 12:19:28|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-10 12:19:28|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-10 12:19:28|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-10 12:19:28|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-10 12:19:28|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-10 12:19:28|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-10 12:19:28|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-10 12:19:28|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-10 12:19:28|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-10 12:19:28|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-10 12:19:28|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-10 12:19:28|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-10 12:19:28|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-10 12:19:28|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-10 12:19:28|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-10 12:19:28|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-10 12:19:28|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-10 12:19:28|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-10 12:19:28|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-10 12:19:28|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-10 12:19:28|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-10 12:19:28|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-10 12:19:28|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-10 12:19:28|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-10 12:19:28|KP115|null|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-10 12:19:28|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-10 12:19:28|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-10 12:19:28|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-10 12:19:28|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-10 12:22:32|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-10 12:22:32|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-10 12:22:32|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-10 12:22:32|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-10 12:22:32|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-10 12:22:32|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-10 12:22:32|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-10 12:22:32|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-10 12:22:32|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-10 12:22:32|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-10 12:22:32|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-10 12:22:32|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-10 12:22:32|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-10 12:22:32|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-10 12:22:32|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-10 12:22:32|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-10 12:22:32|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-10 12:22:32|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-10 12:22:32|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-10 12:22:32|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-10 12:22:32|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-10 12:22:32|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-10 12:22:32|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-10 12:22:32|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-10 12:22:32|KP115|null|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-10 12:22:32|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-10 12:22:32|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-10 12:22:32|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-10 12:22:32|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-10 12:25:24|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-10 12:25:24|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-10 12:25:24|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-10 12:25:24|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-10 12:25:24|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-10 12:25:24|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-10 12:25:24|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-10 12:25:24|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-10 12:25:24|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-10 12:25:24|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-10 12:25:24|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-10 12:25:24|Phone - Pixel 6 |null|Other|1|null|null
+2c:f4:32:18:b6:1b|192.168.1.11|2023-04-10 12:25:24|Light - ceiling-light-2 WiFi |Espressif Inc.|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-10 12:25:24|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-10 12:25:24|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-10 12:25:24|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-10 12:25:24|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-10 12:25:24|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-10 12:25:24|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-10 12:25:24|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-10 12:25:24|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-10 12:25:24|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-10 12:25:24|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-10 12:25:24|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-10 12:25:24|KP115|null|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-10 12:25:24|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-10 12:25:24|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-10 12:25:24|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-10 12:25:24|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:15:06|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:15:06|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:15:06|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:15:06|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:15:06|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:15:06|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:15:06|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:15:06|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:15:06|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:15:06|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:15:06|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:15:06|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:15:06|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:15:06|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:15:06|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:15:06|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:15:06|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:15:06|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:15:06|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:15:06|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:15:06|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:15:06|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:15:06|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:15:06|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:15:06|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:15:06|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:18:29|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:18:29|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:18:29|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:18:29|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:18:29|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:18:29|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:18:29|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:18:29|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:18:29|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:18:29|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:18:29|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:18:29|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:18:29|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:18:29|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:18:29|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:18:29|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:18:29|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:18:29|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:18:29|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:18:29|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:18:29|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:18:29|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:18:29|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:18:29|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:18:29|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:18:29|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:19:53|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:19:53|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:19:53|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:19:53|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:19:53|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:19:53|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:19:53|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:19:53|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:19:53|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:19:53|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:19:53|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:19:53|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:19:53|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:19:53|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:19:53|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:19:53|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:19:53|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:19:53|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:19:53|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:19:53|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:19:53|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:19:53|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:19:53|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:19:53|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:19:53|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:19:53|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:26:18|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:26:18|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:26:18|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:26:18|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:26:18|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:26:18|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:26:18|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:26:18|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:26:18|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:26:18|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:26:18|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:26:18|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:26:18|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:26:18|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:26:18|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:26:18|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:26:18|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:26:18|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:26:18|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:26:18|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:26:18|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:26:18|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:26:18|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:26:18|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:26:18|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:26:18|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:32:30|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:32:30|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:32:30|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:32:30|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:32:30|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:32:30|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:32:30|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:32:30|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:32:30|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:32:30|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:32:30|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:32:30|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:32:30|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:32:30|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:32:30|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:32:30|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:32:30|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:32:30|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:32:30|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:32:30|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:32:30|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:32:30|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:32:30|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:32:30|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:32:30|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-11 15:32:30|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:32:30|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:42:21|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:42:21|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:42:21|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:42:21|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:42:21|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:42:21|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:42:21|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:42:21|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:42:21|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:42:21|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:42:21|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:42:21|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:42:21|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:42:21|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:42:21|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:42:21|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:42:21|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:42:21|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:42:21|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:42:21|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:42:21|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:42:21|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:42:21|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:42:21|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:42:21|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-11 15:42:21|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:42:21|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 15:45:42|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 15:45:42|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 15:45:42|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 15:45:42|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 15:45:42|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 15:45:42|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 15:45:42|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 15:45:42|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 15:45:42|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 15:45:42|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 15:45:42|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 15:45:42|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 15:45:42|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 15:45:42|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 15:45:42|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 15:45:42|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 15:45:42|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 15:45:42|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 15:45:42|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 15:45:42|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 15:45:42|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 15:45:42|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 15:45:42|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 15:45:42|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 15:45:42|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-11 15:45:42|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 15:45:42|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 16:07:03|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 16:07:03|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 16:07:03|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 16:07:03|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 16:07:03|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 16:07:03|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 16:07:03|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 16:07:03|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 16:07:03|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 16:07:03|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 16:07:03|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 16:07:03|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 16:07:03|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 16:07:03|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 16:07:03|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 16:07:03|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 16:07:03|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 16:07:03|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 16:07:03|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 16:07:03|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 16:07:03|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 16:07:03|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 16:07:03|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 16:07:03|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 16:07:03|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-11 16:07:03|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 16:07:03|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-11 16:08:54|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-11 16:08:54|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-11 16:08:54|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-11 16:08:54|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-11 16:08:54|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-11 16:08:54|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-11 16:08:54|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-11 16:08:54|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-11 16:08:54|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-11 16:08:54|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-11 16:08:54|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-11 16:08:54|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-11 16:08:54|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-11 16:08:54|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-11 16:08:54|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-11 16:08:54|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-11 16:08:54|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-11 16:08:54|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-11 16:08:54|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-11 16:08:54|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-11 16:08:54|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-11 16:08:54|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-11 16:08:54|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-11 16:08:54|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-11 16:08:54|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-11 16:08:54|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-04-12 19:58:32|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-04-12 19:58:32|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-04-12 19:58:32|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-04-12 19:58:32|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-04-12 19:58:32|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-04-12 19:58:32|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-04-12 19:58:32|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-04-12 19:58:32|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+6c:97:6d:7b:4a:43|192.168.1.167|2023-04-12 19:58:32|MOTO 82G|null|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-04-12 19:58:32|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-04-12 19:58:32|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-04-12 19:58:32|Phone - Pixel 6 |null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-04-12 19:58:32|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-04-12 19:58:32|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-04-12 19:58:32|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-04-12 19:58:32|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-04-12 19:58:32|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+84:5c:f3:da:3b:99|192.168.1.87|2023-04-12 19:58:32|PC - Boris WiFi |Intel Corporate|Other|1|null|null
+ac:82:47:ca:0f:e4|192.168.1.86|2023-04-12 19:58:32|PC - Seo WiFi |Intel Corporate|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-04-12 19:58:32|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-04-12 19:58:32|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-04-12 19:58:32|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-04-12 19:58:32|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-04-12 19:58:32|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-04-12 19:58:32|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-04-12 19:58:32|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-04-12 19:58:32|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+4c:c9:5e:93:10:ff|192.168.1.27|2023-04-12 19:58:32|TV - Frame WiFi|Samsung Electronics Co.,Ltd|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-04-12 19:58:32|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null
+74:ac:b9:ad:c3:30|192.168.1.21|2023-06-10 08:32:06|Study switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+80:2a:a8:13:3e:4e|192.168.1.22|2023-06-10 08:32:06|Access Point|Ubiquiti Networks Inc.|AP|0|null|null
+d0:21:f9:8c:59:f9|192.168.1.139|2023-06-10 08:32:06|Access Point WiFi 6|Ubiquiti Networks Inc.|AP|1|LAN|null
+f4:92:bf:a3:f3:56|192.168.1.57|2023-06-10 08:32:06|TV table switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+d0:21:f9:b4:ca:0b|192.168.1.138|2023-06-10 08:32:06|FLEX POE Switch|Ubiquiti Networks Inc.|Switch|1|LAN|null
+74:ac:b9:54:09:fa|100.65.124.236|2023-06-10 08:32:06|Security Gateway - USG|Ubiquiti Networks Inc.|null|1|LAN|null
+2c:f0:5d:9e:73:2c|null|2023-06-10 08:32:06|PC - Boris LAN|Micro-Star INTL CO., LTD.|Other|1|null|null
+14:c1:4e:2e:a3:3f|192.168.1.94|2023-06-10 08:32:06|SmartSpeaker - Google - Black|Google, Inc.|Other|1|null|null
+48:b0:2d:5c:79:0d|192.168.1.105|2023-06-10 08:32:06|Console - Nvidia Shield TV|NVIDIA Corporation|Other|1|null|null
+b0:a4:60:1e:bf:a4|192.168.1.45|2023-06-10 08:32:06|PC - NUC WiFi|Intel Corporate|Other|1|null|null
+2c:f4:32:18:61:43|192.168.1.14|2023-06-10 08:32:06|Light - ceiling-light-1 WiFi |Espressif Inc.|Other|1|null|null
+3a:9d:69:e0:29:28|192.168.1.92|2023-06-10 08:32:06|Phone - Pixel 6 |null|Other|1|null|null
+1a:e7:41:7c:be:c8|192.168.1.131|2023-06-10 08:32:06|Pixel-3a|null|Other|1|null|null
+dc:a6:32:73:8a:b1|192.168.1.9|2023-06-10 08:32:06|Raspberry Pi 4 LAN|Raspberry Pi Trading Ltd|Other|1|null|null
+c0:06:c3:09:de:e2|192.168.1.119|2023-06-10 08:32:06|Power plug - Dishwasher|TP-Link Corporation Limited|Other|1|null|null
+ec:fa:bc:a7:49:76|192.168.1.6|2023-06-10 08:32:06|Light - Dining light WiFi |Espressif Inc.|Other|1|null|null
+b8:27:eb:ec:f6:66|null|2023-06-10 08:32:06|Paspberry Pi B|Raspberry Pi Foundation|Other|1|null|null
+bc:dd:c2:32:f9:ee|192.168.1.15|2023-06-10 08:32:06|Light - Study WiFi |Espressif Inc.|Other|1|null|null
+00:11:32:ef:a5:6c|192.168.1.82|2023-06-10 08:32:06|NAS - Synology|Synology Incorporated|Other|1|null|null
+2c:f4:32:b3:34:9e|192.168.1.30|2023-06-10 08:32:06|Light - Sideboard WiFi |Espressif Inc.|Other|1|null|null
+00:f6:20:82:88:f1|192.168.1.16|2023-06-10 08:32:06|SmartSpeaker - Grey|Google, Inc.|Other|1|null|null
+1c:69:7a:a2:34:7b|192.168.1.58|2023-06-10 08:32:06|PC - NUC LAN|EliteGroup Computer Systems Co., LTD|Other|1|null|null
+84:cc:a8:4a:56:4c|192.168.1.150|2023-06-10 08:32:06|ESP32 - 1n - Laser Toy|Espressif Inc.|Other|1|null|null
+28:87:ba:76:ed:03|192.168.1.163|2023-06-10 08:32:06|KP115|null|Other|1|null|null
+94:b5:55:c7:cb:e0|192.168.1.151|2023-06-10 08:32:06|ESP32 - display|null|Other|1|null|null
+c0:06:c3:09:e4:46|192.168.1.66|2023-06-10 08:32:06|Power plug - Washroom|TP-Link Corporation Limited|Other|1|null|null
+3c:8d:20:f1:9f:04|192.168.1.17|2023-06-10 08:32:06|SmartSpeaker - Google Display |Google, Inc.|Other|1|null|null

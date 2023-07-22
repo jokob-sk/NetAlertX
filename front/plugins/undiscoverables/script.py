@@ -6,7 +6,7 @@ import pathlib
 import argparse
 import sys
 
-sys.path.append("/home/pi/pialert/pialert/plugins")
+sys.path.append("/home/pi/pialert/front/plugins")
 
 from plugin_helper import Plugin_Objects
 

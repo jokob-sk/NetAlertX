@@ -22,7 +22,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 #### 🔝 Popular/Suggested
 
 - [API endpoints details](/docs/API.md)
-- [Plugin system details and how to develop your own](/pialert/plugins/README.md)
+- [Plugin system details and how to develop your own](/front/plugins/README.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
 - [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)

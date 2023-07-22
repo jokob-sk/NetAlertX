@@ -1,8 +1,8 @@
 {
-    "code_name": "snmp_discovery",
-    "unique_prefix": "SNMPDSC",
+    "code_name": "unifi_import",
+    "unique_prefix": "UNFIMP",
     "enabled": true,    
-    "data_source":  "pyton-script",
+    "data_source":  "python-script",
     "data_filters": [
         {
             "compare_column" : "Object_PrimaryID",
@@ -16,21 +16,51 @@
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "SNMP discovery"
+        "string" : "UniFi import"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-s\"></i>"
+        "string" : "<i class=\"fa-solid fa-upload\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch."
+        "string" : "This plugin is used to import devices from an UNIFI controller."
     }],
     "params" : [
         {
-            "name"  : "routers",
+            "name"  : "username",
             "type"  : "setting",
-            "value" : "SNMPDSC_routers"
+            "value" : "UNFIMP_username"
+        },
+        {
+            "name"  : "password",
+            "type"  : "setting",
+            "value" : "UNFIMP_password"
+        },
+        {
+            "name"  : "host",
+            "type"  : "setting",
+            "value" : "UNFIMP_host"
+        },
+        {
+            "name"  : "sites",
+            "type"  : "setting",
+            "value" : "UNFIMP_sites"
+        },
+        {
+            "name"  : "protocol",
+            "type"  : "setting",
+            "value" : "UNFIMP_protocol"
+        },
+        {
+            "name"  : "port",
+            "type"  : "setting",
+            "value" : "UNFIMP_port"
+        },
+        {
+            "name"  : "version",
+            "type"  : "setting",
+            "value" : "UNFIMP_version"
         }
     ], 
     "database_column_definitions":
@@ -122,7 +152,7 @@
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
-            "default_value":"(unknown)",
+            "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
@@ -140,13 +170,13 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Router IP"
+                "string" : "Vendor"
                 }]
         },
         {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -159,14 +189,14 @@
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Network"
+                "string" : "Online?"
                 }]
         } ,       
         {
@@ -192,7 +222,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "RAW output"
+                "string" : "Network"
                 }]
         },        
         {
@@ -235,13 +265,13 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable import of devices from a SNMP enabled device. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+                "string" : "Enable import of devices from a UNIFI controller. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/pialert/plugins/snmp_discovery/script.py routers={s-quote}{routers}{s-quote}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port} version={version}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -254,18 +284,108 @@
             }]
         },
         {
-            "function": "routers",
-            "type": "list",
-            "default_value":["snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2"],
+            "function": "username",
+            "type": "text",
+            "default_value":"",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code":"en_us",
-                "string" : "Routers"
+                "string" : "Username"
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "A list of <code>snmpwalk</code> commands to execute against IP addresses of roputers/switches with SNMP turned on. <br/> <br/> Example with the router on the IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported. More info on the plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins/snmp_discovery' target='_blank'>here</a>."
+                "string" : "The username used to login into your UNIFI controller. It is recommended to create a read-only user account."
+            }]
+        },
+        {
+            "function": "password",
+            "type": "password",
+            "default_value":"",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Password"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The password used to login into your UNIFI controller."
+            }]
+        },
+        {
+            "function": "protocol",
+            "type": "text.select",
+            "default_value":"https://",
+            "options": ["https://", "http://"],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Protocol"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The protocol to use to access the controller."
+            }]
+        },
+        {
+            "function": "host",
+            "type": "text",
+            "default_value":"192.168.1.1",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Host"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The host (IP) where the UNIFI controller is runnig. Do NOT include the protocol (e.g. <code>https://</code>)"
+            }]
+        },
+        {
+            "function": "port",
+            "type": "text",
+            "default_value":"8443",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Port number"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>."
+            }]
+        },
+        {
+            "function": "version",
+            "type": "text",
+            "default_value":"",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "API version"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The base version of the Unify controller API. Supported values as of time of writing are <code>v4|v5|unifiOS|UDMP-unifiOS</code>."
+            }]
+        },
+        {
+            "function": "sites",
+            "type": "list",
+            "default_value":["default"],
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "UNIFI sites"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "The sites you want to connect to. Usually it is only one and the name is <code>default</code>. Check the URL in your UniFi controller UI if unsure."
             }]
         },
         {
@@ -280,7 +400,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#UNFIMP_RUN\"><code>UNFIMP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
         },
         {
@@ -305,7 +425,7 @@
         {
             "function": "WATCH",
             "type": "text.multiselect",
-            "default_value":["Watched_Value1"],
+            "default_value":["Watched_Value1", "Watched_Value4"],
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
             "name" :[{
@@ -314,7 +434,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname (not discoverable) </li><li><code>Watched_Value2</code> is Router IP </li><li><code>Watched_Value3</code> is not used </li><li><code>Watched_Value4</code> is not used </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Vendor </li><li><code>Watched_Value3</code> is Type </li><li><code>Watched_Value4</code> is Network </li></ul>"
             }] 
         },
         {

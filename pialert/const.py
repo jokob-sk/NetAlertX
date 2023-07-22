@@ -10,7 +10,7 @@ confPath = "/config/pialert.conf"
 dbPath = '/db/pialert.db'
 
 
-pluginsPath  = pialertPath + '/pialert/plugins'
+pluginsPath  = pialertPath + '/front/plugins'
 logPath      = pialertPath + '/front/log'
 apiPath      = pialertPath + '/front/api/'
 fullConfPath = pialertPath + confPath

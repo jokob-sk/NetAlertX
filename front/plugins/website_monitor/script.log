@@ -1,0 +1,13 @@
+Pi.Alert [Prototype]:
+---------------------------------------------------------
+Current User: root 
+
+Monitor Web-Services
+Timestamp: 2023-06-11 16:40:25
+
+Start Services Monitoring
+
+| Timestamp | URL | StatusCode | ResponseTime |
+-----------------------------------------------
+2023-06-11 16:40:26 | https://google.com | 200 | 0.340850
+2023-06-11 16:40:26 | https://duck.com | 200 | 0.051173

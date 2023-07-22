@@ -396,7 +396,7 @@ function generateTabs()
                     ${localize(pluginObj, 'description')} 
                 
                     <span>
-                        <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins/${pluginObj.code_name}" target="_blank"><?= lang('Gen_ReadDocs');?></a>
+                        <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${pluginObj.code_name}" target="_blank"><?= lang('Gen_ReadDocs');?></a>
                     </span>
                 
                 </div>

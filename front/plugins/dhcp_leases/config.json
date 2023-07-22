@@ -1,6 +1,6 @@
 {
-    "code_name": "unifi_import",
-    "unique_prefix": "UNFIMP",
+    "code_name": "dhcp_leases",
+    "unique_prefix": "DHCPLSS",
     "enabled": true,    
     "data_source":  "python-script",
     "data_filters": [
@@ -9,60 +9,29 @@
             "compare_operator" : "==",
             "compare_field_id": "txtMacFilter",
             "compare_js_template": "'{value}'.toString()", 
-            "compare_use_quotes": true 
+            "compare_use_quotes": true            
         }
     ],
     "localized": ["display_name", "description", "icon"],
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "UniFi import"
+        "string" : "DHCP Leases"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-upload\"></i>"
+        "string" : "<i class=\"fa-solid fa-hourglass-half\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is used to import devices from an UNIFI controller."
+        "string" : "This plugin is to import devices from dhcp.leases files."
     }],
     "params" : [
         {
-            "name"  : "username",
+            "name"  : "paths",
             "type"  : "setting",
-            "value" : "UNFIMP_username"
-        },
-        {
-            "name"  : "password",
-            "type"  : "setting",
-            "value" : "UNFIMP_password"
-        },
-        {
-            "name"  : "host",
-            "type"  : "setting",
-            "value" : "UNFIMP_host"
-        },
-        {
-            "name"  : "sites",
-            "type"  : "setting",
-            "value" : "UNFIMP_sites"
-        },
-        {
-            "name"  : "protocol",
-            "type"  : "setting",
-            "value" : "UNFIMP_protocol"
-        },
-        {
-            "name"  : "port",
-            "type"  : "setting",
-            "value" : "UNFIMP_port"
-        },
-        {
-            "name"  : "version",
-            "type"  : "setting",
-            "value" : "UNFIMP_version"
-        }
-    ], 
+            "value" : "DHCPLSS_paths_to_check"
+        }], 
     "database_column_definitions":
     [          
         {
@@ -148,6 +117,19 @@
         },
         {
             "column": "Watched_Value1",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Is active"
+                }]
+        },
+        {
+            "column": "Watched_Value2",
             "mapped_to_column": "DHCP_Name", 
             "css_classes": "col-sm-2",
             "show": true,
@@ -161,19 +143,6 @@
                 }]
         },
         {
-            "column": "Watched_Value2",            
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "Vendor"
-                }]
-        },
-        {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
             "show": true,
@@ -183,7 +152,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Type"
+                "string" : "Hardware"
                 }]
         } ,
         {
@@ -196,7 +165,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Online?"
+                "string" : "State"
                 }]
         } ,       
         {
@@ -222,7 +191,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Network"
+                "string" : "DHCP leases file"
                 }]
         },        
         {
@@ -265,13 +234,13 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable import of devices from a UNIFI controller. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+                "string" : "Enable import of devices from <code>dhcp.leases</code> files. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/pialert/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port} version={version}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/dhcp_leases/script.py paths={paths}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -280,112 +249,22 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Command to run. Not recommended to change."
+                "string" : "Command to run"
             }]
         },
         {
-            "function": "username",
-            "type": "text",
-            "default_value":"",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Username"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The username used to login into your UNIFI controller. It is recommended to create a read-only user account."
-            }]
-        },
-        {
-            "function": "password",
-            "type": "password",
-            "default_value":"",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Password"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The password used to login into your UNIFI controller."
-            }]
-        },
-        {
-            "function": "protocol",
-            "type": "text.select",
-            "default_value":"https://",
-            "options": ["https://", "http://"],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Protocol"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The protocol to use to access the controller."
-            }]
-        },
-        {
-            "function": "host",
-            "type": "text",
-            "default_value":"192.168.1.1",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Host"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The host (IP) where the UNIFI controller is runnig. Do NOT include the protocol (e.g. <code>https://</code>)"
-            }]
-        },
-        {
-            "function": "port",
-            "type": "text",
-            "default_value":"8443",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Port number"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>."
-            }]
-        },
-        {
-            "function": "version",
-            "type": "text",
-            "default_value":"",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "API version"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The base version of the Unify controller API. Supported values as of time of writing are <code>v4|v5|unifiOS|UDMP-unifiOS</code>."
-            }]
-        },
-        {
-            "function": "sites",
+            "function": "paths_to_check",
             "type": "list",
-            "default_value":["default"],
+            "default_value":["/mnt/dhcp1.leases", "/mnt/dhcp2.leases"],
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code":"en_us",
-                "string" : "UNIFI sites"
+                "string" : "Files"
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "The sites you want to connect to. Usually it is only one and the name is <code>default</code>. Check the URL in your UniFi controller UI if unsure."
+                "string" : "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file."
             }]
         },
         {
@@ -400,7 +279,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#UNFIMP_RUN\"><code>UNFIMP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
         },
         {
@@ -434,7 +313,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Vendor </li><li><code>Watched_Value3</code> is Type </li><li><code>Watched_Value4</code> is Network </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Active </li><li><code>Watched_Value2</code> is Hostname </li><li><code>Watched_Value3</code> is hardware </li><li><code>Watched_Value4</code> is State </li></ul>"
             }] 
         },
         {

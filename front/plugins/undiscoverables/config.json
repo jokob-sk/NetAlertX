@@ -50,8 +50,8 @@
   },    
     {
       "function": "CMD",
-      "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/pialert/plugins/undiscoverables/script.py devices={devices}",
+      "type": "text",
+      "default_value": "python3 /home/pi/pialert/front/plugins/undiscoverables/script.py devices={devices}",
       "options": [],
       "localized": ["name", "description"],
       "name": [

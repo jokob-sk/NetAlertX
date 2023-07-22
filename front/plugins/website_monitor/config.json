@@ -1,41 +1,40 @@
 {
-    "code_name": "dhcp_leases",
-    "unique_prefix": "DHCPLSS",
+    "code_name": "website_monitor",
+    "unique_prefix": "WEBMON",
     "enabled": true,    
     "data_source":  "python-script",
-    "data_filters": [
-        {
-            "compare_column" : "Object_PrimaryID",
-            "compare_operator" : "==",
-            "compare_field_id": "txtMacFilter",
-            "compare_js_template": "'{value}'.toString()", 
-            "compare_use_quotes": true            
-        }
-    ],
     "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "DHCP Leases"
+        "string" : "Website monitor"
     }],
     "icon":[{
         "language_code":"en_us",
-        "string" : "<i class=\"fa-solid fa-hourglass-half\"></i>"
+        "string" : "<i class=\"fa-solid fa-globe\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is to import devices from dhcp.leases files."
+        "string" : "This plugin is to monitor status changes of services or websites."
     }],
-    "params" : [
-        {
-            "name"  : "paths",
-            "type"  : "setting",
-            "value" : "DHCPLSS_paths_to_check"
-        }], 
+    "params" : [{
+        "name"  : "macs",
+        "type"  : "sql",
+        "value" : "SELECT dev_MAC from DEVICES"
+    },
+    {
+        "name"  : "urls",
+        "type"  : "setting",
+        "value" : "WEBMON_urls_to_check"
+    },
+    {
+        "name"  : "internet_ip",
+        "type"  : "setting",
+        "value" : "WEBMON_SQL_internet_ip"
+    }],  
     "database_column_definitions":
     [          
         {
-            "column": "Index",            
+            "column": "Index",
             "css_classes": "col-sm-2",
             "show": false,
             "type": "label",            
@@ -62,30 +61,28 @@
         },
         {
             "column": "Object_PrimaryID",
-            "mapped_to_column": "DHCP_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "devicemac",            
+            "type": "url",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "MAC address"
+                "string" : "Monitored URL"
                 }]
         },
         {
             "column": "Object_SecondaryID",
-            "mapped_to_column": "DHCP_IP", 
             "css_classes": "col-sm-2",
-            "show": true,
-            "type": "deviceip",            
+            "show": false,
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "IP"
+                "string" : "N/A"
                 }]
         } ,
         {
@@ -103,7 +100,6 @@
         },
         {
             "column": "DateTimeChanged",
-            "mapped_to_column": "DHCP_DateTime", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -119,18 +115,38 @@
             "column": "Watched_Value1",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "threshold",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "maximum": 199,
+                    "hexColor": "#792D86"                
+                },
+                {
+                    "maximum": 299,
+                    "hexColor": "#5B862D"
+                },
+                {
+                    "maximum": 399,
+                    "hexColor": "#7D862D"
+                },
+                {
+                    "maximum": 499,
+                    "hexColor": "#BF6440"
+                },
+                {
+                    "maximum": 599,
+                    "hexColor": "#D33115"
+                }
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Is active"
+                "string" : "Status code"
                 }]
         },
         {
             "column": "Watched_Value2",
-            "mapped_to_column": "DHCP_Name", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -139,39 +155,39 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Hostname"
+                "string" : "Latency"
                 }]
         },
         {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Hardware"
+                "string" : "N/A"
                 }]
         } ,
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "State"
+                "string" : "N/A"
                 }]
         } ,       
         {
             "column": "UserData",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "textboxsave",            
             "default_value":"",
             "options": [],
@@ -179,19 +195,6 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Comments"
-                }]
-        },        
-        {
-            "column": "Extra",
-            "css_classes": "col-sm-3",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "DHCP leases file"
                 }]
         },        
         {
@@ -219,6 +222,19 @@
                 "language_code":"en_us",
                 "string" : "Status"
                 }]
+        },        
+        {
+            "column": "Extra",
+            "css_classes": "col-sm-3",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Extra"
+                }]
         }            
     ],
     "settings":[
@@ -234,13 +250,13 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable import of devices from <code>dhcp.leases</code> files. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
             }]
         },
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/pialert/plugins/dhcp_leases/script.py paths={paths}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -250,21 +266,6 @@
             "description": [{
                 "language_code":"en_us",
                 "string" : "Command to run"
-            }]
-        },
-        {
-            "function": "paths_to_check",
-            "type": "list",
-            "default_value":["/mnt/dhcp1.leases", "/mnt/dhcp2.leases"],
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Files"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file."
             }]
         },
         {
@@ -279,8 +280,23 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
             }]
+        },
+        {
+            "function": "API_SQL",
+            "type": "text",
+            "default_value":"SELECT * FROM plugin_website_monitor",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "API endpoint (not implemented)"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> file endpoint</a>."
+            }]            
         },
         {
             "function": "RUN_TIMEOUT",
@@ -304,7 +320,7 @@
         {
             "function": "WATCH",
             "type": "text.multiselect",
-            "default_value":["Watched_Value1", "Watched_Value4"],
+            "default_value":["Watched_Value1"],
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
             "name" :[{
@@ -313,7 +329,7 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Active </li><li><code>Watched_Value2</code> is Hostname </li><li><code>Watched_Value3</code> is hardware </li><li><code>Watched_Value4</code> is State </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
             }] 
         },
         {
@@ -330,7 +346,38 @@
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             }] 
+        },
+        {
+            "function": "urls_to_check",
+            "type": "list",
+            "default_value":["https://google.com", "https://duck.com"],
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Arguments"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>. The values from this setting will be used to replace the <code>{urls}</code> wildcard in the <code>WEBMON_CMD</code> setting."
+            }]
+        },
+        {
+            "function": "SQL_internet_ip",
+            "type": "readonly",
+            "default_value":"SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Helper variable"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet. "
+            }]
         }
+
     ]
 }
 
