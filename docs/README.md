@@ -49,12 +49,12 @@ Feel free to suggest or submit new docs via a PR.
 
 ## 👨‍💻 Development priorities
 
-Highest to lowest:
+Priorities from highest to lowest:
 
-* 🥇 Fixing core functionality bugs not solvable with workarounds
-* 🥈 New core functionality unlocking other opportunities (e.g.: plugins) 
-* 🥉 Refactoring enabling faster implementation of future functionality 
-* (low) UI functionality & improvements
+* 🔼 Fixing core functionality bugs not solvable with workarounds
+* 🔵 New core functionality unlocking other opportunities (e.g.: plugins) 
+* 🔵 Refactoring enabling faster implementation of future functionality 
+* 🔽 (low) UI functionality & improvements (PRs welcome 😉)
 
 Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integrate into other workflows. 
 

@@ -66,7 +66,7 @@ def checkPermissionsOK():
     dbW_access = (os.access(fullDbPath, os.W_OK))
 
     mylog('none', ['\n'])
-    mylog('none', ['The container restarted (started). If this is unexpected check bit.ly/PiAlertDebug for troubleshooting tips.'])
+    mylog('none', ['The container restarted (started). If this is unexpected check https://bit.ly/PiAlertDebug for troubleshooting tips.'])
     mylog('none', ['\n'])
     mylog('none', ['Permissions check (All should be True)'])
     mylog('none', ['------------------------------------------------'])

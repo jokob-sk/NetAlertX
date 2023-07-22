@@ -11,10 +11,10 @@ services:
     network_mode: host
     restart: unless-stopped
     volumes:
-      - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
-      # - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
-      - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
-      # - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db           
+      # - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
+      # - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
+      - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db           
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
       # ---------------------------------------------------------------------------
