@@ -108,7 +108,7 @@ BTC: 1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM
 [screen5]: ./docs/img/network.png             "Screen 5"
 [screen6]: ./docs/img/settings.png            "Screen 6"
 [screen7]: ./docs/img/help_faq.png            "Screen 7"
-[screen8]: ./docs/img/plugins_webmon.png      "Screen 8"
+[screen8]: ./docs/img/plugins_rogue_dhcp.png  "Screen 8"
 [screen9]: ./docs/img/device_nmap.png         "Screen 9"
 [report1]: ./docs/img/4_report_1.jpg          "Report sample 1"
 [report2]: ./docs/img/4_report_2.jpg          "Report sample 2"
