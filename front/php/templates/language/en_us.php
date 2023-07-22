@@ -535,7 +535,7 @@ The arp-scan time itself depends on the number of IP addresses to check so set t
 'TIMEZONE_name' => 'Time zone',
 'TIMEZONE_description' => 'Time zone to display stats correctly. Find your time zone <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" rel="nofollow">here</a>.',
 'ENABLE_PLUGINS_name' => 'Enable Plugins',
-'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
+'ENABLE_PLUGINS_description' => 'Enables the <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins">plugins</a> functionality. Loading plugins requires more hardware resources so you might want to disable them on low-powered system.',
 'PLUGINS_KEEP_HIST_name' => 'Plugins History',
 'PLUGINS_KEEP_HIST_description' => 'How many entries of Plugins History scan results should be kept (globally, not device specific!).',
 'PIALERT_WEB_PROTECTION_name' => 'Enable login',

@@ -109,7 +109,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           $html = $html.
             '<div  class=" row table_row" >
               <div class="table_cell bold">
-              <i class="fa-regular fa-book fa-sm"></i> <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins" target="_blank">' . lang('Gen_ReadDocs').'</a></div> 
+              <i class="fa-regular fa-book fa-sm"></i> <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">' . lang('Gen_ReadDocs').'</a></div> 
               </div>';
         }
 

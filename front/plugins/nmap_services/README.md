@@ -4,7 +4,7 @@ This plugin shows all Services discovered by regular NMAP scans. It's also a sam
 
 ### Usage
 
-- The sql query from the `NMAPSRV_CMD` setting is used to create source data for this plugin. Column order and values need to adhere to the ones specified in the [documentation](https://github.com/jokob-sk/Pi.Alert/tree/main/pialert/plugins).
+- The sql query from the `NMAPSRV_CMD` setting is used to create source data for this plugin. Column order and values need to adhere to the ones specified in the [documentation](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins).
 
 ### Notes
 
