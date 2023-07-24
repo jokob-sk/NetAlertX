@@ -1232,6 +1232,16 @@ function initializeCalendar () {
         duration           : { month: 1 },
         buttonText         : '<?= lang('Presence_CalHead_month');?>',
         columnHeaderFormat : 'D'
+      },
+      agendaWeek: {
+        buttonText         : '<?= lang('Presence_CalHead_week');?>',
+      },
+      agendaDay: {
+        type              : 'agenda',
+        duration          : { day: 1 },
+        buttonText        : '<?= lang('Presence_CalHead_day');?>',
+        slotLabelFormat   : 'H',
+        slotDuration      : '01:00:00'
       }
     },
 
@@ -1278,7 +1288,7 @@ function initializeCalendar () {
     },
 
     eventRender: function (event, element) {
-      $(element).tooltip({container: 'body', placement: 'right',
+      $(element).tooltip({container: 'body', placement: 'bottom',
                           title: event.tooltip});
       // element.attr ('title', event.tooltip);  // Alternative tooltip
     },

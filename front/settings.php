@@ -305,7 +305,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             //   "test"  => [lang("settings_event_tooltip"),""]
             // ];
 
-            if(count($eventsList) > 0)
+            if(count($eventsList) > 0 && $set['Type'] != 'json')
             {
               foreach ($eventsList as $event) {
                 $eventsHtml = $eventsHtml.'<span class="input-group-addon pointer"

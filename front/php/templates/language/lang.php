@@ -56,6 +56,10 @@ function lang($key)
       // if found, use default language
       $temp = $lang[$defaultLang][$key];
 
+    } elseif (strpos($key, "__metadata") !== false) {
+        // If the key contains "__metadata", handle it here.
+        // You can set a specific value or perform some other action for these keys.
+        $temp = "__metadata";
     } else
     {
       // String not found in the default or selected language
