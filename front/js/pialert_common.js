@@ -97,6 +97,28 @@ function deleteAllCookies() {
 
 
 // -----------------------------------------------------------------------------
+// Get language string
+// -----------------------------------------------------------------------------
+function cacheStrings()
+{
+  $.get('api/table_language_strings.json', function(res) {    
+        
+    data = res["data"];       
+
+    data.forEach((langString) => {
+      // console.log(langString)
+      setCache(`pia_lang_${langString.String_Key}`, langString.String_Value, expirationMinutes='1440') // expire in a day
+    });
+
+        
+  })
+}
+
+function getString (key) {
+  return getCache(`pia_lang_${key}`)
+}
+
+// -----------------------------------------------------------------------------
 // Modal dialog handling
 // -----------------------------------------------------------------------------
 function showModalOk (title, message, callbackFunction = null) {
@@ -369,6 +391,9 @@ function navigateToDeviceWithIp (ip) {
   });
 }
 
+// initialize
+cacheStrings()
 
+console.log("init pialert_common.js")
 
 
