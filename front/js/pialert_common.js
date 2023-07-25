@@ -20,13 +20,13 @@ var emptyArr            = ['undefined', "", undefined, null, 'null'];
 // -----------------------------------------------------------------------------
 // Simple session cache withe expiration managed via cookies
 // -----------------------------------------------------------------------------
-function getCache(key)
+function getCache(key, noCookie = false)
 {
   // check cache
   if(sessionStorage.getItem(key))
   {
     // check if not expired
-    if(getCookie(key + '_session_expiry') != "")
+    if(noCookie || getCookie(key + '_session_expiry') != "")
     {
       return sessionStorage.getItem(key);
     }
@@ -38,8 +38,12 @@ function getCache(key)
 // -----------------------------------------------------------------------------
 function setCache(key, data, expirationMinutes='')
 {
-  sessionStorage.setItem(key, data); 
-  setCookie (key + '_session_expiry', 'OK', expirationMinutes='')
+  sessionStorage.setItem(key, data);  
+
+  if (expirationMinutes != '') 
+  {
+    setCookie (key + '_session_expiry', 'OK', expirationMinutes='')
+  }
 }
 
 
@@ -107,15 +111,29 @@ function cacheStrings()
 
     data.forEach((langString) => {
       // console.log(langString)
-      setCache(`pia_lang_${langString.String_Key}`, langString.String_Value, expirationMinutes='1440') // expire in a day
+      setCache(`pia_lang_${langString.String_Key}`, langString.String_Value) 
     });
-
         
   })
 }
 
 function getString (key) {
-  return getCache(`pia_lang_${key}`)
+  // todo
+  // php/server/utilDB.php?key=Gen_Okay
+  // need to initilaize session storage
+  
+  result = getCache(`pia_lang_${key}`, true);
+
+  if (result == "")
+  {
+    getCache(`pia_lang_${key}`, true)
+  }
+  else
+  {
+    // this is async can't do that 
+  }
+
+  return result;
 }
 
 // -----------------------------------------------------------------------------

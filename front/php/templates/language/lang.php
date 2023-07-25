@@ -37,6 +37,7 @@ require dirname(__FILE__).'/en_us.php';
 require dirname(__FILE__).'/de_de.php';
 require dirname(__FILE__).'/es_es.php';
 
+
 function lang($key)
 {
   global $pia_lang_selected, $lang, $defaultLang, $strings;
@@ -72,4 +73,6 @@ function lang($key)
   } 
     
   return $temp;
-}
+};
+
+
