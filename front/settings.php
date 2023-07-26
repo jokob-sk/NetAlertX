@@ -72,267 +72,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       <div class="settingsImported"><?= lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
     <div class="content " id='accordion_gen'>
-   <?php      
-
-      $html = "";
-      $groups = [];
-
-      // collect all groups
-      foreach ($settings as $row) { 
-        if( in_array($row['Group'] , $groups) == false) {
-          array_push($groups ,$row['Group']);
-        }
-      }
-
-      // create settings groups
-      $isIn = ' in ';
-      foreach ($groups as $group) 
-      {
-        $isPlugin = FALSE;
-
-        if (in_array($group, $settingCoreGroups))
-        {
-          $settingGroupTypeHtml = "";
-        } else
-        {
-          $settingGroupTypeHtml = ' (<i class="fa-regular fa-plug fa-sm"></i>) ';
-          $isPlugin = TRUE;
-        }
-
-        $html = $html.'<div  class=" box panel panel-default">
-                          <a data-toggle="collapse" data-parent="#accordion_gen" href="#'.$group.'">
-                            <div class="panel-heading">                              
-                                <h4 class="panel-title">'.lang($group.'_icon')." ".lang($group.'_display_name').$settingGroupTypeHtml.'</h4>                              
-                            </div>
-                          </a>
-                          <div id="'.$group.'" data-myid="collapsible" class="panel-collapse collapse '.$isIn.'"> 
-                            <div class="panel-body">';
-        $isIn = ' '; // open the first panel only by default on page load
-
-        if($isPlugin)
-        {
-          $html = $html.
-            '<div  class=" row table_row" >
-              <div class="table_cell bold">
-              <i class="fa-regular fa-book fa-sm"></i> <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">' . lang('Gen_ReadDocs').'</a></div> 
-              </div>';
-        }
-
-        // populate settings for each group 
-        foreach ($settings as $set) 
-        { 
-          if($set["Group"] == $group)
-          {
-            $html = $html.
-            '<div  class=" row table_row" > 
-              <div class="table_cell setting_name bold" ><label>';
-
-            $html = $html.getString ($set['Code_Name'].'_name', $set['Display_Name']).'</label>';
-
-            $html = $html.'<div class="small" ><code>'.$set['Code_Name'].'</code></div>';
-
-            $html = $html.
-            '</div>       
-              <div class="table_cell setting_description" >';               
-
-            $html = $html.getString ($set['Code_Name'].'_description', $set['Description']);
-
-            $html = $html.
-              '</div>       
-            <div class="table_cell setting_input input-group" >';
-
-            // render different input types based on the settings type
-            $input = "";
-
-            // text - textbox
-            if($set['Type'] == 'text' || $set['Type'] == 'string' || $set['Type'] == 'date-time'  ) 
-            {
-              $input = '<input class="form-control" onChange="settingsChanged()"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'" value="'.$set['Value'].'"/>';                
-            } 
-            // password - hidden text
-            elseif ($set['Type'] == 'password')
-            {
-              $input = '<input onChange="settingsChanged()"  my-data-type="'.$set['Type'].'"  class="form-control input" id="'.$set['Code_Name'].'" type="password" value="'.$set['Value'].'"/>';
-            }
-            // readonly 
-            elseif ($set['Type'] == 'readonly')
-            {
-              $input = '<input class="form-control input"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
-            }
-            // boolean - checkbox
-            elseif ($set['Type'] == 'boolean' || $set['Type'] == 'integer.checkbox')
-            {
-              $checked = "";
-              if ($set['Value'] == "True" || $set['Value'] == "1") { $checked = "checked";};
-              $input = '<input onChange="settingsChanged()" my-data-type="'.$set['Type'].'" class="checkbox" id="'.$set['Code_Name'].'" type="checkbox" value="'.$set['Value'].'" '.$checked.' />';              
-              
-            }
-            // integer - number input
-            elseif ($set['Type'] == 'integer')
-            {
-              $input = '<input onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" id="'.$set['Code_Name'].'" type="number" value="'.$set['Value'].'"/>';                
-            }
-            // text.select - dropdown
-            elseif ($set['Type'] == 'text.select')
-            {
-              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
-              
-              $values = createArray($set['Value']);
-              $options = createArray($set['Options']);
-
-              foreach ($options as $option) {              
-                $selected = "";
-
-                if( in_array( $option , $values) == true) {
-                  $selected = "selected";
-                }
-
-                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-              }                
-              $input = $input.'</select>';
-            }
-            // integer.select - dropdown
-            elseif ($set['Type'] == 'integer.select')
-            {
-              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'">';                 
-
-              $values = createArray($set['Value']);
-              $options = createArray($set['Options']);
-
-              foreach ($options as $option) {   
-                
-                $selected = "";
-
-                if( in_array( $option , $values) == true) {
-                  $selected = "selected";
-                }
-
-                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-              }                
-              $input = $input.'</select>';
-            }
-            // text.multiselect
-            elseif ($set['Type'] == 'text.multiselect')
-            {
-              $input = '<select onChange="settingsChanged()"  my-data-type="'.$set['Type'].'" class="form-control" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple>';  
-
-              $values = createArray($set['Value']);
-              $options = createArray($set['Options']);
-
-              foreach ($options as $option) {                     
-                $selected = "";
-
-                if( in_array( $option , $values) == true) {
-                  $selected = "selected";
-                }
-
-                $input = $input.'<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
-              }                
-              $input = $input.'</select>';
-            }
-            //  subnets
-            elseif ($set['Type'] == 'subnets')
-            {
-              $input = $input.
-              '<div class="row form-group">
-                <div class="col-xs-5">
-                  <input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>
-                </div>';
-              // Add interface button
-              $input = $input.
-                '<div class="col-xs-4">
-                  <input class="form-control " id="ipInterface" type="text" placeholder="eth0" />
-                </div>
-                <div class="col-xs-3"><button class="btn btn-primary" onclick="addInterface()" >Add</button></div>
-                </div>';
-              
-              // list all interfaces as options
-              $input = $input.'<div class="form-group">
-                <select class="form-control"  my-data-type="'.$set['Type'].'" name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
-                
-              $options = createArray($set['Value']);                
-
-              foreach ($options as $option) {                                       
-
-                $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
-              }                
-              $input = $input.'</select></div>';
-              // Remove all interfaces button               
-              $input = $input.'<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
-              
-            }               
-            //  list
-            elseif ($set['Type'] == 'list')
-            {
-
-              $settingKeyOfLists[] = $set['Code_Name'];
-
-              $input = $input.
-              '<div class="row form-group">
-                <div class="col-xs-9">
-                  <input class="form-control" type="text" id="'.$set['Code_Name'].'_input" placeholder="Enter value"/>
-                </div>';
-              // Add interface button
-              $input = $input.
-                '<div class="col-xs-3"><button class="btn btn-primary" onclick="addList'.$set['Code_Name'].'()" >Add</button></div>
-                </div>';
-              
-              // list all interfaces as options
-              $input = $input.'<div class="form-group">
-                <select class="form-control"  my-data-type="'.$set['Type'].'"  name="'.$set['Code_Name'].'" id="'.$set['Code_Name'].'" multiple readonly>';
-                
-              $options = createArray($set['Value']);                
-
-              foreach ($options as $option) {                                       
-
-                $input = $input.'<option value="'.$option.'" disabled>'.$option.'</option>';
-              }                
-              $input = $input.'</select></div>';
-              // Remove all interfaces button               
-              $input = $input.'<div><button class="btn btn-primary" onclick="removeFromList'.$set['Code_Name'].'()">Remove last</button></div>';
-              
-            }          
-            //  json
-            elseif ($set['Type'] == 'json')
-            {
-              $input = '<input class="form-control input"  my-data-type="'.$set['Type'].'"  id="'.$set['Code_Name'].'"  value="'.$set['Value'].'" readonly/>';
-            }     
-
-            $html = $html.$input;
-
-            // render any buttons or additional actions if specified            
-            $eventsHtml = "";
-            // if available get all the events associated with this setting 
-            $eventsList = createArray($set['Events']);  
-
-            // icon map for the events
-            // $iconMap = [
-            //   "test"  => [lang("settings_event_tooltip"),""]
-            // ];
-
-            if(count($eventsList) > 0 && $set['Type'] != 'json')
-            {
-              foreach ($eventsList as $event) {
-                $eventsHtml = $eventsHtml.'<span class="input-group-addon pointer"
-                  data-myparam="'.$set['Code_Name'].'" 
-                  data-myevent="'.$event.'"
-                >
-                  <i title="'.lang($event."_event_tooltip").'" class="fa '.lang($event."_event_icon").' " >                 
-                  </i>
-                </span>';
-              }
-            }
-
-            $html = $html.$eventsHtml.'</div>  
-            </div>';
-          }
-        }
-
-        $html = $html.'</div></div></div>';
-      }
-
-      // echo $html;
-   ?>
+     <!-- PLACEHOLDER -->
    </div>
    
     <!-- /.content -->
@@ -356,10 +96,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 <script>
 
-  // NEW code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  // NEW code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  // NEW code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  
   
   function getData(){
 
@@ -374,6 +110,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function initSettingsPage(settingsData){
 
     const settingGroups = [];
+    const settingKeyOfLists = [];
     // core groups are the ones not generated by plugins
     const settingCoreGroups = ['General', 'NewDeviceDefaults', 'Email', 'Webhooks', 'Apprise', 'NTFY', 'PUSHSAFER', 'MQTT', 'DynDNS', 'PiHole', 'Pholus', 'Nmap', 'API'];
 
@@ -459,19 +196,116 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           // Render different input types based on the settings type
           let input = "";
 
-          // text - textbox
           if (set['Type'] === 'text' || set['Type'] === 'string' || set['Type'] === 'date-time') {
-            input = `
-              <input class="form-control" onChange="settingsChanged()" my-data-type="${set['Type']}" id="${set['Code_Name']}" value="${set['Value']}"/>
-            `;
+            input = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${set['Type']}"  id="${set['Code_Name']}" value="${set['Value']}"/>`;
+          } else if (set['Type'] === 'password') {
+            input = `<input onChange="settingsChanged()"  my-data-type="${set['Type']}"  class="form-control input" id="${set['Code_Name']}" type="password" value="${set['Value']}"/>`;
+          } else if (set['Type'] === 'readonly') {
+            input = `<input class="form-control input"  my-data-type="${set['Type']}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
+          } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
+            let checked = set['Value'] === 'True' || set['Value'] === '1' ? 'checked' : '';
+            input = `<input onChange="settingsChanged()" my-data-type="${set['Type']}" class="checkbox" id="${set['Code_Name']}" type="checkbox" value="${set['Value']}" ${checked} />`;
+          } else if (set['Type'] === 'integer') {
+            input = `<input onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" id="${set['Code_Name']}" type="number" value="${set['Value']}"/>`;
+          } else if (set['Type'] === 'text.select' || set['Type'] === 'integer.select') {
+            input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}">`;
+
+            values = createArray(set['Value']);
+            options = createArray(set['Options']);
+
+            options.forEach(option => {
+              let selected = values.includes(option) ? 'selected' : '';
+              input += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+
+            input += '</select>';
+          } else if (set['Type'] === 'text.multiselect') {
+            input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple>`;
+
+            values = createArray(set['Value']);
+            options = createArray(set['Options']);
+
+            options.forEach(option => {
+              let selected = values.includes(option) ? 'selected' : '';
+              input += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+
+            input += '</select>';
+          } else if (set['Type'] === 'subnets') {
+            input = 
+            '<div class="row form-group">' +
+              '<div class="col-xs-5">' +
+                '<input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>' +
+              '</div>' +
+              '<div class="col-xs-4">' +
+                '<input class="form-control" id="ipInterface" type="text" placeholder="eth0" />' +
+              '</div>' +
+              '<div class="col-xs-3">' +
+                '<button class="btn btn-primary" onclick="addInterface()">Add</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="form-group">' +
+              `<select class="form-control"  my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+
+            options = createArray(set['Value']);
+
+            options.forEach(option => {
+              input += `<option value="${option}" disabled>${option}</option>`;
+            });
+
+            input += '</select></div>' +
+            '<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
+          } else if (set['Type'] === 'list') {
+
+            settingKeyOfLists.push(set['Code_Name']);
+
+            input = 
+            '<div class="row form-group">' +
+              '<div class="col-xs-9">' +
+                `<input class="form-control" type="text" id="${set['Code_Name']}_input" placeholder="Enter value"/>` +
+              '</div>' +
+              '<div class="col-xs-3">' +
+                `<button class="btn btn-primary" onclick="addList${set['Code_Name']}()">Add</button>` +
+              '</div>' +
+            '</div>' +
+            '<div class="form-group">' +
+              `<select class="form-control"  my-data-type="${set['Type']}"  name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+
+            let options = createArray(set['Value']);
+
+            options.forEach(option => {
+              input += `<option value="${option}" disabled>${option}</option>`;
+            });
+
+            input += '</select></div>' +
+            `<div><button class="btn btn-primary" onclick="removeFromList${set['Code_Name']}()">Remove last</button></div>`;
+          } else if (set['Type'] === 'json') {
+            input = `<input class="form-control input"  my-data-type="${set['Type']}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
           }
+
+          let eventsHtml = "";
+
+          const eventsList = createArray(set['Events']);
+
+          if (eventsList.length > 0 && set['Type'] !== 'json') {
+            eventsList.forEach(event => {
+              eventsHtml += `<span class="input-group-addon pointer"
+                data-myparam="${set['Code_Name']}"
+                data-myevent="${event}"
+              >
+                <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}">                 
+                </i>
+              </span>`;
+            });
+          }
+
           
-          setHtml += input + `
+          setHtml += input +  eventsHtml + `
               </div>
             </div>
           `
 
-          // generate hsettings in the correct group section
+          // generate settings in the correct group section
           $(`#${group} .panel-body`).append(setHtml);
           
         }
@@ -479,15 +313,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     }
 
-
   }
 
-  // old code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  // old code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  // old code ---------------------------------------------------------------------------------------------------------------------------------------------------------
-  
-  
-
+  // todo fix
+  function createArray(valueString) {
+    return valueString.split(',').map(item => item.trim());
+  }
 
   // number of settings has to be equal to
 

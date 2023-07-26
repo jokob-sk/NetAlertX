@@ -1,4 +1,4 @@
-
+<!-- utils needing a DB connection -->
 
 <?php
 
