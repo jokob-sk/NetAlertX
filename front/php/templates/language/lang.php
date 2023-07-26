@@ -18,61 +18,64 @@ switch($result){
 
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = $defaultLang;}
 
-//Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra")
-$result = $db->query("SELECT * FROM Plugins_Language_Strings");  
+require dirname(__FILE__).'/../skinUI.php';
 
-// array 
+$result = $db->query("SELECT * FROM Plugins_Language_Strings");
 $strings = array();
-while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-  // Push row data      
-  $strings[] = array(  'Language_Code'     => $row['Language_Code'],
-                        'String_Key'       => $row['String_Key'],                        
-                        'String_Value'     => $row['String_Value'],
-                        'Extra'            => $row['Extra']
-                      ); 
+while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+    $strings[$row['String_Key']] = $row['String_Value'];
 }
 
-require dirname(__FILE__).'/../skinUI.php';
-require dirname(__FILE__).'/en_us.php';
-require dirname(__FILE__).'/de_de.php';
-require dirname(__FILE__).'/es_es.php';
 
+// Load data from JSON files 
+function getLanguageDataFromJson()
+{
+    global $allLanguages;
+
+    // Array to hold the language data from the JSON files
+    $languageData = [];
+    
+    // Load and parse the JSON data from .json files
+    foreach ($allLanguages as $language) {
+      $data = json_decode(file_get_contents(dirname(__FILE__).'/'.$language.'.json'), true); 
+      $languageData[$language] = $data[$language];
+    }
+
+    return $languageData;
+}
+
+
+// Merge the JSON data with the SQL data, giving priority to SQL data for overlapping keys
+function mergeLanguageData($jsonLanguageData, $sqlLanguageData)
+{
+    // Loop through the JSON language data and check for overlapping keys
+    foreach ($jsonLanguageData as $languageCode => $languageStrings) {
+        foreach ($languageStrings as $key => $value) {
+            // Check if the key exists in the SQL data, if yes, use the SQL value
+            if (isset($sqlLanguageData[$key])) {
+                $jsonLanguageData[$languageCode][$key] = $sqlLanguageData[$key];
+            }
+        }
+    }
+
+    return $jsonLanguageData;
+}
 
 function lang($key)
 {
-  global $pia_lang_selected, $lang, $defaultLang, $strings;
+  global $pia_lang_selected, $lang, $defaultLang, $strings, $db;
+  // Get the data from JSON files
+  $languageData = getLanguageDataFromJson();
 
-  // get strings from the DB and append them to the ones from the files
-  foreach ($strings as $string) 
-  { 
-    $lang[$string["Language_Code"]][$string["String_Key"]] = $string["String_Value"]; 
-  }
+  // Get the data from SQL query  
+  $sqlLanguageData = $strings;
 
-  // check if key exists in selected language
-  if(array_key_exists($key, $lang[$pia_lang_selected]) == FALSE) 
-  {
-    // check if key exists in the default language if not available in the selected
-    if (array_key_exists($key, $lang[$defaultLang]) == TRUE) 
-    {
-      // if found, use default language
-      $temp = $lang[$defaultLang][$key];
+  // Merge JSON data with SQL data
+  $mergedLanguageData = mergeLanguageData($languageData, $sqlLanguageData);
 
-    } elseif (strpos($key, "__metadata") !== false) {
-        // If the key contains "__metadata", handle it here.
-        // You can set a specific value or perform some other action for these keys.
-        $temp = "__metadata";
-    } else
-    {
-      // String not found in the default or selected language
-      $temp = "String not found for key: ".$key;
-    }
-  } else
-  {
-    // use selected language translation
-    $temp = $lang[$pia_lang_selected][$key];
-  } 
-    
-  return $temp;
+  $result = $mergedLanguageData[$pia_lang_selected][$key] ?? "String Not found for key ".$key;
+
+  return $result;
 };
 
 
