@@ -152,13 +152,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       headersHtml += `<div class="box panel panel-default">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
                     <div class="panel-heading">
-                      <h4 class="panel-title">${group} ${settingGroupTypeHtml}</h4>
+                      <h4 class="panel-title">${getString(group+"_icon")} ${getString(group+"_display_name")} ${settingGroupTypeHtml}</h4>
                     </div>
                   </a>
                   <div id="${group}" data-myid="collapsible" class="panel-collapse collapse ${isIn}">
                     <div class="panel-body">
-                    ${isPlugin ? pluginHtml: ""}
-                    test
+                    ${isPlugin ? pluginHtml: ""}                    
                     </div>
                   </div>
                 </div>
@@ -232,20 +231,21 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             input += '</select>';
           } else if (set['Type'] === 'subnets') {
-            input = 
-            '<div class="row form-group">' +
-              '<div class="col-xs-5">' +
-                '<input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>' +
-              '</div>' +
-              '<div class="col-xs-4">' +
-                '<input class="form-control" id="ipInterface" type="text" placeholder="eth0" />' +
-              '</div>' +
-              '<div class="col-xs-3">' +
-                '<button class="btn btn-primary" onclick="addInterface()">Add</button>' +
-              '</div>' +
-            '</div>' +
-            '<div class="form-group">' +
-              `<select class="form-control"  my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+            input = `
+            <div class="row form-group">
+              <div class="col-xs-5">
+                <input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>
+              </div>
+              <div class="col-xs-4">
+                <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
+              </div>
+              <div class="col-xs-3">
+                <button class="btn btn-primary" onclick="addInterface()">Add</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <select class="form-control" my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+
 
             options = createArray(set['Value']);
 
@@ -259,17 +259,18 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             settingKeyOfLists.push(set['Code_Name']);
 
-            input = 
-            '<div class="row form-group">' +
-              '<div class="col-xs-9">' +
-                `<input class="form-control" type="text" id="${set['Code_Name']}_input" placeholder="Enter value"/>` +
-              '</div>' +
-              '<div class="col-xs-3">' +
-                `<button class="btn btn-primary" onclick="addList${set['Code_Name']}()">Add</button>` +
-              '</div>' +
-            '</div>' +
-            '<div class="form-group">' +
-              `<select class="form-control"  my-data-type="${set['Type']}"  name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+            input = `
+              <div class="row form-group">
+                <div class="col-xs-9">
+                  <input class="form-control" type="text" id="${set['Code_Name']}_input" placeholder="Enter value"/>
+                </div>
+                <div class="col-xs-3">
+                  <button class="btn btn-primary" onclick="addList${set['Code_Name']}()">Add</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <select class="form-control" my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+
 
             let options = createArray(set['Value']);
 
@@ -280,14 +281,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             input += '</select></div>' +
             `<div><button class="btn btn-primary" onclick="removeFromList${set['Code_Name']}()">Remove last</button></div>`;
           } else if (set['Type'] === 'json') {
-            input = `<input class="form-control input"  my-data-type="${set['Type']}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
+            input = `<textarea class="form-control input" my-data-type="${set['Type']}" id="${set['Code_Name']}" readonly>${JSON.stringify(set['Value'], null, 2)}</textarea>`;
           }
 
-          let eventsHtml = "";
+          let eventsHtml = "";          
 
           const eventsList = createArray(set['Events']);
 
-          if (eventsList.length > 0 && set['Type'] !== 'json') {
+          if (eventsList.length > 0) {
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
                 data-myparam="${set['Code_Name']}"
@@ -298,7 +299,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               </span>`;
             });
           }
-
           
           setHtml += input +  eventsHtml + `
               </div>
@@ -316,8 +316,36 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   }
 
   // todo fix
-  function createArray(valueString) {
-    return valueString.split(',').map(item => item.trim());
+  function createArray(input) {
+    // Empty array
+    if (input === '[]') {
+      return [];
+    }
+
+    // Regex patterns
+    const patternBrackets = /(^\s*\[)|(\]\s*$)/g;
+    const patternQuotes = /(^\s*')|('\s*$)/g;
+    const replacement = '';
+
+    // Remove brackets
+    const noBrackets = input.replace(patternBrackets, replacement);
+
+    const options = [];
+
+    // Create array
+    const optionsTmp = noBrackets.split(',');
+
+    // Handle only one item in array
+    if (optionsTmp.length === 0) {
+      return [noBrackets.replace(patternQuotes, replacement)];
+    }
+
+    // Remove quotes
+    optionsTmp.forEach(item => {
+      options.push(item.replace(patternQuotes, replacement).trim());
+    });
+
+    return options;
   }
 
   // number of settings has to be equal to
@@ -397,60 +425,42 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     var settingsArray = [];
 
     // generate javascript to collect values    
-    <?php 
+    const noConversion = ['text', 'integer', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
 
-    $noConversion = array('text', 'integer', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'); 
+    settingsJSON["data"].forEach(set => {
+      if (noConversion.includes(set['Type'])) {
 
-    foreach ($settings as $set) { 
-      if(in_array($set['Type'] , $noConversion))
-      { 
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", $("#'.$set["Code_Name"].'").val() ]);';
-      } 
-      elseif ($set['Type'] == "boolean")
-      {
-        echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temp ]);';  
-      }
-      elseif ($set['Type'] == "integer.checkbox")
-      {
-        echo 'temp = $("#'.$set["Code_Name"].'").is(":checked") ;';
-        echo 'temp ? temp = 1 : temp = 0;';
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temp ]);';  
-      }
-      elseif ($set["Code_Name"] == "SCAN_SUBNETS")
-      {        
-        echo "var temps = [];
-
-        $( '#SCAN_SUBNETS option' ).each( function( i, selected ) {
-          temps.push($( selected ).val());
-        });       
+        console.log($(set["Code_Name"]).val())
+        console.log(set["Code_Name"])
         
-        ";
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
-      }
-      elseif ($set['Type'] == "list")
-      { 
-        echo 'console.log($("#'.$set["Code_Name"].'"));';       
-        echo "var temps = [];
+        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
+
+      } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
         
-        $( '#".$set["Code_Name"]." option' ).each( function( i, selected ) {
-          vl = $( selected ).val()
-          if (vl != '')
-          {
+        const temp = $(`#${set["Code_Name"]}`).is(':checked') ? 1 : 0;
+        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temp]);
+
+      } else if (set['Code_Name'] === 'SCAN_SUBNETS') {
+        const temps = [];
+        $('#SCAN_SUBNETS option').each(function (i, selected) {
+          temps.push($(selected).val());
+        });
+        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
+      } else if (set['Type'] === 'list') {
+        const temps = [];
+        $(`#${set["Code_Name"]} option`).each(function (i, selected) {
+          const vl = $(selected).val();
+          if (vl !== '') {
             temps.push(vl);
           }
-        });       
-        console.log(temps);
-        ";
-        echo 'settingsArray.push(["'.$set["Group"].'", "'.$set["Code_Name"].'", "'.$set["Type"].'", temps ]);';
+        });        
+        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
+      } else if (set['Type'] === 'json') {
+        // todo: fix jquery value collection
+        const temps = $('#'+set["Code_Name"]).val();
+        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
       }
-      elseif ($set['Type'] == "json")
-      {
-        // todo
-      }
-    }
-    
-    ?>
+    });
     console.log(settingsArray);
     return settingsArray;
   }  

@@ -27,6 +27,9 @@ from plugin import get_plugins_configs, print_plugin_info
 def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
     result = default
 
+    if events is None:
+        events = []
+
     # use existing value if already supplied, otherwise default value is used
     if key in config_dir:
         result =  config_dir[key]
@@ -34,15 +37,12 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=[], de
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
 
-    # # store setting metadata as a JSON
-    # ccd(f'{key}__metadata', set, c_d, "", "json" , "", pref)
-    # if inputtype == 'json':
-    #     result = json.dumps(result)
-
     conf.mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
+    # save metadata in dummy setting
     conf.mySettingsSQLsafe.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
 
     conf.mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
+    #  save metadata in dummy setting
     conf.mySettings.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
 
     return result
@@ -208,7 +208,19 @@ def importConfigs (db):
             # Setting code name / key  
             key = pref + "_" + setFunction 
 
-            v = ccd(key, set["default_value"], c_d, set["name"][0]["string"], set["type"] , str(set["options"]), pref, set)
+            # set.get() - returns None if not found, set["options"] raises error
+            #  ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
+            v = ccd(key, 
+                    set["default_value"], 
+                    c_d, 
+                    set["name"][0]["string"], 
+                    set["type"] , 
+                    str(set["options"]), 
+                    group = pref, 
+                    events = set.get("events"), 
+                    desc = set["description"][0]["string"], 
+                    regex = "", 
+                    setJsonMetadata = set)
 
             # Save the user defined value into the object
             set["value"] = v

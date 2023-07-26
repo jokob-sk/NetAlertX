@@ -11,7 +11,8 @@
 var timerRefreshData = ''
 var modalCallbackFunction = '';
 var emptyArr            = ['undefined', "", undefined, null, 'null'];
-UI_LANG = "English";
+var UI_LANG = "English";
+var settingsJSON = {}
 
 
 // urlParams = new Proxy(new URLSearchParams(window.location.search), {
@@ -42,6 +43,7 @@ function setCache(key, data, expirationMinutes='')
 {
   sessionStorage.setItem(key, data);  
 
+  // create cookie if expiration set to handle refresh of data
   if (expirationMinutes != '') 
   {
     setCookie (key + '_session_expiry', 'OK', expirationMinutes='')
@@ -110,9 +112,11 @@ function deleteAllCookies() {
 function cacheSettings()
 {
   
-  $.get('api/table_settings.json', function(res) {    
+  $.get('api/table_settings.json', function(res) { 
+    
+    settingsJSON = res;
         
-    data = res["data"];       
+    data = settingsJSON["data"];       
 
     data.forEach((set) => {      
       setCache(`pia_set_${set.Code_Name}`, set.Value) 
@@ -148,7 +152,7 @@ function cacheStrings()
       Object.entries(res).forEach(([language, translations]) => {
           
           Object.entries(translations).forEach(([key, value]) => {              
-
+              // store as key - value pairs in session
               setCache(`pia_lang_${key}_${language}`, value) 
           });
       });
