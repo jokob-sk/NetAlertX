@@ -425,12 +425,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     var settingsArray = [];
 
     // generate javascript to collect values    
-    const noConversion = ['text', 'integer', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
+    const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
 
     settingsJSON["data"].forEach(set => {
       if (noConversion.includes(set['Type'])) {
 
-        console.log($(set["Code_Name"]).val())
+        console.log($('#'+set["Code_Name"]).val())
         console.log(set["Code_Name"])
         
         settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
@@ -455,13 +455,18 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           }
         });        
         settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
-      } else if (set['Type'] === 'json') {
-        // todo: fix jquery value collection
-        const temps = $('#'+set["Code_Name"]).val();
+      } else if (set['Type'] === 'json') {        
+        const temps = $('#'+set["Code_Name"]).val();        
         settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
       }
     });
+
+    // todo fix passing values between front end and server 
+    console.log("settingsArray");
     console.log(settingsArray);
+
+    sessionStorage.setItem('pia_settingsArray', settingsArray);
+
     return settingsArray;
   }  
 

@@ -229,7 +229,7 @@ function saveSettings()
 {
   global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;   
 
-  // save in the file
+  // save to the file
   $new_name = $config_file.'_'.$timestamp.'.backup';
   $new_location = $configFolderPath.$new_name;
 
@@ -265,15 +265,64 @@ function saveSettings()
     }
   }
 
+  echo "--SETTINGS<br>";
+  echo count($SETTINGS);
+  echo "--SETTINGS session<br>";
+  echo count($_SESSION['pia_settingsArray']); //pia_settingsArray
+  echo "--SETTINGS session<br>";
+  echo $_SESSION['pia_settingsArray']; //pia_settingsArray
+
+  $index = 0;
+  foreach($SETTINGS as $setting)
+  {
+    if(count($setting) < 3)
+    {
+      echo "--PREV<br>";
+      echo json_encode($SETTINGS[$index -1]);
+      echo "--<br>";
+      echo json_encode($setting);
+      echo "--<br>";
+      echo count($setting);
+      echo "--NEXT<br>";
+      echo json_encode($SETTINGS[$index +1]);
+      echo "--<br>";
+    }
+
+    $index = $index +1;
+  }
+  
+
   // go thru the groups and prepare settings to write to file
   foreach($groups as $group)
   {
     $txt = $txt."\n\n# ".$group;
     $txt = $txt."\n#---------------------------\n" ;
+    
+    $index = 0;
     foreach($SETTINGS as $setting)
     {
+      $index = $index +1;
       if($group == $setting[0])
       {            
+        // if (count($setting) < 3)
+        if ($index == 248)
+        {
+          echo json_encode($index-1);
+          echo json_encode($setting[0]);
+          echo json_encode($setting[1]);
+        }
+
+        if (count($setting) < 3)
+        // if ($index == 248)
+        {
+          echo "<br>----------------<br>";
+          echo json_encode($index-1);
+          echo json_encode($setting[0]);
+          echo json_encode($setting[1]);
+        }
+        
+
+
         if($setting[2] == 'text' or $setting[2] == 'password' or $setting[2] == 'readonly' or $setting[2] == 'text.select')
         {
           $val = encode_single_quotes($setting[3]);
@@ -304,6 +353,9 @@ function saveSettings()
 
           $temp = $temp.']';  // close brackets 
           $txt = $txt.$setting[1]."=".$temp."\n" ; 
+        } elseif($setting[2] == 'json')
+        {
+          $txt = $txt.$setting[1]."=".$setting[3]."\n" ; 
         }            
       }
     }
