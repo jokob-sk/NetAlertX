@@ -461,12 +461,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       }
     });
 
-    // todo fix passing values between front end and server 
-    console.log("settingsArray");
-    console.log(settingsArray);
-
-    sessionStorage.setItem('pia_settingsArray', settingsArray);
-
     return settingsArray;
   }  
 
@@ -480,7 +474,9 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       $.ajax({
       method: "POST",
       url: "../php/server/util.php",
-      data: { function: 'savesettings', settings: collectSettings() },
+      data: { 
+        function: 'savesettings', 
+        settings: JSON.stringify(collectSettings()) },
       success: function(data, textStatus) {                    
           showModalOk ('Result', data );
           // Remove navigation prompt "Are you sure you want to leave..."
@@ -490,6 +486,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     }
   }
 
+  
   // ---------------------------------------------------------  
   function getParam(targetId, key, skipCache = false) {  
 
