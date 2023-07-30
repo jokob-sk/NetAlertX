@@ -269,56 +269,52 @@ function saveSettings()
   }
   
   // go thru the groups and prepare settings to write to file
-  foreach($groups as $group)
-  {
-    $txt = $txt."\n\n# ".$group;
-    $txt = $txt."\n#---------------------------\n" ;
-    
-    
-    foreach($decodedSettings as $setting)
-    {
-      
-      if($group == $setting[0])
-      {                   
+  foreach ($groups as $group) {
+    $txt .= "\n\n# " . $group;
+    $txt .= "\n#---------------------------\n";
 
+    foreach ($decodedSettings as $setting) {
+        $settingGroup = $setting[0];
+        $settingKey = $setting[1];
+        $settingType = $setting[2]; 
+        $settingValue = $setting[3];
 
-        if($setting[2] == 'text' or $setting[2] == 'password' or $setting[2] == 'readonly' or $setting[2] == 'text.select')
-        {
-          $val = encode_single_quotes($setting[3]);
-          $txt = $txt.$setting[1]."='".$val."'\n" ; 
-        } elseif($setting[2] == 'integer' or $setting[2] == 'integer.select')
-        {
-          $txt = $txt.$setting[1]."=".$setting[3]."\n" ; 
-        } elseif($setting[2] == 'boolean' || $setting[2] == 'integer.checkbox')
-        {
-          $val = "False";
-          if($setting[3] == 'true' || $setting[3] == '1' || $setting[3] == 1 || $setting[3] == 'True')
-          {
-            $val = "True";
-          }
-          $txt = $txt.$setting[1]."=".$val."\n" ; 
-        }elseif($setting[2] == 'text.multiselect' or $setting[2] == 'subnets' or $setting[2] == 'list')
-        {
-          $temp = '[';         
-          
-          if (count($setting) > 3 && is_array( $setting[3]) == True){
-            foreach($setting[3] as $val)
-            {
-              $temp = $temp."'". encode_single_quotes($val)."',";
+        if ($group == $settingGroup) {
+            if ($settingType == 'text' || $settingType == 'password' || $settingType == 'readonly' || $settingType == 'text.select') {
+                $val = encode_single_quotes($settingValue);
+                $txt .= $settingKey . "='" . $val . "'\n";
+            } elseif ($settingType == 'integer' || $settingType == 'integer.select') {
+                $txt .= $settingKey . "=" . $settingValue . "\n";
+            } elseif ($settingType == 'boolean' || $settingType == 'integer.checkbox') {
+
+                if ($settingValue === true || $settingValue === 1 || strtolower($settingValue) === 'true') {
+                    $val = "True";
+                } else {
+                    $val = "False";
+                }
+
+                $txt .= $settingKey . "=" . $val . "\n";
+            } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list') {
+                $temp = '[';
+
+                if (count($setting) > 3 && is_array($settingValue) == true) {
+                    foreach ($settingValue as $val) {
+                        $temp .= "'" . encode_single_quotes($val) . "',";
+                    }
+
+                    $temp = substr_replace($temp, "", -1); // remove last comma ','
+                }
+
+                $temp .= ']'; // close brackets
+                $txt .= $settingKey . "=" . $temp . "\n";
+            } elseif ($settingType == 'json') {
+                $txt .= $settingKey . "=" . $settingValue . "\n";
             }
-
-            $temp = substr_replace($temp, "", -1); // remove last comma ','
-          }
-
-          $temp = $temp.']';  // close brackets 
-          $txt = $txt.$setting[1]."=".$temp."\n" ; 
-        } elseif($setting[2] == 'json')
-        {
-          $txt = $txt.$setting[1]."=".$setting[3]."\n" ; 
-        }            
-      }
+        }
     }
   }
+
+
 
   $txt = $txt."\n\n";
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";

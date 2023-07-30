@@ -761,21 +761,26 @@ height: 50px;
     margin-bottom: 6px;
 }
 
-
+/* AdminLTE overrides */
 #networkTree .box
 {
-    padding:2px;
-    margin:2px;
+    border-top:1px;
+    border-top-color:grey;
+    padding:0px;
+    margin:0px;
+    align-items:center;
+    border-radius:20px;
+    width:180px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 #networkTree .netNodeText
-{
-    top: 2px;
-    margin: 2px;    
+{ 
     position: absolute;
 }
 #networkTree .netPort
 {
-    width: 10px;;
     float:left;
     display:inline;  
 }
@@ -784,8 +789,7 @@ height: 50px;
     margin-left: 16px;
     /* border: solid;
     border-color:#606060;     */
-    position: relative;
-    font-size: 0.75em;
+    position: relative;    
 }
 #networkTree .netIcon
 {

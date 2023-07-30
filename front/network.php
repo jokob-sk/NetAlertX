@@ -609,7 +609,7 @@
 
   // --------------------------------------------------------------------------- 
   var myTree;
-  var treeAreaHeight = 600;
+  var treeAreaHeight = 800;
   var emSize;
   var nodeHeight;
 
@@ -617,9 +617,10 @@
   {    
     // calculate the font size of the leaf nodes to fit everything into the tree area
     leafNodesCount == 0 ? 1 : leafNodesCount;
-    emSize = ((600/(20*leafNodesCount)).toFixed(2));        
+    emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));        
     emSize = emSize > 1 ? 1 : emSize;      
     
+    // nodeHeight = ((emSize*100*0.30).toFixed(0))
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
     $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${$('.content-header').width()}px`)
@@ -632,7 +633,7 @@
 
         // Build HTML for individual nodes in the network diagram
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
-        devicePort = (!emptyArr.includes(nodeData.data.port )) ?  "<div class='netPort ' >"+nodeData.data.port +"</div>" : "";
+        devicePort = (!emptyArr.includes(nodeData.data.port )) ?  "<div class='netPort ' style=width:"+emSize*2.5+"em; >"+nodeData.data.port +"</div>" : "";
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
         collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*2.5+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
         statusCss = " netStatus-" + nodeData.data.status;
@@ -643,13 +644,7 @@
 
         return result = "<div class='box "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
                           style='height:"+nodeData.settings.nodeHeight+"px;\
-                                 width:180px;\
-                                 display:flex;\
-                                 flex-direction:column;\
-                                 justify-content:center;\
                                  " + fontSize + "\
-                                 align-items:center;\
-                                 border-radius:5px;'\
                           >\
                           <div class='netNodeText '>\
                             <strong>" + devicePort + deviceIcon +
@@ -660,7 +655,7 @@
         },
 
       onNodeClick:  nodeData =>  { 
-          // console.log(this)  
+          console.log(this)  
         },
       mainAxisNodeSpacing: 'auto',
       // mainAxisNodeSpacing: 3,
