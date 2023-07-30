@@ -407,7 +407,7 @@
         "run_event_tooltip" : "Enable the setting and save your changes at first before you run it.",
         "run_event_icon" : "fa-play",
         "general_event_title" : "Executing an ad-hoc event",
-        "general_event_description" : " The event you nove triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a  href=\"/maintenance.php#tab_Logging\">error log</a> if you didn not get the expected result. <br/> <br/>  Status: ",
+        "general_event_description" : " The event you nove triggered might take a while until background processes finish. The execution ended once you see <code>finished</code> below. Check the <a  href='/maintenance.php#tab_Logging'>error log</a> if you didn not get the expected result. <br/> <br/>  Status: ",
         "Plugins_Unprocessed_Events" : "Unprocessed Events",
         "Plugins_Objects" : "Plugin Objects",
         "Plugins_DeleteAll" : "Delete all (filters are ignored)",

@@ -394,7 +394,7 @@
         "run_event_tooltip" : "Activa el ajuste y guarda tus cambios antes de ejecutarlo.",
         "run_event_icon" : "fa-play",
         "general_event_title" : "Ejecutar un evento ad-hoc",
-        "general_event_description" : "El evento que has ejecutado puede tardar un rato mientras finalizan procesos en segundo plano. La ejecución ha terminado cuando ves <code>finalizado</code> abajo. Comprueba el <a onclick='setCache(\"activeMaintenanceTab\", \"tab_Logging_id\")' href=\"/maintenance.php#tab_Logging\">registro de error</a> si no has obtenido el resultado esperado. <br/> <br/>  Estado: ", 						
+        "general_event_description" : "El evento que has ejecutado puede tardar un rato mientras finalizan procesos en segundo plano. La ejecución ha terminado cuando ves <code>finalizado</code> abajo. Comprueba el <a  href='/maintenance.php#tab_Logging'>registro de error</a> si no has obtenido el resultado esperado. <br/> <br/>  Estado: ", 						
         "Plugins_Unprocessed_Events" : "Eventos sin procesar",
         "Plugins_Objects" : "Objetos del Plugin",
         "Plugins_History" : "Historial de eventos",									  				 
