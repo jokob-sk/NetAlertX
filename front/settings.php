@@ -439,14 +439,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         
         const temp = $(`#${set["Code_Name"]}`).is(':checked') ? 1 : 0;
         settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temp]);
-
-      } else if (set['Code_Name'] === 'SCAN_SUBNETS') {
-        const temps = [];
-        $('#SCAN_SUBNETS option').each(function (i, selected) {
-          temps.push($(selected).val());
-        });
-        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
-      } else if (set['Type'] === 'list') {
+      
+      } else if (set['Type'] === 'list' || set['Type'] === 'subnets') {
         const temps = [];
         $(`#${set["Code_Name"]} option`).each(function (i, selected) {
           const vl = $(selected).val();

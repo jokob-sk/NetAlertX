@@ -13,22 +13,14 @@
 
     <!-- &copy; 2020 Puche -->
     <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>
-
-       
     
-       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) | <b>Built on: </b> 
+       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) | <b><?= lang('Maintenance_built_on');?>: </b> 
        
-       <?php 
-        
-        echo date("Y-m-d", ((int)file_get_contents( "buildtimestamp.txt")));        
-       
-       ?> 
+       <?php echo date("Y-m-d", ((int)file_get_contents( "buildtimestamp.txt")));?> 
        
        | <b> Version: </b>
        
-       <?php      
-
-        $filename = "/.VERSION";
+       <?php $filename = "/.VERSION";
        
         if(file_exists($filename))
         {

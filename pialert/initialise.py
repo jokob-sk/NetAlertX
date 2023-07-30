@@ -248,9 +248,6 @@ def importConfigs (db):
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
 
-    # Used to determine the next import
-    conf.lastTimeImported = time.time()
-
     # Is used to display a message in the UI when old (outdated) settings are loaded    
     initOrSetParam(db, "Back_Settings_Imported",(round(time.time() * 1000),) )    
     
@@ -259,6 +256,10 @@ def importConfigs (db):
 
     #  update only the settings datasource
     update_api(db, False, ["settings"])  
+
+    # Used to determine the next import
+    conf.lastTimeImported = time.time()
+    
     #TO DO this creates a circular reference between API and HELPER !
 
     mylog('info', '[Config] Imported new config')
