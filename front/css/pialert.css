@@ -646,6 +646,11 @@ height: 50px;
 }
 }
 
+.settingswrap .metadata
+{
+    display: none;
+}
+
 .table_row {    
     padding: 3px;    
     width:100%;

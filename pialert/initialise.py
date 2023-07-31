@@ -40,12 +40,12 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=[], de
     conf.mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
     # save metadata in dummy setting
     if '__metadata' not in key:
-        conf.mySettingsSQLsafe.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
+        conf.mySettingsSQLsafe.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, []))
 
     conf.mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
     #  save metadata in dummy setting
     if '__metadata' not in key:
-        conf.mySettings.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, ""))
+        conf.mySettings.append((f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, []))
 
     return result
 #-------------------------------------------------------------------------------

@@ -71,7 +71,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       </h1>
       <div class="settingsImported"><?= lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
-    <div class="content " id='accordion_gen'>
+    <div class="content settingswrap" id='accordion_gen'>
      <!-- PLACEHOLDER -->
    </div>
    
@@ -91,7 +91,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <?php
   require 'php/templates/footer.php';  
 ?>
-
 
 
 <script>
@@ -178,12 +177,22 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
         if(set["Group"] == group)
         {
+          // hide metadata by default by assigning it a special class
+          const isMetadata = set['Code_Name'].includes('__metadata');
+          isMetadata ? metadataClass = 'metadata' : metadataClass = '';
+          isMetadata ? infoIcon = '' : infoIcon = `<i 
+                                                      my-to-toggle="row_${set['Code_Name']}__metadata"
+                                                      title="${getString("Settings_Metadata_Toggle")}" 
+                                                      class="fa fa-circle-question pointer" 
+                                                      onclick="toggleMetadata(this)">
+                                                    </i>` ;
+
           setHtml += `
-                    <div class="row table_row">
+                    <div class="row table_row ${metadataClass}" id="row_${set['Code_Name']}">
                       <div class="table_cell setting_name bold">
                         <label>${getString(set['Code_Name'] + '_name', set['Display_Name'])}</label>
                         <div class="small">
-                          <code>${set['Code_Name']}</code>
+                          <code>${set['Code_Name']}</code>${infoIcon}
                         </div>
                       </div>
                       <div class="table_cell setting_description">
@@ -265,7 +274,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                   <input class="form-control" type="text" id="${set['Code_Name']}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" onclick="addList${set['Code_Name']}()">Add</button>
+                  <button class="btn btn-primary" my-input-from="${set['Code_Name']}_input" my-input-to="${set['Code_Name']}" onclick="addList(this)">Add</button>
                 </div>
               </div>
               <div class="form-group">
@@ -279,7 +288,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             });
 
             input += '</select></div>' +
-            `<div><button class="btn btn-primary" onclick="removeFromList${set['Code_Name']}()">Remove last</button></div>`;
+            `<div><button class="btn btn-primary" my-input="${set['Code_Name']}" onclick="removeFromList(this)">Remove last</button></div>`;
           } else if (set['Type'] === 'json') {
             input = `<textarea class="form-control input" my-data-type="${set['Type']}" id="${set['Code_Name']}" readonly>${JSON.stringify(set['Value'], null, 2)}</textarea>`;
           }
@@ -288,11 +297,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
           const eventsList = createArray(set['Events']);
 
+          console.log(eventsList)
+
           if (eventsList.length > 0) {
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
                 data-myparam="${set['Code_Name']}"
                 data-myevent="${event}"
+                onclick="handleEvent(this)"
               >
                 <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}">                 
                 </i>
@@ -360,35 +372,27 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     showModalOk('WARNING', "<?= lang("settings_missing")?>");    
   }
 
-  <?php
-    // generate javascript methods to handle add and remove items to lists
-    foreach($settingKeyOfLists as $settingKey )
-    {
-      $addList = 'function addList'.$settingKey.'()
-      {
-        input = $("#'.$settingKey.'_input").val();
-        $("#'.$settingKey.'").append($("<option disabled></option>").attr("value", input).text(input));
+  // ---------------------------------------------------------
+  function addList(element)
+  {
 
-        
-        $("#'.$settingKey.'_input").val("");
-  
-        settingsChanged();
-      }
-      ';      
+    const fromId = $(element).attr('my-input-from');
+    const toId = $(element).attr('my-input-to');
 
+    input = $(`#${fromId}`).val();
+    $(`#${toId}`).append($("<option disabled></option>").attr("value", input).text(input));
+    
+    // clear input
+    $(`#${fromId}`).val("");
 
-      $remList = 'function removeFromList'.$settingKey.'()
-      {
-        settingsChanged();
-        // $("#'.$settingKey.'").empty();
-        $("#'.$settingKey.'").find("option:last").remove();
-      }';
-
-      echo $remList;
-      echo $addList;
-    }
-  ?>
-  
+    settingsChanged();
+  }
+  // ---------------------------------------------------------
+  function removeFromList(element)
+  {
+    settingsChanged();    
+    $(`#${$(element).attr('my-input')}`).find("option:last").remove();
+  }
   // ---------------------------------------------------------
   function addInterface()
   {
@@ -424,15 +428,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   {
     var settingsArray = [];
 
-    // generate javascript to collect values    
+    // collect values for each of the different input form controls
     const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
 
     settingsJSON["data"].forEach(set => {
       if (noConversion.includes(set['Type'])) {
 
-        console.log($('#'+set["Code_Name"]).val())
-        console.log(set["Code_Name"])
-        
         settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
 
       } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
@@ -556,17 +557,25 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // ----------------------------------------------------------------------------- 
   // handling events on the backend initiated by the front end START
   // ----------------------------------------------------------------------------- 
-  $(window).on('load', function() { 
-    $('span[data-myevent]').each(function(index, element){
-      $(element).attr('onclick', 
-      'handleEvent(\"' + $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam') + '\")'      
-      );
-    });
-  });
+  function toggleMetadata(element)
+  {
+    const id = $(element).attr('my-to-toggle');
+
+    $(`#${id}`).toggle();
+  }
+
+
+  // ----------------------------------------------------------------------------- 
+  // handling events on the backend initiated by the front end START
+  // ----------------------------------------------------------------------------- 
 
   modalEventStatusId = 'modal-message-front-event'
 
-  function handleEvent (value){
+  function handleEvent (element){
+
+    // value has to be in format event|param. e.g. run|ENABLE_ARPSCAN
+    value = $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam')        
+
     setParameter ('Front_Event', value)
 
     // show message
@@ -585,7 +594,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       displayedEvent = $('#'+modalEventStatusId).html()
 
       // loop until finished  
-      if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 4s
+      if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 2s
       {
         
         getParam(modalEventStatusId,"Front_Event", true)

@@ -295,14 +295,12 @@ function saveSettings()
 
                 $txt .= $settingKey . "=" . $val . "\n";
             } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list') {
-                $temp = '[';
-
-                echo $settingType.'<br>';
-                echo $settingKey.'<br>';
-                echo json_encode($settingValue).'<br>';
-                // echo json_decode($settingValue).'<br>';
-
-                // json_decode($settingValue) todo
+                $temp = '';
+                
+                if(is_array($settingValue) == FALSE)
+                {
+                  $settingValue =  json_decode($settingValue);
+                }
 
                 if (count($setting) > 3 && is_array($settingValue) == true) {
                     foreach ($settingValue as $val) {
@@ -312,7 +310,7 @@ function saveSettings()
                     $temp = substr_replace($temp, "", -1); // remove last comma ','
                 }
 
-                $temp .= ']'; // close brackets
+                $temp = '['.$temp.']'; // wrap brackets
                 $txt .= $settingKey . "=" . $temp . "\n";
             } elseif ($settingType == 'json') {
                 $txt .= $settingKey . "=" . $settingValue . "\n";
@@ -330,7 +328,7 @@ function saveSettings()
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
   // open new file and write the new configuration      
-  $newConfig = fopen($fullConfPath.'_debug', "w") or die("Unable to open file!"); // todo
+  $newConfig = fopen($fullConfPath, "w") or die("Unable to open file!"); 
   fwrite($newConfig, $txt);
   fclose($newConfig);
 
