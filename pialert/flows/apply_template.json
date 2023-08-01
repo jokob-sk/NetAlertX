@@ -1,5 +1,5 @@
 {
-    "name":"unmark_new",    
+    "name":"apply_template",    
     "triggers": [
         {
             "type": "new",            
@@ -50,8 +50,10 @@
                     "type": "plugin",            
                     "params": 
                     {
-                        "name": "UNMRK_NEW",
-                        "CMD": "db.row"                        
+                        "unique_prefix": "KNWN",
+                        "override":{
+                            
+                        }
                     }
 
                 }

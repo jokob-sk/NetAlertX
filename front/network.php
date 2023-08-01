@@ -24,8 +24,7 @@
   </section>
 
 
-
-  <div id="networkTree" ></div>
+  <div id="networkTree" class="drag"></div>
 
   <!-- Main content ---------------------------------------------------------- -->
   <section class="content">
@@ -448,6 +447,7 @@
   require 'php/templates/footer.php';
 ?>
 
+
 <script src="lib/treeviz/index.js"></script>
 <script src="lib/treeviz/require.js"></script>
 <script src="js/pialert_common.js"></script>
@@ -608,6 +608,19 @@
   }
 
   // --------------------------------------------------------------------------- 
+  function handleNodeClick(event)
+  {
+    
+    console.log(event.target.offsetParent)
+    
+    const targetTabMAC = $(event.target.offsetParent).attr("data-mytreemacmain");
+
+    var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
+  
+    // Simulate a click event on the target tab
+    targetTab.click();
+  }
+  // --------------------------------------------------------------------------- 
   var myTree;
   var treeAreaHeight = 800;
   var emSize;
@@ -642,7 +655,7 @@
 
         highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";        
 
-        return result = "<div class='box "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
+        return result = "<div class='box pointer "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
                           style='height:"+nodeData.settings.nodeHeight+"px;\
                                  " + fontSize + "\
                           >\
@@ -668,6 +681,8 @@
       idKey: "id",
       hasFlatData: false,      
       linkWidth: (nodeData) => 3,
+      linkColor: (nodeData) => "#ffcc80",
+      onNodeClick: (nodeData) => handleNodeClick(nodeData),
       relationnalField: "children",      
       });
       
