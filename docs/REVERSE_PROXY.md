@@ -1,5 +1,7 @@
 # Reverse Proxy Configuration
 
+> Submitted by amazing [cvc90](https://github.com/cvc90) 🙏
+
 ## NGINX HTTP Configuration (Direct Path)
 
 1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
