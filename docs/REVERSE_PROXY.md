@@ -1,6 +1,289 @@
 # Reverse Proxy Configuration
 
-Reverse proxy example by using LinuxServer's SWAG container.
+## NGINX HTTP Configuration (Direct Path)
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 80; 
+     server_name pi.alert; 
+     proxy_preserve_host on; 
+     proxy_pass http://localhost:20211/; 
+     proxy_pass_reverse http://localhost:20211/; 
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/
+
+<br>
+
+## NGINX HTTP Configuration (Sub Path)
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 80; 
+     server_name pi.alert; 
+     proxy_preserve_host on; 
+     location ^~ /pi.alert/ {
+          proxy_pass http://localhost:20211/;
+          proxy_pass_reverse http://localhost:20211/; 
+          proxy_redirect ~^/(.*)$ /pi.alert/$1;
+          rewrite ^/pi.alert/?(.*)$ /$1 break;			
+     }
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/pi.alert/
+
+<br>
+
+## NGINX HTTP Configuration (Sub Path) with module ngx_http_sub_module
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 80; 
+     server_name pi.alert; 
+     proxy_preserve_host on; 
+     location ^~ /pi.alert/ {
+          proxy_pass http://localhost:20211/;
+          proxy_pass_reverse http://localhost:20211/; 
+          proxy_redirect ~^/(.*)$ /pi.alert/$1;
+          rewrite ^/pi.alert/?(.*)$ /$1 break;
+	  sub_filter_once off;
+	  sub_filter_types *;
+	  sub_filter 'href="/' 'href="/pi.alert/';
+	  sub_filter '(?>$host)/css' '/pi.alert/css';
+	  sub_filter '(?>$host)/js'  '/pi.alert/js';
+	  sub_filter '/img' '/pi.alert/img';
+	  sub_filter '/lib' '/pi.alert/lib';
+	  sub_filter '/php' '/pi.alert/php';				
+     }
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/pi.alert/
+
+<br>
+
+**NGINX HTTPS Configuration (Direct Path)**
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 443; 
+     server_name pi.alert; 
+     SSLEngine On;
+     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
+     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
+     proxy_preserve_host on; 
+     proxy_pass http://localhost:20211/; 
+     proxy_pass_reverse http://localhost:20211/; 
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/
+
+<br>
+
+**NGINX HTTPS Configuration (Sub Path)**
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 443; 
+     server_name pi.alert; 
+     SSLEngine On;
+     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
+     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
+     location ^~ /pi.alert/ {
+          proxy_pass http://localhost:20211/;
+          proxy_pass_reverse http://localhost:20211/; 
+          proxy_redirect ~^/(.*)$ /pi.alert/$1;
+          rewrite ^/pi.alert/?(.*)$ /$1 break;		
+     }
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+
+<br>
+
+## NGINX HTTPS Configuration (Sub Path) with module ngx_http_sub_module
+
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+
+2. In this file, paste the following code:
+
+```
+   server { 
+     listen 443; 
+     server_name pi.alert; 
+     SSLEngine On;
+     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
+     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
+     location ^~ /pi.alert/ {
+          proxy_pass http://localhost:20211/;
+          proxy_pass_reverse http://localhost:20211/; 
+          proxy_redirect ~^/(.*)$ /pi.alert/$1;
+          rewrite ^/pi.alert/?(.*)$ /$1 break;
+	  sub_filter_once off;
+	  sub_filter_types *;
+	  sub_filter 'href="/' 'href="/pi.alert/';
+	  sub_filter '(?>$host)/css' '/pi.alert/css';
+	  sub_filter '(?>$host)/js'  '/pi.alert/js';
+	  sub_filter '/img' '/pi.alert/img';
+	  sub_filter '/lib' '/pi.alert/lib';
+	  sub_filter '/php' '/pi.alert/php';		
+     }
+    }
+``` 
+
+3. Activate the new website by running the following command:
+
+   `nginx -s reload` or `systemctl restart nginx`
+
+4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+
+<br>
+
+## Apache HTTP Configuration (Direct Path)
+
+1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+
+2. In this file, paste the following code:
+
+```
+    <VirtualHost *:80>
+         ServerName pi.alert
+         ProxyPreserveHost On
+         ProxyPass / http://localhost:20211/
+         ProxyPassReverse / http://localhost:20211/
+    </VirtualHost>
+``` 
+
+3. Activate the new website by running the following command:
+
+   `a2ensite pialert` or `service apache2 reload`
+
+4. Once Apache restarts, you should be able to access the proxy website at http://pi.alert/
+
+<br>
+
+## Apache HTTP Configuration (Sub Path)
+
+1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+
+2. In this file, paste the following code:
+
+```
+    <VirtualHost *:80>
+         ServerName pi.alert
+         location ^~ /pi.alert/ {
+               ProxyPreserveHost On
+               ProxyPass / http://localhost:20211/
+               ProxyPassReverse / http://localhost:20211/
+         }
+    </VirtualHost>
+```   
+
+3. Activate the new website by running the following command:
+
+   `a2ensite pialert` or `service apache2 reload`
+
+4. Once Apache restarts, you should be able to access the proxy website at http://pi.alert/
+
+<br>
+
+## Apache HTTPS Configuration (Direct Path)
+
+1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+
+2. In this file, paste the following code:
+
+```
+    <VirtualHost *:443>
+         ServerName pi.alert
+         SSLEngine On
+         SSLCertificateFile /etc/ssl/certs/pi.alert.pem
+         SSLCertificateKeyFile /etc/ssl/private/pi.alert.key
+         ProxyPreserveHost On
+         ProxyPass / http://localhost:20211/
+         ProxyPassReverse / http://localhost:20211/
+    </VirtualHost>
+```   
+
+3. Activate the new website by running the following command:
+
+    `a2ensite pialert` or `service apache2 reload`
+
+4. Once Apache restarts, you should be able to access the proxy website at https://pi.alert/
+
+<br>
+
+## Apache HTTPS Configuration (Sub Path)
+
+1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+
+2. In this file, paste the following code:
+                            
+```
+	<VirtualHost *:443> 
+        ServerName pi.alert
+        SSLEngine On 
+        SSLCertificateFile /etc/ssl/certs/pi.alert.pem
+        SSLCertificateKeyFile /etc/ssl/private/pi.alert.key
+        location ^~ /pi.alert/ {
+              ProxyPreserveHost On
+              ProxyPass / http://localhost:20211/
+              ProxyPassReverse / http://localhost:20211/
+        }
+    </VirtualHost>
+```       
+
+3. Activate the new website by running the following command:
+
+   `a2ensite pialert` or `service apache2 reload`
+
+4. Once Apache restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+
+## Reverse proxy example by using LinuxServer's SWAG container.
 
 > Submitted by [s33d1ing](https://github.com/s33d1ing). 🙏
 
