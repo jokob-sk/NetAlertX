@@ -2,6 +2,10 @@
 
 Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node).
 
+> 💡 Tip: You can add dummy devices via the [Undiscoverables plugin](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/README.md)
+
+> 💡 Tip: Export your configuration of the Network and Devices once in a while via the Export CSV feature under **Maintenance** -> **Backup/Restore** -> **CSV Export**.   
+
 ## ⚡Quick setup:
 
 * Go to Devices > Device Details. 
