@@ -1,13 +1,54 @@
 {
-    "name":"apply_template",    
-    "triggers": [
+    "name":"apply_template",  
+    "params" : [
         {
-            "type": "new",            
-            "object": 
-            {
-                "type": "db.row",
-                "target": "Devices"
-            }
+            "name"  : "target_macs",
+            "type"  : "setting",
+            "value" : "KNWN_target_macs"
+        }, 
+        {
+            "name"  : "dev_AlertDeviceDown",
+            "type"  : "setting",
+            "value" : "KNWN_dev_AlertDeviceDown"    
+        }, 
+        {
+            "name"  : "dev_AlertEvents",
+            "type"  : "setting",
+            "value" : "KNWN_dev_AlertEvents"
+        },
+        {
+            "name" : "",
+            "type":"array",
+            "value": "trigger.Object_PrimaryID"
+        },
+        {
+            "type":"array",
+            "value": "trigger"
+        }
+    ],  
+    "trigger": [
+        {
+            "object_type": "dbtable",
+            "object_key": "Devices",
+            "object_event": "new",
+            "object_filter": "",
+            "object_mappings": 
+            [
+                {
+                    "column": "Object_PrimaryID",
+                    "mapped_to_column": "Dev_MAC", 
+                    "css_classes": "col-sm-2",
+                    "show": true,
+                    "type": "devicemac",
+                    "default_value":"",
+                    "options": [],
+                    "localized": ["name"],
+                    "name":[{
+                        "language_code":"en_us",
+                        "string" : "MAC address"
+                        }]
+                }
+            ]
         }
     ],
     "steps": [
@@ -51,9 +92,15 @@
                     "params": 
                     {
                         "unique_prefix": "KNWN",
-                        "override":{
-                            
-                        }
+                        "overrides":[
+                            {
+                                "object_path": "settings.0",
+                                "key":"function", 
+                                "value":"target_macs", 
+                                "target_property":"default_value", 
+                                "desired_value":  "triggers.keys"                              
+                            }
+                        ]
                     }
 
                 }

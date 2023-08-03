@@ -39,9 +39,9 @@
   "settings":[
         {
           "function": "target_macs",
-          "type": "readonly",
+          "type": "list.readonly",
           "maxLength": 50,
-          "default_value": "",
+          "default_value": [],
           "options": [],
           "localized": ["name", "description"],
           "name": [
