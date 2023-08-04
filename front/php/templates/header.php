@@ -138,10 +138,14 @@ if ($ENABLED_DARKMODE === True) {
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">          
-    		 <!-- Full Screen -->		 
-    		 <li>
-    			<a href='#' span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
-    		 </li>	          
+	 <!-- Reload -->		 
+	 <li>
+	   <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='location.reload()'><i class='fa fa-repeat'></i></a>
+	 </li>	
+	 <!-- Full Screen -->		 
+	 <li>
+	   <a id="fullscreen-button" href='#' role="button" span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
+	 </li>	        
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
@@ -277,13 +281,15 @@ if ($ENABLED_DARKMODE === True) {
 
   //--------------------------------------------------------------
 
-	function toggleFullscreen() {
-	  if (document.fullscreenElement) {
-		document.exitFullscreen();
-	  } else {
-		document.documentElement.requestFullscreen();
-	  }
+  function toggleFullscreen() {
+
+   if (document.fullscreenElement) {
+     document.exitFullscreen();
+    }
+   else {
+     document.documentElement.requestFullscreen();
 	}
+   }
   
   //--------------------------------------------------------------
 
