@@ -283,12 +283,19 @@ def plugin_param_from_glob_set(globalSetting):
 
     noConversion = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
     arrayConversion = ['text.multiselect', 'list'] 
+    jsonConversion = ['.template'] 
 
     if setTyp in noConversion:
         return setVal
 
     if setTyp in arrayConversion:
         return flatten_array(setVal)
+
+    for item in jsonConversion:
+        if setTyp.endswith(item):
+            return json.dumps(setVal)
+
+
 
 #-------------------------------------------------------------------------------
 # Gets the setting value

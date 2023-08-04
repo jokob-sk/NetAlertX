@@ -204,42 +204,34 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           // Render different input types based on the settings type
           let input = "";
 
-          if (set['Type'] === 'text' || set['Type'] === 'string' || set['Type'] === 'date-time') {
-            input = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${set['Type']}"  id="${set['Code_Name']}" value="${set['Value']}"/>`;
-          } else if (set['Type'] === 'password') {
-            input = `<input onChange="settingsChanged()"  my-data-type="${set['Type']}"  class="form-control input" id="${set['Code_Name']}" type="password" value="${set['Value']}"/>`;
-          } else if (set['Type'] === 'readonly') {
-            input = `<input class="form-control input"  my-data-type="${set['Type']}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
-          } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
+          const setType = set['Type'].toLowerCase();
+
+          if (setType.startsWith('text') || setType.startsWith('string') || setType.startsWith('date-time') ) {
+            
+            if(setType.includes(".select"))
+            {
+              input = generateInputOptions(set, input, isMultiSelect = false)
+
+            } else if(setType.includes(".multiselect"))
+            {
+              input = generateInputOptions(set, input, isMultiSelect = true)
+            } else{
+              input = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${set['Code_Name']}" value="${set['Value']}"/>`;
+            }            
+          } else if (setType === 'integer') {
+            input = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${set['Code_Name']}" type="number" value="${set['Value']}"/>`;
+          } else if (setType === 'password') {
+            input = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${set['Code_Name']}" type="password" value="${set['Value']}"/>`;
+          } else if (setType === 'readonly') {
+            input = `<input class="form-control input"  my-data-type="${setType}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
+          } else if (setType === 'boolean' || setType === 'integer.checkbox') {
             let checked = set['Value'] === 'True' || set['Value'] === '1' ? 'checked' : '';
-            input = `<input onChange="settingsChanged()" my-data-type="${set['Type']}" class="checkbox" id="${set['Code_Name']}" type="checkbox" value="${set['Value']}" ${checked} />`;
-          } else if (set['Type'] === 'integer') {
-            input = `<input onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" id="${set['Code_Name']}" type="number" value="${set['Value']}"/>`;
-          } else if (set['Type'] === 'text.select' || set['Type'] === 'integer.select') {
-            input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}">`;
+            input = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${set['Code_Name']}" type="checkbox" value="${set['Value']}" ${checked} />`;          
+          } else if (setType === 'integer.select') {
 
-            values = createArray(set['Value']);
-            options = createArray(set['Options']);
-
-            options.forEach(option => {
-              let selected = values.includes(option) ? 'selected' : '';
-              input += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-
-            input += '</select>';
-          } else if (set['Type'] === 'text.multiselect') {
-            input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple>`;
-
-            values = createArray(set['Value']);
-            options = createArray(set['Options']);
-
-            options.forEach(option => {
-              let selected = values.includes(option) ? 'selected' : '';
-              input += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-
-            input += '</select>';
-          } else if (set['Type'] === 'subnets') {
+            input = generateInputOptions(set, input)
+          
+          } else if (setType === 'subnets') {
             input = `
             <div class="row form-group">
               <div class="col-xs-5">
@@ -253,7 +245,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control" my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+              <select class="form-control" my-data-type="${setType}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
 
 
             options = createArray(set['Value']);
@@ -264,7 +256,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             input += '</select></div>' +
             '<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
-          } else if (set['Type'] === 'list') {
+          } else if (setType === 'list') {
 
             settingKeyOfLists.push(set['Code_Name']);
 
@@ -278,8 +270,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 </div>
               </div>
               <div class="form-group">
-                <select class="form-control" my-data-type="${set['Type']}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
-
+                <select class="form-control" my-data-type="${setType}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
 
             let options = createArray(set['Value']);
 
@@ -289,8 +280,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             input += '</select></div>' +
             `<div><button class="btn btn-primary" my-input="${set['Code_Name']}" onclick="removeFromList(this)">Remove last</button></div>`;
-          } else if (set['Type'] === 'json') {
-            input = `<textarea class="form-control input" my-data-type="${set['Type']}" id="${set['Code_Name']}" readonly>${JSON.stringify(set['Value'], null, 2)}</textarea>`;
+          } else if (setType === 'json') {
+            input = `<textarea class="form-control input" my-data-type="${setType}" id="${set['Code_Name']}" readonly>${JSON.stringify(set['Value'], null, 2)}</textarea>`;
           }
 
           let eventsHtml = "";          
@@ -325,6 +316,26 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     }
 
+  }
+
+  //
+  function generateInputOptions(set, input, isMultiSelect = false)
+  {
+
+    multi = isMultiSelect ? "multiple" : "";
+    input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}" ${multi}>`;
+
+            values = createArray(set['Value']);
+            options = createArray(set['Options']);
+
+            options.forEach(option => {
+              let selected = values.includes(option) ? 'selected' : '';
+              input += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+
+            input += '</select>';
+
+    return input;
   }
 
   // todo fix

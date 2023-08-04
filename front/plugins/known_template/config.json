@@ -34,12 +34,106 @@
         "name"  : "dev_AlertEvents",
         "type"  : "setting",
         "value" : "KNWN_dev_AlertEvents"
+    },    
+    {
+        "name"  : "trigger_ids",
+        "type"  : "array",
+        "value" : "trigger.Object_PrimaryID"
+    },
+    {
+        "name"  : "trigger_objects",
+        "type"  : "array",
+        "value" : "trigger"
     }
   ], 
   "settings":[
         {
+          "function": "flows",
+          "type": "json",
+          "maxLength": 50,
+          "default_value": [{
+              "name":"apply_template",  
+              "trigger": [
+                  {
+                      "object_event": "new",
+                      "object_filter": ""                      
+                  }
+              ],
+              "steps": [
+                  {
+                      "step_type":"wait",
+                      "params": [
+                          {
+                              "days": 3,
+                              "hours": 0,
+                              "minutes": 0,
+                              "seconds": 0
+                          }
+                      ]
+                  },
+                  {
+                      "step_type":"condition",
+                      "params": [
+                          {
+                              "left": {
+                                  "value": "triggers[0].object['dev_NewDevice']",
+                                  "use_quotes": true,
+                                  "js_template": "'{value}'.toString()"
+                              },
+                              "operator": {
+                                  "value" : "==",
+                                  "data_type": "boolean"
+                              },
+                              "right": {
+                                  "value": true,
+                                  "use_quotes": false,
+                                  "js_template": "'{value}'.toString()"
+                              }
+                          }
+                      ]
+                  },
+                  {
+                      "step_type":"action",
+                      "params": [
+                          {
+                              "type": "plugin",            
+                              "params": 
+                              {
+                                  "unique_prefix": "KNWN",
+                                  "overrides":[
+                                      {
+                                          "object_path": "settings.0",
+                                          "key":"function", 
+                                          "value":"target_macs", 
+                                          "target_property":"default_value", 
+                                          "desired_value":  "triggers.keys"                              
+                                      }
+                                  ]
+                              }
+          
+                          }
+                      ]
+                  }
+              ]
+          }],
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Flows"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "The flow."
+            }
+          ]
+        },
+        {
           "function": "target_macs",
-          "type": "list.readonly",
+          "type": "list.readonly",          
           "maxLength": 50,
           "default_value": [],
           "options": [],
@@ -74,9 +168,13 @@
         },
         {
           "function": "dev_Name",
-          "type": "readonly",
+          "type": "text.template",
           "maxLength": 50,
           "default_value": "(unknown)",
+          "value": {
+            "value":"(unknown)",            
+            "override": true
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [

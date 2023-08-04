@@ -21,8 +21,6 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 🔝 Popular/Suggested
 
-- [API endpoints details](/docs/API.md)
-- [Plugin system details and how to develop your own](/front/plugins/README.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
 - [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
@@ -40,10 +38,16 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### ♻ Misc
 
-- [New Version notifications](/docs/VERSIONS.md)
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
-- [Database structure](/docs/DATABASE.md)
 - [Reverse proxy (Nginx, Apache, SWAG)](/docs/REVERSE_PROXY.md)
+
+#### 👩‍💻For Developers👨‍💻
+
+- [APP code structure](/pialert/README.md)
+- [Database structure](/docs/DATABASE.md)
+- [API endpoints details](/docs/API.md)
+- [Plugin system details and how to develop your own](/front/plugins/README.md)
+- [New Version notifications](/docs/VERSIONS.md)
 
 Feel free to suggest or submit new docs via a PR. 
 

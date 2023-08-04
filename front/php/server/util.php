@@ -312,7 +312,7 @@ function saveSettings()
 
                 $temp = '['.$temp.']'; // wrap brackets
                 $txt .= $settingKey . "=" . $temp . "\n";
-            } elseif ($settingType == 'json') {
+            } elseif ($settingType == 'json' || substr($settingType, -9) === ".template") {
                 $txt .= $settingKey . "=" . $settingValue . "\n";
             }
         }
