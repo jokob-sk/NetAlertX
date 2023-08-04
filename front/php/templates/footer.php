@@ -40,7 +40,7 @@
     <div class="pull-right no-hidden-xs">
 
     <!-- Pi.Alert footer with url -->
-    <?php 
+    <?php
       echo '<a href="https://github.com/jokob-sk/Pi.Alert" target="_blank">Pi.Alert</a>';
     ?>
     </div>
