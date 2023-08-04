@@ -9,7 +9,7 @@ import json
 
 import conf 
 from const import fullConfPath
-from helper import collect_lang_strings, updateSubnets, initOrSetParam
+from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
@@ -18,13 +18,13 @@ from plugin import get_plugins_configs, print_plugin_info
 #===============================================================================
 # Initialise user defined values
 #===============================================================================
-# We need access to the DB to save new values so need to define DB access methods first
-#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Import user values
 # Check config dictionary
-def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
+def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {}):
+
+    # use default inintialization value    
     result = default
 
     if events is None:
@@ -222,7 +222,7 @@ def importConfigs (db):
                     events = set.get("events"), 
                     desc = set["description"][0]["string"], 
                     regex = "", 
-                    setJsonMetadata = set)
+                    setJsonMetadata = set)                   
 
             # Save the user defined value into the object
             set["value"] = v

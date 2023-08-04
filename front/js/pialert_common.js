@@ -300,6 +300,13 @@ function showMessage (textMessage="") {
 // -----------------------------------------------------------------------------
 // General utilities
 // -----------------------------------------------------------------------------
+
+// check if JSON object
+function isJsonObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+
 // remove unnecessary lines from the result
 function sanitize(data)
 {

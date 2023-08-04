@@ -21,7 +21,7 @@ def update_devices_MAC_vendors (db, pArg = ''):
 
     # Update vendors DB (iab oui)
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
-    update_args = ['sh', pialertPath + '/update_vendors.sh', pArg]
+    update_args = ['sh', pialertPath + '/back/update_vendors.sh', pArg]
 
     # Execute command
     if conf.LOG_LEVEL == 'debug':

@@ -173,66 +173,111 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       // go thru all settings and collect settings per settings group 
       settingsData.forEach((set) => {
 
+        let val = set['Value'];
+        const codeName = set['Code_Name'];
+        const setType = set['Type'].toLowerCase();
+        const isMetadata = codeName.includes('__metadata');
+        // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
+        const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
+
+        // constructing final HTML for the setting
         setHtml = ""
 
         if(set["Group"] == group)
         {
-          // hide metadata by default by assigning it a special class
-          const isMetadata = set['Code_Name'].includes('__metadata');
+          // hide metadata by default by assigning it a special class          
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
           isMetadata ? infoIcon = '' : infoIcon = `<i 
-                                                      my-to-toggle="row_${set['Code_Name']}__metadata"
+                                                      my-to-toggle="row_${codeName}__metadata"
                                                       title="${getString("Settings_Metadata_Toggle")}" 
                                                       class="fa fa-circle-question pointer" 
                                                       onclick="toggleMetadata(this)">
                                                     </i>` ;
 
+          // NAME & DESCRIPTION columns
           setHtml += `
-                    <div class="row table_row ${metadataClass}" id="row_${set['Code_Name']}">
+                    <div class="row table_row ${metadataClass}" id="row_${codeName}">
                       <div class="table_cell setting_name bold">
-                        <label>${getString(set['Code_Name'] + '_name', set['Display_Name'])}</label>
+                        <label>${getString(codeName + '_name', set['Display_Name'])}</label>
                         <div class="small">
-                          <code>${set['Code_Name']}</code>${infoIcon}
+                          <code>${codeName}</code>${infoIcon}
                         </div>
                       </div>
                       <div class="table_cell setting_description">
-                        ${getString(set['Code_Name'] + '_description', set['Description'])}
+                        ${getString(codeName + '_description', set['Description'])}
                       </div>
                       <div class="table_cell setting_input input-group">
                   `;
 
-          // Render different input types based on the settings type
-          let input = "";
+          // OVERRIDE
+          // surface settings override functionality if the setting is a template that can be overriden with user defined values
+          // if the setting is a json of the correct structure, handle like a template setting
 
-          const setType = set['Type'].toLowerCase();
+          let overrideHtml = "";  
 
+          //pre-check if this is a json object that needs value extraction
+
+          let overridable = false;
+          let override = false;
+          let overrideValue = val;
+
+          // TODO finish
+          if ('override_value' in setObj) {
+            overridable = true;
+            const overrideObj = setObj["override_value"]
+            const override = overrideObj["override"];
+            overrideValue = overrideObj["value"];
+
+            console.log(isJsonObject(val))
+            console.log(setObj)
+            console.log(group)
+          }
+
+          if(overridable)
+          {
+            let checked = override;            
+            overrideHtml = `<div class="override">
+                              <span class="overrideText" title="${getString("Setting_Override_Description")}">
+                                ${getString("Setting_Override")}
+                              </span>
+                              <span class="overrideCheck">
+                                <input onChange="overrideToggle()" my-data-type="${setType}" class="checkbox" id="${codeName}_override" type="checkbox" ${checked} />
+                              </span>
+                            </div>`;
+          }
+
+          
+          // INPUT
+          // pre-processing done, render setting based on type        
+
+          let inputHtml = "";
           if (setType.startsWith('text') || setType.startsWith('string') || setType.startsWith('date-time') ) {
             
             if(setType.includes(".select"))
             {
-              input = generateInputOptions(set, input, isMultiSelect = false)
+              inputHtml = generateInputOptions(set, inputHtml, isMultiSelect = false)
 
             } else if(setType.includes(".multiselect"))
             {
-              input = generateInputOptions(set, input, isMultiSelect = true)
+              inputHtml = generateInputOptions(set, inputHtml, isMultiSelect = true)
             } else{
-              input = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${set['Code_Name']}" value="${set['Value']}"/>`;
+              inputHtml = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${codeName}" value="${val}"/>`;
             }            
           } else if (setType === 'integer') {
-            input = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${set['Code_Name']}" type="number" value="${set['Value']}"/>`;
+            inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${codeName}" type="number" value="${val}"/>`;
           } else if (setType === 'password') {
-            input = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${set['Code_Name']}" type="password" value="${set['Value']}"/>`;
+            inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${codeName}" type="password" value="${val}"/>`;
           } else if (setType === 'readonly') {
-            input = `<input class="form-control input"  my-data-type="${setType}"  id="${set['Code_Name']}"  value="${set['Value']}" readonly/>`;
+            inputHtml = `<input class="form-control input"  my-data-type="${setType}"  id="${codeName}"  value="${val}" readonly/>`;
           } else if (setType === 'boolean' || setType === 'integer.checkbox') {
-            let checked = set['Value'] === 'True' || set['Value'] === '1' ? 'checked' : '';
-            input = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${set['Code_Name']}" type="checkbox" value="${set['Value']}" ${checked} />`;          
+            let checked = val === 'True' || val === '1' ? 'checked' : '';
+            inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} />`;          
           } else if (setType === 'integer.select') {
 
-            input = generateInputOptions(set, input)
+            inputHtml = generateInputOptions(set, inputHtml)
           
           } else if (setType === 'subnets') {
-            input = `
+            inputHtml = `
             <div class="row form-group">
               <div class="col-xs-5">
                 <input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>
@@ -245,55 +290,55 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control" my-data-type="${setType}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;
 
 
-            options = createArray(set['Value']);
+            options = createArray(val);
 
             options.forEach(option => {
-              input += `<option value="${option}" disabled>${option}</option>`;
+              inputHtml += `<option value="${option}" disabled>${option}</option>`;
             });
 
-            input += '</select></div>' +
+            inputHtml += '</select></div>' +
             '<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
-          } else if (setType === 'list') {
+          } else if (setType === 'list' || setType === 'list.readonly') {
 
-            settingKeyOfLists.push(set['Code_Name']);
+            settingKeyOfLists.push(codeName);
 
-            input = `
+            inputHtml = `
               <div class="row form-group">
                 <div class="col-xs-9">
-                  <input class="form-control" type="text" id="${set['Code_Name']}_input" placeholder="Enter value"/>
+                  <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${set['Code_Name']}_input" my-input-to="${set['Code_Name']}" onclick="addList(this)">Add</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this)">Add</button>
                 </div>
               </div>
               <div class="form-group">
-                <select class="form-control" my-data-type="${setType}" name="${set['Code_Name']}" id="${set['Code_Name']}" multiple readonly>`;
+                <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;
 
-            let options = createArray(set['Value']);
+            let options = createArray(val);
 
             options.forEach(option => {
-              input += `<option value="${option}" disabled>${option}</option>`;
+              inputHtml += `<option value="${option}" disabled>${option}</option>`;
             });
 
-            input += '</select></div>' +
-            `<div><button class="btn btn-primary" my-input="${set['Code_Name']}" onclick="removeFromList(this)">Remove last</button></div>`;
+            inputHtml += '</select></div>' +
+            `<div><button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button></div>`;
           } else if (setType === 'json') {
-            input = `<textarea class="form-control input" my-data-type="${setType}" id="${set['Code_Name']}" readonly>${JSON.stringify(set['Value'], null, 2)}</textarea>`;
+            inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
           }
 
+          // EVENTS
+          // process events (e.g. run ascan, or test a notification) if associated with the setting
           let eventsHtml = "";          
 
-          const eventsList = createArray(set['Events']);
-
-          console.log(eventsList)
+          const eventsList = createArray(set['Events']);          
 
           if (eventsList.length > 0) {
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
-                data-myparam="${set['Code_Name']}"
+                data-myparam="${codeName}"
                 data-myevent="${event}"
                 onclick="handleEvent(this)"
               >
@@ -302,8 +347,9 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               </span>`;
             });
           }
-          
-          setHtml += input +  eventsHtml + `
+
+          // construct final HTML for the setting
+          setHtml += inputHtml +  eventsHtml + overrideHtml + `
               </div>
             </div>
           `
@@ -318,7 +364,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   }
 
-  //
+
+
+
+  // ---------------------------------------------------------
+  // generate a list of options for a input select
   function generateInputOptions(set, input, isMultiSelect = false)
   {
 
@@ -338,7 +388,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     return input;
   }
 
-  // todo fix
+  // ---------------------------------------------------------  
+  // Generate an array object from a string representation of an array
   function createArray(input) {
     // Empty array
     if (input === '[]') {

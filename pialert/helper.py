@@ -337,3 +337,7 @@ class noti_struc:
         self.json = json
         self.text = text
         self.html = html        
+
+#-------------------------------------------------------------------------------
+def isJsonObject(value):
+    return isinstance(value, dict)
