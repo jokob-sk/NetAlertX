@@ -43,7 +43,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [New Version notifications](/docs/VERSIONS.md)
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
 - [Database structure](/docs/DATABASE.md)
-- [Reverse proxy with SWAG](/docs/REVERSE_PROXY.md)
+- [Reverse proxy (Nginx, Apache, SWAG)](/docs/REVERSE_PROXY.md)
 
 Feel free to suggest or submit new docs via a PR. 
 
