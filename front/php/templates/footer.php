@@ -39,9 +39,9 @@
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
 
-    <!-- Pi.Alert  2.50  <small>(2019-12-30)</small> -->
-    <?php
-      echo 'Pi.Alert';
+    <!-- Pi.Alert footer with url -->
+    <?php 
+      echo '<a href="https://github.com/jokob-sk/Pi.Alert" target="_blank">Pi.Alert</a>';
     ?>
     </div>
   </footer>
@@ -52,9 +52,7 @@
 
 </div>
 <!-- ./wrapper -->
-
-
-
+        
 <!-- Bootstrap 3.3.7 -->
   <script src="lib/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
