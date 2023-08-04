@@ -138,6 +138,10 @@ if ($ENABLED_DARKMODE === True) {
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">          
+    		 <!-- Full Screen -->		 
+    		 <li>
+    			<a href='#' span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
+    		 </li>	          
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
@@ -273,12 +277,20 @@ if ($ENABLED_DARKMODE === True) {
 
   //--------------------------------------------------------------
 
+	function toggleFullscreen() {
+	  if (document.fullscreenElement) {
+		document.exitFullscreen();
+	  } else {
+		document.documentElement.requestFullscreen();
+	  }
+	}
+  
+  //--------------------------------------------------------------
+
   // Update server time in the header
   show_pia_servertime()
 
   // Update server state in the header
   updateState()
-
-
-
+  
 </script>
