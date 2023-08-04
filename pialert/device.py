@@ -451,7 +451,10 @@ def update_devices_names (db):
         
         # isf still not found update name so we can distinguish the devices where we tried already
         if newName == -1 :
-            recordsNotFound.append (["(name not found)", device['dev_MAC']])          
+            # if dev_Name is the same as what we will change it to, take no action
+            # this mitigates a race condition which would overwrite a users edits that occured since the select earlier
+            if device['dev_Name'] != "(name not found)":
+                recordsNotFound.append (["(name not found)", device['dev_MAC']])          
         else:
             # name wa sfound with DiG or Pholus
             recordsToUpdate.append ([newName, device['dev_MAC']])
