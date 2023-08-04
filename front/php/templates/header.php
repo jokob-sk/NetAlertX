@@ -138,6 +138,14 @@ if ($ENABLED_DARKMODE === True) {
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">          
+	 <!-- Back Button -->		 
+	 <li>
+	   <a id="back-button" href="javascript:history.go(-1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-left'></i></a>
+	 </li>
+	 <!-- Next Button -->		 
+	 <li>
+	   <a id="next-button" href="javascript:history.go(1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-right'></i></a>
+	 </li>			
 	 <!-- Reload -->		 
 	 <li>
 	   <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='location.reload()'><i class='fa fa-repeat'></i></a>
