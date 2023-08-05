@@ -24,7 +24,7 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-       <!--  <?= lang('SYSTEM_TITLE') ;?> -->
+       <?= lang('SYSTEM_TITLE') ;?>
       </h1>
     </section>
 
