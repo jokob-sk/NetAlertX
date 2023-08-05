@@ -402,8 +402,10 @@ for ($x = 0; $x < sizeof($usb_devices_mount); $x++) {
 echo '         </table>';
 echo '      </div>
       </div>';
-echo '<br>';
 
+// ----------------------------------------------------------
+
+echo '<br>';
 
 ?>
 
