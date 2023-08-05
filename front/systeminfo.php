@@ -14,7 +14,7 @@
 
 ?>
 <?php
-  error_reporting(0); // Turn off php errors
+  error_reporting(0);// Turn off php errors
   require 'php/templates/header.php';
 ?>
 <!-- Page ------------------------------------------------------------------ -->
@@ -180,6 +180,43 @@ echo '<script>
 	var resolutionDiv = document.getElementById("resolution");
 	resolutionDiv.innerHTML = "Width: " + w + "px / Height: " + h + "px<br> " + "Width: " + rw + "px / Height: " + rh + "px (native)";
 </script>';
+
+// Storage ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> Storage</h3>
+            </div>
+            <div class="box-body">';
+
+$storage_lsblk = shell_exec("lsblk -io NAME,SIZE,TYPE,MOUNTPOINT,MODEL --list | tail -n +2 | awk '{print $1\"#\"$2\"#\"$3\"#\"$4\"#\"$5}'");
+$storage_lsblk_line = explode("\n", $storage_lsblk);
+$storage_lsblk_line = array_filter($storage_lsblk_line);
+
+for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
+	$temp = array();
+	$temp = explode("#", $storage_lsblk_line[$x]);
+	$storage_lsblk_line[$x] = $temp;
+}
+// echo '<pre>';
+// print_r($storage_lsblk_line);
+// echo '</pre>';
+
+for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
+	//if (stristr($hdd_devices[$x], '/dev/')) {
+	echo '<div class="row">';
+	if (preg_match('~[0-9]+~', $storage_lsblk_line[$x][0])) {
+		echo '<div class="col-sm-4 sysinfo_gerneral_a">Mount point "' . $storage_lsblk_line[$x][3] . '"</div>';
+	} else {
+		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . str_replace('_', ' ', $storage_lsblk_line[$x][3]) . '"</div>';
+	}
+	echo '<div class="col-sm-3 sysinfo_gerneral_b">Device: /dev/' . $storage_lsblk_line[$x][0] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_gerneral_b">Size: ' . $storage_lsblk_line[$x][1] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_gerneral_b">Type: ' . $storage_lsblk_line[$x][2] . '</div>';
+	echo '</div>';
+	//}
+}
+echo '      </div>
+      </div>';
 
 // Storage usage ----------------------------------------------------------
 echo '<div class="box box-solid">
