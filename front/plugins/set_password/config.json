@@ -1,0 +1,87 @@
+{    
+  "code_name": "set_webui_password",
+  "template_type": "database-entry",
+  "unique_prefix": "SETPWD",
+  "enabled": true,
+  "data_source": "script",  
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [{
+      "language_code": "en_us",
+      "string": "UI password"
+    }],
+  "description": [{
+    "language_code": "en_us",
+    "string": "A simple plugin to set the web ui password on app start."
+  }],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-lock\"></i>"
+    }
+  ],
+  "params" : [
+    {
+        "name"  : "password",
+        "type"  : "setting",
+        "value" : "SETPWD_password"
+    }
+  ], 
+  "settings":[
+    {
+      "function": "RUN",            
+      "type": "text.select",            
+      "default_value":"disabled",
+      "options": ["disabled", "once"],
+      "localized": ["name", "description"],
+      "name" :[{
+          "language_code":"en_us",
+          "string" : "When to run"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "Set to <code>once</code> and specify password to reset your pasword in <code>SETPWD_password</code>."
+      }]
+  },
+  {
+      "function": "CMD",
+      "type": "text",
+      "default_value":"/home/pi/pialert/back/pialert-cli set_password {password}",
+      "options": [],
+      "localized": ["name", "description"],
+      "name" : [{
+          "language_code":"en_us",
+          "string" : "Command"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "Command to run"
+      }]
+  },
+  {
+    "function": "password",
+    "type": "password",
+    "maxLength": 50,
+    "default_value": "123456",
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "Password"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> in the container"
+      }
+    ]
+  }
+    
+          
+  ]
+    
+  }
+    
+
+  

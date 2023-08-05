@@ -89,7 +89,7 @@
     },
     {
       "function": "WATCH",
-      "type": "lable",
+      "type": "readonly",
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -108,7 +108,7 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "lable",
+      "type": "readonly",
       "default_value": [],
       "options": ["new", "watched-changed", "watched-not-changed"],
       "localized": ["name", "description"],
