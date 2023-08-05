@@ -168,13 +168,9 @@
         },
         {
           "function": "dev_Name",
-          "type": "text.template",
+          "type": "readonly",
           "maxLength": 50,
           "default_value": "(unknown)",
-          "override_value": {
-            "value":"(unknown)",            
-            "override": true
-          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -195,6 +191,9 @@
           "type": "string",
           "maxLength": 30,
           "default_value": "House",
+          "override_value": {                 
+            "override": false
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -254,6 +253,9 @@
           "function": "dev_Favorite",
           "type": "integer.checkbox",
           "default_value": 0,
+          "override_value": {            
+            "override": false
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -274,6 +276,9 @@
           "type": "string",
           "maxLength": 10,
           "default_value": "",
+          "override_value": {            
+            "override": false
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -371,7 +376,10 @@
         {
           "function": "dev_StaticIP",
           "type": "integer.checkbox",
-          "default_value": 0,
+          "default_value": 1,
+          "override_value": {            
+            "override": true
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -391,6 +399,9 @@
           "function": "dev_ScanCycle",
           "type": "integer.checkbox",
           "default_value": 1,
+          "override_value": {            
+            "override": true
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -409,7 +420,10 @@
         {
           "function": "dev_LogEvents",
           "type": "integer.checkbox",
-          "default_value": 1,
+          "default_value": 0,          
+          "override_value": {              
+            "override": false
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [
@@ -427,7 +441,10 @@
         {
           "function": "dev_AlertEvents",
           "type": "integer.checkbox",
-          "default_value": 1,
+          "default_value": 0,
+          "override_value": {            
+            "override": true
+          },
           "options": [],
           "localized": ["name", "description"],
           "name": [

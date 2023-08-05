@@ -22,14 +22,14 @@ The json file is also cached on the client-side local storage of the browser.
 
 #### pialert.conf
 
-> [!INFO] 
+> [!NOTE] 
 > This is the source of truth for settings. User-defined values in this files always override default values specified in the Plugin definition.
 
 The App generates two `pialert.conf` entries for every setting (Since version 23.8+). One entry is the setting value, the second is the `__metadata` associated with the setting. This `__metadata` entry contains the full setting definition in JSON format. This should helps the future extensibility of the Settings system.
 
 #### Plugin settings
 
-> [!INFO] 
+> [!NOTE] 
 > This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
 
 Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `pialert.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](/front/plugins/README.md), section `⚙ Setting object structure` for details on the structure of the setting.

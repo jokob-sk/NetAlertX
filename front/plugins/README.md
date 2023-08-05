@@ -384,7 +384,7 @@ Below are some general additional notes, when defining `params`:
 
 #### ⚙ Setting object structure
 
-> [!INFO] 
+> [!NOTE] 
 > The settings flow and when Plugin specific settings are applied is described under the [Settings system](/docs/SETTINGS_SYSTEM.md).
 
 Required attributes are:

@@ -698,6 +698,8 @@ height: 50px;
     margin-top: 50px;
 }
 
+/* Settings */
+
 .settings_content {
     padding: 10px;
     /* background-color: #272c30; */
@@ -720,6 +722,28 @@ height: 50px;
     width: auto 
 }
 
+.override{
+    padding: 5px;
+}
+
+.override .override-text
+{
+    float:left;
+    width: 80%;
+}
+
+.override .override-check
+{
+    float:left;
+    width: 20%;
+}
+
+#settingsPage input[readonly] {
+    /* Apply styles to the readonly input */
+    background-color: #646566;
+    color: #000;    
+    cursor: not-allowed;
+  }
 
 /* Devices */
 .drp-edit

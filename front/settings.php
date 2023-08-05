@@ -217,34 +217,36 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
           //pre-check if this is a json object that needs value extraction
 
-          let overridable = false;
-          let override = false;
-          let overrideValue = val;
+          let overridable = false;  // indicates if the setting is overridable
+          let override = false;     // If the setting is set to be overriden by the user or by default     
+          let readonly = "";        // helper variable to make text input readonly
+          let disabled = "";        // helper variable to make checkbox input readonly
 
           // TODO finish
           if ('override_value' in setObj) {
             overridable = true;
-            const overrideObj = setObj["override_value"]
-            const override = overrideObj["override"];
-            overrideValue = overrideObj["value"];
+            overrideObj = setObj["override_value"]
+            override = overrideObj["override"];            
 
-            console.log(isJsonObject(val))
             console.log(setObj)
             console.log(group)
           }
 
+          // prepare override checkbox and HTML
           if(overridable)
-          {
-            let checked = override;            
-            overrideHtml = `<div class="override">
-                              <span class="overrideText" title="${getString("Setting_Override_Description")}">
+          { 
+            let checked = override ? 'checked' : '';   
+
+            overrideHtml = `<div class="override col-xs-12">
+                              <div class="override-check col-xs-1">
+                                <input onChange="overrideToggle(this)" my-data-type="${setType}" my-input-toggle-readonly="${codeName}" class="checkbox" id="${codeName}_override" type="checkbox" ${checked} />
+                              </div>
+                              <div class="override-text col-xs-11" title="${getString("Setting_Override_Description")}">
                                 ${getString("Setting_Override")}
-                              </span>
-                              <span class="overrideCheck">
-                                <input onChange="overrideToggle()" my-data-type="${setType}" class="checkbox" id="${codeName}_override" type="checkbox" ${checked} />
-                              </span>
-                            </div>`;
-          }
+                              </div>
+                            </div>`;            
+
+          } 
 
           
           // INPUT
@@ -261,7 +263,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             {
               inputHtml = generateInputOptions(set, inputHtml, isMultiSelect = true)
             } else{
-              inputHtml = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${codeName}" value="${val}"/>`;
+
+              // if it's overridable set readonly accordingly
+              if(overridable)
+              {
+                override ? readonly = "" : readonly = " readonly" ; 
+              }
+
+              inputHtml = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${codeName}" value="${val}" ${readonly}/>`;
             }            
           } else if (setType === 'integer') {
             inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${codeName}" type="number" value="${val}"/>`;
@@ -270,8 +279,15 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           } else if (setType === 'readonly') {
             inputHtml = `<input class="form-control input"  my-data-type="${setType}"  id="${codeName}"  value="${val}" readonly/>`;
           } else if (setType === 'boolean' || setType === 'integer.checkbox') {
-            let checked = val === 'True' || val === '1' ? 'checked' : '';
-            inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} />`;          
+            let checked = val === 'True' || val === '1' ? 'checked' : '';                   
+
+            // if it's overridable set readonly accordingly
+            if(overridable)
+            {
+              override ? disabled = "" : disabled = " disabled" ;
+            }             
+
+            inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} ${disabled}/>`;          
           } else if (setType === 'integer.select') {
 
             inputHtml = generateInputOptions(set, inputHtml)
@@ -386,6 +402,34 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             input += '</select>';
 
     return input;
+  }
+
+  
+
+  // ---------------------------------------------------------  
+  // Helper methods
+  // ---------------------------------------------------------  
+  // Toggle readonly mode of teh target element specified by the id in the "my-input-toggle-readonly" attribute
+  function overrideToggle(element) {
+    settingsChanged();
+
+    targetId = $(element).attr("my-input-toggle-readonly");
+
+    inputElement = $(`#${targetId}`)[0];    
+
+    if (!inputElement) {
+      console.error("Input element not found!");
+      return;
+    }
+
+    if (inputElement.type === "text" || inputElement.type === "password") {
+      inputElement.readOnly = !inputElement.readOnly;
+    } else if (inputElement.type === "checkbox") {
+      inputElement.disabled = !inputElement.disabled;
+    } else {
+      console.warn("Unsupported input type. Only text, password, and checkbox inputs are supported.");
+    }
+
   }
 
   // ---------------------------------------------------------  
