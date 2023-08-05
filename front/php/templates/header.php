@@ -156,7 +156,7 @@ if ($ENABLED_DARKMODE === True) {
 	 </li>	        
           <!-- Server Status -->
           <li>
-            <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
+            <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
               <div class="header-status">
                 <code id="state"></code>
               </div>
