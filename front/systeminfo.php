@@ -248,6 +248,80 @@ echo '<br>' . $pia_lang['SysInfo_storage_note'];
 echo '      </div>
       </div>';
 
+// Network ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fas fa-ethernet"></i> Network</h3>
+            </div>
+            <div class="box-body">
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">IP Internet:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . shell_exec("curl https://ifconfig.co") . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">IP connection:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REMOTE_ADDR'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Server IP:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_ADDR'] . '</div>
+			</div>	
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Server name:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_NAME'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Connection port:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REMOTE_PORT'] . '</div>
+			</div>			
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Secure connection:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTPS'] . '</div>
+			</div>	
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Server Version:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_SOFTWARE'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Request URI:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_URI'] . '</div>
+			</div>		
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Server Version:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['QUERY_STRING'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP_host:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_HOST'] . '</div>
+			</div>	
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP_referer:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_REFERER'] . '</div>
+			</div>	
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">MIME:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Accept language:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '</div>
+			</div>				
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Accept encoding:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT_ENCODING'] . '</div>
+			</div>			
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Request_Method:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_METHOD'] . '</div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-3 sysinfo_gerneral_a">Request_time:</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_TIME'] . '</div>
+			</div>						
+		</div>
+      </div>';
+
+
 // Network Hardware ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
