@@ -1,4 +1,4 @@
-## ⚙ Settings 
+## ⚙ Setting system
 
 This is an explanation how settings are handled intended for anyone thinking about writing their own plugin or contributing to the project. 
 
@@ -6,13 +6,35 @@ If you are a user of the app, settings should be described in the `Settings` sec
 
 ### 🛢 Data storage
 
-The source of truth for user-defined values is the `pialert.conf` file. Editing the file overwrites values in the databse and in the `table_settings.json` file. 
+The source of truth for user-defined values is the `pialert.conf` file. Editing the file makes the App overwrite values in the `Settings` database table and in the `table_settings.json` file. 
 
 #### Settings database table
+
+The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `pialert.conf` file. A high-level overview on the databse structure can be found in the [database documentation](/docs/DATABASE.md). 
+
 #### table_settings.json
+
+This is the [API endpoint](/docs/API.md) that reflects the state of the `Settings` database table. Settings can be accessed with the:
+
+* `getSetting(key)` JavaScript method
+
+The json file is also cached on the client-side local storage of the browser.
+
 #### pialert.conf
+
+> [!INFO] 
+> This is the source of truth for settings. User-defined values in this files always override default values specified in the Plugin definition.
+
+The App generates two `pialert.conf` entries for every setting (Since version 23.8+). One entry is the setting value, the second is the `__metadata` associated with the setting. This `__metadata` entry contains the full setting definition in JSON format. This should helps the future extensibility of the Settings system.
+
 #### Plugin settings
 
+> [!INFO] 
+> This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
+
+Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `pialert.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](/front/plugins/README.md), section `⚙ Setting object structure` for details on the structure of the setting.
+
+![Screen 1][screen1]
 
 ### Settings Process flow
 
@@ -50,6 +72,6 @@ Here's a high-level description of the code:
    - Finally, it logs the successful import of the new configuration.
 
 
+_____________________
 
-
-
+[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png      "Screen 1"

@@ -387,10 +387,11 @@ Below are some general additional notes, when defining `params`:
 Required attributes are:
 
 - `"function": "<see Supported settings function values>"` - What function the setting drives or a simple unique code name
-- `"type": "<text|integer|boolean|password|readonly|integer.select|text.select|text.multiselect|list|integer.checkbox>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
+- `"type": "<text|integer|boolean|password|readonly|integer.select|text.select|text.multiselect|list|integer.checkbox|text.template>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
 - `"localized"` - a list of properties on the current JSON level which need to be localized
-- `"name"` and `"description"` - Displayed in the Settings page. An array of localized strings. (see Localized strings below).
+- `"name"` and `"description"` - Displayed on the Settings page. An array of localized strings. (see Localized strings below).
 - (optional) `"events"` - `<test|run>` - to generate an execution button next to the input field of the setting (not fully tested)
+- (optional) `"override_value"` - used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (wip)
     
 ##### Supported settings `function` values
 

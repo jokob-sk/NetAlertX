@@ -31,7 +31,7 @@ def run_plugin_scripts(db, runType):
                 # run if overdue scheduled time   
                 prefix = plugin["unique_prefix"]
 
-                #  check scheduels if any contains a unique plugin prefix matching the current plugin
+                #  check schedules if any contains a unique plugin prefix matching the current plugin
                 for schd in conf.mySchedules:
                     if schd.service == prefix:          
                         # Check if schedule overdue
