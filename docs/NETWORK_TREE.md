@@ -13,6 +13,7 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 * Set the Type of such a device to one of the following: AP, Firewall, Gateway, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN.
 * Save and go to Network where the devices you've marked as network devices (by selecting the Type as mentioned above) will show up as tabs.
 * You can now assign the Unassigend devices to the correct network node.
+* If port is empty or 0 a wifi icon is rendered, otherwise a ethernet port icon
 
 
 ## 🔍Detailed example:

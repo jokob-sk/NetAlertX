@@ -1,5 +1,5 @@
 {
-  "code_name": "undiscoverables",
+  "code_name": "arpscan",
   "unique_prefix": "ARPSCAN",
   "enabled": true,
   "data_source": "python-script",
