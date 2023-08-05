@@ -115,19 +115,21 @@ def main ():
     #===============================================================================
     # This is the main loop of Pi.Alert 
     #===============================================================================
+
+    mylog('debug', '[MAIN] Starting loop')
+
     while True:
 
         # update time started
         loop_start_time = timeNow()
-        mylog('debug', '[MAIN] Starting loop')
-
+        
         # re-load user configuration and plugins   
         importConfigs(db)
 
         # check if new version is available / only check once an hour
-        # if newVersionAvailable is already true the function does nothing and returns true again
-        mylog('debug', [f"[Version check] Last version check timestamp: {last_version_check}"])
         if last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
+            # if newVersionAvailable is already true the function does nothing and returns true again
+            mylog('debug', [f"[Version check] Last version check timestamp: {last_version_check}"])
             last_version_check = loop_start_time
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
@@ -182,8 +184,6 @@ def main ():
                 run = False
 
                 # run once after application starts
-
-
                 if conf.PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
                     run = True
 
@@ -228,7 +228,7 @@ def main ():
                 p = multiprocessing.Process(target=scan_network(db))
                 p.start()
 
-                # Wait for 3600 seconds (max 1h) or until process finishes
+                # Wait for a maximum of 3600 seconds (1h) or until process finishes
                 p.join(3600)
 
                 # If thread is still active
@@ -300,7 +300,7 @@ def main ():
             mylog('verbose', ['[MAIN] waiting to start next loop'])
 
         #loop     
-        time.sleep(5) # wait for N seconds      
+        time.sleep(1) # wait for N seconds      
 
 
 #===============================================================================

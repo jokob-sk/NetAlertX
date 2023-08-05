@@ -14,7 +14,7 @@ apiEndpoints = []
 # API
 #===============================================================================
 def update_api(db, isNotification = False, updateOnlyDataSources = []):
-    mylog('verbose', ['[API] Update API starting'])
+    mylog('debug', ['[API] Update API starting'])
     # return
 
     folder = apiPath 
