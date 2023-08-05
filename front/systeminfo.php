@@ -12,8 +12,6 @@
 //  cvc90      2023        https://github.com/cvc90         GNU GPLv3
 //------------------------------------------------------------------------------
 
-?>
-<?php
   error_reporting(0);// Turn off php errors
   require 'php/templates/header.php';
 ?>
