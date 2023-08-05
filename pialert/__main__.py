@@ -300,7 +300,7 @@ def main ():
             mylog('verbose', ['[MAIN] waiting to start next loop'])
 
         #loop     
-        time.sleep(1) # wait for N seconds      
+        time.sleep(5) # wait for N seconds      
 
 
 #===============================================================================
