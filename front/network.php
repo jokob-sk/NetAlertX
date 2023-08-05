@@ -644,9 +644,13 @@
       renderNode:  nodeData =>  { 
         var fontSize = "font-size:"+emSize+"em;";
 
+        (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
+
+        (port == "" || port == 0 ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+
         // Build HTML for individual nodes in the network diagram
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
-        devicePort = (!emptyArr.includes(nodeData.data.port )) ?  "<div class='netPort ' style=width:"+emSize*2.5+"em; >"+nodeData.data.port +"</div>" : "";
+        devicePort = `<div class='netPort ' style="width:${emSize*2.7}em;height:${emSize*2.7}em" >${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*2.5}em;">${portBckgIcon}</div>`;
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
         collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*2.5+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
         statusCss = " netStatus-" + nodeData.data.status;

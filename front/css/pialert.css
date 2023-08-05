@@ -799,6 +799,8 @@ height: 50px;
     margin-bottom: 6px;
 }
 
+/* NETWORK page */
+
 /* AdminLTE overrides */
 #networkTree .box
 {
@@ -822,6 +824,14 @@ height: 50px;
     float:left;
     display:inline;  
 }
+
+#networkTree .portBckgIcon
+{
+    opacity: 0.3;
+    display: initial;    
+    float: inline-start;
+}
+
 #networkTree
 {
     margin-left: 16px;
@@ -839,7 +849,7 @@ height: 50px;
 {
     display: block;
     position: absolute;
-    margin-left: 156px;
+    margin-left: 170px;
     top: -3px;
     font-size: large;
     left: -15px;

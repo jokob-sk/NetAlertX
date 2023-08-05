@@ -5,7 +5,7 @@ PiAlert comes with a simple API. These API endpoints are static files, that are 
 
 ### When are the endpoints updated
 
-Once you enable the API (`ENABLE_API` setting), the endpoints are updated when objects in the API endpoints are changed:
+The endpoints are updated when objects in the API endpoints are changed.
 
 ### Location of the endpoints
 
