@@ -71,7 +71,7 @@ $total_memory = shell_exec("cat /proc/meminfo | grep MemTotal | cut -d' ' -f2-")
 $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
 $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
 $stat['mem_used'] = round(memory_get_usage() / 1048576 * 100, 2);
-$memory_usage_percent = round($mem_used * 100, 2);
+$memory_usage_percent = round(($stat['mem_used'] / $stat['mem_total']), 2);
 //Load System
 $load_average = sys_getloadavg();
 //Date & Time
