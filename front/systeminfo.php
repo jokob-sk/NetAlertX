@@ -14,7 +14,7 @@
 
 ?>
 <?php
-  error_reporting(0);// Turn off php errors
+  error_reporting(0); // Turn off php errors
   require 'php/templates/header.php';
 ?>
 <!-- Page ------------------------------------------------------------------ -->
