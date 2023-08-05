@@ -287,7 +287,7 @@ echo '<div class="box box-solid">
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_URI'] . '</div>
 			</div>		
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Server Version:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">Server query:</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['QUERY_STRING'] . '</div>
 			</div>
 			<div class="row">
