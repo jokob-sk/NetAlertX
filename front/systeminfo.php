@@ -9,7 +9,7 @@
 //  Puche      2021        pi.alert.application@gmail.com   GNU GPLv3
 //  jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3
 //  leiweibau  2022        https://github.com/leiweibau     GNU GPLv3
-//  cvc90      2023        https://github.com/cvc90         GNU GPLv3
+//  cvc90  	   2023        https://github.com/cvc90         GNU GPLv3
 //------------------------------------------------------------------------------
 
 ?>
@@ -92,6 +92,9 @@ $hdd_result = shell_exec("df | awk '{print $5}'");
 $hdd_devices_percent = explode("\n", trim($hdd_result));
 $hdd_result = shell_exec("df | awk '{print $6}'");
 $hdd_devices_mount = explode("\n", trim($hdd_result));
+//usb devices
+$usb_result = shell_exec("lsusb");
+$usb_devices_mount = explode("\n", trim($usb_result));
 
 // Client ----------------------------------------------------------
 echo '<div class="box box-solid">
@@ -200,6 +203,63 @@ for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 echo '<br>' . $pia_lang['SysInfo_storage_note'];
 echo '      </div>
       </div>';
+
+// Services ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-database"></i> Services (running)</h3>
+            </div>
+            <div class="box-body">';
+echo '<div style="height: 300px; overflow: scroll;">';
+exec('systemctl --type=service --state=running', $running_services);
+echo '<table class="table table-bordered table-hover table-striped dataTable no-footer" style="margin-bottom: 10px;">';
+echo '<thead>
+		<tr role="row">
+			<th style="padding: 8px;">Service Name</th>
+			<th style="padding: 8px;">Service Description</th>
+		</tr>
+	  </thead>';
+$table_color = 'odd';
+for ($x = 0; $x < sizeof($running_services); $x++) {
+	if (stristr($running_services[$x], '.service')) {
+		$temp_services_arr = array_values(array_filter(explode(' ', trim($running_services[$x]))));
+		$servives_name = $temp_services_arr[0];
+		unset($temp_services_arr[0], $temp_services_arr[1], $temp_services_arr[2], $temp_services_arr[3]);
+		$servives_description = implode(" ", $temp_services_arr);
+		if ($table_color == 'odd') {$table_color = 'even';} else { $table_color = 'odd';}
+
+		echo '<tr class="' . $table_color . '"><td style="padding: 3px; padding-left: 10px;">' . substr($servives_name, 0, -8) . '</td><td style="padding: 3px; padding-left: 10px;">' . $servives_description . '</td></tr>';
+	}
+}
+echo '</table>';
+echo '</div>';
+echo '      </div>
+      </div>';
+
+// USB ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+               <h3 class="box-title sysinfo_headline"><i class="fab fa-usb"></i> USB Devices</h3>
+            </div>
+            <div class="box-body">';
+echo '         <table class="table table-bordered table-hover table-striped dataTable no-footer" style="margin-bottom: 10px;">';
+
+$table_color = 'odd';
+sort($usb_devices_mount);
+for ($x = 0; $x < sizeof($usb_devices_mount); $x++) {
+	$cut_pos = strpos($usb_devices_mount[$x], ':');
+	$usb_bus = substr($usb_devices_mount[$x], 0, $cut_pos);
+	$usb_dev = substr($usb_devices_mount[$x], $cut_pos + 1);
+
+	if ($table_color == 'odd') {$table_color = 'even';} else { $table_color = 'odd';}
+	echo '<tr class="' . $table_color . '"><td style="padding: 3px; padding-left: 10px; width: 150px;"><b>' . str_replace('Device', 'Dev.', $usb_bus) . '</b></td><td style="padding: 3px; padding-left: 10px;">' . $usb_dev . '</td></tr>';
+}
+echo '         </table>';
+echo '      </div>
+      </div>';
+echo '<br>';
+
+
 ?>
 
 </div>
