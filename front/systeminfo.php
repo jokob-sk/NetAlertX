@@ -9,7 +9,7 @@
 //  Puche      2021        pi.alert.application@gmail.com   GNU GPLv3
 //  jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3
 //  leiweibau  2022        https://github.com/leiweibau     GNU GPLv3
-//  cvc90  	   2023        https://github.com/cvc90         GNU GPLv3
+//  cvc90      2023        https://github.com/cvc90         GNU GPLv3
 //------------------------------------------------------------------------------
 
 ?>
@@ -41,7 +41,7 @@ if ($os_version == '') {$os_version = exec('uname -o');}
 //$os_version_arr = explode("\n", trim($os_version));
 $stat['os_version'] = str_replace('"', '', str_replace('PRETTY_NAME=', '', $os_version));
 $stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p"));
-//cpu stat
+//CPU stat
 $prevVal = shell_exec("cat /proc/cpuinfo | grep processor");
 $prevArr = explode("\n", trim($prevVal));
 $stat['cpu'] = sizeof($prevArr);
@@ -66,7 +66,7 @@ if (file_exists('/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq')) {
 	// Fallback
 	$stat['cpu_frequ'] = "unknown";
 }
-//memory stat
+//Memory stats
 $total_memory = shell_exec("cat /proc/meminfo | grep MemTotal | cut -d' ' -f2-") / 1024 | bc;
 $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
 $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
@@ -79,7 +79,14 @@ $date = new DateTime();
 $formatted_date = $date->format('l, F j, Y H:i:s');
 $formatted_date2 = $date->format('d/m/Y H:i:s');
 $formatted_date3 = $date->format('Y/m/d H:i:s');
-//hdd stat
+//Network Hardware stat
+$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $1}'");
+$net_interfaces = explode("\n", trim($network_result));
+$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $2}'");
+$net_interfaces_rx = explode("\n", trim($network_result));
+$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $10}'");
+$net_interfaces_tx = explode("\n", trim($network_result));
+//HDD stats
 $hdd_result = shell_exec("df | awk '{print $1}'");
 $hdd_devices = explode("\n", trim($hdd_result));
 $hdd_result = shell_exec("df | awk '{print $2}'");
@@ -92,7 +99,7 @@ $hdd_result = shell_exec("df | awk '{print $5}'");
 $hdd_devices_percent = explode("\n", trim($hdd_result));
 $hdd_result = shell_exec("df | awk '{print $6}'");
 $hdd_devices_mount = explode("\n", trim($hdd_result));
-//usb devices
+//USB devices
 $usb_result = shell_exec("lsusb");
 $usb_devices_mount = explode("\n", trim($usb_result));
 
@@ -238,6 +245,33 @@ for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 	}
 }
 echo '<br>' . $pia_lang['SysInfo_storage_note'];
+echo '      </div>
+      </div>';
+
+// Network Hardware ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> Network Hardware</h3>
+            </div>
+            <div class="box-body">';
+
+for ($x = 0; $x < sizeof($net_interfaces); $x++) {
+	$interface_name = str_replace(':', '', $net_interfaces[$x]);
+	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep inet');
+	$interface_ip_arr = explode(' ', trim($interface_ip_temp));
+
+	if (!isset($interface_ip_arr[1])) {$interface_ip_arr[1] = '--';}
+
+	if ($net_interfaces_rx[$x] == 0) {$temp_rx = 0;} else { $temp_rx = number_format(round(($net_interfaces_rx[$x] / 1024 / 1024), 2), 2, ',', '.');}
+	if ($net_interfaces_tx[$x] == 0) {$temp_tx = 0;} else { $temp_tx = number_format(round(($net_interfaces_tx[$x] / 1024 / 1024), 2), 2, ',', '.');}
+	echo '<div class="row">';
+	echo '<div class="col-sm-2 sysinfo_network_a">' . $interface_name . '</div>';
+	echo '<div class="col-sm-2 sysinfo_network_b">' . $interface_ip_arr[1] . '</div>';
+	echo '<div class="col-sm-3 sysinfo_network_b">RX: <div class="sysinfo_network_value">' . $temp_rx . ' MB</div></div>';
+	echo '<div class="col-sm-3 sysinfo_network_b">TX: <div class="sysinfo_network_value">' . $temp_tx . ' MB</div></div>';
+	echo '</div>';
+
+}
 echo '      </div>
       </div>';
 
