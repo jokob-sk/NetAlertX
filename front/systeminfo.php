@@ -9,7 +9,7 @@
 //  Puche      2021        pi.alert.application@gmail.com   GNU GPLv3
 //  jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3
 //  leiweibau  2022        https://github.com/leiweibau     GNU GPLv3
-//  cvc90  	   2023        https://github.com/cvc90         GNU GPLv3
+//  cvc90      2023        https://github.com/cvc90         GNU GPLv3
 //------------------------------------------------------------------------------
 
 ?>
@@ -32,7 +32,7 @@
     <section class="content">	
 
 <?php
-// https://stackoverflow.com/a/19209082
+// OS-Version
 $os_version = '';
 // Raspbian
 if ($os_version == '') {$os_version = exec('cat /etc/os-release | grep PRETTY_NAME');}
