@@ -37,8 +37,8 @@ if (file_exists("log/report_output.html")) {
     include("log/report_output.html");
 } else {
     // Display an error message
-    echo "<h1>Error</h1>";
-    echo "<p>The page you are looking for is temporarily unavailable, please try again after a few seconds</p>";
+    echo "<h2>Error</h2>";
+	  echo lang('REPORT_ERROR');
 }
 ?>
 
