@@ -385,6 +385,26 @@ class DB():
                             PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """)
 
+        self.commitDB()        
+        
+        # indicates, if CurrentScan table is available
+        currentScanMissing = self.sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='CurrentScan';
+        """).fetchone() == None
+
+        if currentScanMissing == False:
+            self.sql.execute("DROP TABLE CurrentScan;")
+
+        self.sql.execute(""" CREATE TABLE CurrentScan (
+                                cur_ScanCycle INTEGER NOT NULL,
+                                cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
+                                cur_IP STRING(50) NOT NULL COLLATE NOCASE,
+                                cur_Vendor STRING(250),
+                                cur_ScanMethod STRING(10)
+                            );
+                        """)
+
         self.commitDB()
 
 

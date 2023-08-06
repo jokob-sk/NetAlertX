@@ -1,7 +1,7 @@
 
 
 import conf
-from scanners.arpscan import execute_arpscan
+
 from scanners.pihole import copy_pihole_network, read_DHCP_leases
 from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
@@ -35,14 +35,6 @@ def scan_network (db):
         return False
 
     db.commitDB()
-
-    #  Moved to the ARPSCAN Plugin
-    # arp-scan command
-    # conf.arpscan_devices = []
-    # if conf.ENABLE_ARPSCAN:    
-    #     mylog('verbose','[Network Scan] arp-scan start')    
-    #     conf.arpscan_devices = execute_arpscan (conf.userSubnets)
-    #     mylog('verbose','[Network Scan] arp-scan ends')
 
     # Pi-hole method    
     if conf.PIHOLE_ACTIVE :       
@@ -213,14 +205,7 @@ def void_ghost_disconnections (db):
 #-------------------------------------------------------------------------------
 def pair_sessions_events (db):
     sql = db.sql #TO-DO
-
-    # NOT NECESSARY FOR INCREMENTAL UPDATE
-    # print_log ('Pair session - 1 Clean')
-    # sql.execute ("""UPDATE Events
-    #                 SET eve_PairEventRowid = NULL
-    #                 WHERE eve_EventType IN ('New Device', 'Connected')
-    #              """ )
-    
+   
 
     # Pair Connection / New Device events
     mylog('debug','[Pair Session] - 1 Connections / New Devices')
@@ -275,53 +260,49 @@ def insert_events (db):
     
     # Check device down
     mylog('debug','[Events] - 1 - Devices down')
-    sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+    sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT dev_MAC, dev_LastIP, ?, 'Device Down', '', 1
+                    SELECT dev_MAC, dev_LastIP, '{startTime}', 'Device Down', '', 1
                     FROM Devices 
                     WHERE dev_AlertDeviceDown = 1
                       AND dev_PresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime) )
+                                         ) """)
 
     # Check new connections
     mylog('debug','[Events] - 2 - New Connections')
-    sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+    sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT cur_MAC, cur_IP, ?, 'Connected', '', dev_AlertEvents
+                    SELECT cur_MAC, cur_IP, '{startTime}', 'Connected', '', dev_AlertEvents
                     FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_PresentLastScan = 0 """,
-                    (startTime) )
+                    WHERE dev_MAC = cur_MAC  
+                      AND dev_PresentLastScan = 0 """)
 
     # Check disconnections
     mylog('debug','[Events] - 3 - Disconnections')
-    sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+    sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT dev_MAC, dev_LastIP, ?, 'Disconnected', '',
+                    SELECT dev_MAC, dev_LastIP, '{startTime}', 'Disconnected', '',
                         dev_AlertEvents
                     FROM Devices
                     WHERE dev_AlertDeviceDown = 0
                       AND dev_PresentLastScan = 1
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime) )
+                                         ) """)
 
     # Check IP Changed
     mylog('debug','[Events] - 4 - IP Changes')
-    sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+    sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT cur_MAC, cur_IP, ?, 'IP Changed',
+                    SELECT cur_MAC, cur_IP, '{startTime}', 'IP Changed',
                         'Previous IP: '|| dev_LastIP, dev_AlertEvents
                     FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle                      
-                      AND dev_LastIP <> cur_IP """,
-                    (startTime) )
+                    WHERE dev_MAC = cur_MAC                        
+                      AND dev_LastIP <> cur_IP """ )
     mylog('debug','[Events] - Events end')
