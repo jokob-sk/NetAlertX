@@ -211,6 +211,7 @@
         "Maintenance_version" : "Actualizaciones de la aplicación",
         "Maintenance_new_version" : "🆕 Una nueva versión está disponible. Comprueba las <a href=\"https://github.com/jokob-sk/Pi.Alert/releases\" target=\"_blank\">notas de lanzamiento</a>.",
         "Maintenance_current_version" : "No hay actualizaciones disponibles. Comprueba en que <a href=\"https://github.com/jokob-sk/Pi.Alert/issues/138\" target=\"_blank\">se está trabajando</a>.",
+        "Maintenance_built_on" : "Construido el",
         "Maintenance_database_path" : "Ruta de la base de datos:",
         "Maintenance_database_size" : "Tamaño de base de datos:",
         "Maintenance_database_lastmod" : "Última modificación:",
