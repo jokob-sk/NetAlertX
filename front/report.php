@@ -23,7 +23,7 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-       <?= lang('REPORT_TITLE') ;?>
+       <?= lang('REPORT_TITLE') ;?>	
       </h1>
     </section>
 
@@ -38,7 +38,7 @@ if (file_exists("log/report_output.html")) {
 } else {
     // Display an error message
     echo "<h2>Error</h2>";
-	  echo lang('REPORT_ERROR');
+    echo lang('REPORT_ERROR');
 }
 ?>
 
