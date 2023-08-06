@@ -8,7 +8,7 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath
 from logger import mylog
-from helper import timeNow,  updateState, get_file_content, write_file
+from helper import timeNowTZ,  updateState, get_file_content, write_file
 from api import update_api
 
 #-------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ def run_plugin_scripts(db, runType):
                         shouldRun = schd.runScheduleCheck()  
                         if shouldRun:
                             # note the last time the scheduled plugin run was executed
-                            schd.last_run = timeNow()
+                            schd.last_run = timeNowTZ()
 
         if shouldRun:            
                         
@@ -102,8 +102,8 @@ def get_setting(key):
             result = set
     
     if result is None:
-        mylog('info', [' Error - setting_missing - Setting not found for key: ', key])           
-        mylog('info', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
+        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
+        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
         write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
     return result
@@ -165,14 +165,14 @@ def execute_plugin(db, plugin):
                 resolved = get_setting(param["value"])
 
                 if resolved != None:
-                    resolved = plugin_param_from_glob_set(resolved)
+                    resolved = passable_string_from_setting(resolved)
 
             #  Get Sql result
             if param["type"] == "sql":
                 resolved = flatten_array(db.get_sql_array(param["value"]))
 
             if resolved == None:
-                mylog('none', ['[Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
+                mylog('none', [f'[Plugins] The parameter "name":"{param["name"]}" for "value": {param["value"]} was resolved as None'])
 
             else:
                 params.append( [param["name"], resolved] )
@@ -286,14 +286,14 @@ def handle_empty(value):
 
 #-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
-def plugin_param_from_glob_set(globalSetting):
+def passable_string_from_setting(globalSetting):
 
     setVal = globalSetting[6] # setting value
     setTyp = globalSetting[3] # setting type
 
 
     noConversion = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
-    arrayConversion = ['text.multiselect', 'list'] 
+    arrayConversion = ['text.multiselect', 'list', 'subnets'] 
     jsonConversion = ['.template'] 
 
     if setTyp in noConversion:
@@ -305,6 +305,8 @@ def plugin_param_from_glob_set(globalSetting):
     for item in jsonConversion:
         if setTyp.endswith(item):
             return json.dumps(setVal)
+
+    mylog('none', ['[Plugins]: ERROR: Parameter not converted.'])  
 
 
 

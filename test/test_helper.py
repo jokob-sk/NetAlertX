@@ -6,7 +6,7 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()) + "/pialert/
 
 import datetime
 
-from helper import timeNow, updateSubnets
+from helper import timeNowTZ, updateSubnets
 
 
 # -------------------------------------------------------------------------------

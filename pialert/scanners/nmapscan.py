@@ -3,7 +3,7 @@ import subprocess
 
 import conf
 from const import logPath, sql_nmap_scan_all
-from helper import json_struc, timeNow, updateState
+from helper import json_struc, timeNowTZ, updateState
 from logger import append_line_to_file, mylog
 #-------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ def performNmapScan(db, devicesToScan):
                 mylog('verbose', ['[NMAP Scan] Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', device["dev_LastIP"], progress]) 
 
             if output == "": # check if the subprocess failed                    
-                mylog('info', ['[NMAP Scan] Nmap FAIL for ', device["dev_LastIP"], progress ,' check logs for details']) 
+                mylog('minimal', ['[NMAP Scan] Nmap FAIL for ', device["dev_LastIP"], progress ,' check logs for details']) 
             else: 
                 mylog('verbose', ['[NMAP Scan] Nmap SUCCESS for ', device["dev_LastIP"], progress])
 
@@ -87,7 +87,7 @@ def performNmapScan(db, devicesToScan):
                 elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                     startCollecting = False # end reached
                 elif startCollecting and len(line.split()) == 3:                                    
-                    newEntriesTmp.append(nmap_entry(device["dev_MAC"], timeNow(), line.split()[0], line.split()[1], line.split()[2], device["dev_Name"]))
+                    newEntriesTmp.append(nmap_entry(device["dev_MAC"], timeNowTZ(), line.split()[0], line.split()[1], line.split()[2], device["dev_Name"]))
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             index += 1

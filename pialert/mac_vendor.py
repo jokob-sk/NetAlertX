@@ -3,7 +3,7 @@ import subprocess
 import conf
 
 from const import pialertPath, vendorsDB
-from helper import timeNow, updateState
+from helper import timeNowTZ, updateState
 from logger import mylog
 
 
@@ -17,7 +17,7 @@ def update_devices_MAC_vendors (db, pArg = ''):
     sql = db.sql # TO-DO
     # Header    
     updateState(db,"Upkeep: Vendors")
-    mylog('verbose', ['[', timeNow(), '] Upkeep - Update HW Vendors:' ])
+    mylog('verbose', ['[', timeNowTZ(), '] Upkeep - Update HW Vendors:' ])
 
     # Update vendors DB (iab oui)
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    

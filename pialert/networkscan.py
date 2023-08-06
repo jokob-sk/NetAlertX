@@ -5,7 +5,7 @@ import conf
 from scanners.pihole import copy_pihole_network, read_DHCP_leases
 from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
-from helper import timeNow
+from helper import timeNowTZ
 from logger import mylog
 from reporting import skip_repeated_notifications
 
@@ -25,15 +25,6 @@ def scan_network (db):
     # updateState(db,"Scan: Network")
     mylog('verbose', ['[Network Scan] Scan Devices:' ])       
 
-    # Query ScanCycle properties    
-    scanCycle_data = query_ScanCycle_Data (db, True)
-    if scanCycle_data is None:
-        mylog('none', ['\n'])        
-        mylog('none', ['[Network Scan]*************** ERROR ***************'])
-        mylog('none', ['[Network Scan] ScanCycle %s not found' % conf.cycle ])
-        mylog('none', ['[Network Scan]    Exiting...\n'])
-        return False
-
     db.commitDB()
 
     # Pi-hole method    
@@ -52,21 +43,7 @@ def scan_network (db):
 
 def process_scan (db):
 
-    # Query ScanCycle properties    
-    scanCycle_data = query_ScanCycle_Data (db, True)
-    if scanCycle_data is None:
-        mylog('none', ['\n'])        
-        mylog('none', ['[Process Scan]*************** ERROR ***************'])
-        mylog('none', ['[Process Scan] ScanCycle %s not found' % conf.cycle ])
-        mylog('none', ['[Process Scan]    Exiting...\n'])
-        return False
-
-    db.commitDB()
-
-    # ScanCycle data        
-    cycle_interval  = scanCycle_data['cic_EveryXmin']
-
-    # Load current scan data
+     # Load current scan data
     mylog('verbose','[Process Scan]  Processing scan results')     
     save_scanned_devices (db)    
 
@@ -114,34 +91,16 @@ def process_scan (db):
     mylog('verbose','[Process Scan] Skipping repeated notifications')
     skip_repeated_notifications (db)
 
-    # Clear current scan as processed
-    db.sql.execute ("DELETE FROM CurrentScan")
+    # Clear current scan as processed TODO uncomment
+    # db.sql.execute ("DELETE FROM CurrentScan")
   
     # Commit changes    
     db.commitDB()
 
-    # moved plugin execution to main loop
-    # if ENABLE_PLUGINS:
-    #    run_plugin_scripts(db,'always_after_scan')
-
-
-#-------------------------------------------------------------------------------
-def query_ScanCycle_Data (db, pOpenCloseDB = False, cycle = 1):
-    # Query Data
-    db.sql.execute ("""SELECT cic_arpscanCycles, cic_EveryXmin
-                    FROM ScanCycles
-                    WHERE cic_ID = ? """, (cycle,))
-    sqlRow = db.sql.fetchone()
-
-    # Return Row
-    return sqlRow
-
-
-
 #-------------------------------------------------------------------------------
 def void_ghost_disconnections (db):
     sql = db.sql #TO-DO
-    startTime = timeNow()
+    startTime = timeNowTZ()
     # Void connect ghost events (disconnect event exists in last X min.) 
     mylog('debug','[Void Ghost Con] - 1 Connect ghost events')
     sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
@@ -256,7 +215,7 @@ def create_sessions_snapshot (db):
 #-------------------------------------------------------------------------------
 def insert_events (db):
     sql = db.sql #TO-DO
-    startTime = timeNow()    
+    startTime = timeNowTZ()    
     
     # Check device down
     mylog('debug','[Events] - 1 - Devices down')

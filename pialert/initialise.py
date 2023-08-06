@@ -77,12 +77,13 @@ def importConfigs (db):
     conf.mySettings = [] # reset settings
     conf.mySettingsSQLsafe = [] # same as above but safe to be passed into a SQL query
 
+    # User values loaded from now
     c_d = read_config_file(config_file)
 
+   
     # Import setting if found in the dictionary
-    # General
-    conf.ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'General', ['run']) 
-    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
+    
+    # General    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')
     conf.ENABLE_PLUGINS = ccd('ENABLE_PLUGINS', True , c_d, 'Enable plugins', 'boolean', '', 'General') 
@@ -97,6 +98,10 @@ def importConfigs (db):
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')
+
+    # ARPSCAN (+ other settings provided by the ARPSCAN plugin)
+    conf.ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'ARPSCAN', ['run']) 
+    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'ARPSCAN')    
 
     # Email
     conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
@@ -175,6 +180,31 @@ def importConfigs (db):
 
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
+
+    # TODO cleanup later ----------------------------------------------------------------------------------
+    # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings
+    conf.time_started = datetime.datetime.now(conf.tz)
+    conf.cycle = ""
+    conf.check_report = [1, "internet_IP", "update_vendors_silent"]
+    conf.plugins_once_run = False
+    
+    # to be deleted if not used 
+    conf.log_timestamp = conf.time_started
+    #cron_instance = Cron()
+
+    # timestamps of last execution times
+    conf.startTime = conf.time_started
+    now_minus_24h = conf.time_started - datetime.timedelta(hours = 24)
+
+    # set these times to the past to force the first run 
+    conf.last_network_scan = now_minus_24h
+    conf.last_internet_IP_scan = now_minus_24h
+    conf.last_scan_run = now_minus_24h
+    conf.last_cleanup = now_minus_24h
+    conf.last_update_vendors = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
+    conf.last_version_check = now_minus_24h  
+
+    # TODO cleanup later ----------------------------------------------------------------------------------
     
     # global mySchedules
     # reset schedules
@@ -265,7 +295,7 @@ def importConfigs (db):
     
     #TO DO this creates a circular reference between API and HELPER !
 
-    mylog('info', '[Config] Imported new config')
+    mylog('minimal', '[Config] Imported new config')
 
 
 
@@ -274,7 +304,7 @@ def read_config_file(filename):
     """
     retuns dict on the config file key:value pairs
     """
-    mylog('info', '[Config] reading config file')
+    mylog('minimal', '[Config] reading config file')
     # load the variables from  pialert.conf
     code = compile(filename.read_text(), filename.name, "exec")
     confDict = {} # config dictionary

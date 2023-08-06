@@ -6,7 +6,7 @@ import re
 # pialert modules
 
 import conf
-from helper import timeNow, updateState
+from helper import timeNowTZ, updateState
 from logger import append_line_to_file, mylog
 from const import logPath
 
@@ -45,7 +45,7 @@ def check_internet_IP ( db ):
 
     # Check IP Change
     if internet_IP != previous_IP :
-        mylog('info', ['[Internet IP]    New internet IP: ', internet_IP])
+        mylog('minimal', ['[Internet IP]    New internet IP: ', internet_IP])
         save_new_internet_IP (db, internet_IP)
         
     else :
@@ -116,7 +116,7 @@ def get_previous_internet_IP (db):
 def save_new_internet_IP (db, pNewIP):
     # Log new IP into logfile
     append_line_to_file (logPath + '/IP_changes.log',
-        '['+str(timeNow()) +']\t'+ pNewIP +'\n')
+        '['+str(timeNowTZ()) +']\t'+ pNewIP +'\n')
 
     prevIp = get_previous_internet_IP(db)     
     # Save event
@@ -125,7 +125,7 @@ def save_new_internet_IP (db, pNewIP):
                         eve_PendingAlertEmail)
                     VALUES ('Internet', ?, ?, 'Internet IP Changed',
                         'Previous Internet IP: '|| ?, 1) """,
-                    (pNewIP, timeNow(), prevIp) )
+                    (pNewIP, timeNowTZ(), prevIp) )
 
     # Save new IP
     db.sql.execute ("""UPDATE Devices SET dev_LastIP = ?

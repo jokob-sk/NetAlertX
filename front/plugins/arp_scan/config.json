@@ -36,8 +36,8 @@
     {
       "function": "RUN",            
       "type": "text.select",            
-      "default_value":"disabled",
-      "options": ["disabled", "once", "schedule", "scan_cycle", "always_after_scan",  "on_new_device"],
+      "default_value":"schedule",
+      "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",

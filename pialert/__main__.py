@@ -24,7 +24,7 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, isNewVersion,  timeNow, updateState
+from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState
 from api import update_api
 from networkscan import process_scan, scan_network
 from initialise import importConfigs
@@ -74,29 +74,11 @@ main structure of Pi Alert
 """
 
 def main ():
-    mylog('debug', ['[MAIN] Setting up ...'])
+    mylog('none', ['[MAIN] Setting up ...']) # has to be level 'none' as user config not loaded yet
 
-    conf.time_started = datetime.datetime.now()
-    conf.cycle = ""
-    conf.check_report = [1, "internet_IP", "update_vendors_silent"]
-    conf.plugins_once_run = False
+    mylog('none', [f'[conf.tz] Setting up ...{conf.tz}'])
+
     
-    # to be deleted if not used 
-    conf.log_timestamp = conf.time_started
-    #cron_instance = Cron()
-
-    # timestamps of last execution times
-    startTime = conf.time_started
-    now_minus_24h = conf.time_started - datetime.timedelta(hours = 24)
-
-    # set these times to the past to force the first run 
-    last_network_scan = now_minus_24h
-    last_internet_IP_scan = now_minus_24h
-    last_scan_run = now_minus_24h
-    last_cleanup = now_minus_24h
-    last_update_vendors = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
-    last_version_check = now_minus_24h  
-
     # indicates, if a new version is available
     conf.newVersionAvailable = False
     
@@ -120,17 +102,18 @@ def main ():
 
     while True:
 
-        # update time started
-        loop_start_time = timeNow()
-        
         # re-load user configuration and plugins   
         importConfigs(db)
 
+        # update time started
+        conf.loop_start_time = timeNowTZ()
+        loop_start_time = conf.loop_start_time # TODO fix
+
         # check if new version is available / only check once an hour
-        if last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
+        if conf.last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
             # if newVersionAvailable is already true the function does nothing and returns true again
-            mylog('debug', [f"[Version check] Last version check timestamp: {last_version_check}"])
-            last_version_check = loop_start_time
+            mylog('debug', [f"[Version check] Last version check timestamp: {conf.last_version_check}"])
+            conf.last_version_check = loop_start_time
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
@@ -210,7 +193,7 @@ def main ():
                     run = nmapSchedule.runScheduleCheck()                    
 
                 if run:
-                    nmapSchedule.last_run = timeNow()
+                    nmapSchedule.last_run = timeNowTZ()
                     performNmapScan(db, get_all_devices(db))
             
             # todo replace the scans with plugins

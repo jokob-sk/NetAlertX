@@ -18,17 +18,23 @@ lastImportedConfFile = 1.1
 plugins_once_run = False
 newVersionAvailable = False
 time_started = ''
+startTime = ''
+last_network_scan = ''
+last_internet_IP_scan = ''
+last_scan_run = ''
+last_cleanup = ''
+last_update_vendors = ''
+last_version_check = ''
 check_report = []
 log_timestamp = 0
 arpscan_devices = []
+
 # for MQTT
 mqtt_connected_to_broker = False
 mqtt_sensors = []
 client = None  # mqtt client
 # for notifications
 changedPorts_json_struc = None
-
-
 
 # ACTUAL CONFIGRATION ITEMS set to defaults
 

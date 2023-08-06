@@ -48,7 +48,7 @@ def publish_mqtt(client, topic, message):
         status = result[0]
 
         if status != 0:            
-            mylog('info', ["Waiting to reconnect to MQTT broker"])
+            mylog('minimal', ["Waiting to reconnect to MQTT broker"])
             time.sleep(0.1) 
     return True
 
@@ -180,7 +180,7 @@ def mqtt_start(db):
 
     sec_delay = len(devices) * int(conf.MQTT_DELAY_SEC)*5
 
-    mylog('info', ["        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
+    mylog('minimal', ["        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
     for device in devices:        
 
