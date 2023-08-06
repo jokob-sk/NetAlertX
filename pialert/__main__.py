@@ -213,6 +213,7 @@ def main ():
                     nmapSchedule.last_run = timeNow()
                     performNmapScan(db, get_all_devices(db))
             
+            # todo replace the scans with plugins
             # Perform a network scan via arp-scan or pihole
             if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < loop_start_time:
                 last_network_scan = loop_start_time
@@ -250,7 +251,7 @@ def main ():
             # --------------------------------------------------
             # process all the scanned data into new devices
             mylog('debug', "[MAIN] start processig scan results")
-            process_scan (db, conf.arpscan_devices )
+            process_scan (db)
             
             # Reporting   
             if conf.cycle in conf.check_report:

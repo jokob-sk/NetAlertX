@@ -14,44 +14,48 @@ from scanners.pholusscan import performPholusScan, resolve_device_name_dig, reso
 #-------------------------------------------------------------------------------
 
 
-def save_scanned_devices (db, p_arpscan_devices, p_cycle_interval):
+def save_scanned_devices (db):
     sql = db.sql #TO-DO
     cycle = 1 # always 1, only one cycle supported
 
-    mylog('debug', ['[ARP Scan] Detected devices:', len(p_arpscan_devices)])
+    # mylog('debug', ['[ARP Scan] Detected devices:', len(p_arpscan_devices)])
 
-    # Delete previous scan data
-    sql.execute ("DELETE FROM CurrentScan WHERE cur_ScanCycle = ?",
-                (cycle,))
+    # handled by the ARPSCAN plugin
+    # # Delete previous scan data
+    # sql.execute ("DELETE FROM CurrentScan")
 
-    if len(p_arpscan_devices) > 0:
-        # Insert new arp-scan devices
-        sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
-                        "    cur_IP, cur_Vendor, cur_ScanMethod) "+
-                        "VALUES ("+ str(cycle) + ", :mac, :ip, :hw, 'arp-scan')",
-                        p_arpscan_devices) 
+    # if len(p_arpscan_devices) > 0:
+    #     # Insert new arp-scan devices
+    #     sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
+    #                     "    cur_IP, cur_Vendor, cur_ScanMethod) "+
+    #                     "VALUES (1, :mac, :ip, :hw, 'arp-scan')",
+    #                     p_arpscan_devices) 
 
-    # Insert Pi-hole devices
-    startTime = timeNow()
-    sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, 
-                        cur_IP, cur_Vendor, cur_ScanMethod)
-                    SELECT ?, PH_MAC, PH_IP, PH_Vendor, 'Pi-hole'
-                    FROM PiHole_Network
-                    WHERE PH_LastQuery >= ?
-                      AND NOT EXISTS (SELECT 'X' FROM CurrentScan
-                                      WHERE cur_MAC = PH_MAC
-                                        AND cur_ScanCycle = ? )""",
-                    (cycle,
-                     (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
-                     cycle) )
+
+# ------------------------ TO CONVERT INTO PLUGIN
+    # # Insert Pi-hole devices
+    # startTime = timeNow()
+    # sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, 
+    #                     cur_IP, cur_Vendor, cur_ScanMethod)
+    #                 SELECT ?, PH_MAC, PH_IP, PH_Vendor, 'Pi-hole'
+    #                 FROM PiHole_Network
+    #                 WHERE PH_LastQuery >= ?
+    #                   AND NOT EXISTS (SELECT 'X' FROM CurrentScan
+    #                                   WHERE cur_MAC = PH_MAC
+    #                                     AND cur_ScanCycle = ? )""",
+    #                 (cycle,
+    #                  (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
+    #                  cycle) )
+# ------------------------ TO CONVERT INTO PLUGIN
+
 
     # Check Internet connectivity
     internet_IP = get_internet_IP( conf.DIG_GET_IP_ARG )
         # TESTING - Force IP
         # internet_IP = ""
     if internet_IP != "" :
-        sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
-                        VALUES (?, 'Internet', ?, Null, 'queryDNS') """, (cycle, internet_IP) )
+        sql.execute (f"""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
+                        VALUES ( 1, 'Internet', '{internet_IP}', Null, 'queryDNS') """)
 
     # #76 Add Local MAC of default local interface
       # BUGFIX #106 - Device that pialert is running
@@ -73,93 +77,67 @@ def save_scanned_devices (db, p_arpscan_devices, p_cycle_interval):
         local_ip = '0.0.0.0'
 
     # Check if local mac has been detected with other methods
-    sql.execute ("SELECT COUNT(*) FROM CurrentScan WHERE cur_ScanCycle = ? AND cur_MAC = ? ", (cycle, local_mac) )
+    sql.execute ("SELECT COUNT(*) FROM CurrentScan WHERE cur_MAC = ? ", (local_mac) )
     if sql.fetchone()[0] == 0 :
         sql.execute ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) "+
-                     "VALUES ( ?, ?, ?, Null, 'local_MAC') ", (cycle, local_mac, local_ip) )
+                     "VALUES ( 1, ?, ?, Null, 'local_MAC') ", (local_mac, local_ip) )
 
 #-------------------------------------------------------------------------------
 def print_scan_stats (db):
     sql = db.sql #TO-DO
     # Devices Detected
-    sql.execute ("""SELECT COUNT(*) FROM CurrentScan
-                    WHERE cur_ScanCycle = ? """,
-                    (conf.cycle,))
+    sql.execute ("""SELECT COUNT(*) FROM CurrentScan""")
     mylog('verbose', ['[Scan Stats]    Devices Detected.......: ', str (sql.fetchone()[0]) ])
 
     # Devices arp-scan
-    sql.execute ("""SELECT COUNT(*) FROM CurrentScan
-                    WHERE cur_ScanMethod='arp-scan' AND cur_ScanCycle = ? """,
-                    (conf.cycle,))
+    sql.execute ("""SELECT COUNT(*) FROM CurrentScan WHERE cur_ScanMethod='arp-scan' """)
     mylog('verbose', ['[Scan Stats]        arp-scan detected..: ', str (sql.fetchone()[0]) ])
 
     # Devices Pi-hole
-    sql.execute ("""SELECT COUNT(*) FROM CurrentScan
-                    WHERE cur_ScanMethod='PiHole' AND cur_ScanCycle = ? """,
-                    (conf.cycle,))
+    sql.execute ("""SELECT COUNT(*) FROM CurrentScan WHERE cur_ScanMethod='PiHole'""")
     mylog('verbose', ['[Scan Stats]        Pi-hole detected...: +' + str (sql.fetchone()[0]) ])
 
     # New Devices
     sql.execute ("""SELECT COUNT(*) FROM CurrentScan
-                    WHERE cur_ScanCycle = ? 
-                      AND NOT EXISTS (SELECT 1 FROM Devices
-                                      WHERE dev_MAC = cur_MAC) """,
-                    (conf.cycle,))
+                    WHERE NOT EXISTS (SELECT 1 FROM Devices
+                                      WHERE dev_MAC = cur_MAC) """)
     mylog('verbose', ['[Scan Stats]        New Devices........: ' + str (sql.fetchone()[0]) ])
-
-    # Devices in this ScanCycle
-    sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_ScanCycle = ? """,
-                    (conf.cycle,))
-    
-    mylog('verbose', ['[Scan Stats]    Devices in this cycle..: ' + str (sql.fetchone()[0]) ])
 
     # Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
-                    WHERE dev_AlertDeviceDown = 1
-                      AND dev_ScanCycle = ?
+                    WHERE dev_AlertDeviceDown = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (conf.cycle,))
+                                        AND dev_ScanCycle = cur_ScanCycle) """)
     mylog('verbose', ['[Scan Stats]        Down Alerts........: ' + str (sql.fetchone()[0]) ])
 
     # New Down Alerts
     sql.execute ("""SELECT COUNT(*) FROM Devices
                     WHERE dev_AlertDeviceDown = 1
-                      AND dev_PresentLastScan = 1
-                      AND dev_ScanCycle = ?
+                      AND dev_PresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (conf.cycle,))
+                                        AND dev_ScanCycle = cur_ScanCycle) """)
     mylog('verbose', ['[Scan Stats]        New Down Alerts....: ' + str (sql.fetchone()[0]) ])
 
     # New Connections
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_PresentLastScan = 0
-                      AND dev_ScanCycle = ? """,
-                    (conf.cycle,))
+                      AND dev_PresentLastScan = 0""")                      
     mylog('verbose', ['[Scan Stats]        New Connections....: ' + str ( sql.fetchone()[0]) ])
 
     # Disconnections
     sql.execute ("""SELECT COUNT(*) FROM Devices
-                    WHERE dev_PresentLastScan = 1
-                      AND dev_ScanCycle = ?
+                    WHERE dev_PresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (conf.cycle,))
+                                        AND dev_ScanCycle = cur_ScanCycle) """)
     mylog('verbose', ['[Scan Stats]        Disconnections.....: ' + str ( sql.fetchone()[0]) ])
 
     # IP Changes
     sql.execute ("""SELECT COUNT(*) FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_ScanCycle = ?
-                      AND dev_LastIP <> cur_IP """,
-                    (conf.cycle,))
+                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle                      
+                      AND dev_LastIP <> cur_IP """)
     mylog('verbose', ['[Scan Stats]        IP Changes.........: ' + str ( sql.fetchone()[0]) ])
 
 
@@ -176,20 +154,18 @@ def create_new_devices (db):
                         eve_PendingAlertEmail)
                     SELECT cur_MAC, cur_IP, ?, 'New Device', cur_Vendor, 1
                     FROM CurrentScan
-                    WHERE cur_ScanCycle = ? 
-                      AND NOT EXISTS (SELECT 1 FROM Devices
+                    WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """,
-                    (startTime, conf.cycle) ) 
+                    (startTime) ) 
 
     mylog('debug','[New Devices] Insert Connection into session table')
     sql.execute ("""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
                         ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
                     SELECT cur_MAC, cur_IP,'Connected',?, NULL , NULL ,1, cur_Vendor
                     FROM CurrentScan 
-                    WHERE cur_ScanCycle = ? 
-                      AND NOT EXISTS (SELECT 1 FROM Sessions
+                    WHERE NOT EXISTS (SELECT 1 FROM Sessions
                                       WHERE ses_MAC = cur_MAC) """,
-                    (startTime, conf.cycle) ) 
+                    (startTime) ) 
                     
     # arpscan - Create new devices
     mylog('debug','[New Devices] 2 Create devices')
@@ -236,13 +212,12 @@ def create_new_devices (db):
                     SELECT cur_MAC, '(unknown)', cur_Vendor, cur_IP, ?, ?,
                         {newDevDefaults}
                     FROM CurrentScan
-                    WHERE cur_ScanCycle = ? 
-                      AND NOT EXISTS (SELECT 1 FROM Devices
+                    WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """
 
     mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
 
-    sql.execute (sqlQuery, (startTime, startTime, conf.cycle) ) 
+    sql.execute (sqlQuery, (startTime, startTime) ) 
 
     # Pi-hole - Insert events for new devices
     # NOT STRICYLY NECESARY (Devices can be created through Current_Scan)
@@ -326,18 +301,15 @@ def update_devices_data_from_scan (db):
                     WHERE dev_ScanCycle = ?
                       AND dev_PresentLastScan = 0
                       AND EXISTS (SELECT 1 FROM CurrentScan 
-                                  WHERE dev_MAC = cur_MAC
-                                    AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, conf.cycle))
+                                  WHERE dev_MAC = cur_MAC) """,
+                    (startTime))
 
     # Clean no active devices
     mylog('debug','[Update Devices] 2 Clean no active devices')
     sql.execute ("""UPDATE Devices SET dev_PresentLastScan = 0
-                    WHERE dev_ScanCycle = ?
-                      AND NOT EXISTS (SELECT 1 FROM CurrentScan 
+                    WHERE NOT EXISTS (SELECT 1 FROM CurrentScan 
                                       WHERE dev_MAC = cur_MAC
-                                        AND dev_ScanCycle = cur_ScanCycle) """,
-                    (conf.cycle,))
+                                        AND dev_ScanCycle = cur_ScanCycle) """)
 
     # Update IP & Vendor
     mylog('debug','[Update Devices] - 3 LastIP & Vendor')
@@ -348,11 +320,9 @@ def update_devices_data_from_scan (db):
                         dev_Vendor = (SELECT cur_Vendor FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle)
-                    WHERE dev_ScanCycle = ?
-                      AND EXISTS (SELECT 1 FROM CurrentScan
+                    WHERE EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE dev_MAC = cur_MAC
-                                    AND dev_ScanCycle = cur_ScanCycle) """,
-                    (conf.cycle,)) 
+                                    AND dev_ScanCycle = cur_ScanCycle) """) 
 
     # Pi-hole Network - Update (unknown) Name
     mylog('debug','[Update Devices] - 4 Unknown Name')

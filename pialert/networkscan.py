@@ -36,12 +36,13 @@ def scan_network (db):
 
     db.commitDB()
 
+    #  Moved to the ARPSCAN Plugin
     # arp-scan command
-    conf.arpscan_devices = []
-    if conf.ENABLE_ARPSCAN:    
-        mylog('verbose','[Network Scan] arp-scan start')    
-        conf.arpscan_devices = execute_arpscan (conf.userSubnets)
-        mylog('verbose','[Network Scan] arp-scan ends')
+    # conf.arpscan_devices = []
+    # if conf.ENABLE_ARPSCAN:    
+    #     mylog('verbose','[Network Scan] arp-scan start')    
+    #     conf.arpscan_devices = execute_arpscan (conf.userSubnets)
+    #     mylog('verbose','[Network Scan] arp-scan ends')
 
     # Pi-hole method    
     if conf.PIHOLE_ACTIVE :       
@@ -57,8 +58,7 @@ def scan_network (db):
 
 
 
-def process_scan (db, arpscan_devices):
-
+def process_scan (db):
 
     # Query ScanCycle properties    
     scanCycle_data = query_ScanCycle_Data (db, True)
@@ -76,7 +76,7 @@ def process_scan (db, arpscan_devices):
 
     # Load current scan data
     mylog('verbose','[Process Scan]  Processing scan results')     
-    save_scanned_devices (db, arpscan_devices, cycle_interval)    
+    save_scanned_devices (db)    
 
     db.commitDB()
     
@@ -85,8 +85,7 @@ def process_scan (db, arpscan_devices):
     print_scan_stats(db)
     mylog('none','[Process Scan] Stats end')
 
-    # Create Events
-    mylog('verbose','[Process Scan] Updating DB Info')
+    # Create Events    
     mylog('verbose','[Process Scan] Sessions Events (connect / discconnect)')
     insert_events(db)
 
@@ -122,6 +121,9 @@ def process_scan (db, arpscan_devices):
     # Skip repeated notifications
     mylog('verbose','[Process Scan] Skipping repeated notifications')
     skip_repeated_notifications (db)
+
+    # Clear current scan as processed
+    db.sql.execute ("DELETE FROM CurrentScan")
   
     # Commit changes    
     db.commitDB()
@@ -279,12 +281,11 @@ def insert_events (db):
                     SELECT dev_MAC, dev_LastIP, ?, 'Device Down', '', 1
                     FROM Devices 
                     WHERE dev_AlertDeviceDown = 1
-                      AND dev_PresentLastScan = 1
-                      AND dev_ScanCycle = ?
+                      AND dev_PresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, conf.cycle) )
+                    (startTime) )
 
     # Check new connections
     mylog('debug','[Events] - 2 - New Connections')
@@ -294,9 +295,8 @@ def insert_events (db):
                     SELECT cur_MAC, cur_IP, ?, 'Connected', '', dev_AlertEvents
                     FROM Devices, CurrentScan
                     WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_PresentLastScan = 0
-                      AND dev_ScanCycle = ? """,
-                    (startTime, conf.cycle) )
+                      AND dev_PresentLastScan = 0 """,
+                    (startTime) )
 
     # Check disconnections
     mylog('debug','[Events] - 3 - Disconnections')
@@ -308,11 +308,10 @@ def insert_events (db):
                     FROM Devices
                     WHERE dev_AlertDeviceDown = 0
                       AND dev_PresentLastScan = 1
-                      AND dev_ScanCycle = ?
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC
                                         AND dev_ScanCycle = cur_ScanCycle) """,
-                    (startTime, conf.cycle) )
+                    (startTime) )
 
     # Check IP Changed
     mylog('debug','[Events] - 4 - IP Changes')
@@ -322,8 +321,7 @@ def insert_events (db):
                     SELECT cur_MAC, cur_IP, ?, 'IP Changed',
                         'Previous IP: '|| dev_LastIP, dev_AlertEvents
                     FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle
-                      AND dev_ScanCycle = ?
+                    WHERE dev_MAC = cur_MAC AND dev_ScanCycle = cur_ScanCycle                      
                       AND dev_LastIP <> cur_IP """,
-                    (startTime, conf.cycle) )
+                    (startTime) )
     mylog('debug','[Events] - Events end')

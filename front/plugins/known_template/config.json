@@ -48,9 +48,8 @@
   ], 
   "settings":[
         {
-          "function": "flows",
-          "type": "json",
-          "maxLength": 50,
+          "function": "FLOW",
+          "type": "json",          
           "default_value": [{
               "name":"apply_template",  
               "trigger": [
@@ -121,13 +120,13 @@
           "name": [
             {
               "language_code": "en_us",
-              "string": "Flows"
+              "string": "Plugin flow"
             }
           ],
           "description": [
             {
               "language_code": "en_us",
-              "string": "The flow."
+              "string": "This flow makes sure the template is applied to devices that are older than 3 days."
             }
           ]
         },

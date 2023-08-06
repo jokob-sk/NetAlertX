@@ -2,7 +2,7 @@
     "code_name": "website_monitor",
     "unique_prefix": "WEBMON",
     "enabled": true,    
-    "data_source":  "python-script",
+    "data_source":  "script",
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",

@@ -97,7 +97,7 @@ More on specifics below.
 
 Currently, only 3 data sources are supported (valid `data_source` value). 
 
-- Script (`python-script`)
+- Script (`script`)
 - SQL query on the PiAlert database (`pialert-db-query`)
 - Template (`template`)
 
@@ -107,9 +107,9 @@ Currently, only 3 data sources are supported (valid `data_source` value).
 >```
 Any of the above data sources have to return a "table" of the exact structure as outlined above.
 
-### "data_source":  "python-script"
+### "data_source":  "script"
 
- If the `data_source` is set to `python-script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain an executable Linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
+ If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain an executable Linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
  
  The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
@@ -264,7 +264,7 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
     "code_name": "dhcp_leases",
     "unique_prefix": "DHCPLSS",
     ...
-    "data_source":  "python-script",
+    "data_source":  "script",
     "localized": ["display_name", "description", "icon"],
     "mapped_to_table": "DHCP_Leases",    
     ...

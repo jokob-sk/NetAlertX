@@ -181,8 +181,8 @@ def execute_plugin(db, plugin):
     # build SQL query parameters to insert into the DB
     sqlParams = []
 
-    # python-script 
-    if plugin['data_source'] == 'python-script':
+    # script 
+    if plugin['data_source'] == 'script':
         # ------- prepare params --------
         # prepare command from plugin settings, custom parameters  
         command = resolve_wildcards_arr(set_CMD.split(), params)        
@@ -203,24 +203,35 @@ def execute_plugin(db, plugin):
 
 
         #  check the last run output
-        f = open(pluginsPath + '/' + plugin["code_name"] + '/last_result.log', 'r+')
-        newLines = f.read().split('\n')
-        f.close()        
+        # Initialize newLines
+        newLines = []
 
-        # cleanup - select only lines containing a separator to filter out unnecessary data
-        newLines = list(filter(lambda x: '|' in x, newLines))  
+        # Create the file path
+        file_path = os.path.join(pluginsPath, plugin["code_name"], 'last_result.log')
 
-        # # regular logging
-        # for line in newLines:
-        #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
-        
-        for line in newLines:
-            columns = line.split("|")
-            # There has to be always 9 columns
-            if len(columns) == 9:
-                sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
-            else:
-                mylog('none', ['[Plugins]: Skipped invalid line in the output: ', line])
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # File exists, open it and read its contents
+            with open(file_path, 'r+') as f:
+                newLines = f.read().split('\n')
+
+            # if the script produced some outpout, clean it up to ensure it's the correct format        
+            # cleanup - select only lines containing a separator to filter out unnecessary data
+            newLines = list(filter(lambda x: '|' in x, newLines))  
+
+            # # regular logging
+            # for line in newLines:
+            #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+            
+            for line in newLines:
+                columns = line.split("|")
+                # There has to be always 9 columns
+                if len(columns) == 9:
+                    sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
+                else:
+                    mylog('none', ['[Plugins]: Skipped invalid line in the output: ', line])
+        else:
+            mylog('debug', [f'[Plugins] The file {file_path} does not exist'])             
     
     # pialert-db-query
     if plugin['data_source'] == 'pialert-db-query':

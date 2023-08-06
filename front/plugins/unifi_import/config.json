@@ -2,7 +2,7 @@
     "code_name": "unifi_import",
     "unique_prefix": "UNFIMP",
     "enabled": true,    
-    "data_source":  "python-script",
+    "data_source":  "script",
     "data_filters": [
         {
             "compare_column" : "Object_PrimaryID",

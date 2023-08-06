@@ -2,7 +2,7 @@
   "code_name": "undiscoverables",
   "unique_prefix": "UNDIS",
   "enabled": true,
-  "data_source": "python-script",
+  "data_source": "script",
   "mapped_to_table": "DHCP_Leases", 
 
   "localized": ["display_name", "description", "icon"],

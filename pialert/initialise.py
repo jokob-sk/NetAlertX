@@ -59,16 +59,19 @@ def importConfigs (db):
 
     # Only import file if the file was modifed since last import.
     # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
+
+    fileModifiedTime = os.path.getmtime(config_file)
+
     mylog('debug', ['[Import Config] checking config file '])
     mylog('debug', ['[Import Config] lastImportedConfFile     :', conf.lastImportedConfFile])
-    mylog('debug', ['[Import Config] file modified time       :', os.path.getmtime(config_file)])
+    mylog('debug', ['[Import Config] file modified time       :', fileModifiedTime])
     
 
-    if (os.path.getmtime(config_file) == conf.lastImportedConfFile) :
+    if (fileModifiedTime == conf.lastImportedConfFile) :
         mylog('debug', ['[Import Config] skipping config file import'])
         return
 
-    conf.lastImportedConfFile = os.path.getmtime(config_file)  
+    conf.lastImportedConfFile = fileModifiedTime  
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
