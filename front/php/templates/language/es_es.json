@@ -139,6 +139,7 @@
         "DevDetail_Tab_Events" : "Eventos",
         "DevDetail_Tab_Pholus" : "<i class=\"fa fa-search\"></i> Pholus",
         "DevDetail_Tab_PholusEmpty" : "No se ha encontrado nada para este dispositivo con Pholus.",
+        "DevDetail_Tab_Plugins" : "<i class=\"fa fa-plug\"></i> Plugins",        
         "DevDetail_Tab_NmapTableHeader" : "Resultados del escaneo programado",
         "DevDetail_Tab_NmapTableText" : "Establece la programación en los <a href=\"/settings.php#NMAP_ACTIVE\">Ajustes</a>",
         "DevDetail_Tab_NmapEmpty" : "Ningún puerto detectado en este dispositivo con Nmap.",
