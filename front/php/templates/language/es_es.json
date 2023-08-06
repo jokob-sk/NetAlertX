@@ -391,6 +391,8 @@
         "HelpFAQ_Cat_Presence_401_text" : "Si esto sucede, tiene la posibilidad de eliminar los eventos del dispositivo en cuestión (vista de detalles).  Otra posibilidad sería encender el dispositivo y esperar hasta que Pi.Alert reconozca el dispositivo como \"online\" con el siguiente escaneo y luego simplemente apagar el dispositivo nuevamente.  Ahora Pi.Alert debería anotar correctamente el estado del dispositivo en la base de datos con el próximo escaneo.",
         "HelpFAQ_Cat_Network_600_head" : "¿Para qué sirve esta sección?",
         "HelpFAQ_Cat_Network_600_text" : "Esta sección debería ofrecerle la posibilidad de mapear la asignación de sus dispositivos de red.  Para ello, puede crear uno o más conmutadores, WLAN, enrutadores, etc., proporcionarles un número de puerto si es necesario y asignarles dispositivos ya detectados. Esta asignación se realiza en la vista detallada del dispositivo a asignar.  Por lo tanto, es posible determinar rápidamente a qué puerto está conectado un host y si está en línea. Es posible asignar un dispositivo a múltiples puertos (agrupación de puertos), así como múltiples dispositivos a un puerto (máquinas virtuales).",
+        "HelpFAQ_Cat_Network_601_head" : "¿Hay otros documentos?",
+        "HelpFAQ_Cat_Network_601_text" : "¡Sí, los hay! Marque <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/\">all docs</a> para más información.",        
         "test_event_tooltip" : "Guarda tus cambios antes de probar nuevos ajustes.",
         "test_event_icon" : "fa-vial-circle-check",
         "run_event_tooltip" : "Activa el ajuste y guarda tus cambios antes de ejecutarlo.",
