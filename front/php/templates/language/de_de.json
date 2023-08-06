@@ -26,6 +26,7 @@
         "Navigation_Devices" : "Geräte",
         "Navigation_Presence" : "Anwesenheit",
         "Navigation_Events" : "Ereignisse",
+        "Navigation_Report" : "Bericht",        
         "Navigation_Maintenance" : "Wartung",
         "Navigation_Settings" : "Einstellung",
         "Navigation_SystemInfo" : "System info",       
@@ -317,6 +318,8 @@
         "HelpFAQ_Cat_Presence_401_text" : "Wenn dies geschieht hast du die Möglickeit, bei dem betreffenden Gerät (Detailsansicht) die Events zu löschen. Eine andere Möglichkeit wäre, das Gerät einzuschalten und zu warten, bis Pi.Alert mit dem nächsten Scan das Gerät als \"Online\" erkennt und anschließend das Gerät einfach wieder ausschalten. Nun sollte Pi.Alert mit dem nächsten Scan den Zustand des Gerätes ordentlich in der Datenbank vermerken.",
         "HelpFAQ_Cat_Network_600_head" : "Was bringt mir diese Seite?",
         "HelpFAQ_Cat_Network_600_text" : "Diese Seite soll dir die Möglichkeit bieten, die Belegung deiner Netzwerkgeräte abzubilden. Dazu kannst du einen oder mehrere Switches, WLANs, Router, etc. erstellen, sie ggf. mit einer Portanzahl versehen und bereits erkannte Geräte diesen zuordnen. Diese Zuordnung erfolgt in der Detailansicht, des zuzuordnenden Gerätes. So ist es dir möglich, schnell festzustellen an welchem Port ein Host angeschlossen und ob er online ist.",
+        "REPORT_TITLE" : "Bericht",
+        "REPORT_ERROR" : "Die gesuchte Seite ist vorübergehend nicht verfügbar. Bitte versuchen Sie es nach ein paar Sekunden erneut",
         "SYSTEM_TITLE" : "Systeminformationen"        
     }
   }
