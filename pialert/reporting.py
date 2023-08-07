@@ -1,4 +1,14 @@
-
+#---------------------------------------------------------------------------------#
+#  Pi.Alert                                                                       #
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#                                                                                 #
+#  reporting.py - Pialert Back module. Template to email reporting in HTML format #
+#---------------------------------------------------------------------------------#
+#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
+#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
+#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
+#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
+#---------------------------------------------------------------------------------#
 
 import datetime
 import json
@@ -11,6 +21,7 @@ from json2table import convert
 
 # pialert modules
 import conf
+import const
 from const import pialertPath, logPath, apiPath
 from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
@@ -47,8 +58,8 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         return noti_struc("", "", "")
 
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
-    headerProps = "width='120px' style='color:blue; font-size: 16px;' bgcolor='#909090' "
-    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#909090' "
+    headerProps = "width='120px' style='color:white; font-size: 16px;' bgcolor='#64a0d6' "
+    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#64a0d6' "
 
     build_direction = "TOP_TO_BOTTOM"
     text_line = '{}\t{}\n'
@@ -139,14 +150,25 @@ def send_notifications (db):
     mail_html = template_file.read()
     template_file.close()
 
-    # Report Header & footer
+    # Report "REPORT_DATE" in Header & footer
     timeFormated = timeNowTZ().strftime ('%Y-%m-%d %H:%M')
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
+    # Report "SERVER_NAME" in Header & footer
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
+    # Report "VERSION" in Header & footer
+    VERSIONFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/version.php']).decode('utf-8')
+    mail_text = mail_text.replace ('<VERSION_PIALERT>', VERSIONFILE)
+    mail_html = mail_html.replace ('<VERSION_PIALERT>', VERSIONFILE)	
+
+    # Report "BUILD" in Header & footer
+    BUILDFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/build.php']).decode('utf-8')
+    mail_text = mail_text.replace ('<BUILD_PIALERT>', BUILDFILE)
+    mail_html = mail_html.replace ('<BUILD_PIALERT>', BUILDFILE)
+	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
     if 'internet' in conf.INCLUDED_SECTIONS :
