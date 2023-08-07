@@ -128,7 +128,7 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": ["new", "watched-changed"],
+      "default_value": ["new"],
       "options": ["new", "watched-changed", "watched-not-changed"],
       "localized": ["name", "description"],
       "name": [

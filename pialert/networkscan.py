@@ -103,62 +103,52 @@ def void_ghost_disconnections (db):
     startTime = timeNowTZ()
     # Void connect ghost events (disconnect event exists in last X min.) 
     mylog('debug','[Void Ghost Con] - 1 Connect ghost events')
-    sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null,
-                        eve_EventType ='VOIDED - ' || eve_EventType
-                    WHERE eve_MAC != 'Internet'
-                      AND eve_EventType = 'Connected'
-                      AND eve_DateTime = ?
-                      AND eve_MAC IN (
-                          SELECT Events.eve_MAC
-                          FROM CurrentScan, Devices, ScanCycles, Events 
-                          WHERE cur_ScanCycle = ?
-                            AND dev_MAC = cur_MAC
-                            AND dev_ScanCycle = cic_ID
-                            AND cic_ID = cur_ScanCycle
-                            AND eve_MAC = cur_MAC
-                            AND eve_EventType = 'Disconnected'
-                            AND eve_DateTime >=
-                                DATETIME (?, '-' || cic_EveryXmin ||' minutes')
-                          ) """,
-                    (startTime, conf.cycle, startTime)   )
+    sql.execute("""UPDATE Events SET eve_PairEventRowid = Null,
+                                eve_EventType ='VOIDED - ' || eve_EventType
+                            WHERE eve_MAC != 'Internet'
+                            AND eve_EventType = 'Connected'
+                            AND eve_DateTime = ?
+                            AND eve_MAC IN (
+                                SELECT Events.eve_MAC
+                                FROM CurrentScan, Devices, Events 
+                                WHERE dev_MAC = cur_MAC
+                                    AND eve_MAC = cur_MAC
+                                    AND eve_EventType = 'Disconnected'
+                                    AND eve_DateTime >= DATETIME(?, '-3 minutes')
+                                ) """,
+                            (startTime, startTime))
 
     # Void connect paired events
     mylog('debug','[Void Ghost Con] - 2 Paired events')
-    sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null 
-                    WHERE eve_MAC != 'Internet'
-                      AND eve_PairEventRowid IN (
-                          SELECT Events.RowID
-                          FROM CurrentScan, Devices, ScanCycles, Events 
-                          WHERE cur_ScanCycle = ?
-                            AND dev_MAC = cur_MAC
-                            AND dev_ScanCycle = cic_ID
-                            AND cic_ID = cur_ScanCycle
-                            AND eve_MAC = cur_MAC
-                            AND eve_EventType = 'Disconnected'
-                            AND eve_DateTime >=
-                                DATETIME (?, '-' || cic_EveryXmin ||' minutes')
-                          ) """,
-                    (conf.cycle, startTime)   )
+    sql.execute("""UPDATE Events SET eve_PairEventRowid = Null 
+                            WHERE eve_MAC != 'Internet'
+                            AND eve_PairEventRowid IN (
+                                SELECT Events.RowID
+                                FROM CurrentScan, Devices, Events 
+                                WHERE dev_MAC = cur_MAC
+                                    AND eve_MAC = cur_MAC
+                                    AND eve_EventType = 'Disconnected'
+                                    AND eve_DateTime >= DATETIME(?, '-3 minutes')
+                                ) """,
+                            (startTime,))
 
     # Void disconnect ghost events 
     mylog('debug','[Void Ghost Con] - 3 Disconnect ghost events')
-    sql.execute ("""UPDATE Events SET eve_PairEventRowid = Null, 
-                        eve_EventType = 'VOIDED - '|| eve_EventType
-                    WHERE eve_MAC != 'Internet'
-                      AND ROWID IN (
-                          SELECT Events.RowID
-                          FROM CurrentScan, Devices, ScanCycles, Events 
-                          WHERE cur_ScanCycle = ?
-                            AND dev_MAC = cur_MAC
-                            AND dev_ScanCycle = cic_ID
-                            AND cic_ID = cur_ScanCycle
-                            AND eve_MAC = cur_MAC
-                            AND eve_EventType = 'Disconnected'
-                            AND eve_DateTime >=
-                                DATETIME (?, '-' || cic_EveryXmin ||' minutes')
-                          ) """,
-                    (conf.cycle, startTime)   )
+    sql.execute("""UPDATE Events SET eve_PairEventRowid = Null, 
+                            eve_EventType = 'VOIDED - '|| eve_EventType
+                        WHERE eve_MAC != 'Internet'
+                        AND ROWID IN (
+                            SELECT Events.RowID
+                            FROM CurrentScan, Devices, Events 
+                            WHERE dev_MAC = cur_MAC
+                                AND eve_MAC = cur_MAC
+                                AND eve_EventType = 'Disconnected'
+                                AND eve_DateTime >= DATETIME(?, '-3 minutes')
+                            ) """,
+                (startTime,))
+
     mylog('debug','[Void Ghost Con] Void Ghost Connections end')
+
     db.commitDB()
 
 #-------------------------------------------------------------------------------
