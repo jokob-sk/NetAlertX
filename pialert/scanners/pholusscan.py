@@ -2,7 +2,7 @@ import subprocess
 import re
 
 from const import fullPholusPath, logPath
-from helper import checkIPV4, timeNow, updateState
+from helper import checkIPV4, timeNowTZ, updateState
 from logger import mylog
 
 #-------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ def performPholusScan (db, timeoutSec, userSubnets):
         for line in newLines:
             columns = line.split("|")
             if len(columns) == 4:
-                params.append(( interface + " " + mask, timeNow() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
+                params.append(( interface + " " + mask, timeNowTZ() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3], ''))
 
         if len(params) > 0:                
             sql.executemany ("""INSERT INTO Pholus_Scan ("Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value", "Extra") VALUES (?, ?, ?, ?, ?, ?, ?)""", params) 

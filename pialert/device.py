@@ -5,7 +5,7 @@
 import subprocess
 
 import conf
-from helper import timeNow
+from helper import timeNowTZ
 from plugin import get_setting_value
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
@@ -21,20 +21,10 @@ def save_scanned_devices (db):
     # mylog('debug', ['[ARP Scan] Detected devices:', len(p_arpscan_devices)])
 
     # handled by the ARPSCAN plugin
-    # # Delete previous scan data
-    # sql.execute ("DELETE FROM CurrentScan")
-
-    # if len(p_arpscan_devices) > 0:
-    #     # Insert new arp-scan devices
-    #     sql.executemany ("INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, "+
-    #                     "    cur_IP, cur_Vendor, cur_ScanMethod) "+
-    #                     "VALUES (1, :mac, :ip, :hw, 'arp-scan')",
-    #                     p_arpscan_devices) 
-
 
 # ------------------------ TO CONVERT INTO PLUGIN
     # # Insert Pi-hole devices
-    # startTime = timeNow()
+    # startTime = timeNowTZ()
     # sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, 
     #                     cur_IP, cur_Vendor, cur_ScanMethod)
     #                 SELECT ?, PH_MAC, PH_IP, PH_Vendor, 'Pi-hole'
@@ -144,7 +134,7 @@ def print_scan_stats (db):
 #-------------------------------------------------------------------------------
 def create_new_devices (db):
     sql = db.sql # TO-DO
-    startTime = timeNow()
+    startTime = timeNowTZ()
 
     # arpscan - Insert events for new devices
     mylog('debug','[New Devices] New devices - 1 Events')
@@ -289,7 +279,7 @@ def create_new_devices (db):
 #-------------------------------------------------------------------------------
 def update_devices_data_from_scan (db):
     sql = db.sql #TO-DO    
-    startTime = timeNow()
+    startTime = timeNowTZ()
     # Update Last Connection
     mylog('debug','[Update Devices] 1 Last Connection')
     sql.execute (f"""UPDATE Devices SET dev_LastConnection = '{startTime}',

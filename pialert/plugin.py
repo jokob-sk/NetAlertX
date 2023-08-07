@@ -2,13 +2,14 @@ import os
 import json
 import subprocess
 import datetime
+import base64
 from collections import namedtuple
 
 # pialert modules
 import conf
 from const import pluginsPath, logPath
 from logger import mylog
-from helper import timeNow,  updateState, get_file_content, write_file
+from helper import timeNowTZ,  updateState, get_file_content, write_file
 from api import update_api
 
 #-------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ def run_plugin_scripts(db, runType):
                         shouldRun = schd.runScheduleCheck()  
                         if shouldRun:
                             # note the last time the scheduled plugin run was executed
-                            schd.last_run = timeNow()
+                            schd.last_run = timeNowTZ()
 
         if shouldRun:            
                         
@@ -102,8 +103,8 @@ def get_setting(key):
             result = set
     
     if result is None:
-        mylog('info', [' Error - setting_missing - Setting not found for key: ', key])           
-        mylog('info', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
+        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
+        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
         write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
     return result
@@ -165,14 +166,14 @@ def execute_plugin(db, plugin):
                 resolved = get_setting(param["value"])
 
                 if resolved != None:
-                    resolved = plugin_param_from_glob_set(resolved)
+                    resolved = passable_string_from_setting(resolved)
 
             #  Get Sql result
             if param["type"] == "sql":
                 resolved = flatten_array(db.get_sql_array(param["value"]))
 
             if resolved == None:
-                mylog('none', ['[Plugins] The parameter "name":"', param["name"], '" was resolved as None'])
+                mylog('none', [f'[Plugins] The parameter "name":"{param["name"]}" for "value": {param["value"]} was resolved as None'])
 
             else:
                 params.append( [param["name"], resolved] )
@@ -229,7 +230,7 @@ def execute_plugin(db, plugin):
                 if len(columns) == 9:
                     sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
                 else:
-                    mylog('none', ['[Plugins]: Skipped invalid line in the output: ', line])
+                    mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])
         else:
             mylog('debug', [f'[Plugins] The file {file_path} does not exist'])             
     
@@ -249,7 +250,7 @@ def execute_plugin(db, plugin):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
             else:
-                mylog('none', ['[Plugins]: Skipped invalid sql result'])
+                mylog('none', ['[Plugins] Skipped invalid sql result'])
 
 
     # check if the subprocess / SQL query failed / there was no valid output
@@ -257,7 +258,7 @@ def execute_plugin(db, plugin):
         mylog('none', ['[Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
         return  
     else: 
-        mylog('verbose', ['[Plugins]: SUCCESS, received ', len(sqlParams), ' entries'])  
+        mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
 
     # process results if any
     if len(sqlParams) > 0:                
@@ -286,15 +287,17 @@ def handle_empty(value):
 
 #-------------------------------------------------------------------------------
 # Flattens a setting to make it passable to a script
-def plugin_param_from_glob_set(globalSetting):
+def passable_string_from_setting(globalSetting):
 
     setVal = globalSetting[6] # setting value
     setTyp = globalSetting[3] # setting type
 
-
     noConversion = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
     arrayConversion = ['text.multiselect', 'list'] 
+    arrayConversionBase64 = ['subnets'] 
     jsonConversion = ['.template'] 
+
+    mylog('debug', f'[Plugins] setTyp: {setTyp}')
 
     if setTyp in noConversion:
         return setVal
@@ -302,9 +305,15 @@ def plugin_param_from_glob_set(globalSetting):
     if setTyp in arrayConversion:
         return flatten_array(setVal)
 
+    if setTyp in arrayConversionBase64:
+        
+        return flatten_array(setVal, encodeBase64 = True)
+
     for item in jsonConversion:
         if setTyp.endswith(item):
             return json.dumps(setVal)
+
+    mylog('none', ['[Plugins] ERROR: Parameter not converted.'])  
 
 
 
@@ -335,33 +344,47 @@ def get_setting_value(key):
     return ''
 
 #-------------------------------------------------------------------------------
-def flatten_array(arr):
-    
+def flatten_array(arr, encodeBase64=False):
     tmp = ''
+    arrayItemStr = ''
 
+    mylog('debug', '[Plugins] Flattening the below array')
+    mylog('debug', f'[Plugins] Convert to Base64: {encodeBase64}')
     mylog('debug', arr)
 
-    for arrayItem in arr:        
+    for arrayItem in arr:
         # only one column flattening is supported
         if isinstance(arrayItem, list):            
-            arrayItem = str(arrayItem[0])
+            arrayItemStr = str(arrayItem[0]).replace("'", '')  # removing single quotes - not allowed            
+        else:
+            # is string already
+            arrayItemStr = arrayItem
 
-        tmp += arrayItem + ','
-        # tmp = tmp.replace("'","").replace(' ','') # No single quotes or empty spaces allowed
-        tmp = tmp.replace("'","") # No single quotes allowed
 
-    return tmp[:-1] # Remove last comma ','
+        tmp += f'{arrayItemStr},'
+
+    tmp = tmp[:-1]  # Remove last comma ','
+
+    mylog('debug', f'[Plugins] Flattened array: {tmp}')
+
+    if encodeBase64:
+        tmp = str(base64.b64encode(tmp.encode('ascii')))
+        mylog('debug', f'[Plugins] Flattened array (base64): {tmp}')
+
+
+    return tmp
+
 
 
 #-------------------------------------------------------------------------------
 # Replace {wildcars} with parameters
 def resolve_wildcards_arr(commandArr, params):
 
-    mylog('debug', ['[Plugins]: Pre-Resolved CMD: '] + commandArr)   
+    mylog('debug', ['[Plugins] Pre-Resolved CMD: '] + commandArr)   
 
     for param in params:
-        # mylog('debug', ['[Plugins]: key     : {', param[0], '}'])
-        # mylog('debug', ['[Plugins]: resolved: ', param[1]])
+        # mylog('debug', ['[Plugins] key     : {', param[0], '}'])
+        # mylog('debug', ['[Plugins] resolved: ', param[1]])
 
         i = 0
         
@@ -491,30 +514,35 @@ def process_plugin_events(db, plugin):
     # Perform databse table mapping if enabled for the plugin   
     if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
 
-        sqlParams = []        
+        # Initialize an empty list to store SQL parameters.
+        sqlParams = []
 
+        # Get the database table name from the 'mapped_to_table' key in the 'plugin' dictionary.
         dbTable = plugin['mapped_to_table']
 
+        # Log a debug message indicating the mapping of objects to the database table.
         mylog('debug', ['[Plugins] Mapping objects to database table: ', dbTable])
 
-        #  collect all columns to be mapped
-        mappedCols = []        
+        # Initialize lists to hold mapped column names, columnsStr, and valuesStr for SQL query.
+        mappedCols = []
         columnsStr = ''
         valuesStr = ''
 
-        for clmn in plugin['database_column_definitions']:            
-            if 'mapped_to_column' in clmn:                
+        # Loop through the 'database_column_definitions' in the 'plugin' dictionary to collect mapped columns.
+        # Build the columnsStr and valuesStr for the SQL query.
+        for clmn in plugin['database_column_definitions']:
+            if 'mapped_to_column' in clmn:
                 mappedCols.append(clmn)
                 columnsStr = f'{columnsStr}, "{clmn["mapped_to_column"]}"'
                 valuesStr = f'{valuesStr}, ?'
 
+        # Remove the first ',' from columnsStr and valuesStr.
         if len(columnsStr) > 0:
-            columnsStr = columnsStr[1:] # remove first ','
-            valuesStr = valuesStr[1:] # remove first ','
+            columnsStr = columnsStr[1:]
+            valuesStr = valuesStr[1:]
 
-        # map the column names to plugin object event values
+        # Map the column names to plugin object event values and create a list of tuples 'sqlParams'.
         for plgEv in pluginEvents:
-
             tmpList = []
 
             for col in mappedCols:
@@ -543,15 +571,21 @@ def process_plugin_events(db, plugin):
                 elif col['column'] == 'Extra':
                     tmpList.append(plgEv.extra)
                 elif col['column'] == 'Status':
-                    tmpList.append(plgEv.status)               
-                
+                    tmpList.append(plgEv.status)
+
+            # Append the mapped values to the list 'sqlParams' as a tuple.
             sqlParams.append(tuple(tmpList))
 
+        # Generate the SQL INSERT query using the collected information.
         q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
 
-        mylog('debug', ['[Plugins] SQL query for mapping: ', q ])
+        # Log a debug message showing the generated SQL query for mapping.
+        mylog('debug', ['[Plugins] SQL query for mapping: ', q])
 
-        sql.executemany (q, sqlParams) 
+        # Execute the SQL query using 'sql.executemany()' and the 'sqlParams' list of tuples.
+        # This will insert multiple rows into the database in one go.
+        sql.executemany(q, sqlParams)
+
 
     db.commitDB()
 

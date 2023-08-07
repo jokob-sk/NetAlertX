@@ -92,5 +92,5 @@ class api_endpoint_class:
                 # update hash
                 apiEndpoints[changedIndex].hash = self.hash
             else:
-                mylog('info', [f'[API] ERROR Updating {self.fileName}'])
+                mylog('minimal', [f'[API] ERROR Updating {self.fileName}'])
             

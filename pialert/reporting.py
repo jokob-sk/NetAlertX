@@ -23,8 +23,9 @@ from json2table import convert
 import conf
 import const
 from const import pialertPath, logPath, apiPath
-from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNow, hide_email,  updateState, get_file_content, write_file
+from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
+from plugin import execute_plugin
 
 
 from publishers.email import (check_config as email_check_config, 
@@ -150,7 +151,7 @@ def send_notifications (db):
     template_file.close()
 
     # Report Header & footer
-    timeFormated = timeNow().strftime ('%Y-%m-%d %H:%M')
+    timeFormated = timeNowTZ().strftime ('%Y-%m-%d %H:%M')
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
@@ -282,43 +283,43 @@ def send_notifications (db):
 
         msg = noti_struc(json_final, mail_text, mail_html)
 
-        mylog('info', ['[Notification] Udating API files'])
+        mylog('minimal', ['[Notification] Udating API files'])
         send_api()
 
         if conf.REPORT_MAIL and check_config('email'):
             updateState(db,"Send: Email")
-            mylog('info', ['[Notification] Sending report by Email'])
+            mylog('minimal', ['[Notification] Sending report by Email'])
             send_email (msg )
         else :
             mylog('verbose', ['[Notification] Skip email'])
         if conf.REPORT_APPRISE and check_config('apprise'):
             updateState(db,"Send: Apprise")
-            mylog('info', ['[Notification] Sending report by Apprise'])
+            mylog('minimal', ['[Notification] Sending report by Apprise'])
             send_apprise (msg)
         else :
             mylog('verbose', ['[Notification] Skip Apprise'])
         if conf.REPORT_WEBHOOK and check_config('webhook'):
             updateState(db,"Send: Webhook")
-            mylog('info', ['[Notification] Sending report by Webhook'])
+            mylog('minimal', ['[Notification] Sending report by Webhook'])
             send_webhook (msg)
         else :
             mylog('verbose', ['[Notification] Skip webhook'])
         if conf.REPORT_NTFY and check_config('ntfy'):
             updateState(db,"Send: NTFY")
-            mylog('info', ['[Notification] Sending report by NTFY'])
+            mylog('minimal', ['[Notification] Sending report by NTFY'])
             send_ntfy (msg)
         else :
             mylog('verbose', ['[Notification] Skip NTFY'])
         if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
             updateState(db,"Send: PUSHSAFER")
-            mylog('info', ['[Notification] Sending report by PUSHSAFER'])
+            mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
             send_pushsafer (msg)
         else :
             mylog('verbose', ['[Notification] Skip PUSHSAFER'])
         # Update MQTT entities
         if conf.REPORT_MQTT and check_config('mqtt'):
             updateState(db,"Send: MQTT")
-            mylog('info', ['[Notification] Establishing MQTT thread'])
+            mylog('minimal', ['[Notification] Establishing MQTT thread'])
             mqtt_start(db)
         else :
             mylog('verbose', ['[Notification] Skip MQTT'])
@@ -329,7 +330,7 @@ def send_notifications (db):
     sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
                     WHERE dev_MAC IN (SELECT eve_MAC FROM Events
                                       WHERE eve_PendingAlertEmail = 1)
-                 """, (datetime.datetime.now(),) )
+                 """, (datetime.datetime.now(conf.tz),) )
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1""")
 
@@ -339,7 +340,7 @@ def send_notifications (db):
     conf.changedPorts_json_struc = None
 
     # DEBUG - print number of rows updated
-    mylog('info', ['[Notification] Notifications changes: ', sql.rowcount])
+    mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
 
     # Commit changes
     db.commitDB()
@@ -479,15 +480,18 @@ def check_and_run_event(db):
 
     event, param = ['','']
     if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
-        event = rows[0]['par_Value'].split('|')[0]
-        param = rows[0]['par_Value'].split('|')[1]
+        keyValue = rows[0]['par_Value'].split('|')
+
+        if len(keyValue) == 2:
+            event = keyValue[0]
+            param = keyValue[1]
     else:
         return
 
     if event == 'test':
         handle_test(param)
     if event == 'run':
-        handle_run(param)
+        handle_run(param, db)
 
     # clear event execution flag
     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
@@ -496,20 +500,24 @@ def check_and_run_event(db):
     db.commitDB()
 
 #-------------------------------------------------------------------------------
-def handle_run(runType):
-    global last_network_scan
-
-    mylog('info', ['[', timeNow(), '] START Run: ', runType])
+def handle_run(runType, db):
+    
+    mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
 
     if runType == 'ENABLE_ARPSCAN':
-        last_network_scan = conf.time_started - datetime.timedelta(hours = 24)
+        # run the plugin to run
+        for plugin in conf.plugins:
+            if plugin["unique_prefix"] == 'ARPSCAN':                
+                execute_plugin(db, plugin) 
 
-    mylog('info', ['[', timeNow(), '] END Run: ', runType])
+    mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
+
+
 
 #-------------------------------------------------------------------------------
 def handle_test(testType):
 
-    mylog('info', ['[', timeNow(), '] START Test: ', testType])
+    mylog('minimal', ['[', timeNowTZ(), '] START Test: ', testType])
 
     # Open text sample
     sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
@@ -533,4 +541,4 @@ def handle_test(testType):
     if testType == 'REPORT_PUSHSAFER':
         send_pushsafer (sample_msg)
 
-    mylog('info', ['[Test Publishers] END Test: ', testType])
+    mylog('minimal', ['[Test Publishers] END Test: ', testType])

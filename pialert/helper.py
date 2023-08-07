@@ -18,13 +18,12 @@ from const import *
 from logger import mylog, logResult
 
 
-
-#-------------------------------------------------------------------------------
-def timeNow():
-    return datetime.datetime.now().replace(microsecond=0)
 #-------------------------------------------------------------------------------
 def timeNowTZ():
     return datetime.datetime.now(conf.tz).replace(microsecond=0)
+
+def timeNow():
+    return datetime.datetime.now().replace(microsecond=0)
 
 #-------------------------------------------------------------------------------
 def updateState(db, newState):
@@ -213,7 +212,7 @@ def isNewVersion(newVersion: bool):
             text = url.text
             data = json.loads(text)
         except requests.exceptions.ConnectionError as e:
-            mylog('info', ["    Couldn't check for new release."])
+            mylog('minimal', ["    Couldn't check for new release."])
             data = ""
 
         # make sure we received a valid response and not an API rate limit exceeded message

@@ -63,7 +63,7 @@ UI displays outdated values until the API endpoints get refreshed.
 
 ## Plugin file structure overview 
 
-> Folder name must be the same as the code name value in: `"code_name": "<value>"`
+> ⚠️Folder name must be the same as the code name value in: `"code_name": "<value>"`
 > Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use. 
 
   | File | Required (plugin type) | Description | 

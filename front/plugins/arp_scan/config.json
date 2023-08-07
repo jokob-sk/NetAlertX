@@ -1,10 +1,18 @@
 {
-  "code_name": "arpscan",
+  "code_name": "arp_scan",
   "unique_prefix": "ARPSCAN",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan", 
-
+  "data_filters": [
+    {
+        "compare_column" : "Object_PrimaryID",
+        "compare_operator" : "==",
+        "compare_field_id": "txtMacFilter",
+        "compare_js_template": "'{value}'.toString()", 
+        "compare_use_quotes": true 
+    }
+  ],
   "localized": ["display_name", "description", "icon"],
 
   "display_name": [
@@ -36,8 +44,8 @@
     {
       "function": "RUN",            
       "type": "text.select",            
-      "default_value":"disabled",
-      "options": ["disabled", "once", "schedule", "scan_cycle", "always_after_scan",  "on_new_device"],
+      "default_value":"schedule",
+      "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",
@@ -120,7 +128,7 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": ["new", "watched-changed"],
+      "default_value": ["new"],
       "options": ["new", "watched-changed", "watched-not-changed"],
       "localized": ["name", "description"],
       "name": [

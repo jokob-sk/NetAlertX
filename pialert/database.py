@@ -6,7 +6,7 @@ import sqlite3
 from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
-from helper import json_struc, initOrSetParam, row_to_json, timeNow #, updateState
+from helper import json_struc, initOrSetParam, row_to_json, timeNowTZ #, updateState
 
 
 
@@ -397,7 +397,7 @@ class DB():
             self.sql.execute("DROP TABLE CurrentScan;")
 
         self.sql.execute(""" CREATE TABLE CurrentScan (
-                                cur_ScanCycle INTEGER NOT NULL,
+                                cur_ScanCycle INTEGER,
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
@@ -478,7 +478,7 @@ def get_all_devices(db):
 #-------------------------------------------------------------------------------
 def insertOnlineHistory(db):
     sql = db.sql #TO-DO
-    startTime = timeNow()
+    startTime = timeNowTZ()
     # Add to History
 
     # only run this if the scans have run

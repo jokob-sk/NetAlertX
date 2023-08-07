@@ -9,7 +9,10 @@ from const import *
 #-------------------------------------------------------------------------------
 # duplication from helper to avoid circle
 #-------------------------------------------------------------------------------
-def timeNow():
+def timeNowTZ():
+    if conf.tz:
+        return datetime.datetime.now(conf.tz).replace(microsecond=0)
+    else:
         return datetime.datetime.now().replace(microsecond=0)
 
 
@@ -31,12 +34,12 @@ def mylog(requestedDebugLevel, n):
             reqLvl = lvl[1]
 
     if reqLvl <= setLvl:
-        file_print (*n)
+        file_print (*n)        
 
 #-------------------------------------------------------------------------------
 def file_print (*args):
 
-    result = timeNow().strftime ('%H:%M:%S') + ' '    
+    result = timeNowTZ().strftime ('%H:%M:%S') + ' '    
        
     for arg in args:                
         result += str(arg)
