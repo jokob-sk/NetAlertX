@@ -91,8 +91,8 @@ def process_scan (db):
     mylog('verbose','[Process Scan] Skipping repeated notifications')
     skip_repeated_notifications (db)
 
-    # Clear current scan as processed TODO uncomment
-    # db.sql.execute ("DELETE FROM CurrentScan")
+    # Clear current scan as processed 
+    db.sql.execute ("DELETE FROM CurrentScan")
   
     # Commit changes    
     db.commitDB()

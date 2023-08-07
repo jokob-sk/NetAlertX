@@ -5,6 +5,7 @@ import pathlib
 import argparse
 import sys
 import re
+import base64
 import subprocess
 from time import strftime
 
@@ -18,21 +19,53 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 
 def main():
+    # sample
+    # /home/pi/pialert/front/plugins/arp_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ=='
     # the script expects a parameter in the format of userSubnets=subnet1,subnet2,...
     parser = argparse.ArgumentParser(description='Import devices from settings')
     parser.add_argument('userSubnets', nargs='+', help="list of subnets with options")
     values = parser.parse_args()
 
+    import base64
+
+    # Assuming Plugin_Objects is a class or function that reads data from the RESULT_FILE
+    # and returns a list of objects called 'devices'.
     devices = Plugin_Objects(RESULT_FILE)
 
-    subnets_list = []
+    # Print a message to indicate that the script is starting.
+    print('In script:')
 
-    if isinstance(values.userSubnets, list):
-        subnets_list = values.userSubnets
+    # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
+    # which holds a list of user-submitted subnets.
+    # Printing the userSubnets list to check its content.
+    print(values.userSubnets)
+
+    # Extract the base64-encoded subnet information from the first element of the userSubnets list.
+    # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.
+    userSubnetsParamBase64 = values.userSubnets[0].split('userSubnets=b')[1]
+
+    # Printing the extracted base64-encoded subnet information.
+    print(userSubnetsParamBase64)
+
+    # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
+    userSubnetsParam = base64.b64decode(userSubnetsParamBase64).decode('ascii')
+
+    # Print the decoded subnet information.
+    print('userSubnetsParam:')
+    print(userSubnetsParam)
+
+    # Check if the decoded subnet information contains multiple subnets separated by commas.
+    # If it does, split the string into a list of individual subnets.
+    # Otherwise, create a list with a single element containing the subnet information.
+    if ',' in userSubnetsParam:
+        subnets_list = userSubnetsParam.split(',')
     else:
-        subnets_list = [values.userSubnets]
+        subnets_list = [userSubnetsParam]
 
+    # Execute the ARP scanning process on the list of subnets (whether it's one or multiple subnets).
+    # The function 'execute_arpscan' is assumed to be defined elsewhere in the code.
     unique_devices = execute_arpscan(subnets_list)
+
 
     for device in unique_devices:
         devices.add_object(

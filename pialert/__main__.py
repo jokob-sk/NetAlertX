@@ -107,7 +107,14 @@ def main ():
 
         # update time started
         conf.loop_start_time = timeNowTZ()
+        
+        # TODO fix these
         loop_start_time = conf.loop_start_time # TODO fix
+        last_update_vendors = conf.last_update_vendors
+        last_network_scan = conf.last_network_scan
+        last_cleanup = conf.last_cleanup
+        last_version_check = conf.last_version_check
+        
 
         # check if new version is available / only check once an hour
         if conf.last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
@@ -128,10 +135,11 @@ def main ():
         update_api(db)
         
         # proceed if 1 minute passed
-        if last_scan_run + datetime.timedelta(minutes=1) < loop_start_time :
+        if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time :
 
              # last time any scan or maintenance/upkeep was run
-            last_scan_run = loop_start_time
+            conf.last_scan_run = loop_start_time
+            last_internet_IP_scan = conf.last_internet_IP_scan
 
             # Header
             updateState(db,"Process: Start")      

@@ -397,7 +397,7 @@ class DB():
             self.sql.execute("DROP TABLE CurrentScan;")
 
         self.sql.execute(""" CREATE TABLE CurrentScan (
-                                cur_ScanCycle INTEGER NOT NULL,
+                                cur_ScanCycle INTEGER,
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
