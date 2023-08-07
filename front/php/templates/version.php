@@ -1,4 +1,4 @@
-<?php   
+<?php
 #---------------------------------------------------------------------------------#
 #  Pi.Alert                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
@@ -10,13 +10,12 @@
 #    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 #---------------------------------------------------------------------------------#
-   
-$filename = "/.VERSION";
-if(file_exists($filename))
-{
-  echo file_get_contents($filename);
-}
-else{
-  echo "File not found";
-}               
+
+    $filename = "/.VERSION";
+    if(file_exists($filename)) {
+        echo file_get_contents($filename);
+    }
+    else{
+        echo "File not found";
+    }               
 ?>
