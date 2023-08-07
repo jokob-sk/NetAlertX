@@ -150,14 +150,25 @@ def send_notifications (db):
     mail_html = template_file.read()
     template_file.close()
 
-    # Report Header & footer
+    # Report "REPORT_DATE" in Header & footer
     timeFormated = timeNowTZ().strftime ('%Y-%m-%d %H:%M')
     mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
     mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
 
+    # Report "SERVER_NAME" in Header & footer
     mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
     mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
+    # Report "VERSION" in Header & footer
+    VERSIONFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/version.php']).decode('utf-8')
+    mail_text = mail_text.replace ('<VERSION_PIALERT>', VERSIONFILE)
+    mail_html = mail_html.replace ('<VERSION_PIALERT>', VERSIONFILE)	
+
+    # Report "BUILD" in Header & footer
+    BUILDFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/build.php']).decode('utf-8')
+    mail_text = mail_text.replace ('<BUILD_PIALERT>', BUILDFILE)
+    mail_html = mail_html.replace ('<BUILD_PIALERT>', BUILDFILE)
+	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
     if 'internet' in conf.INCLUDED_SECTIONS :
