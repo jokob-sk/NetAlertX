@@ -14,6 +14,7 @@ import conf
 from const import pialertPath, logPath, apiPath
 from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
+from plugin import execute_plugin
 
 
 from publishers.email import (check_config as email_check_config, 
@@ -468,15 +469,18 @@ def check_and_run_event(db):
 
     event, param = ['','']
     if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
-        event = rows[0]['par_Value'].split('|')[0]
-        param = rows[0]['par_Value'].split('|')[1]
+        keyValue = rows[0]['par_Value'].split('|')
+
+        if len(keyValue) == 2:
+            event = keyValue[0]
+            param = keyValue[1]
     else:
         return
 
     if event == 'test':
         handle_test(param)
     if event == 'run':
-        handle_run(param)
+        handle_run(param, db)
 
     # clear event execution flag
     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
@@ -485,15 +489,19 @@ def check_and_run_event(db):
     db.commitDB()
 
 #-------------------------------------------------------------------------------
-def handle_run(runType):
-    global last_network_scan
-
+def handle_run(runType, db):
+    
     mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
 
     if runType == 'ENABLE_ARPSCAN':
-        last_network_scan = conf.time_started - datetime.timedelta(hours = 24)
+        # run the plugin to run
+        for plugin in conf.plugins:
+            if plugin["unique_prefix"] == 'ARPSCAN':                
+                execute_plugin(db, plugin) 
 
     mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
+
+
 
 #-------------------------------------------------------------------------------
 def handle_test(testType):

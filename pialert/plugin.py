@@ -292,7 +292,6 @@ def passable_string_from_setting(globalSetting):
     setVal = globalSetting[6] # setting value
     setTyp = globalSetting[3] # setting type
 
-
     noConversion = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
     arrayConversion = ['text.multiselect', 'list'] 
     arrayConversionBase64 = ['subnets'] 
@@ -515,77 +514,77 @@ def process_plugin_events(db, plugin):
     # Perform databse table mapping if enabled for the plugin   
     if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
 
-    # Initialize an empty list to store SQL parameters.
-    sqlParams = []
+        # Initialize an empty list to store SQL parameters.
+        sqlParams = []
 
-    # Get the database table name from the 'mapped_to_table' key in the 'plugin' dictionary.
-    dbTable = plugin['mapped_to_table']
+        # Get the database table name from the 'mapped_to_table' key in the 'plugin' dictionary.
+        dbTable = plugin['mapped_to_table']
 
-    # Log a debug message indicating the mapping of objects to the database table.
-    mylog('debug', ['[Plugins] Mapping objects to database table: ', dbTable])
+        # Log a debug message indicating the mapping of objects to the database table.
+        mylog('debug', ['[Plugins] Mapping objects to database table: ', dbTable])
 
-    # Initialize lists to hold mapped column names, columnsStr, and valuesStr for SQL query.
-    mappedCols = []
-    columnsStr = ''
-    valuesStr = ''
+        # Initialize lists to hold mapped column names, columnsStr, and valuesStr for SQL query.
+        mappedCols = []
+        columnsStr = ''
+        valuesStr = ''
 
-    # Loop through the 'database_column_definitions' in the 'plugin' dictionary to collect mapped columns.
-    # Build the columnsStr and valuesStr for the SQL query.
-    for clmn in plugin['database_column_definitions']:
-        if 'mapped_to_column' in clmn:
-            mappedCols.append(clmn)
-            columnsStr = f'{columnsStr}, "{clmn["mapped_to_column"]}"'
-            valuesStr = f'{valuesStr}, ?'
+        # Loop through the 'database_column_definitions' in the 'plugin' dictionary to collect mapped columns.
+        # Build the columnsStr and valuesStr for the SQL query.
+        for clmn in plugin['database_column_definitions']:
+            if 'mapped_to_column' in clmn:
+                mappedCols.append(clmn)
+                columnsStr = f'{columnsStr}, "{clmn["mapped_to_column"]}"'
+                valuesStr = f'{valuesStr}, ?'
 
-    # Remove the first ',' from columnsStr and valuesStr.
-    if len(columnsStr) > 0:
-        columnsStr = columnsStr[1:]
-        valuesStr = valuesStr[1:]
+        # Remove the first ',' from columnsStr and valuesStr.
+        if len(columnsStr) > 0:
+            columnsStr = columnsStr[1:]
+            valuesStr = valuesStr[1:]
 
-    # Map the column names to plugin object event values and create a list of tuples 'sqlParams'.
-    for plgEv in pluginEvents:
-        tmpList = []
+        # Map the column names to plugin object event values and create a list of tuples 'sqlParams'.
+        for plgEv in pluginEvents:
+            tmpList = []
 
-        for col in mappedCols:
-            if col['column'] == 'Index':
-                tmpList.append(plgEv.index)
-            elif col['column'] == 'Plugin':
-                tmpList.append(plgEv.pluginPref)
-            elif col['column'] == 'Object_PrimaryID':
-                tmpList.append(plgEv.primaryId)
-            elif col['column'] == 'Object_SecondaryID':
-                tmpList.append(plgEv.secondaryId)
-            elif col['column'] == 'DateTimeCreated':
-                tmpList.append(plgEv.created)
-            elif col['column'] == 'DateTimeChanged':
-                tmpList.append(plgEv.changed)
-            elif col['column'] == 'Watched_Value1':
-                tmpList.append(plgEv.watched1)
-            elif col['column'] == 'Watched_Value2':
-                tmpList.append(plgEv.watched2)
-            elif col['column'] == 'Watched_Value3':
-                tmpList.append(plgEv.watched3)
-            elif col['column'] == 'Watched_Value4':
-                tmpList.append(plgEv.watched4)
-            elif col['column'] == 'UserData':
-                tmpList.append(plgEv.userData)
-            elif col['column'] == 'Extra':
-                tmpList.append(plgEv.extra)
-            elif col['column'] == 'Status':
-                tmpList.append(plgEv.status)
+            for col in mappedCols:
+                if col['column'] == 'Index':
+                    tmpList.append(plgEv.index)
+                elif col['column'] == 'Plugin':
+                    tmpList.append(plgEv.pluginPref)
+                elif col['column'] == 'Object_PrimaryID':
+                    tmpList.append(plgEv.primaryId)
+                elif col['column'] == 'Object_SecondaryID':
+                    tmpList.append(plgEv.secondaryId)
+                elif col['column'] == 'DateTimeCreated':
+                    tmpList.append(plgEv.created)
+                elif col['column'] == 'DateTimeChanged':
+                    tmpList.append(plgEv.changed)
+                elif col['column'] == 'Watched_Value1':
+                    tmpList.append(plgEv.watched1)
+                elif col['column'] == 'Watched_Value2':
+                    tmpList.append(plgEv.watched2)
+                elif col['column'] == 'Watched_Value3':
+                    tmpList.append(plgEv.watched3)
+                elif col['column'] == 'Watched_Value4':
+                    tmpList.append(plgEv.watched4)
+                elif col['column'] == 'UserData':
+                    tmpList.append(plgEv.userData)
+                elif col['column'] == 'Extra':
+                    tmpList.append(plgEv.extra)
+                elif col['column'] == 'Status':
+                    tmpList.append(plgEv.status)
 
-        # Append the mapped values to the list 'sqlParams' as a tuple.
-        sqlParams.append(tuple(tmpList))
+            # Append the mapped values to the list 'sqlParams' as a tuple.
+            sqlParams.append(tuple(tmpList))
 
-    # Generate the SQL INSERT query using the collected information.
-    q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
+        # Generate the SQL INSERT query using the collected information.
+        q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
 
-    # Log a debug message showing the generated SQL query for mapping.
-    mylog('debug', ['[Plugins] SQL query for mapping: ', q])
+        # Log a debug message showing the generated SQL query for mapping.
+        mylog('debug', ['[Plugins] SQL query for mapping: ', q])
 
-    # Execute the SQL query using 'sql.executemany()' and the 'sqlParams' list of tuples.
-    # This will insert multiple rows into the database in one go.
-    sql.executemany(q, sqlParams)
+        # Execute the SQL query using 'sql.executemany()' and the 'sqlParams' list of tuples.
+        # This will insert multiple rows into the database in one go.
+        sql.executemany(q, sqlParams)
 
 
     db.commitDB()
