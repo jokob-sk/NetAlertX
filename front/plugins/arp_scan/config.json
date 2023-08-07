@@ -3,7 +3,7 @@
   "unique_prefix": "ARPSCAN",
   "enabled": true,
   "data_source": "script",
-  "mapped_to_table": "CurrentScan", 
+  "mapped_to_table": "CurrentScan",  
   "data_filters": [
     {
         "compare_column" : "Object_PrimaryID",

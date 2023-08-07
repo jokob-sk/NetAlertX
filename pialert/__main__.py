@@ -26,7 +26,7 @@ from const import *
 from logger import  mylog
 from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState
 from api import update_api
-from networkscan import process_scan, scan_network
+# from networkscan import process_scan, scan_network
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
 from database import DB, get_all_devices
@@ -206,43 +206,43 @@ def main ():
             
             # todo replace the scans with plugins
             # Perform a network scan via arp-scan or pihole
-            if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < loop_start_time:
-                last_network_scan = loop_start_time
-                conf.cycle = 1 # network scan
-                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
-                updateState(db,"Scan: Network")
+            # if last_network_scan + datetime.timedelta(minutes=conf.SCAN_CYCLE_MINUTES) < loop_start_time:
+            #     last_network_scan = loop_start_time
+            #     conf.cycle = 1 # network scan
+            #     mylog('verbose', ['[MAIN] cycle:',conf.cycle])
+            #     updateState(db,"Scan: Network")
 
-                # scan_network() 
+            #     # scan_network() 
 
-                #  DEBUG start ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                # Start scan_network as a process                
+            #     #  DEBUG start ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            #     # Start scan_network as a process                
 
-                p = multiprocessing.Process(target=scan_network(db))
-                p.start()
+            #     p = multiprocessing.Process(target=scan_network(db))
+            #     p.start()
 
-                # Wait for a maximum of 3600 seconds (1h) or until process finishes
-                p.join(3600)
+            #     # Wait for a maximum of 3600 seconds (1h) or until process finishes
+            #     p.join(3600)
 
-                # If thread is still active
-                if p.is_alive():
-                    mylog('none', "[MAIN]  scan_network running too long - let\'s kill it")
+            #     # If thread is still active
+            #     if p.is_alive():
+            #         mylog('none', "[MAIN]  scan_network running too long - let\'s kill it")
 
-                    # Terminate - may not work if process is stuck for good
-                    p.terminate()
-                    # OR Kill - will work for sure, no chance for process to finish nicely however
-                    # p.kill()
+            #         # Terminate - may not work if process is stuck for good
+            #         p.terminate()
+            #         # OR Kill - will work for sure, no chance for process to finish nicely however
+            #         # p.kill()
 
-                    p.join()
+            #         p.join()
 
-                #  DEBUG end ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                # Run splugin scripts which are set to run every timne after a scan finished
-                if conf.ENABLE_PLUGINS:
-                    run_plugin_scripts(db,'always_after_scan')
+            #     #  DEBUG end ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            #     # Run splugin scripts which are set to run every timne after a scan finished
+            if conf.ENABLE_PLUGINS:
+                run_plugin_scripts(db,'always_after_scan')
 
             # --------------------------------------------------
             # process all the scanned data into new devices
-            mylog('debug', "[MAIN] start processig scan results")
-            process_scan (db)
+            # mylog('debug', "[MAIN] start processig scan results")
+            # process_scan (db)
             
             # Reporting   
             if conf.cycle in conf.check_report:

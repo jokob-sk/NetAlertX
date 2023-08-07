@@ -11,6 +11,7 @@ from const import pluginsPath, logPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file
 from api import update_api
+from networkscan import process_scan
 
 #-------------------------------------------------------------------------------
 def run_plugin_scripts(db, runType):
@@ -586,8 +587,16 @@ def process_plugin_events(db, plugin):
         # This will insert multiple rows into the database in one go.
         sql.executemany(q, sqlParams)
 
+        db.commitDB()
+
+        # perform scan if mapped to CurrentScan table
+        if dbTable == 'CurrentScan':            
+            process_scan(db)
+
 
     db.commitDB()
+
+
 
 
 
