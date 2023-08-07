@@ -340,3 +340,34 @@ class noti_struc:
 #-------------------------------------------------------------------------------
 def isJsonObject(value):
     return isinstance(value, dict)
+
+#-------------------------------------------------------------------------------
+#  Return whole setting touple
+def get_setting(key):
+    result = None
+    # index order: key, name, desc, inputtype, options, regex, result, group, events
+    for set in conf.mySettings:
+        if set[0] == key:
+            result = set
+    
+    if result is None:
+        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
+        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
+        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
+
+    return result
+
+#-------------------------------------------------------------------------------
+#  Return setting value
+def get_setting_value(key):
+    
+    set = get_setting(key)
+
+    if get_setting(key) is not None:
+
+        setVal = set[6] # setting value
+        setTyp = set[3] # setting type
+
+        return setVal
+
+    return ''

@@ -19,8 +19,8 @@ fullPholusPath = pialertPath+'/pholus/pholus3.py'
 
 
 vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
-piholeDB               = '/etc/pihole/pihole-FTL.db'
-piholeDhcpleases       = '/etc/pihole/dhcp.leases'
+
+
 
 
 #===============================================================================

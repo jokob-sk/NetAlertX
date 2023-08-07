@@ -1,10 +1,13 @@
 """ module to import db and leases from PiHole """
+# TODO remove this file in teh future
 
 import sqlite3
 
 import conf
-from const import piholeDB, piholeDhcpleases
 from logger import mylog
+
+piholeDhcpleases       = '/etc/pihole/dhcp.leases'
+piholeDB               = '/etc/pihole/pihole-FTL.db'
 
 #-------------------------------------------------------------------------------
 def copy_pihole_network (db):

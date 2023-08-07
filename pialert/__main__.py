@@ -63,9 +63,6 @@ main structure of Pi Alert
             run PHOLUS
             run NMAP
             run "scan_network()"
-                ARP Scan
-                PiHole copy db
-                PiHole DHCP leases
                 processing scan results
             run plugins (after Scan)
         reporting

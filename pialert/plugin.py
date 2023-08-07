@@ -9,7 +9,7 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath
 from logger import mylog
-from helper import timeNowTZ,  updateState, get_file_content, write_file
+from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
 from networkscan import process_scan
 
@@ -94,21 +94,7 @@ def get_plugin_setting(plugin, function_key):
 
     return result
 
-#-------------------------------------------------------------------------------
-#  Return whole setting touple
-def get_setting(key):
-    result = None
-    # index order: key, name, desc, inputtype, options, regex, result, group, events
-    for set in conf.mySettings:
-        if set[0] == key:
-            result = set
-    
-    if result is None:
-        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
-        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
-        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
-    return result
         
 
 #-------------------------------------------------------------------------------
@@ -252,6 +238,32 @@ def execute_plugin(db, plugin):
                 sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
+    
+    # pialert-db-query
+    if plugin['data_source'] == 'sqlite-db-query':
+        # replace single quotes wildcards
+        # set_CMD should contain a SQL query    
+        q = set_CMD.replace("{s-quote}", '\'')
+
+        # Execute command
+        mylog('verbose', ['[Plugins] Executing: ', q])
+        
+        fullSqlitePath = plugin['data_source_settings']['db_path']
+
+        #  try attaching the sqlite DB
+        try:
+            sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS PH")
+        except sqlite3.Error as e:
+            mylog('none',[ '[Plugin] - ATTACH DATABASE failed with SQL ERROR: ', e])
+
+        arr = db.get_sql_array (q) 
+
+        for row in arr:
+            # There has to be always 9 columns
+            if len(row) == 9 and (row[0] in ['','null']) == False :
+                sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
+            else:
+                mylog('none', ['[Plugins] Skipped invalid sql result'])
 
 
     # check if the subprocess / SQL query failed / there was no valid output
@@ -329,20 +341,7 @@ def get_plugin_setting_value(plugin, function_key):
 
     return None
 
-#-------------------------------------------------------------------------------
-#  Return setting value
-def get_setting_value(key):
-    
-    set = get_setting(key)
 
-    if get_setting(key) is not None:
-
-        setVal = set[6] # setting value
-        setTyp = set[3] # setting type
-
-        return setVal
-
-    return ''
 
 #-------------------------------------------------------------------------------
 def flatten_array(arr, encodeBase64=False):

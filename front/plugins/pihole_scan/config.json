@@ -1,0 +1,235 @@
+{
+  "code_name": "pihole_scan",
+  "unique_prefix": "PIHOLE",
+  "enabled": true,
+  "data_source": "sqlite-db-query",
+  "data_source_settings": 
+  {
+    "db_path":"/etc/pihole/pihole-FTL.db"
+  },
+  "mapped_to_table": "CurrentScan",  
+  "data_filters": [
+    {
+        "compare_column" : "Object_PrimaryID",
+        "compare_operator" : "==",
+        "compare_field_id": "txtMacFilter",
+        "compare_js_template": "'{value}'.toString()", 
+        "compare_use_quotes": true 
+    }
+  ],
+  "localized": ["display_name", "description", "icon"],
+
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Network scan (PiHole)"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "This plugin is to import devices from PiHole"
+    }
+  ],
+    "params" : [
+    {
+        "name"  : "subnets",
+        "type"  : "setting",
+        "value" : "SCAN_SUBNETS"
+    }],  
+
+  "settings": [
+    {
+      "function": "RUN",            
+      "type": "text.select",            
+      "default_value":"schedule",
+      "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
+      "localized": ["name", "description"],
+      "name" :[{
+          "language_code":"en_us",
+          "string" : "When to run"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+      }]
+  },    
+  
+  {
+      "function": "CMD",
+      "type": "text",
+      "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM PH.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM PH.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM PH.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM PH.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM PH.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr <> '00:00:00:00:00:00';            ",
+      "options": [],
+      "localized": ["name", "description"],
+      "name" : [{
+          "language_code":"en_us",
+          "string" : "SQL to run"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
+      }]
+  },
+    
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 300,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        }
+      ]
+    },
+    {
+        "function": "RUN_SCHD",
+        "type": "text",
+        "default_value":"*/3 * * * *",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "Schedule"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes."
+        }]
+    },
+    {
+        "function": "WATCH",
+        "type": "text.multiselect",
+        "default_value":["Watched_Value1", "Watched_Value2"],
+        "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
+        "localized": ["name", "description"],
+        "name" :[{
+            "language_code":"en_us",
+            "string" : "Watched"
+        }] ,
+        "description":[{
+            "language_code":"en_us",
+            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+        }] 
+    },
+    {
+      "function": "REPORT_ON",
+      "type": "text.multiselect",
+      "default_value": ["new"],
+      "options": ["new", "watched-changed", "watched-not-changed"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When should notification be sent out."
+        }
+      ]
+    }
+  ],
+
+  "database_column_definitions": 
+  [          
+    {
+      "column": "Object_PrimaryID",
+      "mapped_to_column": "cur_MAC",         
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "devicemac",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "MAC"
+          }]
+    }, 
+    {
+        "column": "Watched_Value1",
+        "mapped_to_column": "cur_IP", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "deviceip",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "IP"
+            }]
+    },
+    {
+        "column": "Watched_Value2",
+        "mapped_to_column": "cur_Vendor", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "label",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Vendor"
+            }]
+    } ,
+    {
+        "column": "Extra",
+        "mapped_to_column": "cur_ScanMethod", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "label",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Scan method"
+            }]
+    } ,
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Created"
+          }]
+    },   
+    {
+        "column": "DateTimeChanged",        
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "label",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Changed"
+            }]
+    }        
+  ]
+}
