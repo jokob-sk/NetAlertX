@@ -3,7 +3,7 @@
 #  Pi.Alert                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
-#  version.php - Templates module Template to display the current version         #
+#  build.php - Templates module Template to display the current build version     #
 #---------------------------------------------------------------------------------#
 #    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
 #    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
