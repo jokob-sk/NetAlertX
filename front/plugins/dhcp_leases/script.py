@@ -39,8 +39,7 @@ def main():
     newEntries = []
 
     if values.paths:
-        for path in values.paths.split('=')[1].split(','):
-            
+        for path in values.paths.split('=')[1].split(','):           
 
             newEntries = get_entries(newEntries, path)  
 
@@ -79,15 +78,28 @@ def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 =
 # -----------------------------------------------------------------------------
 def get_entries(newEntries, path):
 
+    #  PiHole dhcp.leases format
+    if 'pihole' in path:
+        data = []
+        reporting = False
+        with open(piholeDhcpleases, 'r') as f:
+            for line in f:                
+                
+                row = line.rstrip().split()
+                # rows: DHCP_DateTime, DHCP_MAC, DHCP_IP, DHCP_Name, DHCP_MAC2
+                if len(row) == 5 :
+                    tmpPlugObj = plugin_object_class(row[1], row[2], 'True', row[3], row[4], 'True', path)
+                    newEntries.append(tmpPlugObj) 
 
-    leases = DhcpLeases(path)
-    leasesList = leases.get()
+    #  Generic dhcp.leases format
+    else:
+        leases = DhcpLeases(path)
+        leasesList = leases.get()
 
-    for lease in leasesList:
+        for lease in leasesList:
 
-        tmpPlugObj = plugin_object_class(lease.ethernet, lease.ip, lease.active, lease.hostname, lease.hardware, lease.binding_state, path)
-
-        newEntries.append(tmpPlugObj) 
+            tmpPlugObj = plugin_object_class(lease.ethernet, lease.ip, lease.active, lease.hostname, lease.hardware, lease.binding_state, path)
+            newEntries.append(tmpPlugObj) 
 
     return newEntries
 

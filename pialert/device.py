@@ -62,10 +62,12 @@ def save_scanned_devices (db):
     if check_IP_format(local_ip) == '':
         local_ip = '0.0.0.0'
 
-    # Check if local mac has been detected with other methods
-    sql.execute (f"SELECT COUNT(*) FROM CurrentScan WHERE cur_MAC = '{local_mac}'")
-    if sql.fetchone()[0] == 0 :
-        sql.execute (f"""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( 1, '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
+    # Proceed if variable contains valid MAC
+    if check_mac_or_internet(local_mac):
+        # Check if local mac has been detected with other methods
+        sql.execute (f"SELECT COUNT(*) FROM CurrentScan WHERE cur_MAC = '{local_mac}'")
+        if sql.fetchone()[0] == 0 :
+            sql.execute (f"""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( 1, '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
 
 #-------------------------------------------------------------------------------
 def print_scan_stats (db):
@@ -415,3 +417,16 @@ def update_devices_names (db):
     # update names of devices which we were bale to resolve
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsToUpdate )
     db.commitDB()
+
+#-------------------------------------------------------------------------------
+# Check if the variable contains a valid MAC address or "Internet"
+def check_mac_or_internet(input_str):
+    # Regular expression pattern for matching a MAC address
+    mac_pattern = r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+
+    if input_str.lower() == 'internet':
+        return True
+    elif re.match(mac_pattern, input_str):
+        return True
+    else:
+        return False

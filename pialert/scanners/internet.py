@@ -11,7 +11,6 @@ from logger import append_line_to_file, mylog
 from const import logPath
 
 
-
 # need to find a better way to deal with settings !
 #global DDNS_ACTIVE, DDNS_DOMAIN, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD 
 

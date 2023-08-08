@@ -47,7 +47,7 @@ docker run -d --rm --network=host \
 | **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
 |Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 |Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
-|Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole  | 
+|Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
 |Optional| `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
 
 
@@ -65,10 +65,12 @@ These are the most important settings to get at least some output in your Device
 
 - ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
 
-##### For pihole: PIHOLE_ACTIVE, DHCP_ACTIVE
+##### For pihole: PIHOLE_RUN, DHCPLSS_RUN
 
-* `PIHOLE_ACTIVE`: You need to map `:/etc/pihole/pihole-FTL.db in the docker-compose.yml` file if you enable this setting.
-* `DHCP_ACTIVE` : You need to map `:/etc/pihole/dhcp.leases in the docker-compose.yml` file if you enable this setting.
+* `PIHOLE_RUN`: You need to map `:/etc/pihole/pihole-FTL.db in the docker-compose.yml` file if you enable this setting.
+* `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases in the docker-compose.yml` file if you enable this setting. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole`).
+
+> It's recommended to use the same schedule interval for all plugins scanning your network.
 
 ### **Common issues** 
 

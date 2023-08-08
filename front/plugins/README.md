@@ -95,11 +95,12 @@ More on specifics below.
 
 ## Supported data sources
 
-Currently, only 3 data sources are supported (valid `data_source` value). 
+Currently, these data sources are supported (valid `data_source` value). 
 
 - Script (`script`)
 - SQL query on the PiAlert database (`pialert-db-query`)
 - Template (`template`)
+- External SQLite database (`sqlite-db-query`)
 
 > 🔎Example
 >```json
@@ -199,6 +200,44 @@ This SQL query is executed on the `pialert.db` SQLite database file.
 ### "data_source":  "template"
 
 Used to initialize internal settings. Check the `newdev_template` plugin for details.
+
+### "data_source":  "sqlite-db-query"
+
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL.` prefix. The external SQLite database file has to be mapped in the container to the path specified in the `db_path` property:
+
+```json
+  ...
+  "data_source": "sqlite-db-query",
+  "data_source_settings": 
+  {
+    "db_path":"/etc/pihole/pihole-FTL.db"
+  },
+  ...
+```
+
+The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type. 
+
+>  🔎Example
+>
+> Notice the `EXTERNAL.` prefix.
+>
+>```json
+>{
+>      "function": "CMD",
+>      "type": "text",
+>      "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM EXTERNAL.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr <> '00:00:00:00:00:00';            ",
+>      "options": [],
+>      "localized": ["name", "description"],
+>      "name" : [{
+>          "language_code":"en_us",
+>          "string" : "SQL to run"
+>      }],
+>      "description": [{
+>          "language_code":"en_us",
+>          "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
+>      }]
+>  }
+>  ```
 
 ## 🕳 Filters
 
@@ -355,7 +394,7 @@ Below are some general additional notes, when defining `params`:
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
   - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
-  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `SCAN_CYCLE_MINUTES`. 
+  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `PIHOLE_RUN`. 
 - `"value" : "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
 
 
