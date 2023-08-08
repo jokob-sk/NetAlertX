@@ -72,7 +72,11 @@ $total_memorymb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2
 $total_memorymb = number_format($total_memorymb, 0, '.', '.');
 $mem_used = round(memory_get_usage() / 1048576 * 100, 2);
 $memory_usage_percent = round(($mem_used / $total_memorymb), 2);
-//Load System
+//System
+$system_namekernel = shell_exec("uname");
+$system_namesystem = shell_exec("uname -o");
+$system_full = shell_exec("uname -a");
+$system_architecture = shell_exec("uname -m");
 $load_average = sys_getloadavg();
 //Date & Time
 $date = new DateTime();
@@ -110,19 +114,19 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
                 </div>            
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date2</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date2:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
                 </div>                                        
             </div>
@@ -135,7 +139,7 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">User Agent</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">User Agent:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_USER_AGENT'] . '</div>
                 </div>
                 <div class="row">
@@ -163,12 +167,28 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Uptime</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Uptime:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['uptime'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Operating System</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">Kernel:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $system_namekernel . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">System:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $system_namesystem . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Operating System:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['os_version'] . '</div>
+                </div>				
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Uname:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $system_full . '</div>
+                </div>	
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Architecture:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $system_architecture . '</div>
                 </div>
                 <div class="row">
                   <div class="col-sm-3 sysinfo_gerneral_a">Load AVG:</div>
@@ -322,11 +342,11 @@ echo '<div class="box box-solid">
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['QUERY_STRING'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP_host:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP host:</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_HOST'] . '</div>
 			</div>	
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP_referer:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP referer:</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_REFERER'] . '</div>
 			</div>	
 			<div class="row">
@@ -342,11 +362,11 @@ echo '<div class="box box-solid">
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT_ENCODING'] . '</div>
 			</div>			
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Request_Method:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">Request Method:</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_METHOD'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Request_time:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">Request time:</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_TIME'] . '</div>
 			</div>						
 		</div>
