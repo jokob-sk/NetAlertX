@@ -48,7 +48,7 @@
     {
       "function": "RUN",            
       "type": "text.select",            
-      "default_value":"schedule",
+      "default_value":"disabled",
       "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{
@@ -57,7 +57,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+          "string" : "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>/etc/pihole/pihole-FTL.db</code> mount path."
       }]
   },    
   
@@ -99,7 +99,7 @@
     {
         "function": "RUN_SCHD",
         "type": "text",
-        "default_value":"*/3 * * * *",
+        "default_value":"*/30 * * * *",
         "options": [],
         "localized": ["name", "description"],
         "name" : [{
@@ -108,7 +108,7 @@
         }],
         "description": [{
             "language_code":"en_us",
-            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes."
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes."
         }]
     },
     {
