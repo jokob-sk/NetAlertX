@@ -63,12 +63,15 @@ if (file_exists('/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq')) {
 	// Fallback
 	$stat['cpu_frequ'] = "unknown";
 }
+$cpu_temp = shell_exec('cat /sys/class/thermal/thermal_zone0/temp'); // Get the CPU temperature
+$cpu_temp = floatval($cpu_temp) / 1000; // Convert the temperature to degrees Celsius
 //Memory stats
-$total_memory = shell_exec("cat /proc/meminfo | grep MemTotal | cut -d' ' -f2-") / 1024 | bc;
-$mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
-$stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
-$stat['mem_used'] = round(memory_get_usage() / 1048576 * 100, 2);
-$memory_usage_percent = round(($stat['mem_used'] / $stat['mem_total']), 2);
+$total_memorykb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2}'");
+$total_memorykb = number_format($total_memorykb, 0, '.', '.');
+$total_memorymb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2/1024}'");
+$total_memorymb = number_format($total_memorymb, 0, '.', '.');
+$mem_used = round(memory_get_usage() / 1048576 * 100, 2);
+$memory_usage_percent = round(($mem_used / $total_memorymb), 2);
 //Load System
 $load_average = sys_getloadavg();
 //Date & Time
@@ -106,16 +109,27 @@ echo '<div class="box box-solid">
               <h3 class="box-title sysinfo_headline"><i class="fa fa-globe"></i> This Client</h3>
             </div>
             <div class="box-body">
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">User Agent</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_USER_AGENT'] . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Browser Resolution:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b" id="resolution"></div>
-				</div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">User Agent</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_USER_AGENT'] . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Browser Resolution:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b" id="resolution"></div>
+                </div>
             </div>
       </div>';
+
+echo '<script>
+    var ratio = window.devicePixelRatio || 1;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var rw = window.innerWidth * ratio;
+    var rh = window.innerHeight * ratio;
+
+    var resolutionDiv = document.getElementById("resolution");
+    resolutionDiv.innerHTML = "Width: " + w + "px / Height: " + h + "px<br> " + "Width: " + rw + "px / Height: " + rh + "px (native)";
+</script>';
 
 // General ----------------------------------------------------------
 echo '<div class="box box-solid">
@@ -123,54 +137,85 @@ echo '<div class="box box-solid">
               <h3 class="box-title sysinfo_headline"><i class="fa fa-info-circle"></i> General</h3>
             </div>
             <div class="box-body">
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Full Date</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Date</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
-				</div>			
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Date2</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Timezone</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
-				</div>					
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Uptime</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['uptime'] . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Operating System</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['os_version'] . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">CPU Name:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_model'] . '</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">CPU Cores:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . ' @ ' . $stat['cpu_frequ'] . ' MHz</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Memory:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['mem_used'] . ' MB / ' . $stat['mem_total'] . ' MB</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Memory %:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $memory_usage_percent . ' %</div>
-				</div>				
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Total memory:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">' . $total_memory  . ' MB</div>
-				</div>
-				<div class="row">
-				  <div class="col-sm-3 sysinfo_gerneral_a">Load AVG:</div>
-				  <div class="col-sm-9 sysinfo_gerneral_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
-				</div>					
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
+                </div>            
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date2</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
+                </div>                                        
+            </div>
+      </div>';
+
+// System ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-computer"></i> System</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Uptime</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['uptime'] . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Operating System</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['os_version'] . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Load AVG:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
+                </div>
+            </div>
+      </div>';
+
+// CPU ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-microchip"></i> CPU</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Name:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_model'] . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Cores:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . ' @ ' . $stat['cpu_frequ'] . ' MHz</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">'. $cpu_temp .' °C</div>
+                </div>
+            </div>
+      </div>';
+      
+// Memory ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-memory"></i> Memory</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Memory:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $mem_used . ' MB / ' . $total_memorymb . ' MB</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Memory %:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $memory_usage_percent . ' %</div>
+                </div>                
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Total memory:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $total_memorymb  . ' MB (' . $total_memorykb . ' KB)</div>
+                </div>
             </div>
       </div>';
 
