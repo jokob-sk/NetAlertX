@@ -29,6 +29,7 @@
     <section class="content">	
 
 <?php
+//General
 // OS-Version
 $os_version = '';
 // Raspbian
