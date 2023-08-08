@@ -38,6 +38,13 @@ if ($os_version == '') {$os_version = exec('uname -o');}
 //$os_version_arr = explode("\n", trim($os_version));
 $stat['os_version'] = str_replace('"', '', str_replace('PRETTY_NAME=', '', $os_version));
 $stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p"));
+//Motherboard stat
+$motherboard_name = shell_exec('cat /sys/class/dmi/id/board_name'); // Get the Motherboard name
+$motherboard_manufactured = shell_exec('cat /sys/class/dmi/id/board_vendor'); // Get the Motherboard manufactured
+$motherboard_revision = shell_exec('cat /sys/class/dmi/id/board_version'); // Get the Motherboard revision
+$motherboard_bios = shell_exec('cat /sys/class/dmi/id/bios_version'); // Get the Motherboard BIOS
+$motherboard_biosdate = shell_exec('cat /sys/class/dmi/id/bios_date'); // Get the Motherboard BIOS date
+$motherboard_biosvendor = shell_exec('cat /sys/class/dmi/id/bios_vendor'); // Get the Motherboard BIOS vendor
 //CPU stat
 $prevVal = shell_exec("cat /proc/cpuinfo | grep processor");
 $prevArr = explode("\n", trim($prevVal));
@@ -194,6 +201,39 @@ echo '<div class="box box-solid">
                 <div class="row">
                   <div class="col-sm-3 sysinfo_gerneral_a">Load AVG:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
+                </div>
+            </div>
+      </div>';
+
+// Motherboard ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-laptop-code"></i> Motherboard</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Name:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_name . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Manufactured by:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_manufactured . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Revision:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_revision. '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_bios . '</div>
+                </div>				
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS date_</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosdate . '</div>
+                </div>	
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS vendor:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosvendor . '</div>
                 </div>
             </div>
       </div>';
