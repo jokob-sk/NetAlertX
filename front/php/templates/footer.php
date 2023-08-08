@@ -3,7 +3,7 @@
 #  Pi.Alert                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
-#  version.php - Templates module Template to display the current version         #
+# footer.php - Front module. Common footer to all the web pages                   #
 #---------------------------------------------------------------------------------#
 #    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
 #    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
