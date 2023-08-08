@@ -275,7 +275,7 @@ for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 		echo '</div>';
 	}
 }
-echo '<br>' . $pia_lang['SysInfo_storage_note'];
+#echo '<br>' . $lang['SysInfo_storage_note'];
 echo '      </div>
       </div>';
 
