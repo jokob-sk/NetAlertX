@@ -103,6 +103,31 @@ $hdd_devices_mount = explode("\n", trim($hdd_result));
 $usb_result = shell_exec("lsusb");
 $usb_devices_mount = explode("\n", trim($usb_result));
 
+// General ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-info-circle"></i> General</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
+                </div>            
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Date2</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
+                </div>                                        
+            </div>
+      </div>';
+
 // Client ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
@@ -130,31 +155,6 @@ echo '<script>
     var resolutionDiv = document.getElementById("resolution");
     resolutionDiv.innerHTML = "Width: " + w + "px / Height: " + h + "px<br> " + "Width: " + rw + "px / Height: " + rh + "px (native)";
 </script>';
-
-// General ----------------------------------------------------------
-echo '<div class="box box-solid">
-            <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-info-circle"></i> General</h3>
-            </div>
-            <div class="box-body">
-                <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
-                </div>            
-                <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date2</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
-                </div>                                        
-            </div>
-      </div>';
 
 // System ----------------------------------------------------------
 echo '<div class="box box-solid">
