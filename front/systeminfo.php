@@ -64,8 +64,9 @@ if (file_exists('/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq')) {
 	// Fallback
 	$stat['cpu_frequ'] = "unknown";
 }
-$cpu_temp = shell_exec('cat /sys/class/thermal/thermal_zone0/temp'); // Get the CPU temperature
+$cpu_temp = shell_exec('cat /sys/class/hwmon/hwmon0/temp1_input'); // Get the CPU temperature
 $cpu_temp = floatval($cpu_temp) / 1000; // Convert the temperature to degrees Celsius
+$cpu_vendor = exec('cat /proc/cpuinfo | grep "vendor_id" | cut -d ":" -f 2' ); // Get the CPU vendor
 //Memory stats
 $total_memorykb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2}'");
 $total_memorykb = number_format($total_memorykb, 0, '.', '.');
@@ -205,17 +206,45 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Vendor:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $cpu_vendor . '</div>
+                </div>			
+                <div class="row">
                   <div class="col-sm-3 sysinfo_gerneral_a">CPU Name:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_model'] . '</div>
                 </div>
                 <div class="row">
                   <div class="col-sm-3 sysinfo_gerneral_a">CPU Cores:</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . ' @ ' . $stat['cpu_frequ'] . ' MHz</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . '</div>
                 </div>
+                <div class="row">
+                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Speed:</div>
+                  <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_frequ'] . ' MHz</div>
+                </div>				
                 <div class="row">
                   <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">'. $cpu_temp .' °C</div>
-                </div>
+                </div>';
+				  // Get the number of CPU cores
+				  $num_cpus = $stat['cpu'];
+				  $num_cpus = $num_cpus +2;
+
+				  // Iterate over the CPU cores
+				  for ($i = 2,$a = 0; $i < $num_cpus; $i++,$a++) {
+
+					// Get the CPU temperature
+					$cpu_tempxx = shell_exec('cat /sys/class/hwmon/hwmon0/temp' . $i . '_input');
+
+					// Convert the temperature to degrees Celsius
+					$cpu_tempxx = floatval($cpu_tempxx) / 1000;
+
+					// Print the CPU temperature
+					echo '<div class="row">
+					  <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp ' . $a . ':</div>
+					  <div class="col-sm-9 sysinfo_gerneral_b">' . $cpu_tempxx . ' °C</div>
+					</div>';
+				}
+			echo '				
             </div>
       </div>';
       
