@@ -253,7 +253,7 @@ def execute_plugin(db, plugin):
 
         #  try attaching the sqlite DB
         try:
-            sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS PH")
+            sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL")
         except sqlite3.Error as e:
             mylog('none',[ '[Plugin] - ATTACH DATABASE failed with SQL ERROR: ', e])
 

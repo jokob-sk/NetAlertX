@@ -47,7 +47,6 @@ ENABLE_PLUGINS =  True
 PIALERT_WEB_PROTECTION =  False 
 PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' 
 INCLUDED_SECTIONS =  ['internet', 'new_devices', 'down_devices', 'events', 'ports']   
-SCAN_CYCLE_MINUTES = 5 
 DAYS_TO_KEEP_EVENTS =  90 
 REPORT_DASHBOARD_URL =  'http://pi.alert/' 
 DIG_GET_IP_ARG = '-4 myip.opendns.com @resolver1.opendns.com' 
@@ -106,10 +105,6 @@ DDNS_DOMAIN = 'your_domain.freeddns.org'
 DDNS_USER = 'dynu_user' 
 DDNS_PASSWORD = 'A0000000B0000000C0000000D0000000' 
 DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'
-
-# PiHole
-PIHOLE_ACTIVE = False
-DHCP_ACTIVE = False 
 
 # PHOLUS
 PHOLUS_ACTIVE = False

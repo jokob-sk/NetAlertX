@@ -264,7 +264,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file."
+                "string" : "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file. (If you are mapping a PiHole dhcp.leases file the path in the container must contain <code>pihole</code>, e.g.: <code>:/etc/pihole/dhcp.leases</code>)"
             }]
         },
         {

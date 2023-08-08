@@ -2,7 +2,6 @@
 
 import conf
 
-from scanners.pihole import copy_pihole_network, read_DHCP_leases
 from database import insertOnlineHistory
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
 from helper import timeNowTZ
@@ -14,32 +13,6 @@ from reporting import skip_repeated_notifications
 #===============================================================================
 # SCAN NETWORK
 #===============================================================================
-
-
-def scan_network (db):
-    sql = db.sql #TO-DO
-
-
-    # Header
-    # moved updateState to main loop
-    # updateState(db,"Scan: Network")
-    mylog('verbose', ['[Network Scan] Scan Devices:' ])       
-
-    db.commitDB()
-
-    # Pi-hole method    
-    if conf.PIHOLE_ACTIVE :       
-        mylog('verbose','[Network Scan] Pi-hole start')        
-        copy_pihole_network(db) 
-        db.commitDB() 
-
-    # DHCP Leases method    
-    if conf.DHCP_ACTIVE :        
-        mylog('verbose','[Network Scan] DHCP Leases start')        
-        read_DHCP_leases (db) 
-        db.commitDB()
-
-
 
 def process_scan (db):
 
