@@ -13,7 +13,7 @@ from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonOb
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
-from plugin import get_plugins_configs, print_plugin_info
+from plugin import get_plugins_configs, print_plugin_info, run_plugin_scripts
 
 #===============================================================================
 # Initialise user defined values
@@ -189,8 +189,7 @@ def importConfigs (db):
     conf.startTime = conf.time_started
     now_minus_24h = conf.time_started - datetime.timedelta(hours = 24)
 
-    # set these times to the past to force the first run 
-    conf.last_network_scan = now_minus_24h
+    # set these times to the past to force the first run     
     conf.last_internet_IP_scan = now_minus_24h
     conf.last_scan_run = now_minus_24h
     conf.last_cleanup = now_minus_24h
@@ -199,7 +198,6 @@ def importConfigs (db):
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     
-    # global mySchedules
     # reset schedules
     conf.mySchedules = [] 
 
@@ -282,6 +280,9 @@ def importConfigs (db):
 
     #  update only the settings datasource
     update_api(db, False, ["settings"])  
+
+    # run plugins that are modifying the config   
+    run_plugin_scripts(db, 'before_config_save')
 
     # Used to determine the next import
     conf.lastTimeImported = time.time()

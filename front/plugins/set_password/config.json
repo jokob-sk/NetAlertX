@@ -7,7 +7,7 @@
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
       "language_code": "en_us",
-      "string": "UI password"
+      "string": "Set password"
     }],
   "description": [{
     "language_code": "en_us",
@@ -31,7 +31,7 @@
       "function": "RUN",            
       "type": "text.select",            
       "default_value":"disabled",
-      "options": ["disabled", "once"],
+      "options": ["disabled", "before_config_save"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",

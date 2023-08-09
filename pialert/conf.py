@@ -19,7 +19,6 @@ plugins_once_run = False
 newVersionAvailable = False
 time_started = ''
 startTime = ''
-last_network_scan = ''
 last_internet_IP_scan = ''
 last_scan_run = ''
 last_cleanup = ''

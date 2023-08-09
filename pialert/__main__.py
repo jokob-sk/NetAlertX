@@ -107,8 +107,7 @@ def main ():
         
         # TODO fix these
         loop_start_time = conf.loop_start_time # TODO fix
-        last_update_vendors = conf.last_update_vendors
-        last_network_scan = conf.last_network_scan
+        last_update_vendors = conf.last_update_vendors        
         last_cleanup = conf.last_cleanup
         last_version_check = conf.last_version_check
         

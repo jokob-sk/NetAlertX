@@ -8,12 +8,16 @@
 - [unifi_import (UNFIMP)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/)
 - [snmp_discovery (SNMPDSC)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/snmp_discovery/)
 - [undiscoverables (UNDIS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/)
+- [arp_scan (ARPSCAN)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/arp_scan/)
 
 ### SQL query based plugins
 - [nmap_services (NMAPSERV)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/) 
 
 ### template based plugins
 - [newdev_template (NEWDEV)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/newdev_template/) 
+
+### External SQLite based plugins
+- [pihole_scan (PIHOLE)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/newdev_template/) 
 
 ## 🌟 Create a custom plugin: Overview
 
@@ -296,6 +300,9 @@ PiAlert will take the results of the plugin execution and insert these results i
 
 This approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, get's the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `"DHCP_Leases"` database table in the PiAlert database. All this is achieved by:
 
+> [!NOTE] 
+> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
+
 1) Specifying the database table into which the results are inserted by defining `"mapped_to_table": "DHCP_Leases"` in the root of the `config.json` file as shown below:
 
 ```json
@@ -440,8 +447,14 @@ Required attributes are:
 You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
 
 - `RUN` - (required) Specifies when the service is executed
-    - Supported Options: "disabled", "once", "schedule" (if included then a `RUN_SCHD` setting needs to be specified), "always_after_scan", "on_new_device"
-- `RUN_SCHD` - (required if you include the above `RUN` function) Cron-like scheduling used if the `RUN` setting set to `schedule`
+    - Supported Options: 
+      - "disabled" - not run
+      - "once" - run on app start or on settings saved
+      - "schedule" - if included then a `RUN_SCHD` setting needs to be specified to determine what's the schedule, 
+      - "always_after_scan" - run always after a scan is finished
+      - "on_new_device" - run when a new device is detected
+      - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. 
+- `RUN_SCHD` - (required if you include the above `RUN` function) Cron-like scheduling is used if the `RUN` setting set to `schedule`
 - `CMD` - (required) What command should be executed. 
 - `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
 - `RUN_TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.

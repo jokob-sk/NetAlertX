@@ -25,8 +25,6 @@ import const
 from const import pialertPath, logPath, apiPath
 from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
-# from plugin import execute_plugin
-
 
 from publishers.email import (check_config as email_check_config, 
                               send as send_email )
