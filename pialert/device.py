@@ -2,6 +2,7 @@
 import subprocess
 
 import conf
+import re
 from helper import timeNowTZ, get_setting, get_setting_value
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log

@@ -64,10 +64,7 @@ def print_log (pText):
         # log_timestamp2, ' ',
         log_timestamp2.strftime ('%H:%M:%S'), ' ',
         pText)
-    
 
-    # Save current time to calculate elapsed time until next log
-    conf.log_timestamp = log_timestamp2 
 
     return pText
 

@@ -193,6 +193,11 @@ function getString (key) {
   }
   result = getCache(`pia_lang_${key}_${lang_code}`, true);
 
+  if(isEmpty(result))
+  {
+    result = getCache(`pia_lang_${key}_en_us`, true);
+  }
+
   return result;
 }
 
@@ -474,6 +479,12 @@ function navigateToDeviceWithIp (ip) {
 
     
   });
+}
+
+// -----------------------------------------------------------------------------
+function isEmpty(value)
+{
+  return emptyArr.includes(value)
 }
 
 // initialize

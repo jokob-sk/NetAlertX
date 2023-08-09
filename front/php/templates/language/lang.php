@@ -73,9 +73,20 @@ function lang($key)
   // Merge JSON data with SQL data
   $mergedLanguageData = mergeLanguageData($languageData, $sqlLanguageData);
 
-  $result = $mergedLanguageData[$pia_lang_selected][$key] ?? "String Not found for key ".$key;
+  // Check if the key exists in the selected language
+  if (isset($mergedLanguageData[$pia_lang_selected][$key])) {
+    $result = $mergedLanguageData[$pia_lang_selected][$key];
+  } else {
+    // If key not found in selected language, use "en_us" as fallback
+    if (isset($mergedLanguageData['en_us'][$key])) {
+      $result = $mergedLanguageData['en_us'][$key];
+    } else {
+      // If key not found in "en_us" either, use a default string
+      $result = "String Not found for key " . $key;
+    }
+  }
 
   return $result;
-};
+}
 
 

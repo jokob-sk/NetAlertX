@@ -183,8 +183,6 @@ def importConfigs (db):
     conf.check_report = [1, "internet_IP", "update_vendors_silent"]
     conf.plugins_once_run = False
     
-    # to be deleted if not used 
-    conf.log_timestamp = conf.time_started
     #cron_instance = Cron()
 
     # timestamps of last execution times
