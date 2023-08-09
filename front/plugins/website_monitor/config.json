@@ -2,19 +2,31 @@
     "code_name": "website_monitor",
     "unique_prefix": "WEBMON",
     "enabled": true,    
-    "data_source":  "script",
+    "data_source":  "python-script",
     "localized": ["display_name", "description", "icon"],
-    "display_name" : [{
-        "language_code":"en_us",
-        "string" : "Website monitor"
-    }],
+	"display_name" : [{
+		  "language_code": "en_us",
+		  "string" : "Website monitor"
+		},
+		{
+		  "language_code": "es_es",
+		  "string" : "Monitor de sitio web"
+		}],
     "icon":[{
-        "language_code":"en_us",
+        "language_code": "en_us",
         "string" : "<i class=\"fa-solid fa-globe\"></i>"
-    }],     
+		},
+		{
+		"language_code": "es_es",
+        "string" : "<i class=\"fa-solid fa-globe\"></i>"
+		}],     
     "description": [{
-        "language_code":"en_us",
+        "language_code": "en_us",
         "string" : "This plugin is to monitor status changes of services or websites."
+		},
+		{
+		"language_code": "es_es",
+        "string" : "Este complemento es para monitorear los cambios de estado de los servicios o sitios web."
     }],
     "params" : [{
         "name"  : "macs",
@@ -42,10 +54,14 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
                 }]
-        } ,
+        },
         {
             "column": "Plugin",
             "css_classes": "col-sm-2",
@@ -55,8 +71,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
                 }]
         },
         {
@@ -68,8 +88,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Monitored URL"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "URL monitoreada"					
                 }]
         },
         {
@@ -81,10 +105,14 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
                 }]
-        } ,
+        },
         {
             "column": "DateTimeCreated",
             "css_classes": "col-sm-2",
@@ -94,8 +122,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Created"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Creado"					
                 }]
         },
         {
@@ -107,8 +139,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Changed"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Cambiado"					
                 }]
         },
         {
@@ -141,8 +177,12 @@
             ],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Status code"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Código de estado"					
                 }]
         },
         {
@@ -154,8 +194,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Latency"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Latencia"					
                 }]
         },
         {
@@ -167,10 +211,14 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
                 }]
-        } ,
+        },
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
@@ -180,10 +228,14 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
                 }]
-        } ,       
+        },       
         {
             "column": "UserData",
             "css_classes": "col-sm-2",
@@ -193,8 +245,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Comments"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comentarios"					
                 }]
         },        
         {
@@ -219,8 +275,12 @@
             ],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Status"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Estado"					
                 }]
         },        
         {
@@ -232,8 +292,12 @@
             "options": [],
             "localized": ["name"],
             "name":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Extra"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Extra"					
                 }]
         }            
     ],
@@ -245,12 +309,20 @@
             "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
             "localized": ["name", "description"],
             "name" :[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "When to run"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Cuando ejecuta"
             }],
             "description": [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> setting</a>."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Habilite un escaneo regular de sus servicios. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el escaneo se ejecuta solo una vez al iniciar la aplicación (contenedor) durante el tiempo especificado en <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> configuración</a>."
             }]
         },
         {
@@ -260,12 +332,20 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Command"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comando"						
             }],
             "description": [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Command to run"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comando a ejecutar"	
             }]
         },
         {
@@ -275,12 +355,20 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Schedule"
-            }],
-            "description": [{
-                "language_code":"en_us",
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Schedule"
+				}],
+				"description": [{
+                "language_code": "en_us",
                 "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+				},
+				{
+                "language_code": "es_es",
+                "string": "Solo habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code></a>. Asegúrese de ingresar el schedule en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingrese <code >0 4 * * *</code> ejecutará el escaneo después de las 4 am en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> que configuró arriba </a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
             }]
         },
         {
@@ -290,12 +378,20 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "API endpoint (not implemented)"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Punto de conexión de la API (no implementado)"				
             }],
             "description": [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> file endpoint</a>."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través de <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> punto final del archivo</a>."					
             }]            
         },
         {
@@ -305,16 +401,24 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Run timeout"
-            },
-            {
-                "language_code":"de_de",
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tiempo de espera de ejecución"				
+				},
+				{
+                "language_code": "de_de",
                 "string" : "Wartezeit"
             }],
             "description": [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
             }]
         },
         {
@@ -324,12 +428,20 @@
             "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
             "localized": ["name", "description"],
             "name" :[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Watched"
-            }] ,
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Visto"				
+            }],
             "description":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Click</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es un código de estado de respuesta (por ejemplo: 200, 404) </li><li><code>Valor_observado2</code> es Latencia (no recomendado)</li><li><code>Valor_observado3</code> no utilizado </li><li><code>Valor_observado4 </ code> sin usar </li></ul>"				
             }] 
         },
         {
@@ -339,12 +451,20 @@
             "options": ["new","watched-changed","watched-not-changed"],
             "localized": ["name", "description"],
             "name" :[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Report on"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Informar sobre"					
             }] ,
             "description":[{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."					
             }] 
         },
         {
@@ -354,12 +474,20 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Arguments"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Argumentos"					
             }],
             "description": [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Services to watch. Enter full URL, e.g. <code>https://google.com</code>. The values from this setting will be used to replace the <code>{urls}</code> wildcard in the <code>WEBMON_CMD</code> setting."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Servicios para ver. Ingrese la URL completa, por ejemplo, <code>https://google.com</code>. Los valores de esta configuración se usarán para reemplazar el comodín <code>{urls}</code> en la configuración < code>WEBMON_CMD</code>."					
             }]
         },
         {
@@ -369,15 +497,22 @@
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
-                "language_code":"en_us",
+                "language_code": "en_us",
                 "string" : "Helper variable"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Variable de ayuda"					
             }],
             "description": [{
-                "language_code":"en_us",
-                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet. "
+                "language_code": "en_us",
+                "string" : "Unused setting - for demonstration only. Getting the IP address of the Router / Internet."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Configuración no utilizada: solo para demostración. Obtener la dirección IP del enrutador / Internet."				
             }]
         }
 
     ]
 }
-
