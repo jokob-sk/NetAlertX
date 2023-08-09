@@ -75,8 +75,10 @@ $cpu_temp = floatval($cpu_temp) / 1000; // Convert the temperature to degrees Ce
 $cpu_vendor = exec('cat /proc/cpuinfo | grep "vendor_id" | cut -d ":" -f 2' ); // Get the CPU vendor
 //Memory stats
 $total_memorykb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2}'");
+$total_memorykb = trim($total_memorykb);
 $total_memorykb = number_format($total_memorykb, 0, '.', '.');
 $total_memorymb = shell_exec("cat /proc/meminfo | grep MemTotal | awk '{print $2/1024}'");
+$total_memorymb = trim($total_memorymb);
 $total_memorymb = number_format($total_memorymb, 0, '.', '.');
 $mem_used = round(memory_get_usage() / 1048576 * 100, 2);
 $memory_usage_percent = round(($mem_used / $total_memorymb), 2);
