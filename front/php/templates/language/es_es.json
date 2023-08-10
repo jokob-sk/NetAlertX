@@ -94,6 +94,7 @@
         "Presence_CalHead_quarter" : "trimestre",
         "Presence_CalHead_month" : "mes",
         "Presence_CalHead_week" : "semana",
+        "Presence_CalHead_day" : "día",
         "Events_Title" : "Eventos",
         "Events_Periodselect_today" : "Hoy",
         "Events_Periodselect_LastWeek" : "La semana pasada",
