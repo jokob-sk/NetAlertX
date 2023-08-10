@@ -26,7 +26,8 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-           <?= lang('Device_Title');?>
+          <i class=\"fa fa-laptop\"></i></i>
+          <?= lang('Device_Title');?>
       </h1>
     </section>
 
