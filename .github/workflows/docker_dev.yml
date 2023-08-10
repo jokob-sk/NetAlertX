@@ -37,7 +37,7 @@ jobs:
 
       - name: Get release version
         id: get_version
-        run: echo "dev"
+        run: echo "::set-output name=version::${{ 'Dev' }}"
 
       - name: Create .VERSION file
         run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION
