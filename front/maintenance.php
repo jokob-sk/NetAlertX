@@ -44,7 +44,8 @@ $pia_installed_skins = array('skin-black-light',
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?= lang('Maintenance_Title');?>
+        <i class=\"fa fa-wrench\"></i></i>         
+        <?= lang('Maintenance_Title');?>
       </h1>
     </section>
 
