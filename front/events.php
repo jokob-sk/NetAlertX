@@ -1,11 +1,16 @@
-<!-- ---------------------------------------------------------------------------
-#  Pi.Alert
-#  Open Source Network Guard / WIFI & LAN intrusion detector
-#
-#  events.php - Front module. Events page
-#-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
-#--------------------------------------------------------------------------- -->
+<!--
+#---------------------------------------------------------------------------------#
+#  Pi.Alert                                                                       #
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#                                                                                 #
+#  events.php - Front module. Events page                                         #
+#---------------------------------------------------------------------------------#
+#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
+#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
+#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
+#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
+#---------------------------------------------------------------------------------#
+-->
 
 <?php
   require 'php/templates/header.php';
@@ -17,7 +22,8 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-         <?= lang('Events_Title');?>
+        <i class=\"fa fa-bolt\"></i></i>
+        <?= lang('Events_Title');?>
       </h1>
 
       <!-- period selector -->
