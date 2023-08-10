@@ -457,7 +457,7 @@
         "SMTP_SKIP_TLS_description" : "Deshabilite TLS cuando se conecte a su servidor SMTP.",
         "SMTP_FORCE_SSL_name" : "Forzar SSL",
         "SMTP_FORCE_SSL_description" : "Forzar SSL al conectarse a su servidor SMTP",
-        "SYSTEM_TITLE" : "Información del sistema",        
+        "SYSTEM_TITLE" : "<i class=\"fa fa-microchip\"></i> Información del sistema",        
         "REPORT_TO_name" : "Enviar el email a",
         "REPORT_TO_description" : "Dirección de correo electrónico a la que se enviará la notificación.",
         "REPORT_FROM_name" : "Asunto del email",
