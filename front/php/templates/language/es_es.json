@@ -212,6 +212,7 @@
         "DevDetail_WOL_Title" : "<i class=\"fa fa-power-off\"></i> Wake-on-LAN",
         "DevDetail_Run_Actions_Title" : "<i class=\"fa fa-play\"></i> Ejecutar acción en el dispositivo",
         "DevDetail_Run_Actions_Tooltip" : "Ejecutar la acción del desplegable sobre el dispositivo actual.",
+        "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalles del dispositivo",        
         "Maintenance_Title" : "Herramientas de mantenimiento",
         "Maintenance_version" : "Actualizaciones de la aplicación",
         "Maintenance_new_version" : "🆕 Una nueva versión está disponible. Comprueba las <a href=\"https://github.com/jokob-sk/Pi.Alert/releases\" target=\"_blank\">notas de lanzamiento</a>.",
