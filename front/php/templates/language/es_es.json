@@ -10,6 +10,7 @@
         "Gen_Save" : "Guardar",
         "Gen_Saved" : "Guardado",
         "Gen_Run" : "Ejecutar",
+        "Gen_Copy" : "Ejecutar",        
         "Gen_Action" : "Acción",
         "Gen_Purge" : "Purgar",
         "Gen_Backup" : "Ejecutar copia de seguridad",
