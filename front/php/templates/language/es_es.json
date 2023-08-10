@@ -217,7 +217,7 @@
         "DevDetail_Copy_Device_Tooltip": "Copiar detalles del dispositivo de la lista desplegable. Todo en esta página se sobrescribirá",
         "BackDevDetail_Copy_Title": "Copiar detalles",
         "BackDevDetail_Copy_Ask": "¿Copiar detalles del dispositivo de la lista desplegable (se sobrescribirá todo en esta página)?",        
-        "Maintenance_Title" : "<i class=\"fa fa-wrench\"></i></i> Herramientas de mantenimiento",
+        "Maintenance_Title" : "Herramientas de mantenimiento",
         "Maintenance_version" : "Actualizaciones de la aplicación",
         "Maintenance_new_version" : "🆕 Una nueva versión está disponible. Comprueba las <a href=\"https://github.com/jokob-sk/Pi.Alert/releases\" target=\"_blank\">notas de lanzamiento</a>.",
         "Maintenance_current_version" : "No hay actualizaciones disponibles. Comprueba en que <a href=\"https://github.com/jokob-sk/Pi.Alert/issues/138\" target=\"_blank\">se está trabajando</a>.",
