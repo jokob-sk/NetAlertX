@@ -235,7 +235,7 @@ if ($ENABLED_DARKMODE === True) {
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('report.php') ) ){ echo 'active'; } ?>">
-          <a href="report.php"><i class="fa fa-bolt"></i> <span><?= lang('Navigation_Report');?></span></a>
+          <a href="report.php"><i class="fa fa-flag"></i> <span><?= lang('Navigation_Report');?></span></a>
         </li>	      
 	      
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
