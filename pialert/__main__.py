@@ -26,7 +26,7 @@ from const import *
 from logger import  mylog
 from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState
 from api import update_api
-# from networkscan import process_scan, scan_network
+from networkscan import process_scan
 from initialise import importConfigs
 from mac_vendor import update_devices_MAC_vendors
 from database import DB, get_all_devices
@@ -205,10 +205,12 @@ def main ():
             if conf.ENABLE_PLUGINS:
                 run_plugin_scripts(db,'always_after_scan')
 
-            # --------------------------------------------------
+            
             # process all the scanned data into new devices
-            # mylog('debug', "[MAIN] start processig scan results")
-            # process_scan (db)
+            if conf.currentScanNeedsProcessing == True:   
+                mylog('debug', "[MAIN] start processig scan results")             
+                process_scan(db)
+                conf.currentScanNeedsProcessing = False                
             
             # Reporting   
             if conf.cycle in conf.check_report:
@@ -259,6 +261,12 @@ def main ():
 
         #loop     
         time.sleep(5) # wait for N seconds      
+
+
+
+
+
+
 
 
 #===============================================================================

@@ -46,6 +46,7 @@ services:
       - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
       - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php      
       - ${DEV_LOCATION}/front/systeminfo.php:/home/pi/pialert/front/systeminfo.php      
+      - ${DEV_LOCATION}/front/report.php:/home/pi/pialert/front/report.php      
       - ${DEV_LOCATION}/front/flows.php:/home/pi/pialert/front/flows.php      
       - ${DEV_LOCATION}/front/plugins:/home/pi/pialert/front/plugins      
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
