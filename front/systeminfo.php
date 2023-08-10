@@ -93,15 +93,6 @@ $date = new DateTime();
 $formatted_date = $date->format('l, F j, Y H:i:s');
 $formatted_date2 = $date->format('d/m/Y H:i:s');
 $formatted_date3 = $date->format('Y/m/d H:i:s');
-//Network stats
-// Check Server name
-if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = 'Server name not found'; }
-// Check HTTPS
-if (isset($_SERVER['HTTPS'])) { $network_HTTPS = 'Yes (HTTPS)'; } else { $network_HTTPS = 'No (HTTP)'; }
-// Check Query String
-if (empty($_SERVER['QUERY_STRING'])) { $network_QueryString = 'No query string'; } else { $network_QueryString = $_SERVER['QUERY_STRING']; }
-// Check HTTP referer
-if (empty($_SERVER['HTTP_REFERER'])) { $network_referer = 'No HTTP referer'; } else { $network_referer = $_SERVER['HTTP_REFERER']; }
 //Network Hardware stat
 $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $1}'");
 $net_interfaces = explode("\n", trim($network_result));
@@ -364,9 +355,9 @@ echo '<div class="box box-solid">
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 	if (stristr($hdd_devices[$x], '/dev/')) {
-		if ($hdd_devices_total[$x] == 0) {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_total = trim($temp_total);}
-		if ($hdd_devices_used[$x] == 0) {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
-		if ($hdd_devices_free[$x] == 0) {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
+		if ($hdd_devices_total[$x] == 0) {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.');}
+		if ($hdd_devices_used[$x] == 0) {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.');}
+		if ($hdd_devices_free[$x] == 0) {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.');}
 		echo '<div class="row">';
 		echo '<div class="col-sm-4 sysinfo_gerneral_a">Mount point "' . $hdd_devices_mount[$x] . '"</div>';
 		echo '<div class="col-sm-2 sysinfo_gerneral_b">Total: ' . $temp_total . ' GB</div>';
@@ -399,7 +390,7 @@ echo '<div class="box box-solid">
 			</div>	
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">Server name:</div>
-			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_NAME . '</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_NAME'] . '</div>
 			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">Connection port:</div>
@@ -407,7 +398,7 @@ echo '<div class="box box-solid">
 			</div>			
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">Secure connection:</div>
-			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_HTTPS . '</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTPS'] . '</div>
 			</div>	
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">Server Version:</div>
@@ -419,7 +410,7 @@ echo '<div class="box box-solid">
 			</div>		
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">Server query:</div>
-			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_QueryString . '</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['QUERY_STRING'] . '</div>
 			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP host:</div>
@@ -427,7 +418,7 @@ echo '<div class="box box-solid">
 			</div>	
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP referer:</div>
-			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_referer . '</div>
+			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_REFERER'] . '</div>
 			</div>	
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">MIME:</div>
@@ -451,6 +442,7 @@ echo '<div class="box box-solid">
 			</div>						
 		</div>
       </div>';
+
 
 // Network Hardware ----------------------------------------------------------
 echo '<div class="box box-solid">
