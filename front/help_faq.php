@@ -14,7 +14,10 @@
 
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
-      <h4><?= lang('HelpFAQ_Cat_General');?></h4>
+      <h4>
+        <i class="fa fa-question"></i>
+        <?= lang('HelpFAQ_Cat_General');?>
+      </h4>
 
        <div class="panel-group" id="accordion_gen">
         <div class="panel panel-default">
@@ -105,7 +108,10 @@
         </div>
       </div> 
 
-<h4><?= lang('Navigation_Devices');?></h4>
+<h4>
+  <i class="fa fa-laptop"></i>
+  <?= lang('Navigation_Devices');?>
+</h4>
  <div class="panel-group" id="accordion_dev">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -123,7 +129,8 @@
 </div> 
 
 
-<h4><?= lang('HelpFAQ_Cat_Detail');?></h4>
+<h4>
+  <i class="fa fa-info-circle"></i><?= lang('HelpFAQ_Cat_Detail');?></h4>
  <div class="panel-group" id="accordion_det">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -181,7 +188,10 @@
   </div>
 </div> 
 
-<h4><?= lang('Navigation_Presence');?></h4>
+<h4>
+  <i class="fa fa-calendar"></i>
+  <?= lang('Navigation_Presence');?>
+</h4>
  <div class="panel-group" id="accordion_pre">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -211,7 +221,8 @@
   </div>
 </div> 
 
-<h4><?= lang('Navigation_Network');?></h4>
+<h4>
+  <i class="fa fa-network-wired"></i><?= lang('Navigation_Network');?></h4>
  <div class="panel-group" id="accordion_net">
   <div class="panel panel-default">
     <div class="panel-heading">

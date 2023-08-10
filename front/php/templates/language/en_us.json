@@ -372,7 +372,7 @@
         "Network_NoAssignedDevices" : "This network node does not have any assigned devices (leaf nodes). Assign one from bellow or go to the <b><i class=\"fa fa-info-circle\"></i> Details</b> tab of any device in <a href=\"devices.php\"><b> <i class=\"fa fa-laptop\"></i> Devices</b></a>, and assign it to a network <b><i class=\"fa fa-server\"></i> Node (MAC)</b> and <b><i class=\"fa fa-ethernet\"></i> Port</b> there.",
         "HelpFAQ_Title" : "Help / FAQ",
         "HelpFAQ_Cat_General" : "General",
-        "HelpFAQ_Cat_Detail" : "<i class=\"fa fa-info-circle\"></i> Details",
+        "HelpFAQ_Cat_Detail" : "Details",
         "HelpFAQ_Cat_General_100_head" : "The clock on the top right and the times of the events/presence are not correct (time difference).",
         "HelpFAQ_Cat_General_100_text_a" : "On your PC the following time zone is set for the PHP environment:",
         "HelpFAQ_Cat_General_100_text_b" : "If this is not the timezone you are in, you should change the timezone in the PHP configuration file. You can find it in this directory:",
