@@ -39,7 +39,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Set to <code>once</code> and specify password to reset your pasword in <code>SETPWD_password</code>."
+          "string" : "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>."
       }]
   },
   {

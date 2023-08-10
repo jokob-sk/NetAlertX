@@ -209,17 +209,29 @@ $db->close();
 
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active">
-          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab"><?= lang('Maintenance_Tools_Tab_UISettings');?></a>
+        <li class="active">          
+          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab">
+            <i class="fa fa-cogs"></i> 
+            <?= lang('Maintenance_Tools_Tab_UISettings');?>
+          </a>
         </li>
         <li>
-          <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab"><?= lang('Maintenance_Tools_Tab_Tools');?></a>
+          <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab">
+            <i class="fa fa-toolbox"></i> 
+            <?= lang('Maintenance_Tools_Tab_Tools');?>
+          </a>
         </li>
         <li>
-          <a id="tab_BackupRestore_id" href="#tab_BackupRestore" data-toggle="tab"><?= lang('Maintenance_Tools_Tab_BackupRestore');?></a>
+          <a id="tab_BackupRestore_id" href="#tab_BackupRestore" data-toggle="tab">
+            <i class="fa fa-file-shield"></i> 
+            <?= lang('Maintenance_Tools_Tab_BackupRestore');?>
+          </a>
         </li>
         <li>
-          <a id="tab_Logging_id" href="#tab_Logging" data-toggle="tab"><?= lang('Maintenance_Tools_Tab_Logging');?></a>
+          <a id="tab_Logging_id" href="#tab_Logging" data-toggle="tab">
+            <i class="fa fa-triangle-exclamation"></i> 
+            <?= lang('Maintenance_Tools_Tab_Logging');?>
+          </a>
         </li>
     </ul>
     <div class="tab-content">

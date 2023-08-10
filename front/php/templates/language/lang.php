@@ -27,18 +27,31 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 }
 
 
-// Load data from JSON files 
 function getLanguageDataFromJson()
 {
     global $allLanguages;
 
+    // Default language
+    $defaultLanguage = 'en_us';
+
     // Array to hold the language data from the JSON files
     $languageData = [];
     
-    // Load and parse the JSON data from .json files
     foreach ($allLanguages as $language) {
-      $data = json_decode(file_get_contents(dirname(__FILE__).'/'.$language.'.json'), true); 
-      $languageData[$language] = $data[$language];
+        // Load and parse the JSON data from .json files
+        $jsonFilePath = dirname(__FILE__) . '/' . $language . '.json';
+        
+        if (file_exists($jsonFilePath)) {
+            $data = json_decode(file_get_contents($jsonFilePath), true);
+            
+            // Use the default language if the key is not found
+            $languageData[$language] = $data[$language] ?? $data[$defaultLanguage] ?? [];
+        } else {
+            // Handle the case where the JSON file doesn't exist
+            // For example, you might want to log an error message
+            echo 'File not found: '.$jsonFilePath;
+
+        }
     }
 
     return $languageData;

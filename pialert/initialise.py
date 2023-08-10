@@ -64,14 +64,12 @@ def importConfigs (db):
 
     mylog('debug', ['[Import Config] checking config file '])
     mylog('debug', ['[Import Config] lastImportedConfFile     :', conf.lastImportedConfFile])
-    mylog('debug', ['[Import Config] file modified time       :', fileModifiedTime])
+    mylog('debug', ['[Import Config] fileModifiedTime         :', fileModifiedTime])
     
 
     if (fileModifiedTime == conf.lastImportedConfFile) :
         mylog('debug', ['[Import Config] skipping config file import'])
         return
-
-    conf.lastImportedConfFile = fileModifiedTime  
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -285,7 +283,7 @@ def importConfigs (db):
     run_plugin_scripts(db, 'before_config_save')
 
     # Used to determine the next import
-    conf.lastTimeImported = time.time()
+    conf.lastImportedConfFile = os.path.getmtime(config_file)      
     
     #TO DO this creates a circular reference between API and HELPER !
 
