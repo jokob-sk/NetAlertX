@@ -242,6 +242,7 @@
         "Maintenance_lang_es_es" : "Spanish (ES)",
         "Maintenance_lang_selector_text" : "El cambio tiene lugar en el lado del servidor, por lo que afecta todos los dispositivos en uso.",
         "Maintenance_lang_selector_apply" : "Aplicar",
+        "Maintenance_Status" : "Estado",
         "Maintenance_Tools_Tab_Settings" : "Ajustes",
         "Maintenance_Tools_Tab_UISettings" : "Ajustes de interfaz",													
         "Maintenance_Tools_Tab_Tools" : "Herramientas",
