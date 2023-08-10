@@ -208,7 +208,7 @@
         "DevDetail_WOL_Title" : "<i class=\"fa fa-power-off\"></i> Wake-on-LAN",
         "DevDetail_Run_Actions_Title" : "<i class=\"fa fa-play\"></i> Ejecutar acción en el dispositivo",
         "DevDetail_Run_Actions_Tooltip" : "Ejecutar la acción del desplegable sobre el dispositivo actual.",
-        "Maintenance_Title" : "Herramientas de mantenimiento",
+        "Maintenance_Title" : "<i class=\"fa fa-wrench\"></i></i> Herramientas de mantenimiento",
         "Maintenance_version" : "Actualizaciones de la aplicación",
         "Maintenance_new_version" : "🆕 Una nueva versión está disponible. Comprueba las <a href=\"https://github.com/jokob-sk/Pi.Alert/releases\" target=\"_blank\">notas de lanzamiento</a>.",
         "Maintenance_current_version" : "No hay actualizaciones disponibles. Comprueba en que <a href=\"https://github.com/jokob-sk/Pi.Alert/issues/138\" target=\"_blank\">se está trabajando</a>.",
