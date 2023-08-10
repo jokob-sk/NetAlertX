@@ -234,6 +234,10 @@ if ($ENABLED_DARKMODE === True) {
           <a href="events.php"><i class="fa fa-bolt"></i> <span><?= lang('Navigation_Events');?></span></a>
         </li>
 
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('report.php') ) ){ echo 'active'; } ?>">
+          <a href="report.php"><i class="fa fa-bolt"></i> <span><?= lang('Navigation_Report');?></span></a>
+        </li>	      
+	      
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
           <a href="network.php"><span><i class="fa fa-fw fa-network-wired"></i>  <?= lang('Navigation_Network');?></span></a>
         </li>
