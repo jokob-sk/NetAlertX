@@ -146,7 +146,7 @@
         "DevDetail_Tab_NmapTableHeader" : "Resultados del escaneo programado",
         "DevDetail_Tab_NmapTableText" : "Establece la programación en los <a href=\"/settings.php#NMAP_ACTIVE\">Ajustes</a>",
         "DevDetail_Tab_NmapEmpty" : "Ningún puerto detectado en este dispositivo con Nmap.",
-        "DevDetail_MainInfo_Title" : "Información principal",
+        "DevDetail_MainInfo_Title" : "<i class=\"fa fa-pencil\"></i> Información principal",
         "DevDetail_MainInfo_mac" : "MAC",
         "DevDetail_MainInfo_Name" : "Nombre",
         "DevDetail_MainInfo_Owner" : "Propietario",
