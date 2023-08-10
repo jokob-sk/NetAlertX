@@ -152,7 +152,10 @@ $db->close();
           <div class="col-md-12">
           <div class="box" id="Maintain-Status">
               <div class="box-header with-border">
-                <h3 class="box-title">Status</h3>
+                <h3 class="box-title">
+                  <i class=\"fa fa-display\"></i></i>         
+                  <?= lang('Maintenance_Status');?>
+                </h3>
               </div>
               <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
