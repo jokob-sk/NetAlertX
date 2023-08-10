@@ -38,7 +38,7 @@
         "Navigation_Devices" : "Dispositivos",
         "Navigation_Presence" : "Historial",
         "Navigation_Events" : "Eventos",
-        "Navigation_Report" : "Reporte",        
+        "Navigation_Report" : "<i class=\"fa fa-flag\"></i> Reporte",        
         "Navigation_Network" : "Red",
         "Navigation_Plugins" : "Plugins",
         "Navigation_Maintenance" : "Mantenimiento",
