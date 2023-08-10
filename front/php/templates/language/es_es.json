@@ -161,7 +161,7 @@
         "DevDetail_MainInfo_Network_Title" : "<i class=\"fa fa-network-wired\"></i> Red",
         "DevDetail_MainInfo_Network" : "<i class=\"fa fa-server\"></i> Nodo (MAC)",
         "DevDetail_GoToNetworkNode" : "Navegar a la página de Internet del nodo seleccionado.",
-        "DevDetail_MainInfo_Network_Port" : "Puerto de Red HW",
+        "DevDetail_MainInfo_Network_Port" : "<i class=\"fa fa-ethernet\"></i> Puerto de Red HW",
         "DevDetail_SessionInfo_Title" : "Información de sesión",
         "DevDetail_SessionInfo_Status" : "Estado",
         "DevDetail_SessionInfo_FirstSession" : "1ra. sesión",
