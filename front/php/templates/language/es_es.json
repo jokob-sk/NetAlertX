@@ -45,7 +45,7 @@
         "Navigation_Flows" : "Flows",
         "Navigation_SystemInfo" : "Info del sistema",
         "Navigation_HelpFAQ" : "Ayuda / FAQ",				
-        "Device_Title" : "Dispositivos",
+        "Device_Title" : "<i class=\"fa fa-laptop\"></i> Dispositivos",
         "Device_Shortcut_AllDevices" : "Todos",
         "Device_Shortcut_Connected" : "Conectado(s)",
         "Device_Shortcut_Favorites" : "Favorito(s)",
