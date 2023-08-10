@@ -334,7 +334,7 @@
         "Network_ManageDevices" : "Administrar dispositivos",
         "Network_ManageAdd" : "Añadir dispositivo",
         "Network_ManageAssign" : "Asignar",
-        "Network_ManageUnassign" : "Desasignar",									   
+        "Network_ManageUnassign" : "Desasignar",
         "Network_ManageEdit" : "Actualizar dispositivo",
         "Network_ManageDel" : "Eliminar dispositivo",
         "Network_ManageAdd_Name" : "Nombre del dispositivo",
