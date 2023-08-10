@@ -12,7 +12,6 @@ from const import pluginsPath, logPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from networkscan import process_scan
 
 #-------------------------------------------------------------------------------
 def run_plugin_scripts(db, runType):
@@ -24,7 +23,8 @@ def run_plugin_scripts(db, runType):
 
     for plugin in conf.plugins:
 
-        shouldRun = False
+        shouldRun = False        
+        prefix = plugin["unique_prefix"]
 
         set = get_plugin_setting(plugin, "RUN")
         if set != None and set['value'] == runType:
@@ -32,7 +32,7 @@ def run_plugin_scripts(db, runType):
                 shouldRun = True
             elif  runType == "schedule":
                 # run if overdue scheduled time   
-                prefix = plugin["unique_prefix"]
+                
 
                 #  check schedules if any contains a unique plugin prefix matching the current plugin
                 for schd in conf.mySchedules:
@@ -44,6 +44,8 @@ def run_plugin_scripts(db, runType):
                             schd.last_run = timeNowTZ()
 
         if shouldRun:            
+            # Header
+            updateState(db,f"Plugins: {prefix}")
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
@@ -418,7 +420,8 @@ def combine_plugin_objects(old, new):
 def process_plugin_events(db, plugin):    
     sql = db.sql
     
-    ##global pluginObjects, pluginEvents
+    # capturing if we need to process scan results for devices
+    conf.currentScanNeedsProcessing = False    
 
     pluginPref = plugin["unique_prefix"]
 
@@ -590,16 +593,10 @@ def process_plugin_events(db, plugin):
         db.commitDB()
 
         # perform scan if mapped to CurrentScan table
-        if dbTable == 'CurrentScan':            
-            process_scan(db)
-
+        if dbTable == 'CurrentScan':   
+            conf.currentScanNeedsProcessing = True          
 
     db.commitDB()
-
-
-
-
-
 
 
 #-------------------------------------------------------------------------------

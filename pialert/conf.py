@@ -1,5 +1,11 @@
 """ config related functions for Pi.Alert """
 
+# TODO: Create and manage this as part of an app_state class object
+#===============================================================================
+# class app_state:
+#     def __init__(self, currentScanNeedsProcessing = False):
+#         self.currentScanNeedsProcessing = currentScanNeedsProcessing
+
 
 # These are global variables, not config items and should not exist !
 mySettings = []
@@ -14,6 +20,8 @@ tz = ''
 # modified time of the most recently imported config file
 # set to a small value to force import at first run
 lastImportedConfFile = 1.1 
+
+currentScanNeedsProcessing = False 
 
 plugins_once_run = False
 newVersionAvailable = False
