@@ -444,7 +444,7 @@
         "DAYS_TO_KEEP_EVENTS_name" : "Eliminar eventos anteriores a",
         "DAYS_TO_KEEP_EVENTS_description" : "Esta es una configuración de mantenimiento. Esto especifica el número de días de entradas de eventos que se guardarán. Todos los eventos anteriores se eliminarán periódicamente.",
         "HRS_TO_KEEP_NEWDEV_name": "Guardar nuevos dispositivos para",
-        "HRS_TO_KEEP_NEWDEV_description": "Esta es una configuración de mantenimiento. Si está habilitado (<code>0</code> está deshabilitado), los dispositivos marcados como <b>Nuevo dispositivo</b> se eliminarán si su <b>Primera sesión</ b> el tiempo era anterior a las horas especificadas en esta configuración. Utilice esta configuración si desea eliminar automáticamente <b>Nuevos dispositivos</b> después de <code>X</code> horas".,
+        "HRS_TO_KEEP_NEWDEV_description": "Esta es una configuración de mantenimiento. Si está habilitado (<code>0</code> está deshabilitado), los dispositivos marcados como <b>Nuevo dispositivo</b> se eliminarán si su <b>Primera sesión</ b> el tiempo era anterior a las horas especificadas en esta configuración. Utilice esta configuración si desea eliminar automáticamente <b>Nuevos dispositivos</b> después de <code>X</code> horas.",
         "REPORT_DASHBOARD_URL_name" : "URL de Pi.Alert",
         "REPORT_DASHBOARD_URL_description" : "Esta URL se utiliza como base para generar enlaces en los correos electrónicos. Ingrese la URL completa que comienza con <code>http://</code>, incluido el número de puerto (sin barra inclinada al final <code>/</code>).",
         "DIG_GET_IP_ARG_name" : "Descubrir de IP de Internet",
