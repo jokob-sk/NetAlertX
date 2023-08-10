@@ -168,7 +168,7 @@
         "DevDetail_SessionInfo_LastSession" : "Última sesión",
         "DevDetail_SessionInfo_LastIP" : "Última IP",
         "DevDetail_SessionInfo_StaticIP" : "IP estática",
-        "DevDetail_EveandAl_Title" : "Configuración de eventos y alertas",
+        "DevDetail_EveandAl_Title" : "<i class=\"fa fa-bolt\"></i> Configuración de eventos y alertas",
         "DevDetail_EveandAl_ScanCycle" : "Ciclo de escaneo",
         "DevDetail_EveandAl_AlertAllEvents" : "Alerta a todos los eventos",
         "DevDetail_EveandAl_AlertDown" : "Alerta de caída",
