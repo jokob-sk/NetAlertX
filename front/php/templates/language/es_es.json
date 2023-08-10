@@ -369,7 +369,7 @@
         "Network_NoAssignedDevices" : "Este nodo de red no tiene asignado ningún dispositivo (nodo externo). Asigna uno de la lista o ve a la pestaña <b><i class=\"fa fa-info-circle\"></i> Detalles</b> de cualquier dispositivo en la página<a href=\"devices.php\"><b> <i class=\"fa fa-laptop\"></i> Dispositivos</b></a>, y asígnalo a un <b><i class=\"fa fa-server\"></i> Nodo (MAC)</b>  <b><i class=\"fa fa-ethernet\"></i> Puerto</b> de la red ahí.",
         "HelpFAQ_Title" : "Ayuda / FAQ",
         "HelpFAQ_Cat_General" : "General",
-        "HelpFAQ_Cat_Detail" : "Detalles",
+        "HelpFAQ_Cat_Detail" : "<i class=\"fa fa-info-circle\"></i> Detalles",
         "HelpFAQ_Cat_General_100_head" : "El reloj en la parte superior derecha y el tiempo de los eventos/presencia no son correctos (diferencia de tiempo).",
         "HelpFAQ_Cat_General_100_text_a" : "En su PC, la siguiente zona horaria está configurada para el entorno PHP:",
         "HelpFAQ_Cat_General_100_text_b" : "Si esta no es la zona horaria en la que se encuentra, debe cambiar la zona horaria en el archivo de configuración de PHP. Puedes encontrarlo en este directorio:",
