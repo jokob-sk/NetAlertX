@@ -37,7 +37,7 @@ jobs:
 
       - name: Get release version
         id: get_version
-        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+        run: echo "dev"
 
       - name: Create .VERSION file
         run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION
