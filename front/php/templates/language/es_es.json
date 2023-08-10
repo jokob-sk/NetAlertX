@@ -214,6 +214,7 @@
         "DevDetail_Run_Actions_Tooltip" : "Ejecutar la acción del desplegable sobre el dispositivo actual.",
         "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalles del dispositivo",
         "DevDetail_Copy_Device_Tooltip": "Copiar detalles del dispositivo de la lista desplegable. Todo en esta página se sobrescribirá",
+        "BackDevDetail_Copy_Title": "Copiar detalles",
         "BackDevDetail_Copy_Ask": "¿Copiar detalles del dispositivo de la lista desplegable (se sobrescribirá todo en esta página)?",        
         "Maintenance_Title" : "Herramientas de mantenimiento",
         "Maintenance_version" : "Actualizaciones de la aplicación",
