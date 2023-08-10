@@ -22,7 +22,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-        <i class=\"fa fa-bolt\"></i></i>
+        <i class=\"fa fa-bolt\"></i>
         <?= lang('Events_Title');?>
       </h1>
 
