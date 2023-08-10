@@ -62,6 +62,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
+          <i class=\"fa fa-cog\"></i></i>
           <?= lang('Navigation_Settings');?> 
           <a style="cursor:pointer">
             <span>
