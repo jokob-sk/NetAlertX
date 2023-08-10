@@ -420,6 +420,7 @@
         "settings_imported" : "Última vez que los ajustes fueron importados desde el archivo pialert.conf:",
         "settings_expand_all" : "Expandir todo",
         "Setting_Override" : "Sobreescribir el valor",
+        "Setting_Override_Description": "Habilitar esta opción anulará un valor predeterminado proporcionado por la aplicación con el valor especificado anteriormente.",
         "General_display_name" : "General",
         "General_icon" : "<i class=\"fa fa-gears\"></i>",
         "ENABLE_ARPSCAN_name" : "Activar escaneo ARP",
