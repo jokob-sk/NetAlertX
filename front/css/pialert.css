@@ -907,3 +907,29 @@ height: 50px;
     width:480px;
     
 }
+
+/*Hidden special button*/
+
+@media (max-width: 464px) {
+  #back-button {
+    display: none;
+  }
+}
+
+@media (max-width: 432px) {
+  #next-button {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  #reload-button {
+    display: none;
+  }
+}
+
+@media (max-width: 365px) {
+  #fullscreen-button {
+    display: none;
+  }
+}
