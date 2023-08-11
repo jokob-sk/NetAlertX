@@ -3,7 +3,8 @@
   "template_type": "database-entry",
   "unique_prefix": "KNWN",
   "enabled": true,
-  "data_source": "template",  
+  "data_source": "template", 
+  "show_ui": false, 
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
       "language_code": "en_us",

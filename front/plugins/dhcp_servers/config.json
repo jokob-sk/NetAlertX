@@ -3,6 +3,7 @@
     "unique_prefix": "DHCPSRVS",
     "enabled": true,    
     "data_source":  "script",
+    "show_ui": true,
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",

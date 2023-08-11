@@ -1,9 +1,10 @@
 {    
-  "code_name": "set_webui_password",
+  "code_name": "set_password",
   "template_type": "database-entry",
   "unique_prefix": "SETPWD",
   "enabled": true,
   "data_source": "script",  
+  "show_ui": false,
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
       "language_code": "en_us",

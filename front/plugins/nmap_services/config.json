@@ -12,6 +12,7 @@
             "compare_use_quotes": true 
         }
     ],
+    "show_ui": true,
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",

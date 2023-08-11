@@ -3,6 +3,7 @@
     "unique_prefix": "UNFIMP",
     "enabled": true,    
     "data_source":  "script",
+    "show_ui": true,
     "data_filters": [
         {
             "compare_column" : "Object_PrimaryID",

@@ -102,16 +102,26 @@ More on specifics below.
 
 Currently, these data sources are supported (valid `data_source` value). 
 
-- Script (`script`)
-- SQL query on the PiAlert database (`pialert-db-query`)
-- Template (`template`)
-- External SQLite database (`sqlite-db-query`)
+| Name | `data_source` value | Needs to return a "table" | Overview (more details on this page below) | 
+|----------------------|----------------------|----------------------|----------------------| 
+| Script | `script` | no | Executes any linux command in the `CMD` setting. |
+| Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
+| Template | `template` | no | Used to generate internal settings, such a sdefault values. |
+| External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
+
 
 > 🔎Example
 >```json
 >"data_source":  "pialert-db-query"
 >```
 Any of the above data sources have to return a "table" of the exact structure as outlined above.
+
+You can show or hide the UI on the "Plugins" page and "Plugins" tab on devices via the `show_ui` property:
+
+> 🔎Example
+>```json
+> "show_ui": true,
+> ```
 
 ### "data_source":  "script"
 
@@ -208,17 +218,29 @@ Used to initialize internal settings. Check the `newdev_template` plugin for det
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL.` prefix. The external SQLite database file has to be mapped in the container to the path specified in the `db_path` property:
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL.` prefix. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
-```json
-  ...
-  "data_source": "sqlite-db-query",
-  "data_source_settings": 
-  {
-    "db_path":"/etc/pihole/pihole-FTL.db"
-  },
-  ...
-```
+>  🔎Example
+>
+>```json
+>  ...
+>{
+>        "function": "DB_PATH",
+>        "type": "readonly",
+>        "default_value":"/etc/pihole/pihole-FTL.db",
+>        "options": [],
+>        "localized": ["name", "description"],
+>        "name" : [{
+>            "language_code":"en_us",
+>            "string" : "DB Path"
+>        }],
+>        "description": [{
+>            "language_code":"en_us",
+>            "string" : "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
+>        }]    
+>    }
+>  ...
+>```
 
 The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type. 
 

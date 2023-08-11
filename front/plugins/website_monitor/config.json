@@ -3,6 +3,7 @@
     "unique_prefix": "WEBMON",
     "enabled": true,    
     "data_source":  "python-script",
+    "show_ui": true,
     "localized": ["display_name", "description", "icon"],
 	"display_name" : [{
 		  "language_code": "en_us",

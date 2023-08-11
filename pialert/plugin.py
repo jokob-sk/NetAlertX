@@ -32,8 +32,6 @@ def run_plugin_scripts(db, runType):
                 shouldRun = True
             elif  runType == "schedule":
                 # run if overdue scheduled time   
-                
-
                 #  check schedules if any contains a unique plugin prefix matching the current plugin
                 for schd in conf.mySchedules:
                     if schd.service == prefix:          
@@ -250,8 +248,16 @@ def execute_plugin(db, plugin):
 
         # Execute command
         mylog('verbose', ['[Plugins] Executing: ', q])
+
+        # ------- necessary settings check  --------
+        set = get_plugin_setting(plugin, "DB_PATH")
+
+        #  handle missing "function":"DB_PATH" setting
+        if set == None:                
+            mylog('none', ['[Plugins] Error: DB_PATH setting for plugin type sqlite-db-query missing.'])
+            return 
         
-        fullSqlitePath = plugin['data_source_settings']['db_path']
+        fullSqlitePath = set["value"]
 
         #  try attaching the sqlite DB
         try:

@@ -12,6 +12,7 @@
             "compare_use_quotes": true            
         }
     ],
+    "show_ui": true,
     "localized": ["display_name", "description", "icon"],
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{

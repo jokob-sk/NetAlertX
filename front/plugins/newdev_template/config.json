@@ -4,6 +4,7 @@
   "unique_prefix": "NEWDEV",
   "enabled": true,
   "data_source": "template",  
+  "show_ui": false,
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
       "language_code": "en_us",

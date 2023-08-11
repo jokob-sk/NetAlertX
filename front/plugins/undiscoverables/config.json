@@ -4,7 +4,7 @@
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "DHCP_Leases", 
-
+  "show_ui": true,
   "localized": ["display_name", "description", "icon"],
 
   "display_name": [

@@ -3,10 +3,6 @@
   "unique_prefix": "PIHOLE",
   "enabled": true,
   "data_source": "sqlite-db-query",
-  "data_source_settings": 
-  {
-    "db_path":"/etc/pihole/pihole-FTL.db"
-  },
   "mapped_to_table": "CurrentScan",  
   "data_filters": [
     {
@@ -17,6 +13,7 @@
         "compare_use_quotes": true 
     }
   ],
+  "show_ui": true,
   "localized": ["display_name", "description", "icon"],
 
   "display_name": [
@@ -57,7 +54,7 @@
         }],
         "description": [{
             "language_code":"en_us",
-            "string" : "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path."
+            "string" : "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting."
         }]
     },
     {
@@ -93,6 +90,21 @@
           "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
         }
       ]
+    },
+    {
+        "function": "DB_PATH",
+        "type": "readonly",
+        "default_value":"/etc/pihole/pihole-FTL.db",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "DB Path"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
+        }]    
     },
     {
         "function": "RUN_SCHD",

@@ -216,7 +216,7 @@ function generateTabs()
 
         // console.log(pluginObj)
 
-        if(pluginObj.data_source != "template") // hiding template-based plugins as they don't produce any output
+        if(pluginObj.show_ui) // hiding plugins where specified
         {
             $('#tabs-location').append(
                 `<li class=" left-nav ${activetab}">
