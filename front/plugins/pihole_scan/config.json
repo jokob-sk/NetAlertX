@@ -59,7 +59,7 @@
     },
     {
         "function": "CMD",
-        "type": "text",
+        "type": "readonly",
         "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM EXTERNAL.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM EXTERNAL.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr <> '00:00:00:00:00:00';            ",
         "options": [],
         "localized": ["name", "description"],
@@ -71,25 +71,6 @@
             "language_code":"en_us",
             "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
         }]
-    },    
-    {
-      "function": "RUN_TIMEOUT",
-      "type": "integer",
-      "default_value": 300,
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Run timeout"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-        }
-      ]
     },
     {
         "function": "DB_PATH",
