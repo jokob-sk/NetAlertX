@@ -2,22 +2,23 @@
 
 ### Script based plugins
 
-- [website_monitor (WEBMON)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/website_monitor/) 
-- [dhcp_servers (DHCPSRVS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_servers/) 
-- [dhcp_leases (DHCPLSS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/dhcp_leases/) 
-- [unifi_import (UNFIMP)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/unifi_import/)
-- [snmp_discovery (SNMPDSC)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/snmp_discovery/)
-- [undiscoverables (UNDIS)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/)
-- [arp_scan (ARPSCAN)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/arp_scan/)
+- [website_monitor (WEBMON)](/front/plugins/website_monitor/) 
+- [dhcp_servers (DHCPSRVS)](/front/plugins/dhcp_servers/) 
+- [dhcp_leases (DHCPLSS)](/front/plugins/dhcp_leases/) 
+- [unifi_import (UNFIMP)](/front/plugins/unifi_import/)
+- [snmp_discovery (SNMPDSC)](/front/plugins/snmp_discovery/)
+- [undiscoverables (UNDIS)](/front/plugins/undiscoverables/)
+- [arp_scan (ARPSCAN)](/front/plugins/arp_scan/)
+- [set_password (SETPWD)](/front/plugins/set_password/)
 
 ### SQL query based plugins
-- [nmap_services (NMAPSERV)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/nmap_services/) 
+- [nmap_services (NMAPSERV)](/front/plugins/nmap_services/) 
 
 ### template based plugins
-- [newdev_template (NEWDEV)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/newdev_template/) 
+- [newdev_template (NEWDEV)](/front/plugins/newdev_template/) 
 
 ### External SQLite based plugins
-- [pihole_scan (PIHOLE)](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/newdev_template/) 
+- [pihole_scan (PIHOLE)](/front/plugins/newdev_template/) 
 
 ## 🌟 Create a custom plugin: Overview
 
@@ -127,7 +128,7 @@ Any of the above data sources have to return a "table" of the exact structure as
 
 ### 👍 Python script.py tips
 
-The [Undicoverables plugins `script.py` file](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
+The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](/front/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
 
 #### 🔎 last_result.log examples
 
