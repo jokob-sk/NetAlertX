@@ -22,7 +22,8 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-       <?= lang('REPORT_TITLE') ;?>	
+        <i class=\"fa fa-flag\"></i>
+        <?= lang('REPORT_TITLE') ;?>	
       </h1>
     </section>
 

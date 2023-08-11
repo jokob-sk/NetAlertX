@@ -44,7 +44,8 @@ $pia_installed_skins = array('skin-black-light',
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?= lang('Maintenance_Title');?>
+        <i class=\"fa fa-wrench\"></i>         
+        <?= lang('Maintenance_Title');?>
       </h1>
     </section>
 
@@ -151,7 +152,10 @@ $db->close();
           <div class="col-md-12">
           <div class="box" id="Maintain-Status">
               <div class="box-header with-border">
-                <h3 class="box-title">Status</h3>
+                <h3 class="box-title">
+                  <i class=\"fa fa-display\"></i></i>         
+                  <?= lang('Maintenance_Status');?>
+                </h3>
               </div>
               <div class="box-body" style="padding-bottom: 5px;">
                 <div class="db_info_table">
