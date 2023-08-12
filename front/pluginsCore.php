@@ -335,7 +335,7 @@ function generateTabs()
                         <li >
                             <a href="#historyTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
                                 
-                                <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCountDisplayed} ' . lang(''Plugins_Out_of') . ' ${histCount})
+                                <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCountDisplayed} <?= lang('Plugins_Out_of');?> ${histCount})
                                 
                             </a>
                         </li>
