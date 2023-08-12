@@ -416,6 +416,7 @@
         "Plugins_DeleteAll" : "Eliminar todo (se ignoran los filtros)",        
         "Plugins_History" : "Historial de eventos",
         "Plugins_Filters_Mac" : "Filtro MAC",
+        "Plugins_Out_of" : "de",
         "Settings_Title" : "<i class=\"fa fa-cog\"> Configuración</i>",
         "settings_missing" : "Actualiza la página, no todos los ajustes se han cargado. Probablemente sea por una sobrecarga de la base de datos.",
         "settings_missing_block" : "No puedes guardar los ajustes sin establecer todas las claves. Actualiza la página. Problabmente esté causado por una sobrecarga de la base de datos.",
