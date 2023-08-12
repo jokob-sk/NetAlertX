@@ -8,7 +8,8 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-         <?= lang('HelpFAQ_Title');?>
+        <i class="fa fa-question"></i>
+        <?= lang('HelpFAQ_Title');?>
       </h1>
     </section>
 
