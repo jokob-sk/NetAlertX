@@ -583,6 +583,18 @@
         "API_display_name" : "API",
         "API_icon" : "<i class=\"fa fa-arrow-down-up-across-line\"></i>",									  
         "API_CUSTOM_SQL_name" : "Endpoint personalizado",
-        "API_CUSTOM_SQL_description" : "Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través del <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">archivo <code>table_custom_endpoint.json</code ></a>."
+        "API_CUSTOM_SQL_description" : "Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través del <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">archivo <code>table_custom_endpoint.json</code ></a>.",
+        "Systeminfo_General" : "General",
+        "Systeminfo_This_Client": "Este cliente",
+        "Systeminfo_System": "Sistema",
+        "Systeminfo_Motherboard" : "Placa base",
+        "Systeminfo_CPU" : "CPU",
+        "Systeminfo_Memory": "Memoria",
+        "Systeminfo_Storage": "Almacenamiento",
+        "Systeminfo_Storage_usage": "Uso de almacenamiento",
+        "Systeminfo_Network": "Red",
+        "Systeminfo_Network_Hardware": "Hardware de red",
+        "Systeminfo_Services": "Servicios",
+        "Systeminfo_USB_Devices": "Dispositivos USB"
     }
 }
