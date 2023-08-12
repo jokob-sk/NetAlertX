@@ -20,19 +20,31 @@
     {
       "language_code": "en_us",
       "string": "Network scan (Arp-Scan)"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Escaneo de red (Arp-Scan)"
+    }	
   ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-search\"></i>"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    }	
   ],
   "description": [
     {
       "language_code": "en_us",
       "string": "This plugin is to execute an arp-scan on the local network"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Este plugin es para ejecutar un escaneo arp en la red local."
+    }	
   ],
     "params" : [
     {
@@ -48,13 +60,22 @@
       "default_value":"schedule",
       "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
       "localized": ["name", "description"],
-      "name" :[{
+      "name" :[
+	  {
           "language_code":"en_us",
           "string" : "When to run"
+      },
+	  {
+          "language_code":"es_es",
+          "string" : "Cuando ejecutar"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>setting</a> "
+      },
+	  {
+          "language_code":"es_es",
+          "string" : "Especifique cuándo se ejecutará su análisis de descubrimiento de red. La configuración típica sería <code>schedule</code> y luego se especifica una programación similar a cron en la configuración <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code></a> "
       }]
   },    
     {
@@ -67,13 +88,21 @@
         {
           "language_code": "en_us",
           "string": "Command"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        }		
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Command to run. This should not be changed"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando para ejecutar. Esto no debe ser cambiado"
+        }		
       ]
     },
     
@@ -87,13 +116,21 @@
         {
           "language_code": "en_us",
           "string": "Run timeout"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        }		
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, se cancela el script."
+        }		
       ]
     },
     {
@@ -105,10 +142,18 @@
         "name" : [{
             "language_code":"en_us",
             "string" : "Schedule"
+        },
+		{
+            "language_code":"es_es",
+            "string" : "Schedule"
         }],
         "description": [{
             "language_code":"en_us",
             "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins scanning your network."
+        },
+		{
+            "language_code":"es_es",
+            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/3 * * * *</code> ejecutará el escaneo cada 3 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
         }]
     },
     {
@@ -120,10 +165,18 @@
         "name" :[{
             "language_code":"en_us",
             "string" : "Watched"
+        },
+		{
+            "language_code":"es_es",
+            "string" : "Watched"
         }] ,
         "description":[{
             "language_code":"en_us",
             "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+        },
+		{
+            "language_code":"es_es",
+            "string" : "Envía una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Valor_observado1</code> es IP</li><li><code>Valor_observado2</code> es Proveedor</li><li><code>Valor_observado3</code> es Interfaz </li><li><code>Valor_observado4</code> es N/A </li></ul>"
         }] 
     },
     {
@@ -136,13 +189,21 @@
         {
           "language_code": "en_us",
           "string": "Report on"
-        }
+        },
+	    {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        }	
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "When should notification be sent out."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo debe enviarse una notificación."
+        }		
       ]
     }
   ],
@@ -161,6 +222,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "MAC"
+          },
+		  {
+          "language_code":"es_es",
+          "string" : "MAC"
           }]
     }, 
     {
@@ -174,6 +239,10 @@
         "localized": ["name"],
         "name":[{
             "language_code":"en_us",
+            "string" : "IP"
+            },
+			{
+            "language_code":"es_es",
             "string" : "IP"
             }]
     },
@@ -189,6 +258,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Vendor"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "Proveedor"
             }]
     } ,
     {
@@ -203,6 +276,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Scan method"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "Método de escaneado"
             }]
     } ,
     {
@@ -216,6 +293,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "Created"
+          },
+		  {
+          "language_code":"es_es",
+          "string" : "Creado"
           }]
     },   
     {
@@ -229,6 +310,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Changed"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "Cambiado"
             }]
     }        
   ]

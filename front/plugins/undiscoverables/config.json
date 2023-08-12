@@ -11,19 +11,31 @@
     {
       "language_code": "en_us",
       "string": "Un-Discoverable Devices"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Dispositivos no detectables"
+    }	
   ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-binoculars\"></i>"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-binoculars\"></i>"
+    }	
   ],
   "description": [
     {
       "language_code": "en_us",
       "string": "This plugin is to import undiscoverable devices from a file."
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Este complemento es para importar dispositivos no detectables desde un archivo."
+    }	
   ],
     "params" : [
     {
@@ -42,10 +54,18 @@
       "name" :[{
           "language_code":"en_us",
           "string" : "When to run"
+      },
+{
+          "language_code":"es_es",
+          "string" : "Cuándo ejecuta"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+      },
+	  {
+          "language_code":"es_es",
+          "string" : "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
       }]
   },    
     {
@@ -58,13 +78,21 @@
         {
           "language_code": "en_us",
           "string": "Command"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        }		
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Command to run. This can not be changed"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar. Esto no se puede cambiar"
+        }		
       ]
     },
     
@@ -78,13 +106,21 @@
         {
           "language_code": "en_us",
           "string": "Run timeout"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        }		
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        }		
       ]
     },
     {
@@ -97,13 +133,20 @@
         {
           "language_code": "en_us",
           "string": "Watched"
-        }
-      ],
+        },
+        {
+          "language_code": "es_es",
+          "string": "Visto"
+        }],
       "description": [
         {
           "language_code": "en_us",
           "string": "Undiscoverable Devices can not change their status, no watch is enabled."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Los dispositivos no detectables no pueden cambiar su estado, ningún reloj está habilitado."
+        }		
       ]
     },
     {
@@ -116,13 +159,21 @@
         {
           "language_code": "en_us",
           "string": "Report on"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        }		
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "No notifications will be sent."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "No se enviarán notificaciones."
+        }		
       ]
     },
     {
@@ -134,10 +185,18 @@
       "name" : [{
           "language_code":"en_us",
           "string" : "UnDiscoverable Devices"
+      },
+	  {
+          "language_code":"es_es",
+          "string" : "Dispositivo no detectable"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "Devices to be added to the devices list."
+      },
+	  {
+          "language_code":"es_es",
+          "string" : "Dispositivos que se añadirán a la lista de dispositivos."
       }]
   }
   ],
@@ -156,6 +215,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "Device Name"
+          },
+		  {
+          "language_code":"es_es",
+          "string" : "Nombre del dispositivo"
           }]
     }, 
     {
@@ -170,6 +233,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "MAC address"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "Dirección MAC"
             }]
     },
     {
@@ -184,6 +251,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "IP"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "IP"
             }]
     } ,
     {
@@ -197,6 +268,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "Created"
+          },
+		  {
+          "language_code":"es_es",
+          "string" : "Creado"
           }]
     },   
     {
@@ -211,6 +286,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Changed"
+            },
+			{
+            "language_code":"es_es",
+            "string" : "Cambiado"
             }]
     }        
   ]

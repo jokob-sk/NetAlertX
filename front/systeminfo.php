@@ -130,7 +130,7 @@ $usb_devices_mount = explode("\n", trim($usb_result));
 // General ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-info-circle"></i> General</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-info-circle"></i> ' . lang('Systeminfo_General') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -155,7 +155,7 @@ echo '<div class="box box-solid">
 // Client ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-globe"></i> This Client</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-globe"></i> ' . lang('Systeminfo_This_Client') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -183,7 +183,7 @@ echo '<script>
 // System ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-computer"></i> System</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-computer"></i> ' . lang('Systeminfo_System') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -220,7 +220,7 @@ echo '<div class="box box-solid">
 // Motherboard ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-laptop-code"></i> Motherboard</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-laptop-code"></i> ' . lang('Systeminfo_Motherboard') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -253,7 +253,7 @@ echo '<div class="box box-solid">
 // CPU ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-microchip"></i> CPU</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-microchip"></i> ' . lang('Systeminfo_CPU') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -302,7 +302,7 @@ echo '<div class="box box-solid">
 // Memory ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-memory"></i> Memory</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-memory"></i> ' . lang('Systeminfo_Memory') . '</h3>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -323,7 +323,7 @@ echo '<div class="box box-solid">
 // Storage ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> Storage</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage') . '</h3>
             </div>
             <div class="box-body">';
 
@@ -360,7 +360,7 @@ echo '      </div>
 // Storage usage ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> Storage usage</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage_usage') . '</h3>
             </div>
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
@@ -383,7 +383,7 @@ echo '      </div>
 // Network ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fas fa-ethernet"></i> Network</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fas fa-ethernet"></i> ' . lang('Systeminfo_Network') . '</h3>
             </div>
             <div class="box-body">
 			<div class="row">
@@ -456,7 +456,7 @@ echo '<div class="box box-solid">
 // Network Hardware ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> Network Hardware</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
             </div>
             <div class="box-body">';
 
@@ -483,7 +483,7 @@ echo '      </div>
 // Services ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-database"></i> Services (running)</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-database"></i> ' . lang('Systeminfo_Services') . '</h3>
             </div>
             <div class="box-body">';
 echo '<div style="height: 300px; overflow: scroll;">';
@@ -515,7 +515,7 @@ echo '      </div>
 // USB ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-               <h3 class="box-title sysinfo_headline"><i class="fab fa-usb"></i> USB Devices</h3>
+               <h3 class="box-title sysinfo_headline"><i class="fab fa-usb"></i> ' . lang('Systeminfo_USB_Devices') . '</h3>
             </div>
             <div class="box-body">';
 echo '         <table class="table table-bordered table-hover table-striped dataTable no-footer" style="margin-bottom: 10px;">';
