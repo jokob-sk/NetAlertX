@@ -20,7 +20,10 @@ class plugins_state:
         self.processScan = processScan
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
+def run_plugin_scripts(db, runType, pluginsState = None):
+
+    if pluginsState == None:
+        pluginsState = plugins_state()
 
     # Header
     updateState(db,"Run: Plugins")
@@ -604,13 +607,15 @@ def process_plugin_events(db, plugin, pluginsState):
         sql.executemany(q, sqlParams)
 
         db.commitDB()
+
+        # perform scan if mapped to CurrentScan table        
+        if dbTable == 'CurrentScan':               
+            pluginsState.processScan = True  
  
 
     db.commitDB()
 
-    # perform scan if mapped to CurrentScan table        
-    if dbTable == 'CurrentScan':               
-        pluginsState.processScan = True  
+
 
     return pluginsState
 

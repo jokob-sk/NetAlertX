@@ -74,10 +74,12 @@ def print_log (pText):
 # textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
 # is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
 
-def append_file_binary (pPath, input):    
-    file = open (pPath, 'ab') 
-    file.write (input) 
-    file.close() 
+def append_file_binary(file_path, input_data):
+    with open(file_path, 'ab') as file:
+        if isinstance(input_data, str):
+            input_data = input_data.encode('utf-8')  # Encode string as bytes
+        file.write(input_data)
+
 
 
 #-------------------------------------------------------------------------------
