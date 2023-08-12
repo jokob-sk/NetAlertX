@@ -202,7 +202,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus_lastrun.log"];
+  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus_lastrun.log", 'pialert.php_errors.log'];
   
   if(in_array($logFile, $allowedFiles))
   {
@@ -365,9 +365,38 @@ function encode_single_quotes ($val) {
 // -------------------------------------------------------------------------------------------
 
 function getDateFromPeriod () {
-  $period = $_REQUEST['period'];    
-  return '"'. date ('Y-m-d', strtotime ('+2 day -'. $period) ) .'"';
+
+  $periodDate = $_REQUEST['period'];
+
+  $periodDateSQL = "";
+  $days = "";
+
+  switch ($periodDate) {
+    case '7 days':
+      $days = "7";
+      break;
+    case '1 month':
+      $days = "30";
+      break;
+    case '1 year':
+      $days = "365";
+      break;
+    case '100 years':
+      $days = "3650"; //10 years
+      break;
+    default:
+    $days = "1";    
+  }  
+
+  $periodDateSQL = "-".$days." day"; 
+
+  return " date('now', '".$periodDateSQL."') ";
+ 
+  // $period = $_REQUEST['period'];    
+  // return '"'. date ('Y-m-d', strtotime ('+2 day -'. $period) ) .'"';
 }
+
+
 
 // -------------------------------------------------------------------------------------------
 function quotes ($text) {

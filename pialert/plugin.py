@@ -23,6 +23,7 @@ class plugins_state:
 def run_plugin_scripts(db, runType, pluginsState = None):
 
     if pluginsState == None:
+        mylog('debug', ['[Plugins] pluginsState initialized '])
         pluginsState = plugins_state()
 
     # Header
@@ -614,8 +615,6 @@ def process_plugin_events(db, plugin, pluginsState):
  
 
     db.commitDB()
-
-
 
     return pluginsState
 

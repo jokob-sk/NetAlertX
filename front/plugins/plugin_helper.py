@@ -14,7 +14,9 @@ def read_config_file():
 
     print('[plugin_helper] reading config file')
     # load the variables from  pialert.conf
-    code = compile(filename.read_text(), filename.name, "exec")
+    with open(filename, "r") as file:
+        code = compile(file.read(), filename, "exec")
+
     confDict = {} # config dictionary
     exec(code, {"__builtins__": {}}, confDict)
     return confDict 

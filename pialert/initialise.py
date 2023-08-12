@@ -124,6 +124,7 @@ def importConfigs (db):
     conf.APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
     conf.APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
     conf.APPRISE_PAYLOAD = ccd('APPRISE_PAYLOAD', 'html' , c_d, 'Payload type', 'text.select', "['html', 'text']", 'Apprise')
+    conf.APPRISE_SIZE = ccd('APPRISE_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Apprise')
 
     # NTFY
     conf.REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
