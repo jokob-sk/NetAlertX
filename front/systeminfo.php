@@ -20,7 +20,7 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-       <i class=\"fa fa-microchip\"></i>
+       <i class="fa fa-microchip"></i>
        <?= lang('SYSTEM_TITLE') ;?>
       </h1>
     </section>
