@@ -153,7 +153,7 @@ $db->close();
           <div class="box" id="Maintain-Status">
               <div class="box-header with-border">
                 <h3 class="box-title">
-                  <i class=\"fa fa-display\"></i></i>         
+                  <i class="fa fa-display"></i></i>         
                   <?= lang('Maintenance_Status');?>
                 </h3>
               </div>
