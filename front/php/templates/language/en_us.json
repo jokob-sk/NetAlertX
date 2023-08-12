@@ -417,6 +417,7 @@
         "Plugins_DeleteAll" : "Delete all (filters are ignored)",
         "Plugins_History" : "Events History",
         "Plugins_Filters_Mac" : "Mac Filter",
+        "Plugins_Out_of" : "out of",        
         "Settings_Metadata_Toggle" : "Show/hide metadata for the given setting.",
         "settings_missing" : "Not all settings loaded, refresh the page! This is probably caused by a high load on the database.",
         "settings_missing_block" : "You can not save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.",
