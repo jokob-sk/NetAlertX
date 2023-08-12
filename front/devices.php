@@ -31,7 +31,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-          <i class=\"fa fa-laptop\"></i>
+          <i class="fa fa-laptop"></i>
           <?= lang('Device_Title');?>
       </h1>
     </section>
