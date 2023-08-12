@@ -250,7 +250,7 @@ def send_notifications (db):
         mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
         mylog('verbose', ['[Notification] Ports sections done.'])    
 
-    if 'plugins' in conf.INCLUDED_SECTIONS and conf.ENABLE_PLUGINS:
+    if 'plugins' in conf.INCLUDED_SECTIONS:
         # Compose Plugins Section
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
 

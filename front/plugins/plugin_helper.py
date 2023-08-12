@@ -1,4 +1,30 @@
 from time import strftime
+import pytz
+from datetime import datetime
+
+#-------------------------------------------------------------------------------
+def read_config_file():
+    """
+    retuns dict on the config file key:value pairs
+    config_dir[key]
+    """
+
+    filename = '/home/pi/pialert/config/pialert.conf'
+
+
+    print('[plugin_helper] reading config file')
+    # load the variables from  pialert.conf
+    code = compile(filename.read_text(), filename.name, "exec")
+    confDict = {} # config dictionary
+    exec(code, {"__builtins__": {}}, confDict)
+    return confDict 
+# -------------------------------------------------------------------
+
+
+
+pialertConfigFile = read_config_file()
+timeZoneSetting = pialertConfigFile['TIMEZONE']
+timeZone = pytz.timezone(timeZoneSetting)
 
 
 # -------------------------------------------------------------------
@@ -23,7 +49,7 @@ class Plugin_Object:
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = strftime("%Y-%m-%d %H:%M:%S")
+        self.created = datetime.now(timeZone).strftime("%Y-%m-%d %H:%M:%S")
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2
@@ -51,6 +77,7 @@ class Plugin_Object:
             self.foreignKey,
         )
         return line
+    
 
 
 class Plugin_Objects:
@@ -94,3 +121,7 @@ class Plugin_Objects:
             for obj in self.objects:
                 fp.write(obj.write())
         fp.close()
+
+
+
+

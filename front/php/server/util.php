@@ -366,7 +366,7 @@ function encode_single_quotes ($val) {
 
 function getDateFromPeriod () {
   $period = $_REQUEST['period'];    
-  return '"'. date ('Y-m-d', strtotime ('+1 day -'. $period) ) .'"';
+  return '"'. date ('Y-m-d', strtotime ('+2 day -'. $period) ) .'"';
 }
 
 // -------------------------------------------------------------------------------------------

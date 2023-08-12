@@ -120,8 +120,8 @@ def main ():
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
-        if conf.ENABLE_PLUGINS and conf.plugins_once_run == False:
-            run_plugin_scripts(db, 'once')  
+        if conf.plugins_once_run == False:
+            pluginsState = run_plugin_scripts(db, 'once')  
             conf.plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
@@ -145,8 +145,7 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            if conf.ENABLE_PLUGINS:
-                run_plugin_scripts(db,'schedule') 
+            pluginsState = run_plugin_scripts(db,'schedule', pluginsState) 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
@@ -201,16 +200,17 @@ def main ():
                     performNmapScan(db, get_all_devices(db))
            
            
-            # Run splugin scripts which are set to run every timne after a scans finished
-            if conf.ENABLE_PLUGINS:
-                run_plugin_scripts(db,'always_after_scan')
+            # Run splugin scripts which are set to run every timne after a scans finished            
+            pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)
 
             
             # process all the scanned data into new devices
-            if conf.currentScanNeedsProcessing == True:   
-                mylog('debug', "[MAIN] start processig scan results")             
+            mylog('debug', [f'[MAIN] processScan: {pluginsState.processScan}'])
+            if pluginsState.processScan == True:   
+                mylog('debug', "[MAIN] start processig scan results")  
+                pluginsState.processScan = False
                 process_scan(db)
-                conf.currentScanNeedsProcessing = False                
+                          
             
             # Reporting   
             if conf.cycle in conf.check_report:
@@ -221,9 +221,8 @@ def main ():
                 
                 #  new devices were found
                 if len(newDevices) > 0:
-                    #  run all plugins registered to be run when new devices are found
-                    if conf.ENABLE_PLUGINS:
-                        run_plugin_scripts(db, 'on_new_device')
+                    #  run all plugins registered to be run when new devices are found                    
+                    pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)
 
                     #  Scan newly found devices with Nmap if enabled
                     if conf.NMAP_ACTIVE and len(newDevices) > 0:
@@ -241,15 +240,6 @@ def main ():
 
             # Commit SQL
             db.commitDB()          
-            
-            # Final message
-            if conf.cycle != "":
-                action = str(conf.cycle)
-                if action == "1":
-                    action = "network_scan"
-                mylog('verbose', ['[MAIN] Last action: ', action])
-                conf.cycle = ""
-                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
             
             # Footer
             updateState(db,"Process: Wait")

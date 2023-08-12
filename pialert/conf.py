@@ -2,10 +2,6 @@
 
 # TODO: Create and manage this as part of an app_state class object
 #===============================================================================
-# class app_state:
-#     def __init__(self, currentScanNeedsProcessing = False):
-#         self.currentScanNeedsProcessing = currentScanNeedsProcessing
-
 
 # These are global variables, not config items and should not exist !
 mySettings = []
@@ -20,8 +16,6 @@ tz = ''
 # modified time of the most recently imported config file
 # set to a small value to force import at first run
 lastImportedConfFile = 1.1 
-
-currentScanNeedsProcessing = False 
 
 plugins_once_run = False
 newVersionAvailable = False
@@ -49,7 +43,6 @@ ENABLE_ARPSCAN = True
 SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL = 'verbose' 
 TIMEZONE = 'Europe/Berlin'
-ENABLE_PLUGINS =  True 
 PIALERT_WEB_PROTECTION =  False 
 PIALERT_WEB_PASSWORD = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' 
 INCLUDED_SECTIONS =  ['internet', 'new_devices', 'down_devices', 'events', 'ports']   

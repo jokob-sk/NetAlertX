@@ -21,9 +21,8 @@ def update_api(db, isNotification = False, updateOnlyDataSources = []):
 
     # update notifications moved to reporting send_api()
 
-    # Save plugins
-    if conf.ENABLE_PLUGINS: 
-        write_file(folder + 'plugins.json'  , json.dumps({"data" : conf.plugins}))  
+    # Save plugins    
+    write_file(folder + 'plugins.json'  , json.dumps({"data" : conf.plugins}))  
 
     #  prepare database tables we want to expose 
     dataSourcesSQLs = [

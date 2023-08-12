@@ -13,8 +13,14 @@ from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
 
+
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType):
+class plugins_state:
+    def __init__(self, processScan = False):
+        self.processScan = processScan
+
+#-------------------------------------------------------------------------------
+def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
 
     # Header
     updateState(db,"Run: Plugins")
@@ -47,7 +53,9 @@ def run_plugin_scripts(db, runType):
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
-            execute_plugin(db, plugin) 
+            pluginsState = execute_plugin(db, plugin, pluginsState) 
+
+    return pluginsState
 
 
 
@@ -120,7 +128,7 @@ def get_plugin_string(props, el):
 
 #-------------------------------------------------------------------------------
 # Executes the plugin command specified in the setting with the function specified as CMD 
-def execute_plugin(db, plugin):
+def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     sql = db.sql  
 
     # ------- necessary settings check  --------
@@ -289,10 +297,12 @@ def execute_plugin(db, plugin):
         sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         db.commitDB()
 
-        process_plugin_events(db, plugin)
+        pluginsState = process_plugin_events(db, plugin, pluginsState)
 
         # update API endpoints
-        update_api(db, False, ["plugins_events","plugins_objects"])   
+        update_api(db, False, ["plugins_events","plugins_objects"])  
+    
+    return pluginsState
 
 #-------------------------------------------------------------------------------
 def custom_plugin_decoder(pluginDict):
@@ -423,11 +433,8 @@ def combine_plugin_objects(old, new):
 
 #-------------------------------------------------------------------------------
 # Check if watched values changed for the given plugin
-def process_plugin_events(db, plugin):    
+def process_plugin_events(db, plugin, pluginsState):    
     sql = db.sql
-    
-    # capturing if we need to process scan results for devices
-    conf.currentScanNeedsProcessing = False    
 
     pluginPref = plugin["unique_prefix"]
 
@@ -597,12 +604,15 @@ def process_plugin_events(db, plugin):
         sql.executemany(q, sqlParams)
 
         db.commitDB()
-
-        # perform scan if mapped to CurrentScan table
-        if dbTable == 'CurrentScan':   
-            conf.currentScanNeedsProcessing = True          
+ 
 
     db.commitDB()
+
+    # perform scan if mapped to CurrentScan table        
+    if dbTable == 'CurrentScan':               
+        pluginsState.processScan = True  
+
+    return pluginsState
 
 
 #-------------------------------------------------------------------------------
@@ -648,5 +658,4 @@ class plugin_object_class:
 
         self.watchedHash  = str(hash(tmp))
 
-  
 

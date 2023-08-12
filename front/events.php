@@ -13,7 +13,7 @@
 -->
 
 <?php
-  require 'php/templates/header.php';
+  require 'php/templates/header.php';  
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -22,7 +22,7 @@
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
       <h1 id="pageTitle">
-        <i class=\"fa fa-bolt\"></i>
+        <i class="fa fa-bolt"></i>
         <?= lang('Events_Title');?>
       </h1>
 
