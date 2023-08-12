@@ -369,7 +369,7 @@
         "Network_Node_Name" : "Nombre de nodo",
         "Network_Parent" : "Dispositivo primario de la red",
         "Network_NoAssignedDevices" : "Este nodo de red no tiene asignado ningún dispositivo (nodo externo). Asigna uno de la lista o ve a la pestaña <b><i class=\"fa fa-info-circle\"></i> Detalles</b> de cualquier dispositivo en la página<a href=\"devices.php\"><b> <i class=\"fa fa-laptop\"></i> Dispositivos</b></a>, y asígnalo a un <b><i class=\"fa fa-server\"></i> Nodo (MAC)</b>  <b><i class=\"fa fa-ethernet\"></i> Puerto</b> de la red ahí.",
-        "HelpFAQ_Title" : "<i class=\"fa fa-question\"></i> Ayuda / FAQ",
+        "HelpFAQ_Title" : "Ayuda / FAQ",
         "HelpFAQ_Cat_General" : "General",
         "HelpFAQ_Cat_Detail" : "Detalles",
         "HelpFAQ_Cat_General_100_head" : "El reloj en la parte superior derecha y el tiempo de los eventos/presencia no son correctos (diferencia de tiempo).",
