@@ -320,8 +320,20 @@
         "HelpFAQ_Cat_Network_600_text" : "Diese Seite soll dir die Möglichkeit bieten, die Belegung deiner Netzwerkgeräte abzubilden. Dazu kannst du einen oder mehrere Switches, WLANs, Router, etc. erstellen, sie ggf. mit einer Portanzahl versehen und bereits erkannte Geräte diesen zuordnen. Diese Zuordnung erfolgt in der Detailansicht, des zuzuordnenden Gerätes. So ist es dir möglich, schnell festzustellen an welchem Port ein Host angeschlossen und ob er online ist.",
         "REPORT_TITLE" : "Bericht",
         "REPORT_ERROR" : "Die gesuchte Seite ist vorübergehend nicht verfügbar. Bitte versuchen Sie es nach ein paar Sekunden erneut",
-        "SYSTEM_TITLE" : "Systeminformationen"
+        "SYSTEM_TITLE" : "Systeminformationen",
         "Plugins_Out_of" : "von",
+        "Systeminfo_General" : "Allgemein",
+        "Systeminfo_This_Client" : "Dieser Mandant",
+        "Systeminfo_System" : "System",
+        "Systeminfo_Motherboard" : "Hauptplatine",
+        "Systeminfo_CPU" : "CPU",
+        "Systeminfo_Memory" : "Speicher",
+        "Systeminfo_Storage" : "Lagerung",
+        "Systeminfo_Storage_usage" : "Speicherverwendung",
+        "Systeminfo_Network" : "Netzwerk",
+        "Systeminfo_Network_Hardware" : "Netzwerk Hardware",
+        "Systeminfo_Services" : "Dienste",
+        "Systeminfo_USB_Devices" : "USB-Geräte"        
     }
   }
   
