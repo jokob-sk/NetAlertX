@@ -595,6 +595,8 @@
         "Systeminfo_Network": "Red",
         "Systeminfo_Network_Hardware": "Hardware de red",
         "Systeminfo_Services": "Servicios",
-        "Systeminfo_USB_Devices": "Dispositivos USB"
+        "Systeminfo_USB_Devices": "Dispositivos USB",
+        "Systeminfo_Services_Name": "Nombre del servicio",
+        "Systeminfo_Services_Description": "Descripción del servicio"
     }
 }
