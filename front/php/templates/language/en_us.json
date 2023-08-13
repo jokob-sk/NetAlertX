@@ -594,10 +594,12 @@
         "Systeminfo_CPU" : "CPU",
         "Systeminfo_Memory" : "Memory",
         "Systeminfo_Storage" : "Storage",
-        "Systeminfo_Storage_usage" : "Storage usage",
+        "Systeminfo_Storage_Usage" : "Storage usage",
         "Systeminfo_Network" : "Network",
         "Systeminfo_Network_Hardware" : "Network Hardware",
         "Systeminfo_Services" : "Services",
+        "Systeminfo_Services_Name" : "Service Name",
+        "Systeminfo_Services_Description" : "Service Description",        
         "Systeminfo_USB_Devices" : "USB Devices"        
     }
 }
