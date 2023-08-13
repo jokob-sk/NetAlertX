@@ -240,7 +240,7 @@ echo '<div class="box box-solid">
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_bios . '</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS date_</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS date:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosdate . '</div>
                 </div>	
                 <div class="row">
