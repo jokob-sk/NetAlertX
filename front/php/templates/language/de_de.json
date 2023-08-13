@@ -329,7 +329,7 @@
         "Systeminfo_CPU" : "CPU",
         "Systeminfo_Memory" : "Speicher",
         "Systeminfo_Storage" : "Lagerung",
-        "Systeminfo_Storage_usage" : "Speicherverwendung",
+        "Systeminfo_Storage_Usage" : "Speicherverwendung",
         "Systeminfo_Network" : "Netzwerk",
         "Systeminfo_Network_Hardware" : "Netzwerk Hardware",
         "Systeminfo_Services" : "Dienste",
