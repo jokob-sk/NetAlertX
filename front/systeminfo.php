@@ -134,19 +134,19 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Full Date:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Full_Date') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Date') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
                 </div>            
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Date2:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Date2') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Timezone:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_TimeZone') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
                 </div>                                        
             </div>
@@ -159,11 +159,11 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">User Agent:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Client_User_Agent') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_USER_AGENT'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Browser Resolution:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Client_Resolution') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b" id="resolution"></div>
                 </div>
             </div>
@@ -240,7 +240,7 @@ echo '<div class="box box-solid">
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_bios . '</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS date_</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">BIOS date:</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosdate . '</div>
                 </div>	
                 <div class="row">
@@ -257,23 +257,23 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Vendor:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Vendor') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $cpu_vendor . '</div>
                 </div>			
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Name:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Name') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_model'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Cores:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Cores') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Speed:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Speed') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_frequ'] . ' MHz</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Temp') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">'. $cpu_temp .' °C</div>
                 </div>';
 				  // Get the number of CPU cores
@@ -306,15 +306,15 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Memory %:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Memory_Usage_Percent') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $memory_usage_percent . ' %</div>
                 </div>                 
 				<div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Use memory:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Memory_Usage') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $mem_used . ' MB / ' . $total_memorymb . ' MB</div>
                 </div>               
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Total memory:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Memory_Total_Memory') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $total_memorymb  . ' MB (' . $total_memorykb . ' KB)</div>
                 </div>
             </div>
@@ -344,13 +344,13 @@ for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
 	//if (stristr($hdd_devices[$x], '/dev/')) {
 	echo '<div class="row">';
 	if (preg_match('~[0-9]+~', $storage_lsblk_line[$x][0])) {
-		echo '<div class="col-sm-4 sysinfo_gerneral_a">Mount point "' . $storage_lsblk_line[$x][3] . '"</div>';
+		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . lang('Systeminfo_Storage_Mount') . ' ' . $storage_lsblk_line[$x][3] . '"</div>';
 	} else {
 		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . str_replace('_', ' ', $storage_lsblk_line[$x][3]) . '"</div>';
 	}
-	echo '<div class="col-sm-3 sysinfo_gerneral_b">Device: /dev/' . $storage_lsblk_line[$x][0] . '</div>';
-	echo '<div class="col-sm-2 sysinfo_gerneral_b">Size: ' . $storage_lsblk_line[$x][1] . '</div>';
-	echo '<div class="col-sm-2 sysinfo_gerneral_b">Type: ' . $storage_lsblk_line[$x][2] . '</div>';
+	echo '<div class="col-sm-3 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Device') . ' /dev/' . $storage_lsblk_line[$x][0] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Size') . ' ' . $storage_lsblk_line[$x][1] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Type') . ' ' . $storage_lsblk_line[$x][2] . '</div>';
 	echo '</div>';
 	//}
 }
@@ -360,7 +360,7 @@ echo '      </div>
 // Storage usage ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage_usage') . '</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage_Usage') . '</h3>
             </div>
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
@@ -369,10 +369,10 @@ for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 		if ($hdd_devices_used[$x] == 0) {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
 		if ($hdd_devices_free[$x] == 0) {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
 		echo '<div class="row">';
-		echo '<div class="col-sm-4 sysinfo_gerneral_a">Mount point "' . $hdd_devices_mount[$x] . '"</div>';
-		echo '<div class="col-sm-2 sysinfo_gerneral_b">Total: ' . $temp_total . ' GB</div>';
-		echo '<div class="col-sm-3 sysinfo_gerneral_b">Used: ' . $temp_used . ' GB (' . number_format($hdd_devices_percent[$x], 1, ',', '.') . '%)</div>';
-		echo '<div class="col-sm-2 sysinfo_gerneral_b">Free: ' . $temp_free . ' GB</div>';
+		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . lang('Systeminfo_Storage_Usage_Mount') . ' ' . $hdd_devices_mount[$x] . '"</div>';
+		echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Usage_Total') . ' ' . $temp_total . ' GB</div>';
+		echo '<div class="col-sm-3 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Usage_Used') . ' ' . $temp_used . ' GB (' . number_format($hdd_devices_percent[$x], 1, ',', '.') . '%)</div>';
+		echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Usage_Free') . ' ' . $temp_free . ' GB</div>';
 		echo '</div>';
 	}
 }
@@ -491,8 +491,8 @@ exec('systemctl --type=service --state=running', $running_services);
 echo '<table class="table table-bordered table-hover table-striped dataTable no-footer" style="margin-bottom: 10px;">';
 echo '<thead>
 		<tr role="row">
-			<th style="padding: 8px;">Service Name</th>
-			<th style="padding: 8px;">Service Description</th>
+			<th style="padding: 8px;">' . lang('Systeminfo_Services_Name') . '</th>
+			<th style="padding: 8px;">' . lang('Systeminfo_Services_Description') . '</th>   
 		</tr>
 	  </thead>';
 $table_color = 'odd';
