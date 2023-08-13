@@ -257,23 +257,23 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Vendor:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Vendor') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $cpu_vendor . '</div>
                 </div>			
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Name:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Name') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_model'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Cores:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Cores') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Speed:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Speed') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['cpu_frequ'] . ' MHz</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_CPU_Temp') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">'. $cpu_temp .' °C</div>
                 </div>';
 				  // Get the number of CPU cores
