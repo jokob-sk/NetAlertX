@@ -590,6 +590,8 @@
         "Systeminfo_General_Date2": "Fecha2:",
         "Systeminfo_General_TimeZone": "Zona horaria:",
         "Systeminfo_This_Client": "Este cliente",
+        "Systeminfo_Client_User_Agent": "Agente de usuario:",
+        "Systeminfo_Client_Resolution": "Resolución del navegador:",        
         "Systeminfo_System": "Sistema",
         "Systeminfo_Motherboard" : "Placa base",
         "Systeminfo_CPU" : "CPU",
