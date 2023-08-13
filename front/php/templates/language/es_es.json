@@ -592,11 +592,15 @@
         "Systeminfo_Memory": "Memoria",
         "Systeminfo_Storage": "Almacenamiento",
         "Systeminfo_Storage_usage": "Uso de almacenamiento",
+        "Systeminfo_Storage_Usage_Mount": "Punto de montaje:",			
+        "Systeminfo_Storage_Usage_Total": "Total:",
+        "Systeminfo_Storage_Usage_Used": "Usado:",
+        "Systeminfo_Storage_Usage_Free": "Libre:",        
         "Systeminfo_Network": "Red",
         "Systeminfo_Network_Hardware": "Hardware de red",
         "Systeminfo_Services": "Servicios",
-        "Systeminfo_USB_Devices": "Dispositivos USB",
         "Systeminfo_Services_Name": "Nombre del servicio",
-        "Systeminfo_Services_Description": "Descripción del servicio"
+        "Systeminfo_Services_Description": "Descripción del servicio"        
+        "Systeminfo_USB_Devices": "Dispositivos USB"
     }
 }
