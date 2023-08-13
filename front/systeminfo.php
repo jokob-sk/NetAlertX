@@ -159,11 +159,11 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">User Agent:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Client_User_Agent') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_USER_AGENT'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Browser Resolution:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Client_Resolution') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b" id="resolution"></div>
                 </div>
             </div>
