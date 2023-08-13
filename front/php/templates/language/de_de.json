@@ -328,6 +328,8 @@
         "Systeminfo_General_Date2" "Datum2:",
         "Systeminfo_General_TimeZone": "Zeitzone:",        
         "Systeminfo_This_Client" : "Dieser Mandant",
+        "Systeminfo_Client_User_Agent": "Benutzeragent:",
+        "Systeminfo_Client_Resolution": "Browserauflösung:",        
         "Systeminfo_System" : "System",
         "Systeminfo_Motherboard" : "Hauptplatine",
         "Systeminfo_CPU" : "CPU",
