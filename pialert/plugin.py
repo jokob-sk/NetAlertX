@@ -517,7 +517,7 @@ def process_plugin_events(db, plugin, pluginsState):
             sql.execute ("UPDATE Plugins_Objects set Plugin = ?, DateTimeChanged = ?, Watched_Value1 = ?, Watched_Value2 = ?, Watched_Value3 = ?, Watched_Value4 = ?, Status = ?, Extra = ?, ForeignKey = ? WHERE \"Index\" = ?", (plugObj.pluginPref, plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3, plugObj.watched4, plugObj.status, plugObj.extra, plugObj.foreignKey, plugObj.index))
 
     # Update the Plugins_Events with the new statuses    
-    sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', pluginPref)
+    sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
 
     for plugObj in pluginEvents: 
 
