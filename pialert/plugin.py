@@ -514,10 +514,10 @@ def process_plugin_events(db, plugin, pluginsState):
 
             sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
         else:
-            sql.execute (f"UPDATE Plugins_Objects set Plugin = '{plugObj.pluginPref}', DateTimeChanged = '{plugObj.changed}', Watched_Value1 = '{plugObj.watched1}', Watched_Value2 = '{plugObj.watched2}', Watched_Value3 = '{plugObj.watched3}', Watched_Value4 = '{plugObj.watched4}', Status = '{plugObj.status}', Extra = '{plugObj.extra}', ForeignKey = '{plugObj.foreignKey}' WHERE \"Index\" = {plugObj.index}")            
+            sql.execute ("UPDATE Plugins_Objects set Plugin = ?, DateTimeChanged = ?, Watched_Value1 = ?, Watched_Value2 = ?, Watched_Value3 = ?, Watched_Value4 = ?, Status = ?, Extra = ?, ForeignKey = ? WHERE \"Index\" = ?", (plugObj.pluginPref, plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3, plugObj.watched4, plugObj.status, plugObj.extra, plugObj.foreignKey, plugObj.index))
 
     # Update the Plugins_Events with the new statuses    
-    sql.execute (f'DELETE FROM Plugins_Events where Plugin = "{pluginPref}"')
+    sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', pluginPref)
 
     for plugObj in pluginEvents: 
 
