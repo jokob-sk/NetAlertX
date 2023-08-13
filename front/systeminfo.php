@@ -306,15 +306,15 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Memory %:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . $Systeminfo_Memory_Usage_Percent . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $memory_usage_percent . ' %</div>
                 </div>                 
 				<div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Use memory:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . $Systeminfo_Memory_Usage . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $mem_used . ' MB / ' . $total_memorymb . ' MB</div>
                 </div>               
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Total memory:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . $Systeminfo_Memory_Total_Memory . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $total_memorymb  . ' MB (' . $total_memorykb . ' KB)</div>
                 </div>
             </div>
