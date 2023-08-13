@@ -333,7 +333,7 @@
         "Systeminfo_System" : "System",
         "Systeminfo_Motherboard" : "Hauptplatine",
         "Systeminfo_CPU" : "CPU",
-		"Systeminfo_CPU_Vendor": "CPU-Anbieter:",
+	"Systeminfo_CPU_Vendor": "CPU-Anbieter:",
         "Systeminfo_CPU_Name": "CPU-Name:",
         "Systeminfo_CPU_Cores": "CPU-Kerne:",
         "Systeminfo_CPU_Speed": "CPU-Geschwindigkeit:",
