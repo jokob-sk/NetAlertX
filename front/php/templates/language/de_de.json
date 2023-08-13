@@ -330,6 +330,10 @@
         "Systeminfo_Memory" : "Speicher",
         "Systeminfo_Storage" : "Lagerung",
         "Systeminfo_Storage_Usage" : "Speicherverwendung",
+        "Systeminfo_Storage_Usage_Mount": "Mountpunkt:",
+        "Systeminfo_Storage_Usage_Total": "Gesamt:",
+        "Systeminfo_Storage_Usage_Used": "Verwendet:",
+        "Systeminfo_Storage_Usage_Free": "Kostenlos:",        
         "Systeminfo_Network" : "Netzwerk",
         "Systeminfo_Network_Hardware" : "Netzwerk Hardware",
         "Systeminfo_Services" : "Dienste",
@@ -338,4 +342,3 @@
         "Systeminfo_USB_Devices" : "USB-Geräte"        
     }
   }
-  
