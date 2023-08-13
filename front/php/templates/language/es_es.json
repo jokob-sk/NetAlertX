@@ -604,7 +604,7 @@
         "Systeminfo_Network_Hardware": "Hardware de red",
         "Systeminfo_Services": "Servicios",
         "Systeminfo_Services_Name": "Nombre del servicio",
-        "Systeminfo_Services_Description": "Descripción del servicio"        
+        "Systeminfo_Services_Description": "Descripción del servicio",        
         "Systeminfo_USB_Devices": "Dispositivos USB"
     }
 }
