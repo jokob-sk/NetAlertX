@@ -360,7 +360,7 @@ echo '      </div>
 // Storage usage ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage_usage') . '</h3>
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-hdd"></i> ' . lang('Systeminfo_Storage_Usage') . '</h3>
             </div>
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
