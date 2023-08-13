@@ -333,6 +333,8 @@
         "Systeminfo_Network" : "Netzwerk",
         "Systeminfo_Network_Hardware" : "Netzwerk Hardware",
         "Systeminfo_Services" : "Dienste",
+        "Systeminfo_Services_Name": "Dienstname",
+        "Systeminfo_Services_Description": "Dienstbeschreibung",        
         "Systeminfo_USB_Devices" : "USB-Geräte"        
     }
   }
