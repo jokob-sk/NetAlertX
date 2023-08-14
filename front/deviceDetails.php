@@ -157,7 +157,7 @@
                       </div>
 
                       <!-- Owner -->
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Owner_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Owner');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
@@ -174,7 +174,7 @@
                       </div>
 
                       <!-- Type -->
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Type_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Type');?></label>
                         <div class="col-sm-9">
                           <div class="input-group">
@@ -192,14 +192,14 @@
                       </div>
 
                       <!-- Icon -->
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Icon_Descr');?>">
                         <label class="col-sm-3 control-label">
                           <?= lang('DevDetail_Icon');?> 
                           <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
-                            <input class="form-control" title="<?= lang('DevDetail_Icon_Descr');?>" id="txtIcon" type="text" value="--">
+                            <input class="form-control"  id="txtIcon" type="text" value="--">
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
                             <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtIcon');"></i></span>
                             <div class="input-group-btn">
@@ -214,7 +214,7 @@
                       </div>
 
                       <!-- Vendor -->
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Vendor_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Vendor');?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtVendor" type="text" value="--">
@@ -325,7 +325,7 @@
 
                       <!-- Network -->
                       <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Network_Node_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
                           <div class="input-group"> 
@@ -342,7 +342,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_Network_Port_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network_Port');?></label>
                         <div class="col-sm-9">
                           <input class="form-control" id="txtNetworkPort" type="text" value="--">
@@ -431,7 +431,7 @@
                       </div>
 
                       <!-- Randomized MAC -->
-                      <div class="form-group" >
+                      <div class="form-group" title="<?= lang('RandomMAC_hover');?>" >
                         <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_RandomMAC');?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
                           <span id="iconRandomMACinactive" data-toggle="tooltip" data-placement="right" title="Random MAC is Inactive">
