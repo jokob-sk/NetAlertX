@@ -187,31 +187,31 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Uptime:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_Uptime') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['uptime'] . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Kernel:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_Kernel') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $system_namekernel . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">System:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_System') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $system_namesystem . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Operating System:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_OSVersion') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $stat['os_version'] . '</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Uname:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_Uname') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $system_full . '</div>
                 </div>	
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Architecture:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_Architecture') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">' . $system_architecture . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">Load AVG:</div>
+                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_System_AVG') . '</div>
                   <div class="col-sm-9 sysinfo_gerneral_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
                 </div>
             </div>
