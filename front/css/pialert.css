@@ -738,9 +738,9 @@ height: 50px;
     width: 20%;
 }
 
-#settingsPage input[readonly] {
+input[readonly] {
     /* Apply styles to the readonly input */
-    background-color: #646566;
+    background-color: #646566 !important;
     color: #000;    
     cursor: not-allowed;
   }

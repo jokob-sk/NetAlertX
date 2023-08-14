@@ -36,10 +36,6 @@ def send(msg: noti_struc):
             payloadData = msg.text
 
     # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
-    # payload = html
-
-    # if conf.APPRISE_PAYLOAD == 'text':
-    #     payload = text
 
     _json_payload = {
         "urls": conf.APPRISE_URL,

@@ -157,8 +157,8 @@ def main ():
                 check_internet_IP(db)
 
             # Update vendors once a week
-            if last_update_vendors + datetime.timedelta(days = 7) < loop_start_time:
-                last_update_vendors = loop_start_time
+            if conf.last_update_vendors + datetime.timedelta(days = 7) < loop_start_time:
+                conf.last_update_vendors = loop_start_time
                 conf.cycle = 'update_vendors'
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
                 update_devices_MAC_vendors(db)

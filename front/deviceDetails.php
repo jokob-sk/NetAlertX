@@ -1461,6 +1461,9 @@ function getDeviceData (readAllData=false) {
         $('#txtNetworkNodeMac').val                  (getDevicesListValue('mac', deviceData['dev_Network_Node_MAC_ADDR'] ,'name'));
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
+        // disabling network node configuration if root Internet node
+        $('#txtNetworkNodeMac').prop('readonly', mac == 'Internet' );
+        $('#txtNetworkPort').prop('readonly', mac == 'Internet' );
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
