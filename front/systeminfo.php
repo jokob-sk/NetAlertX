@@ -344,13 +344,13 @@ for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
 	//if (stristr($hdd_devices[$x], '/dev/')) {
 	echo '<div class="row">';
 	if (preg_match('~[0-9]+~', $storage_lsblk_line[$x][0])) {
-		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . lang('Systeminfo_Storage_Mount') . ' ' . $storage_lsblk_line[$x][3] . '"</div>';
+		echo '<div class="col-sm-4 sysinfo_storage_a">"' . lang('Systeminfo_Storage_Mount') . ' ' . $storage_lsblk_line[$x][3] . '"</div>';
 	} else {
-		echo '<div class="col-sm-4 sysinfo_gerneral_a">"' . str_replace('_', ' ', $storage_lsblk_line[$x][3]) . '"</div>';
+		echo '<div class="col-sm-4 sysinfo_storage_a">"' . str_replace('_', ' ', $storage_lsblk_line[$x][3]) . '"</div>';
 	}
-	echo '<div class="col-sm-3 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Device') . ' /dev/' . $storage_lsblk_line[$x][0] . '</div>';
-	echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Size') . ' ' . $storage_lsblk_line[$x][1] . '</div>';
-	echo '<div class="col-sm-2 sysinfo_gerneral_b">' . lang('Systeminfo_Storage_Type') . ' ' . $storage_lsblk_line[$x][2] . '</div>';
+	echo '<div class="col-sm-3 sysinfo_storage_b">' . lang('Systeminfo_Storage_Device') . ' /dev/' . $storage_lsblk_line[$x][0] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_storage_b">' . lang('Systeminfo_Storage_Size') . ' ' . $storage_lsblk_line[$x][1] . '</div>';
+	echo '<div class="col-sm-2 sysinfo_storage_b">' . lang('Systeminfo_Storage_Type') . ' ' . $storage_lsblk_line[$x][2] . '</div>';
 	echo '</div>';
 	//}
 }
