@@ -291,8 +291,8 @@ echo '<div class="box box-solid">
 
 					// Print the CPU temperature
 					echo '<div class="row">
-					  <div class="col-sm-3 sysinfo_gerneral_a">CPU Temp ' . $a . ':</div>
-					  <div class="col-sm-9 sysinfo_gerneral_b">' . $cpu_tempxx . ' °C</div>
+					  <div class="col-sm-3 sysinfo_cpu_a">CPU Temp ' . $a . ':</div>
+					  <div class="col-sm-9 sysinfo_cpu_b">' . $cpu_tempxx . ' °C</div>
 					</div>';
 				}
 			echo '				
