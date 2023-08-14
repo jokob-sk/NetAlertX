@@ -387,67 +387,67 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">IP Internet:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_IP') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . shell_exec("curl https://ifconfig.co") . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">IP connection:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_IP_Connection') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REMOTE_ADDR'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Server IP:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_IP_Server') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_ADDR'] . '</div>
 			</div>	
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Server name:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Server_Name') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_NAME . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Connection port:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Connection_Port') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REMOTE_PORT'] . '</div>
 			</div>			
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Secure connection:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Secure_Connection:') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_HTTPS . '</div>
 			</div>	
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Server Version:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Server_Version') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['SERVER_SOFTWARE'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Request URI:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Request_URI') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_URI'] . '</div>
 			</div>		
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Server query:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Server_Query') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_QueryString . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP host:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_HTTP_Host') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_HOST'] . '</div>
 			</div>	
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">HTTP referer:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_HTTP_Referer') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_referer . '</div>
 			</div>	
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">MIME:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_MIME') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Accept language:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Accept_Language') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '</div>
 			</div>				
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Accept encoding:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Accept_Encoding') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['HTTP_ACCEPT_ENCODING'] . '</div>
 			</div>			
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Request Method:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Request_Method') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_METHOD'] . '</div>
 			</div>
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">Request time:</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Request_Time') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_TIME'] . '</div>
 			</div>						
 		</div>
