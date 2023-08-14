@@ -96,13 +96,13 @@ $formatted_date2 = $date->format('d/m/Y H:i:s');
 $formatted_date3 = $date->format('Y/m/d H:i:s');
 //Network stats
 // Check Server name
-if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = 'Server name not found'; }
+if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = lang('Systeminfo_Network_Server_Name_String'); }
 // Check HTTPS
-if (isset($_SERVER['HTTPS'])) { $network_HTTPS = 'Yes (HTTPS)'; } else { $network_HTTPS = 'No (HTTP)'; }
+if (isset($_SERVER['HTTPS'])) { $network_HTTPS = 'Yes (HTTPS)'; } else { $network_HTTPS = lang('Systeminfo_Network_Secure_Connection_String'); }
 // Check Query String
-if (empty($_SERVER['QUERY_STRING'])) { $network_QueryString = 'No query string'; } else { $network_QueryString = $_SERVER['QUERY_STRING']; }
+if (empty($_SERVER['QUERY_STRING'])) { $network_QueryString = lang('Systeminfo_Network_Server_Query_String'); } else { $network_QueryString = $_SERVER['QUERY_STRING']; }
 // Check HTTP referer
-if (empty($_SERVER['HTTP_REFERER'])) { $network_referer = 'No HTTP referer'; } else { $network_referer = $_SERVER['HTTP_REFERER']; }
+if (empty($_SERVER['HTTP_REFERER'])) { $network_referer = lang('Systeminfo_Network_HTTP_Referer_String'); } else { $network_referer = $_SERVER['HTTP_REFERER']; }
 //Network Hardware stat
 $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $1}'");
 $net_interfaces = explode("\n", trim($network_result));
