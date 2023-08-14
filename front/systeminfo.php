@@ -134,20 +134,20 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Full_Date') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date . '</div>
+                  <div class="col-sm-3 sysinfo_general_a">' . lang('Systeminfo_General_Full_Date') . '</div>
+                  <div class="col-sm-9 sysinfo_general_b">' . $formatted_date . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Date') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date2 . '</div>
+                  <div class="col-sm-3 sysinfo_general_a">' . lang('Systeminfo_General_Date') . '</div>
+                  <div class="col-sm-9 sysinfo_general_b">' . $formatted_date2 . '</div>
                 </div>            
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_Date2') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $formatted_date3 . '</div>
+                  <div class="col-sm-3 sysinfo_general_a">' . lang('Systeminfo_General_Date2') . '</div>
+                  <div class="col-sm-9 sysinfo_general_b">' . $formatted_date3 . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_General_TimeZone') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $timeZone . '</div>
+                  <div class="col-sm-3 sysinfo_general_a">' . lang('Systeminfo_General_TimeZone') . '</div>
+                  <div class="col-sm-9 sysinfo_general_b">' . $timeZone . '</div>
                 </div>                                        
             </div>
       </div>';
