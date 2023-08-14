@@ -224,28 +224,28 @@ echo '<div class="box box-solid">
             </div>
             <div class="box-body">
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_Name') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_name . '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_Name') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_name . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_Manufactured') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_manufactured . '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_Manufactured') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_manufactured . '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_Revision') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_revision. '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_Revision') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_revision. '</div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_BIOS') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_bios . '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_BIOS') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_bios . '</div>
                 </div>				
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_BIOS_Date') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosdate . '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_BIOS_Date') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_biosdate . '</div>
                 </div>	
                 <div class="row">
-                  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Motherboard_BIOS_Vendor') . '</div>
-                  <div class="col-sm-9 sysinfo_gerneral_b">' . $motherboard_biosvendor . '</div>
+                  <div class="col-sm-3 sysinfo_motherboard_a">' . lang('Systeminfo_Motherboard_BIOS_Vendor') . '</div>
+                  <div class="col-sm-9 sysinfo_motherboard_b">' . $motherboard_biosvendor . '</div>
                 </div>
             </div>
       </div>';
