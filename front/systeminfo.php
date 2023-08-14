@@ -407,7 +407,7 @@ echo '<div class="box box-solid">
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REMOTE_PORT'] . '</div>
 			</div>			
 			<div class="row">
-			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Secure_Connection:') . '</div>
+			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Secure_Connection') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $network_HTTPS . '</div>
 			</div>	
 			<div class="row">
