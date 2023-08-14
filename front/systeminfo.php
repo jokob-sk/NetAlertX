@@ -470,10 +470,10 @@ for ($x = 0; $x < sizeof($net_interfaces); $x++) {
 	if ($net_interfaces_rx[$x] == 0) {$temp_rx = 0;} else { $temp_rx = number_format(round(($net_interfaces_rx[$x] / 1024 / 1024), 2), 2, ',', '.');}
 	if ($net_interfaces_tx[$x] == 0) {$temp_tx = 0;} else { $temp_tx = number_format(round(($net_interfaces_tx[$x] / 1024 / 1024), 2), 2, ',', '.');}
 	echo '<div class="row">';
-	echo '<div class="col-sm-2 sysinfo_network_a">' . $interface_name . '</div>';
-	echo '<div class="col-sm-2 sysinfo_network_b">' . $interface_ip_arr[1] . '</div>';
-	echo '<div class="col-sm-3 sysinfo_network_b">RX: <div class="sysinfo_network_value">' . $temp_rx . ' MB</div></div>';
-	echo '<div class="col-sm-3 sysinfo_network_b">TX: <div class="sysinfo_network_value">' . $temp_tx . ' MB</div></div>';
+	echo '<div class="col-sm-2 sysinfo_network_hardware_a">' . $interface_name . '</div>';
+	echo '<div class="col-sm-2 sysinfo_network_hardware_b">' . $interface_ip_arr[1] . '</div>';
+	echo '<div class="col-sm-3 sysinfo_network_hardware_b">RX: <div class="sysinfo_network_value">' . $temp_rx . ' MB</div></div>';
+	echo '<div class="col-sm-3 sysinfo_network_hardware_b">TX: <div class="sysinfo_network_value">' . $temp_tx . ' MB</div></div>';
 	echo '</div>';
 
 }
