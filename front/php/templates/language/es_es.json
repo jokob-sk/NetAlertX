@@ -211,6 +211,7 @@
         "DevDetail_Nmap_buttonSkipDiscovery" : "Omitir detección de host",
         "DevDetail_Nmap_buttonSkipDiscovery_text" : "Omitir detección de host (-Pn opción): Escaneo predeterminado sin detección de host",
         "DevDetail_Nmap_resultsLink" : "Puedes abandonar esta página después de empezar un escaneo. Los resultados también estarán disponibles en el archivo <code>pialert_front.log</code>.",
+        "DevDetail_Nmap_Scans": "Escaneos de Nmap",        
         "BackDevDetail_Actions_Title_Run" : "Ejecutar acción",
         "BackDevDetail_Actions_Not_Registered" : "Acción no registrada: ",
         "BackDevDetail_Actions_Ask_Run" : "¿Desea ejecutar la acción?",
