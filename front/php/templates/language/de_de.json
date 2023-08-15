@@ -119,6 +119,8 @@
         "DevDetail_Tab_Sessions" : "Sitzungen",
         "DevDetail_Tab_Presence" : "Anwesenheit",
         "DevDetail_Tab_Events" : "Ereignisse",
+	"DevDetail_Internet_Speedtest" : "Online Speedtest",
+	"DevDetail_Internet_Speedtest_Start" : "Speedtest starten",	    
         "DevDetail_MainInfo_Title" : "Haupt Infos",
         "DevDetail_MainInfo_mac" : "MAC",
         "DevDetail_MainInfo_Name" : "Name",
