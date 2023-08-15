@@ -17,7 +17,7 @@
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "DHCP Leases"
+        "string" : "DHCP Leases (Device import)"
     }],
     "icon":[{
         "language_code":"en_us",

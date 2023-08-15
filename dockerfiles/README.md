@@ -61,14 +61,22 @@ docker run -d --rm --network=host \
 
 These are the most important settings to get at least some output in your Devices screen. Usually, only one approach is used, but you should be able to combine these approaches.
 
-##### For arp-scan: ENABLE_ARPSCAN, SCAN_SUBNETS
+##### For arp-scan: ARPSCAN_RUN, SCAN_SUBNETS
 
 - ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
 
 ##### For pihole: PIHOLE_RUN, DHCPLSS_RUN
 
-* `PIHOLE_RUN`: You need to map `:/etc/pihole/pihole-FTL.db in the docker-compose.yml` file if you enable this setting.
-* `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases in the docker-compose.yml` file if you enable this setting. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole`).
+There are 2 approaches how to get PiHole devices imported. Via the PiHole import (PIHOLE) plugin or DHCP leases (DHCPLSS) plugin.
+
+**PiHole (Device sync)**
+
+* `PIHOLE_RUN`: You need to map `:/etc/pihole/pihole-FTL.db` in the `docker-compose.yml` file if you enable this setting.
+
+**DHCP Leases (Device import)**
+
+* `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. 
+* The above setting has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file).
 
 > It's recommended to use the same schedule interval for all plugins scanning your network.
 
@@ -87,6 +95,8 @@ version: "3"
 services:
   pialert:
     container_name: pialert
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/pi.alert_dev:latest" 
     image: "jokobsk/pi.alert:latest"      
     network_mode: "host"        
     restart: unless-stopped
@@ -113,6 +123,8 @@ Example by [SeimuS](https://github.com/SeimusS).
     container_name: PiAlert
     hostname: PiAlert
     privileged: true
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/pi.alert_dev:latest" 
     image: jokobsk/pi.alert:latest
     environment:
       - TZ=Europe/Bratislava
@@ -134,6 +146,8 @@ version: "3"
 services:
   pialert:
     container_name: pialert
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/pi.alert_dev:latest" 
     image: "jokobsk/pi.alert:latest"      
     network_mode: "host"        
     restart: unless-stopped
@@ -178,6 +192,8 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 ```yaml
   pialert:
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/pi.alert_dev:latest" 
     image: jokobsk/pi.alert
     ports:
       - "80:20211/tcp"

@@ -39,7 +39,6 @@ changedPorts_json_struc = None
 # ACTUAL CONFIGRATION ITEMS set to defaults
 
 # General
-ENABLE_ARPSCAN = True 
 SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL = 'verbose' 
 TIMEZONE = 'Europe/Berlin'

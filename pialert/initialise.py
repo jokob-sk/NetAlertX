@@ -96,8 +96,7 @@ def importConfigs (db):
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')    
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
 
-    # ARPSCAN (+ other settings provided by the ARPSCAN plugin)
-    conf.ENABLE_ARPSCAN = ccd('ENABLE_ARPSCAN', True , c_d, 'Enable arpscan', 'boolean', '', 'ARPSCAN', ['run']) 
+    # ARPSCAN (+ other settings provided by the ARPSCAN plugin)    
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'ARPSCAN')    
 
     # Email

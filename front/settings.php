@@ -356,6 +356,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
                 data-myparam="${codeName}"
+                data-myparam-plugin="${group}"
                 data-myevent="${event}"
                 onclick="handleEvent(this)"
               >
@@ -680,8 +681,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   function handleEvent (element){
 
-    // value has to be in format event|param. e.g. run|ENABLE_ARPSCAN
-    value = $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam')        
+    // value has to be in format event|param. e.g. run|ARPSCAN
+    value = $(element).attr('data-myevent') + '|'+ $(element).attr('data-myparam-plugin')        
 
     setParameter ('Front_Event', value)
 

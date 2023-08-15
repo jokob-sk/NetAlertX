@@ -19,11 +19,11 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Network scan (Arp-Scan)"
+      "string": "Arp-Scan (Network scan)"
     },
     {
       "language_code": "es_es",
-      "string": "Escaneo de red (Arp-Scan)"
+      "string": "Arp-Scan (Escaneo de red)"
     }	
   ],
   "icon": [
@@ -60,6 +60,7 @@
       "default_value":"schedule",
       "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
       "localized": ["name", "description"],
+      "events": ["run"],
       "name" :[
 	  {
           "language_code":"en_us",

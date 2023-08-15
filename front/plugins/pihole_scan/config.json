@@ -19,7 +19,7 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Network scan (PiHole)"
+      "string": "PiHole (Device sync)"
     }
   ],
   "icon": [
@@ -31,7 +31,7 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "This plugin is to import devices from PiHole"
+      "string": "This plugin syncs devices from the PiHole database"
     }
   ],
     "params" : [

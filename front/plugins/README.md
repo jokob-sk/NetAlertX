@@ -463,7 +463,8 @@ Required attributes are:
 - `"localized"` - a list of properties on the current JSON level which need to be localized
 - `"name"` and `"description"` - Displayed on the Settings page. An array of localized strings. (see Localized strings below).
 - (optional) `"events"` - `<test|run>` - to generate an execution button next to the input field of the setting (not fully tested)
-- (optional) `"override_value"` - used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (wip)
+- (optional) `"override_value"` - used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (work in progress)
+- (optional) `"events": ["run", "test"]` - used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting and then after clicking an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. 
     
 ##### Supported settings `function` values
 

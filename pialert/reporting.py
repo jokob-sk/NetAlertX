@@ -25,6 +25,7 @@ import const
 from const import pialertPath, logPath, apiPath
 from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
+from plugin import execute_plugin
 
 from publishers.email import (check_config as email_check_config, 
                               send as send_email )
@@ -512,12 +513,11 @@ def check_and_run_event(db):
 def handle_run(runType, db):
     
     mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
-
-    if runType == 'ENABLE_ARPSCAN':
-        # run the plugin to run
-        for plugin in conf.plugins:
-            if plugin["unique_prefix"] == 'ARPSCAN':                
-                execute_plugin(db, plugin) 
+    
+    # run the plugin to run
+    for plugin in conf.plugins:
+        if plugin["unique_prefix"] == runType:                
+            execute_plugin(db, plugin) 
 
     mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
 
