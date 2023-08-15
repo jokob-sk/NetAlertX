@@ -153,7 +153,7 @@
         "DevDetail_MainInfo_Owner" : "Propietario",
         "DevDetail_MainInfo_Type" : "Tipo",
         "DevDetail_Icon" : "Icono",
-        "DevDetail_Icon_Descr" : "Enter a font awesome icon name without the fa- prefix or with complete class, e.g.: fa fa-brands fa-apple.",
+        "DevDetail_Icon_Descr" : "Ingrese un nombre de icono de fuente awesome sin el prefijo fa- o con clase completa, por ejemplo: fa fa-skin fa-apple.",
         "DevDetail_MainInfo_Vendor" : "Proveedor",
         "DevDetail_MainInfo_Favorite" : "Favorito",
         "DevDetail_MainInfo_Group" : "Grupo",
