@@ -175,6 +175,7 @@
         "DevDetail_Nmap_buttonDetail_text" : "Detailierter Scan: Standardscan mit aktivierter Betriebssystemerkennung, Versionserkennung, Skript-Scan und Traceroute (bis zu 30 oder mehr Sekunden)",
         "DevDetail_Nmap_buttonSkipDiscovery" : "Ohne Erreichbarkeitsprüfung",
         "DevDetail_Nmap_buttonSkipDiscovery_text" : "Ohne Erreichbarkeitsprüfung (-Pn Parameter): Standard Scan bei dem nmap annimmt, dass der Host erreichbar ist.",
+	"DevDetail_Nmap_Scans": "Nmap Scans",	    
         "Maintenance_Title" : "Wartungswerkzeuge",
         "Maintenance_database_path" : "Datenbank-Pfad",
         "Maintenance_database_size" : "Datenbank-Größe",
