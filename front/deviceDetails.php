@@ -1,11 +1,16 @@
-<!-- ---------------------------------------------------------------------------
-#  Pi.Alert
-#  Open Source Network Guard / WIFI & LAN intrusion detector 
-#
-#  deviceDetails.php - Front module. Device management page
-#-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
-#--------------------------------------------------------------------------- -->
+<!--
+#---------------------------------------------------------------------------------#
+#  Pi.Alert                                                                       #
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#                                                                                 #
+#  deviceDetails.php - Front module. Device management page                       #
+#---------------------------------------------------------------------------------#
+#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
+#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
+#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
+#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
+#---------------------------------------------------------------------------------#
+-->
 
 <?php
   require 'php/templates/header.php';
@@ -100,7 +105,7 @@
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
                 <?php
-                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
+                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = lang('DevDetail_Tab_Tools'); } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
                 ?>
               <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
@@ -539,9 +544,9 @@
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
               ?>
-                <h4 class="">Online Speedtest</h4>
+                <h4 class=""><?= lang('DevDetail_Internet_Speedtest');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">Start Speedtest</button>
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
                 </div>
                    
                   <script>
@@ -561,7 +566,7 @@
               <?php  
               }
               ?>
-                <h4 class="">Nmap Scans</h4>
+                <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
@@ -615,12 +620,12 @@
                 <table id="tableNmap" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th>Index</th>                    
-                    <th>Time</th>
-                    <th>Port</th>
-                    <th>State</th>
-                    <th>Service</th>
-                    <th>Extra (Notes)</th>
+                    <th><?= lang("DevDetail_Tab_NmapTableIndex");?></th>                    
+                    <th><?= lang("DevDetail_Tab_NmapTableTime");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
                   </tr>
                   </thead>
                   <!-- Comment out tbody when trying to implement better table with datatables here -->
@@ -671,10 +676,10 @@
                 <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Event type</th>
-                    <th>IP</th>
-                    <th>Additional info</th>
+                    <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>
+                    <th><?= lang("DevDetail_Tab_EventsTableEvent");?></th>
+                    <th><?= lang("DevDetail_Tab_EventsTableIP");?></th>
+                    <th><?= lang("DevDetail_Tab_EventsTableInfo");?></th>
                   </tr>
                   </thead>
                 </table>
@@ -685,13 +690,13 @@
               <table id="tablePholus" class="table table-bordered table-hover table-striped ">
                 <thead>
                 <tr>
-                  <th>Index</th>
-                  <th>Info</th>
-                  <th>Time</th>
-                  <th>IP</th>
-                  <th>Entry Type</th>
-                  <th>Value</th>
-                  <th>Extra</th>
+                  <th><?= lang("DevDetail_Tab_PholusTableIndex");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableInfo");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableTime");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableIP");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableEntry");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableValue");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableExtra");?></th>
                 </tr>
                 </thead>
                 <!-- Comment out tbody when trying to implement better table with datatables here -->
