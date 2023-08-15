@@ -676,10 +676,10 @@
                 <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Event type</th>
-                    <th>IP</th>
-                    <th>Additional info</th>
+					          <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>                    
+                    <th><?= lang("DevDetail_Tab_EventsTableEvent");?></th>
+                    <th><?= lang("DevDetail_Tab_EventsTableIP");?></th>
+                    <th><?= lang("DevDetail_Tab_EventsTableInfo");?></th>
                   </tr>
                   </thead>
                 </table>
