@@ -615,12 +615,12 @@
                 <table id="tableNmap" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-                    <th>Index</th>                    
-                    <th>Time</th>
-                    <th>Port</th>
-                    <th>State</th>
-                    <th>Service</th>
-                    <th>Extra (Notes)</th>
+                    <th><?= lang("DevDetail_Tab_NmapTableIndex");?></th>                    
+                    <th><?= lang("DevDetail_Tab_NmapTableTime");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableExtra ");?></th>
                   </tr>
                   </thead>
                   <!-- Comment out tbody when trying to implement better table with datatables here -->
