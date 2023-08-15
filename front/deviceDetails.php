@@ -693,8 +693,8 @@
                   <th><?= lang("DevDetail_Tab_PholusTableIndex");?></th>                    
                   <th><?= lang("DevDetail_Tab_PholusTableInfo");?></th>
                   <th><?= lang("DevDetail_Tab_PholusTableTime");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableEntry");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableIP");?></th>
+		  <th><?= lang("DevDetail_Tab_PholusTableIP");?></th>			
+                  <th><?= lang("DevDetail_Tab_PholusTableEntry");?></th>                  
                   <th><?= lang("DevDetail_Tab_PholusTableValue");?></th>
 		  <th><?= lang("DevDetail_Tab_PholusTableExtra");?></th>
                 </tr>
