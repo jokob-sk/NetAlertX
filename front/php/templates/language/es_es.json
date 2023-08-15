@@ -137,6 +137,7 @@
         "DevDetail_Shortcut_Presence" : "Historial",
         "DevDetail_Shortcut_DownAlerts" : "Alerta(s) de caída(s)",
         "DevDetail_Tab_Details" : "<i class=\"fa fa-info-circle\"></i> Detalles",
+        "DevDetail_Tab_Tools": "<i class=\"fa fa-screwdriver-wrench\"></i> Herramientas",        
         "DevDetail_Tab_Nmap" : "<i class=\"fa fa-ethernet\"></i> Nmap",
         "DevDetail_Tab_Sessions" : "<i class=\"fa fa-list-ol\"></i> Sesiones",
         "DevDetail_Tab_Presence" : "<i class=\"fa fa-calendar\"></i> Historial",
