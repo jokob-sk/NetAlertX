@@ -157,6 +157,8 @@
         "DevDetail_Type_hover" : "The Type of the device. If you select any of the pre-defined network devices (e.g.: AP, Firewall, Router, Switch...) they will show up in the Network tree configuration as possible parent network nodes.",
         "DevDetail_Icon" : "Icon",
         "DevDetail_Icon_Descr" : "Enter a font awesome icon name without the fa- prefix or with complete class, e.g.: fa fa-brands fa-apple.",
+	"DevDetail_Internet_Speedtest" : "Online Speedtest",
+	"DevDetail_Internet_Speedtest_Start" : "Start Speedtest",	    
         "DevDetail_MainInfo_Vendor" : "Vendor",
         "DevDetail_Vendor_hover" : "Vendor should be auto-detected. You can overwrite or add your custom value.",
         "DevDetail_MainInfo_Favorite" : "Favorite",
