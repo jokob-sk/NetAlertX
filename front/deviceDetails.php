@@ -561,7 +561,7 @@
               <?php  
               }
               ?>
-                <h4 class="">Nmap Scans</h4>
+                <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
