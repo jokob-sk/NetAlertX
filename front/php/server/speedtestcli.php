@@ -1,4 +1,5 @@
 <?php
+require dirname(__FILE__).'/../server/init.php';
 exec('../../../back/speedtest-cli --secure --simple', $output);
 
 echo '<h4>'. lang('Speedtest_Results') .'</h4>';
