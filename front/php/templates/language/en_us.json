@@ -218,6 +218,7 @@
         "DevDetail_Nmap_buttonSkipDiscovery" : "Skip host discovery",
         "DevDetail_Nmap_buttonSkipDiscovery_text" : "Skip host discovery (-Pn option): Default scan without host discovery",
         "DevDetail_Nmap_resultsLink" : "You can leave this page after starting a scan. Results will be also available in the <code>pialert_front.log</code> file.",
+	"DevDetail_Nmap_Scans": "Nmap Scans",	    
         "BackDevDetail_Actions_Title_Run" : "Run action",
         "BackDevDetail_Actions_Not_Registered" : "Action not registered: ",
         "BackDevDetail_Actions_Ask_Run" : "Do you want to execute the action?",
