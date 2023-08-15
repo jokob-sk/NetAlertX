@@ -625,7 +625,7 @@
                     <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
                     <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
                     <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableExtra ");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
                   </tr>
                   </thead>
                   <!-- Comment out tbody when trying to implement better table with datatables here -->
