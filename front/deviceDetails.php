@@ -690,13 +690,13 @@
               <table id="tablePholus" class="table table-bordered table-hover table-striped ">
                 <thead>
                 <tr>
-                  <th>Index</th>
-                  <th>Info</th>
-                  <th>Time</th>
-                  <th>IP</th>
-                  <th>Entry Type</th>
-                  <th>Value</th>
-                  <th>Extra</th>
+                  <th><?= lang("DevDetail_Tab_PholusTableIndex");?></th>                    
+                  <th><?= lang("DevDetail_Tab_PholusTableInfo");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableTime");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableEntry");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableIP");?></th>
+                  <th><?= lang("DevDetail_Tab_PholusTableValue");?></th>
+		  <th><?= lang("DevDetail_Tab_PholusTableExtra");?></th>
                 </tr>
                 </thead>
                 <!-- Comment out tbody when trying to implement better table with datatables here -->
