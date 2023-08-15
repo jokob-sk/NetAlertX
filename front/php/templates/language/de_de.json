@@ -332,6 +332,7 @@
         "REPORT_ERROR" : "Die gesuchte Seite ist vorübergehend nicht verfügbar. Bitte versuchen Sie es nach ein paar Sekunden erneut",
         "SYSTEM_TITLE" : "Systeminformationen",
         "Plugins_Out_of" : "von",
+        "Speedtest_Results" : "Ergebnisse des Geschwindigkeitstests",	    
         "Systeminfo_General" : "Allgemein",
         "Systeminfo_General_Full_Date": "Vollständiges Datum:",
         "Systeminfo_General_Date": "Datum:",
