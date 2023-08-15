@@ -676,7 +676,7 @@
                 <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                   <thead>
                   <tr>
-					          <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>                    
+                    <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>
                     <th><?= lang("DevDetail_Tab_EventsTableEvent");?></th>
                     <th><?= lang("DevDetail_Tab_EventsTableIP");?></th>
                     <th><?= lang("DevDetail_Tab_EventsTableInfo");?></th>
