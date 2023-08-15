@@ -100,7 +100,7 @@
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
                 <?php
-                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = "Tools"; } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
+                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = lang('DevDetail_Tab_Tools'); } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
                 ?>
               <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
