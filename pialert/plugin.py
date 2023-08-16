@@ -441,97 +441,113 @@ def combine_plugin_objects(old, new):
 def process_plugin_events(db, plugin, pluginsState):    
     sql = db.sql
 
+    # Access the connection from the DB instance
+    conn = db.sql_connection
+
     pluginPref = plugin["unique_prefix"]
 
     mylog('debug', ['[Plugins] Processing        : ', pluginPref])
 
-    plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
-    plugEventsArr  = db.get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
+    try:
+        # Begin a transaction
+        with conn:
 
-    pluginObjects = []
-    pluginEvents  = []
+            plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
+            plugEventsArr  = db.get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
 
-    for obj in plugObjectsArr: 
-        pluginObjects.append(plugin_object_class(plugin, obj))
+            pluginObjects = []
+            pluginEvents  = []
 
-    existingPluginObjectsCount = len(pluginObjects)
+            for obj in plugObjectsArr: 
+                pluginObjects.append(plugin_object_class(plugin, obj))
 
-    mylog('debug', ['[Plugins] Existing objects        : ', existingPluginObjectsCount])
-    mylog('debug', ['[Plugins] New and existing events : ', len(plugEventsArr)])
+            existingPluginObjectsCount = len(pluginObjects)
 
-    # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
-    for eve in plugEventsArr:
-        tmpObject = plugin_object_class(plugin, eve)        
-        tmpObject.status = "new"
-        pluginEvents.append(tmpObject)
+            mylog('debug', ['[Plugins] Existing objects        : ', existingPluginObjectsCount])
+            mylog('debug', ['[Plugins] New and existing events : ', len(plugEventsArr)])
 
-    
-    #  Update the status to "exists"
-    index = 0
-    for tmpObjFromEvent in pluginEvents:        
+            # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
+            for eve in plugEventsArr:
+                tmpObject = plugin_object_class(plugin, eve)        
+                tmpObject.status = "new"
+                pluginEvents.append(tmpObject)
 
-        #  compare hash of the IDs for uniqueness
-        if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
-            mylog('debug', ['[Plugins] Found existing object'])
-            pluginEvents[index].status = "exists"            
-        index += 1
-
-    # Loop thru events and update the one that exist to determine if watched columns changed
-    index = 0
-    for tmpObjFromEvent in pluginEvents:  
-
-        if tmpObjFromEvent.status == "exists": 
-
-            #  compare hash of the changed watched columns for uniqueness
-            if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
-                pluginEvents[index].status = "watched-changed"                            
-            else:
-                pluginEvents[index].status = "watched-not-changed"  
-        index += 1
-
-    # Merge existing plugin objects with newly discovered ones and update existing ones with new values
-    for eveObj in pluginEvents:
-        if eveObj.status == 'new':
-            pluginObjects.append(eveObj)
-        else:
+            
+            #  Update the status to "exists"
             index = 0
-            for plugObj in pluginObjects:
-                # find corresponding object for the event and merge
-                if plugObj.idsHash == eveObj.idsHash:               
-                    pluginObjects[index] =  combine_plugin_objects(plugObj, eveObj)                    
+            for tmpObjFromEvent in pluginEvents:        
 
+                #  compare hash of the IDs for uniqueness
+                if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
+                    mylog('debug', ['[Plugins] Found existing object'])
+                    pluginEvents[index].status = "exists"            
                 index += 1
 
-    # Update the DB
-    # ----------------------------
-    # Update the Plugin_Objects    
-    for plugObj in pluginObjects: 
+            # Loop thru events and update the one that exist to determine if watched columns changed
+            index = 0
+            for tmpObjFromEvent in pluginEvents:  
 
-        createdTime = plugObj.created
+                if tmpObjFromEvent.status == "exists": 
 
-        if plugObj.status == 'new':
-            
-            createdTime = plugObj.changed
+                    #  compare hash of the changed watched columns for uniqueness
+                    if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
+                        pluginEvents[index].status = "watched-changed"                            
+                    else:
+                        pluginEvents[index].status = "watched-not-changed"  
+                index += 1
 
-            sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
-        else:
-            sql.execute ("UPDATE Plugins_Objects set Plugin = ?, DateTimeChanged = ?, Watched_Value1 = ?, Watched_Value2 = ?, Watched_Value3 = ?, Watched_Value4 = ?, Status = ?, Extra = ?, ForeignKey = ? WHERE \"Index\" = ?", (plugObj.pluginPref, plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3, plugObj.watched4, plugObj.status, plugObj.extra, plugObj.foreignKey, plugObj.index))
+            # Merge existing plugin objects with newly discovered ones and update existing ones with new values
+            for eveObj in pluginEvents:
+                if eveObj.status == 'new':
+                    pluginObjects.append(eveObj)
+                else:
+                    index = 0
+                    for plugObj in pluginObjects:
+                        # find corresponding object for the event and merge
+                        if plugObj.idsHash == eveObj.idsHash:               
+                            pluginObjects[index] =  combine_plugin_objects(plugObj, eveObj)                    
 
-    # Update the Plugins_Events with the new statuses    
-    sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
+                        index += 1
 
-    for plugObj in pluginEvents: 
+            # Update the DB
+            # ----------------------------
+            # Update the Plugin_Objects    
+            for plugObj in pluginObjects: 
 
-        createdTime = plugObj.created
+                createdTime = plugObj.created
 
-        # use the same datetime for created and changed if a new entry
-        if plugObj.status == 'new':
-            createdTime = plugObj.changed  
+                if plugObj.status == 'new':
+                    
+                    createdTime = plugObj.changed
 
-        #  insert only events if they are to be reported on
-        if plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):  
+                    sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
+                else:
+                    sql.execute ("UPDATE Plugins_Objects set Plugin = ?, DateTimeChanged = ?, Watched_Value1 = ?, Watched_Value2 = ?, Watched_Value3 = ?, Watched_Value4 = ?, Status = ?, Extra = ?, ForeignKey = ? WHERE \"Index\" = ?", (plugObj.pluginPref, plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3, plugObj.watched4, plugObj.status, plugObj.extra, plugObj.foreignKey, plugObj.index))
 
-            sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
+            # Update the Plugins_Events with the new statuses    
+            sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
+
+            for plugObj in pluginEvents: 
+
+                createdTime = plugObj.created
+
+                # use the same datetime for created and changed if a new entry
+                if plugObj.status == 'new':
+                    createdTime = plugObj.changed  
+
+                #  insert only events if they are to be reported on
+                if plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):  
+
+                    sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
+
+            # Commit the transaction
+            conn.commit()
+
+    except Exception as e:
+        # Rollback the transaction in case of an error
+        conn.rollback()
+        mylog('none', ['[Plugins] SQL transaction error: ', e])
+        raise e
 
     # Perform database table mapping if enabled for the plugin   
     if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
