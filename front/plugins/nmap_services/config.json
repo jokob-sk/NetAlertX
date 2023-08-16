@@ -21,10 +21,18 @@
     "icon":[{
         "language_code":"en_us",
         "string" : "<i class=\"fa-solid fa-satellite-dish\"></i>"
+    },
+	{
+        "language_code":"es_es",
+        "string" : "<i class=\"fa-solid fa-satellite-dish\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
         "string" : "This plugin shows all services discovered by NMAP scans."
+    },
+	{
+        "language_code":"es_es",
+        "string" : "Este complemento muestra todos los servicios descubiertos por escaneos NMAP."
     }],
     "params" : [],  
     "database_column_definitions":
@@ -208,6 +216,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Status"
+                },
+				{
+                "language_code":"es_es",
+                "string" : "Estado"
                 }]
         }            
     ],
@@ -221,10 +233,18 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "When to run"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Cuando ejecutar"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Specify when the SQL query is executed."
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Especificar cuándo se ejecuta la consulta SQL."
             }]
         },
         {
@@ -236,11 +256,20 @@
             "name" : [{
                 "language_code":"en_us",
                 "string" : "SQL to run"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Consulta SQL"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
-            }]
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos."
+            }
+			]
         },
         {
             "function": "RUN_SCHD",
@@ -251,10 +280,18 @@
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Schedule"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Schedule"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#NMAPSRV_RUN\"><code>NMAPSRV_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#NMAPSRV_RUN\"><code>NMAPSRV_RUN</code> setting</a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
             }]
         },
         {
@@ -266,10 +303,18 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "Watched"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Visto"
             }] ,
             "description":[{
                 "language_code":"en_us",
                 "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is service type (e.g.: http, ssh)</li><li><code>Watched_Value2</code> is Status (open or closed)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el tipo de servicio (p. ej., http, ssh)</li><li><code>Watched_Value2</code> es el estado (abierto o cerrado)</li> <li><code>Watched_Value3</code> no utilizado </li><li><code>Watched_Value4</code> no utilizado </li></ul>"
             }] 
         },
         {
@@ -281,12 +326,19 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "Report on"
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Informar sobre"
             }] ,
             "description":[{
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+            },
+			{
+                "language_code":"es_es",
+                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."
             }] 
         }
     ]
 }
-
