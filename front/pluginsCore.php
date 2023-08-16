@@ -401,20 +401,27 @@ function initTabs()
 
         if($('#objectsTarget_'+ pref) != undefined && $('#historyTarget_'+ pref) != undefined && $('#eventsTarget_'+ pref) != undefined)
         {
-            everythingHidden = $('#objectsTarget_'+ pref).attr('class').includes('active') == false && $('#historyTarget_'+ pref).attr('class').includes('active') == false && $('#eventsTarget_'+ pref).attr('class').includes('active') == false;
+            var isObjectsInactive = !$('#objectsTarget_' + pref).hasClass('active');
+            var isHistoryInactive = !$('#historyTarget_' + pref).hasClass('active');
+            var isEventsInactive = !$('#eventsTarget_' + pref).hasClass('active');
+
+            var everythingHidden = isObjectsInactive && isHistoryInactive && isEventsInactive;
+
         }
 
         // show the objectsTarget if no specific pane selected or if selected is hidden        
-        if((target == '#'+pref ) && everythingHidden) 
-        {
-            var classTmp = $('#objectsTarget_'+ pref).attr('class');
+        if (target === '#' + pref && everythingHidden) {
+            var objectsTarget = $('#objectsTarget_' + pref);
 
-            if($('#objectsTarget_'+ pref).attr('class').includes('active') == false)
-            {   
-                classTmp += ' active';            
-                $('#objectsTarget_'+ pref).attr('class', classTmp)
-            }
-        } 
+            if (objectsTarget.length > 0) {
+                var classTmp = objectsTarget.attr('class');
+
+                if (!classTmp.includes('active')) {
+                    classTmp += ' active';            
+                    objectsTarget.attr('class', classTmp);
+                }
+            } 
+        }
     });
 }
 
