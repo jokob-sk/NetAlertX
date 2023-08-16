@@ -162,7 +162,7 @@ function cacheStrings()
   });
 
   // handle strings and translations from plugins
-  $.get('api/table_language_strings.json', function(res) {    
+  $.get('api/table_plugins_language_strings.json', function(res) {    
         
     data = res["data"];       
 
@@ -193,9 +193,14 @@ function getString (key) {
   }
   result = getCache(`pia_lang_${key}_${lang_code}`, true);
 
+
   if(isEmpty(result))
   {
+    console.log(`pia_lang_${key}_${lang_code}`)
+    console.log(key)    
     result = getCache(`pia_lang_${key}_en_us`, true);
+    console.log(result)   
+  
   }
 
   return result;

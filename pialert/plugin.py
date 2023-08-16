@@ -301,6 +301,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         db.commitDB()
 
+        # create objects
         pluginsState = process_plugin_events(db, plugin, pluginsState)
 
         # update API endpoints
@@ -532,7 +533,7 @@ def process_plugin_events(db, plugin, pluginsState):
 
             sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
 
-    # Perform databse table mapping if enabled for the plugin   
+    # Perform database table mapping if enabled for the plugin   
     if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
 
         # Initialize an empty list to store SQL parameters.

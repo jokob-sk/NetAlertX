@@ -34,7 +34,7 @@ def update_api(db, isNotification = False, updateOnlyDataSources = []):
         ["plugins_events", sql_plugins_events],
         ["plugins_history", sql_plugins_history],
         ["plugins_objects", sql_plugins_objects],
-        ["language_strings", sql_language_strings],
+        ["plugins_language_strings", sql_language_strings],
         ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 

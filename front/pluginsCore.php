@@ -136,38 +136,6 @@ function saveData (id) {
     });    
 }
 
-// -----------------------------------------------------------------------------
-// Get translated string
-function localize (obj, key) {
-
-    currLangCode = getCookie("language")
-
-    result = ""
-    en_us = ""
-
-    if(obj.localized && obj.localized.includes(key))
-    {
-        for(i=0;i<obj[key].length;i++)
-        {
-            code = obj[key][i]["language_code"]            
-
-            if( code == 'en_us')
-            {
-                en_us = obj[key][i]["string"]
-            }
-
-            if(code == currLangCode)
-            {
-                result = obj[key][i]["string"]
-            }
-
-        }
-    }
-
-    result == "" ? result = en_us : result ;
-
-    return result;
-}
 
 // -----------------------------------------------------------------------------
 pluginDefinitions = []
@@ -218,10 +186,11 @@ function generateTabs()
 
         if(pluginObj.show_ui) // hiding plugins where specified
         {
+            prefix = pluginObj.unique_prefix;
             $('#tabs-location').append(
                 `<li class=" left-nav ${activetab}">
-                    <a class=" col-sm-12  " href="#${pluginObj.unique_prefix}" data-plugin-prefix="${pluginObj.unique_prefix}" id="${pluginObj.unique_prefix}_id" data-toggle="tab" >
-                    ${localize(pluginObj, 'icon')} ${localize(pluginObj, 'display_name')}
+                    <a class=" col-sm-12  " href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab" >
+                    ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
                     </a>
                 </li>`
             );
@@ -238,13 +207,14 @@ function generateTabs()
         evRows = ""
         obRows = ""
         hiRows = ""
+        prefix = pluginObj.unique_prefix;
 
         // Generate the header
         $.each(pluginObj["database_column_definitions"], function(index, colDef){
             if(colDef.show == true) // select only the ones to show
             {
                 colDefinitions.push(colDef)            
-                headersHtml += `<th class="${colDef.css_classes}" >${localize(colDef, "name" )}</th>`
+                headersHtml += `<th class="${colDef.css_classes}" >${getString(`${prefix}_${colDef.column}_name` )}</th>`
             }
         });
 
@@ -252,7 +222,7 @@ function generateTabs()
         var eveCount = 0;
         for(i=0;i<pluginUnprocessedEvents.length;i++)
         {
-            if(pluginUnprocessedEvents[i].Plugin == pluginObj.unique_prefix)
+            if(pluginUnprocessedEvents[i].Plugin == prefix)
             {
                 clm = ""
 
@@ -271,7 +241,7 @@ function generateTabs()
         
         for(i=pluginHistory.length-1;i >= 0;i--) // from latest to the oldest
         {
-            if(pluginHistory[i].Plugin == pluginObj.unique_prefix)
+            if(pluginHistory[i].Plugin == prefix)
             {
                 if(histCount < 50) // only display 50 entries to optimize performance
                 {       
@@ -293,7 +263,7 @@ function generateTabs()
         var obCount = 0;
         for(var i=0;i<pluginObjects.length;i++)
         {
-            if(pluginObjects[i].Plugin == pluginObj.unique_prefix)
+            if(pluginObjects[i].Plugin == prefix)
             {
                 if(shouldBeShown(pluginObjects[i], pluginObj)) // filter TODO
                 {
@@ -313,11 +283,11 @@ function generateTabs()
 
         $('#tabs-content-location').append(
             `    
-            <div id="${pluginObj.unique_prefix}" class="tab-pane ${activetab}">
+            <div id="${prefix}" class="tab-pane ${activetab}">
                 <div class="nav-tabs-custom" style="margin-bottom: 0px">
                     <ul class="nav nav-tabs">
                         <li class="active" >
-                            <a href="#objectsTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
+                            <a href="#objectsTarget_${prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-cube"></i> <?= lang('Plugins_Objects');?> (${obCount})
                                 
@@ -325,7 +295,7 @@ function generateTabs()
                         </li>
 
                         <li >
-                            <a href="#eventsTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
+                            <a href="#eventsTarget_${prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-bolt"></i> <?= lang('Plugins_Unprocessed_Events');?> (${eveCount})
                                 
@@ -333,7 +303,7 @@ function generateTabs()
                         </li>
 
                         <li >
-                            <a href="#historyTarget_${pluginObj.unique_prefix}" data-toggle="tab" >
+                            <a href="#historyTarget_${prefix}" data-toggle="tab" >
                                 
                                 <i class="fa fa-clock"></i> <?= lang('Plugins_History');?> (${histCountDisplayed} <?= lang('Plugins_Out_of');?> ${histCount})
                                 
@@ -346,7 +316,7 @@ function generateTabs()
 
                 <div class="tab-content">
 
-                    <div id="objectsTarget_${pluginObj.unique_prefix}" class="tab-pane ${activetab}">
+                    <div id="objectsTarget_${prefix}" class="tab-pane ${activetab}">
                         <table class="table table-striped" data-my-dbtable="Plugins_Objects"> 
                             <tbody>
                                 <tr>
@@ -356,10 +326,10 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Objects' )"><?= lang('Plugins_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_Objects' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>
-                    <div id="eventsTarget_${pluginObj.unique_prefix}" class="tab-pane">
+                    <div id="eventsTarget_${prefix}" class="tab-pane">
                         <table class="table table-striped" data-my-dbtable="Plugins_Events">
                         
                             <tbody>
@@ -370,10 +340,10 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_Events' )"><?= lang('Plugins_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_Events' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>    
-                    <div id="historyTarget_${pluginObj.unique_prefix}" class="tab-pane">
+                    <div id="historyTarget_${prefix}" class="tab-pane">
                         <table class="table table-striped" data-my-dbtable="Plugins_History">
                         
                             <tbody>
@@ -384,7 +354,7 @@ function generateTabs()
                             </tbody>
                         </table>
                         <div class="plugin-obj-purge">                                 
-                            <button class="btn btn-primary" onclick="purgeAll('${pluginObj.unique_prefix}', 'Plugins_History' )"><?= lang('Plugins_DeleteAll');?></button> 
+                            <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_History' )"><?= lang('Plugins_DeleteAll');?></button> 
                         </div> 
                     </div>                   
 
@@ -393,7 +363,7 @@ function generateTabs()
 
                 <div class='plugins-description'>
 
-                    ${localize(pluginObj, 'description')} 
+                    ${getString(prefix + '_description')} 
                 
                     <span>
                         <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${pluginObj.code_name}" target="_blank"><?= lang('Gen_ReadDocs');?></a>
