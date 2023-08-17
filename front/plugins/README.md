@@ -95,6 +95,8 @@ More on specifics below.
   | 7 | `Extra` | no | Any other data you want to pass and display in PiAlert and the notifications |
   | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
 
+> [!NOTE] 
+> De-duplication is run once an hour on the `Plugins_Objects` database table and duplicate entries with the same value in columns `Object_PrimaryID`, `Object_SecondaryID`, `Plugin` (auto-filled based on `unique_prefix` of the plugin), `UserData` (can be populated with the `"type": "textboxsave"` column type) are removed.
 
 # config.json structure
 
@@ -540,6 +542,7 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 - `devicemac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
 - `deviceip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP addresses and translated into a Mac address that is then used for the link itself.
 - `url` - The value is considered to be a URL so a link is generated.
+- `textboxsave` - An editable and saveable text box is generated that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table.
 
 
 ```json

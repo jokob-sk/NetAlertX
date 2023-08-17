@@ -42,14 +42,11 @@ def run_plugin_scripts(db, runType, pluginsState = None):
                 shouldRun = True
             elif  runType == "schedule":
                 # run if overdue scheduled time   
-                #  check schedules if any contains a unique plugin prefix matching the current plugin
+                # check schedules if any contains a unique plugin prefix matching the current plugin
                 for schd in conf.mySchedules:
                     if schd.service == prefix:          
                         # Check if schedule overdue
                         shouldRun = schd.runScheduleCheck()  
-                        if shouldRun:
-                            # note the last time the scheduled plugin run was executed
-                            schd.last_run = timeNowTZ()
 
         if shouldRun:            
             # Header
@@ -58,6 +55,12 @@ def run_plugin_scripts(db, runType, pluginsState = None):
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
             pluginsState = execute_plugin(db, plugin, pluginsState) 
+            #  update last run time
+            if runType == "schedule":
+                for schd in conf.mySchedules:
+                    if schd.service == prefix:          
+                        # note the last time the scheduled plugin run was executed
+                        schd.last_run = timeNowTZ()
 
     return pluginsState
 
@@ -103,7 +106,7 @@ def get_plugin_setting(plugin, function_key):
           result =  set 
 
     if result == None:
-        mylog('none', ['[Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
+        mylog('debug', ['[Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
 
     return result
 
@@ -298,8 +301,14 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     if len(sqlParams) > 0:                
         sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
         db.commitDB()
-        sql.executemany ("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
-        db.commitDB()
+
+        try:
+            sql.executemany("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams)
+            db.commitDB()
+        except sqlite3.Error as e:
+            db.rollbackDB()  # Rollback changes in case of an error
+            mylog('none', ['[Plugins] ERROR inserting into Plugins_History:', e]) 
+            
 
         # create objects
         pluginsState = process_plugin_events(db, plugin, pluginsState)

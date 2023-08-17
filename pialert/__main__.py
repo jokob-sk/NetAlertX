@@ -113,10 +113,10 @@ def main ():
         
 
         # check if new version is available / only check once an hour
-        if conf.last_version_check  + datetime.timedelta(hours=1) < loop_start_time :
+        if conf.last_version_check  + datetime.timedelta(hours=1) < conf.loop_start_time :
             # if newVersionAvailable is already true the function does nothing and returns true again
             mylog('debug', [f"[Version check] Last version check timestamp: {conf.last_version_check}"])
-            conf.last_version_check = loop_start_time
+            conf.last_version_check = conf.loop_start_time
             conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
@@ -232,8 +232,8 @@ def main ():
                 send_notifications(db)
 
             # clean up the DB once an hour
-            if last_cleanup + datetime.timedelta(hours = 1) < loop_start_time:
-                last_cleanup = loop_start_time
+            if conf.last_cleanup + datetime.timedelta(hours = 1) < loop_start_time:
+                conf.last_cleanup = loop_start_time
                 conf.cycle = 'cleanup'  
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])
                 db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA, conf.HRS_TO_KEEP_NEWDEV, conf.PLUGINS_KEEP_HIST)   

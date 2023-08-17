@@ -50,6 +50,11 @@ class DB():
         return True
 
     #-------------------------------------------------------------------------------
+    def rollbackDB(self):
+        if self.sql_connection:
+            self.sql_connection.rollback()
+
+    #-------------------------------------------------------------------------------    
     def get_sql_array(self, query):
         if self.sql_connection == None :
             mylog('debug','getQueryArray: databse is not open')
@@ -113,6 +118,20 @@ class DB():
             mylog('verbose', [f'[DB Cleanup] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
             self.sql.execute (f"""DELETE FROM Devices 
                                   WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
+
+
+        # De-dupe (de-duplicate) from the Plugins_Objects table        
+        mylog('verbose', ['[DB Cleanup] Plugins_Objects: Delete all duplicates'])
+        self.sql.execute("""
+            DELETE FROM Plugins_Objects
+            WHERE rowid > (
+                SELECT MIN(rowid) FROM Plugins_Objects p2
+                WHERE Plugins_Objects.Plugin = p2.Plugin
+                AND Plugins_Objects.Object_PrimaryID = p2.Object_PrimaryID
+                AND Plugins_Objects.Object_SecondaryID = p2.Object_SecondaryID
+                AND Plugins_Objects.UserData = p2.UserData
+            )
+        """)
 
         # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
         mylog('verbose', ['[DB Cleanup] Pholus_Scan: Delete all duplicates'])
