@@ -221,11 +221,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
 
             # if the script produced some outpout, clean it up to ensure it's the correct format        
             # cleanup - select only lines containing a separator to filter out unnecessary data
-            newLines = list(filter(lambda x: '|' in x, newLines))  
-
-            # # regular logging
-            # for line in newLines:
-            #     append_line_to_file (pluginsPath + '/plugin.log', line +'\n')         
+            newLines = list(filter(lambda x: '|' in x, newLines))        
             
             for line in newLines:
                 columns = line.split("|")
@@ -521,36 +517,69 @@ def process_plugin_events(db, plugin, pluginsState):
             # Update the DB
             # ----------------------------
             # Update the Plugin_Objects    
-            for plugObj in pluginObjects: 
+            # Create lists to hold the data for bulk insertion
+            objects_to_insert = []
+            events_to_insert = []
 
-                createdTime = plugObj.created
-
+            for plugObj in pluginObjects:
+                createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
+                values = (
+                    plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
+                    plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
+                    plugObj.watched4, plugObj.status, plugObj.extra, plugObj.userData,
+                    plugObj.foreignKey
+                )
+                
                 if plugObj.status == 'new':
-                    
-                    createdTime = plugObj.changed
-
-                    sql.execute ("INSERT INTO Plugins_Objects (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status, Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))    
+                    objects_to_insert.append(values)
                 else:
-                    sql.execute ("UPDATE Plugins_Objects set Plugin = ?, DateTimeChanged = ?, Watched_Value1 = ?, Watched_Value2 = ?, Watched_Value3 = ?, Watched_Value4 = ?, Status = ?, Extra = ?, ForeignKey = ? WHERE \"Index\" = ?", (plugObj.pluginPref, plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3, plugObj.watched4, plugObj.status, plugObj.extra, plugObj.foreignKey, plugObj.index))
+                    objects_to_insert.append(values + (plugObj.index,))  # Include index for UPDATE
 
-            # Update the Plugins_Events with the new statuses    
-            sql.execute ('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
-
-            for plugObj in pluginEvents: 
-
-                createdTime = plugObj.created
-
-                # use the same datetime for created and changed if a new entry
                 if plugObj.status == 'new':
-                    createdTime = plugObj.changed  
+                    events_to_insert.append(values)
+                elif plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):
+                    events_to_insert.append(values)
 
-                #  insert only events if they are to be reported on
-                if plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):  
+            # Bulk insert/update objects
+            if objects_to_insert:
+                sql.executemany(
+                    """
+                    INSERT INTO Plugins_Objects 
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "Index") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT("Index") DO UPDATE 
+                    SET "Plugin" = excluded.Plugin, 
+                        "DateTimeChanged" = excluded.DateTimeChanged, 
+                        "Watched_Value1" = excluded.Watched_Value1,
+                        "Watched_Value2" = excluded.Watched_Value2,
+                        "Watched_Value3" = excluded.Watched_Value3,
+                        "Watched_Value4" = excluded.Watched_Value4,
+                        "Status" = excluded.Status,
+                        "Extra" = excluded.Extra,
+                        "ForeignKey" = excluded.ForeignKey
+                    """, objects_to_insert
+                )
 
-                    sql.execute ("INSERT INTO Plugins_Events (Plugin, Object_PrimaryID, Object_SecondaryID, DateTimeCreated, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status,  Extra, UserData, ForeignKey) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (plugObj.pluginPref, plugObj.primaryId , plugObj.secondaryId , createdTime, plugObj.changed , plugObj.watched1 , plugObj.watched2 , plugObj.watched3 , plugObj.watched4 , plugObj.status , plugObj.extra, plugObj.userData, plugObj.foreignKey ))
+            # Bulk insert events
+            if events_to_insert:
+                sql.executemany(
+                    """
+                    INSERT INTO Plugins_Events 
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, events_to_insert
+                )
 
-            # Commit the transaction
-            conn.commit()
+            # Delete old events
+            sql.execute('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
+
+            # Commit changes to the database
+            db.commitDB()
+
 
     except Exception as e:
         # Rollback the transaction in case of an error

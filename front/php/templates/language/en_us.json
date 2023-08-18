@@ -271,6 +271,7 @@
         "Maintenance_lang_es_es" : "Spanish (ES)",
         "Maintenance_lang_selector_text" : "The change takes place on the client side, so it affects only the current browser.",
         "Maintenance_lang_selector_apply" : "Apply",
+        "Maintenance_Status" : "Status",
         "Maintenance_Tools_Tab_Settings" : "Settings",
         "Maintenance_Tools_Tab_UISettings" : "UI Settings",
         "Maintenance_Tools_Tab_Tools" : "Tools",

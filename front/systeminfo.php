@@ -371,7 +371,7 @@ for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 		echo '<div class="row">';
 		echo '<div class="col-sm-4 sysinfo_storage_usage_a">"' . lang('Systeminfo_Storage_Usage_Mount') . ' ' . $hdd_devices_mount[$x] . '"</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Total') . ' ' . $temp_total . ' GB</div>';
-		echo '<div class="col-sm-3 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Used') . ' ' . $temp_used . ' GB (' . number_format($hdd_devices_percent[$x], 1, ',', '.') . '%)</div>';
+		echo '<div class="col-sm-3 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Used') . ' ' . $temp_used . ' GB (' . $hdd_devices_percent[$x]. ')</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Free') . ' ' . $temp_free . ' GB</div>';
 		echo '</div>';
 	}
