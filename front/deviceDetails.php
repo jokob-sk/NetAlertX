@@ -563,9 +563,9 @@
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
               ?>
-                <h4 class=""><i class="fa-solid fa-rocket"></i> <?= lang('DevDetail_Internet_Speedtest');?></h4>
+                <h4 class=""><i class="fa-solid fa-rocket"></i> <?= lang('DevDetail_Tab_Internet_Speedtest_Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Tab_Internet_Speedtest_Start');?></button>
                   <br><div id="speedtestoutput" style="margin-top: 10px;"></div>
                 </div>
                    
