@@ -625,7 +625,29 @@
                     })
                   }
                   </script>
+
+                <h4 class=""><i class="fa-solid fa-binoculars"></i> <?= lang('DevDetail_Tab_Tools_Mtr_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="mtr" class="btn btn-primary pa-btn" style="margin: auto;" onclick="mtr()"><?= lang('DevDetail_Tab_Tools_Mtr_Start');?></button>
+                <br><div id="mtroutput" style="margin-top: 10px;"></div>
+                </div>
                 
+                  <script>
+                  function mtr() {
+                 
+                    $( "#mtroutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/mtr.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#mtroutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#mtroutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#mtroutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+                      
                 <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
