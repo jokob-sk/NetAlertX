@@ -25,7 +25,7 @@ exit;
 }
 
 // Perform a test with the PING command
-$output = shell_exec("ping #c4 $ip");
+$output = shell_exec("ping -c4 $ip");
 
 // Show the result
 echo "<pre>";
