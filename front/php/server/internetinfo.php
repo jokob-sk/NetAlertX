@@ -18,6 +18,17 @@ require dirname(__FILE__).'/../server/init.php';
 // Perform a test with the PING command
 $output = shell_exec("curl ipinfo.io");
 
+// Check if there is error
+if (!isset($output) || empty($output)) {
+	// Error message
+	$output = lang('DevDetail_Internet_Info_Error');
+	// Show the result
+	echo "<pre>";
+	echo $output;
+	echo "</pre>";
+	exit;	
+} 
+	
 // Replace "{" with ""
 $output = str_replace("{", "", $output);
 
