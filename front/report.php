@@ -32,9 +32,9 @@
 
 <?php
 // Check if the page exists
-if (file_exists("log/report_output.html")) {
+if (file_exists("api/notification_text.html")) {
     // Load the page
-    include("log/report_output.html");
+    include("api/notification_text.html");
 } else {
     // Display an error message
     echo "<h2>Error</h2>";

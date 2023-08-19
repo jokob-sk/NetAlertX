@@ -616,7 +616,7 @@ def process_plugin_events(db, plugin, pluginsState):
                     """, objects_to_insert
                 )
 
-            # Bulk insert events
+            # Bulk insert events (insert only events if they are to be reported on)
             if events_to_insert:
                 sql.executemany(
                     """
@@ -627,9 +627,6 @@ def process_plugin_events(db, plugin, pluginsState):
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, events_to_insert
                 )
-
-            # Delete old events
-            sql.execute('DELETE FROM Plugins_Events where Plugin = ?', (pluginPref,))
 
             # Commit changes to the database
             db.commitDB()
