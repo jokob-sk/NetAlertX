@@ -734,7 +734,7 @@
                   <div id="loading" style="display: none">
                     <div class="pa_semitransparent-panel"></div>
                     <div class="panel panel-default pa_spinner">
-                      <table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
+                      <table><td width="130px" align="middle"><?= lang("DevDetail_Spinner");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
                     </div>
                   </div>
 
