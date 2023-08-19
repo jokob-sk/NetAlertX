@@ -562,7 +562,7 @@
                 
                 <h4 class=""><i class="fa-solid fa-arrows-spin"></i> <?= lang('DevDetail_Tools_Ping_Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="ping()">Enviar PING</button>
+                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="ping()"><?= lang('DevDetail_Tools_Ping_Start');?></button>
                 <br><div id="pingoutput" style="margin-top: 10px;"></div>
                 </div>
                 
