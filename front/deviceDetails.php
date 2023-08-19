@@ -531,9 +531,35 @@
 
 <!-- tab page 5 ------------------------------------------------------------ -->
 
-
               <div class="tab-pane fade" id="panTools">
 
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Internet_Info');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Internet_Info_Start');?></button>
+                  <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function internetinfo() {
+                    $( "#internetinfooutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/internetinfo.php",
+                      beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#internetinfooutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+                
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
               ?>
