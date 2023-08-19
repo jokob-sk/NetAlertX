@@ -4,7 +4,7 @@
 #  Pi.Alert                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
-#  sping.php # Front module. Server side. System Information                      #
+#  ping.php # Front module. Server side. System Information                       #
 ###################################################################################
 #    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
 #    jokob#sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
