@@ -4,7 +4,7 @@
 #  Pi.Alert                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
-#  ping.php # Front module. Server side. System Information                       #
+#  ping.php # Front module. Server side. System Information                      #
 ###################################################################################
 #    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
 #    jokob#sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
@@ -20,8 +20,13 @@ $ip = $_GET['ip'];
 
 // Check if IP is valid
 if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-echo '' . lang('DevDetail_Tab_Tools_Ping_Error') . '';
-exit;
+	// Error message
+	$output = lang('DevDetail_Tab_Tools_Ping_Error');
+	// Show the result
+	echo "<pre>";
+	echo $output;
+	echo "</pre>";
+	exit;
 }
 
 // Perform a test with the PING command
