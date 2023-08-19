@@ -224,6 +224,7 @@
         "DevDetail_SessionTable_Duration" : "Duración",
         "DevDetail_SessionTable_IP" : "Dirección IP",
         "DevDetail_SessionTable_Additionalinfo" : "Información adicional",
+        "DevDetail_Spinner" : "Cargando ...",	        
         "DevDetail_Events_CheckBox" : "Ocultar eventos de conexión",
         "DevDetail_Nmap_buttonFast" : "Exploración rápida",
         "DevDetail_Nmap_buttonDefault" : "Escaneado predeterminado",
