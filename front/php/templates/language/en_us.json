@@ -231,6 +231,7 @@
         "DevDetail_SessionTable_Duration" : "Duration",
         "DevDetail_SessionTable_IP" : "IP",
         "DevDetail_SessionTable_Additionalinfo" : "Additional info",
+	"DevDetail_Spinner" : "Loading...",
         "DevDetail_Events_CheckBox" : "Hide Connection Events",
         "DevDetail_Nmap_buttonFast" : "Fast Scan",
         "DevDetail_Nmap_buttonDefault" : "Default Scan",
