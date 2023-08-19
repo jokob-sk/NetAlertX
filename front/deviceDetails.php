@@ -532,7 +532,7 @@
 <!-- tab page 5 ------------------------------------------------------------ -->
 
 
-              <div class="tab-pane fade" id="panNmap">
+              <div class="tab-pane fade" id="panTools">
 
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
@@ -1896,7 +1896,7 @@ function initializeTabsNew () {
     {
       loadPholus();
     }
-    if(target == "#panNmap")
+    if(target == "#panTools")
     {
       loadNmap();
     }
@@ -2062,7 +2062,7 @@ function reloadTab()
     loadPholus();
   }
   
-  if(getCache("activeDevicesTab") == "tabNmap")
+  if(getCache("activeDevicesTab") == "tabDetails")
   {
     loadNmap();
   }
