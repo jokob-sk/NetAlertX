@@ -627,6 +627,9 @@
                   }
                   </script>
 
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
                 <h4 class=""><i class="fa-solid fa-binoculars"></i> <?= lang('DevDetail_Tab_Tools_Mtr_Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                 <button type="button" id="mtr" class="btn btn-primary pa-btn" style="margin: auto;" onclick="mtr()"><?= lang('DevDetail_Tab_Tools_Mtr_Start');?></button>
@@ -648,6 +651,9 @@
                     })
                   }
                   </script>
+              <?php  
+              }
+              ?>
                                   
               <?php
               if ($_REQUEST['mac'] != 'Internet') {
