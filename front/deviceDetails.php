@@ -537,21 +537,22 @@
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
               ?>
-                <h4 class=""><?= lang('DevDetail_Internet_Speedtest');?></h4>
+                <h4 class=""><i class="fa-solid fa-rocket"></i> <?= lang('DevDetail_Internet_Speedtest');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                   <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
+                  <br><div id="speedtestoutput" style="margin-top: 10px;"></div>
                 </div>
                    
                   <script>
                   function speedtestcli() {
-                    $( "#scanoutput" ).empty();
+                    $( "#speedtestoutput" ).empty();
                     $.ajax({
                       method: "POST",
                       url: "./php/server/speedtestcli.php",
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      beforeSend: function() { $('#speedtestoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#speedtestoutput').removeClass("ajax_scripts_loading"); },
                       success: function(data, textStatus) {
-                          $("#scanoutput").html(data);    
+                          $("#speedtestoutput").html(data);    
                       }
                     })
                   }
