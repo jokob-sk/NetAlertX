@@ -55,16 +55,16 @@ if (!filter_var($port, FILTER_VALIDATE_INT, array('options' => array('min_range'
 // Get password
 $password = isset($_GET['password']) ? $_GET['password'] : '';
 
-// Validate the password
-if (!filter_var($password, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/"))) {
+// Validate the password (regular expression requires that the password has at least 8 characters, a lowercase letter, an uppercase letter and a number)
+//if (!filter_var($password, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/')))) {
 	// Error message
-	$output = lang('DevDetail_Tab_Tools_WOL_Error_Password');
+//	$output = lang('DevDetail_Tab_Tools_WOL_Error_Password');
 	// Show the result
-	echo "<pre>";
-	echo $output;
-	echo "</pre>";
-	exit;
-}
+//	echo "<pre>";
+//	echo $output;
+//	echo "</pre>";
+//	exit;
+//}
 
 // Create the magic packet
 $magicPacket = pack('H*', 'FF FF FF FF FF FF FF ' . $mac);
