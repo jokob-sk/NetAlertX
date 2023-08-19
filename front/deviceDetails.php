@@ -648,9 +648,9 @@
                   }
                   </script>
                                   
-                <h4 class=""><i class="fa-solid fa-power-off"></i> <?= lang('DevDetail_Tools_WOL_Title');?></h4>
+                <h4 class=""><i class="fa-solid fa-power-off"></i> <?= lang('DevDetail_Tab_Tools_WOL__Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wol()"><?= lang('DevDetail_Tools_WOL_Start');?></button>
+                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wol()"><?= lang('DevDetail_Tab_Tools_WOL__Start');?></button>
                 <br><div id="woloutput" style="margin-top: 10px;"></div>
                 </div>
                 
