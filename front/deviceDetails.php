@@ -649,6 +649,9 @@
                   }
                   </script>
                                   
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>				
                 <h4 class=""><i class="fa-solid fa-power-off"></i> <?= lang('DevDetail_Tab_Tools_WOL_Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                 <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wol()"><?= lang('DevDetail_Tab_Tools_WOL_Start');?></button>
@@ -669,7 +672,10 @@
                       }
                     })
                   }
-                  </script>	
+                  </script>
+              <?php  
+              }
+              ?>
                                   
                 <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
