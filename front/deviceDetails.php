@@ -583,6 +583,9 @@
                   }
                   </script>
 
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
                 <h4 class=""><i class="fa-solid fa-route"></i> <?= lang('DevDetail_Tab_Tools_Traceroute_Title');?></h4>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                 <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()"><?= lang('DevDetail_Tab_Tools_Traceroute_Start');?></button>
@@ -604,6 +607,9 @@
                     })
                   }
                   </script>
+              <?php  
+              }
+              ?>
 
               <?php
               if ($_REQUEST['mac'] != 'Internet') {
