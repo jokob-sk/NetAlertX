@@ -559,6 +559,29 @@
               <?php  
               }
               ?>
+                
+                <h4 class=""><i class="fa-solid fa-arrows-spin"></i> <?= lang('DevDetail_Tools_Ping_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="ping()">Enviar PING</button>
+                <br><div id="pingoutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function ping() {
+                 
+                    $( "#pingoutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/ping.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#pingoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#pingoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#pingoutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+                      
                 <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
