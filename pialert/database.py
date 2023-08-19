@@ -430,7 +430,7 @@ class DB():
     #-------------------------------------------------------------------------------
     def get_table_as_json(self, sqlQuery):
 
-        mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+        # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
         try:
             self.sql.execute(sqlQuery)
             columnNames = list(map(lambda x: x[0], self.sql.description))
@@ -444,7 +444,7 @@ class DB():
             tmp = row_to_json(columnNames, row)
             result["data"].append(tmp)
 
-        mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
+        # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
         return json_struc(result, columnNames)
 
     #-------------------------------------------------------------------------------
@@ -452,7 +452,7 @@ class DB():
     #-------------------------------------------------------------------------------
     def read(self, query, *args):
         """check the query and arguments are aligned and are read only"""
-        mylog('debug',[ '[Database] - Read All: SELECT Query: ', query, " params: ", args])
+        # mylog('debug',[ '[Database] - Read All: SELECT Query: ', query, " params: ", args])
         try:
             assert query.count('?') == len(args)
             assert query.upper().strip().startswith('SELECT')

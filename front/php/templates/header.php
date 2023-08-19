@@ -253,9 +253,9 @@ if ($ENABLED_DARKMODE === True) {
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
           <a href="settings.php"><i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span></a>
         </li>
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('flows.php') ) ){ echo 'active'; } ?>">
+        <!-- <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('flows.php') ) ){ echo 'active'; } ?>">
           <a href="flows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Flows');?></span></a>
-        </li>
+        </li> -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
           <a href="systeminfo.php"><i class="fa fa-microchip"></i> <span><?= lang('Navigation_SystemInfo');?></span></a>
         </li>

@@ -70,18 +70,23 @@ def run_plugin_scripts(db, runType, pluginsState = None):
 
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
+    pluginsList = []  # Create an empty list to store plugin configurations
     
-    pluginsList = []
-
-    # only top level directories required. No need for the loop
-    # for root, dirs, files in os.walk(pluginsPath):
-    
+    # Get a list of top-level directories in the specified pluginsPath
     dirs = next(os.walk(pluginsPath))[1]
-    for d in dirs:            # Loop over directories, not files    
-        if not d.startswith( "__" ):        # ignore __pycache__ 
-            pluginsList.append(json.loads(get_file_content(pluginsPath + "/" + d + '/config.json')))          
+    
+    # Loop through each directory (plugin folder) in dirs
+    for d in dirs:
+        # Check if the directory name does not start with "__" and does not end with "__ignore"
+        if not d.startswith("__") and not d.endswith("__ignore"):
+            # Construct the path to the config.json file within the plugin folder
+            config_path = os.path.join(pluginsPath, d, "config.json")
+            
+            # Load the contents of the config.json file as a JSON object and append it to pluginsList
+            pluginsList.append(json.loads(get_file_content(config_path)))
+    
+    return pluginsList  # Return the list of plugin configurations
 
-    return pluginsList
 
 
 
@@ -227,7 +232,24 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 columns = line.split("|")
                 # There has to be always 9 columns
                 if len(columns) == 9:
-                    sqlParams.append((plugin["unique_prefix"], columns[0], columns[1], 'null', columns[2], columns[3], columns[4], columns[5], columns[6], 0, columns[7], 'null', columns[8]))
+                    # Construct a tuple of values to be inserted into the database table.
+                    sqlParams.append(
+                        (
+                            plugin["unique_prefix"],   # "Plugin" column value from the plugin dictionary
+                            columns[0],                 # "Object_PrimaryID" value from columns list
+                            columns[1],                 # "Object_SecondaryID" value from columns list
+                            'null',                     # Placeholder for "DateTimeCreated" column
+                            columns[2],                 # "DateTimeChanged" value from columns list
+                            columns[3],                 # "Watched_Value1" value from columns list
+                            columns[4],                 # "Watched_Value2" value from columns list
+                            columns[5],                 # "Watched_Value3" value from columns list
+                            columns[6],                 # "Watched_Value4" value from columns list
+                            0,                          # Placeholder for "Status" column
+                            columns[7],                 # "Extra" value from columns list
+                            'null',                     # Placeholder for "UserData" column
+                            columns[8]                  # "ForeignKey" value from columns list
+                        )
+                    )
                 else:
                     mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])
         else:
@@ -247,7 +269,24 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         for row in arr:
             # There has to be always 9 columns
             if len(row) == 9 and (row[0] in ['','null']) == False :
-                sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
+                # Construct a tuple of values to be inserted into the database table.
+                sqlParams.append(
+                    (
+                        plugin["unique_prefix"],   # "Plugin" plugin dictionary
+                        row[0],                     # "Object_PrimaryID" row
+                        handle_empty(row[1]),       # "Object_SecondaryID" column after handling empty values
+                        'null',                     # Placeholder "DateTimeCreated" column
+                        row[2],                     # "DateTimeChanged" row
+                        row[3],                     # "Watched_Value1" row
+                        row[4],                     # "Watched_Value2" row
+                        handle_empty(row[5]),       # "Watched_Value3" column after handling empty values
+                        handle_empty(row[6]),       # "Watched_Value4" column after handling empty values
+                        0,                          # Placeholder "Status" column
+                        row[7],                     # "Extra" row
+                        'null',                     # Placeholder "UserData" column
+                        row[8]                      # "ForeignKey" row
+                    )
+                )
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
     
@@ -281,7 +320,22 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         for row in arr:
             # There has to be always 9 columns
             if len(row) == 9 and (row[0] in ['','null']) == False :
-                sqlParams.append((plugin["unique_prefix"], row[0], handle_empty(row[1]), 'null', row[2], row[3], row[4], handle_empty(row[5]), handle_empty(row[6]), 0, row[7], 'null', row[8]))
+                # Create a tuple containing values to be inserted into the database.
+                # Each value corresponds to a column in the table in the order of the columns.
+                sqlParams.append(
+                    (plugin["unique_prefix"],     #  "Plugin" 
+                    row[0],                       #  "Object_PrimaryID" 
+                    handle_empty(row[1]),         #  "Object_SecondaryID" 
+                    'null',                       #  "DateTimeCreated" column (null placeholder)
+                    row[2],                       #  "DateTimeChanged" 
+                    row[3],                       #  "Watched_Value1" 
+                    row[4],                       #  "Watched_Value2" 
+                    handle_empty(row[5]),         #  "Watched_Value3" 
+                    handle_empty(row[6]),         #  "Watched_Value4" 
+                    0,                            #  "Status" column (placeholder)
+                    row[7],                       #  "Extra" 
+                    'null',                       #  "UserData" column (null placeholder)
+                    row[8]))                      #  "ForeignKey" 
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
 
@@ -484,7 +538,7 @@ def process_plugin_events(db, plugin, pluginsState):
 
                 #  compare hash of the IDs for uniqueness
                 if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
-                    mylog('debug', ['[Plugins] Found existing object'])
+                    # mylog('debug', ['[Plugins] Found existing object'])
                     pluginEvents[index].status = "exists"            
                 index += 1
 
