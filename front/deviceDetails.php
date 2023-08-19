@@ -647,7 +647,29 @@
                     })
                   }
                   </script>
-                      
+                                  
+                <h4 class=""><i class="fa-solid fa-power-off"></i> <?= lang('DevDetail_Tools_WOL_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wol()"><?= lang('DevDetail_Tools_WOL_Start');?></button>
+                <br><div id="woloutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function wol() {
+                 
+                    $( "#woloutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/wol.php?action=get&mac=" + document.getElementById('txtMAC').value + "",
+                      beforeSend: function() { $('#woloutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#woloutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#woloutput").html(data);
+                      }
+                    })
+                  }
+                  </script>	
+                                  
                 <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
