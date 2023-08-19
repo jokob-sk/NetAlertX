@@ -700,7 +700,10 @@
               <?php  
               }
               ?>
-                                  
+
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>                 
                 <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
@@ -771,7 +774,9 @@
                 </table>
               
               </div>
-
+             <?php  
+             }
+             ?>
 
 
 
