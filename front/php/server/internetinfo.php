@@ -21,7 +21,7 @@ $output = shell_exec("curl ipinfo.io");
 // Check if there is error
 if (!isset($output) || empty($output)) {
 	// Error message
-	$output = lang('DevDetail_Internet_Info_Error');
+	$output = lang('DevDetail_Tab_Internet_Info_Error');
 	// Show the result
 	echo "<pre>";
 	echo $output;
