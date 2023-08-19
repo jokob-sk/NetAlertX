@@ -20,7 +20,7 @@ $ip = $_GET['ip'];
 
 // Check if IP is valid
 if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-echo '' . lang('DevDetail_Tools_Ping_Error') . '';
+echo '' . lang('DevDetail_Tab_Tools_Ping_Error') . '';
 exit;
 }
 
