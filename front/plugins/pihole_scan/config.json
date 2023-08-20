@@ -20,19 +20,31 @@
     {
       "language_code": "en_us",
       "string": "PiHole (Device sync)"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "PiHole (Sincronización de dispositivos)"
+    }    
   ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-search\"></i>"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    }    
   ],
   "description": [
     {
       "language_code": "en_us",
       "string": "This plugin syncs devices from the PiHole database"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Este complemento sincroniza dispositivos desde la base de datos de PiHole"
+    }    
   ],
     "params" : [
     {
@@ -51,10 +63,18 @@
         "name" :[{
             "language_code":"en_us",
             "string" : "When to run"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Cuando ejecutar"
         }],
         "description": [{
             "language_code":"en_us",
             "string" : "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Especifique cuándo se ejecutará la importación de su dispositivo PiHole desde la base de datos de PiHole. La configuración típica sería <code>schedule</code> y luego especifica una programación similar a cron en la configuración <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code></a>. Si está habilitado, debe asignar la base de datos pihole en su contenedor a la ruta de montaje <code>:/etc/pihole/pihole-FTL.db</code> como se especifica en la configuración <code>DB_PATH</code>."
         }]
     },
     {
@@ -66,10 +86,18 @@
         "name" : [{
             "language_code":"en_us",
             "string" : "SQL to run"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Consulta SQL"
         }],
         "description": [{
             "language_code":"en_us",
             "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos. Este en particular selecciona datos de una base de datos PiHole SQLite asignada y los asigna a las columnas correspondientes del complemento."
         }]
     },
     {
@@ -81,10 +109,18 @@
         "name" : [{
             "language_code":"en_us",
             "string" : "DB Path"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Ruta de la base de datos"
         }],
         "description": [{
             "language_code":"en_us",
             "string" : "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Configuración requerida para el tipo de complemento <code>sqlite-db-query</code>. Se utiliza para montar una base de datos SQLite externa y ejecutar la consulta SQL almacenada en la configuración <code>CMD</code>."
         }]    
     },
     {
@@ -96,10 +132,18 @@
         "name" : [{
             "language_code":"en_us",
             "string" : "Schedule"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Programar"
         }],
         "description": [{
             "language_code":"en_us",
             "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins scanning your network."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
         }]
     },
     {
@@ -111,10 +155,18 @@
         "name" :[{
             "language_code":"en_us",
             "string" : "Watched"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Visto"
         }] ,
         "description":[{
             "language_code":"en_us",
             "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es IP</li><li><code>Watched_Value2</code> es Proveedor</li><li><code>Watched_Value3</code> is es Interfaz</li><li><code>Watched_Value4</code> es N/A</li></ul>"
         }] 
     },
     {
@@ -127,13 +179,21 @@
         {
           "language_code": "en_us",
           "string": "Report on"
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        }        
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "When should notification be sent out."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "¿Cuándo se debe enviar la notificación?."
+        }        
       ]
     }
   ],
@@ -152,6 +212,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "MAC"
+          },
+          {
+          "language_code":"es_es",
+          "string" : "MAC"
           }]
     }, 
     {
@@ -165,6 +229,10 @@
         "localized": ["name"],
         "name":[{
             "language_code":"en_us",
+            "string" : "IP"
+            },
+            {
+            "language_code":"es_es",
             "string" : "IP"
             }]
     },
@@ -180,6 +248,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Vendor"
+            },
+            {
+            "language_code":"es_es",
+            "string" : "Proveedor"
             }]
     } ,
     {
@@ -194,6 +266,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Scan method"
+            },
+            {
+            "language_code":"es_es",
+            "string" : "Método de escaneo"
             }]
     } ,
     {
@@ -207,6 +283,10 @@
       "name":[{
           "language_code":"en_us",
           "string" : "Created"
+          },
+          {
+          "language_code":"es_es",
+          "string" : "Creado"
           }]
     },   
     {
@@ -220,6 +300,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Changed"
+            },
+            {
+            "language_code":"es_es",
+            "string" : "Cambiado"
             }]
     }        
   ]
