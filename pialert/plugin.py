@@ -563,17 +563,18 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 index += 1
 
             # Loop thru events and check if previously available objects are missing
-            # Create a set of hashes of IDs in pluginObjects
-            plugin_objects_ids_hash = set(x.idsHash for x in pluginObjects)
+            for tmpObj in pluginObjects:
+                
+                isMissing = True
 
-            for tmpObjFromEvent in pluginEvents:
-                if tmpObjFromEvent.idsHash not in plugin_objects_ids_hash:
-                    for x in pluginObjects:
-                        if x.primaryId == tmpObjFromEvent.primaryId and x.secondaryId == tmpObjFromEvent.secondaryId:
-                            mylog('debug', ['[Plugins] Missing from last scan: ', x.primaryId , x.secondaryId])
-                            x.status  = "missing-in-last-scan"
-                            x.changed = datetime.now(timeZone).strftime("%Y-%m-%d %H:%M:%S")
-                            break
+                for tmpObjFromEvent in pluginEvents:
+                    if tmpObj.idsHash == tmpObjFromEvent.idsHash:
+                        isMissing = False
+
+                if isMissing:
+                    tmpObj.status = "missing-in-last-scan"
+                    tmpObj.changed = timeNowTZ()
+                    mylog('debug', ['[Plugins] Missing from last scan: ', x.primaryId , x.secondaryId])
 
 
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values
