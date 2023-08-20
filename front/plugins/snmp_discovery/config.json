@@ -214,6 +214,10 @@
                 {
                     "equals": "new",
                     "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+                },
+                {
+                    "equals": "missing-in-last-scan",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
                 }
             ],
             "localized": ["name"],
@@ -322,7 +326,7 @@
             "function": "REPORT_ON",
             "type": "text.multiselect",
             "default_value":["new","watched-changed"],
-            "options": ["new","watched-changed","watched-not-changed"],
+            "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
             "localized": ["name", "description"],
             "name" :[{
                 "language_code":"en_us",

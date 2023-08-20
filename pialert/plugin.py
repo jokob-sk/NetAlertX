@@ -232,10 +232,13 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 columns = line.split("|")
                 # There has to be always 9 columns
                 if len(columns) == 9:
-                    # Construct a tuple of values to be inserted into the database table.
+                    # Create a tuple containing values to be inserted into the database.
+                    # Each value corresponds to a column in the table in the order of the columns.
+                    # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class.
                     sqlParams.append(
                         (
-                            plugin["unique_prefix"],   # "Plugin" column value from the plugin dictionary
+                            0,                          # "Index" placeholder
+                            plugin["unique_prefix"],    # "Plugin" column value from the plugin dictionary
                             columns[0],                 # "Object_PrimaryID" value from columns list
                             columns[1],                 # "Object_SecondaryID" value from columns list
                             'null',                     # Placeholder for "DateTimeCreated" column
@@ -244,7 +247,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                             columns[4],                 # "Watched_Value2" value from columns list
                             columns[5],                 # "Watched_Value3" value from columns list
                             columns[6],                 # "Watched_Value4" value from columns list
-                            0,                          # Placeholder for "Status" column
+                            'not-processed',            #  "Status" column (placeholder)
                             columns[7],                 # "Extra" value from columns list
                             'null',                     # Placeholder for "UserData" column
                             columns[8]                  # "ForeignKey" value from columns list
@@ -269,10 +272,13 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         for row in arr:
             # There has to be always 9 columns
             if len(row) == 9 and (row[0] in ['','null']) == False :
-                # Construct a tuple of values to be inserted into the database table.
+                # Create a tuple containing values to be inserted into the database.
+                # Each value corresponds to a column in the table in the order of the columns.
+                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
                 sqlParams.append(
                     (
-                        plugin["unique_prefix"],   # "Plugin" plugin dictionary
+                        0,                          # "Index" placeholder
+                        plugin["unique_prefix"],    # "Plugin" plugin dictionary
                         row[0],                     # "Object_PrimaryID" row
                         handle_empty(row[1]),       # "Object_SecondaryID" column after handling empty values
                         'null',                     # Placeholder "DateTimeCreated" column
@@ -281,7 +287,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                         row[4],                     # "Watched_Value2" row
                         handle_empty(row[5]),       # "Watched_Value3" column after handling empty values
                         handle_empty(row[6]),       # "Watched_Value4" column after handling empty values
-                        0,                          # Placeholder "Status" column
+                        'not-processed',            #  "Status" column (placeholder)
                         row[7],                     # "Extra" row
                         'null',                     # Placeholder "UserData" column
                         row[8]                      # "ForeignKey" row
@@ -322,7 +328,9 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
+                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
                 sqlParams.append(
+                    0,                            #  "Index" placeholder
                     (plugin["unique_prefix"],     #  "Plugin" 
                     row[0],                       #  "Object_PrimaryID" 
                     handle_empty(row[1]),         #  "Object_SecondaryID" 
@@ -332,7 +340,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                     row[4],                       #  "Watched_Value2" 
                     handle_empty(row[5]),         #  "Watched_Value3" 
                     handle_empty(row[6]),         #  "Watched_Value4" 
-                    0,                            #  "Status" column (placeholder)
+                    'not-processed',              #  "Status" column (placeholder)
                     row[7],                       #  "Extra" 
                     'null',                       #  "UserData" column (null placeholder)
                     row[8]))                      #  "ForeignKey" 
@@ -349,11 +357,9 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
 
     # process results if any
     if len(sqlParams) > 0:                
-        sql.executemany ("""INSERT INTO Plugins_Events ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams) 
-        db.commitDB()
 
         try:
-            sql.executemany("""INSERT INTO Plugins_History ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams)
+            sql.executemany("""INSERT INTO Plugins_History ("Index", "Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams)
             db.commitDB()
         except sqlite3.Error as e:
             db.rollbackDB()  # Rollback changes in case of an error
@@ -361,7 +367,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             
 
         # create objects
-        pluginsState = process_plugin_events(db, plugin, pluginsState)
+        pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
 
         # update API endpoints
         update_api(db, False, ["plugins_events","plugins_objects"])  
@@ -497,7 +503,7 @@ def combine_plugin_objects(old, new):
 
 #-------------------------------------------------------------------------------
 # Check if watched values changed for the given plugin
-def process_plugin_events(db, plugin, pluginsState):    
+def process_plugin_events(db, plugin, pluginsState, plugEventsArr):    
     sql = db.sql
 
     # Access the connection from the DB instance
@@ -511,8 +517,8 @@ def process_plugin_events(db, plugin, pluginsState):
         # Begin a transaction
         with conn:
 
+            #  get existing objects
             plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
-            plugEventsArr  = db.get_sql_array ("SELECT * FROM Plugins_Events where Plugin = '" + str(pluginPref)+"'") 
 
             pluginObjects = []
             pluginEvents  = []
@@ -525,46 +531,65 @@ def process_plugin_events(db, plugin, pluginsState):
             mylog('debug', ['[Plugins] Existing objects        : ', existingPluginObjectsCount])
             mylog('debug', ['[Plugins] New and existing events : ', len(plugEventsArr)])
 
-            # set status as new - will be changed later if conditions are fulfilled, e.g. entry found
-            for eve in plugEventsArr:
-                tmpObject = plugin_object_class(plugin, eve)        
-                tmpObject.status = "new"
-                pluginEvents.append(tmpObject)
+            
+            # create plugin objects from events - will be processed to find existing objects 
+            for eve in plugEventsArr:                                  
+                pluginEvents.append(plugin_object_class(plugin, eve))
 
             
-            #  Update the status to "exists"
+            #  Loop thru all current events and update the status to "exists" if the event matches an existing object
             index = 0
             for tmpObjFromEvent in pluginEvents:        
 
                 #  compare hash of the IDs for uniqueness
-                if any(x.idsHash == tmpObject.idsHash for x in pluginObjects):
-                    # mylog('debug', ['[Plugins] Found existing object'])
+                if any(x.idsHash == tmpObjFromEvent.idsHash for x in pluginObjects):                    
+            
                     pluginEvents[index].status = "exists"            
                 index += 1
 
-            # Loop thru events and update the one that exist to determine if watched columns changed
+
+            # Loop thru events and check if the ones that exist have changed in the watched columns
+            # if yes update status accordingly
             index = 0
             for tmpObjFromEvent in pluginEvents:  
 
                 if tmpObjFromEvent.status == "exists": 
 
                     #  compare hash of the changed watched columns for uniqueness
-                    if any(x.watchedHash != tmpObject.watchedHash for x in pluginObjects):
+                    if any(x.watchedHash != tmpObjFromEvent.watchedHash for x in pluginObjects):
                         pluginEvents[index].status = "watched-changed"                            
                     else:
                         pluginEvents[index].status = "watched-not-changed"  
                 index += 1
 
+            # Loop thru events and check if previously available objects are missing
+            # Create a set of hashes of IDs in pluginObjects
+            plugin_objects_ids_hash = set(x.idsHash for x in pluginObjects)
+
+            for tmpObjFromEvent in pluginEvents:
+                if tmpObjFromEvent.idsHash not in plugin_objects_ids_hash:
+                    for x in pluginObjects:
+                        if x.primaryId == tmpObjFromEvent.primaryId and x.secondaryId == tmpObjFromEvent.secondaryId:
+                            x.status  = "missing-in-last-scan"
+                            x.changed = datetime.now(timeZone).strftime("%Y-%m-%d %H:%M:%S")
+                            break
+
+
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values
-            for eveObj in pluginEvents:
-                if eveObj.status == 'new':
-                    pluginObjects.append(eveObj)
+            for tmpObjFromEvent in pluginEvents:
+                # set "new" status for new objects and append
+                if tmpObjFromEvent.status == 'not-processed':
+                    # This is a new object as it was not discovered as "exists" previously                    
+                    tmpObjFromEvent.status = 'new'
+
+                    pluginObjects.append(tmpObjFromEvent)
+                # update data of existing objects
                 else:
                     index = 0
                     for plugObj in pluginObjects:
                         # find corresponding object for the event and merge
-                        if plugObj.idsHash == eveObj.idsHash:               
-                            pluginObjects[index] =  combine_plugin_objects(plugObj, eveObj)                    
+                        if plugObj.idsHash == tmpObjFromEvent.idsHash:               
+                            pluginObjects[index] =  combine_plugin_objects(plugObj, tmpObjFromEvent)                    
 
                         index += 1
 
@@ -575,8 +600,14 @@ def process_plugin_events(db, plugin, pluginsState):
             objects_to_insert = []
             events_to_insert = []
 
+            statuses_to_report_on = get_plugin_setting_value(plugin, "REPORT_ON")
+
+            mylog('debug', ['[Plugins] statuses_to_report_on: ', statuses_to_report_on])
+
             for plugObj in pluginObjects:
+                #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
+
                 values = (
                     plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
                     plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
@@ -589,10 +620,15 @@ def process_plugin_events(db, plugin, pluginsState):
                 else:
                     objects_to_insert.append(values + (plugObj.index,))  # Include index for UPDATE
 
-                if plugObj.status == 'new':
+                # only generate events that we want to be notified on
+                if plugObj.status in statuses_to_report_on:
                     events_to_insert.append(values)
-                elif plugObj.status in get_plugin_setting_value(plugin, "REPORT_ON"):
-                    events_to_insert.append(values)
+
+            mylog('debug', ['[Plugins] events_to_insert count: ', len(events_to_insert)])
+            mylog('debug', ['[Plugins] pluginEvents count : ', len(pluginEvents)])
+            logEventStatusCounts(pluginEvents)
+            mylog('debug', ['[Plugins] pluginObjects count: ', len(pluginObjects)])
+            logEventStatusCounts(pluginObjects)
 
             # Bulk insert/update objects
             if objects_to_insert:
@@ -636,7 +672,7 @@ def process_plugin_events(db, plugin, pluginsState):
         # Rollback the transaction in case of an error
         conn.rollback()
         mylog('none', ['[Plugins] SQL transaction error: ', e])
-        raise e
+        raise e   
 
     # Perform database table mapping if enabled for the plugin   
     if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
@@ -732,8 +768,8 @@ class plugin_object_class:
         self.pluginPref   = objDbRow[1]
         self.primaryId    = objDbRow[2]
         self.secondaryId  = objDbRow[3]
-        self.created      = objDbRow[4]
-        self.changed      = objDbRow[5]
+        self.created      = objDbRow[4] # can be null
+        self.changed      = objDbRow[5] # never null (data coming from plugin)
         self.watched1     = objDbRow[6]
         self.watched2     = objDbRow[7]
         self.watched3     = objDbRow[8]
@@ -742,6 +778,10 @@ class plugin_object_class:
         self.extra        = objDbRow[11]
         self.userData     = objDbRow[12]
         self.foreignKey   = objDbRow[13]
+
+        # Check if self.status is valid
+        if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:
+            raise ValueError("Invalid status value for plugin object:", self.status)
 
         # self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
         self.idsHash      = str(self.primaryId) + str(self.secondaryId)
@@ -768,4 +808,16 @@ class plugin_object_class:
 
         self.watchedHash  = str(hash(tmp))
 
+#-------------------------------------------------------------------------------
+def logEventStatusCounts(pluginEvents):
+    status_counts = {}  # Dictionary to store counts for each status
 
+    for event in pluginEvents:
+        status = event.status
+        if status in status_counts:
+            status_counts[status] += 1
+        else:
+            status_counts[status] = 1
+
+    for status, count in status_counts.items():
+        mylog('debug', [f'Status "{status}": {count} events'])

@@ -121,7 +121,7 @@
       "function": "REPORT_ON",
       "type": "text.multiselect",
       "default_value": ["new"],
-      "options": ["new", "watched-changed", "watched-not-changed"],
+      "options": ["new", "watched-changed", "watched-not-changed", "missing-in-last-scan"],
       "localized": ["name", "description"],
       "name": [
         {

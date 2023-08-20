@@ -153,7 +153,7 @@
       "function": "REPORT_ON",
       "type": "readonly",
       "default_value": [],
-      "options": ["new", "watched-changed", "watched-not-changed"],
+      "options": ["new", "watched-changed", "watched-not-changed", "missing-in-last-scan"],
       "localized": ["name", "description"],
       "name": [
         {

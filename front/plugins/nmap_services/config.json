@@ -210,6 +210,10 @@
                 {
                     "equals": "new",
                     "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+                },
+                {
+                    "equals": "missing-in-last-scan",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
                 }
             ],
             "localized": ["name"],

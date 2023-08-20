@@ -488,7 +488,8 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 - `REPORT_ON` - (optional) Send a notification only on these statuses. Supported options are: 
   - `new` means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. 
   - `watched-changed` - means that selected `Watched_ValueN` columns changed
-  - `watched-not-changed` - reports even on events where selected `Watched_ValueN` did not change
+  - `watched-not-changed`  - reports even on events where selected `Watched_ValueN` did not change
+  - `missing-in-last-scan` - if object is missing compared to previous scans
 
 
 > 🔎 Example:
