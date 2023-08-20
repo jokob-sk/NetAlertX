@@ -574,7 +574,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 if isMissing:
                     tmpObj.status = "missing-in-last-scan"
                     tmpObj.changed = timeNowTZ()
-                    mylog('debug', ['[Plugins] Missing from last scan: ', x.primaryId , x.secondaryId])
+                    mylog('debug', ['[Plugins] Missing from last scan: ', tmpObj.primaryId , tmpObj.secondaryId])
 
 
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values
