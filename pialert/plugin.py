@@ -570,6 +570,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 if tmpObjFromEvent.idsHash not in plugin_objects_ids_hash:
                     for x in pluginObjects:
                         if x.primaryId == tmpObjFromEvent.primaryId and x.secondaryId == tmpObjFromEvent.secondaryId:
+                            mylog('debug', ['[Plugins] Missing from last scan: ', x.primaryId , x.secondaryId])
                             x.status  = "missing-in-last-scan"
                             x.changed = datetime.now(timeZone).strftime("%Y-%m-%d %H:%M:%S")
                             break
@@ -599,6 +600,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             # Create lists to hold the data for bulk insertion
             objects_to_insert = []
             events_to_insert = []
+            objects_to_update = []
 
             statuses_to_report_on = get_plugin_setting_value(plugin, "REPORT_ON")
 
@@ -607,18 +609,18 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
-
+                #  13 values without Index
                 values = (
                     plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
                     plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
                     plugObj.watched4, plugObj.status, plugObj.extra, plugObj.userData,
                     plugObj.foreignKey
                 )
-                
+
                 if plugObj.status == 'new':
                     objects_to_insert.append(values)
                 else:
-                    objects_to_insert.append(values + (plugObj.index,))  # Include index for UPDATE
+                    objects_to_update.append(values + (plugObj.index,))  # Include index for UPDATE
 
                 # only generate events that we want to be notified on
                 if plugObj.status in statuses_to_report_on:
@@ -630,29 +632,31 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             mylog('debug', ['[Plugins] pluginObjects count: ', len(pluginObjects)])
             logEventStatusCounts(pluginObjects)
 
-            # Bulk insert/update objects
+            # Bulk insert objects
             if objects_to_insert:
                 sql.executemany(
                     """
                     INSERT INTO Plugins_Objects 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "Index") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT("Index") DO UPDATE 
-                    SET "Plugin" = excluded.Plugin, 
-                        "DateTimeChanged" = excluded.DateTimeChanged, 
-                        "Watched_Value1" = excluded.Watched_Value1,
-                        "Watched_Value2" = excluded.Watched_Value2,
-                        "Watched_Value3" = excluded.Watched_Value3,
-                        "Watched_Value4" = excluded.Watched_Value4,
-                        "Status" = excluded.Status,
-                        "Extra" = excluded.Extra,
-                        "ForeignKey" = excluded.ForeignKey
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, objects_to_insert
                 )
 
-            # Bulk insert events (insert only events if they are to be reported on)
+            # Bulk update objects
+            if objects_to_update:
+                sql.executemany(
+                    """
+                    UPDATE Plugins_Objects
+                    SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
+                        "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?
+                    WHERE "Index" = ?
+                    """, objects_to_update
+                )
+
+            # Bulk insert events
             if events_to_insert:
                 sql.executemany(
                     """
@@ -666,6 +670,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 
             # Commit changes to the database
             db.commitDB()
+
 
 
     except Exception as e:
