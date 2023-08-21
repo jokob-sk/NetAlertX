@@ -26,7 +26,6 @@ last_scan_run = ''
 last_cleanup = ''
 last_update_vendors = ''
 last_version_check = ''
-check_report = []
 arpscan_devices = []
 
 # for MQTT

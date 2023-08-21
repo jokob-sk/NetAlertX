@@ -96,16 +96,27 @@ class DB():
         self.sql.execute (f"""DELETE FROM Events 
                              WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
                              
-        # Cleanup Plugin Events History
-        mylog('verbose', ['[DB Cleanup] Plugins_History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
-        self.sql.execute (f"""DELETE FROM Plugins_History 
-                             WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
+        # # Cleanup Plugin Events History
+        # mylog('verbose', ['[DB Cleanup] Plugins_History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
+        # self.sql.execute (f"""DELETE FROM Plugins_History 
+        #                      WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
 
-        # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting 
-        mylog('verbose', [f'[DB Cleanup] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} (PLUGINS_KEEP_HIST setting)'])
-        self.sql.execute (f"""DELETE from Plugins_History where "Index" not in (
-                        SELECT "Index" from Plugins_History 
-                        order by "Index" desc limit {str(PLUGINS_KEEP_HIST)})""")
+        # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
+        mylog('verbose', [f'[DB Cleanup] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)'])
+
+        # Build the SQL query to delete entries that exceed the limit per unique "Plugin" column entry
+        delete_query = f"""DELETE FROM Plugins_History 
+                                WHERE "Index" NOT IN (
+                                    SELECT "Index"
+                                    FROM (
+                                        SELECT "Index", 
+                                            ROW_NUMBER() OVER(PARTITION BY "Plugin" ORDER BY DateTimeChanged DESC) AS row_num
+                                        FROM Plugins_History
+                                    ) AS ranked_objects
+                                    WHERE row_num <= {str(PLUGINS_KEEP_HIST)}
+                                );"""
+
+        self.sql.execute(delete_query)
 
         # Cleanup Pholus_Scan
         if PHOLUS_DAYS_DATA != 0:
@@ -120,7 +131,8 @@ class DB():
                                   WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
 
 
-        # De-dupe (de-duplicate) from the Plugins_Objects table        
+        # De-dupe (de-duplicate) from the Plugins_Objects table 
+        # TODO This shouldn't be necessary - probably a concurrency bug somewhere in the code :(        
         mylog('verbose', ['[DB Cleanup] Plugins_Objects: Delete all duplicates'])
         self.sql.execute("""
             DELETE FROM Plugins_Objects
@@ -245,18 +257,18 @@ class DB():
             self.sql.execute("DROP TABLE Settings;")
 
         self.sql.execute("""
-        CREATE TABLE "Settings" (
-        "Code_Name"	    TEXT,
-        "Display_Name"	TEXT,
-        "Description"	TEXT,
-        "Type"          TEXT,
-        "Options"       TEXT,
-        "RegEx"         TEXT,
-        "Value"	        TEXT,
-        "Group"	        TEXT,
-        "Events"	    TEXT
-        );
-        """)
+            CREATE TABLE "Settings" (
+            "Code_Name"	    TEXT,
+            "Display_Name"	TEXT,
+            "Description"	TEXT,
+            "Type"          TEXT,
+            "Options"       TEXT,
+            "RegEx"         TEXT,
+            "Value"	        TEXT,
+            "Group"	        TEXT,
+            "Events"	    TEXT
+            );
+            """)
 
         # indicates, if Pholus_Scan table is available
         pholusScanMissing = self.sql.execute("""
@@ -500,19 +512,13 @@ def insertOnlineHistory(db):
     startTime = timeNowTZ()
     # Add to History
 
-    # only run this if the scans have run
-    scanCount = db.read_one("SELECT count(*) FROM CurrentScan")
-    if scanCount[0] == 0 :
-        mylog('debug',[ '[insertOnlineHistory] - nothing to do, currentScan empty'])
-        return 0
-
     History_All = db.read("SELECT * FROM Devices")
     History_All_Devices  = len(History_All)
 
     History_Archived = db.read("SELECT * FROM Devices WHERE dev_Archived = 1")
     History_Archived_Devices  = len(History_Archived)
 
-    History_Online = db.read("SELECT * FROM CurrentScan")
+    History_Online = db.read("SELECT * FROM Devices WHERE dev_PresentLastScan = 1")
     History_Online_Devices  = len(History_Online)
     History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
 

@@ -206,6 +206,7 @@ def main ():
             
             # process all the scanned data into new devices
             mylog('debug', [f'[MAIN] processScan: {pluginsState.processScan}'])
+            
             if pluginsState.processScan == True:   
                 mylog('debug', "[MAIN] start processig scan results")  
                 pluginsState.processScan = False
@@ -213,23 +214,22 @@ def main ():
                           
             
             # Reporting   
-            if conf.cycle in conf.check_report:
-                # Check if new devices found
-                sql.execute (sql_new_devices)
-                newDevices = sql.fetchall()
-                db.commitDB()
-                
-                #  new devices were found
-                if len(newDevices) > 0:
-                    #  run all plugins registered to be run when new devices are found                    
-                    pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)
+            # Check if new devices found
+            sql.execute (sql_new_devices)
+            newDevices = sql.fetchall()
+            db.commitDB()
+            
+            #  new devices were found
+            if len(newDevices) > 0:
+                #  run all plugins registered to be run when new devices are found                    
+                pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)
 
-                    #  Scan newly found devices with Nmap if enabled
-                    if conf.NMAP_ACTIVE and len(newDevices) > 0:
-                        performNmapScan( db, newDevices)
+                #  Scan newly found devices with Nmap if enabled
+                if conf.NMAP_ACTIVE and len(newDevices) > 0:
+                    performNmapScan( db, newDevices)
 
-                # send all configured notifications
-                send_notifications(db)
+            # send all configured notifications
+            send_notifications(db)
 
             # clean up the DB once an hour
             if conf.last_cleanup + datetime.timedelta(hours = 1) < loop_start_time:

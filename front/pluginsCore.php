@@ -239,7 +239,7 @@ function generateTabs()
         var histCount = 0
         var histCountDisplayed = 0
         
-        for(i=pluginHistory.length-1;i >= 0;i--) // from latest to the oldest
+        for(i=0;i < pluginHistory.length ;i++) 
         {
             if(pluginHistory[i].Plugin == prefix)
             {

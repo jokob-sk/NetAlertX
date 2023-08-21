@@ -13,7 +13,8 @@ from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonOb
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
-from plugin import get_plugins_configs, print_plugin_info, run_plugin_scripts
+from plugin import print_plugin_info, run_plugin_scripts
+from plugin_utils import get_plugins_configs
 
 #===============================================================================
 # Initialise user defined values
@@ -175,7 +176,6 @@ def importConfigs (db):
     # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings
     conf.time_started = datetime.datetime.now(conf.tz)
     conf.cycle = ""
-    conf.check_report = [1, "internet_IP", "update_vendors_silent"]
     conf.plugins_once_run = False
     
     #cron_instance = Cron()

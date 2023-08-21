@@ -3,7 +3,7 @@ import sqlite3
 import json
 import subprocess
 import datetime
-import base64
+
 from collections import namedtuple
 
 # pialert modules
@@ -12,6 +12,7 @@ from const import pluginsPath, logPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, flatten_array, combine_plugin_objects, resolve_wildcards_arr
 
 
 #-------------------------------------------------------------------------------
@@ -65,77 +66,6 @@ def run_plugin_scripts(db, runType, pluginsState = None):
     return pluginsState
 
 
-
-
-
-#-------------------------------------------------------------------------------
-def get_plugins_configs():
-    pluginsList = []  # Create an empty list to store plugin configurations
-    
-    # Get a list of top-level directories in the specified pluginsPath
-    dirs = next(os.walk(pluginsPath))[1]
-    
-    # Loop through each directory (plugin folder) in dirs
-    for d in dirs:
-        # Check if the directory name does not start with "__" and does not end with "__ignore"
-        if not d.startswith("__") and not d.endswith("__ignore"):
-            # Construct the path to the config.json file within the plugin folder
-            config_path = os.path.join(pluginsPath, d, "config.json")
-            
-            # Load the contents of the config.json file as a JSON object and append it to pluginsList
-            pluginsList.append(json.loads(get_file_content(config_path)))
-    
-    return pluginsList  # Return the list of plugin configurations
-
-
-
-
-#-------------------------------------------------------------------------------
-def print_plugin_info(plugin, elements = ['display_name']):
-
-    mylog('verbose', ['[Plugins] ---------------------------------------------']) 
-
-    for el in elements:
-        res = get_plugin_string(plugin, el)
-        mylog('verbose', ['[Plugins] ', el ,': ', res]) 
-
-
-#-------------------------------------------------------------------------------
-# Gets the whole setting object
-def get_plugin_setting(plugin, function_key):
-    
-    result = None
-
-    for set in plugin['settings']:
-        if set["function"] == function_key:
-          result =  set 
-
-    if result == None:
-        mylog('debug', ['[Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
-
-    return result
-
-
-        
-
-#-------------------------------------------------------------------------------
-# Get localized string value on the top JSON depth, not recursive
-def get_plugin_string(props, el):
-
-    result = ''
-
-    if el in props['localized']:
-        for val in props[el]:
-            if val['language_code'] == 'en_us':
-                result = val['string']
-        
-        if result == '':
-            result = 'en_us string missing'
-
-    else:
-        result = props[el]
-    
-    return result
 
 
 #-------------------------------------------------------------------------------
@@ -356,21 +286,13 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
 
     # process results if any
-    if len(sqlParams) > 0:                
-
-        try:
-            sql.executemany("""INSERT INTO Plugins_History ("Index", "Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", "Watched_Value4", "Status" ,"Extra", "UserData", "ForeignKey") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", sqlParams)
-            db.commitDB()
-        except sqlite3.Error as e:
-            db.rollbackDB()  # Rollback changes in case of an error
-            mylog('none', ['[Plugins] ERROR inserting into Plugins_History:', e]) 
-            
+    if len(sqlParams) > 0:               
 
         # create objects
         pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
 
         # update API endpoints
-        update_api(db, False, ["plugins_events","plugins_objects"])  
+        update_api(db, False, ["plugins_events","plugins_objects", "plugins_history"])  
     
     return pluginsState
 
@@ -432,78 +354,17 @@ def get_plugin_setting_value(plugin, function_key):
 
 
 
-#-------------------------------------------------------------------------------
-def flatten_array(arr, encodeBase64=False):
-    tmp = ''
-    arrayItemStr = ''
-
-    mylog('debug', '[Plugins] Flattening the below array')
-    mylog('debug', f'[Plugins] Convert to Base64: {encodeBase64}')
-    mylog('debug', arr)
-
-    for arrayItem in arr:
-        # only one column flattening is supported
-        if isinstance(arrayItem, list):            
-            arrayItemStr = str(arrayItem[0]).replace("'", '')  # removing single quotes - not allowed            
-        else:
-            # is string already
-            arrayItemStr = arrayItem
-
-
-        tmp += f'{arrayItemStr},'
-
-    tmp = tmp[:-1]  # Remove last comma ','
-
-    mylog('debug', f'[Plugins] Flattened array: {tmp}')
-
-    if encodeBase64:
-        tmp = str(base64.b64encode(tmp.encode('ascii')))
-        mylog('debug', f'[Plugins] Flattened array (base64): {tmp}')
-
-
-    return tmp
 
 
 
-#-------------------------------------------------------------------------------
-# Replace {wildcars} with parameters
-def resolve_wildcards_arr(commandArr, params):
-
-    mylog('debug', ['[Plugins] Pre-Resolved CMD: '] + commandArr)   
-
-    for param in params:
-        # mylog('debug', ['[Plugins] key     : {', param[0], '}'])
-        # mylog('debug', ['[Plugins] resolved: ', param[1]])
-
-        i = 0
-        
-        for comPart in commandArr:
-
-            commandArr[i] = comPart.replace('{' + param[0] + '}', param[1]).replace('{s-quote}',"'")
-
-            i += 1
-
-    return commandArr    
+ 
 
 
-#-------------------------------------------------------------------------------
-# Combine plugin objects, keep user-defined values, created time, changed time if nothing changed and the index
-def combine_plugin_objects(old, new):    
-    
-    new.userData = old.userData 
-    new.index = old.index 
-    new.created = old.created 
-
-    # Keep changed time if nothing changed
-    if new.status in ['watched-not-changed']:
-        new.changed = old.changed
-
-    #  return the new object, with some of the old values
-    return new
 
 #-------------------------------------------------------------------------------
 # Check if watched values changed for the given plugin
 def process_plugin_events(db, plugin, pluginsState, plugEventsArr):    
+      
     sql = db.sql
 
     # Access the connection from the DB instance
@@ -517,24 +378,23 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
         # Begin a transaction
         with conn:
 
-            #  get existing objects
-            plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
-
             pluginObjects = []
             pluginEvents  = []
+
+            #  Create plugin objects from existing database entries
+            plugObjectsArr = db.get_sql_array ("SELECT * FROM Plugins_Objects where Plugin = '" + str(pluginPref)+"'") 
 
             for obj in plugObjectsArr: 
                 pluginObjects.append(plugin_object_class(plugin, obj))
 
-            existingPluginObjectsCount = len(pluginObjects)
-
-            mylog('debug', ['[Plugins] Existing objects        : ', existingPluginObjectsCount])
-            mylog('debug', ['[Plugins] New and existing events : ', len(plugEventsArr)])
-
-            
+           
             # create plugin objects from events - will be processed to find existing objects 
             for eve in plugEventsArr:                                  
                 pluginEvents.append(plugin_object_class(plugin, eve))
+
+
+            mylog('debug', ['[Plugins] Existing objects from Plugins_Objects: ', len(pluginObjects)])
+            mylog('debug', ['[Plugins] Logged events from the plugin run    : ', len(pluginEvents)])
 
             
             #  Loop thru all current events and update the status to "exists" if the event matches an existing object
@@ -572,9 +432,11 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                         isMissing = False
 
                 if isMissing:
-                    tmpObj.status = "missing-in-last-scan"
-                    tmpObj.changed = timeNowTZ()
-                    mylog('debug', ['[Plugins] Missing from last scan: ', tmpObj.primaryId , tmpObj.secondaryId])
+                    # if wasn't missing before, mark as changed
+                    if tmpObj.status != "missing-in-last-scan":
+                        tmpObj.changed = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
+                        tmpObj.status = "missing-in-last-scan"                    
+                    mylog('debug', [f'[Plugins] Missing from last scan (PrimaryID | SecondaryID): {tmpObj.primaryId} | {tmpObj.secondaryId}'])
 
 
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values
@@ -601,6 +463,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             # Create lists to hold the data for bulk insertion
             objects_to_insert = []
             events_to_insert = []
+            history_to_insert = []
             objects_to_update = []
 
             statuses_to_report_on = get_plugin_setting_value(plugin, "REPORT_ON")
@@ -627,11 +490,20 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 if plugObj.status in statuses_to_report_on:
                     events_to_insert.append(values)
 
-            mylog('debug', ['[Plugins] events_to_insert count: ', len(events_to_insert)])
-            mylog('debug', ['[Plugins] pluginEvents count : ', len(pluginEvents)])
-            logEventStatusCounts(pluginEvents)
-            mylog('debug', ['[Plugins] pluginObjects count: ', len(pluginObjects)])
-            logEventStatusCounts(pluginObjects)
+                # combine all DB insert and update events into one for history
+                history_to_insert.append(values)
+
+            
+            mylog('debug', ['[Plugins] pluginEvents      count: ', len(pluginEvents)])
+            mylog('debug', ['[Plugins] pluginObjects     count: ', len(pluginObjects)])
+
+            mylog('debug', ['[Plugins] events_to_insert  count: ', len(events_to_insert)])
+            mylog('debug', ['[Plugins] history_to_insert count: ', len(history_to_insert)])
+            mylog('debug', ['[Plugins] objects_to_insert count: ', len(objects_to_insert)])
+            mylog('debug', ['[Plugins] objects_to_update count: ', len(objects_to_update)])
+
+            logEventStatusCounts('pluginEvents', pluginEvents)
+            logEventStatusCounts('pluginObjects', pluginObjects)
 
             # Bulk insert objects
             if objects_to_insert:
@@ -659,6 +531,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 
             # Bulk insert events
             if events_to_insert:
+
                 sql.executemany(
                     """
                     INSERT INTO Plugins_Events 
@@ -667,6 +540,19 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, events_to_insert
+                )
+
+            # Bulk insert history entries
+            if history_to_insert:
+
+                sql.executemany(
+                    """
+                    INSERT INTO Plugins_History 
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, history_to_insert
                 )
 
             # Commit changes to the database
@@ -789,8 +675,8 @@ class plugin_object_class:
         if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:
             raise ValueError("Invalid status value for plugin object:", self.status)
 
-        # self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
-        self.idsHash      = str(self.primaryId) + str(self.secondaryId)
+        self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
+        # self.idsHash      = str(self.primaryId) + str(self.secondaryId)
 
         self.watchedClmns = []
         self.watchedIndxs = []          
@@ -814,16 +700,3 @@ class plugin_object_class:
 
         self.watchedHash  = str(hash(tmp))
 
-#-------------------------------------------------------------------------------
-def logEventStatusCounts(pluginEvents):
-    status_counts = {}  # Dictionary to store counts for each status
-
-    for event in pluginEvents:
-        status = event.status
-        if status in status_counts:
-            status_counts[status] += 1
-        else:
-            status_counts[status] = 1
-
-    for status, count in status_counts.items():
-        mylog('debug', [f'Status "{status}": {count} events'])
