@@ -535,7 +535,82 @@
               </div>
 
 
-<!-- tab page 5 ------------------------------------------------------------ -->
+<!-- tab page "Nmap"  ------------------------------------------------------------ -->
+
+              <div class="tab-pane fade" id="panNmap">
+
+                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
+                <div style="width:100%; text-align: center;">
+                  <script>
+                      setTimeout(function(){
+                        document.getElementById('piamanualnmap_fast').innerHTML='<?= lang('DevDetail_Nmap_buttonFast');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_normal').innerHTML='<?= lang('DevDetail_Nmap_buttonDefault');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_detail').innerHTML='<?= lang('DevDetail_Nmap_buttonDetail');?> (' + document.getElementById('txtLastIP').value +')';
+                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?= lang('DevDetail_Nmap_buttonSkipDiscovery');?> (' + document.getElementById('txtLastIP').value +')';
+                      }, 2000);
+                  </script>
+
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')"><?= lang("DevDetail_Loading");?></button>
+                
+                  <div style="text-align: left;">
+                    <ul style="padding:20px;">
+                      <li><?= lang('DevDetail_Nmap_buttonFast_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonDefault_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonDetail_text');?></li>
+                      <li><?= lang('DevDetail_Nmap_buttonSkipDiscovery_text');?></li>
+                      <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><?= lang('DevDetail_Nmap_resultsLink');?></a></li>
+
+                    </ul>
+                  </div>
+                </div>
+
+                <div id="scanoutput" style="margin-top: 30px;"></div>
+                   
+                  <script>
+                  function manualnmapscan(targetip, mode) {
+                    $( "#scanoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/nmap_scan.php",
+                      data: { scan: targetip, mode: mode },
+                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                        console.log(data);
+                          $("#scanoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+
+                  <h3><?= lang("DevDetail_Tab_NmapTableHeader");?></h3>
+
+                  <div><?= lang("DevDetail_Tab_NmapTableText");?></div>
+
+                <table id="tableNmap" class="table table-bordered table-hover table-striped ">
+                  <thead>
+                  <tr>
+                    <th><?= lang("DevDetail_Tab_NmapTableIndex");?></th>                    
+                    <th><?= lang("DevDetail_Tab_NmapTableTime");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
+                    <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
+                  </tr>
+                  </thead>
+                  <!-- Comment out tbody when trying to implement better table with datatables here -->
+                  <!-- IDEA: Show unmatched pholus entries?  -->
+                  <tbody id="tableNmapBody">
+                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
+                  </tbody>
+                </table>
+				
+              </div>
+				  
+<!-- tab page "Tools" ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panTools">
 
@@ -732,84 +807,8 @@
               <?php  
               }
               ?>
-
-              <?php
-              if ($_REQUEST['mac'] != 'Internet') {
-              ?>                 
-                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
-                <div style="width:100%; text-align: center;">
-                  <script>
-                      setTimeout(function(){
-                        document.getElementById('piamanualnmap_fast').innerHTML='<?= lang('DevDetail_Nmap_buttonFast');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_normal').innerHTML='<?= lang('DevDetail_Nmap_buttonDefault');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_detail').innerHTML='<?= lang('DevDetail_Nmap_buttonDetail');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?= lang('DevDetail_Nmap_buttonSkipDiscovery');?> (' + document.getElementById('txtLastIP').value +')';
-                      }, 2000);
-                  </script>
-
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')"><?= lang("DevDetail_Loading");?></button>
-                
-                  <div style="text-align: left;">
-                    <ul style="padding:20px;">
-                      <li><?= lang('DevDetail_Nmap_buttonFast_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonDefault_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonDetail_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonSkipDiscovery_text');?></li>
-                      <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><?= lang('DevDetail_Nmap_resultsLink');?></a></li>
-
-                    </ul>
-                  </div>
-                </div>
-
-                <div id="scanoutput" style="margin-top: 30px;"></div>
-                   
-                  <script>
-                  function manualnmapscan(targetip, mode) {
-                    $( "#scanoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/nmap_scan.php",
-                      data: { scan: targetip, mode: mode },
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                        console.log(data);
-                          $("#scanoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-
-                  <h3><?= lang("DevDetail_Tab_NmapTableHeader");?></h3>
-
-                  <div><?= lang("DevDetail_Tab_NmapTableText");?></div>
-
-                <table id="tableNmap" class="table table-bordered table-hover table-striped ">
-                  <thead>
-                  <tr>
-                    <th><?= lang("DevDetail_Tab_NmapTableIndex");?></th>                    
-                    <th><?= lang("DevDetail_Tab_NmapTableTime");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
-                  </tr>
-                  </thead>
-                  <!-- Comment out tbody when trying to implement better table with datatables here -->
-                  <!-- IDEA: Show unmatched pholus entries?  -->
-                  <tbody id="tableNmapBody">
-                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
-                  </tbody>
-                </table>
-              
-              </div>
-             <?php  
-              }
-             ?>
-                
+	</div>   
+				
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
 
