@@ -2067,7 +2067,7 @@ function initializeTabsNew () {
     {
       loadPholus();
     }
-    if(target == "#panTools")
+    if(target == "#panNmap")
     {
       loadNmap();
     }
