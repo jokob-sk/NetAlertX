@@ -106,8 +106,8 @@
               ?>
               <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
               <?php
-              }
-              ?>               
+               }
+              ?>
               <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
@@ -807,7 +807,7 @@
               <?php  
               }
               ?>
-	</div>   
+		</div>
 				
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
