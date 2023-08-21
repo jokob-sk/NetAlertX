@@ -2234,7 +2234,7 @@ function reloadTab()
     loadPholus();
   }
   
-  if(getCache("activeDevicesTab") == "tabDetails")
+  if(getCache("activeDevicesTab") == "tabNmap")
   {
     loadNmap();
   }
