@@ -102,6 +102,12 @@
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>			  
+			        <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
+              <?php  
+              }
+              ?>               
               <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
