@@ -12,7 +12,7 @@ from const import pluginsPath, logPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, flatten_array, combine_plugin_objects, resolve_wildcards_arr
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, flatten_array, combine_plugin_objects, resolve_wildcards_arr, get_plugin_setting_value, handle_empty, custom_plugin_decoder
 
 
 #-------------------------------------------------------------------------------
@@ -296,17 +296,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     
     return pluginsState
 
-#-------------------------------------------------------------------------------
-def custom_plugin_decoder(pluginDict):
-    return namedtuple('X', pluginDict.keys())(*pluginDict.values())        
 
-#-------------------------------------------------------------------------------
-# Handle empty value 
-def handle_empty(value):    
-    if value == '' or value is None:
-        value = 'null'
-
-    return value    
 
 
 #-------------------------------------------------------------------------------
@@ -338,26 +328,6 @@ def passable_string_from_setting(globalSetting):
             return json.dumps(setVal)
 
     mylog('none', ['[Plugins] ERROR: Parameter not converted.'])  
-
-
-
-#-------------------------------------------------------------------------------
-# Gets the setting value
-def get_plugin_setting_value(plugin, function_key):
-    
-    resultObj = get_plugin_setting(plugin, function_key)
-
-    if resultObj != None:
-        return resultObj["value"]
-
-    return None
-
-
-
-
-
-
- 
 
 
 

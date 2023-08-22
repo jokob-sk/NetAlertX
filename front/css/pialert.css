@@ -829,7 +829,7 @@ input[readonly] {
 {
     opacity: 0.3;
     display: initial;    
-    float: inline-start;
+    float: left;
 }
 
 #networkTree

@@ -161,3 +161,28 @@ def get_plugins_configs():
             pluginsList.append(json.loads(get_file_content(config_path)))
     
     return pluginsList  # Return the list of plugin configurations
+
+
+    
+#-------------------------------------------------------------------------------
+# Gets the setting value
+def get_plugin_setting_value(plugin, function_key):
+    
+    resultObj = get_plugin_setting(plugin, function_key)
+
+    if resultObj != None:
+        return resultObj["value"]
+
+    return None
+
+#-------------------------------------------------------------------------------
+def custom_plugin_decoder(pluginDict):
+    return namedtuple('X', pluginDict.keys())(*pluginDict.values())        
+
+#-------------------------------------------------------------------------------
+# Handle empty value 
+def handle_empty(value):    
+    if value == '' or value is None:
+        value = 'null'
+
+    return value    
