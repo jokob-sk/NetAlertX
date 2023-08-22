@@ -16,16 +16,36 @@
     "localized": ["display_name", "description", "icon"],
     "mapped_to_table": "DHCP_Leases",    
     "display_name" : [{
-        "language_code":"en_us",
-        "string" : "SNMP discovery"
+    "language_code": "en_us",
+    "string": "SNMP discovery"
+   },
+   {
+    "language_code": "es_es",
+    "string": "Descubrimiento SNMP"
+    },
+    {
+    "language_code": "de_de",
+    "string": "SNMP-Erkennung"
     }],
     "icon":[{
         "language_code":"en_us",
         "string" : "<i class=\"fa-solid fa-s\"></i>"
+    },
+    {
+        "language_code":"es_es",
+        "string" : "<i class=\"fa-solid fa-s\"></i>"
+    },
+    {
+        "language_code":"de_de",
+        "string" : "<i class=\"fa-solid fa-s\"></i>"
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch."
+        "string" : "Este complemento se utiliza para descubrir dispositivos a través de las tablas arp de un enrutador o conmutador compatible con RFC1213.."
+    },
+    {
+        "language_code":"es_es",
+        "string" : "Este complemento se utiliza para descubrir dispositivos a través de las tablas arp de un enrutador o conmutador compatible con RFC1213."
     }],
     "params" : [
         {
@@ -47,6 +67,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "N/A"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "N/A"
                 }]
         } ,
         {
@@ -59,6 +83,10 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
+                "string" : "N/A"
+                },
+                {
+                "language_code":"es_es",
                 "string" : "N/A"
                 }]
         },
@@ -74,6 +102,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "MAC address"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Dirección MAC"
                 }]
         },
         {
@@ -88,6 +120,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "IP"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "IP"
                 }]
         } ,
         {
@@ -101,6 +137,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Created"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Creado"
                 }]
         },
         {
@@ -115,6 +155,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Changed"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Cambiado"
                 }]
         },
         {
@@ -129,6 +173,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Hostname"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Nombre de host"
                 }]
         },
         {
@@ -141,6 +189,10 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
+                "string" : "Router IP"
+                },
+                {
+                "language_code":"es_es",
                 "string" : "Router IP"
                 }]
         },
@@ -155,6 +207,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Type"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Tipo"
                 }]
         } ,
         {
@@ -168,6 +224,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Network"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Red"
                 }]
         } ,       
         {
@@ -181,6 +241,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Comments"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Comentarios"
                 }]
         },        
         {
@@ -194,6 +258,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "RAW output"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "salida RAW"
                 }]
         },        
         {
@@ -224,6 +292,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Status"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Estado"
                 }]
         }            
     ],
@@ -237,10 +309,18 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "When to run"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Cuándo ejecutar"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Enable import of devices from a SNMP enabled device. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Habilite la importación de dispositivos desde un dispositivo habilitado para SNMP. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el análisis se ejecuta solo una vez al inicio de la aplicación (contenedor) o después de actualizar su configuración."
             }]
         },
         {
@@ -252,10 +332,18 @@
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Command"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Comando"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Command to run. Not recommended to change."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Comando para ejecutar. No se recomienda cambiar."
             }]
         },
         {
@@ -267,10 +355,18 @@
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Routers"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Routers"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "A list of <code>snmpwalk</code> commands to execute against IP addresses of roputers/switches with SNMP turned on. <br/> <br/> Example with the router on the IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported. More info on the plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>here</a>."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Una lista de comandos <code>snmpwalk</code> para ejecutar en direcciones IP de computadoras/conmutadores con SNMP activado. <br/> <br/> Ejemplo con el enrutador en la IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1. 2.1.3.1.1.2</code> <br/><br/> Solo se admite IPv4. No se admite la autenticación. Más información sobre el complemento <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>aquí</a>."
             }]
         },
         {
@@ -282,10 +378,18 @@
             "name" : [{
                 "language_code":"en_us",
                 "string" : "Schedule"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Schedule"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
             }]
         },
         {
@@ -299,13 +403,21 @@
                 "string" : "Run timeout"
             },
             {
+                "language_code":"es_es",
+                "string" : "Tiempo de espera de ejecución"
+            },                
+            {
                 "language_code":"de_de",
                 "string" : "Wartezeit"
             }],
             "description": [{
                 "language_code":"en_us",
                 "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-            }]
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se excede este tiempo, el script se cancela.."
+            }            ]
         },
         {
             "function": "WATCH",
@@ -316,10 +428,18 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "Watched"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Visto"
             }] ,
             "description":[{
                 "language_code":"en_us",
                 "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname (not discoverable) </li><li><code>Watched_Value2</code> is Router IP </li><li><code>Watched_Value3</code> is not used </li><li><code>Watched_Value4</code> is not used </li></ul>"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el nombre de host (no detectable) </li><li><code>Watched_Value2</code> es la IP del enrutador </li><li><code>Watched_Value3< /code> no se utiliza </li><li><code>Watched_Value4</code> no se utiliza </li></ul>"
             }] 
         },
         {
@@ -331,12 +451,19 @@
             "name" :[{
                 "language_code":"en_us",
                 "string" : "Report on"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Informar sobre"
             }] ,
             "description":[{
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
             }] 
         }
     ]
 }
-
