@@ -98,9 +98,11 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         for header in headers:
             html = format_table(html, header, thProps)
 
-    return noti_struc(jsn, text, html)
+    notiStruc = noti_struc(jsn, text, html)
 
+    mylog('debug', ['[Notification] Ports: notiStruc:', json.dumps(notiStruc.__dict__, indent=4) ])
 
+    return notiStruc
 
 
 def send_notifications (db):
@@ -241,7 +243,7 @@ def send_notifications (db):
             json_ports =  conf.changedPorts_json_struc.json["data"]
 
         notiStruc = construct_notifications(db, "", "Ports", True, conf.changedPorts_json_struc)
-        mylog('verbose', ['[Notification] Ports: notiStruc:', notiStruc ])
+        
         mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
 
         portsTxt = ""
@@ -483,7 +485,7 @@ def skip_repeated_notifications (db):
 #===============================================================================
 
 #-------------------------------------------------------------------------------
-def check_and_run_event(db):
+def check_and_run_event(db, pluginsState):
     sql = db.sql # TO-DO
     sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
     rows = sql.fetchall()
@@ -501,7 +503,7 @@ def check_and_run_event(db):
     if event == 'test':
         handle_test(param)
     if event == 'run':
-        handle_run(param, db)
+        pluginsState = handle_run(param, db, pluginsState)
 
     # clear event execution flag
     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
@@ -509,17 +511,20 @@ def check_and_run_event(db):
     # commit to DB
     db.commitDB()
 
+    return pluginsState
+
 #-------------------------------------------------------------------------------
-def handle_run(runType, db):
+def handle_run(runType, db, pluginsState):
     
     mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
     
     # run the plugin to run
     for plugin in conf.plugins:
         if plugin["unique_prefix"] == runType:                
-            execute_plugin(db, plugin) 
+            pluginsState = execute_plugin(db, plugin, pluginsState) 
 
     mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
+    return pluginsState
 
 
 

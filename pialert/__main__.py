@@ -125,7 +125,7 @@ def main ():
             conf.plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
-        check_and_run_event(db)
+        pluginsState = check_and_run_event(db, pluginsState)
 
         # Update API endpoints              
         update_api(db)

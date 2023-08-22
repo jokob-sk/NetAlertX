@@ -533,7 +533,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
     except Exception as e:
         # Rollback the transaction in case of an error
         conn.rollback()
-        mylog('none', ['[Plugins] SQL transaction error: ', e])
+        mylog('none', ['[Plugins] Error: ', e])
         raise e   
 
     # Perform database table mapping if enabled for the plugin   
