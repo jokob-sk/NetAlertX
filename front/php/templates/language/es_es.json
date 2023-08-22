@@ -82,6 +82,7 @@
         "Device_Table_nav_next" : "Siguiente",
         "Device_Table_nav_prev" : "Anterior",
         "Presence_Title" : "Historial por dispositivo",
+        "Presence_Loading" : "Cargando...",        
         "Presence_Shortcut_AllDevices" : "Todos",
         "Presence_Shortcut_Connected" : "Conectado(s)",
         "Presence_Shortcut_Favorites" : "Favorito(s)",
