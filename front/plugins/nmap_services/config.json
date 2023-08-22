@@ -17,6 +17,10 @@
     "display_name" : [{
         "language_code":"en_us",
         "string" : "Services (NMAP)"
+    },
+    {
+        "language_code":"es_es",
+        "string" : "Servicios (NMAP)"
     }],
     "icon":[{
         "language_code":"en_us",
@@ -74,6 +78,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Device name"
+                },
+		{
+                "language_code":"es_es",
+                "string" : "Nombre del dispositivo"
                 }]
         },
         {
@@ -87,6 +95,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Ip and Port"
+                },
+	   	{
+                "language_code":"es_es",
+                "string" : "IP y puerto"
                 }]
         } ,
         {
@@ -100,6 +112,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Created"
+                },
+	    	{
+                "language_code":"es_es",
+                "string" : "Creado"
                 }]
         },
         {
@@ -113,6 +129,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Changed"
+                },
+	    	{
+                "language_code":"es_es",
+                "string" : "Cambiado"
                 }]
         },
         {
@@ -125,6 +145,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Service"
+                },
+	    	{
+		"language_code":"es_es",
+                "string" : "Servicio"
                 }]
         },
         {
@@ -138,6 +162,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "State"
+                },
+	    	{
+                "language_code":"es_es",
+                "string" : "Estado"
                 }]
         },
         {
@@ -150,6 +178,10 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
+                "string" : "N/A"
+                },
+	    	{
+                "language_code":"es_es",
                 "string" : "N/A"
                 }]
         } ,
@@ -164,6 +196,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "N/A"
+                },
+	    	{
+                "language_code":"es_es",
+                "string" : "N/A"
                 }]
         } ,       
         {
@@ -177,6 +213,10 @@
             "name":[{
                 "language_code":"en_us",
                 "string" : "Extra"
+                },
+	    	{
+                "language_code":"es_es",
+                "string" : "Extra"
                 }]
         },       
         {
@@ -189,6 +229,10 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
+                "string" : "MAC"
+                },
+	    	{
+                "language_code":"es_es",
                 "string" : "MAC"
                 }]
         },        
