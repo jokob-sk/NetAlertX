@@ -82,6 +82,7 @@
         "Device_Table_nav_next" : "Next",
         "Device_Table_nav_prev" : "Previous",
         "Presence_Title" : "Presence by Device",
+	"Presence_Loading" : "Loading...",	    
         "Presence_Shortcut_AllDevices" : "All Devices",
         "Presence_Shortcut_Connected" : "Connected",
         "Presence_Shortcut_Favorites" : "Favorites",
