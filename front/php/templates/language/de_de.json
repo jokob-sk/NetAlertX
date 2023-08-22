@@ -75,6 +75,7 @@
         "Presence_CalHead_month" : "Monat",
         "Presence_CalHead_week" : "Woche",
         "Events_Title" : "Ereignisse",
+	"Events_Loading": "Laden...",	    
         "Events_Periodselect_today" : "Heute",
         "Events_Periodselect_LastWeek" : "Letzte Woche",
         "Events_Periodselect_LastMonth" : "Letzter Monat",

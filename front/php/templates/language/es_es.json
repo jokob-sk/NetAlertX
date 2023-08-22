@@ -98,6 +98,7 @@
         "Presence_CalHead_week" : "semana",
         "Presence_CalHead_day" : "día",
         "Events_Title" : "Eventos",
+        "Events_Loading" : "Cargando...",
         "Events_Periodselect_today" : "Hoy",
         "Events_Periodselect_LastWeek" : "La semana pasada",
         "Events_Periodselect_LastMonth" : "El mes pasado",
