@@ -200,6 +200,7 @@
         "DevDetail_EveandAl_ScanCycle_a" : "Escanear Dispositivo",
         "DevDetail_EveandAl_ScanCycle_z" : "No Escanear Dispositivo",
         "DevDetail_button_Delete" : "Eliminar dispositivo",
+        "DevDetail_button_DeleteEvents" : "Eliminar eventos",        
         "DevDetail_button_DeleteEvents_Warning" : "¿Desea eliminar todos los eventos de este dispositivo?<br><br>(se eliminarán el <b>Historial de eventos</b> y las <b>Sesiones</b>, y puede ayudar en el caso de notificaciones constantes)",
         "DevDetail_button_Reset" : "Restablecer cambios",
         "DevDetail_button_Save" : "Guardar",
