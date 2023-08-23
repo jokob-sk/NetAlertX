@@ -65,7 +65,7 @@ function getFormControl(dbColumnDef, value, index) {
         case 'label':            
             result = `<span>${value}<span>`;
             break;
-        case 'textboxsave':
+        case 'textbox_save':
 
             value = value == 'null' ? '' : value; // hide 'null' values
 
@@ -81,10 +81,13 @@ function getFormControl(dbColumnDef, value, index) {
         case 'url':
             result = `<span><a href="${value}" target="_blank">${value}</a><span>`;
             break;
-        case 'devicemac':
+        case 'device_name_mac':
+            result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${getNameByMacAddress(value)}</a><span>`;
+            break;
+        case 'device_mac':
             result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
             break;
-        case 'deviceip':
+        case 'device_ip':
             result = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
             break;
         case 'threshold': 

@@ -82,7 +82,7 @@
             "mapped_to_column": "DHCP_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "devicemac",            
+            "type": "device_mac",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -100,7 +100,7 @@
             "mapped_to_column": "DHCP_IP", 
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "deviceip",            
+            "type": "device_ip",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -221,7 +221,7 @@
             "column": "UserData",
             "css_classes": "col-sm-2",
             "show": false,
-            "type": "textboxsave",            
+            "type": "textbox_save",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -445,11 +445,11 @@
             }            ] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             },
             {
                 "language_code":"es_es",
-                "string" : "."
+                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
             }] 
         }
     ]

@@ -470,7 +470,7 @@
         "PIALERT_WEB_PROTECTION_name" : "Enable login",
         "PIALERT_WEB_PROTECTION_description" : "When enabled a login dialog is displayed. Read below carefully if you get locked out of your instance.",
         "PIALERT_WEB_PASSWORD_name" : "Login password",
-        "PIALERT_WEB_PASSWORD_description" : "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli</code> in the container",
+        "PIALERT_WEB_PASSWORD_description" : "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli</code> in the container or use the <a onclick=\"toggleAllSettings()\" href=\"#SETPWD_RUN\"><code>SETPWD_RUN</code> Set password plugin</a>.",
         "INCLUDED_SECTIONS_name" : "Notify on",
         "INCLUDED_SECTIONS_description" : "Specifies which events trigger notifications. Remove the event type(s) you don not want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select/deselect).",        
         "DAYS_TO_KEEP_EVENTS_name" : "Delete events older than",

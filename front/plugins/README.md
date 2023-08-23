@@ -96,7 +96,7 @@ More on specifics below.
   | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
 
 > [!NOTE] 
-> De-duplication is run once an hour on the `Plugins_Objects` database table and duplicate entries with the same value in columns `Object_PrimaryID`, `Object_SecondaryID`, `Plugin` (auto-filled based on `unique_prefix` of the plugin), `UserData` (can be populated with the `"type": "textboxsave"` column type) are removed.
+> De-duplication is run once an hour on the `Plugins_Objects` database table and duplicate entries with the same value in columns `Object_PrimaryID`, `Object_SecondaryID`, `Plugin` (auto-filled based on `unique_prefix` of the plugin), `UserData` (can be populated with the `"type": "textbox_save"` column type) are removed.
 
 # config.json structure
 
@@ -349,7 +349,7 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
             "mapped_to_column": "DHCP_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "devicemac",            
+            "type": "device_mac",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -533,17 +533,17 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an English translation will be shown in the UI.
-- Supported types: `label`, `text`, `threshold`, `replace`, `deviceip`, `devicemac`, `url`. Check for details below, how columns behave based on the type.
+- Supported types: `label`, `text`, `threshold`, `replace`, `device_ip`, `device_mac`, `url`. Check for details below, how columns behave based on the type.
   - `label` makes a column display only
   - `text` makes a column editable and a save icon is displayed next to it.
   - See below for information on `threshold`, `replace`
 - The `options` property is used in conjunction with these types:
   - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
-- `devicemac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
-- `deviceip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP addresses and translated into a Mac address that is then used for the link itself.
+- `device_mac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
+- `device_ip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP addresses and translated into a Mac address that is then used for the link itself.
 - `url` - The value is considered to be a URL so a link is generated.
-- `textboxsave` - An editable and saveable text box is generated that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table.
+- `textbox_save` - An editable and saveable text box is generated that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table.
 
 
 ```json

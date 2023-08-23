@@ -241,7 +241,7 @@
             "column": "UserData",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "textboxsave",            
+            "type": "textbox_save",            
             "default_value":"",
             "options": [],
             "localized": ["name"],

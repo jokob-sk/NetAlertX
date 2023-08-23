@@ -807,6 +807,7 @@ input[readonly] {
     border-top:1px;
     border-top-color:grey;
     padding:0px;
+    padding-top:6px;
     margin:0px;
     align-items:center;
     border-radius:20px;

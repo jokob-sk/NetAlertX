@@ -480,10 +480,30 @@ function navigateToDeviceWithIp (ip) {
         window.open(window.location.origin +'/deviceDetails.php?mac=' + mac , "_blank");
       }
     });
-
-
     
   });
+}
+
+// -----------------------------------------------------------------------------
+function getNameByMacAddress(macAddress) {
+
+  const sessionDataKey = 'devicesListAll';  
+  const sessionData = sessionStorage.getItem(sessionDataKey);
+
+  if (!sessionData) {
+      console.log(`Session variable "${sessionDataKey}" not found.`);
+      return "Unknown";
+  }
+
+  const devices = JSON.parse(sessionData);
+
+  for (const device of devices) {
+      if (device.mac === macAddress) {
+          return device.name;
+      }
+  }
+
+  return "Unknown"; // Return a default value if MAC address is not found
 }
 
 // -----------------------------------------------------------------------------

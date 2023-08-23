@@ -223,7 +223,7 @@
             "column": "ForeignKey",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "devicemac",            
+            "type": "device_mac",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
