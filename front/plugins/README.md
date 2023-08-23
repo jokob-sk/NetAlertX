@@ -1,5 +1,8 @@
 ## 📚 Docs for individual plugins 
 
+[Click here, if you want to see the Spanish version
+](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md) 
+
 ### Script based plugins
 
 - [website_monitor (WEBMON)](/front/plugins/website_monitor/) 
