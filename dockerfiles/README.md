@@ -78,7 +78,7 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 * `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. 
 * The above setting has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file).
 
-> It's recommended to use the same schedule interval for all plugins scanning your network.
+> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
 ### **Common issues** 
 

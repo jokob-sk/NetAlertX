@@ -139,7 +139,7 @@
         }],
         "description": [{
             "language_code":"en_us",
-            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins scanning your network."
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
         },
         {
             "language_code":"es_es",

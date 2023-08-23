@@ -1,9 +1,9 @@
 {
-  "code_name": "arp_scan",
-  "unique_prefix": "ARPSCAN",
+  "code_name": "pholus_scan",
+  "unique_prefix": "PHOLUS",
   "enabled": true,
   "data_source": "script",
-  "mapped_to_table": "CurrentScan",  
+  "mapped_to_table": "Pholus_Scan",  
   "data_filters": [
     {
         "compare_column" : "Object_PrimaryID",
@@ -19,12 +19,8 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Arp-Scan (Network scan)"
-    },
-    {
-      "language_code": "es_es",
-      "string": "Arp-Scan (Escaneo de red)"
-    }	
+      "string": "Pholus-Scan (Name discovery)"
+    }
   ],
   "icon": [
     {
@@ -39,19 +35,21 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "This plugin is to execute an arp-scan on the local network"
-    },
-    {
-      "language_code": "es_es",
-      "string": "Este plugin es para ejecutar un escaneo arp en la red local."
-    }	
+      "string": "This plugin is to execute a Pholus-scan (name discovery) on the local network"
+    }
   ],
     "params" : [
     {
         "name"  : "subnets",
         "type"  : "setting",
         "value" : "SCAN_SUBNETS"
-    }],  
+    },
+    {
+        "name"  : "timeout",
+        "type"  : "setting",
+        "value" : "RUN_TIMEOUT"
+  }
+  ],  
 
   "settings": [
     {
@@ -72,17 +70,13 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>setting</a> "
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Especifique cuándo se ejecutará su análisis de descubrimiento de red. La configuración típica sería <code>schedule</code> y luego se especifica una programación similar a cron en la configuración <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code></a> "
+          "string" : "Specify when your Name-discovery scan will run. Typical setting would be <code>on_new_device</code> or <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PHOLUS_RUN_SCHD\"><code>PHOLUS_RUN_SCHD</code>setting</a>."
       }]
   },    
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/arp_scan/script.py userSubnets={subnets}",
+      "default_value": "python3 /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets={subnets} timeoutSec={timeout}",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -126,18 +120,14 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-        },
-        {
-          "language_code": "es_es",
-          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, se cancela el script."
-        }		
+          "string": "Network scan time in seconds. Pholus scan will always run this long. The longer it runs the more device names might be resolved. Will be divided by the number of subnets."
+        }
       ]
     },
     {
         "function": "RUN_SCHD",
         "type": "text",
-        "default_value":"*/3 * * * *",
+        "default_value":"30 3 * * *",
         "options": [],
         "localized": ["name", "description"],
         "name" : [{
@@ -150,11 +140,7 @@
         }],
         "description": [{
             "language_code":"en_us",
-            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
-        },
-		{
-            "language_code":"es_es",
-            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/3 * * * *</code> ejecutará el escaneo cada 3 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>30 3 * * *</code> will run the scan at 3:30 am. Will be run NEXT time the time passes. <br/>"
         }]
     },
     {
@@ -173,11 +159,7 @@
         }] ,
         "description":[{
             "language_code":"en_us",
-            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
-        },
-		{
-            "language_code":"es_es",
-            "string" : "Envía una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Valor_observado1</code> es IP</li><li><code>Valor_observado2</code> es Proveedor</li><li><code>Valor_observado3</code> es Interfaz </li><li><code>Valor_observado4</code> es N/A </li></ul>"
+            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is TBC</li><li><code>Watched_Value2</code> is TBC</li><li><code>Watched_Value3</code> is TBC </li><li><code>Watched_Value4</code> is TBC </li></ul>"
         }] 
     },
     {
