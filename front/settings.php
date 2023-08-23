@@ -353,6 +353,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           const eventsList = createArray(set['Events']);          
 
           if (eventsList.length > 0) {
+            console.log(eventsList)
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
                 data-myparam="${codeName}"

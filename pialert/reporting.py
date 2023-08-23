@@ -543,16 +543,19 @@ def handle_test(testType):
     sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
 
     sample_msg = noti_struc(sample_json_payload, sample_txt, sample_html )
+   
 
-    if testType == 'REPORT_MAIL':
+    if testType == 'Email':
         send_email(sample_msg)
-    if testType == 'REPORT_WEBHOOK':
+    elif testType == 'Webhooks':
         send_webhook (sample_msg)
-    if testType == 'REPORT_APPRISE':
+    elif testType == 'Apprise':
         send_apprise (sample_msg)
-    if testType == 'REPORT_NTFY':
+    elif testType == 'NTFY':
         send_ntfy (sample_msg)
-    if testType == 'REPORT_PUSHSAFER':
+    elif testType == 'PUSHSAFER':
         send_pushsafer (sample_msg)
+    else:
+        mylog('none', ['[Test Publishers] No test matches: ', testType])    
 
     mylog('minimal', ['[Test Publishers] END Test: ', testType])
