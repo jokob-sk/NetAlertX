@@ -538,10 +538,11 @@ The UI will adjust how columns are displayed in the UI based on the definition o
   - `text` makes a column editable and a save icon is displayed next to it.
   - See below for information on `threshold`, `replace`
 - The `options` property is used in conjunction with these types:
-  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
+  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with the corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
   - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
 - `device_mac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
-- `device_ip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP addresses and translated into a Mac address that is then used for the link itself.
+- `device_ip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP address and translated into a Mac address that is then used for the link itself.
+- `device_name_mac` - The value is considered to be a MAC address and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name.
 - `url` - The value is considered to be a URL so a link is generated.
 - `textbox_save` - An editable and saveable text box is generated that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table.
 
