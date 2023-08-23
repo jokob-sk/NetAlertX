@@ -16,11 +16,11 @@
     "localized": ["display_name", "description", "icon"],
     "display_name" : [{
         "language_code":"en_us",
-        "string" : "Services (NMAP)"
+        "string" : "Services & Ports (NMAP)"
     },
     {
         "language_code":"es_es",
-        "string" : "Servicios (NMAP)"
+        "string" : "Servicios & Puertos (NMAP)"
     }],
     "icon":[{
         "language_code":"en_us",

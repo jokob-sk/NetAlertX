@@ -308,14 +308,50 @@
         "default_value":"",
         "options": [],
         "localized": ["name"],
-        "name":[{
+        "name":[
+          {
             "language_code":"en_us",
             "string" : "Changed"
-            },
-			{
+          },
+          {
             "language_code":"es_es",
             "string" : "Cambiado"
+          }
+        ]
+    },        
+    {
+        "column": "Status",
+        "css_classes": "col-sm-1",
+        "show": true,
+        "type": "replace",            
+        "default_value":"",
+        "options": [
+            {
+                "equals": "watched-not-changed",
+                "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+            },
+            {
+                "equals": "watched-changed",
+                "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+            },
+            {
+                "equals": "new",
+                "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+            },
+            {
+                "equals": "missing-in-last-scan",
+                "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+            }
+        ],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Status"
+            },
+    {
+            "language_code":"es_es",
+            "string" : "Estado"
             }]
-    }        
+    }           
   ]
 }

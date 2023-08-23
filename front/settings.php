@@ -99,7 +99,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   
   function getData(){
 
-    $.get('api/table_settings.json', function(res) {    
+    $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
         
         settingsData = res["data"];       
 
@@ -584,6 +584,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           showModalOk ('Result', data );
           // Remove navigation prompt "Are you sure you want to leave..."
           window.onbeforeunload = null;
+         
         }
       });
     }
