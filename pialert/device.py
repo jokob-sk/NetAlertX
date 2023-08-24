@@ -364,7 +364,7 @@ def update_devices_names (db):
     db.commitDB()
 
     # skip checks if no unknown devices
-    if len(unknownDevices) == 0 and conf.PHOLUS_FORCE == False:
+    if len(unknownDevices) == 0:
         return
 
     # Devices without name
