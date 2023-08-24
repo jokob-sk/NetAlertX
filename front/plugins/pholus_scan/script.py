@@ -16,11 +16,12 @@ sys.path.append('/home/pi/pialert/pialert')
 from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
 from helper import timeNowTZ
-from const import fullPholusPath, logPath
+from const import logPath, pialertPath
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+CUR_PATH        = str(pathlib.Path(__file__).parent.resolve())
+LOG_FILE        = os.path.join(CUR_PATH, 'script.log')
+RESULT_FILE     = os.path.join(CUR_PATH, 'last_result.log')
+fullPholusPath  = os.path.join(CUR_PATH, 'pholus/pholus3.py')
 
 
 def main():
