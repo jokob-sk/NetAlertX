@@ -110,8 +110,7 @@
               <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
-              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
-              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
+              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>              
               <li> <a id="tabPlugins"   href="#panPlugins" data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>   </a></li>
 
               <div class="btn-group pull-right">
@@ -628,8 +627,7 @@
                     <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
                   </tr>
                   </thead>
-                  <!-- Comment out tbody when trying to implement better table with datatables here -->
-                  <!-- IDEA: Show unmatched pholus entries?  -->
+                  <!-- Comment out tbody when trying to implement better table with datatables here -->                  
                   <tbody id="tableNmapBody">
                     <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
                   </tbody>
@@ -683,28 +681,6 @@
                   </tr>
                   </thead>
                 </table>
-              </div>
-<!-- tab page 6 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPholus">
-              <!-- Datatable Events -->
-              <table id="tablePholus" class="table table-bordered table-hover table-striped ">
-                <thead>
-                <tr>
-                  <th><?= lang("DevDetail_Tab_PholusTableIndex");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableInfo");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableTime");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableIP");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableEntry");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableValue");?></th>
-                  <th><?= lang("DevDetail_Tab_PholusTableExtra");?></th>
-                </tr>
-                </thead>
-                <!-- Comment out tbody when trying to implement better table with datatables here -->
-                <!-- IDEA: Show unmatched pholus entries?  -->
-                <tbody id="tablePholusBody">
-                  <tr id="tablePholusPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_PholusEmpty"); ?></span></td></tr>
-                </tbody>
-              </table>
               </div>
 
 <!-- tab page 7 ------------------------------------------------------------ -->
@@ -1897,12 +1873,7 @@ function initializeTabsNew () {
   // events on tab change
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
-    
-    // load tab data only when needed (tab change)
-    if(target == "#panPholus")
-    {
-      loadPholus();
-    }
+
     if(target == "#panNmap")
     {
       loadNmap();
@@ -1955,40 +1926,6 @@ function loadNmap()
       {
         // console.log("else")
         $("#tableNmapPlc").show();
-        $(".deviceSpecific").remove();
-      }        
-    });
-}
-
-// -----------------------------------------------------------------------------
-
-function loadPholus()
-{
-    $(".deviceSpecific").remove(); // remove any previous data listed in teh table
-    
-    $.get('php/server/devices.php?action=getPholus&mac='+ mac, function(data) {
-      
-      data = sanitize(data);      
-
-      if(data != "false" && $.trim(data) != [])
-      {
-        var listData = JSON.parse(data);
-        var order = 1;
-
-        tableRows = "";
-
-        // for each item
-        listData.forEach(function (item, index) {                    
-          tableRows += '<tr class="deviceSpecific"><td>'+item.Index+'</td><td>'+item.Info+'</td><td>'+item.Time+'</td><td>'+item.IP_v4_or_v6+'</td><td>'+item.Record_Type+'</td><td>'+item.Value+'</td><td>'+ item.Extra +'</td></tr>'; 
-        });        
-        
-        $("#tablePholusBody").html($("#tablePholusBody").html()+tableRows);        
-        $("#tablePholusPlc").hide();
-      }
-      else
-      {
-        // console.log("else")
-        $("#tablePholusPlc").show();
         $(".deviceSpecific").remove();
       }        
     });
@@ -2064,10 +2001,6 @@ window.onload = function async()
 function reloadTab()
 {
   // tab loaded without switching
-  if(getCache("activeDevicesTab") == "tabPholus")
-  {
-    loadPholus();
-  }
   
   if(getCache("activeDevicesTab") == "tabNmap")
   {
