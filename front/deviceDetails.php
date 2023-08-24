@@ -99,20 +99,22 @@
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
         <!-- <div class="box-transparent"> -->
-
-
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
-                <?php
-                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = lang('DevDetail_Tab_Tools'); } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
-                ?>
-              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+              <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
+              <?php
+               }
+              ?>
+              <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
               <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
               <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
-              <li> <a id="tabPlugins"   href="#panPlugins" data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>   </a></li>
+              <li> <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>  </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -125,9 +127,7 @@
                   id="btnNext"     onclick="recordSwitch('next')"> <i class="fa fa-chevron-right"></i> </button>
               </div>
             </ul>
-
-
-
+            
             <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
@@ -536,37 +536,11 @@
               </div>
 
 
-<!-- tab page 5 ------------------------------------------------------------ -->
-
+<!-- tab page "Nmap"  ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panNmap">
 
-              <?php
-              if ($_REQUEST['mac'] == 'Internet') {
-              ?>
-                <h4 class=""><?= lang('DevDetail_Internet_Speedtest');?></h4>
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
-                </div>
-                   
-                  <script>
-                  function speedtestcli() {
-                    $( "#scanoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/speedtestcli.php",
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#scanoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>
-                <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
+                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
@@ -577,10 +551,10 @@
                       }, 2000);
                   </script>
 
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
-                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')">Loading...</button>
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')"><?= lang("DevDetail_Loading");?></button>
                 
                   <div style="text-align: left;">
                     <ul style="padding:20px;">
@@ -634,17 +608,208 @@
                     <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
                   </tbody>
                 </table>
-              
+				
               </div>
 
+<!-- tab page "Tools" ------------------------------------------------------------ -->
 
+              <div class="tab-pane fade" id="panTools">
 
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Internet_Info_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Internet_Info_Start');?></button>
+                  <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function internetinfo() {
+                    $( "#internetinfooutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/internetinfo.php",
+                      beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#internetinfooutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+                
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-rocket"></i> <?= lang('DevDetail_Tab_Internet_Speedtest_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Tab_Internet_Speedtest_Start');?></button>
+                  <br><div id="speedtestoutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function speedtestcli() {
+                    $( "#speedtestoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/speedtestcli.php",
+                      beforeSend: function() { $('#speedtestoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#speedtestoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#speedtestoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+                
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-arrows-spin"></i> <?= lang('DevDetail_Tab_Tools_Ping_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="ping" class="btn btn-primary pa-btn" style="margin: auto;" onclick="ping()"><?= lang('DevDetail_Tab_Tools_Ping_Start');?></button>
+                <br><div id="pingoutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function ping() {
+                 
+                    $( "#pingoutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/ping.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#pingoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#pingoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#pingoutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
 
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-route"></i> <?= lang('DevDetail_Tab_Tools_Traceroute_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()"><?= lang('DevDetail_Tab_Tools_Traceroute_Start');?></button>
+                <br><div id="tracerouteoutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function traceroute() {
+                 
+                    $( "#tracerouteoutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/traceroute.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#tracerouteoutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
 
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-magnifying-glass"></i> <?= lang('DevDetail_Tab_Tools_Nslookup_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="nslookup" class="btn btn-primary pa-btn" style="margin: auto;" onclick="nslookup()"><?= lang('DevDetail_Tab_Tools_Nslookup_Start');?></button>
+                <br><div id="nslookupoutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function nslookup() {
+                 
+                    $( "#nslookupoutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/nslookup.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#nslookupoutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
 
-<!-- ----------------------------------------------------------------------- -->
-
-
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-binoculars"></i> <?= lang('DevDetail_Tab_Tools_Mtr_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="mtr" class="btn btn-primary pa-btn" style="margin: auto;" onclick="mtr()"><?= lang('DevDetail_Tab_Tools_Mtr_Start');?></button>
+                <br><div id="mtroutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function mtr() {
+                 
+                    $( "#mtroutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/mtr.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
+                      beforeSend: function() { $('#mtroutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#mtroutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#mtroutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+                                  
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>				
+                <h4 class=""><i class="fa-solid fa-power-off"></i> <?= lang('DevDetail_Tab_Tools_WOL_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                <button type="button" id="wol" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wol()"><?= lang('DevDetail_Tab_Tools_WOL_Start');?></button>
+                <br><div id="woloutput" style="margin-top: 10px;"></div>
+                </div>
+                
+                  <script>
+                  function wol() {
+                 
+                    $( "#woloutput" ).empty();
+                    $.ajax({
+                      method: "GET",
+                      url: "./php/server/wol.php?action=get&mac=" + document.getElementById('txtMAC').value + "",
+                      beforeSend: function() { $('#woloutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#woloutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#woloutput").html(data);
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+		</div>
+				
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
 
@@ -652,7 +817,7 @@
                   <div id="loading" style="display: none">
                     <div class="pa_semitransparent-panel"></div>
                     <div class="panel panel-default pa_spinner">
-                      <table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
+                      <table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
                     </div>
                   </div>
 
@@ -1129,7 +1294,7 @@ function initializeDatatables () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang('DevDetail_Loading');?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
@@ -1168,7 +1333,7 @@ function initializeDatatables () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang('DevDetail_Loading');?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
@@ -2026,7 +2191,7 @@ function initTable(tableId, mac){
   // Processing
   'processing'  : true,
   'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang('DevDetail_Loading');?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
