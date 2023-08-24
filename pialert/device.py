@@ -201,7 +201,7 @@ def create_new_devices (db):
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) """
 
-    mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
+    # mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
@@ -233,7 +233,7 @@ def create_new_devices (db):
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = PH_MAC) """
     
-    mylog('debug',f'[New Devices] 4 Create devices SQL: {sqlQuery}')
+    # mylog('debug',f'[New Devices] 4 Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
@@ -267,7 +267,7 @@ def create_new_devices (db):
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = DHCP_MAC) """
 
-    mylog('debug',f'[New Devices] 6 Create devices SQL: {sqlQuery}')
+    # mylog('debug',f'[New Devices] 6 Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
