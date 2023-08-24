@@ -47,7 +47,7 @@
     {
         "name"  : "timeout",
         "type"  : "setting",
-        "value" : "RUN_TIMEOUT"
+        "value" : "PHOLUS_RUN_TIMEOUT"
   }
   ],  
 
@@ -68,10 +68,16 @@
           "language_code":"es_es",
           "string" : "Cuando ejecutar"
       }],
-      "description": [{
+      "description": [
+        {
           "language_code":"en_us",
-          "string" : "Specify when your Name-discovery scan will run. Typical setting would be <code>on_new_device</code> or <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PHOLUS_RUN_SCHD\"><code>PHOLUS_RUN_SCHD</code>setting</a>."
-      }]
+          "string" : "<a href=\"https://github.com/jokob-sk/Pi.Alert/tree/main/pholus\" target=\"_blank\" >Pholus</a> is a sniffing tool to discover additional information about the devices on the network, including the device name. If enabled this will execute the scan before every network scan cycle until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Please be aware it can spam the network with unnecessary traffic. Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>. For a scheduled or one-off scan, check the <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code> setting</a>.Specify when your Name-discovery scan will run. Typical setting would be <code>on_new_device</code> or <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PHOLUS_RUN_SCHD\"><code>PHOLUS_RUN_SCHD</code>setting</a>."
+      },
+        {
+          "language_code":"es_es",
+          "string" : "<a href=\"https://github.com/jokob-sk/Pi.Alert/tree/main/pholus\" target=\"_blank\" >Pholus</a> es una herramienta de rastreo para descubrir información adicional sobre los dispositivos en la red, incluido el nombre del dispositivo. Si está habilitado, ejecutará el escaneo antes de cada ciclo de escaneo de red hasta que no haya dispositivos <code>(unknown)</code> o <code>(name not found)</code>. Tenga en cuenta que puede enviar spam a la red con tráfico innecesario. Depende de la configuración de <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code></a>. Para un análisis programado o único, verifique la configuración de <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code></a>."
+      }
+    ]
   },    
     {
       "function": "CMD",
@@ -134,7 +140,7 @@
             "language_code":"en_us",
             "string" : "Schedule"
         },
-		{
+		    {
             "language_code":"es_es",
             "string" : "Schedule"
         }],
@@ -142,6 +148,31 @@
             "language_code":"en_us",
             "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>30 3 * * *</code> will run the scan at 3:30 am. Will be run NEXT time the time passes. <br/>"
         }]
+    },
+    {
+        "function": "DAYS_DATA",
+        "type": "integer",
+        "default_value":30,
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "Schedule"
+        },
+		    {
+            "language_code":"es_es",
+            "string" : "Retención de datos"
+        }],
+        "description": [
+          {
+            "language_code":"en_us",
+            "string" : "How many days of Pholus scan entries should be kept (globally, not device specific!) Enter <code>0</code> to disable."
+        },
+          {
+            "language_code":"es_es",
+            "string" : "Cuántos días de entradas de escaneo de Pholus deben conservarse (globalmente, ¡no específico del dispositivo!). El archivo <a href=\"/maintenance.php#tab_Logging\">pialert_pholus.log</a> no se modifica. Introduzca <code>0</code> para desactivar."
+        }
+      ]
     },
     {
         "function": "WATCH",
@@ -153,13 +184,13 @@
             "language_code":"en_us",
             "string" : "Watched"
         },
-		{
+		    {
             "language_code":"es_es",
             "string" : "Watched"
         }] ,
         "description":[{
             "language_code":"en_us",
-            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is TBC</li><li><code>Watched_Value2</code> is TBC</li><li><code>Watched_Value3</code> is TBC </li><li><code>Watched_Value4</code> is TBC </li></ul>"
+            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Info</li><li><code>Watched_Value2</code> is Record type</li><li><code>Watched_Value3</code> is Info </li><li><code>Watched_Value4</code> is N/A </li></ul>"
         }] 
     },
     {
@@ -195,7 +226,7 @@
   [          
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",         
+      "mapped_to_column": "MAC",         
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_name_mac",            
@@ -212,11 +243,11 @@
           }]
     }, 
     {
-        "column": "Watched_Value1",
-        "mapped_to_column": "cur_IP", 
+        "column": "Object_SecondaryID",
+        "mapped_to_column": "IP_v4_or_v6", 
         "css_classes": "col-sm-2",
         "show": true,
-        "type": "device_ip",            
+        "type": "label",            
         "default_value":"",
         "options": [],
         "localized": ["name"],
@@ -224,14 +255,14 @@
             "language_code":"en_us",
             "string" : "IP"
             },
-			{
+			      {
             "language_code":"es_es",
             "string" : "IP"
             }]
     },
     {
-        "column": "Watched_Value2",
-        "mapped_to_column": "cur_Vendor", 
+        "column": "Watched_Value1",
+        "mapped_to_column": "Info", 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "label",            
@@ -240,16 +271,30 @@
         "localized": ["name"],
         "name":[{
             "language_code":"en_us",
-            "string" : "Vendor"
+            "string" : "Info"
             },
 			{
             "language_code":"es_es",
-            "string" : "Proveedor"
+            "string" : "Info"
+            }]
+    } ,    
+    {
+        "column": "Watched_Value2",
+        "mapped_to_column": "Record_Type", 
+        "css_classes": "col-sm-2",
+        "show": true,
+        "type": "label",            
+        "default_value":"",
+        "options": [],
+        "localized": ["name"],
+        "name":[{
+            "language_code":"en_us",
+            "string" : "Type"
             }]
     } ,
     {
-        "column": "Extra",
-        "mapped_to_column": "cur_ScanMethod", 
+        "column": "Watched_Value3",
+        "mapped_to_column": "Value", 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "label",            
@@ -258,15 +303,16 @@
         "localized": ["name"],
         "name":[{
             "language_code":"en_us",
-            "string" : "Scan method"
+            "string" : "Info"
             },
-			{
+			      {
             "language_code":"es_es",
-            "string" : "Método de escaneado"
+            "string" : "Info"
             }]
-    } ,
+    },
     {
       "column": "DateTimeCreated",
+      "mapped_to_column": "Time", 
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",            
@@ -330,7 +376,7 @@
             "language_code":"en_us",
             "string" : "Status"
             },
-    {
+            {
             "language_code":"es_es",
             "string" : "Estado"
             }]

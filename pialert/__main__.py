@@ -24,7 +24,7 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState
+from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState, get_setting_value
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
@@ -34,7 +34,6 @@ from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
 # different scanners
-from scanners.pholusscan import performPholusScan
 from scanners.nmapscan import performNmapScan
 from scanners.internet import check_internet_IP
 
@@ -60,7 +59,6 @@ main structure of Pi Alert
             run plugins (scheduled)
             check internet IP
             check vendor
-            run PHOLUS
             run NMAP
             run "scan_network()"
                 processing scan results
@@ -161,25 +159,7 @@ def main ():
                 conf.last_update_vendors = loop_start_time
                 conf.cycle = 'update_vendors'
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
-                update_devices_MAC_vendors(db)
-
-            # Execute scheduled or one-off Pholus scan if enabled and run conditions fulfilled
-            if conf.PHOLUS_RUN == "schedule" or conf.PHOLUS_RUN == "once":
-
-                pholusSchedule = [sch for sch in conf.mySchedules if sch.service == "pholus"][0]
-                run = False
-
-                # run once after application starts
-                if conf.PHOLUS_RUN == "once" and pholusSchedule.last_run == 0:
-                    run = True
-
-                # run if overdue scheduled time
-                if conf.PHOLUS_RUN == "schedule":
-                    run = pholusSchedule.runScheduleCheck()                    
-
-                if run:
-                    pholusSchedule.last_run = datetime.datetime.now(conf.tz).replace(microsecond=0)
-                    performPholusScan(db, conf.PHOLUS_RUN_TIMEOUT, conf.userSubnets)
+                update_devices_MAC_vendors(db)               
             
             # Execute scheduled or one-off Nmap scan if enabled and run conditions fulfilled
             if conf.NMAP_RUN == "schedule" or conf.NMAP_RUN == "once":
@@ -236,7 +216,7 @@ def main ():
                 conf.last_cleanup = loop_start_time
                 conf.cycle = 'cleanup'  
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])
-                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, conf.PHOLUS_DAYS_DATA, conf.HRS_TO_KEEP_NEWDEV, conf.PLUGINS_KEEP_HIST)   
+                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, get_setting_value('PHOLUS_DAYS_DATA'), conf.HRS_TO_KEEP_NEWDEV, conf.PLUGINS_KEEP_HIST)   
 
             # Commit SQL
             db.commitDB()          

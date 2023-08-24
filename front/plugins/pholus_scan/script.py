@@ -15,6 +15,7 @@ sys.path.append('/home/pi/pialert/pialert')
 
 from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
+from helper import timeNowTZ
 from const import fullPholusPath, logPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -159,7 +160,7 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
         mylog('verbose', ['[PholusScan] Scan: Pholus SUCCESS'])
     
     #  check the last run output
-    f = open(CUR_PATH + '/pialert_pholus_lastrun.log', 'r+')
+    f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')
     newLines = f.read().split('\n')
     f.close()        
 
@@ -173,102 +174,13 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
         columns = line.split("|")
         if len(columns) == 4:
             # "Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value"
-            params.append( interface + " " + mask, timeNowTZ() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3])
+            params.append( [interface + " " + mask, timeNowTZ() , columns[0].replace(" ", ""), columns[1].replace(" ", ""), columns[2].replace(" ", ""), columns[3]])
 
     return params
 
-#-------------------------------------------------------------------------------
-def cleanResult(str):
-    # alternative str.split('.')[0]
-    str = str.replace("._airplay", "")
-    str = str.replace("._tcp", "")
-    str = str.replace(".local", "")
-    str = str.replace("._esphomelib", "")
-    str = str.replace("._googlecast", "")
-    str = str.replace(".lan", "")
-    str = str.replace(".home", "")
-    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-    str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
-    # remove trailing dots
-    if str.endswith('.'):
-        str = str[:-1]
-
-    return str
 
 
-# Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
-# it's also possible the pholus3.py script can be adjusted to provide a better output to interface with it
-# Hit me with a PR if you know how! :)
-def resolve_device_name_pholus (pMAC, pIP, allRes):
-    
-    pholusMatchesIndexes = []
 
-    index = 0
-    for result in allRes:
-        #  limiting entries used for name resolution to the ones containing the current IP (v4 only)
-        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and result["IP_v4_or_v6"] == pIP and '._googlezone' not in result["Value"]:
-            # found entries with a matching MAC address, let's collect indexes             
-            pholusMatchesIndexes.append(index)
-
-        index += 1
-
-    # return if nothing found
-    if len(pholusMatchesIndexes) == 0:
-        return -1
-
-    # we have some entries let's try to select the most useful one
-
-    # airplay matches contain a lot of information
-    # Matches for example: 
-    # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
-            return allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0]
-    
-    # second best - contains airplay
-    # Matches for example: 
-    # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])    
-
-    # Contains PTR Class:32769
-    # Matches for example: 
-    # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
-
-    # Contains AAAA Class:IN
-    # Matches for example: 
-    # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('.local.')[0])
-
-    # Contains _googlecast._tcp.local. PTR Class:IN
-    # Matches for example: 
-    # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
-
-    # Contains A Class:32769
-    # Matches for example: 
-    # Android.local. A Class:32769 "192.168.1.6"
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split(' A Class:32769')[0])
-
-    # # Contains PTR Class:IN
-    # Matches for example: 
-    # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
-            if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
-                return cleanResult(allRes[i]["Value"].split('"')[1])
-
-    return -1
 
 
 #===============================================================================

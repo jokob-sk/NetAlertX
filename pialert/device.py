@@ -3,11 +3,11 @@ import subprocess
 
 import conf
 import re
-from helper import timeNowTZ, get_setting, get_setting_value
+from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
 from mac_vendor import query_MAC_vendor
-from scanners.pholusscan import performPholusScan, resolve_device_name_dig, resolve_device_name_pholus
+
 #-------------------------------------------------------------------------------
 
 
@@ -362,10 +362,6 @@ def update_devices_names (db):
     sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','', '(name not found)') AND dev_LastIP <> '-'")
     unknownDevices = sql.fetchall() 
     db.commitDB()
-
-    # perform Pholus scan if (unknown) devices found
-    if conf.PHOLUS_ACTIVE and (len(unknownDevices) > 0 or conf.PHOLUS_FORCE):        
-        performPholusScan(db, conf.PHOLUS_TIMEOUT, conf.userSubnets)
 
     # skip checks if no unknown devices
     if len(unknownDevices) == 0 and conf.PHOLUS_FORCE == False:

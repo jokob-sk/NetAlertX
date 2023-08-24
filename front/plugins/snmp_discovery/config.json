@@ -41,7 +41,7 @@
     }],     
     "description": [{
         "language_code":"en_us",
-        "string" : "Este complemento se utiliza para descubrir dispositivos a través de las tablas arp de un enrutador o conmutador compatible con RFC1213.."
+        "string" : "This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch."
     },
     {
         "language_code":"es_es",

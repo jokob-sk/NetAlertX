@@ -135,7 +135,7 @@ def resolve_wildcards_arr(commandArr, params):
         
         for comPart in commandArr:
 
-            commandArr[i] = comPart.replace('{' + param[0] + '}', param[1]).replace('{s-quote}',"'")
+            commandArr[i] = comPart.replace('{' + str(param[0]) + '}', str(param[1])).replace('{s-quote}',"'")
 
             i += 1
 

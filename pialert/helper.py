@@ -6,6 +6,7 @@ import datetime
 import os
 import re
 import subprocess
+import pytz
 from pytz import timezone
 from datetime import timedelta
 import json
@@ -20,7 +21,12 @@ from logger import mylog, logResult
 
 #-------------------------------------------------------------------------------
 def timeNowTZ():
-    return datetime.datetime.now(conf.tz).replace(microsecond=0)
+    if isinstance(conf.TIMEZONE, str):
+        tz = pytz.timezone(conf.TIMEZONE)
+    else:
+        tz = conf.TIMEZONE
+
+    return datetime.datetime.now(tz).replace(microsecond=0)
 
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
@@ -371,3 +377,134 @@ def get_setting_value(key):
         return setVal
 
     return ''
+
+#-------------------------------------------------------------------------------
+# Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
+# it's also possible the pholus3.py script can be adjusted to provide a better output to interface with it
+# Hit me with a PR if you know how! :)
+def resolve_device_name_pholus (pMAC, pIP, allRes):
+    
+    pholusMatchesIndexes = []
+
+    index = 0
+    for result in allRes:
+        #  limiting entries used for name resolution to the ones containing the current IP (v4 only)
+        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and result["IP_v4_or_v6"] == pIP and '._googlezone' not in result["Value"]:
+            # found entries with a matching MAC address, let's collect indexes             
+            pholusMatchesIndexes.append(index)
+
+        index += 1
+
+    # return if nothing found
+    if len(pholusMatchesIndexes) == 0:
+        return -1
+
+    # we have some entries let's try to select the most useful one
+
+    # airplay matches contain a lot of information
+    # Matches for example: 
+    # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
+            return allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0]
+    
+    # second best - contains airplay
+    # Matches for example: 
+    # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])    
+
+    # Contains PTR Class:32769
+    # Matches for example: 
+    # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+
+    # Contains AAAA Class:IN
+    # Matches for example: 
+    # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('.local.')[0])
+
+    # Contains _googlecast._tcp.local. PTR Class:IN
+    # Matches for example: 
+    # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split('"')[1])
+
+    # Contains A Class:32769
+    # Matches for example: 
+    # Android.local. A Class:32769 "192.168.1.6"
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
+            return cleanResult(allRes[i]["Value"].split(' A Class:32769')[0])
+
+    # # Contains PTR Class:IN
+    # Matches for example: 
+    # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
+    for i in pholusMatchesIndexes:
+        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
+            if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
+                return cleanResult(allRes[i]["Value"].split('"')[1])
+
+    return -1
+    
+#-------------------------------------------------------------------------------
+
+def resolve_device_name_dig (pMAC, pIP):
+    
+    newName = ""
+
+    try :
+        dig_args = ['dig', '+short', '-x', pIP]
+
+        # Execute command
+        try:
+            # try runnning a subprocess
+            newName = subprocess.check_output (dig_args, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            mylog('none', ['[device_name_dig] ', e.output])            
+            # newName = "Error - check logs"
+            return -1
+
+        # Check returns
+        newName = newName.strip()
+
+        if len(newName) == 0 :
+            return -1
+            
+        # Cleanup
+        newName = cleanResult(newName)
+
+        if newName == "" or  len(newName) == 0: 
+            return -1
+
+        # Return newName
+        return newName
+
+    # not Found
+    except subprocess.CalledProcessError :
+        return -1            
+
+#-------------------------------------------------------------------------------
+def cleanResult(str):
+    # alternative str.split('.')[0]
+    str = str.replace("._airplay", "")
+    str = str.replace("._tcp", "")
+    str = str.replace(".local", "")
+    str = str.replace("._esphomelib", "")
+    str = str.replace("._googlecast", "")
+    str = str.replace(".lan", "")
+    str = str.replace(".home", "")
+    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
+    str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
+    # remove trailing dots
+    if str.endswith('.'):
+        str = str[:-1]
+
+    return str

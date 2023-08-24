@@ -154,15 +154,6 @@ def importConfigs (db):
     conf.DDNS_PASSWORD = ccd('DDNS_PASSWORD', 'A0000000B0000000C0000000D0000000' , c_d, 'DynDNS password', 'password', '', 'DynDNS')
     conf.DDNS_UPDATE_URL = ccd('DDNS_UPDATE_URL', 'https://api.dynu.com/nic/update?' , c_d, 'DynDNS update URL', 'text', '', 'DynDNS')
 
-    # PHOLUS
-    conf.PHOLUS_ACTIVE = ccd('PHOLUS_ACTIVE', False , c_d, 'Enable Pholus scans', 'boolean', '', 'Pholus')
-    conf.PHOLUS_TIMEOUT = ccd('PHOLUS_TIMEOUT', 20 , c_d, 'Pholus timeout', 'integer', '', 'Pholus')
-    conf.PHOLUS_FORCE = ccd('PHOLUS_FORCE', False , c_d, 'Pholus force check', 'boolean', '', 'Pholus')
-    conf.PHOLUS_RUN = ccd('PHOLUS_RUN', 'once' , c_d, 'Pholus enable schedule', 'text.select', "['disabled', 'once', 'schedule']", 'Pholus')
-    conf.PHOLUS_RUN_TIMEOUT = ccd('PHOLUS_RUN_TIMEOUT', 600 , c_d, 'Pholus timeout schedule', 'integer', '', 'Pholus')   
-    conf.PHOLUS_RUN_SCHD = ccd('PHOLUS_RUN_SCHD', '0 4 * * *' , c_d, 'Pholus schedule', 'text', '', 'Pholus')
-    conf.PHOLUS_DAYS_DATA = ccd('PHOLUS_DAYS_DATA', 0 , c_d, 'Pholus keep days', 'integer', '', 'Pholus')
-    
     # Nmap
     conf.NMAP_ACTIVE = ccd('NMAP_ACTIVE', True , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
     conf.NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', 150 , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
@@ -196,11 +187,6 @@ def importConfigs (db):
     
     # reset schedules
     conf.mySchedules = [] 
-
-    # init pholus schedule
-    pholusSchedule = Cron(conf.PHOLUS_RUN_SCHD).schedule(start_date=datetime.datetime.now(conf.tz))    
-    
-    conf.mySchedules.append(schedule_class("pholus", pholusSchedule, pholusSchedule.next(), False))
 
     # init nmap schedule
     nmapSchedule = Cron(conf.NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(conf.tz))
