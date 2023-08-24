@@ -6,13 +6,14 @@
 
 ### Script based plugins
 
+- [arp_scan (ARPSCAN)](/front/plugins/arp_scan/) 
 - [website_monitor (WEBMON)](/front/plugins/website_monitor/) 
 - [dhcp_servers (DHCPSRVS)](/front/plugins/dhcp_servers/) 
 - [dhcp_leases (DHCPLSS)](/front/plugins/dhcp_leases/) 
 - [unifi_import (UNFIMP)](/front/plugins/unifi_import/)
 - [snmp_discovery (SNMPDSC)](/front/plugins/snmp_discovery/)
 - [undiscoverables (UNDIS)](/front/plugins/undiscoverables/)
-- [arp_scan (ARPSCAN)](/front/plugins/arp_scan/)
+- [pholus_scan (ARPSCAN)](/front/plugins/pholus_scan/)
 - [set_password (SETPWD)](/front/plugins/set_password/)
 
 ### SQL query based plugins

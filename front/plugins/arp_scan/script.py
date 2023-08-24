@@ -10,8 +10,12 @@ import subprocess
 from time import strftime
 
 sys.path.append("/home/pi/pialert/front/plugins")
+sys.path.append('/home/pi/pialert/pialert') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects
+from logger import mylog
+from helper import timeNowTZ
+from const import logPath, pialertPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
@@ -33,26 +37,27 @@ def main():
     devices = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    print('In script:')
+    mylog('debug', ['[ARP Scan] In script ']) 
 
     # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
     # which holds a list of user-submitted subnets.
     # Printing the userSubnets list to check its content.
-    print(values.userSubnets)
+    mylog('debug', ['[ARP Scan] values.userSubnets: ', values.userSubnets]) 
+    
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
     # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.
     userSubnetsParamBase64 = values.userSubnets[0].split('userSubnets=b')[1]
 
     # Printing the extracted base64-encoded subnet information.
-    print(userSubnetsParamBase64)
+    mylog('debug', ['[ARP Scan] userSubnetsParamBase64: ', userSubnetsParamBase64]) 
+    
 
     # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
     userSubnetsParam = base64.b64decode(userSubnetsParamBase64).decode('ascii')
 
     # Print the decoded subnet information.
-    print('userSubnetsParam:')
-    print(userSubnetsParam)
+    mylog('debug', ['[ARP Scan] userSubnetsParam: ', userSubnetsParam]) 
 
     # Check if the decoded subnet information contains multiple subnets separated by commas.
     # If it does, split the string into a list of individual subnets.
@@ -94,7 +99,7 @@ def execute_arpscan(userSubnets):
 
         arpscan_output = execute_arpscan_on_interface (interface)        
 
-        print(arpscan_output)
+        mylog('debug', ['[ARP Scan] arpscan_output: ', arpscan_output])         
     
         # Search IP + MAC + Vendor as regular expresion
         re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -121,10 +126,10 @@ def execute_arpscan(userSubnets):
             unique_devices.append(device)    
 
     # return list
-    # mylog('debug', ['[ARP Scan] Found: Devices without duplicates ', len(unique_devices)  ]) 
+    mylog('debug', ['[ARP Scan] Found: Devices without duplicates ', len(unique_devices)  ]) 
 
-    print("Devices List len:", len(devices_list))  # Add this line to print devices_list
-    print("Devices List:", devices_list)  # Add this line to print devices_list
+    mylog('debug', ["Devices List len:", len(devices_list)])    # Add this line to print devices_list
+    mylog('debug',["Devices List:", devices_list])              # Add this line to print devices_list
 
     return devices_list
 
