@@ -129,6 +129,7 @@
         "Events_Table_info" : "Mostrando el INICIO y el FINAL de TODAS las entradas",
         "Events_Table_nav_next" : "Siguiente",
         "Events_Table_nav_prev" : "Anterior",
+        "DevDetail_Loading" : "Cargando ...",        
         "DevDetail_Periodselect_today" : "Hoy",
         "DevDetail_Periodselect_LastWeek" : "La semana pasada",
         "DevDetail_Periodselect_LastMonth" : "El mes pasado",
