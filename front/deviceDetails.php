@@ -576,10 +576,10 @@
                       }, 2000);
                   </script>
 
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')">Loading...</button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')">Loading...</button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')">Loading...</button>
-                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')">Loading...</button>
+                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')"><?= lang("DevDetail_Loading");?></button>
+                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')"><?= lang("DevDetail_Loading");?></button>
                 
                   <div style="text-align: left;">
                     <ul style="padding:20px;">
@@ -650,7 +650,7 @@
                   <div id="loading" style="display: none">
                     <div class="pa_semitransparent-panel"></div>
                     <div class="panel panel-default pa_spinner">
-                      <table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
+                      <table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
                     </div>
                   </div>
 
@@ -1105,7 +1105,7 @@ function initializeDatatables () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
@@ -1144,7 +1144,7 @@ function initializeDatatables () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
@@ -1963,7 +1963,7 @@ function initTable(tableId, mac){
   // Processing
   'processing'  : true,
   'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td>'+
+      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
                   '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
                   '</td></table>',
       emptyTable: 'No data',
