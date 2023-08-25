@@ -106,6 +106,7 @@
         "Events_Table_info" : "Zeige _START_ bis _END_ von _TOTAL_ Einträgen",
         "Events_Table_nav_next" : "Nächste",
         "Events_Table_nav_prev" : "Zurück",
+	"DevDetail_Loading" : "Laden ...",
         "DevDetail_Periodselect_today" : "Heute",
         "DevDetail_Periodselect_LastWeek" : "Letzte Woche",
         "DevDetail_Periodselect_LastMonth" : "Letzter Monat",
