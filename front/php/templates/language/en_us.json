@@ -129,6 +129,7 @@
         "Events_Table_info" : "Showing _START_ to _END_ of _TOTAL_ entries",
         "Events_Table_nav_next" : "Next",
         "Events_Table_nav_prev" : "Previous",
+	"DevDetail_Loading" : "Loading...",	    
         "DevDetail_Periodselect_today" : "Today",
         "DevDetail_Periodselect_LastWeek" : "Last Week",
         "DevDetail_Periodselect_LastMonth" : "Last Month",
