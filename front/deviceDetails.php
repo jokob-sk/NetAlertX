@@ -99,19 +99,22 @@
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
         <!-- <div class="box-transparent"> -->
-
-
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
-                <?php
-                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = lang('DevDetail_Tab_Tools'); } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
-                ?>
-              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+              <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
+              <?php
+               }
+              ?>
+              <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
-              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>              
-              <li> <a id="tabPlugins"   href="#panPlugins" data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>   </a></li>
+              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
+              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
+              <li> <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>  </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -124,9 +127,7 @@
                   id="btnNext"     onclick="recordSwitch('next')"> <i class="fa fa-chevron-right"></i> </button>
               </div>
             </ul>
-
-
-
+            
             <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
