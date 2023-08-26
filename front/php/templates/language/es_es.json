@@ -571,6 +571,7 @@
         "Nmap_icon" : "<i class=\"fa fa-ethernet\"></i>",
         "NMAP_ACTIVE_name" : "Ejecución del ciclo",
         "NMAP_ACTIVE_description" : "Si está habilitado, ejecutará un escaneo en un dispositivo recién encontrado. Para un análisis programado o único, verifique la configuración de <a href=\"#NMAP_RUN\"><code>NMAP_RUN</code></a>.",
+        "NMAP_TIMEOUT_name" : "Tiempo límite de ejecución",
         "NMAP_TIMEOUT_description" : "Tiempo máximo en segundos para esperar a que finalice un escaneo de Nmap en cualquier dispositivo.",
         "NMAP_RUN_name" : "Ejecución programada",
         "NMAP_RUN_description" : "Habilite un escaneo regular de Nmap en su red en todos los dispositivos. Los ajustes de programación se pueden encontrar a continuación. Si selecciona <code>una vez</code>, Nmap se ejecuta solo una vez al inicio durante el tiempo especificado en la configuración de <a href=\"#NMAP_TIMEOUT\"><code>NMAP_TIMEOUT</code></a>.",
