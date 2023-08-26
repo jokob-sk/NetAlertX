@@ -328,12 +328,12 @@ Plugin entries can be filtered based on values entered into filter fields. The `
 
 PiAlert will take the results of the plugin execution and insert these results into a database table, if a plugin contains the property `"mapped_to_table"` in the `config.json` root. The mapping of the columns is defined in the `database_column_definitions` array.
 
-This approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, get's the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `"DHCP_Leases"` database table in the PiAlert database. All this is achieved by:
+This approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, get's the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `"CurrentScan"` database table in the PiAlert database. All this is achieved by:
 
 > [!NOTE] 
 > If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
 
-1) Specifying the database table into which the results are inserted by defining `"mapped_to_table": "DHCP_Leases"` in the root of the `config.json` file as shown below:
+1) Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 
 ```json
 {
@@ -342,16 +342,16 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
     ...
     "data_source":  "script",
     "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "DHCP_Leases",    
+    "mapped_to_table": "CurrentScan",    
     ...
 }
 ```
-2) Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `DHCP_MAC` column in the PiAlert database `DHCP_Leases` table. Notice the  `"mapped_to_column": "DHCP_MAC"` key-value pair in the sample below.
+2) Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
 
 ```json
 {
             "column": "Object_PrimaryID",
-            "mapped_to_column": "DHCP_MAC", 
+            "mapped_to_column": "cur_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_mac",            
@@ -366,6 +366,29 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
 ```
 
 3)  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
+
+> [!NOTE] 
+> You can create a column mapping with a default value via the `mapped_to_column_data` property.  
+
+```json
+{
+            "column": "NameDoesntMatter",
+            "mapped_to_column": "cur_ScanMethod",
+            "mapped_to_column_data": {
+                "value": "DHCPLSS"                
+            },  
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "device_mac",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "MAC address"
+                }]
+        }
+```
 
 #### params
 

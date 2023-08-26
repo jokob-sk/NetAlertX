@@ -432,9 +432,30 @@ class DB():
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
-                                cur_ScanMethod STRING(10)
+                                cur_ScanMethod STRING(10),
+                                cur_Name STRING(250),
+                                cur_LastQuery STRING(250),
+                                cur_DateTime STRING(250)
                             );
                         """)
+
+        # indicates, if DHCP_Leases table is available
+        DHCP_LeasesMissing = self.sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='DHCP_Leases';
+        """).fetchone() == None
+
+        if DHCP_LeasesMissing == False:
+            self.sql.execute("DROP TABLE DHCP_Leases;")
+
+        # indicates, if PiHole_Network table is available
+        PiHole_NetworkMissing = self.sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='PiHole_Network';
+        """).fetchone() == None
+
+        if PiHole_NetworkMissing == False:
+            self.sql.execute("DROP TABLE PiHole_Network;")
 
         self.commitDB()
 

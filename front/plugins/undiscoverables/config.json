@@ -3,7 +3,7 @@
   "unique_prefix": "UNDIS",
   "enabled": true,
   "data_source": "script",
-  "mapped_to_table": "DHCP_Leases", 
+  "mapped_to_table": "CurrentScan", 
   "show_ui": true,
   "localized": ["display_name", "description", "icon"],
 
@@ -55,7 +55,7 @@
           "language_code":"en_us",
           "string" : "When to run"
       },
-{
+      {
           "language_code":"es_es",
           "string" : "Cuándo ejecuta"
       }],
@@ -63,7 +63,7 @@
           "language_code":"en_us",
           "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
       },
-	  {
+	    {
           "language_code":"es_es",
           "string" : "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
       }]
@@ -205,7 +205,7 @@
   [          
     {
       "column": "Watched_Value1",
-      "mapped_to_column": "DHCP_Name",         
+      "mapped_to_column": "cur_Name",         
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",            
@@ -223,7 +223,7 @@
     }, 
     {
         "column": "Object_PrimaryID",
-        "mapped_to_column": "DHCP_MAC", 
+        "mapped_to_column": "cur_MAC", 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "device_mac",            
@@ -241,7 +241,7 @@
     },
     {
         "column": "Object_SecondaryID",
-        "mapped_to_column": "DHCP_IP", 
+        "mapped_to_column": "cur_IP", 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "device_ip",            
@@ -276,7 +276,7 @@
     },   
     {
         "column": "DateTimeChanged",
-        "mapped_to_column": "DHCP_DateTime", 
+        "mapped_to_column": "cur_DateTime", 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "label",            

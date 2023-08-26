@@ -162,7 +162,7 @@
         }] ,
         "description":[{
             "language_code":"en_us",
-            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Last Query</li><li><code>Watched_Value3</code> is Name </li><li><code>Watched_Value4</code> is N/A </li></ul>"
         },
         {
             "language_code":"es_es",
@@ -237,23 +237,33 @@
             }]
     },
     {
-        "column": "Watched_Value2",
-        "mapped_to_column": "cur_Vendor", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Vendor"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Proveedor"
-            }]
-    } ,
+      "column": "Watched_Value2",
+      "mapped_to_column": "cur_LastQuery", 
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Last Query"
+          }]
+    },
+    {
+      "column": "Watched_Value3",
+      "mapped_to_column": "cur_Name", 
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Name"
+          }]
+    },
     {
         "column": "Extra",
         "mapped_to_column": "cur_ScanMethod", 

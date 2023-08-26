@@ -259,9 +259,9 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
                 # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
-                sqlParams.append(
+                sqlParams.append((
                     0,                            #  "Index" placeholder
-                    (plugin["unique_prefix"],     #  "Plugin" 
+                    plugin["unique_prefix"],     #  "Plugin" 
                     row[0],                       #  "Object_PrimaryID" 
                     handle_empty(row[1]),         #  "Object_SecondaryID" 
                     'null',                       #  "DateTimeCreated" column (null placeholder)
@@ -536,8 +536,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
         mylog('none', ['[Plugins] Error: ', e])
         raise e   
 
-    # Perform database table mapping if enabled for the plugin   
-    if len(pluginEvents) > 0 and  "mapped_to_table" in plugin:
+    # Perform database table mapping if enabled for the plugin
+    if len(pluginEvents) > 0 and "mapped_to_table" in plugin:
 
         # Initialize an empty list to store SQL parameters.
         sqlParams = []
@@ -558,6 +558,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
         for clmn in plugin['database_column_definitions']:
             if 'mapped_to_column' in clmn:
                 mappedCols.append(clmn)
+
                 columnsStr = f'{columnsStr}, "{clmn["mapped_to_column"]}"'
                 valuesStr = f'{valuesStr}, ?'
 
@@ -598,6 +599,10 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 elif col['column'] == 'Status':
                     tmpList.append(plgEv.status)
 
+                # Check if there's a default value specified for this column in the JSON.
+                if 'mapped_to_column_data' in col and 'value' in col['mapped_to_column_data']:
+                    tmpList.append(col['mapped_to_column_data']['value'])
+                
             # Append the mapped values to the list 'sqlParams' as a tuple.
             sqlParams.append(tuple(tmpList))
 
@@ -606,6 +611,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 
         # Log a debug message showing the generated SQL query for mapping.
         mylog('debug', ['[Plugins] SQL query for mapping: ', q])
+        mylog('debug', ['[Plugins] SQL sqlParams for mapping: ', sqlParams])
 
         # Execute the SQL query using 'sql.executemany()' and the 'sqlParams' list of tuples.
         # This will insert multiple rows into the database in one go.
@@ -613,12 +619,12 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 
         db.commitDB()
 
-        # perform scan if mapped to CurrentScan table        
-        if dbTable == 'CurrentScan':               
-            pluginsState.processScan = True  
- 
+        # perform scan if mapped to CurrentScan table
+        if dbTable == 'CurrentScan':
+            pluginsState.processScan = True
 
     db.commitDB()
+
 
     return pluginsState
 

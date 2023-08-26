@@ -14,7 +14,7 @@
         }
     ],
     "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "DHCP_Leases",    
+    "mapped_to_table": "CurrentScan",    
     "display_name" : [{
         "language_code":"en_us",
         "string" : "UniFi import"
@@ -114,7 +114,7 @@
         },
         {
             "column": "Object_PrimaryID",
-            "mapped_to_column": "DHCP_MAC", 
+            "mapped_to_column": "cur_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_mac",            
@@ -132,7 +132,7 @@
         },
         {
             "column": "Object_SecondaryID",
-            "mapped_to_column": "DHCP_IP", 
+            "mapped_to_column": "cur_IP", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_ip",            
@@ -167,7 +167,7 @@
         },
         {
             "column": "DateTimeChanged",
-            "mapped_to_column": "DHCP_DateTime", 
+            "mapped_to_column": "cur_DateTime", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -185,7 +185,7 @@
         },
         {
             "column": "Watched_Value1",
-            "mapped_to_column": "DHCP_Name", 
+            "mapped_to_column": "cur_Name", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            

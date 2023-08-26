@@ -42,9 +42,6 @@ different methods to scan the network for devices or to find more details about 
 | Module | Description |
 |--------|-----------|
 |```__init__.py```| an empty init file (oops missing in the repo)|
-|```arpscan.py```| run an arp-scan to discover devices |
 |```internet.py```| discover the internet interface and check the external IP also manage Dynamic DNS |
 |```nmapscan.py```| use Nmap to discover more about devices |
-|```pholusscan.py```| use a 3rd party script Pholus to detect more details about the devices on the network |
-|```pihole.py```| Use the PiHole network table in its db and also read the DHCP leases file to discover new devices  |
 

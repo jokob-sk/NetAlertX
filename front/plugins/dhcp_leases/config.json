@@ -14,7 +14,7 @@
     ],
     "show_ui": true,
     "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "DHCP_Leases",    
+    "mapped_to_table": "CurrentScan",    
     "display_name" : [{
         "language_code":"en_us",
         "string" : "DHCP Leases (Device import)"
@@ -79,7 +79,7 @@
         },
         {
             "column": "Object_PrimaryID",
-            "mapped_to_column": "DHCP_MAC", 
+            "mapped_to_column": "cur_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_mac",            
@@ -97,7 +97,7 @@
         },
         {
             "column": "Object_SecondaryID",
-            "mapped_to_column": "DHCP_IP", 
+            "mapped_to_column": "cur_IP", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_ip",            
@@ -132,7 +132,7 @@
         },
         {
             "column": "DateTimeChanged",
-            "mapped_to_column": "DHCP_DateTime", 
+            "mapped_to_column": "cur_DateTime", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -167,7 +167,7 @@
         },
         {
             "column": "Watched_Value2",
-            "mapped_to_column": "DHCP_Name", 
+            "mapped_to_column": "cur_Name", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
@@ -249,6 +249,27 @@
                 {
                 "language_code":"es_es",
                 "string" : "Archivo DHCP leases"
+                }]
+        },
+        {
+            "column": "ScanMethod",
+            "mapped_to_column": "cur_ScanMethod", 
+            "mapped_to_column_data": {
+                "value": "DHCPLSS"                
+            }, 
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Scan method"
+                },
+                {
+                "language_code":"es_es",
+                "string" : "Método de escaneo"
                 }]
         },        
         {

@@ -327,12 +327,12 @@ Las entradas de complementos se pueden filtrar según los valores ingresados en 
 
 PiAlert tomará los resultados de la ejecución del complemento e insertará estos resultados en una tabla de base de datos, si un complemento contiene la propiedad `"mapped_to_table"` en la raíz `config.json`. El mapeo de las columnas se define en la matriz `database_column_definitions`.
 
-Este enfoque se utiliza para implementar el complemento "DHCPLSS". El script analiza todos los archivos "dhcp.leases" proporcionados, obtiene los resultados en el formato de tabla genérica descrito en la sección "Orden y valores de las columnas" anterior y toma valores individuales y los inserta en la tabla de base de datos `"DHCP_Leases"` en PiAlert. base de datos. Todo esto se logra mediante:
+Este enfoque se utiliza para implementar el complemento "DHCPLSS". El script analiza todos los archivos "dhcp.leases" proporcionados, obtiene los resultados en el formato de tabla genérica descrito en la sección "Orden y valores de las columnas" anterior y toma valores individuales y los inserta en la tabla de base de datos `"CurrentScan"` en PiAlert. base de datos. Todo esto se logra mediante:
 
 > [!NOTE] 
 > Si los resultados se asignan a la tabla "CurrentScan", los datos se incluyen en el ciclo de escaneo normal, por lo que, por ejemplo, se envían notificaciones para los dispositivos.  
 
-1) Especificar la tabla de la base de datos en la que se insertan los resultados definiendo `"mapped_to_table": "DHCP_Leases"` en la raíz del archivo `config.json` como se muestra a continuación:
+1) Especificar la tabla de la base de datos en la que se insertan los resultados definiendo `"mapped_to_table": "CurrentScan"` en la raíz del archivo `config.json` como se muestra a continuación:
 
 ```json
 {
@@ -341,17 +341,17 @@ Este enfoque se utiliza para implementar el complemento "DHCPLSS". El script ana
     ...
     "data_source":  "script",
     "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "DHCP_Leases",    
+    "mapped_to_table": "CurrentScan",    
     ...
 }
 ```
 
-2) Definir la columna de destino con la propiedad `mapped_to_column` para columnas individuales en la matriz `database_column_definitions` del archivo `config.json`. Por ejemplo, en el complemento `DHCPLSS`, necesitaba asignar el valor de la columna `Object_PrimaryID` devuelta por el complemento a la columna `DHCP_MAC` en la tabla `DHCP_Leases` de la base de datos PiAlert. Observe el par clave-valor `"mapped_to_column": "DHCP_MAC"` en el siguiente ejemplo.
+2) Definir la columna de destino con la propiedad `mapped_to_column` para columnas individuales en la matriz `database_column_definitions` del archivo `config.json`. Por ejemplo, en el complemento `DHCPLSS`, necesitaba asignar el valor de la columna `Object_PrimaryID` devuelta por el complemento a la columna `cur_MAC` en la tabla `CurrentScan` de la base de datos PiAlert. Observe el par clave-valor `"mapped_to_column": "cur_MAC"` en el siguiente ejemplo.
 
 ```json
 {
             "column": "Object_PrimaryID",
-            "mapped_to_column": "DHCP_MAC", 
+            "mapped_to_column": "cur_MAC", 
             "css_classes": "col-sm-2",
             "show": true,
             "type": "device_mac",            
