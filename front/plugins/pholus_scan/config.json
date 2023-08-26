@@ -43,7 +43,7 @@
     },
     {
       "language_code": "es_es",
-      "string": "Este plugin sirve para ejecutar un escaneo Pholus (descubrimiento de nombres) en la red local."
+      "string": "Este plugin sirve para ejecutar un escaneo Pholus (descubrimiento de nombres) en la red local"
     }	  
   ],
     "params" : [
