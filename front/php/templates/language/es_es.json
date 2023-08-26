@@ -562,7 +562,7 @@
         "DDNS_DOMAIN_name" : "URL del dominio DynDNS",
         "DDNS_DOMAIN_description" : "URL del host DynDNS (no incluya http:// o https://).",
         "DDNS_USER_name" : "Usuario de DynDNS",
-        "DDNS_USER_description" : "El nombre de usuario utilizado para iniciar sesión en el servidor DynDNS (a veces, una dirección de correo electrónico completa).",
+        "DDNS_USER_description" : "El nombre de usuario utilizado para iniciar sesión en el servicio DynDNS (a veces, una dirección de correo electrónico completa).",
         "DDNS_PASSWORD_name" : "Contraseña de DynDNS",
         "DDNS_PASSWORD_description" : "La contraseña de acceso al servicio DynDNS.",
         "DDNS_UPDATE_URL_name" : "URL de actualización de DynDNS",
