@@ -535,38 +535,10 @@
                 </table>
               </div>
 
-
-<!-- tab page 5 ------------------------------------------------------------ -->
-
+<!-- tab page "Nmap"  ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panNmap">
-
-              <?php
-              if ($_REQUEST['mac'] == 'Internet') {
-              ?>
-                <h4 class=""><?= lang('DevDetail_Internet_Speedtest');?></h4>
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
-                </div>
-                   
-                  <script>
-                  function speedtestcli() {
-                    $( "#scanoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/speedtestcli.php",
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#scanoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>
-                <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
+                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
@@ -628,21 +600,47 @@
                     <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
                   </tr>
                   </thead>
-                  <!-- Comment out tbody when trying to implement better table with datatables here -->                  
+                  <!-- Comment out tbody when trying to implement better table with datatables here -->
                   <tbody id="tableNmapBody">
                     <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
                   </tbody>
                 </table>
-              
+				
               </div>
 
+        
+<!-- tab page "Tools" ------------------------------------------------------------ -->
 
+              <div class="tab-pane fade" id="panTools">
 
-
-
-
-<!-- ----------------------------------------------------------------------- -->
-
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Internet_Info_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Internet_Info_Start');?></button>
+                  <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function internetinfo() {
+                    $( "#internetinfooutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/internetinfo.php",
+                      beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#internetinfooutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+              
+              </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
