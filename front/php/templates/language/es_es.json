@@ -521,7 +521,7 @@
         "NTFY_icon" : "<i class=\"fa fa-terminal\"></i>",
         "REPORT_NTFY_name" : "Habilitar NTFY",
         "REPORT_NTFY_description" : "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://ntfy.sh/\">NTFY</a>.",
-        "NTFY_HOST_name" : "NTFY host URL",
+        "NTFY_HOST_name" : "URL del host NTFY",
         "NTFY_HOST_description" : "URL de host NTFY que comienza con <code>http://</code> o <code>https://</code>. Puede usar la instancia alojada en <a target=\"_blank\" href=\"https://ntfy.sh/\">https://ntfy.sh</a> simplemente ingresando <code>https://ntfy. sh</código>.",
         "NTFY_TOPIC_name" : "Tema de NTFY",
         "NTFY_TOPIC_description" : "Tu tema secreto.",
