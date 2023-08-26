@@ -515,6 +515,8 @@
         "APPRISE_HOST_name" : "Apprise host URL",
         "APPRISE_URL_name" : "URL de notificación de Apprise",
         "APPRISE_URL_description" : "Informar de la URL de destino de la notificación. Por ejemplo, para Telegram sería <code>tgram://{bot_token}/{chat_id}</code>.",
+        "APPRISE_SIZE_name": "Tamaño máximo de carga útil",
+        "APPRISE_SIZE_description": "El tamaño máximo de la carga útil de información como número de caracteres en la cadena pasada. Si supera el límite, se truncará y se agregará un mensaje <code>(text was truncated)</code>.",        
         "NTFY_display_name" : "NTFY",
         "NTFY_icon" : "<i class=\"fa fa-terminal\"></i>",
         "REPORT_NTFY_name" : "Habilitar NTFY",
