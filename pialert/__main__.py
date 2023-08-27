@@ -34,7 +34,6 @@ from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
 # different scanners
-from scanners.nmapscan import performNmapScan
 from scanners.internet import check_internet_IP
 
 
@@ -58,8 +57,7 @@ main structure of Pi Alert
         run scans
             run plugins (scheduled)
             check internet IP
-            check vendor
-            run NMAP
+            check vendor            
             run "scan_network()"
                 processing scan results
             run plugins (after Scan)
@@ -160,25 +158,6 @@ def main ():
                 conf.cycle = 'update_vendors'
                 mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
                 update_devices_MAC_vendors(db)               
-            
-            # Execute scheduled or one-off Nmap scan if enabled and run conditions fulfilled
-            if conf.NMAP_RUN == "schedule" or conf.NMAP_RUN == "once":
-
-                nmapSchedule = [sch for sch in conf.mySchedules if sch.service == "nmap"][0]
-                run = False
-
-                # run once after application starts
-                if conf.NMAP_RUN == "once" and nmapSchedule.last_run == 0:
-                    run = True
-
-                # run if overdue scheduled time
-                if conf.NMAP_RUN == "schedule":
-                    run = nmapSchedule.runScheduleCheck()                    
-
-                if run:
-                    nmapSchedule.last_run = timeNowTZ()
-                    performNmapScan(db, get_all_devices(db))
-           
            
             # Run splugin scripts which are set to run every timne after a scans finished            
             pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)
@@ -202,11 +181,7 @@ def main ():
             #  new devices were found
             if len(newDevices) > 0:
                 #  run all plugins registered to be run when new devices are found                    
-                pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)
-
-                #  Scan newly found devices with Nmap if enabled
-                if conf.NMAP_ACTIVE and len(newDevices) > 0:
-                    performNmapScan( db, newDevices)
+                pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)                
 
             # send all configured notifications
             send_notifications(db)

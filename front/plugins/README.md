@@ -15,9 +15,12 @@
 - [undiscoverables (UNDIS)](/front/plugins/undiscoverables/)
 - [pholus_scan (ARPSCAN)](/front/plugins/pholus_scan/)
 - [set_password (SETPWD)](/front/plugins/set_password/)
+- [nmap_scan (NMAP)](/front/plugins/nmap_scan/) 
 
 ### SQL query based plugins
-- [nmap_services (NMAPSERV)](/front/plugins/nmap_services/) 
+
+- N/A, but the External SQLite based plugins work very similar
+
 
 ### template based plugins
 - [newdev_template (NEWDEV)](/front/plugins/newdev_template/) 

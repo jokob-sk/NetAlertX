@@ -1,5 +1,4 @@
 import os
-import base64
 import json
 
 from logger import mylog
@@ -72,12 +71,12 @@ def get_plugin_string(props, el):
 
 
 #-------------------------------------------------------------------------------
-def flatten_array(arr, encodeBase64=False):
+def flatten_array(arr):
     tmp = ''
     arrayItemStr = ''
 
     mylog('debug', '[Plugins] Flattening the below array')
-    mylog('debug', f'[Plugins] Convert to Base64: {encodeBase64}')
+    
     mylog('debug', arr)
 
     for arrayItem in arr:
@@ -93,12 +92,7 @@ def flatten_array(arr, encodeBase64=False):
 
     tmp = tmp[:-1]  # Remove last comma ','
 
-    mylog('debug', f'[Plugins] Flattened array: {tmp}')
-
-    if encodeBase64:
-        tmp = str(base64.b64encode(tmp.encode('ascii')))
-        mylog('debug', f'[Plugins] Flattened array (base64): {tmp}')
-
+    mylog('debug', f'[Plugins] Flattened array: {tmp}')    
 
     return tmp
 

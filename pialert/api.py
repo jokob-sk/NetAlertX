@@ -3,7 +3,7 @@ import json
 
 # pialert modules
 import conf  
-from const import (apiPath, sql_devices_all, sql_nmap_scan_all, sql_pholus_scan_all, sql_events_pending_alert, 
+from const import (apiPath, sql_devices_all, sql_events_pending_alert, 
                    sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings)
 from logger import mylog
 from helper import write_file
@@ -26,9 +26,7 @@ def update_api(db, isNotification = False, updateOnlyDataSources = []):
 
     #  prepare database tables we want to expose 
     dataSourcesSQLs = [
-        ["devices", sql_devices_all],
-        ["nmap_scan", sql_nmap_scan_all],
-        ["pholus_scan", sql_pholus_scan_all],
+        ["devices", sql_devices_all],        
         ["events_pending_alert", sql_events_pending_alert],
         ["settings", sql_settings],
         ["plugins_events", sql_plugins_events],

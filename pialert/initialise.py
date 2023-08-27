@@ -89,7 +89,7 @@ def importConfigs (db):
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
     conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events', 'ports']   , c_d, 'Notify on', 'text.multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'ports', 'plugins']", 'General')    
+    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'text.multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'plugins']", 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
     conf.DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'German', 'Spanish']", 'General')
@@ -154,13 +154,7 @@ def importConfigs (db):
     conf.DDNS_PASSWORD = ccd('DDNS_PASSWORD', 'A0000000B0000000C0000000D0000000' , c_d, 'DynDNS password', 'password', '', 'DynDNS')
     conf.DDNS_UPDATE_URL = ccd('DDNS_UPDATE_URL', 'https://api.dynu.com/nic/update?' , c_d, 'DynDNS update URL', 'text', '', 'DynDNS')
 
-    # Nmap
-    conf.NMAP_ACTIVE = ccd('NMAP_ACTIVE', True , c_d, 'Enable Nmap scans', 'boolean', '', 'Nmap')
-    conf.NMAP_TIMEOUT = ccd('NMAP_TIMEOUT', 150 , c_d, 'Nmap timeout', 'integer', '', 'Nmap')
-    conf.NMAP_RUN = ccd('NMAP_RUN', 'disabled' , c_d, 'Nmap enable schedule', 'text.select', "['disabled', 'once', 'schedule']", 'Nmap')
-    conf.NMAP_RUN_SCHD = ccd('NMAP_RUN_SCHD', '0 2 * * *' , c_d, 'Nmap schedule', 'text', '', 'Nmap')
-    conf.NMAP_ARGS = ccd('NMAP_ARGS', '-p -10000' , c_d, 'Nmap custom arguments', 'text', '', 'Nmap')    
-
+    
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
 
@@ -187,10 +181,6 @@ def importConfigs (db):
     
     # reset schedules
     conf.mySchedules = [] 
-
-    # init nmap schedule
-    nmapSchedule = Cron(conf.NMAP_RUN_SCHD).schedule(start_date=datetime.datetime.now(conf.tz))
-    conf.mySchedules.append(schedule_class("nmap", nmapSchedule, nmapSchedule.next(), False))
 
     # Format and prepare the list of subnets
     conf.userSubnets = updateSubnets(conf.SCAN_SUBNETS)
@@ -252,10 +242,7 @@ def importConfigs (db):
     conf.plugins_once_run = False
     # -----------------
     # Plugins END
-
-    # write_file(self.path, json.dumps(self.jsonData)) 
-           
-    
+  
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
@@ -270,9 +257,9 @@ def importConfigs (db):
 
     #  update only the settings datasource
     update_api(db, False, ["settings"])  
-
+    
     # run plugins that are modifying the config   
-    pluginsState = run_plugin_scripts(db, 'before_config_save')
+    run_plugin_scripts(db, 'before_config_save' )
 
     # Used to determine the next import
     conf.lastImportedConfFile = os.path.getmtime(config_file)      
