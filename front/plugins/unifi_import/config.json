@@ -61,14 +61,14 @@
             "value" : "UNFIMP_sites"
         },
         {
-            "name"  : "protocol",
-            "type"  : "setting",
-            "value" : "UNFIMP_protocol"
-        },
-        {
             "name"  : "port",
             "type"  : "setting",
             "value" : "UNFIMP_port"
+        },
+        {
+            "name"  : "verifyssl",
+            "type"  : "setting",
+            "value" : "UNFIMP_verifyssl"
         },
         {
             "name"  : "version",
@@ -348,7 +348,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites}  protocol={protocol} port={port} version={version}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites} port={port} verifyssl={verifyssl} version={version}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -415,29 +415,6 @@
             }]
         },
         {
-            "function": "protocol",
-            "type": "text.select",
-            "default_value":"https://",
-            "options": ["https://", "http://"],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Protocol"
-            },
-            {
-                "language_code":"es_es",
-                "string" : "Protocolo"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "The protocol to use to access the controller."
-            },
-            {
-                "language_code":"es_es",
-                "string" : "El protocolo a utilizar para acceder al controlador."
-            }]
-        },
-        {
             "function": "host",
             "type": "text",
             "default_value":"192.168.1.1",
@@ -481,6 +458,29 @@
             {
                 "language_code":"es_es",
                 "string" : "El número de puerto donde se ejecuta el controlador UNIFI. Normalmente es <code>8443</code>."
+            }]
+        },
+        {
+            "function": "verifyssl",
+            "type": "text",
+            "default_value":"false",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "verify SSL"
+            },
+            {
+                "language_code": "es_es",
+                "string": "verificar SSL"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "verify SSL certificate validity <code>true|false</code>."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "verificar la validez del certificado SSL <code>true|false</code>."
             }]
         },
         {
