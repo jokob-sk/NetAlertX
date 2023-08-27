@@ -389,7 +389,7 @@
     {
         "function": "RUN_TIMEOUT",
         "type": "integer",
-        "default_value": 300,
+        "default_value": 30,
         "options": [],
         "localized": ["name", "description"],
         "name": [
