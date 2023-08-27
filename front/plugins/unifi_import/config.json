@@ -38,6 +38,10 @@
     {
         "language_code":"es_es",
         "string" : "Este plugin se utiliza para importar dispositivos desde un controlador UNIFI."
+    },
+    {
+        "language_code":"de_de",
+        "string" : "Dieses Plugin imporiert die Geräte von einem UNIFI Controller."
     }],
     "params" : [
         {
@@ -93,7 +97,12 @@
                 {
                 "language_code":"es_es",
                 "string" : "N/A"
-                }]
+                },
+                {
+                "language_code":"de_de",
+                "string" : "N/A"
+                }
+            ]
         } ,
         {
             "column": "Plugin",
@@ -109,6 +118,10 @@
                 },
                 {
                 "language_code":"es_es",
+                "string" : "N/A"
+                },
+                {
+                "language_code":"de_de",
                 "string" : "N/A"
                 }]
         },
@@ -128,6 +141,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Dirección MAC"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "MAC Adresse"
                 }]
         },
         {
@@ -146,7 +163,12 @@
                 {
                 "language_code":"es_es",
                 "string" : "IP"
-                }]
+                },
+                {
+                "language_code":"de_de",
+                "string" : "IP"
+                }
+            ]
         } ,
         {
             "column": "DateTimeCreated",
@@ -163,6 +185,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Creado"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Erstellt"
                 }]
         },
         {
@@ -181,6 +207,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Cambiado"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Angepasst"
                 }]
         },
         {
@@ -199,6 +229,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Nombre de host"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Name des Hosts"
                 }]
         },
         {
@@ -216,6 +250,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Proveedor"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Hersteller"
                 }]
         },
         {
@@ -233,6 +271,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Tipo"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Typ"
                 }]
         } ,
         {
@@ -250,6 +292,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "¿Online?"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Online?"
                 }]
         } ,       
         {
@@ -267,6 +313,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Comentarios"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Kommentar"
                 }]
         },        
         {
@@ -284,6 +334,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Red"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Netzwerk"
                 }]
         },        
         {
@@ -318,6 +372,10 @@
                 {
                 "language_code":"es_es",
                 "string" : "Estado"
+                },
+                {
+                "language_code":"de_de",
+                "string" : "Status"
                 }]
         }            
     ],
@@ -335,6 +393,10 @@
             {
                 "language_code":"es_es",
                 "string" : "Cuándo ejecutar"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Ausführungszeitpunkt"
             }],
             "description": [{
                 "language_code":"en_us",
@@ -343,7 +405,11 @@
             {
                 "language_code":"es_es",
                 "string" : "Habilite la importación de dispositivos desde un controlador UNIFI. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el análisis se ejecuta solo una vez al iniciar la aplicación (contenedor) o después de actualizar su configuración."
-            }]
+            },
+                {
+                "language_code":"de_de",
+                "string" : "Aktiviere den Import von einem UNIFI controller. Bei <code>schedule</code> werden die Richtzeiten von weiter unten verwendet. Bei der Auswahl <code>once</code> der Import wird einmalig beim Start der Applikation (container), oder nach einem Update der Einstellungen durchgeführt."
+                }]
         },
         {
             "function": "CMD",
@@ -358,6 +424,10 @@
             {
                 "language_code":"es_es",
                 "string" : "Comando"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Befehl"
             }],
             "description": [{
                 "language_code":"en_us",
@@ -366,6 +436,10 @@
             {
                 "language_code":"es_es",
                 "string" : "Comando para ejecutar. No se recomienda cambiar."
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Befehl der ausgeführt wird. Anpassung nicht empfohlen"
             }]
         },
         {
@@ -577,6 +651,10 @@
             {
                 "language_code":"es_es",
                 "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Maximale Laufzeit des Scripts. Nach Ablauf der Zeit wird das Script abgebrochen."
             }]
         },
         {
@@ -595,11 +673,11 @@
             }] ,
             "description":[{
                 "language_code":"en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Vendor </li><li><code>Watched_Value3</code> is Type </li><li><code>Watched_Value4</code> is Network </li></ul>"
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Vendor </li><li><code>Watched_Value3</code> is Type </li><li><code>Watched_Value4</code> is Online </li></ul>"
             },
             {
                 "language_code":"es_es",
-                "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el nombre de host </li><li><code>Watched_Value2</code> es el proveedor </li><li><code>Watched_Value3</code> es el tipo </li><li><code>Watched_Value4</code> es Red </li></ul>"
+                "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el nombre de host </li><li><code>Watched_Value2</code> es el proveedor </li><li><code>Watched_Value3</code> es el tipo </li><li><code>Watched_Value4</code> es Online </li></ul>"
             }] 
         },
         {
@@ -627,3 +705,4 @@
         }
     ]
 }
+
