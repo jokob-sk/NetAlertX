@@ -458,7 +458,9 @@ Below are some general additional notes, when defining `params`:
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
   - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
   - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `PIHOLE_RUN`. 
-- `"value" : "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
+- `"value": "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
+- `"timeoutMultiplier" : true` - used to indicate if the value should multiply the max timeout for the whole script run by the number of values in the given parameter.
+- `"base64": true` - use base64 encoding to pass the value to the script (e.g. if there are spaces)
 
 
 > 🔎Example:
@@ -466,20 +468,27 @@ Below are some general additional notes, when defining `params`:
 > ```json
 > {
 >     "params" : [{
->             "name"  : "macs",
->             "type"  : "sql",
->             "value" : "SELECT dev_MAC from DEVICES"
->         },
->         {
->             "name"  : "urls",
->             "type"  : "setting",
->             "value" : "WEBMON_urls_to_check"
->         },
->         {
->             "name"  : "internet_ip",
->             "type"  : "setting",
->             "value" : "WEBMON_SQL_internet_ip"
->         }]
+>            "name"              : "ips",
+>            "type"              : "sql",
+>            "value"             : "SELECT dev_LastIP from DEVICES",
+>            "timeoutMultiplier" : true
+>        },
+>        {
+>            "name"              : "macs",
+>            "type"              : "sql",
+>            "value"             : "SELECT dev_MAC from DEVICES"            
+>        },
+>        {
+>            "name"              : "timeout",
+>            "type"              : "setting",
+>            "value"             : "NMAP_RUN_TIMEOUT"
+>        },
+>        {
+>            "name"              : "args",
+>            "type"              : "setting",
+>            "value"             : "NMAP_ARGS",
+>            "base64"            : true
+>        }]
 > }
 > ```
 

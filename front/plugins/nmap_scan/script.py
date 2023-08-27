@@ -46,11 +46,11 @@ def main():
     mylog('debug', ['[NMAP Scan] values.timeout: ', values.timeout]) 
     mylog('debug', ['[NMAP Scan] values.args: ', values.args]) 
 
-    argsDecoded = decodeBase64(values.args)
+    argsDecoded = decodeBase64(values.args[0].split('=b')[1]) 
 
     mylog('debug', ['[NMAP Scan] argsDecoded: ', argsDecoded]) 
 
-    entries = performNmapScan(values.ips.split('=')[1].split(','), values.macs.split('=')[1].split(',') , values.timeout.split('=')[1], argsDecoded)
+    entries = performNmapScan(values.ips[0].split('=')[1].split(','), values.macs[0].split('=')[1].split(',') , values.timeout[0].split('=')[1], argsDecoded)
 
     for entry in entries:        
 
@@ -91,8 +91,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
     if len(deviceIPs) > 0:        
 
         devTotal = len(deviceIPs)
-
-        updateState(db,"Scan: Nmap")
+        
 
         mylog('verbose', ['[NMAP Scan] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
         mylog('verbose', ["[NMAP Scan] Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' ])
@@ -111,7 +110,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
 
             try:
                 # try runnning a subprocess with a forced (timeout)  in case the subprocess hangs
-                output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec))
+                output = subprocess.check_output (nmapArgs, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(float(timeoutSec)))
             except subprocess.CalledProcessError as e:
                 # An error occured, handle it
                 mylog('none', ["[NMAP Scan] " ,e.output])
