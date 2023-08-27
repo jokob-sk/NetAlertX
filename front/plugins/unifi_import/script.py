@@ -25,7 +25,7 @@ last_run = curPath + '/last_result.log'
 
 logging.basicConfig(
     filename=log_file,
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
 )
 unifi_logger = logging.getLogger('[UNIFI]')
