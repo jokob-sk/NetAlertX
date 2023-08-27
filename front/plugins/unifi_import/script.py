@@ -2,23 +2,23 @@
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
 # Example call
+
+# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd  host=192.168.1.1 site=default  protocol=https:// port=8443 version='UDMP-unifiOS'
 # python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 sites=sdefault port=8443 verifyssl=false version=v5
+
 
 from __future__ import unicode_literals
 from time import sleep, time, strftime
 import requests
-from requests                               import Request, Session, packages
+from requests import Request, Session, packages
 import pathlib
 import threading
 import subprocess
 import socket
 import json
 import argparse
-import io
-import sys
+import logging
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import pwd
-import os
 from pyunifi.controller import Controller
 
 
@@ -26,17 +26,33 @@ curPath = str(pathlib.Path(__file__).parent.resolve())
 log_file = curPath + '/script.log'
 last_run = curPath + '/last_result.log'
 
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
+)
+unifi_logger = logging.getLogger('[UNIFI]')
+unifi_logger.setLevel(logging.DEBUG)
+
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+
+
 # Workflow
 
 def main():    
 
+    unifi_logger.info('Start scan')
     # init global variables
     global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST, UNIFI_SITES, PORT, VERIFYSSL, VERSION
 
-    last_run_logfile = open(last_run, 'a') 
 
     # empty file
-    last_run_logfile.write("")
+    unifi_logger.debug('Purging old values')
+    with open(last_run, 'w') as last_run_logfile:
+        last_run_logfile.write("")
 
     parser = argparse.ArgumentParser(description='Import devices from an UNIFI controller')
 
@@ -53,6 +69,7 @@ def main():
     # parse output
     newEntries = []
 
+    unifi_logger.debug(f'Check if all login information is available: {values}')
     if values.username and values.password and values.host and values.sites:
         
         UNIFI_USERNAME = values.username.split('=')[1] 
@@ -62,15 +79,15 @@ def main():
         PORT = values.port.split('=')[1]
         VERIFYSSL = values.verifyssl.split('=')[1]
         VERSION = values.version.split('=')[1]
-        
+
         newEntries = get_entries(newEntries)  
 
-   
+    unifi_logger.debug(f'Print {len(newEntries)} to monitoring log')
     for e in newEntries:        
         # Insert list into the log            
         service_monitoring_log(e.primaryId, e.secondaryId, e.created, e.watched1, e.watched2, e.watched3, e.watched4, e.extra, e.foreignKey )
 
-
+    unifi_logger.info(f'Scan finished, added {len(newEntries)} devices')
 
 # -----------------------------------------------------------------------------
 def get_entries(newEntries):
@@ -93,6 +110,8 @@ def get_entries(newEntries):
 
         c = Controller(UNIFI_HOST, UNIFI_USERNAME, UNIFI_PASSWORD, port=PORT, version=VERSION, ssl_verify=VERIFYSSL, site_id=site )
 
+        unifi_logger.debug('identify Unifi Devices')
+        # get all Unifi devices
         for ap in c.get_aps():
 
             # print(f'{json.dumps(ap)}')
@@ -125,8 +144,12 @@ def get_entries(newEntries):
 
             newEntries.append(tmpPlugObj)
 
+        unifi_logger.debug(f'Found {len(newEntries)} Unifi Devices')
         # print(f'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
+        online_macs = set()
+
+        # get_clients() returns all clients which are currently online.
         for cl in c.get_clients():
 
             # print(f'{json.dumps(cl)}')
@@ -137,40 +160,37 @@ def get_entries(newEntries):
             if name == 'null' and hostName != 'null':
                 name = hostName
 
-            tmpPlugObj = plugin_object_class(
-                cl['mac'], 
-                get_unifi_val(cl, 'ip'), 
-                name, 
-                get_unifi_val(cl, 'oui'), 
-                'Other', 
-                1, 
-                get_unifi_val(cl, 'connection_network_name')
-            )     
+            online_macs.add(cl['mac'])
+
+        unifi_logger.debug(f'Found {len(online_macs)} Online Clients')
 
         # print(f'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
-        for us in c.get_clients():
+        # get_users() returns all clients known by the controller
+        for user in c.get_users():
 
-            # print(f'{json.dumps(us)}')
+            # print(f'{json.dumps(user)}')
 
-            name = get_unifi_val(us, 'name')
-            hostName = get_unifi_val(us, 'hostname')
+            name = get_unifi_val(user, 'name')
+            hostName = get_unifi_val(user, 'hostname')
 
-            if name == 'null' and hostName != 'null':
-                name = hostName
+            name = set_name(name, hostName)
+
+            status = 1 if user['mac'] in online_macs else 0
 
             tmpPlugObj = plugin_object_class(
-                us['mac'], 
-                get_unifi_val(us, 'ip'), 
+                user['mac'],
+                get_unifi_val(user, 'last_ip'),
                 name, 
-                get_unifi_val(us, 'oui'), 
+                get_unifi_val(user, 'oui'),
                 'Other', 
-                1, 
-                get_unifi_val(us, 'connection_network_name')
+                status,
+                get_unifi_val(user, 'last_connection_network_name')
             )         
 
             newEntries.append(tmpPlugObj)
 
+    unifi_logger.debug(f'Found {len(newEntries)} Clients overall')
     return newEntries
 
 
@@ -179,19 +199,28 @@ def get_unifi_val(obj, key):
 
     res = ''
 
-    if key in obj:
-        res = obj[key]
+    res = obj.get(key, None)
 
-    if res not in ['','None']:
+    if res not in ['','None', None]:
         return res
-    
-    if obj.get(key) is not None:
-        res = obj.get(key)
 
-    if res not in ['','None']:
-        return res
 
     return 'null'
+
+# -----------------------------------------------------------------------------
+
+def set_name(name: str, hostName: str) -> str:
+
+    if name != 'null':
+        return name
+
+    elif name == 'null' and hostName != 'null':
+        return hostName
+
+    else:
+        return 'null'
+
+
 
 # -------------------------------------------------------------------
 class plugin_object_class:
@@ -211,7 +240,7 @@ class plugin_object_class:
         self.foreignKey   = foreignKey
 
 # -----------------------------------------------------------------------------
-def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 = 'null', watched3 = 'null', watched4 = 'null', extra ='null', foreignKey ='null'  ):
+def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 = 'null', watched3 = 'null', watched4 = 'null', extra ='null', foreignKey ='null'):
     
     if watched1 == '':
         watched1 = 'null'
@@ -226,6 +255,7 @@ def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 =
     if foreignKey == '':
         foreignKey = 'null'
 
+    unifi_logger.debug(f'Adding entry to monitoring log:\n{primaryId}, {secondaryId}, {created}, {watched1}, {watched2}, {watched3}, {watched4}, {extra}')
     with open(last_run, 'a') as last_run_logfile:        
         last_run_logfile.write("{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
                                                 primaryId,
