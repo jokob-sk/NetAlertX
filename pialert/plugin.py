@@ -3,6 +3,7 @@ import sqlite3
 import json
 import subprocess
 import datetime
+import base64
 
 from collections import namedtuple
 
@@ -16,16 +17,88 @@ from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_set
 
 
 #-------------------------------------------------------------------------------
-class plugins_state:
-    def __init__(self, processScan = False):
-        self.processScan = processScan
+class plugin_param:
+    def __init__(self, param, plugin, db):
+
+        paramValuesCount = 1
+
+        #  Get setting value
+        if param["type"] == "setting":
+            inputValue = get_setting(param["value"])
+
+            if inputValue != None:
+                setVal = inputValue[6] # setting value
+                setTyp = inputValue[3] # setting type
+
+                noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
+                arrayConversion         = ['text.multiselect', 'list', 'subnets']                 
+                jsonConversion          = ['.template'] 
+
+                mylog('debug', f'[Plugins] setTyp: {setTyp}')
+
+                if '.select' in setTyp or setTyp in arrayConversion:
+                    paramValuesCount = len(setVal)
+
+                if setTyp in noConversion:
+                    resolved =  setVal
+
+                elif setTyp in arrayConversion:
+                    resolved =  flatten_array(setVal)
+
+                elif setTyp in arrayConversionBase64:
+                    
+                    
+                    resolved =  flatten_array(setVal)
+                else:
+                    for item in jsonConversion:
+                        if setTyp.endswith(item):
+                            return json.dumps(setVal)
+                        else:
+                            mylog('none', ['[Plugins] ERROR: Parameter not converted.'])  
+                
+
+        #  Get SQL result
+        if param["type"] == "sql":
+            inputValue = db.get_sql_array(param["value"])
+            
+            resolved = flatten_array(inputValue)
+
+        
+        mylog('debug', f'[Plugins] Resolved value: {resolved}')
+
+        #  Handle timeout multiplier if script executes multiple time
+        multiplyTimeout = False
+        if 'timeoutMultiplier' in param and param['timeoutMultiplier']:
+            multiplyTimeout = True
+
+        #  Handle base64 encoding
+        encodeToBase64 = False
+        if 'base64' in param and param['base64']:
+            encodeToBase64 = True
+
+
+        mylog('debug', f'[Plugins] Convert to Base64: {encodeToBase64}')
+        if encodeToBase64:
+            resolved = str(base64.b64encode(resolved.encode('ascii')))
+            mylog('debug', f'[Plugins] base64 value: {resolved}')
+
+
+        self.resolved   = resolved        
+        self.inputValue = inputValue        
+        self.base64     = encodeToBase64                
+        self.name       = param["name"]
+        self.type       = param["type"]
+        self.value      = param["value"]
+        self.paramValuesCount       = paramValuesCount    
+        self.multiplyTimeout        = multiplyTimeout    
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType, pluginsState = None):
+class plugins_state:
+    def __init__(self, processScan = False):
+        self.processScan        = processScan
 
-    if pluginsState == None:
-        mylog('debug', ['[Plugins] pluginsState initialized '])
-        pluginsState = plugins_state()
+#-------------------------------------------------------------------------------
+def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
 
     # Header
     updateState(db,"Run: Plugins")
@@ -73,12 +146,17 @@ def run_plugin_scripts(db, runType, pluginsState = None):
 def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     sql = db.sql  
 
+
+    if pluginsState is None:
+        mylog('debug', ['[Plugins] pluginsState is None'])   
+        pluginsState = plugins_state()
+
     # ------- necessary settings check  --------
     set = get_plugin_setting(plugin, "CMD")
 
     #  handle missing "function":"CMD" setting
     if set == None:                
-        return 
+        return pluginsState
 
     set_CMD = set["value"]
 
@@ -90,33 +168,31 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     else:     
         set_RUN_TIMEOUT = set["value"] 
 
-    mylog('debug', ['[Plugins] Timeout: ', set_RUN_TIMEOUT])     
+        
 
-    #  Prepare custom params
+    #  Prepare custom params    
     params = []
 
     if "params" in plugin:
-        for param in plugin["params"]:            
-            resolved = ""
+        for param in plugin["params"]:     
 
-            #  Get setting value
-            if param["type"] == "setting":
-                resolved = get_setting(param["value"])
+            tempParam = plugin_param(param, plugin, db)
 
-                if resolved != None:
-                    resolved = passable_string_from_setting(resolved)
-
-            #  Get Sql result
-            if param["type"] == "sql":
-                resolved = flatten_array(db.get_sql_array(param["value"]))
-
-            if resolved == None:
-                mylog('none', [f'[Plugins] The parameter "name":"{param["name"]}" for "value": {param["value"]} was resolved as None'])
+            if tempParam.resolved == None:
+                mylog('none', [f'[Plugins] The parameter "name":"{tempParam.name}" for "value": {tempParam.value} was resolved as None'])
 
             else:
-                params.append( [param["name"], resolved] )
-    
+                # params.append( [param["name"], resolved] )
+                params.append( [tempParam.name, tempParam.resolved] )
 
+                if tempParam.multiplyTimeout:
+                    
+                    set_RUN_TIMEOUT = set_RUN_TIMEOUT*tempParam.paramValuesCount
+
+                    mylog('debug', [f'[Plugins] The parameter "name":"{param["name"]}" will multiply the timeout {tempParam.paramValuesCount} times. Total timeout: {set_RUN_TIMEOUT}s'])
+    
+    mylog('debug', ['[Plugins] Timeout: ', set_RUN_TIMEOUT]) 
+    
     # build SQL query parameters to insert into the DB
     sqlParams = []
 
@@ -241,7 +317,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         #  handle missing "function":"DB_PATH" setting
         if set == None:                
             mylog('none', ['[Plugins] Error: DB_PATH setting for plugin type sqlite-db-query missing.'])
-            return 
+            return pluginsState
         
         fullSqlitePath = set["value"]
 
@@ -281,7 +357,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
         mylog('none', ['[Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
-        return  
+        return pluginsState 
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
 
@@ -297,37 +373,6 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     return pluginsState
 
 
-
-
-#-------------------------------------------------------------------------------
-# Flattens a setting to make it passable to a script
-def passable_string_from_setting(globalSetting):
-
-    setVal = globalSetting[6] # setting value
-    setTyp = globalSetting[3] # setting type
-
-    noConversion = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
-    arrayConversion = ['text.multiselect', 'list'] 
-    arrayConversionBase64 = ['subnets'] 
-    jsonConversion = ['.template'] 
-
-    mylog('debug', f'[Plugins] setTyp: {setTyp}')
-
-    if setTyp in noConversion:
-        return setVal
-
-    if setTyp in arrayConversion:
-        return flatten_array(setVal)
-
-    if setTyp in arrayConversionBase64:
-        
-        return flatten_array(setVal, encodeBase64 = True)
-
-    for item in jsonConversion:
-        if setTyp.endswith(item):
-            return json.dumps(setVal)
-
-    mylog('none', ['[Plugins] ERROR: Parameter not converted.'])  
 
 
 

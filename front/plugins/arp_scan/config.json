@@ -50,7 +50,8 @@
     {
         "name"  : "subnets",
         "type"  : "setting",
-        "value" : "SCAN_SUBNETS"
+        "value" : "SCAN_SUBNETS",
+        "base64": true
     }],  
 
   "settings": [

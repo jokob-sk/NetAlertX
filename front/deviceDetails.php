@@ -99,19 +99,22 @@
       <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
         <!-- <div class="box-transparent"> -->
-
-
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
-                <?php
-                if ($_REQUEST['mac'] == 'Internet') { $DevDetail_Tap_temp = lang('DevDetail_Tab_Tools'); } else { $DevDetail_Tap_temp = lang('DevDetail_Tab_Nmap');}
-                ?>
-              <li> <a id="tabNmap"     href="#panNmap"     data-toggle="tab"> <?php echo $DevDetail_Tap_temp;?>     </a></li>
+              <?php
+              if ($_REQUEST['mac'] != 'Internet') {
+              ?>
+              <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
+              <?php
+               }
+              ?>
+              <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
-              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>              
-              <li> <a id="tabPlugins"   href="#panPlugins" data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>   </a></li>
+              <li> <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> <?= lang('DevDetail_Tab_Events');?>   </a></li>
+              <li> <a id="tabPholus"   href="#panPholus"   data-toggle="tab"> <?= lang('DevDetail_Tab_Pholus');?>   </a></li>
+              <li> <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab"> <?= lang('DevDetail_Tab_Plugins');?>  </a></li>
 
               <div class="btn-group pull-right">
                 <button type="button" class="btn btn-default"  style="padding: 10px; min-width: 30px;"
@@ -124,9 +127,7 @@
                   id="btnNext"     onclick="recordSwitch('next')"> <i class="fa fa-chevron-right"></i> </button>
               </div>
             </ul>
-
-
-
+            
             <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
@@ -534,38 +535,10 @@
                 </table>
               </div>
 
-
-<!-- tab page 5 ------------------------------------------------------------ -->
-
+<!-- tab page "Nmap"  ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panNmap">
-
-              <?php
-              if ($_REQUEST['mac'] == 'Internet') {
-              ?>
-                <h4 class=""><?= lang('DevDetail_Internet_Speedtest');?></h4>
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Internet_Speedtest_Start');?></button>
-                </div>
-                   
-                  <script>
-                  function speedtestcli() {
-                    $( "#scanoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/speedtestcli.php",
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#scanoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>
-                <h4 class=""><?= lang('DevDetail_Nmap_Scans');?></h4>
+                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
                 <div style="width:100%; text-align: center;">
                   <script>
                       setTimeout(function(){
@@ -627,21 +600,47 @@
                     <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
                   </tr>
                   </thead>
-                  <!-- Comment out tbody when trying to implement better table with datatables here -->                  
+                  <!-- Comment out tbody when trying to implement better table with datatables here -->
                   <tbody id="tableNmapBody">
                     <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
                   </tbody>
                 </table>
-              
+				
               </div>
 
+        
+<!-- tab page "Tools" ------------------------------------------------------------ -->
 
+              <div class="tab-pane fade" id="panTools">
 
-
-
-
-<!-- ----------------------------------------------------------------------- -->
-
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Internet_Info_Title');?></h4>
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Internet_Info_Start');?></button>
+                  <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function internetinfo() {
+                    $( "#internetinfooutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/internetinfo.php",
+                      beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#internetinfooutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+              
+              </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">

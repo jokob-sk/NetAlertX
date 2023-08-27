@@ -108,7 +108,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
 def send_notifications (db):
 
     sql = db.sql  #TO-DO
-    global mail_text, mail_html, json_final, changedPorts_json_struc, partial_html, partial_txt, partial_json
+    global mail_text, mail_html, json_final, partial_html, partial_txt, partial_json
 
     deviceUrl              = conf.REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
     plugins_report         = False
@@ -234,24 +234,7 @@ def send_notifications (db):
 
         mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
-        mylog('verbose', ['[Notification] Events sections done.'])
-
-    if 'ports' in conf.INCLUDED_SECTIONS :
-        # collect "ports" for the webhook json
-        mylog('verbose', ['[Notification] Ports: conf.changedPorts_json_struc:', conf.changedPorts_json_struc])
-        if conf.changedPorts_json_struc is not None:
-            json_ports =  conf.changedPorts_json_struc.json["data"]
-
-        notiStruc = construct_notifications(db, "", "Ports", True, conf.changedPorts_json_struc)
-        
-        mail_html = mail_html.replace ('<PORTS_TABLE>', notiStruc.html)
-
-        portsTxt = ""
-        if conf.changedPorts_json_struc is not None:
-            portsTxt = "Ports \n---------\n Ports changed! Check PiAlert for details!\n"
-
-        mail_text = mail_text.replace ('<PORTS_TABLE>', portsTxt )
-        mylog('verbose', ['[Notification] Ports sections done.'])    
+        mylog('verbose', ['[Notification] Events sections done.'])    
 
     if 'plugins' in conf.INCLUDED_SECTIONS:
         # Compose Plugins Section
@@ -347,9 +330,7 @@ def send_notifications (db):
                     WHERE eve_PendingAlertEmail = 1""")
 
     # clear plugin events
-    sql.execute ("DELETE FROM Plugins_Events")
-
-    conf.changedPorts_json_struc = None
+    sql.execute ("DELETE FROM Plugins_Events")    
 
     # DEBUG - print number of rows updated
     mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
@@ -486,9 +467,12 @@ def skip_repeated_notifications (db):
 
 #-------------------------------------------------------------------------------
 def check_and_run_event(db, pluginsState):
+    mylog('debug', [f'[MAIN] processScan1: {pluginsState.processScan}'])
     sql = db.sql # TO-DO
     sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
     rows = sql.fetchall()
+
+    mylog('debug', [f'[MAIN] processScan2: {pluginsState.processScan}'])
 
     event, param = ['','']
     if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
@@ -498,7 +482,7 @@ def check_and_run_event(db, pluginsState):
             event = keyValue[0]
             param = keyValue[1]
     else:
-        return
+        return pluginsState
 
     if event == 'test':
         handle_test(param)
@@ -510,6 +494,8 @@ def check_and_run_event(db, pluginsState):
 
     # commit to DB
     db.commitDB()
+
+    mylog('debug', [f'[MAIN] processScan3: {pluginsState.processScan}'])
 
     return pluginsState
 

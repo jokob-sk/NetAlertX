@@ -1,8 +1,8 @@
 {
-    "code_name": "nmap_services",
-    "unique_prefix": "NMAPSRV",
+    "code_name": "nmap_scan",
+    "unique_prefix": "NMAP",
     "enabled": true,    
-    "data_source":  "pialert-db-query",
+    "data_source":  "script",
     "data_filters": [
         {
             "compare_column" : "ForeignKey",
@@ -38,7 +38,30 @@
         "language_code":"es_es",
         "string" : "Este complemento muestra todos los servicios descubiertos por escaneos NMAP."
     }],
-    "params" : [],  
+    "params" : [
+        {
+            "name"              : "ips",
+            "type"              : "sql",
+            "value"             : "SELECT dev_LastIP from DEVICES",
+            "timeoutMultiplier" : true
+        },
+        {
+            "name"              : "macs",
+            "type"              : "sql",
+            "value"             : "SELECT dev_MAC from DEVICES"            
+        },
+        {
+            "name"              : "timeout",
+            "type"              : "setting",
+            "value"             : "NMAP_RUN_TIMEOUT"
+        },
+        {
+            "name"              : "args",
+            "type"              : "setting",
+            "value"             : "NMAP_ARGS",
+            "base64"            : true
+        }
+    ],  
     "database_column_definitions":
     [          
         {
@@ -71,7 +94,7 @@
             "column": "Object_PrimaryID",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "device_name_mac",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -94,17 +117,17 @@
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "Ip and Port"
+                "string" : "Port"
                 },
 	   	{
                 "language_code":"es_es",
-                "string" : "IP y puerto"
+                "string" : "Puerto"
                 }]
         } ,
         {
             "column": "DateTimeCreated",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -141,22 +164,6 @@
             "show": true,
             "type": "label",            
             "default_value":"",
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "Service"
-                },
-	    	{
-		"language_code":"es_es",
-                "string" : "Servicio"
-                }]
-        },
-        {
-            "column": "Watched_Value2",
-            "css_classes": "col-sm-1",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
@@ -168,6 +175,22 @@
                 "string" : "Estado"
                 }]
         },
+        {
+            "column": "Watched_Value2",
+            "css_classes": "col-sm-1",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "Service"
+                },
+	    	{
+		"language_code":"es_es",
+                "string" : "Servicio"
+                }]
+        },        
         {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
@@ -272,75 +295,119 @@
         }            
     ],
     "settings":[
-        {
-            "function": "RUN",            
-            "type": "text.select",            
-            "default_value":"disabled",
-            "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
-            "localized": ["name", "description"],
-            "name" :[{
-                "language_code":"en_us",
-                "string" : "When to run"
-            },
-			{
-                "language_code":"es_es",
-                "string" : "Cuando ejecutar"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Specify when the SQL query is executed."
-            },
-			{
-                "language_code":"es_es",
-                "string" : "Especificar cuándo se ejecuta la consulta SQL."
-            }]
+    {
+        "function": "RUN",            
+        "type": "text.select",            
+        "default_value":"disabled",
+        "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+        "localized": ["name", "description"],
+        "name" :[{
+            "language_code":"en_us",
+            "string" : "When to run"
         },
         {
-            "function": "CMD",
-            "type": "text",
-            "default_value":"SELECT  ns.MAC as Object_PrimaryID, cast('http://' || dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1, ns.State as Watched_Value2, dv.dev_Name as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra, ns.MAC as ForeignKey FROM (SELECT * FROM Nmap_Scan) ns left JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv  ON ns.MAC = dv.dev_MAC",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
+            "language_code":"es_es",
+            "string" : "Cuando ejecutar"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "Enable a regular Nmap scan on your network on all devices. The scheduling settings can be found below. If you select <code>once</code> Nmap is run only once on start for the time specified in <a href=\"#NMAP_TIMEOUT\"><code>NMAP_TIMEOUT</code> setting</a>."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Habilite un escaneo regular de Nmap en su red en todos los dispositivos. Los ajustes de programación se pueden encontrar a continuación. Si selecciona <code>una vez</code>, Nmap se ejecuta solo una vez al inicio durante el tiempo especificado en la configuración de <a href=\"#NMAP_TIMEOUT\"><code>NMAP_TIMEOUT</code></a>"
+        }]
+    },
+    {
+        "function": "CMD",
+        "type": "text",
+        "default_value":"python3 /home/pi/pialert/front/plugins/nmap_scan/script.py ips={ips} macs={macs} timeout={timeout} args={args}",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "SQL to run"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Consulta SQL"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "This calls the script responsible for executing the NMAP scan."
+        }
+        ]
+    },
+    {
+        "function": "ARGS",
+        "type": "text",
+        "default_value":"-p -10000",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "Arguments"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Argumentos"
+        }],
+        "description": [
+            {
                 "language_code":"en_us",
-                "string" : "SQL to run"
+                "string" : "Arguments used to run the Nmap scan. Be careful to specify <a href=\"https://linux.die.net/man/1/nmap\" target=\"_blank\">the arguments</a> correctly. For example <code>-p -10000</code> scans ports from 1 to 10000."
             },
-			{
+            {
                 "language_code":"es_es",
-                "string" : "Consulta SQL"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
-            },
-			{
-                "language_code":"es_es",
-                "string" : "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos."
+                "string" : "Argumentos utilizados para ejecutar el análisis de Nmap. Tenga cuidado de especificar <a href=\"https://linux.die.net/man/1/nmap\" target=\"_blank\">los argumentos</a> correctamente. Por ejemplo, <code>-p -10000</code> escanea los puertos del 1 al 10000."
             }
-			]
+        ]
+    },
+    {
+        "function": "RUN_SCHD",
+        "type": "text",
+        "default_value":"0 2 * * *",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "Schedule"
         },
         {
-            "function": "RUN_SCHD",
-            "type": "text",
-            "default_value":"0 2 * * *",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code":"en_us",
-                "string" : "Schedule"
+            "language_code":"es_es",
+            "string" : "Schedule"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#NMAP_RUN\"><code>NMAP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format."
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Solo está habilitado si selecciona <code>programar</code> en la configuración de <a href=\"#NMAP_RUN\"><code>NMAP_RUN</code></a>. Asegúrese de ingresar el cronograma en el formato tipo cron correcto."
+        }]
+    },
+    {
+        "function": "RUN_TIMEOUT",
+        "type": "integer",
+        "default_value": 30,
+        "options": [],
+        "localized": ["name", "description"],
+        "name": [
+            {
+            "language_code": "en_us",
+            "string": "Run timeout"
             },
-			{
-                "language_code":"es_es",
-                "string" : "Schedule"
-            }],
-            "description": [{
-                "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#NMAPSRV_RUN\"><code>NMAPSRV_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-            },
-			{
-                "language_code":"es_es",
-                "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#NMAPSRV_RUN\"><code>NMAPSRV_RUN</code> setting</a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-            }]
+            {
+            "language_code": "es_es",
+            "string": "Tiempo límite de ejecución"
+            }		
+        ],
+        "description": [
+            {
+            "language_code": "en_us",
+            "string": "Max run time per device in seconds."
+            }
+        ]
         },
         {
             "function": "WATCH",
@@ -352,7 +419,7 @@
                 "language_code":"en_us",
                 "string" : "Watched"
             },
-			{
+            {
                 "language_code":"es_es",
                 "string" : "Visto"
             }] ,
@@ -360,7 +427,7 @@
                 "language_code":"en_us",
                 "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is service type (e.g.: http, ssh)</li><li><code>Watched_Value2</code> is Status (open or closed)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
             },
-			{
+            {
                 "language_code":"es_es",
                 "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el tipo de servicio (p. ej., http, ssh)</li><li><code>Watched_Value2</code> es el estado (abierto o cerrado)</li> <li><code>Watched_Value3</code> no utilizado </li><li><code>Watched_Value4</code> no utilizado </li></ul>"
             }] 
@@ -375,7 +442,7 @@
                 "language_code":"en_us",
                 "string" : "Report on"
             },
-			{
+            {
                 "language_code":"es_es",
                 "string" : "Informar sobre"
             }] ,
@@ -383,7 +450,7 @@
                 "language_code":"en_us",
                 "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
             },
-			{
+            {
                 "language_code":"es_es",
                 "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."
             }] 

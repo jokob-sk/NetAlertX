@@ -20,6 +20,10 @@
     {
       "language_code": "en_us",
       "string": "Pholus-Scan (Name discovery)"
+    },
+    {
+      "language_code": "en_us",
+      "string": "Pholus-Scan (Descubrimiento de nombre)"
     }
   ],
   "icon": [
@@ -36,7 +40,11 @@
     {
       "language_code": "en_us",
       "string": "This plugin is to execute a Pholus-scan (name discovery) on the local network"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "Este plugin sirve para ejecutar un escaneo Pholus (descubrimiento de nombres) en la red local"
+    }	  
   ],
     "params" : [
     {
@@ -127,7 +135,11 @@
         {
           "language_code": "en_us",
           "string": "Network scan time in seconds. Pholus scan will always run this long. The longer it runs the more device names might be resolved. Will be divided by the number of subnets."
-        }
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo de escaneo de red en segundos. El escaneo de Pholus siempre durará este tiempo. Cuanto más tiempo se ejecute, más nombres de dispositivos se podrán resolver. Se dividirá por el número de subredes."
+        }	      
       ]
     },
     {
@@ -147,6 +159,10 @@
         "description": [{
             "language_code":"en_us",
             "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>30 3 * * *</code> will run the scan at 3:30 am. Will be run NEXT time the time passes. <br/>"
+        },
+	{
+            "language_code":"es_es",
+            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#PHOLUS_RUN\"><code>PHOLUS_RUN</code></a>. Asegúrese de ingresar la programación en el formato cron correcto (por ejemplo, validar en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, al ingresar <code>30 3 * * *</code> se ejecutará el escaneo a las 3:30 am. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/>"
         }]
     },
     {
@@ -191,6 +207,10 @@
         "description":[{
             "language_code":"en_us",
             "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Info</li><li><code>Watched_Value2</code> is Record type</li><li><code>Watched_Value3</code> is Info </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+        },
+	{
+            "language_code":"es_es",
+            "string" : "Enviar una notificación si los valores seleccionados cambian. Utilice <code>CTRL + Clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es Información</li><li><code>Watched_Value2</code> es Tipo de registro</li><li><code>Watched_Value3</code> es La información </li><li><code>Watched_Value4</code> es N/A </li></ul>"
         }] 
     },
     {
@@ -290,6 +310,10 @@
         "name":[{
             "language_code":"en_us",
             "string" : "Type"
+            },
+	    {
+            "language_code":"es_es",
+            "string" : "Tipo"
             }]
     } ,
     {

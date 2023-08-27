@@ -2,7 +2,10 @@
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
 # Example call
+
 # python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd  host=192.168.1.1 site=default  protocol=https:// port=8443 version='UDMP-unifiOS'
+# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 sites=sdefault port=8443 verifyssl=false version=v5
+
 
 from __future__ import unicode_literals
 from time import sleep, time, strftime
@@ -43,8 +46,7 @@ def main():
 
     unifi_logger.info('Start scan')
     # init global variables
-    global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST
-    global UNIFI_SITES, PORT, PROTOCOL, VERSION
+    global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST, UNIFI_SITES, PORT, VERIFYSSL, VERSION
 
 
     # empty file
@@ -58,8 +60,8 @@ def main():
     parser.add_argument('password',  action="store",  help="Password used to login into the UNIFI controller")  
     parser.add_argument('host',  action="store",  help="Host url or IP address where the UNIFI controller is hosted (excluding http://)")  
     parser.add_argument('sites',  action="store",  help="Name of the sites (usually 'default', check the URL in your UniFi controller UI). Separated by comma (,) if passing multiple sites")      
-    parser.add_argument('protocol',  action="store",  help="https:// or http://")  
     parser.add_argument('port',  action="store",  help="Usually 8443")  
+    parser.add_argument('verifyssl',  action="store",  help="verify SSL certificate [true|false]")  
     parser.add_argument('version',  action="store",  help="The base version of the controller API [v4|v5|unifiOS|UDMP-unifiOS]")  
 
     values = parser.parse_args()
@@ -74,8 +76,8 @@ def main():
         UNIFI_PASSWORD = values.password.split('=')[1]
         UNIFI_HOST = values.host.split('=')[1]  
         UNIFI_SITES = values.sites.split('=')[1]  
-        PROTOCOL = values.protocol.split('=')[1]
         PORT = values.port.split('=')[1]
+        VERIFYSSL = values.verifyssl.split('=')[1]
         VERSION = values.version.split('=')[1]
 
         newEntries = get_entries(newEntries)  
@@ -89,6 +91,7 @@ def main():
 
 # -----------------------------------------------------------------------------
 def get_entries(newEntries):
+    global VERIFYSSL
 
     sites = []
 
@@ -98,10 +101,14 @@ def get_entries(newEntries):
     else:
         sites.append(UNIFI_SITES)
 
+    if (VERIFYSSL.upper() == "TRUE"):
+        VERIFYSSL = True
+    else:
+        VERIFYSSL = False
 
     for site in sites:
 
-        c = Controller(UNIFI_HOST, UNIFI_USERNAME, UNIFI_PASSWORD, version=VERSION, ssl_verify=False, site_id=site )
+        c = Controller(UNIFI_HOST, UNIFI_USERNAME, UNIFI_PASSWORD, port=PORT, version=VERSION, ssl_verify=VERIFYSSL, site_id=site )
 
         unifi_logger.debug('identify Unifi Devices')
         # get all Unifi devices

@@ -1,6 +1,13 @@
 from time import strftime
 import pytz
+import sys
+import base64
 from datetime import datetime
+
+sys.path.append("/home/pi/pialert/front/plugins")
+sys.path.append('/home/pi/pialert/pialert') 
+
+from logger import mylog
 
 #-------------------------------------------------------------------------------
 def read_config_file():
@@ -20,13 +27,35 @@ def read_config_file():
     confDict = {} # config dictionary
     exec(code, {"__builtins__": {}}, confDict)
     return confDict 
-# -------------------------------------------------------------------
-
 
 
 pialertConfigFile = read_config_file()
 timeZoneSetting = pialertConfigFile['TIMEZONE']
 timeZone = pytz.timezone(timeZoneSetting)
+
+# -------------------------------------------------------------------
+def decodeBase64(inputParamBase64):
+
+    # Printing the input list to check its content.
+    mylog('debug', ['[Plugins] Helper base64 input: ', input]) 
+    print('[Plugins] Helper base64 input: ') 
+    print(input) 
+    
+
+    # Extract the base64-encoded subnet information from the first element 
+    # The format of the element is assumed to be like 'param=b<base64-encoded-data>'.      
+
+    # Printing the extracted base64-encoded information.
+    mylog('debug', ['[Plugins] Helper base64 inputParamBase64: ', inputParamBase64]) 
+    
+
+    # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
+    result = base64.b64decode(inputParamBase64).decode('ascii')
+
+    # Print the decoded subnet information.
+    mylog('debug', ['[Plugins] Helper base64 result: ', result]) 
+
+    return result
 
 
 # -------------------------------------------------------------------

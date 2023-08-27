@@ -659,16 +659,16 @@
 
         highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";        
 
-        return result = "<div class='box pointer "+statusCss+" "+highlightedCss+"'  data-mytreemacmain='"+nodeData.data.mac+"' \
-                          style='height:"+nodeData.settings.nodeHeight+"px;\
-                                 " + fontSize + "\
-                          >\
+        return result = `<div class='box ${(nodeData.data.hasChildren)? "pointer":""} ${statusCss} ${highlightedCss}'  
+                              data-mytreemacmain='${nodeData.data.mac}' 
+                              style='height:${nodeData.settings.nodeHeight}px;${fontSize}
+                          >
                           <div class='netNodeText '>\
-                            <strong>" + devicePort + deviceIcon +
-                              "<span class='spanNetworkTree anonymizeDev'>"+nodeData.data.name+"</span>\
-                            </strong>"
-                            +collapseExpandHtml+ 
-                          "</div></div>";
+                            <strong>${devicePort}  ${deviceIcon} 
+                              <span class='spanNetworkTree anonymizeDev'>${nodeData.data.name}</span>\
+                            </strong>
+                            ${collapseExpandHtml}
+                          </div></div>`;
         },
 
       onNodeClick:  nodeData =>  { 

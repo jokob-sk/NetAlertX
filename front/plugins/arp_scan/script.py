@@ -28,9 +28,7 @@ def main():
     # the script expects a parameter in the format of userSubnets=subnet1,subnet2,...
     parser = argparse.ArgumentParser(description='Import devices from settings')
     parser.add_argument('userSubnets', nargs='+', help="list of subnets with options")
-    values = parser.parse_args()
-
-    import base64
+    values = parser.parse_args()    
 
     # Assuming Plugin_Objects is a class or function that reads data from the RESULT_FILE
     # and returns a list of objects called 'devices'.

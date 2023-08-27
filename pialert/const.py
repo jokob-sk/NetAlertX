@@ -35,8 +35,6 @@ sql_devices_stats =  """SELECT Online_Devices as online, Down_Devices as down, A
                         (select count(*) from Devices a where dev_NewDevice = 1 ) as new, 
                         (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown 
                         from Online_History order by Scan_Date desc limit 1"""
-sql_nmap_scan_all = "SELECT  * FROM Nmap_Scan"
-sql_pholus_scan_all = "SELECT  * FROM Pholus_Scan"
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
 sql_plugins_objects = "SELECT  * FROM Plugins_Objects"
