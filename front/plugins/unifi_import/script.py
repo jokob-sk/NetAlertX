@@ -2,7 +2,7 @@
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
 # Example call
-# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 site=sdefault port=8443 verifyssl=false version=v5
+# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 sites=sdefault port=8443 verifyssl=false version=v5
 
 from __future__ import unicode_literals
 from time import sleep, time, strftime
