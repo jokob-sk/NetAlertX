@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 import os
@@ -52,6 +51,8 @@ def main():
 
     entries = performNmapScan(values.ips[0].split('=')[1].split(','), values.macs[0].split('=')[1].split(',') , values.timeout[0].split('=')[1], argsDecoded)
 
+    mylog('verbose', ['[NMAP Scan] Total number of ports found by NMAP: ', len(entries)])
+
     for entry in entries:        
 
         results.add_object(
@@ -61,11 +62,12 @@ def main():
             watched2    = entry.service,
             watched3    = entry.ip + ":" + entry.port,
             watched4    = "",
-            extra       = "",            
-            foreignKey  = entry.extra            
+            extra       = entry.extra,            
+            foreignKey  = entry.mac           
         )
 
-    entries.write_result_file()
+    # generate last_result.log file
+    results.write_result_file()
         
 #-------------------------------------------------------------------------------
 
@@ -88,6 +90,11 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
     run nmap scan on a list of devices
     discovers open ports and keeps track existing and new open ports
     """
+
+    # collect ports / new Nmap Entries
+    newEntriesTmp = []
+
+
     if len(deviceIPs) > 0:        
 
         devTotal = len(deviceIPs)
@@ -96,8 +103,6 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
         mylog('verbose', ['[NMAP Scan] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
         mylog('verbose', ["[NMAP Scan] Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' ])
 
-        # collect ports / new Nmap Entries
-        newEntriesTmp = []
 
         devIndex = 0
         for ip in deviceIPs:
@@ -130,13 +135,13 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
 
             # regular logging
             for line in newLines:
-                append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')                
-            
+                append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')     
 
 
             index = 0
             startCollecting = False
             duration = "" 
+            newPortsPerDevice = 0
             for line in newLines:            
                 if 'Starting Nmap' in line:
                     if len(newLines) > index+1 and 'Note: Host seems down' in newLines[index+1]:
@@ -147,15 +152,18 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                     startCollecting = False # end reached
                 elif startCollecting and len(line.split()) == 3:                                    
                     newEntriesTmp.append(nmap_entry(ip, deviceMACs[devIndex], timeNowTZ(), line.split()[0], line.split()[1], line.split()[2]))
+                    newPortsPerDevice += 1
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             
+            mylog('verbose', [f'[NMAP Scan] {newPortsPerDevice} ports found on {deviceMACs[devIndex]}'])
+
             index += 1
             devIndex += 1
 
-            mylog('verbose', ['[NMAP Scan] Ports found by NMAP: ', len(newEntriesTmp)])
             
-        #end for loop
+            
+        #end for loop       
 
         return newEntriesTmp
 
