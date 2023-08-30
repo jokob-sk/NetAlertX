@@ -6,6 +6,7 @@ import smtplib
 
 
 import conf
+import socket
 from helper import hide_email, noti_struc
 from logger import mylog, print_log
 
@@ -83,8 +84,14 @@ def send (msg: noti_struc):
     except smtplib.SMTPAuthenticationError as e:
         mylog('none', ['      ERROR: Failed at - ', failedAt])
         mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError), skipping Email (enable LOG_LEVEL=debug for more logging)'])
+        mylog('none', ['      ERROR: ', str(e)])
     except smtplib.SMTPServerDisconnected as e:
         mylog('none', ['      ERROR: Failed at - ', failedAt])
         mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable LOG_LEVEL=debug for more logging)'])
+        mylog('none', ['      ERROR: ', str(e)])
+    except socket.gaierror as e:
+        mylog('none', ['      ERROR: Failed at - ', failedAt])
+        mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror), skipping Email (enable LOG_LEVEL=debug for more logging)'])
+        mylog('none', ['      ERROR: ', str(e)])                
 
     mylog('debug', '[Send Email] Last executed - ' + str(failedAt))

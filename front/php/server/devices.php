@@ -50,9 +50,7 @@
       case 'getOwners':               getOwners();                             break;
       case 'getDeviceTypes':          getDeviceTypes();                        break;
       case 'getGroups':               getGroups();                             break;
-      case 'getLocations':            getLocations();                          break;      
-      case 'getNmap':                 getNmap();                               break;
-      case 'saveNmapPort':            saveNmapPort();                          break;
+      case 'getLocations':            getLocations();                          break;                  
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
       case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
@@ -1007,82 +1005,6 @@ function getLocations() {
 
   // Return json
   echo (json_encode ($tableData));
-}
-
-
-//------------------------------------------------------------------------------
-//  Query the List of Nmap entries
-//------------------------------------------------------------------------------
-function getNmap() {
-  global $db;
-
-  // SQL
-  $mac = $_REQUEST['mac']; 
-
-  if ($mac == "Internet") // Not performing data lookup for router (improvement idea for later maybe)
-  {
-    echo "false";
-    return;
-  }
-
-  if (false === filter_var($mac , FILTER_VALIDATE_MAC)) {
-    throw new Exception('Invalid mac address');
-  }
-  else{
-    // $sql = 'SELECT * from Nmap_Scan where MAC ="'.$mac.'" ';
-    $sql = 'select * from (select * from Nmap_Scan  INNER JOIN Devices on Nmap_Scan.MAC = Devices.dev_MAC) where MAC = "'.$mac.'" ';
-
-    // array 
-    $tableData = array();
-
-    // execute query
-    $result = $db->query($sql);
-    while ($row = $result -> fetchArray (SQLITE3_ASSOC)){   
-      // Push row data      
-      $tableData[] = array( 'Index'         => $row['Index'],
-                            'MAC'           => $row['MAC'],
-                            'Port'          => $row['Port'],
-                            'Time'          => $row['Time'],
-                            'State'         => $row['State'],
-                            'Service'       => $row['Service'],                            
-                            'IP'            => $row['dev_LastIP'],                            
-                            'Extra'         => $row['Extra']);
-    }
-
-    if(count($tableData) == 0)
-    {
-      echo "false";
-    } else{
-      // Return json
-      echo (json_encode ($tableData));
-    }
-  }
-}
-
-// -------------------------------------------------------------------------------------------
-
-function saveNmapPort()
-{
-
-  $portIndex = $_REQUEST['id'];
-  $value = $_REQUEST['value'];
- 
-  if(is_integer((int)$portIndex))
-  {
-    global $db;
-     // sql
-    $sql = 'UPDATE Nmap_Scan SET "Extra" = "'. $value .'" WHERE "Index"=' . $portIndex ;
-    // update Data
-    $result = $db->query($sql);
-
-    // check result
-    if ($result == TRUE) {
-      echo 'OK';
-    } else {
-      echo 'KO';
-    }
-  }
- 
 }
 
 // ----------------------------------------------------------------------------------------

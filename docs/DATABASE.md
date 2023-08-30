@@ -19,7 +19,6 @@
   | Plugins_History  | History of all entries from the `Plugins_Events` table | ![Screen11][screen11]  | 
   | Plugins_Language_Strings  | Language strings colelcted from the plugin `config.json` files used for string resolution in the frontend. | ![Screen12][screen12]  | 
   | Plugins_Objects  | Unique objects detected by individual plugins. | ![Screen13][screen13]  | 
-  | ScanCycles  | (obsolete) Used to determine and identify different scan cycles. | ![Screen14][screen14]  | 
   | Sessions  | Used to display sessions in the charts | ![Screen15][screen15]  | 
   | Settings  | Database representation of the sum of all settings from `pialert.conf` and plugins coming from `config.json` files. | ![Screen16][screen16]  | 
 
@@ -27,16 +26,14 @@
 
   [screen1]: /docs/img/DATABASE/CurrentScan.png
   [screen2]: /docs/img/DATABASE/Devices.png
-  [screen4]: /docs/img/DATABASE/Events.png
-  [screen5]: /docs/img/DATABASE/Nmap_Scan.png
+  [screen4]: /docs/img/DATABASE/Events.png  
   [screen6]: /docs/img/DATABASE/Online_History.png
   [screen7]: /docs/img/DATABASE/Parameters.png
   [screen8]: /docs/img/DATABASE/Pholus_Scan.png  
   [screen10]: /docs/img/DATABASE/Plugins_Events.png
   [screen11]: /docs/img/DATABASE/Plugins_History.png
   [screen12]: /docs/img/DATABASE/Plugins_Language_Strings.png
-  [screen13]: /docs/img/DATABASE/Plugins_Objects.png
-  [screen14]: /docs/img/DATABASE/ScanCycles.png
+  [screen13]: /docs/img/DATABASE/Plugins_Objects.png  
   [screen15]: /docs/img/DATABASE/Sessions.png
   [screen16]: /docs/img/DATABASE/Settings.png
 

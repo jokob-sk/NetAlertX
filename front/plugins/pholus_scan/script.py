@@ -27,7 +27,7 @@ fullPholusPath  = os.path.join(CUR_PATH, 'pholus/pholus3.py')
 def main():
     # sample
     # /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ==' timeoutSec=10
-    # sudo docker exec pialert /home/pi/pialert/front/plugins/pholus_scan__ignore/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ==' timeoutSec=10
+    # sudo docker exec pialert /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ==' timeoutSec=10
     
     # the script expects a parameter in the format of userSubnets=subnet1,subnet2,...
     parser = argparse.ArgumentParser(description='Import devices from settings')
@@ -46,6 +46,7 @@ def main():
     # which holds a list of user-submitted subnets.
     # Printing the userSubnets list to check its content.
     mylog('verbose',['[Pholus] Subnets: ', values.userSubnets])
+    mylog('verbose',['[Pholus] len Subnets: ', len(values.userSubnets)])
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
     # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.

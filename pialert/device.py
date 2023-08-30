@@ -93,12 +93,12 @@ def print_scan_stats(db):
     stats = sql.fetchall()
 
     mylog('verbose', f'[Scan Stats] Devices Detected.......: {stats[0]["devices_detected"]}')
-    mylog('verbose', f'[Scan Stats] New Devices..........: {stats[0]["new_devices"]}')
-    mylog('verbose', f'[Scan Stats] Down Alerts..........: {stats[0]["down_alerts"]}')
-    mylog('verbose', f'[Scan Stats] New Down Alerts......: {stats[0]["new_down_alerts"]}')
-    mylog('verbose', f'[Scan Stats] New Connections......: {stats[0]["new_connections"]}')
-    mylog('verbose', f'[Scan Stats] Disconnections.......: {stats[0]["disconnections"]}')
-    mylog('verbose', f'[Scan Stats] IP Changes...........: {stats[0]["ip_changes"]}')
+    mylog('verbose', f'[Scan Stats] New Devices............: {stats[0]["new_devices"]}')
+    mylog('verbose', f'[Scan Stats] Down Alerts............: {stats[0]["down_alerts"]}')
+    mylog('verbose', f'[Scan Stats] New Down Alerts........: {stats[0]["new_down_alerts"]}')
+    mylog('verbose', f'[Scan Stats] New Connections........: {stats[0]["new_connections"]}')
+    mylog('verbose', f'[Scan Stats] Disconnections.........: {stats[0]["disconnections"]}')
+    mylog('verbose', f'[Scan Stats] IP Changes.............: {stats[0]["ip_changes"]}')
 
     mylog('verbose', '[Scan Stats] Scan Method Statistics:')
     for row in stats:

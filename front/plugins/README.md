@@ -500,36 +500,56 @@ Below are some general additional notes, when defining `params`:
 
 Required attributes are:
 
-- `"function": "<see Supported settings function values>"` - What function the setting drives or a simple unique code name
-- `"type": "<text|integer|boolean|password|readonly|integer.select|text.select|text.multiselect|list|integer.checkbox|text.template>"` - The form control used for the setting displayed in the Settings page and what values are accepted.
-- `"localized"` - a list of properties on the current JSON level which need to be localized
-- `"name"` and `"description"` - Displayed on the Settings page. An array of localized strings. (see Localized strings below).
-- (optional) `"events"` - `<test|run>` - to generate an execution button next to the input field of the setting (not fully tested)
-- (optional) `"override_value"` - used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (work in progress)
-- (optional) `"events": ["run", "test"]` - used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting and then after clicking an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. 
+| Property | Description |
+| -------- | ----------- |
+| `"function"` | Specifies the function the setting drives or a simple unique code name. See Supported settings function values for options. |
+| `"type"` | Specifies the form control used for the setting displayed in the Settings page and what values are accepted. Supported options include: |
+|  | - `text` |
+|  | - `integer` |
+|  | - `boolean` |
+|  | - `password` |
+|  | - `readonly` |
+|  | - `integer.select` |
+|  | - `text.select` |
+|  | - `text.multiselect` |
+|  | - `list` |
+|  | - `integer.checkbox` |
+|  | - `text.template` |
+| `"localized"` | A list of properties on the current JSON level that need to be localized. |
+| `"name"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
+| `"description"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
+| (optional) `"events"` | Specifies whether to generate an execution button next to the input field of the setting. Supported values: |
+|  | - `test` |
+|  | - `run` |
+| (optional) `"override_value"` | Used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (Work in progress) |
+| (optional) `"events"` | Used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. |
+
     
 ##### Supported settings `function` values
 
 You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
 
-- `RUN` - (required) Specifies when the service is executed
-    - Supported Options: 
-      - "disabled" - not run
-      - "once" - run on app start or on settings saved
-      - "schedule" - if included then a `RUN_SCHD` setting needs to be specified to determine what's the schedule, 
-      - "always_after_scan" - run always after a scan is finished
-      - "on_new_device" - run when a new device is detected
-      - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. 
-- `RUN_SCHD` - (required if you include the above `RUN` function) Cron-like scheduling is used if the `RUN` setting set to `schedule`
-- `CMD` - (required) What command should be executed. 
-- `API_SQL` - (optional) Generates a `table_` + code_name  + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
-- `RUN_TIMEOUT` - (optional) Max execution time of the script. If not specified a default value of 10 seconds is used to prevent hanging.
-- `WATCH` - (optional) Which database columns are watched for changes for this particular plugin. If not specified no notifications are sent. 
-- `REPORT_ON` - (optional) Send a notification only on these statuses. Supported options are: 
-  - `new` means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. 
-  - `watched-changed` - means that selected `Watched_ValueN` columns changed
-  - `watched-not-changed`  - reports even on events where selected `Watched_ValueN` did not change
-  - `missing-in-last-scan` - if object is missing compared to previous scans
+| Setting | Description |
+| ------- | ----------- |
+| `RUN` | (required) Specifies when the service is executed. |
+|  | Supported Options: |
+|  | - "disabled" - not run |
+|  | - "once" - run on app start or on settings saved |
+|  | - "schedule" - if included, then a `RUN_SCHD` setting needs to be specified to determine the schedule |
+|  | - "always_after_scan" - run always after a scan is finished |
+|  | - "on_new_device" - run when a new device is detected |
+|  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. |
+| `RUN_SCHD` | (required if you include the above `RUN` function) Cron-like scheduling is used if the `RUN` setting is set to `schedule`. |
+| `CMD` | (required) Specifies the command that should be executed. |
+| `API_SQL` | (optional) Generates a `table_` + `code_name` + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md). |
+| `RUN_TIMEOUT` | (optional) Specifies the maximum execution time of the script. If not specified, a default value of 10 seconds is used to prevent hanging. |
+| `WATCH` | (optional) Specifies which database columns are watched for changes for this particular plugin. If not specified, no notifications are sent. |
+| `REPORT_ON` | (optional) Specifies when to send a notification. Supported options are: |
+|  | - `new` means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. |
+|  | - `watched-changed` - means that selected `Watched_ValueN` columns changed |
+|  | - `watched-not-changed` - reports even on events where selected `Watched_ValueN` did not change |
+|  | - `missing-in-last-scan` - if the object is missing compared to previous scans |
+
 
 
 > 🔎 Example:
@@ -573,18 +593,23 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an English translation will be shown in the UI.
-- Supported types: `label`, `text`, `threshold`, `replace`, `device_ip`, `device_mac`, `url`. Check for details below, how columns behave based on the type.
-  - `label` makes a column display only
-  - `text` makes a column editable and a save icon is displayed next to it.
-  - See below for information on `threshold`, `replace`
-- The `options` property is used in conjunction with these types:
-  - `threshold` - The `options` array contains objects from lowest `maximum` to highest with the corresponding `hexColor` used for the value background color if it's less than the specified `maximum`, but more than the previous one in the `options` array
-  - `replace` - The `options` array contains objects with an `equals` property, that is compared to the "value" and if the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value"
-- `device_mac` - The value is considered to be a Mac address and a link pointing to the device with the given Mac address is generated.
-- `device_ip` - The value is considered to be an IP address and a link pointing to the device with the given IP is generated. The IP is checked against the last detected IP address and translated into a Mac address that is then used for the link itself.
-- `device_name_mac` - The value is considered to be a MAC address and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name.
-- `url` - The value is considered to be a URL so a link is generated.
-- `textbox_save` - An editable and saveable text box is generated that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table.
+
+| Supported Types | Description |
+| -------------- | ----------- |
+| `label` | Displays a column only. |
+| `text` | Makes a column editable, and a save icon is displayed next to it. See below for information on `threshold`, `replace`. |
+|  |  |
+| `options` Property | Used in conjunction with types like `threshold`, `replace`. |
+| `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
+| `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
+|  |  |
+| Type Definitions |  |
+| `device_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given MAC address is generated. |
+| `device_ip` | The value is considered to be an IP address. A link pointing to the device with the given IP is generated. The IP is checked against the last detected IP address and translated into a MAC address, which is then used for the link itself. |
+| `device_name_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name. |
+| `url` | The value is considered to be a URL, so a link is generated. |
+| `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
+
 
 
 ```json

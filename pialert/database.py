@@ -96,11 +96,6 @@ class DB():
         self.sql.execute (f"""DELETE FROM Events 
                              WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
                              
-        # # Cleanup Plugin Events History
-        # mylog('verbose', ['[DB Cleanup] Plugins_History: Delete all older than '+str(DAYS_TO_KEEP_EVENTS)+' days (DAYS_TO_KEEP_EVENTS setting)'])
-        # self.sql.execute (f"""DELETE FROM Plugins_History 
-        #                      WHERE DateTimeChanged <= date('now', '{str(DAYS_TO_KEEP_EVENTS)} day')""")
-
         # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
         mylog('verbose', [f'[DB Cleanup] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)'])
 
@@ -154,17 +149,6 @@ class DB():
                         AND Pholus_Scan.Value = p2.Value
                         AND Pholus_Scan.Record_Type = p2.Record_Type
                         );""")
-        # De-Dupe (de-duplicate - remove duplicate entries) from the Nmap_Scan table
-        mylog('verbose', ['[DB Cleanup] Nmap_Scan: Delete all duplicates'])
-        self.sql.execute ("""DELETE  FROM Nmap_Scan
-                        WHERE rowid > (
-                        SELECT MIN(rowid) FROM Nmap_Scan p2
-                        WHERE Nmap_Scan.MAC = p2.MAC
-                        AND Nmap_Scan.Port = p2.Port
-                        AND Nmap_Scan.State = p2.State
-                        AND Nmap_Scan.Service = p2.Service
-                        );""")
-
 
         # Shrink DB
         mylog('verbose', ['[DB Cleanup] Shrink Database'])
@@ -210,7 +194,9 @@ class DB():
           );
           """)
 
-        # Alter Devices table
+        # -------------------------------------------------------------------------
+        # Alter Devices table       
+        # -------------------------------------------------------------------------
         # dev_Network_Node_MAC_ADDR column
         dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
           SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
@@ -244,18 +230,16 @@ class DB():
           ALTER TABLE "Devices" ADD "dev_Icon" TEXT
           """)
 
-        # indicates, if Settings table is available
-        settingsMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Settings';
-        """).fetchone() == None
 
+        # -------------------------------------------------------------------------
+        # Settings table setup
+        # -------------------------------------------------------------------------
+
+        
         # Re-creating Settings table
         mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
 
-        if settingsMissing == False:
-            self.sql.execute("DROP TABLE Settings;")
-
+        self.sql.execute(""" DROP TABLE IF EXISTS Settings;""")
         self.sql.execute("""
             CREATE TABLE "Settings" (
             "Code_Name"	    TEXT,
@@ -270,21 +254,14 @@ class DB():
             );
             """)
 
-        # indicates, if Pholus_Scan table is available
-        pholusScanMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Pholus_Scan';
-        """).fetchone() == None
 
-        # if pholusScanMissing == False:
-        #     # Re-creating Pholus_Scan table
-        #     self.sql.execute("DROP TABLE Pholus_Scan;")
-        #     pholusScanMissing = True
+        # -------------------------------------------------------------------------
+        # Pholus_Scan table setup
+        # -------------------------------------------------------------------------
 
-        if pholusScanMissing:
-            mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
-            self.sql.execute("""
-            CREATE TABLE "Pholus_Scan" (
+        # Create Pholus_Scan table if missing
+        mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
+        self.sql.execute("""CREATE TABLE IF NOT EXISTS "Pholus_Scan" (
             "Index"	          INTEGER,
             "Info"	          TEXT,
             "Time"	          TEXT,
@@ -294,14 +271,13 @@ class DB():
             "Value"           TEXT,
             "Extra"           TEXT,
             PRIMARY KEY("Index" AUTOINCREMENT)
-            );
-            """)
+        );
+        """)
 
-        # indicates, if Nmap_Scan table is available
-        nmapScanMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Nmap_Scan';
-        """).fetchone() == None
+
+        # -------------------------------------------------------------------------
+        # Parameters table setup
+        # -------------------------------------------------------------------------
 
         # Re-creating Parameters table
         mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
@@ -317,25 +293,71 @@ class DB():
         # Initialize Parameters if unavailable
         initOrSetParam(self, 'Back_App_State','Initializing')
 
-        # if nmapScanMissing == False:
-        #     # Re-creating Nmap_Scan table
-        #     self.sql.execute("DROP TABLE Nmap_Scan;")
-        #     nmapScanMissing = True
+        # -------------------------------------------------------------------------
+        # Parameters table setup DEPRECATED after 1/1/2024
+        # -------------------------------------------------------------------------
 
-        if nmapScanMissing:
-            mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
-            self.sql.execute("""
-            CREATE TABLE "Nmap_Scan" (
-            "Index"	          INTEGER,
-            "MAC"	          TEXT,
-            "Port"	          TEXT,
-            "Time"	          TEXT,
-            "State"	          TEXT,
-            "Service"	      TEXT,
-            "Extra"           TEXT,
-            PRIMARY KEY("Index" AUTOINCREMENT)
-            );
-            """)
+        # indicates, if Nmap_Scan table is available
+        nmapScanMissing = self.sql.execute("""
+        SELECT name FROM sqlite_master WHERE type='table'
+        AND name='Nmap_Scan';
+        """).fetchone() == None
+
+        if nmapScanMissing == False:
+            # move data into the PLugins_Objects table
+            self.sql.execute("""INSERT INTO Plugins_Objects (
+                                    Plugin,
+                                    Object_PrimaryID,
+                                    Object_SecondaryID,
+  									DateTimeCreated,
+									DateTimeChanged,
+                                    Watched_Value1,
+                                    Watched_Value2,
+                                    Watched_Value3,
+                                    Watched_Value4,
+                                    Status,
+                                    Extra,
+                                    UserData,
+                                    ForeignKey
+                                )
+                                SELECT
+                                    'NMAP' AS Plugin,
+                                    MAC AS Object_PrimaryID,
+                                    Port AS Object_SecondaryID,
+									Time AS DateTimeCreated,
+									DATETIME('now') AS DateTimeChanged,
+                                    State AS Watched_Value1,
+                                    Service AS Watched_Value2,
+                                    '' AS Watched_Value3,
+                                    '' AS Watched_Value4,
+                                    'watched-not-changed' AS Status,
+                                    Extra AS Extra,
+                                    Extra AS UserData,
+                                    MAC AS ForeignKey
+                                FROM Nmap_Scan;""")
+
+            # Delete the Nmap_Scan table
+            self.sql.execute("DROP TABLE Nmap_Scan;")
+            nmapScanMissing = True
+
+        # if nmapScanMissing:
+        #     mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
+        #     self.sql.execute("""
+        #     CREATE TABLE "Nmap_Scan" (
+        #     "Index"	          INTEGER,
+        #     "MAC"	          TEXT,
+        #     "Port"	          TEXT,
+        #     "Time"	          TEXT,
+        #     "State"	          TEXT,
+        #     "Service"	      TEXT,
+        #     "Extra"           TEXT,
+        #     PRIMARY KEY("Index" AUTOINCREMENT)
+        #     );
+        #     """)
+
+        # -------------------------------------------------------------------------
+        # Plugins tables setup
+        # -------------------------------------------------------------------------
 
         # Plugin state
         sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
@@ -397,16 +419,12 @@ class DB():
                         ); """
         self.sql.execute(sql_Plugins_History)
 
+        # -------------------------------------------------------------------------
+        # Plugins_Language_Strings table setup
+        # -------------------------------------------------------------------------
+
         # Dynamically generated language strings
-        # indicates, if Language_Strings table is available
-        languageStringsMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Plugins_Language_Strings';
-        """).fetchone() == None
-
-        if languageStringsMissing == False:
-            self.sql.execute("DROP TABLE Plugins_Language_Strings;")
-
+        self.sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
         self.sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
                             "Index"	          INTEGER,
                             Language_Code TEXT NOT NULL,
@@ -417,16 +435,13 @@ class DB():
                         ); """)
 
         self.commitDB()        
+
+        # -------------------------------------------------------------------------
+        # CurrentScan table setup
+        # -------------------------------------------------------------------------
         
         # indicates, if CurrentScan table is available
-        currentScanMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='CurrentScan';
-        """).fetchone() == None
-
-        if currentScanMissing == False:
-            self.sql.execute("DROP TABLE CurrentScan;")
-
+        self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
         self.sql.execute(""" CREATE TABLE CurrentScan (
                                 cur_ScanCycle INTEGER,
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
@@ -439,25 +454,20 @@ class DB():
                             );
                         """)
 
-        # indicates, if DHCP_Leases table is available
-        DHCP_LeasesMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='DHCP_Leases';
-        """).fetchone() == None
+        # -------------------------------------------------------------------------
+        #  DELETING OBSOLETE TABLES - to remove with updated db file after 1/1/2024
+        # -------------------------------------------------------------------------        
 
-        if DHCP_LeasesMissing == False:
-            self.sql.execute("DROP TABLE DHCP_Leases;")
-
-        # indicates, if PiHole_Network table is available
-        PiHole_NetworkMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='PiHole_Network';
-        """).fetchone() == None
-
-        if PiHole_NetworkMissing == False:
-            self.sql.execute("DROP TABLE PiHole_Network;")
+        # Deletes obsolete ScanCycles
+        self.sql.execute(""" DROP TABLE IF EXISTS ScanCycles;""")
+        self.sql.execute(""" DROP TABLE IF EXISTS DHCP_Leases;""")
+        self.sql.execute(""" DROP TABLE IF EXISTS PiHole_Network;""")
 
         self.commitDB()
+
+        # -------------------------------------------------------------------------
+        #  DELETING OBSOLETE TABLES - to remove with updated db file after 1/1/2024
+        # -------------------------------------------------------------------------
 
 
     #-------------------------------------------------------------------------------

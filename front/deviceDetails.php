@@ -582,28 +582,7 @@
                       }
                     })
                   }
-                  </script>
-
-                  <h3><?= lang("DevDetail_Tab_NmapTableHeader");?></h3>
-
-                  <div><?= lang("DevDetail_Tab_NmapTableText");?></div>
-
-                <table id="tableNmap" class="table table-bordered table-hover table-striped ">
-                  <thead>
-                  <tr>
-                    <th><?= lang("DevDetail_Tab_NmapTableIndex");?></th>                    
-                    <th><?= lang("DevDetail_Tab_NmapTableTime");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTablePort");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableState");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableService");?></th>
-                    <th><?= lang("DevDetail_Tab_NmapTableExtra");?></th>
-                  </tr>
-                  </thead>
-                  <!-- Comment out tbody when trying to implement better table with datatables here -->
-                  <tbody id="tableNmapBody">
-                    <tr id="tableNmapPlc" class="text-center"><td colspan='7'><span><?= lang("DevDetail_Tab_NmapEmpty"); ?></span></td></tr>
-                  </tbody>
-                </table>
+                  </script>                 
 				
               </div>
 
@@ -1874,60 +1853,11 @@ function initializeTabsNew () {
 
     if(target == "#panNmap")
     {
-      loadNmap();
+      // loadNmap();
     }
   });
 }
 
-// -----------------------------------------------------------------------------
-
-function loadNmap()
-{
-    $(".deviceSpecific").remove(); // remove any previous data listed in the table
-    
-    $.get('php/server/devices.php?action=getNmap&mac='+ mac, function(data) {
-      
-      data = sanitize(data);      
-
-      if(data != "false" && $.trim(data) != [])
-      {
-        var listData = JSON.parse(data);
-        var order = 1;
-
-        tableRows = "";
-
-        // for each item
-        listData.forEach(function (item, index) {                    
-          tableRows += '<tr class="deviceSpecific">\
-                          <td>'+item.Index+'</td>\
-                          <td>'+item.Time+'</td>\
-                          <td>\
-                            <a href="http://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">'+item.Port+'</a>\
-                            <a href="https://'+item.IP+':'+item.Port.split('/')[0]+'" target="_blank">\
-                              <span style="padding-left:5px"><i class="fa fa-lock "></i></a></span>\
-                          </td>\
-                          <td>'+item.State+'</td>\
-                          <td>'+item.Service+'</td>\
-                          <td>\
-                            <div class="input-group">\
-                              <input class="form-control" id="port_'+item.Index+'" type="text" value="'+item.Extra+'">\
-                              <span class="input-group-addon"><i class="fa fa-save pointer" onclick="saveNmapPort('+item.Index+')"></i></span>\
-                            </div>\
-                          </td>\
-                        </tr>';
-                        });        
-        
-        $("#tableNmapBody").html($("#tableNmapBody").html()+tableRows);        
-        $("#tableNmapPlc").hide();
-      }
-      else
-      {
-        // console.log("else")
-        $("#tableNmapPlc").show();
-        $(".deviceSpecific").remove();
-      }        
-    });
-}
 
 //-----------------------------------------------------------------------------------
 
@@ -2005,13 +1935,5 @@ function reloadTab()
     loadNmap();
   }
 }
-
-//-----------------------------------------------------------------------------------
-
-function saveNmapPort(index)
-{
-  saveData('saveNmapPort', index, $('#port_'+index).val())
-}
-
 
 </script>
