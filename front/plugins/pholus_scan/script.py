@@ -40,12 +40,12 @@ def main():
     plug_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    print('In script:')
+    mylog('verbose',['[Pholus] In script'])
 
     # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
     # which holds a list of user-submitted subnets.
     # Printing the userSubnets list to check its content.
-    print(values.userSubnets)
+    mylog('verbose',['[Pholus] Subnets: ', values.userSubnets])
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
     # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.
@@ -123,8 +123,8 @@ def execute_pholus_scan(userSubnets, timeoutSec):
         result_list += pholus_output_list
 
     
-    print("List len:", len(result_list))  
-    print("List:", result_list)  
+    mylog('verbose', ["List len:", len(result_list)])  
+    mylog('verbose',["List:", result_list])  
 
     return result_list
 
@@ -133,7 +133,7 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
 
     # logging & updating app state        
       
-    mylog('none', ['[PholusScan] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
+    mylog('verbose', ['[PholusScan] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
     mylog('verbose', ["[PholusScan] Pholus scan on [interface] ", interface, " [mask] " , mask])
     
     # the scan always lasts 2x as long, so the desired user time from settings needs to be halved

@@ -37,17 +37,18 @@ class plugin_param:
                 mylog('debug', f'[Plugins] setTyp: {setTyp}')
 
                 if '.select' in setTyp or setTyp in arrayConversion:
+                    # store number of returned values
                     paramValuesCount = len(setVal)
 
                 if setTyp in noConversion:
                     resolved =  setVal
-
+                
                 elif setTyp in arrayConversion:
+                    #  make them safely passable to a python or linux script
                     resolved =  flatten_array(setVal)
 
-                elif setTyp in arrayConversionBase64:
-                    
-                    
+                elif setTyp in arrayConversionBase64:                    
+                    #  make them safely passable to a python or linux script by converting them to a base64 string if necessary (if the arg contains spaces)
                     resolved =  flatten_array(setVal)
                 else:
                     for item in jsonConversion:
@@ -60,7 +61,11 @@ class plugin_param:
         #  Get SQL result
         if param["type"] == "sql":
             inputValue = db.get_sql_array(param["value"])
-            
+
+            # store number of returned values
+            paramValuesCount = len(inputValue)
+
+            #  make them safely passable to a python or linux script
             resolved = flatten_array(inputValue)
 
         

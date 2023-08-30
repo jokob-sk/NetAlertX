@@ -467,12 +467,10 @@ def skip_repeated_notifications (db):
 
 #-------------------------------------------------------------------------------
 def check_and_run_event(db, pluginsState):
-    mylog('debug', [f'[MAIN] processScan1: {pluginsState.processScan}'])
+    
     sql = db.sql # TO-DO
     sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
-    rows = sql.fetchall()
-
-    mylog('debug', [f'[MAIN] processScan2: {pluginsState.processScan}'])
+    rows = sql.fetchall()    
 
     event, param = ['','']
     if len(rows) > 0 and rows[0]['par_Value'] != 'finished':

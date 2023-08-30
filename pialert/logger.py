@@ -5,6 +5,7 @@ import datetime
 
 import conf
 from const import *
+# from helper import get_setting_value
 
 #-------------------------------------------------------------------------------
 # duplication from helper to avoid circle
@@ -15,6 +16,8 @@ def timeNowTZ():
     else:
         return datetime.datetime.now().replace(microsecond=0)
 
+
+# conf.LOG_LEVEL = get_setting_value("LOG_LEVEL")
 
 #-------------------------------------------------------------------------------
 debugLevels =   [
