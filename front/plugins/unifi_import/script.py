@@ -32,7 +32,7 @@ logging.basicConfig(
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
 )
 unifi_logger = logging.getLogger('[UNIFI]')
-unifi_logger.setLevel(logging.DEBUG)
+unifi_logger.setLevel(logging.INFO)
 
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -87,7 +87,7 @@ def main():
         # Insert list into the log            
         service_monitoring_log(e.primaryId, e.secondaryId, e.created, e.watched1, e.watched2, e.watched3, e.watched4, e.extra, e.foreignKey )
 
-    unifi_logger.info(f'Scan finished, added {len(newEntries)} devices')
+    unifi_logger.info(f'Scan finished, found {len(newEntries)} devices')
 
 # -----------------------------------------------------------------------------
 def get_entries(newEntries):
