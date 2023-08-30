@@ -1,29 +1,58 @@
 version: "3"
-
-
 services:
- pialert_staging:
-    container_name: pialert_staging
-    image: gitlab.baupal.ch:5050/infra/pialert_gl:staging
-
-    environment:
-      TZ: 'Europe/Zurich'
-      PORT: 20223
-      
+  pialert:
+    privileged: true
+    build:
+      dockerfile: Dockerfile
+      context: .
+      cache_from:
+        - type=registry,ref=docker.io/jokob-sk/pi.alert:buildcache
+    container_name: pialert
+    network_mode: host
+    # restart: unless-stopped
     volumes:
-      - 'staging_config_st:/home/pi/pialert/config'
-      - 'staging_db_st:/home/pi/pialert/db'
-      - 'staging_logs_st:/home/pi/pialert/front/log'
-      #- '/home/pi/gitrepos/pialert_gl/front/plugins/unifi_import/script.py:/home/pi/pialert/front/plugins/unifi_import/script.py'
-      #- '/home/pi/gitrepos/pialert_gl/front/plugins/unifi_import/config.json:/home/pi/pialert/front/plugins/unifi_import/config.json'
-      - '/var/lib/docker/volumes/pihole/_data/pihole-FTL.db:/etc/pihole/pihole-FTL.db:ro'
-      - '/var/lib/docker/volumes/pihole/_data/dhcp.leases:/etc/pihole/dhcp.leases:ro'
-    network_mode: "host"
-      
-    restart: unless-stopped
-
-volumes:
-  staging_config_st:
-  staging_db_st:
-  staging_logs_st:
-  
+      - ${APP_DATA_LOCATION}/pialert_dev/config:/home/pi/pialert/config
+      # - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
+      # - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db           
+      # (optional) useful for debugging if you have issues setting up the container
+      - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
+      # ---------------------------------------------------------------------------
+      # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
+      - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
+      - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases      
+      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
+      - ${DEV_LOCATION}/pialert:/home/pi/pialert/pialert      
+      - ${DEV_LOCATION}/back/report_template.html:/home/pi/pialert/back/report_template.html
+      - ${DEV_LOCATION}/back/report_template_new_version.html:/home/pi/pialert/back/report_template_new_version.html
+      - ${DEV_LOCATION}/back/report_template.txt:/home/pi/pialert/back/report_template.txt      
+      - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
+      - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/7.4/fpm/php.ini      
+      # - ${DEV_LOCATION}/front/api:/home/pi/pialert/front/api
+      - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
+      - ${DEV_LOCATION}/front/lib/AdminLTE:/home/pi/pialert/front/lib/AdminLTE
+      - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
+      - ${DEV_LOCATION}/front/api:/home/pi/pialert/front/api
+      - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php
+      - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php
+      - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php
+      - ${DEV_LOCATION}/front/events.php:/home/pi/pialert/front/events.php
+      - ${DEV_LOCATION}/front/plugins.php:/home/pi/pialert/front/plugins.php
+      - ${DEV_LOCATION}/front/pluginsCore.php:/home/pi/pialert/front/pluginsCore.php
+      - ${DEV_LOCATION}/front/help_faq.php:/home/pi/pialert/front/help_faq.php
+      - ${DEV_LOCATION}/front/index.php:/home/pi/pialert/front/index.php
+      - ${DEV_LOCATION}/front/maintenance.php:/home/pi/pialert/front/maintenance.php
+      - ${DEV_LOCATION}/front/network.php:/home/pi/pialert/front/network.php
+      - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
+      - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php      
+      - ${DEV_LOCATION}/front/systeminfo.php:/home/pi/pialert/front/systeminfo.php      
+      - ${DEV_LOCATION}/front/report.php:/home/pi/pialert/front/report.php      
+      - ${DEV_LOCATION}/front/flows.php:/home/pi/pialert/front/flows.php      
+      - ${DEV_LOCATION}/front/plugins:/home/pi/pialert/front/plugins      
+      # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
+      # ---------------------------------------------------------------------------
+    environment:
+      - TZ=${TZ}
+      - PORT=${PORT}
+      - HOST_USER_ID=${HOST_USER_ID}
+      - HOST_USER_GID=${HOST_USER_GID}
