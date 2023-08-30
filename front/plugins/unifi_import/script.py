@@ -32,7 +32,7 @@ logging.basicConfig(
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
 )
 unifi_logger = logging.getLogger('[UNIFI]')
-unifi_logger.setLevel(logging.DEBUG)
+unifi_logger.setLevel(logging.INFO)
 
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -87,7 +87,7 @@ def main():
         # Insert list into the log            
         service_monitoring_log(e.primaryId, e.secondaryId, e.created, e.watched1, e.watched2, e.watched3, e.watched4, e.extra, e.foreignKey )
 
-    unifi_logger.info(f'Scan finished, added {len(newEntries)} devices')
+    unifi_logger.info(f'Scan finished, found {len(newEntries)} devices')
 
 # -----------------------------------------------------------------------------
 def get_entries(newEntries):
@@ -129,8 +129,7 @@ def get_entries(newEntries):
             name = get_unifi_val(ap, 'name')
             hostName = get_unifi_val(ap, 'hostname')
 
-            if name == 'null' and hostName != 'null':
-                name = hostName
+            name = set_name(name, hostName)
 
             tmpPlugObj = plugin_object_class(
                 ap['mac'], 
@@ -153,13 +152,6 @@ def get_entries(newEntries):
         for cl in c.get_clients():
 
             # print(f'{json.dumps(cl)}')
-
-            name = get_unifi_val(cl, 'name')
-            hostName = get_unifi_val(cl, 'hostname')
-
-            if name == 'null' and hostName != 'null':
-                name = hostName
-
             online_macs.add(cl['mac'])
 
         unifi_logger.debug(f'Found {len(online_macs)} Online Clients')
@@ -178,17 +170,19 @@ def get_entries(newEntries):
 
             status = 1 if user['mac'] in online_macs else 0
 
-            tmpPlugObj = plugin_object_class(
-                user['mac'],
-                get_unifi_val(user, 'last_ip'),
-                name, 
-                get_unifi_val(user, 'oui'),
-                'Other', 
-                status,
-                get_unifi_val(user, 'last_connection_network_name')
-            )         
+            if status == 1:
 
-            newEntries.append(tmpPlugObj)
+                tmpPlugObj = plugin_object_class(
+                    user['mac'],
+                    get_unifi_val(user, 'last_ip'),
+                    name,
+                    get_unifi_val(user, 'oui'),
+                    'Other',
+                    status,
+                    get_unifi_val(user, 'last_connection_network_name')
+                )
+
+                newEntries.append(tmpPlugObj)
 
     unifi_logger.debug(f'Found {len(newEntries)} Clients overall')
     return newEntries
