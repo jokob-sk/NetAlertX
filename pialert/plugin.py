@@ -328,7 +328,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
 
         #  try attaching the sqlite DB
         try:
-            sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL")
+            sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL_"+plugin["unique_prefix"])
         except sqlite3.Error as e:
             mylog('none',[ '[Plugin] - ATTACH DATABASE failed with SQL ERROR: ', e])
 
@@ -342,7 +342,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
                 sqlParams.append((
                     0,                            #  "Index" placeholder
-                    plugin["unique_prefix"],     #  "Plugin" 
+                    plugin["unique_prefix"],      #  "Plugin" 
                     row[0],                       #  "Object_PrimaryID" 
                     handle_empty(row[1]),         #  "Object_SecondaryID" 
                     'null',                       #  "DateTimeCreated" column (null placeholder)

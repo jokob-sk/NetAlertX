@@ -35,6 +35,54 @@ The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` in the container 
 
 - Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [comment in this issue](https://github.com/jokob-sk/Pi.Alert/issues/170#issuecomment-1419902988)
 
+
+#### VLANs on a Hyper-V setup
+
+> Community sourced content by [mscreations](https://github.com/mscreations) from this [discussion](https://github.com/jokob-sk/Pi.Alert/discussions/404).
+
+> [!NOTE] 
+> The setup this was tested on: Bare Metal -> Hyper-V on Win Server 2019 -> Ubuntu 22.04 VM -> Docker -> PiAlert. 
+
+**Approach 1 (may cause issues):**
+
+Configure multiple network adapters in Hyper-V with distinct VLANs connected to each one using Hyper-V's network setup. However, this action can potentially lead to the Docker host's inability to handle network traffic correctly. The issue may stem from the creation of routes for network time servers or domain controllers on every interface, thereby preventing proper synchronization of the underlying Ubuntu VM. This interference can affect the performance of other applications such as Authentik.
+
+**Approach 2 (working example)**
+
+Network connections to switches are configured as trunk and allow all VLANs access to the server. 
+
+By default Hyper-V only allows untagged packets through to the VM interface and no VLAN tagged packets get through. In order to fix this follow these steps:
+
+1) Run the following command in Powershell on the Hyper-V machine: 
+
+```shell
+Set-VMNetworkAdapterVlan -VMName <Docker VM Name> -Trunk -NativeVlanId 0 -AllowedVlanIdList "<comma separated list of vlans>"
+```
+
+(There might be other ways how adjust this.)
+
+2) Within the VM, set up sub-interfaces for each of the VLANs so they can be scanned. On Ubuntu 22.04 Netplan can be used.
+
+In /etc/netplan/00-installer-config.yaml, add vlan definitions:
+
+```
+network:
+  ethernets:
+    eth0:
+      dhcp4: yes
+  vlans:
+    eth0.2:
+      id: 2
+      link: eth0
+      addresses: [ "192.168.2.2/24" ]
+      routes:
+        - to: 192.168.2.0/24
+          via: 192.168.1.1 
+```
+
+3) Run `sudo netplan apply` and the interfaces are then available to scan in PiAlert. 
+4) In this case, use `192.168.2.0/24 --interface=eth0.2` in PiAlert
+
 #### VLAN 🔍Example:
 
 ![Vlan configuration example](/docs/img/SUBNETS/subnets_vlan.png)
