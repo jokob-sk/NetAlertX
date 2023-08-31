@@ -7,14 +7,16 @@ import argparse
 import sys
 
 sys.path.append("/home/pi/pialert/front/plugins")
+sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Objects
+from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from logger import mylog, append_line_to_file
+from helper import timeNowTZ
+from const import logPath, pialertPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH , 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH , 'last_result.log')
-
-
+LOG_FILE = os.path.join(CUR_PATH, 'script.log')
+RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 def main():
 
@@ -22,6 +24,8 @@ def main():
     parser = argparse.ArgumentParser(description='Import devices from settings')
     parser.add_argument('devices',  action="store",  help="list of device names separated by ','")
     values = parser.parse_args()
+
+    mylog('verbose', ['[UNDIS] In script'])     
 
     UNDIS_devices = Plugin_Objects( RESULT_FILE )
 

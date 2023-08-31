@@ -40,13 +40,13 @@ def main():
     plug_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    mylog('verbose',['[Pholus] In script'])
+    mylog('verbose',['[PHOLUS] In script'])
 
     # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
     # which holds a list of user-submitted subnets.
     # Printing the userSubnets list to check its content.
-    mylog('verbose',['[Pholus] Subnets: ', values.userSubnets])
-    mylog('verbose',['[Pholus] len Subnets: ', len(values.userSubnets)])
+    mylog('verbose',['[PHOLUS] Subnets: ', values.userSubnets])
+    mylog('verbose',['[PHOLUS] len Subnets: ', len(values.userSubnets)])
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
     # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.

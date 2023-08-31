@@ -19,28 +19,35 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import pwd
 import os
 
+sys.path.append("/home/pi/pialert/front/plugins")
+sys.path.append('/home/pi/pialert/pialert') 
 
-curPath = str(pathlib.Path(__file__).parent.resolve())
-log_file = curPath + '/script.log'
-last_run = curPath + '/last_result.log'
+from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from logger import mylog, append_line_to_file
+from helper import timeNowTZ
+from const import logPath, pialertPath
+
+CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
+LOG_FILE = os.path.join(CUR_PATH, 'script.log')
+RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+
 
 # Workflow
 
 def main():    
 
+    mylog('verbose', ['[SNMPDSC] In script ']) 
+
     # init global variables
     global ROUTERS
 
     # empty file
-    open(last_run , 'w').close()   
+    open(RESULT_FILE , 'w').close()   
 
-    last_run_logfile = open(last_run, 'a') 
-    
+    last_run_logfile = open(RESULT_FILE, 'a')     
 
-    parser = argparse.ArgumentParser(description='This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch.')
-    
+    parser = argparse.ArgumentParser(description='This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch.')    
     parser.add_argument('routers',  action="store",  help="IP(s) of routers, separated by comma (,) if passing multiple")                        
-
     values = parser.parse_args()
 
     # parse output
@@ -49,11 +56,13 @@ def main():
     if values.routers:        
 
         ROUTERS = values.routers.split('=')[1].replace('\'','')  
-        
         newEntries = get_entries(newEntries)  
    
+    mylog('verbose', ['[SNMPDSC] Entries found: ', len(newEntries)]) 
+
     for e in newEntries:        
-        # Insert list into the log            
+        # Insert list into the log      
+              
         service_monitoring_log(e.primaryId, e.secondaryId, e.created, e.watched1, e.watched2, e.watched3, e.watched4, e.extra, e.foreignKey )
 
 # -----------------------------------------------------------------------------
@@ -72,7 +81,7 @@ def get_entries(newEntries):
     for router in routers:
         # snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2
 
-        print(router)
+        mylog('verbose', ['[SNMPDSC] Router snmpwalk command: ', router]) 
 
         timeoutSec = 10
 
@@ -88,7 +97,7 @@ def get_entries(newEntries):
         # Process outputs
         # Sample: iso.3.6.1.2.1.3.1.1.2.3.1.192.168.1.2 "6C 6C 6C 6C 6C 6C "
 
-        with open(log_file, 'a') as run_logfile:
+        with open(LOG_FILE, 'a') as run_logfile:
             for line in newLines:              
                 
                 # debug
@@ -149,7 +158,7 @@ def service_monitoring_log(primaryId, secondaryId, created, watched1, watched2 =
     if foreignKey == '':
         foreignKey = 'null'
 
-    with open(last_run, 'a') as last_run_logfile:        
+    with open(RESULT_FILE, 'a') as last_run_logfile:        
         last_run_logfile.write("{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
                                                 primaryId,
                                                 secondaryId,

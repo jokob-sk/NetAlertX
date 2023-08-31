@@ -37,9 +37,7 @@ def main():
     # Print a message to indicate that the script is starting.
     mylog('verbose', ['[ARP Scan] In script ']) 
 
-    # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
-    # which holds a list of user-submitted subnets.
-    # Printing the userSubnets list to check its content.
+    #  holds a list of user-submitted subnets.    
     mylog('verbose', ['[ARP Scan] values.userSubnets: ', values.userSubnets]) 
     
 
@@ -87,7 +85,7 @@ def main():
 
 
 def execute_arpscan(userSubnets):
-        # output of possible multiple interfaces
+    # output of possible multiple interfaces
     arpscan_output = ""
     devices_list = []
 
