@@ -154,5 +154,19 @@ class Plugin_Objects:
         fp.close()
 
 
+    def __add__(self, other):
+        if isinstance(other, Plugin_Objects):
+            new_objects = self.objects + other.objects
+            new_result_file = self.result_file  # You might want to adjust this
+            new_instance = Plugin_Objects(new_result_file)
+            new_instance.objects = new_objects
+            return new_instance
+        else:
+            raise TypeError("Unsupported operand type for +")
+
+    def __len__(self):
+        return len(self.objects)
+
+
 
 
