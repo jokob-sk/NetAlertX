@@ -371,7 +371,7 @@ This approach is used to implement the `DHCPLSS` plugin. The script parses all s
 3)  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property.  
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
 
 ```json
 {
@@ -590,7 +590,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 
 ##### UI settings in database_column_definitions
 
-The UI will adjust how columns are displayed in the UI based on the definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
+The UI will adjust how columns are displayed in the UI based on the resolvers definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
 - Only columns with `"show": true` and also with at least an English translation will be shown in the UI.
 
@@ -599,9 +599,10 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 | `label` | Displays a column only. |
 | `text` | Makes a column editable, and a save icon is displayed next to it. See below for information on `threshold`, `replace`. |
 |  |  |
-| `options` Property | Used in conjunction with types like `threshold`, `replace`. |
+| `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
 | `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
+| `regex` | Applies a regex to the value.  The `options` array contains objects with an `type` (must be set to `regex`) and `param` (must contain the regex itself) property. |
 |  |  |
 | Type Definitions |  |
 | `device_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given MAC address is generated. |
@@ -609,6 +610,11 @@ The UI will adjust how columns are displayed in the UI based on the definition o
 | `device_name_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name. |
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
+| `url_http_https` | Generates towo links with the `https` and `http` prefix as lock icons. |
+
+
+> [!NOTE] 
+> Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver
 
 
 
@@ -670,6 +676,28 @@ The UI will adjust how columns are displayed in the UI based on the definition o
             "name":[{
                 "language_code":"en_us",
                 "string" : "Status"
+                }]
+        },
+        {
+            "column": "Watched_Value3",
+            "css_classes": "col-sm-1",
+            "show": true,
+            "type": "regex.url_http_https",            
+            "default_value":"",
+            "options": [
+                {
+                    "type": "regex",
+                    "param": "([\\d.:]+)"
+                }          
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code":"en_us",
+                "string" : "HTTP/s links"
+                },
+	    	    {
+                "language_code":"es_es",
+                "string" : "N/A"
                 }]
         }
 ```

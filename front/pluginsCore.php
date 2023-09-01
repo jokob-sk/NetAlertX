@@ -60,10 +60,34 @@ function getFormControl(dbColumnDef, value, index) {
 
     result = ''
 
-    switch(dbColumnDef.type)
+    // Check if mapped_to_column_data exists and has a value to override the supplied value which is most likely `undefined`
+    if (dbColumnDef.mapped_to_column_data && dbColumnDef.mapped_to_column_data.value) {
+        value = dbColumnDef.mapped_to_column_data.value;
+    }
+
+   
+    result = processColumnValue(dbColumnDef, value, index, dbColumnDef.type)
+
+    return result;
+}
+
+// -----------------------------------------------------------------------------
+// Process column value 
+function processColumnValue(dbColumnDef, value, index, type) {
+  if (type.includes('.')) {
+    const typeParts = type.split('.');
+    
+    // recursion
+    for (const typePart of typeParts) {
+        value = processColumnValue(dbColumnDef, value, index, typePart)
+    }
+
+  } else{
+    // pick form control based on the supplied type
+    switch(type)
     {
         case 'label':            
-            result = `<span>${value}<span>`;
+            value = `<span>${value}<span>`;
             break;
         case 'textbox_save':
 
@@ -71,7 +95,7 @@ function getFormControl(dbColumnDef, value, index) {
 
             id = `${dbColumnDef.column}_${index}`
 
-            result =    `<span class="form-group">
+            value =    `<span class="form-group">
                             <div class="input-group">
                                 <input class="form-control" type="text" value="${value}" id="${id}" data-my-column="${dbColumnDef.column}"  data-my-index="${index}" name="${dbColumnDef.column}">
                                 <span class="input-group-addon"><i class="fa fa-save pointer" onclick="saveData('${id}');"></i></span>
@@ -79,22 +103,33 @@ function getFormControl(dbColumnDef, value, index) {
                         <span>`;
             break;
         case 'url':
-            result = `<span><a href="${value}" target="_blank">${value}</a><span>`;
+            value = `<span><a href="${value}" target="_blank">${value}</a><span>`;
+            break;
+        case 'url_http_https':
+            value = `<span>
+                        <a href="http://${value}" target="_blank">
+                            <i class="fa fa-lock-open "></i>
+                        </a>
+                        /
+                        <a href="https://${value}" target="_blank">
+                            <i class="fa fa-lock "></i>
+                        </a>
+                    <span>`;
             break;
         case 'device_name_mac':
-            result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${getNameByMacAddress(value)}</a><span>`;
+            value = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${getNameByMacAddress(value)}</a><span>`;
             break;
         case 'device_mac':
-            result = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
+            value = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
             break;
         case 'device_ip':
-            result = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
+            value = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
             break;
         case 'threshold': 
             $.each(dbColumnDef.options, function(index, obj) {
-                if(Number(value) < obj.maximum && result == '')
+                if(Number(value) < obj.maximum && value == '')
                 {
-                    result = `<div style="background-color:${obj.hexColor}">${value}</div>`
+                    value = `<div style="background-color:${obj.hexColor}">${value}</div>`
                     // return;
                 }
             });
@@ -103,16 +138,34 @@ function getFormControl(dbColumnDef, value, index) {
             $.each(dbColumnDef.options, function(index, obj) {
                 if(value == obj.equals)
                 {
-                    result = `<span title="${value}">${obj.replacement}</span>`
+                    value = `<span title="${value}">${obj.replacement}</span>`
                 }
             });
             break;
+        case 'regex':
+            for (const option of dbColumnDef.options) {
+                if (option.type === type) {
+                
+                    const regexPattern = new RegExp(option.param);
+                    const match = value.match(regexPattern);
+                    if (match) {
+                        // Return the first match
+                        value =  match[0];
+                    }
+                }
+            }
+            break;
+            
         default:
-            result = value;           
+            value = value + `<div style='text-align:center' title="${getString("Plugins_no_control")}"><i class='fa-solid fa-circle-question'></i></div>` ;           
     }
+  }
 
-    return result;
+  // Default behavior if no match is found
+  return value;
 }
+
+
 
 // -----------------------------------------------------------------------------
 // Update the corresponding DB column and entry
@@ -274,7 +327,7 @@ function generateTabs()
 
                     for(var j=0;j<colDefinitions.length;j++) 
                     {   
-                        clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"]) +'</td>'
+                        clm += '<td>'+ getFormControl(colDefinitions[j], pluginObjects[i][colDefinitions[j].column], pluginObjects[i]["Index"], colDefinitions, pluginObjects[i]) +'</td>'
                     }                                   
                     obRows += `<tr data-my-index="${pluginObjects[i]["Index"]}" >${clm}</tr>`
                     obCount++;

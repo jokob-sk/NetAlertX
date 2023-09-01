@@ -23,7 +23,7 @@ The system continuously scans the network for, **New devices**, **New connection
   - **Pi-hole - DHCP leases**. Import of devices from the PiHole dhcp.leases file
   - **Generic DHCP leases**. Import of devices from the generic dhcp.leases file
   - **UNIFI import**. Import of devices from the UNIFI controller
-  - **SNMP-enabled router import**. Import of devices from an SNMP enabled router
+  - **SNMP-enabled router import**. Import of devices from an SNMP-enabled router
 
 ## 🧩 Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)

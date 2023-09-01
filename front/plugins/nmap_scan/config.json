@@ -111,7 +111,7 @@
             "column": "Object_SecondaryID",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "url",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
@@ -193,15 +193,20 @@
         },        
         {
             "column": "Watched_Value3",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
+            "css_classes": "col-sm-1",
+            "show": true,
+            "type": "regex.url_http_https",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "type": "regex",
+                    "param": "([\\d.:]+)"
+                }          
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code":"en_us",
-                "string" : "N/A"
+                "string" : "HTTP/s links"
                 },
 	    	    {
                 "language_code":"es_es",
