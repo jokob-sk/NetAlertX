@@ -17,17 +17,13 @@ Scans for devices connected to your WIFI / LAN and alerts you if new and unknown
 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) | 🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)
 
 ## 🔍 Scan Methods
-The system continuously scans the network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Scanning methods are:
-  - **Method 1: arp-scan**. The arp-scan system utility is used to search
-        for devices on the network using arp frames.
-  - **Method 2: Pi-hole**. This method is optional and complementary to
-        method 1. If the Pi-hole DNS server is active, Pi.Alert examines its
-        activity looking for active devices using DNS that have not been
-        detected by method 1.
-  - **Method 3. dnsmasq**. This method is optional and complementary to the
-        previous methods. If the DHCP server dnsmasq is active, Pi.Alert
-        examines the DHCP leases (addresses assigned) to find active devices
-        that were not discovered by the other methods.
+The system continuously scans the network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include:
+  - **arp-scan**. The arp-scan system utility is used to search for devices on the network using arp frames.
+  - **Pi-hole - DB import**. The PiHole database is used as a source for events for devices        
+  - **Pi-hole - DHCP leases**. Import of devices from the PiHole dhcp.leases file
+  - **Generic DHCP leases**. Import of devices from the generic dhcp.leases file
+  - **UNIFI import**. Import of devices from the UNIFI controller
+  - **SNMP-enabled router import**. Import of devices from an SNMP enabled router
 
 ## 🧩 Integrations 
    - [Apprise](https://hub.docker.com/r/caronc/apprise), [Pushsafer](https://www.pushsafer.com/), [NTFY](https://ntfy.sh/)
