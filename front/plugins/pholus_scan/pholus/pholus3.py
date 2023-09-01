@@ -18,9 +18,7 @@ from scapy.utils import PcapWriter
 sys.setrecursionlimit(30000)
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#supress Scapy warnings`
 
-runPath = os.path.dirname(os.path.abspath(__file__))
-runPathTmp  = runPath + "/.."  
-logPath     = runPathTmp + '/front/log'
+logPath     = '/home/pi/pialert/front/log'
 # DEBUG
 isDebug = False
 

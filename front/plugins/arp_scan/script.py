@@ -32,7 +32,7 @@ def main():
 
     # Assuming Plugin_Objects is a class or function that reads data from the RESULT_FILE
     # and returns a list of objects called 'devices'.
-    devices = Plugin_Objects(RESULT_FILE)
+    plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
     mylog('verbose', ['[ARP Scan] In script ']) 
@@ -69,7 +69,7 @@ def main():
 
 
     for device in unique_devices:
-        devices.add_object(
+        plugin_objects.add_object(
             primaryId=device['mac'],  # MAC (Device Name)
             secondaryId=device['ip'],  # IP Address            
             watched1=device['ip'],    # Device Name
@@ -79,7 +79,7 @@ def main():
             extra='arp-scan', 
             foreignKey="")
 
-    devices.write_result_file()
+    plugin_objects.write_result_file()
 
     return 0
 

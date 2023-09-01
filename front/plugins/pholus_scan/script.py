@@ -37,7 +37,7 @@ def main():
 
     # Assuming Plugin_Objects is a class or function that reads data from the RESULT_FILE
     # and returns a list of objects called 'devices'.
-    plug_objects = Plugin_Objects(RESULT_FILE)
+    plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
     mylog('verbose',['[PHOLUS] In script'])
@@ -78,7 +78,7 @@ def main():
 
 
     for entry in all_entries:
-        plug_objects.add_object(
+        plugin_objects.add_object(
             # "Info", "Time", "MAC", "IP_v4_or_v6", "Record_Type", "Value"
             primaryId   = entry[2],
             secondaryId = entry[3],
@@ -89,7 +89,7 @@ def main():
             extra       = entry[0],
             foreignKey  = entry[2])
 
-    plug_objects.write_result_file()
+    plugin_objects.write_result_file()
 
     return 0
 
@@ -124,8 +124,8 @@ def execute_pholus_scan(userSubnets, timeoutSec):
         result_list += pholus_output_list
 
     
-    mylog('verbose', ["List len:", len(result_list)])  
-    mylog('verbose',["List:", result_list])  
+    mylog('verbose', ["[PHOLUS] Pholus output number of entries:", len(result_list)])  
+    mylog('verbose', ["[PHOLUS] List:", result_list])  
 
     return result_list
 

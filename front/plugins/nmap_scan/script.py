@@ -34,7 +34,7 @@ def main():
 
     # Plugin_Objects is a class that reads data from the RESULT_FILE
     # and returns a list of results.
-    results = Plugin_Objects(RESULT_FILE)
+    plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
     mylog('debug', ['[NMAP Scan] In script ']) 
@@ -55,7 +55,7 @@ def main():
 
     for entry in entries:        
 
-        results.add_object(
+        plugin_objects.add_object(
             primaryId   = entry.mac,    # MAC (Device Name)
             secondaryId = entry.port,   # IP Address (always 0.0.0.0)
             watched1    = entry.state,  # Device Name
@@ -67,7 +67,7 @@ def main():
         )
 
     # generate last_result.log file
-    results.write_result_file()
+    plugin_objects.write_result_file()
         
 #-------------------------------------------------------------------------------
 

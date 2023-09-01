@@ -227,8 +227,8 @@
         } ,       
         {
             "column": "Extra",
-            "css_classes": "col-sm-3",
-            "show": true,
+            "css_classes": "col-sm-1",
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -262,7 +262,7 @@
         {
             "column": "ForeignKey",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "device_mac",            
             "default_value":"",
             "options": [],

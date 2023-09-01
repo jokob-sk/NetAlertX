@@ -27,11 +27,11 @@ def main():
 
     mylog('verbose', ['[UNDIS] In script'])     
 
-    UNDIS_devices = Plugin_Objects( RESULT_FILE )
+    plugin_objects = Plugin_Objects( RESULT_FILE )
 
     if values.devices:
         for fake_dev in values.devices.split('=')[1].split(','):
-            UNDIS_devices.add_object(
+            plugin_objects.add_object(
                 primaryId=fake_dev,    # MAC (Device Name)
                 secondaryId="0.0.0.0", # IP Address (always 0.0.0.0)
                 watched1=fake_dev,     # Device Name
@@ -41,7 +41,7 @@ def main():
                 extra="",
                 foreignKey="")
 
-    UNDIS_devices.write_result_file()
+    plugin_objects.write_result_file()
 
     return 0
 
