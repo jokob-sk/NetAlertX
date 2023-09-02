@@ -17,9 +17,9 @@
 - [set_password (SETPWD)](/front/plugins/set_password/)
 - [nmap_scan (NMAP)](/front/plugins/nmap_scan/) 
 
-### SQL query based plugins
+### SQL query-based plugins
 
-- N/A, but the External SQLite based plugins work very similar
+- No example available, but the External SQLite based plugins work very similar
 
 
 ### template based plugins
@@ -610,7 +610,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | `device_name_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name. |
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
-| `url_http_https` | Generates towo links with the `https` and `http` prefix as lock icons. |
+| `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |
 
 
 > [!NOTE] 

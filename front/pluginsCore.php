@@ -98,7 +98,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
             value =    `<span class="form-group">
                             <div class="input-group">
                                 <input class="form-control" type="text" value="${value}" id="${id}" data-my-column="${dbColumnDef.column}"  data-my-index="${index}" name="${dbColumnDef.column}">
-                                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="saveData('${id}');"></i></span>
+                                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="genericSaveData('${id}');"></i></span>
                             </div>
                         <span>`;
             break;
@@ -106,6 +106,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
             value = `<span><a href="${value}" target="_blank">${value}</a><span>`;
             break;
         case 'url_http_https':
+            
             value = `<span>
                         <a href="http://${value}" target="_blank">
                             <i class="fa fa-lock-open "></i>
@@ -143,14 +144,16 @@ function processColumnValue(dbColumnDef, value, index, type) {
             });
             break;
         case 'regex':
+            
             for (const option of dbColumnDef.options) {
                 if (option.type === type) {
-                
+                    console.log(value)
                     const regexPattern = new RegExp(option.param);
                     const match = value.match(regexPattern);
                     if (match) {
                         // Return the first match
                         value =  match[0];
+                        console.log(value)
                     }
                 }
             }
@@ -169,10 +172,14 @@ function processColumnValue(dbColumnDef, value, index, type) {
 
 // -----------------------------------------------------------------------------
 // Update the corresponding DB column and entry
-function saveData (id) {
+function genericSaveData (id) {
     columnName  = $(`#${id}`).attr('data-my-column')
     index  = $(`#${id}`).attr('data-my-index')
     columnValue = $(`#${id}`).val()
+
+    console.log(columnName)
+    console.log(index)
+    console.log(columnValue)
 
     $.get(`php/server/dbHelper.php?action=update&dbtable=Plugins_Objects&columnName=Index&id=${index}&columns=UserData&values=${columnValue}`, function(data) {
     

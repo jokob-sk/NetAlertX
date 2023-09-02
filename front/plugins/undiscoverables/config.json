@@ -226,7 +226,7 @@
         "mapped_to_column": "cur_MAC", 
         "css_classes": "col-sm-2",
         "show": true,
-        "type": "device_mac",            
+        "type": "label",            
         "default_value":"",
         "options": [],
         "localized": ["name"],
@@ -291,6 +291,23 @@
             "language_code":"es_es",
             "string" : "Cambiado"
             }]
-    }        
+    },
+    {
+      "column": "ForeignKey",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "device_mac",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "MAC"
+          },
+          {
+          "language_code":"es_es",
+          "string" : "MAC"
+          }]
+      }        
   ]
 }
