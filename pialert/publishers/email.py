@@ -42,6 +42,9 @@ def send (msg: noti_struc):
         # Send mail
         failedAt = print_log('Trying to open connection to ' + str(conf.SMTP_SERVER) + ':' + str(conf.SMTP_PORT))
 
+        # Set a timeout for the SMTP connection (in seconds)
+        smtp_timeout = 30
+
         if conf.SMTP_FORCE_SSL:
             failedAt = print_log('SMTP_FORCE_SSL == True so using .SMTP_SSL()')
             if conf.SMTP_PORT == 0:
@@ -49,7 +52,7 @@ def send (msg: noti_struc):
                 smtp_connection = smtplib.SMTP_SSL(conf.SMTP_SERVER)
             else:
                 failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER, SMTP_PORT)')
-                smtp_connection = smtplib.SMTP_SSL(conf.SMTP_SERVER, conf.SMTP_PORT)
+                smtp_connection = smtplib.SMTP_SSL(conf.SMTP_SERVER, conf.SMTP_PORT, timeout=smtp_timeout)
 
         else:
             failedAt = print_log('SMTP_FORCE_SSL == False so using .SMTP()')

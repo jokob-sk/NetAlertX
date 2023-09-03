@@ -127,13 +127,19 @@ function processColumnValue(dbColumnDef, value, index, type) {
             value = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
             break;
         case 'threshold': 
+
+            valueTmp = ''
+
             $.each(dbColumnDef.options, function(index, obj) {
-                if(Number(value) < obj.maximum && value == '')
+                if(Number(value) < obj.maximum && valueTmp == '') 
                 {
-                    value = `<div style="background-color:${obj.hexColor}">${value}</div>`
+                    valueTmp = `<div style="background-color:${obj.hexColor}">${value}</div>`
                     // return;
                 }
             });
+
+            value = valueTmp;
+
             break;
         case 'replace': 
             $.each(dbColumnDef.options, function(index, obj) {
