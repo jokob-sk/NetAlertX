@@ -594,9 +594,10 @@
               <?php
               if ($_REQUEST['mac'] == 'Internet') {
               ?>
-                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Internet_Info_Title');?></h4>
+                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Tools_Internet_Info_Title');?></h4>
+		<h5 class=""><?= lang('DevDetail_Tab_Tools_Internet_Info_Description');?></h5>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Internet_Info_Start');?></button>
+                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Tools_Internet_Info_Start');?></button>
                   <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
                 </div>
                    
@@ -619,6 +620,7 @@
               ?>
               
               </div>
+
 
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
