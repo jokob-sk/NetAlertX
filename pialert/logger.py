@@ -48,9 +48,14 @@ def file_print (*args):
         result += str(arg)
     print(result)
 
-    file = open(logPath + "/pialert.log", "a") 
-    file.write(result + '\n')
-    file.close()
+    try:
+        # Set a timeout for opening the file (in seconds)
+        file_open_timeout = 10
+
+        with open(os.path.join(logPath, "pialert.log"), "a", timeout=file_open_timeout) as file:
+            file.write(result + '\n')
+    except Exception as e:
+        print(f"Error opening/writing to the file: {e}")
 
 #-------------------------------------------------------------------------------
 def print_log (pText):
