@@ -2,6 +2,8 @@
 import sys
 import io
 import datetime
+import threading
+import time
 
 import conf
 from const import *
@@ -45,17 +47,60 @@ def file_print (*args):
     result = timeNowTZ().strftime ('%H:%M:%S') + ' '    
        
     for arg in args:                
-        result += str(arg)
+        result += str(arg)        
     print(result)
 
-    try:
-        # Set a timeout for opening the file (in seconds)
-        file_open_timeout = 10
+    # try:
+    #     # # Open the file
+    #     # file = open(logPath + "/pialert.log", "a")
 
-        with open(os.path.join(logPath, "pialert.log"), "a", timeout=file_open_timeout) as file:
-            file.write(result + '\n')
+    #     # # Write to the file
+    #     # file.write(result + '\n')
+
+    #     # # Close the file
+    #     # file.close()
+
+    append_to_file_with_timeout(logPath + "/pialert.log", result + '\n', 5)
+
+    # except Exception as e:
+    #     # Handle the exception, e.g., log it or print an error message
+    #     print(f"Error opening or writing to the file: {e}")
+
+#-------------------------------------------------------------------------------
+# Function to append to the file
+def append_to_file(file_path, data):
+    try:
+        # Open the file for appending
+        file = open(file_path, "a")
+        
+        # Write the data to the file
+        file.write(data)
+        
+        # Close the file
+        file.close()
     except Exception as e:
-        print(f"Error opening/writing to the file: {e}")
+        print(f"Error appending to file: {e}")
+
+#-------------------------------------------------------------------------------
+# Function to append to the file with a timeout
+def append_to_file_with_timeout(file_path, data, timeout):
+    # Create a thread for appending to the file
+    append_thread = threading.Thread(target=append_to_file, args=(file_path, data))
+    
+    # Start the thread
+    append_thread.start()
+    
+    # Wait for the thread to complete or timeout
+    append_thread.join(timeout)
+    
+    # If the thread is still running, it has exceeded the timeout
+    if append_thread.is_alive():
+        append_thread.join()  # Optionally, you can force it to terminate
+        
+        # Handle the timeout here, e.g., log an error
+        print("Appending to file timed out")
+
+
 
 #-------------------------------------------------------------------------------
 def print_log (pText):
