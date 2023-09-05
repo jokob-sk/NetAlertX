@@ -210,7 +210,7 @@
                 },
 	    	    {
                 "language_code":"es_es",
-                "string" : "N/A"
+                "string" : "Enlaces HTTP/s"
                 }]
         } ,
         {
@@ -261,7 +261,7 @@
                 },
 	    	    {
                 "language_code":"es_es",
-                "string" : "N/A"
+                "string" : "Datos de usuario"
                 }]
         },       
         {
@@ -357,7 +357,11 @@
         "description": [{
             "language_code":"en_us",
             "string" : "This calls the script responsible for executing the NMAP scan."
-        }
+        },
+	{
+            "language_code":"es_es",
+            "string" : "Esto llama al script responsable de ejecutar el escaneo NMAP."
+        }		
         ]
     },
     {
@@ -428,7 +432,11 @@
             {
             "language_code": "en_us",
             "string": "Max run time per device in seconds."
-            }
+            },
+            {
+            "language_code": "es_es",
+            "string": "Tiempo máximo de ejecución por dispositivo en segundos."
+            }		
         ]
         },
         {
