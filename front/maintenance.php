@@ -695,7 +695,7 @@ function askExportCSV() {
 function ExportCSV()
 { 
   // Execute
-  openInNewTab(window.location.origin + "/php/server/devices.php?action=ExportCSV")
+  openInNewTab("php/server/devices.php?action=ExportCSV")
 }
 
 // Import CSV
@@ -707,7 +707,7 @@ function askImportCSV() {
 function ImportCSV()
 {   
   // Execute
-  $.get('/php/server/devices.php?action=ImportCSV', function(msg) {
+  $.get('php/server/devices.php?action=ImportCSV', function(msg) {
     showMessage (msg);
   });
 }
