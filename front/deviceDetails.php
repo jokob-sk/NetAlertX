@@ -596,6 +596,7 @@
               ?>
                 <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Tools_Internet_Info_Title');?></h4>
 		<h5 class=""><?= lang('DevDetail_Tab_Tools_Internet_Info_Description');?></h5>
+		<br>
                 <div style="width:100%; text-align: center; margin-bottom: 50px;">
                   <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Tools_Internet_Info_Start');?></button>
                   <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
@@ -618,9 +619,37 @@
               <?php  
               }
               ?>
-              
-              </div>
 
+              <?php
+              if ($_REQUEST['mac'] == 'Internet') {
+              ?>
+                <h4 class=""><i class="fa-solid fa-gauge-high"></i> <?= lang('DevDetail_Tab_Tools_Speedtest_Title');?></h4>
+		<h5 class=""><?= lang('DevDetail_Tab_Tools_Speedtest_Description');?></h5>
+		<br>				
+                <div style="width:100%; text-align: center; margin-bottom: 50px;">
+                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Tab_Tools_Speedtest_Start');?></button>
+                  <br><div id="speedtestoutput" style="margin-top: 10px;"></div>
+                </div>
+                   
+                  <script>
+                  function speedtestcli() {
+                    $( "#speedtestoutput" ).empty();
+                    $.ajax({
+                      method: "POST",
+                      url: "./php/server/speedtestcli.php",
+                      beforeSend: function() { $('#speedtestoutput').addClass("ajax_scripts_loading"); },
+                      complete: function() { $('#speedtestoutput').removeClass("ajax_scripts_loading"); },
+                      success: function(data, textStatus) {
+                          $("#speedtestoutput").html(data);    
+                      }
+                    })
+                  }
+                  </script>
+              <?php  
+              }
+              ?>
+		      
+              </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPresence">
