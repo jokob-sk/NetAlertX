@@ -707,7 +707,7 @@ function askImportCSV() {
 function ImportCSV()
 {   
   // Execute
-  $.get('/php/server/devices.php?action=ImportCSV', function(msg) {
+  $.get('php/server/devices.php?action=ImportCSV', function(msg) {
     showMessage (msg);
   });
 }
