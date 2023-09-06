@@ -89,6 +89,8 @@ $system_namesystem = shell_exec("uname -o");
 $system_full = shell_exec("uname -a");
 $system_architecture = shell_exec("uname -m");
 $load_average = sys_getloadavg();
+// Count processes
+$system_process_count = shell_exec("ps -e --no-headers | wc -l");
 //Date & Time
 $date = new DateTime();
 $formatted_date = $date->format('l, F j, Y H:i:s');
@@ -214,6 +216,10 @@ echo '<div class="box box-solid">
                   <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_System_AVG') . '</div>
                   <div class="col-sm-9 sysinfo_system_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
                 </div>
+		<div class="row">
+  		  <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_Running_Processes') . '</div>
+		  <div class="col-sm-9 sysinfo_system_b">' . $system_process_count . '</div>
+		</div>		
             </div>
       </div>';
 
