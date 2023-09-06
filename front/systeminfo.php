@@ -29,12 +29,12 @@
     <section class="content">	
 
 <?php
-//General
+//General stats
 // Date & Time
 $date = new DateTime();
-$formatted_date = $date->format('l, F j, Y H:i:s');
-$formatted_date2 = $date->format('d/m/Y H:i:s');
-$formatted_date3 = $date->format('Y/m/d H:i:s');
+$formatted_date = $date->format('l, F j, Y H:i:s'); // Get date
+$formatted_date2 = $date->format('d/m/Y H:i:s'); // Get date2
+$formatted_date3 = $date->format('Y/m/d H:i:s'); // Get date3
 //System stats
 // OS-Version
 $os_version = '';
