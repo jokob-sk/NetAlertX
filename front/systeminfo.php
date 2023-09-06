@@ -365,15 +365,17 @@ echo '<div class="box box-solid">
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 	if (stristr($hdd_devices[$x], '/dev/')) {
-		if ($hdd_devices_total[$x] == 0) {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_total = trim($temp_total);}
-		if ($hdd_devices_used[$x] == 0) {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
-		if ($hdd_devices_free[$x] == 0) {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
+		if (!stristr($hdd_devices[$x], '/loop')) {
+		if ($hdd_devices_total[$x] == 0 || $hdd_devices_total[$x] == '') {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_total = trim($temp_total);}
+		if ($hdd_devices_used[$x] == 0 || $hdd_devices_used[$x] == '') {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
+		if ($hdd_devices_free[$x] == 0 || $hdd_devices_free[$x] == '') {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
 		echo '<div class="row">';
 		echo '<div class="col-sm-4 sysinfo_storage_usage_a">"' . lang('Systeminfo_Storage_Usage_Mount') . ' ' . $hdd_devices_mount[$x] . '"</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Total') . ' ' . $temp_total . ' GB</div>';
 		echo '<div class="col-sm-3 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Used') . ' ' . $temp_used . ' GB (' . $hdd_devices_percent[$x]. ')</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Free') . ' ' . $temp_free . ' GB</div>';
 		echo '</div>';
+		}
 	}
 }
 #echo '<br>' . $lang['SysInfo_storage_note'];
