@@ -30,6 +30,12 @@
 
 <?php
 //General
+// Date & Time
+$date = new DateTime();
+$formatted_date = $date->format('l, F j, Y H:i:s');
+$formatted_date2 = $date->format('d/m/Y H:i:s');
+$formatted_date3 = $date->format('Y/m/d H:i:s');
+//System stats
 // OS-Version
 $os_version = '';
 // Raspbian
@@ -39,14 +45,19 @@ if ($os_version == '') {$os_version = exec('uname -o');}
 //$os_version_arr = explode("\n", trim($os_version));
 $stat['os_version'] = str_replace('"', '', str_replace('PRETTY_NAME=', '', $os_version));
 $stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p"));
-//Motherboard stat
+$system_namekernel = shell_exec("uname");
+$system_namesystem = shell_exec("uname -o");
+$system_full = shell_exec("uname -a");
+$system_architecture = shell_exec("uname -m");
+$load_average = sys_getloadavg();
+//Motherboard stats
 $motherboard_name = shell_exec('cat /sys/class/dmi/id/board_name'); // Get the Motherboard name
 $motherboard_manufactured = shell_exec('cat /sys/class/dmi/id/board_vendor'); // Get the Motherboard manufactured
 $motherboard_revision = shell_exec('cat /sys/class/dmi/id/board_version'); // Get the Motherboard revision
 $motherboard_bios = shell_exec('cat /sys/class/dmi/id/bios_version'); // Get the Motherboard BIOS
 $motherboard_biosdate = shell_exec('cat /sys/class/dmi/id/bios_date'); // Get the Motherboard BIOS date
 $motherboard_biosvendor = shell_exec('cat /sys/class/dmi/id/bios_vendor'); // Get the Motherboard BIOS vendor
-//CPU stat
+//CPU stats
 $prevVal = shell_exec("cat /proc/cpuinfo | grep processor");
 $prevArr = explode("\n", trim($prevVal));
 $stat['cpu'] = sizeof($prevArr);
@@ -83,19 +94,19 @@ $total_memorymb = trim($total_memorymb);
 $total_memorymb = number_format($total_memorymb, 0, '.', '.');
 $mem_used = round(memory_get_usage() / 1048576 * 100, 2);
 $memory_usage_percent = round(($mem_used / $total_memorymb), 2);
-//System
-$system_namekernel = shell_exec("uname");
-$system_namesystem = shell_exec("uname -o");
-$system_full = shell_exec("uname -a");
-$system_architecture = shell_exec("uname -m");
-$load_average = sys_getloadavg();
-// Count processes
-$system_process_count = shell_exec("ps -e --no-headers | wc -l");
-//Date & Time
-$date = new DateTime();
-$formatted_date = $date->format('l, F j, Y H:i:s');
-$formatted_date2 = $date->format('d/m/Y H:i:s');
-$formatted_date3 = $date->format('Y/m/d H:i:s');
+//HDD stats
+$hdd_result = shell_exec("df | awk '{print $1}'");
+$hdd_devices = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $2}'");
+$hdd_devices_total = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $3}'");
+$hdd_devices_used = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $4}'");
+$hdd_devices_free = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $5}'");
+$hdd_devices_percent = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $6}'");
+$hdd_devices_mount = explode("\n", trim($hdd_result));
 //Network stats
 // Check Server name
 if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = lang('Systeminfo_Network_Server_Name_String'); }
@@ -112,19 +123,6 @@ $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $2}'"
 $net_interfaces_rx = explode("\n", trim($network_result));
 $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $10}'");
 $net_interfaces_tx = explode("\n", trim($network_result));
-//HDD stats
-$hdd_result = shell_exec("df | awk '{print $1}'");
-$hdd_devices = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $2}'");
-$hdd_devices_total = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $3}'");
-$hdd_devices_used = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $4}'");
-$hdd_devices_free = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $5}'");
-$hdd_devices_percent = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $6}'");
-$hdd_devices_mount = explode("\n", trim($hdd_result));
 //USB devices
 $usb_result = shell_exec("lsusb");
 $usb_devices_mount = explode("\n", trim($usb_result));
