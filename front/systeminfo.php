@@ -50,6 +50,7 @@ $system_namesystem = shell_exec("uname -o");
 $system_full = shell_exec("uname -a");
 $system_architecture = shell_exec("uname -m");
 $load_average = sys_getloadavg();
+$system_process_count = shell_exec("ps -e --no-headers | wc -l"); // Count processes
 //Motherboard stats
 $motherboard_name = shell_exec('cat /sys/class/dmi/id/board_name'); // Get the Motherboard name
 $motherboard_manufactured = shell_exec('cat /sys/class/dmi/id/board_vendor'); // Get the Motherboard manufactured
