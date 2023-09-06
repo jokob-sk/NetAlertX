@@ -44,12 +44,12 @@ if ($os_version == '') {$os_version = exec('cat /etc/os-release | grep PRETTY_NA
 if ($os_version == '') {$os_version = exec('uname -o');}
 //$os_version_arr = explode("\n", trim($os_version));
 $stat['os_version'] = str_replace('"', '', str_replace('PRETTY_NAME=', '', $os_version));
-$stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p"));
-$system_namekernel = shell_exec("uname");
-$system_namesystem = shell_exec("uname -o");
-$system_full = shell_exec("uname -a");
-$system_architecture = shell_exec("uname -m");
-$load_average = sys_getloadavg();
+$stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p")); // Get system uptime
+$system_namekernel = shell_exec("uname");  // Get system name kernel 
+$system_namesystem = shell_exec("uname -o");  // Get name system
+$system_full = shell_exec("uname -a");  // Get system full
+$system_architecture = shell_exec("uname -m"); // Get system Architecture
+$load_average = sys_getloadavg(); // Get load average
 $system_process_count = shell_exec("ps -e --no-headers | wc -l"); // Count processes
 //Motherboard stats
 $motherboard_name = shell_exec('cat /sys/class/dmi/id/board_name'); // Get the Motherboard name
