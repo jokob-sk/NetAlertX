@@ -410,7 +410,7 @@
 	"Systeminfo_System_AVG": "AVG laden:",
 	"Systeminfo_System_Kernel": "Kernel:",
 	"Systeminfo_System_OSVersion": "Betriebssystem:",
-	"Systeminfo_System_Running_Processes" : "Laufende Prozesse",	    
+	"Systeminfo_System_Running_Processes" : "Laufende Prozesse:",	    
 	"Systeminfo_System_System": "System:",
 	"Systeminfo_System_Uname": "Uname:",
 	"Systeminfo_System_Uptime": "Betriebszeit:",    
