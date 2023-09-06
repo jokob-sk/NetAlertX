@@ -642,6 +642,7 @@
         "Systeminfo_System_AVG": "Cargar promedio:",
         "Systeminfo_System_Kernel": "Núcleo:",
         "Systeminfo_System_OSVersion": "Sistema Operativo:",
+        "Systeminfo_System_Running_Processes" : "Procesos corriendo",        
         "Systeminfo_System_System": "Sistema:",
         "Systeminfo_System_Uname": "Uname:",
         "Systeminfo_System_Uptime": "Tiempo de actividad:",        
