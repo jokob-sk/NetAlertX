@@ -5,6 +5,7 @@ import pathlib
 import subprocess
 import argparse
 import os
+import sys
 
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 

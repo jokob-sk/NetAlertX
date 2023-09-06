@@ -507,6 +507,32 @@ function getNameByMacAddress(macAddress) {
 }
 
 // -----------------------------------------------------------------------------
+
+function initDeviceListAll()
+{ 
+
+  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
+
+      rawData = JSON.parse (data)      
+
+      devicesListAll = rawData["data"].map(item =>  { return {
+                                                              "name":item[0], 
+                                                              "type":item[2], 
+                                                              "icon":item[3], 
+                                                              "mac":item[11], 
+                                                              "parentMac":item[14], 
+                                                              "rowid":item[13], 
+                                                              "status":item[10] 
+                                                              }})
+
+      setCache('devicesListAll', JSON.stringify(devicesListAll))
+  });
+
+}
+
+var devicesListAll      = [];   // this will contain a list off all devices 
+
+// -----------------------------------------------------------------------------
 function isEmpty(value)
 {
   return emptyArr.includes(value)
@@ -515,6 +541,7 @@ function isEmpty(value)
 // initialize
 cacheSettings()
 cacheStrings()
+initDeviceListAll()
 
 
 console.log("init pialert_common.js")

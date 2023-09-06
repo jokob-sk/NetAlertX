@@ -3,6 +3,12 @@
 
 import subprocess
 from datetime import datetime
+
+import sys
+
+sys.path.append("/home/pi/pialert/front/plugins")
+sys.path.append('/home/pi/pialert/pialert') 
+
 from plugin_helper import Plugin_Objects, Plugin_Object
 from logger import mylog
 

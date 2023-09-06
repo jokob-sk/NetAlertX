@@ -266,8 +266,11 @@
           }]
     },
     {
-        "column": "Extra",
+        "column": "Dummy",
         "mapped_to_column": "cur_ScanMethod", 
+        "mapped_to_column_data": {
+          "value": "PIHOLE"                
+        }, 
         "css_classes": "col-sm-2",
         "show": true,
         "type": "label",            

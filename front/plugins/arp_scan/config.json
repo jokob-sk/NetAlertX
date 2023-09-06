@@ -267,22 +267,25 @@
             }]
     } ,
     {
-        "column": "Extra",
-        "mapped_to_column": "cur_ScanMethod", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Scan method"
-            },
-			{
-            "language_code":"es_es",
-            "string" : "Método de escaneado"
-            }]
+      "column": "Dummy",
+      "mapped_to_column": "cur_ScanMethod", 
+      "mapped_to_column_data": {
+        "value": "arp-scan"                
+      }, 
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Scan method"
+          },
+          {
+          "language_code":"es_es",
+          "string" : "Método de escaneo"
+          }]
     } ,
     {
       "column": "DateTimeCreated",

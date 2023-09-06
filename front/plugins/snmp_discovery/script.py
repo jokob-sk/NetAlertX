@@ -79,7 +79,7 @@ def main():
                             
                             plugin_objects.add_object(
                                 primaryId=macAddress,
-                                secondaryId=ipAddress,
+                                secondaryId=ipAddress.strip(), # Remove leading/trailing spaces from IP
                                 watched1='(unknown)',
                                 watched2=snmpwalkArgs[6],  # router IP
                                 extra=line,

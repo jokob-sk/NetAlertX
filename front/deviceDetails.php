@@ -795,27 +795,7 @@ if ($ENABLED_DARKMODE === True) {
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
   var devicesListAll      = [];   // this will contain a list off all devices 
 
-
-  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
-
-      rawData = JSON.parse (data)      
-
-      devicesListAll = rawData["data"].map(item =>  { return {
-                                                              "name":item[0], 
-                                                              "type":item[2], 
-                                                              "icon":item[3], 
-                                                              "mac":item[11], 
-                                                              "parentMac":item[14], 
-                                                              "rowid":item[13], 
-                                                              "status":item[10] 
-                                                              }})
-
-      setCache('devicesListAll', JSON.stringify(devicesListAll))
-
-    // Read parameters & Initialize components
-    main();
-  });
-
+  main();
 
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
@@ -831,7 +811,6 @@ if ($ENABLED_DARKMODE === True) {
   var skipRepeatedItems   = ['0 h (notify all events)', '1 h', '8 h', '24 h', '168 h (one week)'];
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
-
 
 
 
