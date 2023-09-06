@@ -216,7 +216,7 @@ echo '<div class="box box-solid">
                   <div class="col-sm-9 sysinfo_system_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
                 </div>
 		<div class="row">
-  		  <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_Running_Processes') . '</div>
+  		  <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_System_Running_Processes') . '</div>
 		  <div class="col-sm-9 sysinfo_system_b">' . $system_process_count . '</div>
 		</div>		
             </div>
