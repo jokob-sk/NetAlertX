@@ -581,7 +581,7 @@
         {
             "function": "version",
             "type": "text",
-            "default_value":"",
+            "default_value":"v4",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
