@@ -467,7 +467,7 @@ echo '<div class="box box-solid">
 
 for ($x = 0; $x < sizeof($net_interfaces); $x++) {
 	$interface_name = str_replace(':', '', $net_interfaces[$x]);
-	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep inet');
+	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep "inet "');
 	$interface_ip_arr = explode(' ', trim($interface_ip_temp));
 
 	if (!isset($interface_ip_arr[1])) {$interface_ip_arr[1] = '--';}
