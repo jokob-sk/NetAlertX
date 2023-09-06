@@ -29,7 +29,13 @@
     <section class="content">	
 
 <?php
-//General
+//General stats
+// Date & Time
+$date = new DateTime();
+$formatted_date = $date->format('l, F j, Y H:i:s'); // Get date
+$formatted_date2 = $date->format('d/m/Y H:i:s'); // Get date2
+$formatted_date3 = $date->format('Y/m/d H:i:s'); // Get date3
+//System stats
 // OS-Version
 $os_version = '';
 // Raspbian
@@ -38,15 +44,21 @@ if ($os_version == '') {$os_version = exec('cat /etc/os-release | grep PRETTY_NA
 if ($os_version == '') {$os_version = exec('uname -o');}
 //$os_version_arr = explode("\n", trim($os_version));
 $stat['os_version'] = str_replace('"', '', str_replace('PRETTY_NAME=', '', $os_version));
-$stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p"));
-//Motherboard stat
+$stat['uptime'] = str_replace('up ', '', shell_exec("uptime -p")); // Get system uptime
+$system_namekernel = shell_exec("uname");  // Get system name kernel 
+$system_namesystem = shell_exec("uname -o");  // Get name system
+$system_full = shell_exec("uname -a");  // Get system full
+$system_architecture = shell_exec("uname -m"); // Get system Architecture
+$load_average = sys_getloadavg(); // Get load average
+$system_process_count = shell_exec("ps -e --no-headers | wc -l"); // Count processes
+//Motherboard stats
 $motherboard_name = shell_exec('cat /sys/class/dmi/id/board_name'); // Get the Motherboard name
 $motherboard_manufactured = shell_exec('cat /sys/class/dmi/id/board_vendor'); // Get the Motherboard manufactured
 $motherboard_revision = shell_exec('cat /sys/class/dmi/id/board_version'); // Get the Motherboard revision
 $motherboard_bios = shell_exec('cat /sys/class/dmi/id/bios_version'); // Get the Motherboard BIOS
 $motherboard_biosdate = shell_exec('cat /sys/class/dmi/id/bios_date'); // Get the Motherboard BIOS date
 $motherboard_biosvendor = shell_exec('cat /sys/class/dmi/id/bios_vendor'); // Get the Motherboard BIOS vendor
-//CPU stat
+//CPU stats
 $prevVal = shell_exec("cat /proc/cpuinfo | grep processor");
 $prevArr = explode("\n", trim($prevVal));
 $stat['cpu'] = sizeof($prevArr);
@@ -83,17 +95,19 @@ $total_memorymb = trim($total_memorymb);
 $total_memorymb = number_format($total_memorymb, 0, '.', '.');
 $mem_used = round(memory_get_usage() / 1048576 * 100, 2);
 $memory_usage_percent = round(($mem_used / $total_memorymb), 2);
-//System
-$system_namekernel = shell_exec("uname");
-$system_namesystem = shell_exec("uname -o");
-$system_full = shell_exec("uname -a");
-$system_architecture = shell_exec("uname -m");
-$load_average = sys_getloadavg();
-//Date & Time
-$date = new DateTime();
-$formatted_date = $date->format('l, F j, Y H:i:s');
-$formatted_date2 = $date->format('d/m/Y H:i:s');
-$formatted_date3 = $date->format('Y/m/d H:i:s');
+//HDD stats
+$hdd_result = shell_exec("df | awk '{print $1}'");
+$hdd_devices = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $2}'");
+$hdd_devices_total = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $3}'");
+$hdd_devices_used = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $4}'");
+$hdd_devices_free = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $5}'");
+$hdd_devices_percent = explode("\n", trim($hdd_result));
+$hdd_result = shell_exec("df | awk '{print $6}'");
+$hdd_devices_mount = explode("\n", trim($hdd_result));
 //Network stats
 // Check Server name
 if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = lang('Systeminfo_Network_Server_Name_String'); }
@@ -110,19 +124,6 @@ $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $2}'"
 $net_interfaces_rx = explode("\n", trim($network_result));
 $network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $10}'");
 $net_interfaces_tx = explode("\n", trim($network_result));
-//HDD stats
-$hdd_result = shell_exec("df | awk '{print $1}'");
-$hdd_devices = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $2}'");
-$hdd_devices_total = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $3}'");
-$hdd_devices_used = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $4}'");
-$hdd_devices_free = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $5}'");
-$hdd_devices_percent = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $6}'");
-$hdd_devices_mount = explode("\n", trim($hdd_result));
 //USB devices
 $usb_result = shell_exec("lsusb");
 $usb_devices_mount = explode("\n", trim($usb_result));
@@ -214,6 +215,10 @@ echo '<div class="box box-solid">
                   <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_System_AVG') . '</div>
                   <div class="col-sm-9 sysinfo_system_b">'. $load_average[0] .' '. $load_average[1] .' '. $load_average[2] .'</div>
                 </div>
+		<div class="row">
+  		  <div class="col-sm-3 sysinfo_system_a">' . lang('Systeminfo_System_Running_Processes') . '</div>
+		  <div class="col-sm-9 sysinfo_system_b">' . $system_process_count . '</div>
+		</div>		
             </div>
       </div>';
 
@@ -336,12 +341,8 @@ for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
 	$temp = explode("#", $storage_lsblk_line[$x]);
 	$storage_lsblk_line[$x] = $temp;
 }
-// echo '<pre>';
-// print_r($storage_lsblk_line);
-// echo '</pre>';
 
 for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
-	//if (stristr($hdd_devices[$x], '/dev/')) {
 	echo '<div class="row">';
 	if (preg_match('~[0-9]+~', $storage_lsblk_line[$x][0])) {
 		echo '<div class="col-sm-4 sysinfo_storage_a">"' . lang('Systeminfo_Storage_Mount') . ' ' . $storage_lsblk_line[$x][3] . '"</div>';
@@ -352,7 +353,6 @@ for ($x = 0; $x < sizeof($storage_lsblk_line); $x++) {
 	echo '<div class="col-sm-2 sysinfo_storage_b">' . lang('Systeminfo_Storage_Size') . ' ' . $storage_lsblk_line[$x][1] . '</div>';
 	echo '<div class="col-sm-2 sysinfo_storage_b">' . lang('Systeminfo_Storage_Type') . ' ' . $storage_lsblk_line[$x][2] . '</div>';
 	echo '</div>';
-	//}
 }
 echo '      </div>
       </div>';
@@ -365,15 +365,17 @@ echo '<div class="box box-solid">
             <div class="box-body">';
 for ($x = 0; $x < sizeof($hdd_devices); $x++) {
 	if (stristr($hdd_devices[$x], '/dev/')) {
-		if ($hdd_devices_total[$x] == 0) {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_total = trim($temp_total);}
-		if ($hdd_devices_used[$x] == 0) {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
-		if ($hdd_devices_free[$x] == 0) {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
+		if (!stristr($hdd_devices[$x], '/loop')) {
+		if ($hdd_devices_total[$x] == 0 || $hdd_devices_total[$x] == '') {$temp_total = 0;} else { $temp_total = number_format(round(($hdd_devices_total[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_total = trim($temp_total);}
+		if ($hdd_devices_used[$x] == 0 || $hdd_devices_used[$x] == '') {$temp_used = 0;} else { $temp_used = number_format(round(($hdd_devices_used[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_used = trim($temp_total);}
+		if ($hdd_devices_free[$x] == 0 || $hdd_devices_free[$x] == '') {$temp_free = 0;} else { $temp_free = number_format(round(($hdd_devices_free[$x] / 1024 / 1024), 2), 2, ',', '.'); $temp_free = trim($temp_total);}
 		echo '<div class="row">';
 		echo '<div class="col-sm-4 sysinfo_storage_usage_a">"' . lang('Systeminfo_Storage_Usage_Mount') . ' ' . $hdd_devices_mount[$x] . '"</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Total') . ' ' . $temp_total . ' GB</div>';
 		echo '<div class="col-sm-3 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Used') . ' ' . $temp_used . ' GB (' . $hdd_devices_percent[$x]. ')</div>';
 		echo '<div class="col-sm-2 sysinfo_storage_usage_b">' . lang('Systeminfo_Storage_Usage_Free') . ' ' . $temp_free . ' GB</div>';
 		echo '</div>';
+		}
 	}
 }
 #echo '<br>' . $lang['SysInfo_storage_note'];
@@ -462,7 +464,7 @@ echo '<div class="box box-solid">
 
 for ($x = 0; $x < sizeof($net_interfaces); $x++) {
 	$interface_name = str_replace(':', '', $net_interfaces[$x]);
-	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep inet');
+	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep "inet "');
 	$interface_ip_arr = explode(' ', trim($interface_ip_temp));
 
 	if (!isset($interface_ip_arr[1])) {$interface_ip_arr[1] = '--';}
