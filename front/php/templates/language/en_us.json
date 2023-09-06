@@ -648,6 +648,7 @@
 	"Systeminfo_System_AVG": "Load average:",
 	"Systeminfo_System_Kernel": "Kernel:",
 	"Systeminfo_System_OSVersion": "Operating System:",
+	"Systeminfo_System_Running_Processes" : "Running processes",	    
 	"Systeminfo_System_System": "System:",
 	"Systeminfo_System_Uname": "Uname:",
 	"Systeminfo_System_Uptime": "Uptime:",	    
