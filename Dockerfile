@@ -9,7 +9,7 @@ ENV USER=pi USER_ID=1000 USER_GID=1000  PORT=20211
 
 RUN apt-get update \
     && apt-get install --no-install-recommends tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools python3 iproute2 nmap python3-pip zip systemctl usbutils -y \
-    && pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi \
+    && pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi traceroute \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     && apt-get clean autoclean \
     && apt-get autoremove \
