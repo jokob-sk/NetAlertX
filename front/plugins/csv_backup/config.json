@@ -13,14 +13,26 @@
     },
     {
       "language_code": "es_es",
-      "string": "N/A"
-    }	
+      "string": "Backup CSV"
+    },
+    {
+      "language_code": "de_de",
+      "string": "CSV-Sicherung"
+    }    
   ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-save\"></i>"
-    }
+    },
+    {
+      "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-save\"></i>"
+    },
+    {
+      "language_code": "de_de",
+      "string": "<i class=\"fa-solid fa-save\"></i>"
+    }    
   ],
   "description": [
     {
@@ -29,8 +41,12 @@
     },
     {
       "language_code": "es_es",
-      "string": "N/A"
-    }	
+      "string": "Un Plugin para generar automáticamente copias de seguridad de devices.csv."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zum automatischen Generieren von devices.csv-Backups."
+    }	    
   ],
     "params" : [{
       "name"  : "overwrite",
@@ -57,11 +73,23 @@
       },
       {
           "language_code":"es_es",
-          "string" : "Cuándo ejecuta"
+          "string" : "Cuándo ejecutar"
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Wann laufen"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "When the backup should be created. A daily or weekly <code>SCHEDULE</code> is a good option."
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Cuándo se debe crear la copia de seguridad. Un <code>SCHEDULE</code> diario o semanal es una buena opción."
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Wann das Backup erstellt werden soll. Ein täglicher oder wöchentlicher <code>SCHEDULE</code> ist eine gute Option."
       }]
   },    
     {
@@ -78,7 +106,11 @@
         {
           "language_code": "es_es",
           "string": "Comando"
-        }		
+        },
+        {
+          "language_code": "de_de",
+          "string": "Kommando"
+        }	        
       ],
       "description": [
         {
@@ -88,7 +120,11 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar. Esto no se puede cambiar"
-        }		
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }	        
       ]
     },
     {
@@ -104,6 +140,10 @@
       {
           "language_code":"es_es",
           "string" : "Schedule"
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Schedule"
       }],
       "description": [{
           "language_code":"en_us",
@@ -112,6 +152,10 @@
       {
           "language_code":"es_es",
           "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#CSVBCKP_RUN\"><code>CSVBCKP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#CSVBCKP_RUN\"><code>CSVBCKP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
       }]
   },    
     {
@@ -128,7 +172,11 @@
         {
           "language_code": "es_es",
           "string": "Tiempo límite de ejecución"
-        }		
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitüberschreitung"
+        }	        
       ],
       "description": [
         {
@@ -138,7 +186,11 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-        }		
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
+        }        
       ]
     },
     {
@@ -150,10 +202,26 @@
       "name" : [{
           "language_code":"en_us",
           "string" : "Overwrite file"
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Sobrescribir archivo"
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Datei überschreiben"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "If the <code>devices.csv</code> file should be always overwritten. If disabled, the date and time is added to the name."
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Si el archivo <code>devices.csv</code> siempre debe sobrescribirse. Si está deshabilitado, la fecha y la hora se agregan al nombre."
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Wenn die Datei <code>devices.csv</code> immer überschrieben werden soll. Wenn deaktiviert, werden dem Namen Datum und Uhrzeit hinzugefügt."
       }]
     },
     {
@@ -165,10 +233,26 @@
       "name" : [{
           "language_code":"en_us",
           "string" : "File location"
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Ubicación del archivo"
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Speicherort"
       }],
       "description": [{
           "language_code":"en_us",
           "string" : "Where the <code>devices.csv</code> file should be saved. For example <code>/home/pi/pialert/config</code>."
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <código>/home/pi/pialert/config</código>."
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/home/pi/pialert/config</code>."
       }]
   }
   ],
