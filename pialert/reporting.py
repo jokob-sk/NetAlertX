@@ -100,7 +100,11 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
 
     notiStruc = noti_struc(jsn, text, html)
 
-    mylog('debug', ['[Notification] notiStruc:', json.dumps(notiStruc.__dict__, indent=4) ])
+    
+    if not notiStruc.json['data'] and not notiStruc.text and not notiStruc.html:
+        mylog('debug', '[Notification] notiStruc is empty')
+    else:
+        mylog('debug', ['[Notification] notiStruc:', json.dumps(notiStruc.__dict__, indent=4)])
 
     return notiStruc
 

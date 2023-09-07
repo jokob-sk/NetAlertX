@@ -486,6 +486,11 @@ function navigateToDeviceWithIp (ip) {
 
 // -----------------------------------------------------------------------------
 function getNameByMacAddress(macAddress) {
+  return getDeviceDataByMacAddress(macAddress, "name")
+}
+
+// -----------------------------------------------------------------------------
+function getDeviceDataByMacAddress(macAddress, property) {
 
   const sessionDataKey = 'devicesListAll';  
   const sessionData = sessionStorage.getItem(sessionDataKey);
@@ -499,7 +504,39 @@ function getNameByMacAddress(macAddress) {
 
   for (const device of devices) {
       if (device.mac === macAddress) {
-          return device.name;
+          if ( device.mac == 'd2:a4:1a:74:ae:86')
+          {
+            console.log(device)
+          }
+
+          return device[property];
+      }
+  }
+
+  return "Unknown"; // Return a default value if MAC address is not found
+}
+
+// -----------------------------------------------------------------------------
+function getDeviceDataByMacAddress_NEW(macAddress, property) {
+
+  const sessionDataKey = 'devicesListAll_JSON';  
+  const sessionData = sessionStorage.getItem(sessionDataKey);
+
+  if (!sessionData) {
+      console.log(`Session variable "${sessionDataKey}" not found.`);
+      return "Unknown";
+  }
+
+  const devices = JSON.parse(sessionData);
+
+  for (const device of devices) {
+      if (device.mac === macAddress) {
+          if ( device.mac == 'd2:a4:1a:74:ae:86')
+          {
+            console.log(device)
+          }
+
+          return device[property];
       }
   }
 
@@ -531,6 +568,23 @@ function initDeviceListAll()
 }
 
 var devicesListAll      = [];   // this will contain a list off all devices 
+// -----------------------------------------------------------------------------
+
+function initDeviceListAll_JSON()
+{ 
+
+  $.get('/api/table_devices.json', function(data) {    
+    
+    console.log(data)
+
+    devicesListAll_JSON = data["data"]
+
+    setCache('devicesListAll_JSON', JSON.stringify(devicesListAll_JSON))
+  });
+
+}
+
+var devicesListAll_JSON      = [];   // this will contain a list off all devices 
 
 // -----------------------------------------------------------------------------
 function isEmpty(value)
@@ -542,6 +596,7 @@ function isEmpty(value)
 cacheSettings()
 cacheStrings()
 initDeviceListAll()
+initDeviceListAll_JSON()
 
 
 console.log("init pialert_common.js")

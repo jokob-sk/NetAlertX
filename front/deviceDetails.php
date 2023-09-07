@@ -102,13 +102,6 @@
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="fon t-size:16px;">
               <li> <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> <?= lang('DevDetail_Tab_Details');?>  </a></li>
-              <?php
-              if ($_REQUEST['mac'] != 'Internet') {
-              ?>
-              <li> <a id="tabNmap" href="#panNmap" data-toggle="tab"> <?= lang('DevDetail_Tab_Nmap');?> </a></li>
-              <?php
-               }
-              ?>
               <li> <a id="tabTools"    href="#panTools"    data-toggle="tab"> <?= lang('DevDetail_Tab_Tools');?>    </a></li>
               <li> <a id="tabSessions" href="#panSessions" data-toggle="tab"> <?= lang('DevDetail_Tab_Sessions');?> </a></li>
               <li> <a id="tabPresence" href="#panPresence" data-toggle="tab"> <?= lang('DevDetail_Tab_Presence');?> </a></li>
@@ -534,149 +527,15 @@
                 </table>
               </div>
 
-<!-- tab page "Nmap"  ------------------------------------------------------------ -->
-
-              <div class="tab-pane fade" id="panNmap">
-                <h4 class=""><i class="fa-solid fa-ethernet"></i> <?= lang('DevDetail_Nmap_Scans');?></h4>
-                <div style="width:100%; text-align: center;">
-                  <script>
-                      setTimeout(function(){
-                        document.getElementById('piamanualnmap_fast').innerHTML='<?= lang('DevDetail_Nmap_buttonFast');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_normal').innerHTML='<?= lang('DevDetail_Nmap_buttonDefault');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_detail').innerHTML='<?= lang('DevDetail_Nmap_buttonDetail');?> (' + document.getElementById('txtLastIP').value +')';
-                        document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?= lang('DevDetail_Nmap_buttonSkipDiscovery');?> (' + document.getElementById('txtLastIP').value +')';
-                      }, 2000);
-                  </script>
-
-                  <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'fast')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'normal')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'detail')"><?= lang("DevDetail_Loading");?></button>
-                  <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(document.getElementById('txtLastIP').value, 'skipdiscovery')"><?= lang("DevDetail_Loading");?></button>
-                
-                  <div style="text-align: left;">
-                    <ul style="padding:20px;">
-                      <li><?= lang('DevDetail_Nmap_buttonFast_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonDefault_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonDetail_text');?></li>
-                      <li><?= lang('DevDetail_Nmap_buttonSkipDiscovery_text');?></li>
-                      <li><a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging"><?= lang('DevDetail_Nmap_resultsLink');?></a></li>
-
-                    </ul>
-                  </div>
-                </div>
-
-                <div id="scanoutput" style="margin-top: 30px;"></div>
-                   
-                  <script>
-                  function manualnmapscan(targetip, mode) {
-                    $( "#scanoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/nmap_scan.php",
-                      data: { scan: targetip, mode: mode },
-                      beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                        console.log(data);
-                          $("#scanoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>                 
-				
-              </div>
-
         
 <!-- tab page "Tools" ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panTools">
 
-              <?php
-              if ($_REQUEST['mac'] == 'Internet') {
-              ?>
-                <h4 class=""><i class="fa-solid fa-globe"></i> <?= lang('DevDetail_Tab_Tools_Internet_Info_Title');?></h4>
-		<h5 class=""><?= lang('DevDetail_Tab_Tools_Internet_Info_Description');?></h5>
-		<br>
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()"><?= lang('DevDetail_Tab_Tools_Internet_Info_Start');?></button>
-                  <br><div id="internetinfooutput" style="margin-top: 10px;"></div>
-                </div>
-                   
-                  <script>
-                  function internetinfo() {
-                    $( "#internetinfooutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/internetinfo.php",
-                      beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#internetinfooutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>
-
-              <?php
-              if ($_REQUEST['mac'] == 'Internet') {
-              ?>
-                <h4 class=""><i class="fa-solid fa-gauge-high"></i> <?= lang('DevDetail_Tab_Tools_Speedtest_Title');?></h4>
-		<h5 class=""><?= lang('DevDetail_Tab_Tools_Speedtest_Description');?></h5>
-		<br>				
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                  <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()"><?= lang('DevDetail_Tab_Tools_Speedtest_Start');?></button>
-                  <br><div id="speedtestoutput" style="margin-top: 10px;"></div>
-                </div>
-                   
-                  <script>
-                  function speedtestcli() {
-                    $( "#speedtestoutput" ).empty();
-                    $.ajax({
-                      method: "POST",
-                      url: "./php/server/speedtestcli.php",
-                      beforeSend: function() { $('#speedtestoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#speedtestoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#speedtestoutput").html(data);    
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>
-
-              <?php
-              if ($_REQUEST['mac'] != 'Internet') {
-              ?>
-                <h4 class=""><i class="fa-solid fa-route"></i> <?= lang('DevDetail_Tab_Tools_Traceroute_Title');?></h4>
-		<h5 class=""><?= lang('DevDetail_Tab_Tools_Traceroute_Description');?></h5>		      
-                <div style="width:100%; text-align: center; margin-bottom: 50px;">
-                <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()"><?= lang('DevDetail_Tab_Tools_Traceroute_Start');?></button>
-                <br><div id="tracerouteoutput" style="margin-top: 10px;"></div>
-                </div>
-                
-                  <script>
-                  function traceroute() {
-                 
-                    $( "#tracerouteoutput" ).empty();
-                    $.ajax({
-                      method: "GET",
-                      url: "./php/server/traceroute.php?action=get&ip=" + document.getElementById('txtLastIP').value + "",
-                      beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
-                      complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
-                      success: function(data, textStatus) {
-                          $("#tracerouteoutput").html(data);
-                      }
-                    })
-                  }
-                  </script>
-              <?php  
-              }
-              ?>		      
+                <?php  
+                  require 'deviceDetailsTools.php';
+                ?>
+              
 		      
               </div>
 
@@ -1890,10 +1749,10 @@ function initializeTabsNew () {
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
 
-    if(target == "#panNmap")
-    {
-      // loadNmap();
-    }
+    // if(target == "#panNmap")
+    // {
+    //   // loadNmap();
+    // }
   });
 }
 

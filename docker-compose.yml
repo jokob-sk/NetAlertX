@@ -35,6 +35,7 @@ services:
       - ${DEV_LOCATION}/front/api:/home/pi/pialert/front/api
       - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php
       - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php
+      - ${DEV_LOCATION}/front/deviceDetailsTools.php:/home/pi/pialert/front/deviceDetailsTools.php
       - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php
       - ${DEV_LOCATION}/front/events.php:/home/pi/pialert/front/events.php
       - ${DEV_LOCATION}/front/plugins.php:/home/pi/pialert/front/plugins.php
