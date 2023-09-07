@@ -19,8 +19,6 @@ def timeNowTZ():
         return datetime.datetime.now().replace(microsecond=0)
 
 
-# conf.LOG_LEVEL = get_setting_value("LOG_LEVEL")
-
 #-------------------------------------------------------------------------------
 debugLevels =   [
                     ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3)
@@ -49,22 +47,8 @@ def file_print (*args):
     for arg in args:                
         result += str(arg)        
     print(result)
-
-    # try:
-    #     # # Open the file
-    #     # file = open(logPath + "/pialert.log", "a")
-
-    #     # # Write to the file
-    #     # file.write(result + '\n')
-
-    #     # # Close the file
-    #     # file.close()
-
+ 
     append_to_file_with_timeout(logPath + "/pialert.log", result + '\n', 5)
-
-    # except Exception as e:
-    #     # Handle the exception, e.g., log it or print an error message
-    #     print(f"Error opening or writing to the file: {e}")
 
 #-------------------------------------------------------------------------------
 # Function to append to the file

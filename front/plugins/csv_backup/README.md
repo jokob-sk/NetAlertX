@@ -4,10 +4,5 @@ Plugin generating CSV backups of your Devices database table, including the netw
 
 ### Usage
 
-- Go to settings and find TBC
+- If the devices.csv file can be overwritten or the date and time timestamp added to the name. This is toggled with the `CSVBCKP_overwrite` setting.
 
-#### Examples:
-- TBC
-
-### Known Limitations
-- TBC

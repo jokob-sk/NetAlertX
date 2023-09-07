@@ -49,7 +49,7 @@
       "function": "RUN",            
       "type": "text.select",            
       "default_value":"disabled",
-      "options": ["disabled", "once", "always_after_scan"],
+      "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",
@@ -61,7 +61,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "When the backup should be created. A daily SCHEDULE is a good option."
+          "string" : "When the backup should be created. A daily or weekly <code>SCHEDULE</code> is a good option."
       }]
   },    
     {
@@ -94,7 +94,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"0 2 3 * *",
+      "default_value":"0 2 * * 3",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{
@@ -153,7 +153,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "If the devices.csv file should be always overwritten. If disabled, the date and time is added to the name."
+          "string" : "If the <code>devices.csv</code> file should be always overwritten. If disabled, the date and time is added to the name."
       }]
     },
     {
@@ -168,7 +168,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Where the devices.csv file should be saved."
+          "string" : "Where the <code>devices.csv</code> file should be saved. For example <code>/home/pi/pialert/config</code>."
       }]
   }
   ],

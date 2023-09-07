@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# test script by running python script.py devices=test,dummy
+# test script by running:
+# /home/pi/pialert/front/plugins/csv_backup/script.py overwrite=False location=/home/pi/pialert/config
 
 import os
 import pathlib
@@ -7,12 +8,13 @@ import argparse
 import sys
 import hashlib
 import csv
+import sqlite3
 from io import StringIO
+from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-import database
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
@@ -26,53 +28,66 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 def main():
 
     # the script expects a parameter in the format of devices=device1,device2,...
-    parser = argparse.ArgumentParser(description='TBC')
-    parser.add_argument('location',  action="store",  help="TBC")
-    parser.add_argument('overwrite',  action="store",  help="TBC")
+    parser = argparse.ArgumentParser(description='Export devices data to CSV')
+    parser.add_argument('overwrite', action="store", help="Specify 'TRUE' to overwrite an existing file, or 'FALSE' to create a new file")
+    parser.add_argument('location', action="store", help="The directory where the CSV file will be saved")
     values = parser.parse_args()
+
+    overwrite = values.overwrite.split('=')[1]
+
+    if (overwrite.upper() == "TRUE"):
+        overwrite = True
+    else:
+        overwrite = False
 
     mylog('verbose', ['[CSVBCKP] In script'])     
 
-    # plugin_objects = Plugin_Objects( RESULT_FILE )
+    # Connect to the PiAlert SQLite database
+    conn = sqlite3.connect('/home/pi/pialert/db/pialert.db')
+    cursor = conn.cursor()
 
-    # if values.devices:
-    #     for fake_dev in values.devices.split('=')[1].split(','):
+    # Execute your SQL query
+    cursor.execute("SELECT * FROM Devices")
 
-    #         fake_mac = string_to_mac_hash(fake_dev)
+    # Get column names
+    columns = [desc[0] for desc in cursor.description]
 
-    #         plugin_objects.add_object(
-    #             primaryId=fake_dev,    # MAC (Device Name)
-    #             secondaryId="0.0.0.0", # IP Address (always 0.0.0.0)
-    #             watched1=fake_dev,     # Device Name
-    #             watched2="",
-    #             watched3="",
-    #             watched4="",
-    #             extra="",
-    #             foreignKey=fake_mac)
+    if overwrite:
+        filename = 'devices.csv'
+    else:
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = f'devices_{timestamp}.csv'
 
-    # plugin_objects.write_result_file()
+    fullPath = os.path.join(values.location.split('=')[1], filename)
 
-    # # Execute your SQL query
-    # cursor.execute("SELECT * FROM Devices")
+    mylog('verbose', ['[CSVBCKP] Writing file ', fullPath])   
 
-    # # Get column names
-    # columns = [desc[0] for desc in cursor.description]
+    # Create a CSV file in the specified location
+    with open(fullPath, 'w', newline='') as csvfile:
+        # Initialize the CSV writer
+        csv_writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
-    # # Initialize the CSV writer
-    # csv_writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+        # Wrap the header values in double quotes and write the header row
+        csv_writer.writerow([ '"' + col + '"' for col in columns])
 
-    # # Write the header row
-    # csv_writer.writerow(columns)
+        # Fetch and write data rows
+        for row in cursor.fetchall():
+            # Wrap each value in double quotes and write the row
+            csv_writer.writerow(['"' + str(value) + '"' for value in row])
 
-    # # Fetch and write data rows
-    # for row in cursor.fetchall():
-    #     csv_writer.writerow(row)
+    # Close the database connection
+    conn.close()
 
-    # # Close the database connection
-    # conn.close()
+    # Open the CSV file for reading
+    with open(fullPath, 'r') as file:
+        data = file.read()
 
-    # # Prepare the CSV data for download
-    # csv_data = output.getvalue()
+    # Replace all occurrences of """ with "
+    data = data.replace('"""', '"')
+
+    # Open the CSV file for writing
+    with open(fullPath, 'w') as file:
+        file.write(data)
 
     return 0
 
