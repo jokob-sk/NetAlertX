@@ -248,7 +248,7 @@
       },
       {
           "language_code":"es_es",
-          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <código>/home/pi/pialert/config</código>."
+          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/home/pi/pialert/config</code>."
       },
       {
           "language_code":"de_de",
