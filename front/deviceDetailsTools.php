@@ -54,6 +54,23 @@
 
 <?php } ?>
 
+<?php if ($_REQUEST["mac"] != "Internet") { ?>
+<h4 class=""><i class="fa-solid fa-magnifying-glass"></i>
+    <?= lang("DevDetail_Tab_Tools_Nslookup_Title") ?>
+</h4>
+<h5 class="">
+    <?= lang("DevDetail_Tab_Tools_Nslookup_Description") ?>
+</h5>
+<div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <button type="button" id="nslookup" class="btn btn-primary pa-btn" style="margin: auto;" onclick="nslookup()">
+        <?= lang("DevDetail_Tab_Tools_Nslookup_Start") ?>
+    </button>
+    <br>
+    <div id="nslookupoutput" style="margin-top: 10px;"></div>
+</div>
+
+<?php } ?>                                             
+
 <h4 class=""><i class="fa-solid fa-ethernet"></i>
     <?= lang("DevDetail_Nmap_Scans") ?>    
 </h4>
@@ -145,6 +162,21 @@
                     complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
                         $("#tracerouteoutput").html(data);
+                    }
+                })
+        }
+
+        // ----------------------------------------------------------------
+        function nslookup() {
+                
+            $( "#nslookupoutput" ).empty();
+                $.ajax({
+                    method: "GET",
+                    url: "./php/server/nslookup.php?action=get&ip=" + deviceIP + "",
+                    beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
+                    complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
+                    success: function(data, textStatus) {
+                        $("#nslookupoutput").html(data);
                     }
                 })
         }
