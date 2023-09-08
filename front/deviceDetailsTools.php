@@ -1,5 +1,5 @@
 <script>
-    deviceIP = getDeviceDataByMacAddress_NEW("<?php echo $_REQUEST["mac"]?>", "dev_LastIP")
+    deviceIP = getDeviceDataByMacAddress("<?php echo $_REQUEST["mac"]?>", "dev_LastIP")
 </script>
 
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
