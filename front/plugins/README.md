@@ -1,32 +1,21 @@
-## 📚 Docs for individual plugins 
+### 🔌 Plugins & 📚 Docs 
 
-### Community translations of this file
+| Code                  | Plugin Type            | Link                                                     |
+|-----------------------|------------------------|----------------------------------------------------------|
+| ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
+| CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
+| DHCPLSS               | Script                 | [dhcp_leases](/front/plugins/dhcp_leases/)    |
+| DHCPSRVS              | Script                 | [dhcp_servers](/front/plugins/dhcp_servers/) |
+| NEWDEV                | Template               | [newdev_template](/front/plugins/newdev_template/) |
+| NMAP                  | Script                 | [nmap_scan](/front/plugins/nmap_scan/)            |
+| PIHOLE                | External SQLite DB     | [pihole_scan](/front/plugins/pihole_scan/)    |
+| SETPWD                | Script                 | [set_password](/front/plugins/set_password/)    |
+| SNMPDSC               | Script                 | [snmp_discovery](/front/plugins/snmp_discovery/) |
+| UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
+| UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
+| WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
+| N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
 
-- [Spanish](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md) 
-
-### Script based plugins
-
-- [arp_scan (ARPSCAN)](/front/plugins/arp_scan/) 
-- [website_monitor (WEBMON)](/front/plugins/website_monitor/) 
-- [dhcp_servers (DHCPSRVS)](/front/plugins/dhcp_servers/) 
-- [dhcp_leases (DHCPLSS)](/front/plugins/dhcp_leases/) 
-- [unifi_import (UNFIMP)](/front/plugins/unifi_import/)
-- [snmp_discovery (SNMPDSC)](/front/plugins/snmp_discovery/)
-- [undiscoverables (UNDIS)](/front/plugins/undiscoverables/)
-- [pholus_scan (ARPSCAN)](/front/plugins/pholus_scan/)
-- [set_password (SETPWD)](/front/plugins/set_password/)
-- [nmap_scan (NMAP)](/front/plugins/nmap_scan/) 
-
-### SQL query-based plugins
-
-- No example available, but the External SQLite based plugins work very similar
-
-
-### template based plugins
-- [newdev_template (NEWDEV)](/front/plugins/newdev_template/) 
-
-### External SQLite based plugins
-- [pihole_scan (PIHOLE)](/front/plugins/newdev_template/) 
 
 ## 🌟 Create a custom plugin: Overview
 
@@ -701,6 +690,10 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
                 }]
         }
 ```
+
+### Community translations of this file
+
+- [Spanish](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md) 
 
 
 

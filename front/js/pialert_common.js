@@ -490,34 +490,8 @@ function getNameByMacAddress(macAddress) {
 }
 
 // -----------------------------------------------------------------------------
-// function getDeviceDataByMacAddress(macAddress, property) {
-
-//   const sessionDataKey = 'devicesListAll';  
-//   const sessionData = sessionStorage.getItem(sessionDataKey);
-
-//   if (!sessionData) {
-//       console.log(`Session variable "${sessionDataKey}" not found.`);
-//       return "Unknown";
-//   }
-
-//   const devices = JSON.parse(sessionData);
-
-//   for (const device of devices) {
-//       if (device.mac === macAddress) {
-//           if ( device.mac == 'd2:a4:1a:74:ae:86')
-//           {
-//             console.log(device)
-//           }
-
-//           return device[property];
-//       }
-//   }
-
-//   return "Unknown"; // Return a default value if MAC address is not found
-// }
-
-// -----------------------------------------------------------------------------
-function getDeviceDataByMacAddress(macAddress, property) {
+// 
+function getDeviceDataByMacAddress(macAddress, dbColumn) {
 
   const sessionDataKey = 'devicesListAll_JSON';  
   const sessionData = sessionStorage.getItem(sessionDataKey);
@@ -538,7 +512,7 @@ function getDeviceDataByMacAddress(macAddress, property) {
             console.log(device)
           }
 
-          return device[property];
+          return device[dbColumn];
       }
   }
 

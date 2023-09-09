@@ -49,6 +49,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
 - [Settings system](/docs/SETTINGS_SYSTEM.md)
 - [New Version notifications](/docs/VERSIONS.md)
+- [Frontend development tips](/docs/FRONTEND_DEVELOPMENT.md)
 
 Feel free to suggest or submit new docs via a PR. 
 
