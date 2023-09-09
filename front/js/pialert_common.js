@@ -503,14 +503,8 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
 
   const devices = JSON.parse(sessionData);
 
-  console.log(devices)
-
   for (const device of devices) {
       if (device["dev_MAC"].toLowerCase() === macAddress.toLowerCase()) {
-          if ( device["dev_MAC"].toLowerCase() == 'd2:a4:1a:74:ae:86')
-          {
-            console.log(device)
-          }
 
           return device[dbColumn];
       }
@@ -519,31 +513,6 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
   return "Unknown"; // Return a default value if MAC address is not found
 }
 
-// -----------------------------------------------------------------------------
-
-function initDeviceListAll()
-{ 
-
-  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
-
-      rawData = JSON.parse (data)      
-
-      devicesListAll = rawData["data"].map(item =>  { return {
-                                                              "name":item[0], 
-                                                              "type":item[2], 
-                                                              "icon":item[3], 
-                                                              "mac":item[11], 
-                                                              "parentMac":item[14], 
-                                                              "rowid":item[13], 
-                                                              "status":item[10] 
-                                                              }})
-
-      setCache('devicesListAll', JSON.stringify(devicesListAll))
-  });
-
-}
-
-var devicesListAll      = [];   // this will contain a list off all devices 
 // -----------------------------------------------------------------------------
 
 function initDeviceListAll_JSON()
@@ -571,7 +540,6 @@ function isEmpty(value)
 // initialize
 cacheSettings()
 cacheStrings()
-initDeviceListAll()
 initDeviceListAll_JSON()
 
 

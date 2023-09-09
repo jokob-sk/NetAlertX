@@ -146,13 +146,16 @@ def get_plugins_configs():
     
     # Loop through each directory (plugin folder) in dirs
     for d in dirs:
-        # Check if the directory name does not start with "__" and does not end with "__ignore"
-        if not d.startswith("__") and not d.endswith("__ignore"):
-            # Construct the path to the config.json file within the plugin folder
-            config_path = os.path.join(pluginsPath, d, "config.json")
-            
-            # Load the contents of the config.json file as a JSON object and append it to pluginsList
-            pluginsList.append(json.loads(get_file_content(config_path)))
+        # Check if the directory name does not start with "__" to skip python cache
+        if not d.startswith("__"):
+            # Check if the 'ignore_plugin' file exists in the plugin folder
+            ignore_plugin_path = os.path.join(pluginsPath, d, "ignore_plugin")
+            if not os.path.isfile(ignore_plugin_path):
+                # Construct the path to the config.json file within the plugin folder
+                config_path = os.path.join(pluginsPath, d, "config.json")
+                
+                # Load the contents of the config.json file as a JSON object and append it to pluginsList
+                pluginsList.append(json.loads(get_file_content(config_path)))
     
     return pluginsList  # Return the list of plugin configurations
 

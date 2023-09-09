@@ -153,13 +153,13 @@ function processColumnValue(dbColumnDef, value, index, type) {
             
             for (const option of dbColumnDef.options) {
                 if (option.type === type) {
-                    console.log(value)
+                    
                     const regexPattern = new RegExp(option.param);
                     const match = value.match(regexPattern);
                     if (match) {
                         // Return the first match
                         value =  match[0];
-                        console.log(value)
+                    
                     }
                 }
             }

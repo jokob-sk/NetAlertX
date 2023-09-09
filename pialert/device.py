@@ -15,26 +15,8 @@ def save_scanned_devices (db):
     sql = db.sql #TO-DO
     cycle = 1 # always 1, only one cycle supported
 
-    # mylog('debug', ['[ARP Scan] Detected devices:', len(p_arpscan_devices)])
-
     # handled by the ARPSCAN plugin
-
-# ------------------------ TO CONVERT INTO PLUGIN
-    # # Insert Pi-hole devices
-    # startTime = timeNowTZ()
-    # sql.execute ("""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, 
-    #                     cur_IP, cur_Vendor, cur_ScanMethod)
-    #                 SELECT ?, PH_MAC, PH_IP, PH_Vendor, 'Pi-hole'
-    #                 FROM PiHole_Network
-    #                 WHERE PH_LastQuery >= ?
-    #                   AND NOT EXISTS (SELECT 'X' FROM CurrentScan
-    #                                   WHERE cur_MAC = PH_MAC
-    #                                     AND cur_ScanCycle = ? )""",
-    #                 (cycle,
-    #                  (int(startTime.strftime('%s')) - 60 * p_cycle_interval),
-    #                  cycle) )
-# ------------------------ TO CONVERT INTO PLUGIN
-
+    # handled by the Pi-hole plugin
 
     # Check Internet connectivity
     internet_IP = get_internet_IP( conf.DIG_GET_IP_ARG )
@@ -213,7 +195,7 @@ def create_new_devices (db):
     
     # mylog('debug',f'[New Devices] 4 Create devices SQL: {sqlQuery}')
 
-    sql.execute (sqlQuery, (startTime, startTime) ) 
+    # sql.execute (sqlQuery, (startTime, startTime) ) 
 
     # # DHCP Leases - Insert events for new devices
     # mylog('debug','[New Devices] 5 DHCP Leases Events')
@@ -247,7 +229,7 @@ def create_new_devices (db):
 
     # mylog('debug',f'[New Devices] 6 Create devices SQL: {sqlQuery}')
 
-    sql.execute (sqlQuery, (startTime, startTime) ) 
+    # sql.execute (sqlQuery, (startTime, startTime) ) 
 
     mylog('debug','[New Devices] New Devices end')
     db.commitDB()

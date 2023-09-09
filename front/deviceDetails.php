@@ -650,20 +650,6 @@ if ($ENABLED_DARKMODE === True) {
   }  
 
   // ------------------------------------------------------------
-  function getDevicesListValue(idColumn, idValue, returnColumn)
-  {
-    // Read cache
-    devicesListAll = JSON.parse(getCache('devicesListAll'));
-
-    if(emptyArr.includes(devicesListAll) || emptyArr.includes(idValue))
-    {
-      return '';
-    }
-
-    return devicesListAll.find((item) => {return item[idColumn] == idValue})[returnColumn]
-  }
-
-  // ------------------------------------------------------------
   function getDevicesList()
   {
     // Read cache
@@ -680,8 +666,7 @@ if ($ENABLED_DARKMODE === True) {
   // ------------------------------------------------------------
 
   mac                     = getMac()  // can also be rowID!! not only mac 
-  var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
-  var devicesListAll      = [];   // this will contain a list off all devices 
+  var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI  
 
   main();
 
@@ -1314,7 +1299,7 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);        
-        $('#txtNetworkNodeMac').val                  (getDevicesListValue('mac', deviceData['dev_Network_Node_MAC_ADDR'] ,'name'));
+        $('#txtNetworkNodeMac').val                  ( getDeviceDataByMacAddress(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")) ;
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
         // disabling network node configuration if root Internet node
@@ -1719,7 +1704,7 @@ function setTextValue (textElement, textValue) {
   if(textElement == "txtNetworkNodeMac")
   {
     $('#'+textElement).attr ('data-mynodemac', textValue);
-    $('#'+textElement).val (getDevicesListValue('mac', textValue ,'name') ); 
+    $('#'+textElement).val (getDeviceDataByMacAddress(textValue, "dev_Name")); 
   } else
   {
     $('#'+textElement).attr ('data-myvalue', textValue);
@@ -1749,9 +1734,9 @@ function initializeTabsNew () {
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
 
-    // if(target == "#panNmap")
+    // if(target == "#panTools")
     // {
-    //   // loadNmap();
+    //   // loadTools();
     // }
   });
 }
@@ -1826,12 +1811,8 @@ window.onload = function async()
 
 function reloadTab()
 {
-  // tab loaded without switching
-  
-  if(getCache("activeDevicesTab") == "tabNmap")
-  {
-    loadNmap();
-  }
+  // tab loaded without switching 
+
 }
 
 </script>

@@ -1,21 +1,27 @@
 ### 🔌 Plugins & 📚 Docs 
 
-| Code                  | Plugin Type            | Link                                                     |
-|-----------------------|------------------------|----------------------------------------------------------|
-| ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
-| CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
-| DHCPLSS               | Script                 | [dhcp_leases](/front/plugins/dhcp_leases/)    |
-| DHCPSRVS              | Script                 | [dhcp_servers](/front/plugins/dhcp_servers/) |
-| NEWDEV                | Template               | [newdev_template](/front/plugins/newdev_template/) |
-| NMAP                  | Script                 | [nmap_scan](/front/plugins/nmap_scan/)            |
-| PIHOLE                | External SQLite DB     | [pihole_scan](/front/plugins/pihole_scan/)    |
-| SETPWD                | Script                 | [set_password](/front/plugins/set_password/)    |
-| SNMPDSC               | Script                 | [snmp_discovery](/front/plugins/snmp_discovery/) |
-| UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
-| UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
-| WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
-| N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
+| Is required | CurrentScan | Unique Code Prefix    | Plugin Type            | Link                                                     | 
+|-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
+|             |    Yes      | ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
+|             |             | CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
+|             |    Yes      | DHCPLSS               | Script                 | [dhcp_leases](/front/plugins/dhcp_leases/)    |
+|             |             | DHCPSRVS              | Script                 | [dhcp_servers](/front/plugins/dhcp_servers/) |
+|     Yes     |             | NEWDEV                | Template               | [newdev_template](/front/plugins/newdev_template/) |
+|             |             | NMAP                  | Script                 | [nmap_scan](/front/plugins/nmap_scan/)            |
+|             |    Yes      | PIHOLE                | External SQLite DB     | [pihole_scan](/front/plugins/pihole_scan/)    |
+|             |             | SETPWD                | Script                 | [set_password](/front/plugins/set_password/)    |
+|             |             | SNMPDSC               | Script                 | [snmp_discovery](/front/plugins/snmp_discovery/) |
+|             |    Yes*     | UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
+|             |    Yes      | UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
+|             |             | WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
+|     N/A     |             | N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
 
+>* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+
+> [!NOTE] 
+> You soft-disable plugins via Settings or completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. The difference is that ignored plugins don't show up anywhere in the UI (Settings, Device details, Plugins pages). The app skips ignored plugins  completely. Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however it makes sense to have a least some device-detecting plugins (that insert entries into the `CurrentScan` table) enabled, such as ARPSCAN or PIHOLE.  
+
+> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
 ## 🌟 Create a custom plugin: Overview
 
@@ -48,10 +54,10 @@ Again, please read the below carefully if you'd like to contribute with a plugin
 
 ## ⚠ Disclaimer
 
-Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improving the UI experience. Example improvements for the taking:
+Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improving the UI experience (See [Frontend guidelines](/docs/FRONTEND_DEVELOPMENT.md)). Example improvements for the taking:
 
 * Making the tables sortable/filterable
-* Using the same approach to display table  data as in the Devices section (solves above)
+* Using the same approach to display table data as in the Devices section (solves above)
 * Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
 * ...
 
@@ -59,7 +65,7 @@ Follow the below very carefully and check example plugin(s) if you'd like to wri
 
 These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
 
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries.
+* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
 * Occasional (experienced twice) hanging of processing plugin script file.
 UI displays outdated values until the API endpoints get refreshed. 
 
@@ -71,10 +77,10 @@ UI displays outdated values until the API endpoints get refreshed.
   | File | Required (plugin type) | Description | 
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
-  | `script.py` |  yes (script) | The Python script itself |
-  | `last_result.log` | yes (script) | The file used to interface between PiAlert and the plugin (script).  |
+  | `script.py` |  no | The Python script itself. You may call any valid linux command.  |
+  | `last_result.log` | no | The file used to interface between PiAlert and the plugin. Required for a script plugin if you want to feed data into the app. |
   | `script.log` | no | Logging output (recommended) |
-  | `README.md` | no | Any setup considerations or overview (recommended) |
+  | `README.md` | yes | Any setup considerations or overview  |
 
 More on specifics below.
 
@@ -105,7 +111,7 @@ Currently, these data sources are supported (valid `data_source` value).
 |----------------------|----------------------|----------------------|----------------------| 
 | Script | `script` | no | Executes any linux command in the `CMD` setting. |
 | Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
-| Template | `template` | no | Used to generate internal settings, such a sdefault values. |
+| Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 
 
@@ -113,9 +119,9 @@ Currently, these data sources are supported (valid `data_source` value).
 >```json
 >"data_source":  "pialert-db-query"
 >```
-Any of the above data sources have to return a "table" of the exact structure as outlined above.
+If you want to display plugin objects or import devices into the app, data sources have to return a "table" of the exact structure as outlined above.
 
-You can show or hide the UI on the "Plugins" page and "Plugins" tab on devices via the `show_ui` property:
+You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin on devices via the `show_ui` property:
 
 > 🔎Example
 >```json
@@ -124,20 +130,19 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab on devices v
 
 ### "data_source":  "script"
 
- If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) needs to contain an executable Linux command, that generates a `last_result.log` file. This file needs to be stored in the same folder as the plugin. 
+ If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). This file needs to be stored in the same folder as the plugin. 
+
+> [!IMPORTANT]
+> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
  
  The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
 - The format of the `last_result.log` is a `csv`-like file with the pipe `|` as a separator. 
 - 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.  
 - Don't render "headers" for these "columns".
-- Every scan result / event entry needs to be on a new line.
+Every scan result/event entry needs to be on a new line.
 - You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
 - The order of these "columns" can't be changed.
-
-### 👍 Python script.py tips
-
-The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good and simple example to start with if you are considering creating a custom plugin. It uses the [`plugin_helper.py` library](/front/plugins/plugin_helper.py) that significantly simplifies the creation of your custom script.
 
 #### 🔎 last_result.log examples
 
@@ -217,7 +222,7 @@ Used to initialize internal settings. Check the `newdev_template` plugin for det
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. FOe example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
 >  🔎Example
 >
@@ -241,7 +246,7 @@ You can execute a SQL query on an external database connected to the current PiA
 >  ...
 >```
 
-The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type. 
+The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type The format has to adhere to the format outlined in the "Column order and values" section above. 
 
 >  🔎Example
 >
@@ -267,7 +272,7 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 
 ## 🕳 Filters
 
-Plugin entries can be filtered based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
+Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
 
   | Property | Required | Description | 
   |----------------------|----------------------|----------------------| 
@@ -277,6 +282,7 @@ Plugin entries can be filtered based on values entered into filter fields. The `
   | `compare_js_template` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
   | `compare_use_quotes` | yes | If `true` then the end result of the `compare_js_template` i swrapped in `"` quotes. Use to compare strings. |
   
+  Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
 > 🔎Example:
 > 
@@ -291,96 +297,102 @@ Plugin entries can be filtered based on values entered into filter fields. The `
 >         }
 >     ],
 > ```
+>
+>1. On the `pluginsCore.php` page is an input field with the `txtMacFilter` id:
+>
+>```html
+><input class="form-control" id="txtMacFilter" type="text" value="--">
+>```
+>
+>2. This input field is initialized via the `&mac=` query string.
+>
+>3. The app then proceeds to use this Mac value from this field and compares it to the value of the `Object_PrimaryID` database field. The `compare_operator` is `==`.
+>
+>4. Both values, from the database field `Object_PrimaryID` and from the `txtMacFilter` are wrapped and evaluated with the `compare_js_template`, that is `'{value}.toString()'`.
+>
+>5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
+>
+>6. This results in for example this code: 
+>
+>```javascript
+>    // left part of teh expression coming from compare_column and right from the input field
+>    // notice the added quotes ()") around the left and right part of teh expression
+>    "eval('ac:82:ac:82:ac:82".toString()')" == "eval('ac:82:ac:82:ac:82".toString()')"
+>```
+>
 
-1. On the `pluginsCore.php` page is an input field with the `txtMacFilter` id:
-
-```html
-<input class="form-control" id="txtMacFilter" type="text" value="--">
-```
-
-2. This input field is initialized via the `&mac=` query string.
-
-3. The app then proceeds to use this Mac value from this field and compares it to the value of the `Object_PrimaryID` database field. The `compare_operator` is `==`.
-
-4. Both values, from the database field `Object_PrimaryID` and from the `txtMacFilter` are wrapped and evaluated with the `compare_js_template`, that is `'{value}.toString()'`.
-
-5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
-
-6. This results in for example this code: 
-
-```javascript
-    // left part of teh expression coming from compare_column and right from the input field
-    // notice the added quotes ()") around the left and right part of teh expression
-    "eval('ac:82:ac:82:ac:82".toString()')" == "eval('ac:82:ac:82:ac:82".toString()')"
-```
-
-7. Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
 ### 🗺 Mapping the plugin results into a database table
 
-PiAlert will take the results of the plugin execution and insert these results into a database table, if a plugin contains the property `"mapped_to_table"` in the `config.json` root. The mapping of the columns is defined in the `database_column_definitions` array.
-
-This approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, get's the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `"CurrentScan"` database table in the PiAlert database. All this is achieved by:
+Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
 > [!NOTE] 
 > If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
 
-1) Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 
-```json
-{
-    "code_name": "dhcp_leases",
-    "unique_prefix": "DHCPLSS",
-    ...
-    "data_source":  "script",
-    "localized": ["display_name", "description", "icon"],
-    "mapped_to_table": "CurrentScan",    
-    ...
-}
-```
-2) Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
-
-```json
-{
-            "column": "Object_PrimaryID",
-            "mapped_to_column": "cur_MAC", 
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "device_mac",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "MAC address"
-                }]
-        }
-```
-
-3)  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
+>🔍 Example:
+>
+>For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
+>
+>1. Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
+>
+>```json
+>{
+>    "code_name": "dhcp_leases",
+>    "unique_prefix": "DHCPLSS",
+>    ...
+>    "data_source":  "script",
+>    "localized": ["display_name", "description", "icon"],
+>    "mapped_to_table": "CurrentScan",    
+>    ...
+>}
+>```
+>2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
+>
+>```json
+>{
+>            "column": "Object_PrimaryID",
+>            "mapped_to_column": "cur_MAC", 
+>            "css_classes": "col-sm-2",
+>            "show": true,
+>            "type": "device_mac",            
+>            "default_value":"",
+>            "options": [],
+>            "localized": ["name"],
+>            "name":[{
+>                "language_code":"en_us",
+>                "string" : "MAC address"
+>                }]
+>        }
+>```
+>
+>3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
 > You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
 
-```json
-{
-            "column": "NameDoesntMatter",
-            "mapped_to_column": "cur_ScanMethod",
-            "mapped_to_column_data": {
-                "value": "DHCPLSS"                
-            },  
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "device_mac",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code":"en_us",
-                "string" : "MAC address"
-                }]
-        }
-```
+
+>🔍 Example:
+>
+>```json
+>{
+>            "column": "NameDoesntMatter",
+>            "mapped_to_column": "cur_ScanMethod",
+>            "mapped_to_column_data": {
+>                "value": "DHCPLSS"                
+>            },  
+>            "css_classes": "col-sm-2",
+>            "show": true,
+>            "type": "device_mac",            
+>            "default_value":"",
+>            "options": [],
+>            "localized": ["name"],
+>            "name":[{
+>                "language_code":"en_us",
+>                "string" : "MAC address"
+>                }]
+>        }
+>```
 
 #### params
 
@@ -425,18 +437,18 @@ The `params` array in the `config.json` is used to enable the user to change the
         }
 ```
 
-During script execution, the app will take the command `"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it by with the value from the `WEBMON_urls_to_check` setting. This is because:
+During script execution, the app will take the command `"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it with the value from the `WEBMON_urls_to_check` setting. This is because:
 
-1) The app checks the `params` entries
-2) It finds `"name"  : "urls"`
-3) Checks the type of the `urls` params and finds `"type"  : "setting"`
-4) Gets the setting name from  `"value" : "WEBMON_urls_to_check"` 
+1. The app checks the `params` entries
+2. It finds `"name"  : "urls"`
+3. Checks the type of the `urls` params and finds `"type"  : "setting"`
+4. Gets the setting name from  `"value" : "WEBMON_urls_to_check"` 
    - IMPORTANT: in the `config.json` this setting is identified by `"function":"urls_to_check"`, not `"function":"WEBMON_urls_to_check"`
    - You can also use a global setting, or a setting from a different plugin  
-5) The app gets the user defined value from the setting with the code name `WEBMON_urls_to_check`
+5. The app gets the user defined value from the setting with the code name `WEBMON_urls_to_check`
    - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user: 
    - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
-6) The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
+6. The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
    - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
    - to
    - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
@@ -603,7 +615,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 
 > [!NOTE] 
-> Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver
+> Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
 
 
 

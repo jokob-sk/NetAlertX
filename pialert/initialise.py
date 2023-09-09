@@ -229,12 +229,12 @@ def importConfigs (db):
                 conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
             # Collect settings related language strings
-            # Creates an entry with key ARPSCAN_CMD_name
+            # Creates an entry with key, for example ARPSCAN_CMD_name
             collect_lang_strings(db, set,  pref + "_" + set["function"])
 
         # Collect column related language strings
         for clmn in plugin.get('database_column_definitions', []):
-            # Creates an entry with key ARPSCAN_Object_PrimaryID_name
+            # Creates an entry with key, for example ARPSCAN_Object_PrimaryID_name
             collect_lang_strings(db, clmn,  pref + "_" + clmn.get("column", ""))
 
 
