@@ -64,7 +64,7 @@
     {
       "function": "RUN",            
       "type": "text.select",            
-      "default_value":"disabled",
+      "default_value":"schedule",
       "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{

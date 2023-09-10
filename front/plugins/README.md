@@ -1,6 +1,6 @@
 ### 🔌 Plugins & 📚 Docs 
 
-| Is required | CurrentScan | Unique Code Prefix    | Plugin Type            | Link                                                     | 
+| Required    | CurrentScan | Unique Prefix         | Plugin Type            | Link + Docs                                       | 
 |-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
 |             |    Yes      | ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
 |             |             | CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
@@ -46,7 +46,7 @@ Example use cases for plugins could be:
 * Creating ad-hoc UI tables from existing data in the PiAlert database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.
 * Using other device discovery methods on the network and importing the data as new devices
 * Creating a script to create FAKE devices based on user input via custom settings
-* ...at this point the limitation is mostly the creativity than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
+* ...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
 
 If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
 
