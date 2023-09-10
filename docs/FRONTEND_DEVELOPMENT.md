@@ -43,4 +43,4 @@ Some useful frontend JavaScript functions:
 - `getSetting(string stringKey)` - method to retrieve settings in the frontend 
 
 
-Check the [pialert_common.js](https://github.com/jokob-sk/Pi.Alert/blob/main-2023-06-10/front/js/pialert_common.js) file for more frontend function.
+Check the [pialert_common.js](https://github.com/jokob-sk/Pi.Alert/blob/main-2023-06-10/front/js/pialert_common.js) file for more frontend functions.
