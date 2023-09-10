@@ -518,7 +518,7 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
 function initDeviceListAll_JSON()
 { 
 
-  $.get('/api/table_devices.json', function(data) {    
+  $.get('api/table_devices.json', function(data) {    
     
     console.log(data)
 
