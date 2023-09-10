@@ -31,17 +31,16 @@ def main():
 
     if values.paths:
         for path in values.paths.split('=')[1].split(','): 
-            plug_objects_tmp = get_entries(path, plugin_objects)
-            mylog('verbose', [f'[DHCPLSS] {len(plug_objects_tmp)} Entries found in "{path}"'])        
-            plugin_objects = plugin_objects + plug_objects_tmp
-
+            plugin_objects = get_entries(path, plugin_objects)
+            mylog('verbose', [f'[DHCPLSS] {len(plugin_objects)} Entries found in "{path}"'])        
+            
     plugin_objects.write_result_file()
 
 def get_entries(path, plugin_objects):
     if 'pihole' in path:
-        data = []
-        reporting = False
-        with open(piholeDhcpleases, 'r') as f:
+        
+        
+        with open(path, 'r') as f:
             for line in f:                
                 row = line.rstrip().split()
                 if len(row) == 5:
