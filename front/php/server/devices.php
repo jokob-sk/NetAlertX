@@ -468,74 +468,65 @@ function ExportCSV() {
 //  Import CSV of devices
 //------------------------------------------------------------------------------
 function ImportCSV() {
-
-
   $file = '../../../config/devices.csv';
 
   if (file_exists($file)) {
-
     global $db;    
-
     $skipped = "";
     $error = "";
 
-    // sql
-    $sql = 'DELETE FROM Devices';
-
-    // execute sql
-    $result = $db->query($sql);    
-
+    // Read the CSV file
     $data = file_get_contents($file); 
-    $data = explode("\n", $data); 
+    $lines = explode("\n", $data); 
 
-    $columns = getDevicesColumns();
+    // Get the column headers from the first line of the CSV
+    $header = str_getcsv(array_shift($lines));
+    $header = array_map('trim', $header);
 
-    
+    // Delete everything form the DB table
+    $sql = 'DELETE FROM Devices';     
+    $result = $db->query($sql);  
+
+    // Build the SQL statement
+    $sql = "INSERT INTO Devices (" . implode(', ', $header) . ") VALUES ";
+
     // Parse data from CSV file line by line (max 10000 lines)    
     $index = 0;
-    foreach($data as $row)
-    {
-      // Check if not empty and skipping first line      
-      $rowArray = explode(',',$row);
+    foreach($lines as $row) {
+      $rowArray = str_getcsv($row);
 
-      if(count($rowArray) > 23)
-      {
-        $cleanMac = str_replace("\"","",$rowArray[0]);
-        
-        if(filter_var($cleanMac , FILTER_VALIDATE_MAC) == True || $cleanMac == "Internet")
-        {
-          $sql = "INSERT INTO Devices (".implode(',', $columns).") VALUES (" . $row.")";         
-          $result = $db->query($sql);
-          
-          // check result
-          if ($result != TRUE) {
-            $error = $db->lastErrorMsg();
-            // break the while loop on error
-            break;
-          } 
-        }
-      } else{
-        $skipped = $skipped . ($index+1) . ",";
+      if (count($rowArray) === count($header)) {
+        // Make sure the number of columns matches the header
+        $rowArray = array_map(function ($value) {
+          return "'" . SQLite3::escapeString(trim($value)) . "'";
+        }, $rowArray);
+
+        $sql .= "(" . implode(', ', $rowArray) . "), ";
+      } else {
+        $skipped .= ($index + 1) . ",";
       }
-      $index = $index + 1;
-    }
-   
-    if($error == "")
-    {
-      // import succesful
-      echo lang('BackDevices_DBTools_ImportCSV') . " (Skipped lines: " .$skipped .") ";
 
+      $index++;
     }
-    else{
-      // an error occurred while writing to the DB, display the last error message 
-      echo lang('BackDevices_DBTools_ImportCSVError')."\n".$error."\n$sql \n\n".$result;
+
+    // Remove the trailing comma and space from SQL
+    $sql = rtrim($sql, ', ');
+
+    // Execute the SQL query
+    $result = $db->query($sql);
+
+    if($error === "") {
+      // Import successful
+      echo lang('BackDevices_DBTools_ImportCSV') . " (Skipped lines: " . $skipped . ") ";
+    } else {
+      // An error occurred while writing to the DB, display the last error message 
+      echo lang('BackDevices_DBTools_ImportCSVError') . "\n" . $error . "\n" . $sql . "\n\n" . $result;
     }
-    
-   } else {
+  } else {
     echo lang('BackDevices_DBTools_ImportCSVMissing');    
-   }
-
+  }
 }
+
 
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status
