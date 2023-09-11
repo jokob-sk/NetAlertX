@@ -435,7 +435,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites} port={port} verifyssl={verifyssl} version={version}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites} port={port} verifyssl={verifyssl} version={version} fullimport={fullimport}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -548,7 +548,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>."
+                "string" : "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>, for UDM(P) devices its 443."
             },
             {
                 "language_code":"es_es",
@@ -722,7 +722,38 @@
             {
                 "language_code":"es_es",
                 "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
-            }] 
+            },
+            {
+            "function": "fullimport",
+            "type": "text.select",
+            "default_value":"disabled",
+            "options": ["disabled", "once", "always"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code":"en_us",
+                "string" : "Perform full import"
+            },
+            {
+                "language_code":"es_es",
+                "string" : "[ES] Perform full import"
+            },
+            {
+                "language_code":"de_de",
+                "string" : "Vollständigen Import durchführen"
+            }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Enable a full import of all known devices by the controller instead of only the online ones. During the scan, all found devices appear online. If you select <code>once</code> the full import is only performed once and the status is set to <code>done</code> afterwards."
+            },
+            {
+                "language_code":"es_es",
+                "string" : "Translation Needed - Enable a full import of all known devices by the controller instead of only the online ones. During the scan, all found devices appear online. If you select <code>once</code> the full import is only performed once and the status is set to <code>done</code> afterwards."
+            },
+                {
+                "language_code":"de_de",
+                "string" : "Führe einen kompletten Import aller dem Controller bekannten Geräten durch. Während des Scans werden alle gefundenen Geräte einmalig als Online angezeigt. Bei der Auswahl von <code>once</code> wird der Scan einmalig durchgeführt und der Status anschliessend auf <code>done</code> gesetzt"
+                }]
+        }]
         }
     ]
 }
