@@ -358,13 +358,14 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
 
-
+    
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
         mylog('none', ['[Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
         return pluginsState 
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
+        mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams])
 
     # process results if any
     if len(sqlParams) > 0:               

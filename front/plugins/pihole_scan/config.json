@@ -80,8 +80,8 @@
     },
     {
         "function": "CMD",
-        "type": "readonly",
-        "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM EXTERNAL_PIHOLE.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr <> '00:00:00:00:00:00';            ",
+        "type": "text",
+        "default_value":"SELECT n.hwaddr AS Object_PrimaryID, 'null' AS Object_SecondaryID, datetime() AS DateTime, na.ip  AS Watched_Value1, n.lastQuery AS Watched_Value2, na.name AS Watched_Value3, n.macVendor AS Watched_Value4, {s-quote}null{s-quote} AS Extra, n.hwaddr AS ForeignKey FROM EXTERNAL_PIHOLE.Network AS n LEFT JOIN EXTERNAL_PIHOLE.Network_Addresses AS na ON na.network_id = n.id WHERE n.hwaddr NOT LIKE {s-quote}ip-%{s-quote} AND n.hwaddr <> {s-quote}00:00:00:00:00:00{s-quote};",
         "options": [],
         "localized": ["name", "description"],
         "name" : [{
@@ -220,6 +220,19 @@
           }]
     }, 
     {
+      "column": "Object_SecondaryID",           
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "N/A"
+          }]
+    }, 
+    {
         "column": "Watched_Value1",
         "mapped_to_column": "cur_IP", 
         "css_classes": "col-sm-2",
@@ -263,6 +276,20 @@
       "name":[{
           "language_code":"en_us",
           "string" : "Name"
+          }]
+    },
+    {
+      "column": "Watched_Value4",   
+      "mapped_to_column": "cur_Vendor",    
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[{
+          "language_code":"en_us",
+          "string" : "Vendor"
           }]
     },
     {
