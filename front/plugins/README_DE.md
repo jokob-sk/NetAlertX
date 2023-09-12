@@ -26,7 +26,7 @@
 |             |    Yes*     | UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
 |             |    Yes      | UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
 |             |             | WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
-|     N/A     |             | N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
+|     N/A     |             | N/A                   | SQL query              | No beispiel available, but the External SQLite based plugins work very similar |
 
 >* Das Undiscoverables-Plugin (`UNDIS`) fügt nur vom Benutzer angegebene Dummy-Geräte ein.
 
@@ -103,7 +103,7 @@ Weitere Einzelheiten finden Sie weiter unten.
   | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
   | 1 | `Object_SecondaryID` | no | Optional secondary ID to create a relationship beween other entities, such as a MAC address |
   | 2 | `DateTime` | yes | When the event occured in the format `2023-01-02 15:56:30` |
-  | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For example IP address |
+  | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For beispiel IP address |
   | 4 | `Watched_Value2` | no | As above |
   | 5 | `Watched_Value3` | no | As above  |
   | 6 | `Watched_Value4` | no | As above  |
@@ -135,7 +135,7 @@ If you want to display plugin objects or import devices into the app, data sourc
 
 You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin on devices via the `show_ui` property:
 
-> 🔎Example
+> 🔎Beispiel
 >```json
 > "show_ui": true,
 > ```
@@ -145,7 +145,7 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
  If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). This file needs to be stored in the same folder as the plugin. 
 
 > [!IMPORTANT]
-> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
+> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good beispiel).
  
  The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
@@ -187,9 +187,9 @@ If the `data_source` is set to `pialert-db-query` the `CMD` setting needs to con
 
 This SQL query is executed on the `pialert.db` SQLite database file. 
 
->  🔎Example
+>  🔎Beispiel
 > 
-> SQL query example:
+> SQL query Beispiel:
 > 
 > ```SQL
 > SELECT  dv.dev_Name as Object_PrimaryID, 
@@ -208,7 +208,7 @@ This SQL query is executed on the `pialert.db` SQLite database file.
 > ON ns.MAC = dv.dev_MAC
 > ```
 > 
-> Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
+> Required `CMD` setting beispiel with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
 > 
 > ```json
 > {
@@ -234,9 +234,9 @@ Used to initialize internal settings. Check the `newdev_template` plugin for det
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For beispiel for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
->  🔎Example
+>  🔎Beispiel
 >
 >```json
 >  ...
@@ -260,7 +260,7 @@ You can execute a SQL query on an external database connected to the current PiA
 
 The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type The format has to adhere to the format outlined in the "Column order and values" section above. 
 
->  🔎Example
+>  🔎Beispiel
 >
 > Notice the `EXTERNAL_PIHOLE.` prefix.
 >
@@ -282,9 +282,9 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 >  }
 >  ```
 
-## 🕳 Filters
+## 🕳 Filter
 
-Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
+Plugin-Einträge können in der Benutzeroberfläche basierend auf in Filterfeldern eingegebenen Werten gefiltert werden. Das Textfeld/Feld `txtMacFilter` enthält die Mac-Adresse des aktuell angezeigten Geräts oder einfach eine Mac-Adresse, die in der Abfragezeichenfolge `mac` verfügbar ist.
 
   | Property | Required | Description | 
   |----------------------|----------------------|----------------------| 
@@ -296,7 +296,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
   
   Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
-> 🔎Example:
+> 🔎Beispiel:
 > 
 > ```json
 >     "data_filters": [
@@ -324,7 +324,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >
 >5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
 >
->6. This results in for example this code: 
+>6. Daraus ergibt sich beispielsweise dieser code:
 >
 >```javascript
 >    // left part of teh expression coming from compare_column and right from the input field
@@ -334,17 +334,17 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >
 
 
-### 🗺 Mapping the plugin results into a database table
+### 🗺 Zuordnung der Plugin-Ergebnisse zu einer Datenbanktabelle
 
 Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
 > [!NOTE] 
-> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
+> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for beispiel notification for devices are sent out.  
 
 
->🔍 Example:
+>🔍 Beispiel:
 >
->For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
+>For beispiel, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
 >
 >1. Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 >
@@ -359,7 +359,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >    ...
 >}
 >```
->2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
+>2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For beispiel in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
 >
 >```json
 >{
@@ -384,7 +384,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 > You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
 
 
->🔍 Example:
+>🔍 Beispiel:
 >
 >```json
 >{
@@ -408,9 +408,9 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 
 #### params
 
-The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
+The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For beispiel, the user wants to monitor a specific URL. 
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
 > 
 > ```bash
@@ -476,7 +476,7 @@ Below are some general additional notes, when defining `params`:
 - `"base64": true` - use base64 encoding to pass the value to the script (e.g. if there are spaces)
 
 
-> 🔎Example:
+> 🔎Beispiel:
 > 
 > ```json
 > {
@@ -506,10 +506,10 @@ Below are some general additional notes, when defining `params`:
 > ```
 
 
-#### ⚙ Setting object structure
+#### ⚙ Objektstruktur festlegen
 
 > [!NOTE] 
-> The settings flow and when Plugin specific settings are applied is described under the [Settings system](/docs/SETTINGS_SYSTEM.md).
+> Der Einstellungsablauf und wann Plugin-spezifische Einstellungen angewendet werden, wird im [Einstellungssystem](/docs/SETTINGS_SYSTEM.md) beschrieben.
 
 Required attributes are:
 
@@ -538,7 +538,7 @@ Required attributes are:
 | (optional) `"events"` | Used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. |
 
     
-##### Supported settings `function` values
+##### Unterstützte Einstellungen `function` werte
 
 You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
 
@@ -565,7 +565,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 
 
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > 
 > ```json
 > {
@@ -585,12 +585,12 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > }
 > ```
 
-##### 🌍Localized strings
+##### 🌍Lokalisierte Zeichenfolgen
 
 - `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > 
 > ```json
 > 
@@ -601,7 +601,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > 
 > ```
 
-##### UI settings in database_column_definitions
+##### UI-Einstellungen in database_column_definitions.
 
 The UI will adjust how columns are displayed in the UI based on the resolvers definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
@@ -627,7 +627,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 
 > [!NOTE] 
-> Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
+> Unterstützt Verkettung. Sie können mehrere Resolver mit „.“ verketten. Zum Beispiel `regex.url_http_https`. Dadurch wird der Resolver `regex` und dann der Resolver `url_http_https` angewendet.
 
 
 
