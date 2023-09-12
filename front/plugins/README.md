@@ -1,6 +1,6 @@
 ## 📚 Docs for individual plugins 
 
-### Community translations of this file
+### 🏴 Community translations of this file
 
 * <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
