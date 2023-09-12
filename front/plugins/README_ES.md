@@ -1,29 +1,39 @@
 ## 📚 Documentos para plugins individuales 
 
-### Traducciones comunitarias de este archivo
+### 🏴 Traducciones comunitarias de este archivo
 
-- [Ingles](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md) 
+* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md">
+   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/us.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> Ingles (Americano)
+  </a> 
 
-### Plugins basados en scripts
+* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">
+   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> Alemán (Alemania)
+  </a> 
 
-- [arp_scan (ARPSCAN)](/front/plugins/arp_scan/) 
-- [website_monitor (WEBMON)](/front/plugins/website_monitor/) 
-- [dhcp_servers (DHCPSRVS)](/front/plugins/dhcp_servers/) 
-- [dhcp_leases (DHCPLSS)](/front/plugins/dhcp_leases/) 
-- [unifi_import (UNFIMP)](/front/plugins/unifi_import/)
-- [snmp_discovery (SNMPDSC)](/front/plugins/snmp_discovery/)
-- [undiscoverables (UNDIS)](/front/plugins/undiscoverables/)
-- [pholus_scan (ARPSCAN)](/front/plugins/pholus_scan/)
-- [set_password (SETPWD)](/front/plugins/set_password/)
+### 🔌 Plugins y 📚 Documentos
 
-### Plugins basados en consultas SQL
-- [nmap_services (NMAPSERV)](/front/plugins/nmap_services/) 
+| Requerido   | CurrentScan | Prefijo único         | Tipo de plugin         | Enlace + Documentos                                      | 
+|-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
+|             |    Sí       | ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
+|             |             | CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
+|             |    Sí       | DHCPLSS               | Script                 | [dhcp_leases](/front/plugins/dhcp_leases/)    |
+|             |             | DHCPSRVS              | Script                 | [dhcp_servers](/front/plugins/dhcp_servers/) |
+|     Sí      |             | NEWDEV                | Template               | [newdev_template](/front/plugins/newdev_template/) |
+|             |             | NMAP                  | Script                 | [nmap_scan](/front/plugins/nmap_scan/)            |
+|             |    Sí       | PIHOLE                | External SQLite DB     | [pihole_scan](/front/plugins/pihole_scan/)    |
+|             |             | SETPWD                | Script                 | [set_password](/front/plugins/set_password/)    |
+|             |             | SNMPDSC               | Script                 | [snmp_discovery](/front/plugins/snmp_discovery/) |
+|             |    Sí*      | UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
+|             |    Sí       | UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
+|             |             | WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
+|     N/A     |             | N/A                   | SQL query              | No hay ningún ejemplo disponible, pero los complementos basados en SQLite externo funcionan de manera muy similar |
 
-### Plugins basados en plantillas
-- [newdev_template (NEWDEV)](/front/plugins/newdev_template/) 
+>* El complemento Undiscoverables (`UNDIS`) inserta solo dispositivos ficticios especificados por el usuario.
 
-### Plugins externos basados en SQLite
-- [pihole_scan (PIHOLE)](/front/plugins/newdev_template/) 
+> [!NOTE] 
+> Puede desactivar los complementos a través de Configuración o ignorarlos por completo colocando un archivo `ignore_plugin` en el directorio de complementos. La diferencia es que los complementos ignorados no aparecen en ninguna parte de la interfaz de usuario (Configuración, Detalles del dispositivo, páginas de complementos). La aplicación omite por completo los complementos ignorados. Los complementos de detección de dispositivos insertan valores en la tabla de base de datos "CurrentScan". Es seguro ignorar los complementos que no son necesarios; sin embargo, tiene sentido tener habilitados al menos algunos complementos de detección de dispositivos (que insertan entradas en la tabla `CurrentScan`), como ARPSCAN o PIHOLE.  
+
+> Se recomienda utilizar el mismo intervalo de programación para todos los complementos responsables de descubrir nuevos dispositivos.
 
 ## 🌟 Crear un plugin personalizado: Descripción general
 

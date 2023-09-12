@@ -1,16 +1,16 @@
-## 📚 Docs for individual plugins 
+## 📚 Dokumente für einzelne Plugins
 
-### 🏴 Community translations of this file
+### 🏴 Community-Übersetzungen dieser Datei
+
+* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md">
+   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/us.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> English (American)
+  </a> 
 
 * <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
   </a> 
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">
-   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 20px !important;width: 20px !important;"> German (Germany)
-  </a> 
-
-### 🔌 Plugins & 📚 Docs 
+### 🔌 Plugins und 📚 Dokumente
 
 | Required    | CurrentScan | Unique Prefix         | Plugin Type            | Link + Docs                                       | 
 |-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
@@ -26,65 +26,65 @@
 |             |    Yes*     | UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
 |             |    Yes      | UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
 |             |             | WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
-|     N/A     |             | N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
+|     N/A     |             | N/A                   | SQL query              | No beispiel available, but the External SQLite based plugins work very similar |
 
->* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+>* Das Undiscoverables-Plugin (`UNDIS`) fügt nur vom Benutzer angegebene Dummy-Geräte ein.
 
 > [!NOTE] 
-> You soft-disable plugins via Settings or completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. The difference is that ignored plugins don't show up anywhere in the UI (Settings, Device details, Plugins pages). The app skips ignored plugins  completely. Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however it makes sense to have a least some device-detecting plugins (that insert entries into the `CurrentScan` table) enabled, such as ARPSCAN or PIHOLE.  
+> Sie können Plugins über die Einstellungen sanft deaktivieren oder Plugins vollständig ignorieren, indem Sie eine „ignore_plugin“-Datei im Plugin-Verzeichnis ablegen. Der Unterschied besteht darin, dass ignorierte Plugins nirgendwo in der Benutzeroberfläche angezeigt werden (Einstellungen, Gerätedetails, Plugins-Seiten). Die App überspringt ignorierte Plugins vollständig. Geräteerkennungs-Plugins fügen Werte in die Datenbanktabelle „CurrentScan“ ein. Die Plugins, die nicht erforderlich sind, können getrost ignoriert werden, es ist jedoch sinnvoll, zumindest einige Plugins zur Geräteerkennung (die Einträge in die Tabelle „CurrentScan“ einfügen) zu aktivieren, wie z. B. ARPSCAN oder PIHOLE.  
 
-> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
+> Es wird empfohlen, für alle Plugins, die für die Erkennung neuer Geräte zuständig sind, das gleiche Zeitplanintervall zu verwenden.
 
-## 🌟 Create a custom plugin: Overview
+## 🌟 Erstellen Sie ein benutzerdefiniertes Plugin: Übersicht
 
 | ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 3][screen3] | 
 |----------------------|----------------------| ----------------------| 
 | ![Screen 4][screen4] |  ![Screen 5][screen5] | 
 
-PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
+PiAlert verfügt über ein Plugin-System, um Ereignisse aus Skripten von Drittanbietern in die Benutzeroberfläche einzuspeisen und dann bei Bedarf Benachrichtigungen zu senden. Die hervorgehobene Kernfunktionalität, die dieses Plugin-System unterstützt, ist:
 
-* dynamic creation of a simple UI to interact with the discovered objects,
-* filtering of displayed values in the Devices UI
-* surface settings of plugins in the UI, 
-* different column types for reported values to e.g. link back to a device
-* import objects into existing PiAlert database tables 
+* dynamische Erstellung einer einfachen Benutzeroberfläche zur Interaktion mit den entdeckten Objekten,
+* Filterung der angezeigten Werte in der Geräte-Benutzeroberfläche
+* Oberflächeneinstellungen von Plugins in der Benutzeroberfläche,
+* verschiedene Spaltentypen für gemeldete Werte, z.B. Link zurück zu einem Gerät
+* Objekte in vorhandene PiAlert-Datenbanktabellen importieren
 
-> (Currently, update/overwriting of existing objects is not supported.)
+> (Derzeit wird das Aktualisieren/Überschreiben vorhandener Objekte nicht unterstützt.)
 
-Example use cases for plugins could be:
+Beispielanwendungsfälle für Plugins könnten sein:
 
-* Monitor a web service and alert me if it's down
-* Import devices from dhcp.leases files instead/complementary to using PiHole or arp-scans
-* Creating ad-hoc UI tables from existing data in the PiAlert database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.
-* Using other device discovery methods on the network and importing the data as new devices
-* Creating a script to create FAKE devices based on user input via custom settings
-* ...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
+* Überwachen Sie einen Webdienst und benachrichtigen Sie mich, wenn er nicht verfügbar ist
+* Importieren Sie Geräte aus dhcp.leases-Dateien anstelle/ergänzend zur Verwendung von PiHole oder arp-scans
+* Erstellen von Ad-hoc-UI-Tabellen aus vorhandenen Daten in der PiAlert-Datenbank, z.B. um alle offenen Ports auf Geräten anzuzeigen, um Geräte aufzulisten, die in der letzten Stunde getrennt wurden usw.
+* Verwendung anderer Geräteerkennungsmethoden im Netzwerk und Importieren der Daten als neue Geräte
+* Erstellen eines Skripts zum Erstellen gefälschter Geräte basierend auf Benutzereingaben über benutzerdefinierte Einstellungen
+* ...an diesem Punkt liegt die Einschränkung hauptsächlich in der Kreativität und nicht in der Leistungsfähigkeit (es kann Randfälle geben und die Notwendigkeit, mehr Formularsteuerelemente für Benutzereingaben aus benutzerdefinierten Einstellungen zu unterstützen, aber Sie haben wahrscheinlich schon verstanden, worauf es ankommt)
 
-If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
+Wenn Sie ein Plugin entwickeln möchten, prüfen Sie bitte die bestehende Plugin-Struktur. Sobald die Einstellungen vom Benutzer gespeichert wurden, müssen sie manuell aus der Datei `pialert.conf` entfernt werden, wenn Sie sie aus der `config.json` des Plugins neu initialisieren möchten.
 
-Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
+Bitte lesen Sie das Folgende noch einmal sorgfältig durch, wenn Sie selbst mit einem Plugin beitragen möchten. Diese Dokumentationsdatei ist möglicherweise veraltet. Überprüfen Sie daher auch die Beispiel-Plugins noch einmal.
 
-## ⚠ Disclaimer
+## ⚠ Haftungsausschluss
 
-Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improving the UI experience (See [Frontend guidelines](/docs/FRONTEND_DEVELOPMENT.md)). Example improvements for the taking:
+Befolgen Sie die nachstehenden Anweisungen sorgfältig und prüfen Sie Beispiel-Plugins, wenn Sie selbst eines schreiben möchten. Die Plugin-Benutzeroberfläche ist derzeit nicht meine Priorität. Gerne genehmige ich PRs, wenn Sie daran interessiert sind, die Benutzeroberfläche zu erweitern/verbessern (siehe [Frontend-Richtlinien](/docs/FRONTEND_DEVELOPMENT.md)). Beispielhafte Verbesserungen zum Mitnehmen:
 
-* Making the tables sortable/filterable
-* Using the same approach to display table data as in the Devices section (solves above)
-* Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
+* Die Tabellen sortierbar/filterbar machen
+* Verwenden des gleichen Ansatzes zum Anzeigen von Tabellendaten wie im Abschnitt "Geräte" (wird oben gelöst)
+* Hinzufügen unterstützter Formularsteuerelemente zum Anzeigen der Daten (Derzeit unterstützte Steuerelemente sind im Abschnitt "UI-Einstellungen in Datenbankspaltendefinitionen" unten aufgeführt)
 * ...
 
-## ❗ Known issues:
+## ❗ Bekannte Probleme:
 
 These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
 
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
-* Occasional (experienced twice) hanging of processing plugin script file.
-UI displays outdated values until the API endpoints get refreshed. 
+* Vorhandene Plugin-Objekte werden manchmal nicht richtig interpretiert und stattdessen wird ein neues Objekt erstellt, was zu doppelten Einträgen führt. (Rennbedingung?)
+* Gelegentliches (zweimal aufgetretenes) Hängenbleiben der Verarbeitungs-Plugin-Skriptdatei.
+Die Benutzeroberfläche zeigt veraltete Werte an, bis die API-Endpunkte aktualisiert werden. 
 
-## Plugin file structure overview 
+## Übersicht über die Plugin-Dateistruktur
 
-> ⚠️Folder name must be the same as the code name value in: `"code_name": "<value>"`
-> Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use. 
+> ⚠️Der Ordnername muss mit dem Codenamenwert in Folgendem übereinstimmen: `"code_name": "<value>"`
+> Das eindeutige Präfix muss im Vergleich zu den anderen Einstellungspräfixen eindeutig sein, z. B.: Das Präfix `APPRISE` wird bereits verwendet.
 
   | File | Required (plugin type) | Description | 
   |----------------------|----------------------|----------------------| 
@@ -94,16 +94,16 @@ UI displays outdated values until the API endpoints get refreshed.
   | `script.log` | no | Logging output (recommended) |
   | `README.md` | yes | Any setup considerations or overview  |
 
-More on specifics below.
+Weitere Einzelheiten finden Sie weiter unten.
 
-### Column order and values
+### Spaltenreihenfolge und Werte
 
   | Order | Represented Column | Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
   | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
   | 1 | `Object_SecondaryID` | no | Optional secondary ID to create a relationship beween other entities, such as a MAC address |
   | 2 | `DateTime` | yes | When the event occured in the format `2023-01-02 15:56:30` |
-  | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For example IP address |
+  | 3 | `Watched_Value1` | yes | A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For beispiel IP address |
   | 4 | `Watched_Value2` | no | As above |
   | 5 | `Watched_Value3` | no | As above  |
   | 6 | `Watched_Value4` | no | As above  |
@@ -115,7 +115,7 @@ More on specifics below.
 
 # config.json structure
 
-## Supported data sources
+## Unterstützte Datenquellen
 
 Currently, these data sources are supported (valid `data_source` value). 
 
@@ -127,7 +127,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 
 
-> 🔎Example
+> 🔎Beispiel
 >```json
 >"data_source":  "pialert-db-query"
 >```
@@ -135,7 +135,7 @@ If you want to display plugin objects or import devices into the app, data sourc
 
 You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin on devices via the `show_ui` property:
 
-> 🔎Example
+> 🔎Beispiel
 >```json
 > "show_ui": true,
 > ```
@@ -145,7 +145,7 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
  If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). This file needs to be stored in the same folder as the plugin. 
 
 > [!IMPORTANT]
-> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
+> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good beispiel).
  
  The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
@@ -156,7 +156,7 @@ Every scan result/event entry needs to be on a new line.
 - You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
 - The order of these "columns" can't be changed.
 
-#### 🔎 last_result.log examples
+#### 🔎 last_result.log beispieles
 
 Valid CSV:
 
@@ -187,9 +187,9 @@ If the `data_source` is set to `pialert-db-query` the `CMD` setting needs to con
 
 This SQL query is executed on the `pialert.db` SQLite database file. 
 
->  🔎Example
+>  🔎Beispiel
 > 
-> SQL query example:
+> SQL query Beispiel:
 > 
 > ```SQL
 > SELECT  dv.dev_Name as Object_PrimaryID, 
@@ -208,7 +208,7 @@ This SQL query is executed on the `pialert.db` SQLite database file.
 > ON ns.MAC = dv.dev_MAC
 > ```
 > 
-> Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
+> Required `CMD` setting beispiel with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
 > 
 > ```json
 > {
@@ -234,9 +234,9 @@ Used to initialize internal settings. Check the `newdev_template` plugin for det
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For beispiel for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
->  🔎Example
+>  🔎Beispiel
 >
 >```json
 >  ...
@@ -260,7 +260,7 @@ You can execute a SQL query on an external database connected to the current PiA
 
 The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type The format has to adhere to the format outlined in the "Column order and values" section above. 
 
->  🔎Example
+>  🔎Beispiel
 >
 > Notice the `EXTERNAL_PIHOLE.` prefix.
 >
@@ -282,9 +282,9 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 >  }
 >  ```
 
-## 🕳 Filters
+## 🕳 Filter
 
-Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
+Plugin-Einträge können in der Benutzeroberfläche basierend auf in Filterfeldern eingegebenen Werten gefiltert werden. Das Textfeld/Feld `txtMacFilter` enthält die Mac-Adresse des aktuell angezeigten Geräts oder einfach eine Mac-Adresse, die in der Abfragezeichenfolge `mac` verfügbar ist.
 
   | Property | Required | Description | 
   |----------------------|----------------------|----------------------| 
@@ -296,7 +296,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
   
   Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
 
-> 🔎Example:
+> 🔎Beispiel:
 > 
 > ```json
 >     "data_filters": [
@@ -324,7 +324,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >
 >5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
 >
->6. This results in for example this code: 
+>6. Daraus ergibt sich beispielsweise dieser code:
 >
 >```javascript
 >    // left part of teh expression coming from compare_column and right from the input field
@@ -334,17 +334,17 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >
 
 
-### 🗺 Mapping the plugin results into a database table
+### 🗺 Zuordnung der Plugin-Ergebnisse zu einer Datenbanktabelle
 
 Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
 > [!NOTE] 
-> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
+> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for beispiel notification for devices are sent out.  
 
 
->🔍 Example:
+>🔍 Beispiel:
 >
->For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
+>For beispiel, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
 >
 >1. Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 >
@@ -359,7 +359,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >    ...
 >}
 >```
->2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
+>2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For beispiel in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
 >
 >```json
 >{
@@ -384,7 +384,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 > You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
 
 
->🔍 Example:
+>🔍 Beispiel:
 >
 >```json
 >{
@@ -408,9 +408,9 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 
 #### params
 
-The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
+The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For beispiel, the user wants to monitor a specific URL. 
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
 > 
 > ```bash
@@ -476,7 +476,7 @@ Below are some general additional notes, when defining `params`:
 - `"base64": true` - use base64 encoding to pass the value to the script (e.g. if there are spaces)
 
 
-> 🔎Example:
+> 🔎Beispiel:
 > 
 > ```json
 > {
@@ -506,10 +506,10 @@ Below are some general additional notes, when defining `params`:
 > ```
 
 
-#### ⚙ Setting object structure
+#### ⚙ Objektstruktur festlegen
 
 > [!NOTE] 
-> The settings flow and when Plugin specific settings are applied is described under the [Settings system](/docs/SETTINGS_SYSTEM.md).
+> Der Einstellungsablauf und wann Plugin-spezifische Einstellungen angewendet werden, wird im [Einstellungssystem](/docs/SETTINGS_SYSTEM.md) beschrieben.
 
 Required attributes are:
 
@@ -538,7 +538,7 @@ Required attributes are:
 | (optional) `"events"` | Used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. |
 
     
-##### Supported settings `function` values
+##### Unterstützte Einstellungen `function` werte
 
 You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
 
@@ -565,7 +565,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 
 
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > 
 > ```json
 > {
@@ -585,12 +585,12 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > }
 > ```
 
-##### 🌍Localized strings
+##### 🌍Lokalisierte Zeichenfolgen
 
 - `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
 - `"string"`  - The string to be displayed in the given language.
 
-> 🔎 Example:
+> 🔎 Beispiel:
 > 
 > ```json
 > 
@@ -601,7 +601,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > 
 > ```
 
-##### UI settings in database_column_definitions
+##### UI-Einstellungen in database_column_definitions.
 
 The UI will adjust how columns are displayed in the UI based on the resolvers definition of the `database_column_definitions` object. These are the supported form controls and related functionality:
 
@@ -627,7 +627,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 
 > [!NOTE] 
-> Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
+> Unterstützt Verkettung. Sie können mehrere Resolver mit „.“ verketten. Zum Beispiel `regex.url_http_https`. Dadurch wird der Resolver `regex` und dann der Resolver `url_http_https` angewendet.
 
 
 
