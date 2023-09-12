@@ -715,12 +715,6 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
         }
 ```
 
-### Community translations of this file
-
-- [Spanish](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md) 
-
-
-
 [screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png                    "Screen 1"
 [screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png           "Screen 2"
 [screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png      "Screen 3"
