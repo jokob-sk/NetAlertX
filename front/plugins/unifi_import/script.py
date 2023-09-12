@@ -52,7 +52,7 @@ def main():
     parser.add_argument('port',  action="store",  help="Usually 8443")
     parser.add_argument('verifyssl',  action="store",  help="verify SSL certificate [true|false]")
     parser.add_argument('version',  action="store",  help="The base version of the controller API [v4|v5|unifiOS|UDMP-unifiOS]")
-    parser.add_argument('fullimport', action="store", help="Defines if a full import or only online devices hould be imported [disabled|once|always]"
+    parser.add_argument('fullimport', action="store", help="Defines if a full import or only online devices hould be imported [disabled|once|always]")
 
     values = parser.parse_args()
 
@@ -85,7 +85,7 @@ def main():
 
 # .............................................
 
-def get_entries(plugin_objects: plugin_helper.Plugin_Objects) -> plugin_helper.Plugin_Objects:
+def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
     global VERIFYSSL
 
     # check if the full run must be run:
@@ -159,7 +159,7 @@ def get_entries(plugin_objects: plugin_helper.Plugin_Objects) -> plugin_helper.P
         # get_users() returns all clients known by the controller
         for user in c.get_users():
 
-            mylog('verbose', [f'{json.dumps(user)}'])
+            #mylog('verbose', [f'{json.dumps(user)}'])
 
             name = get_unifi_val(user, 'name')
             hostName = get_unifi_val(user, 'hostname')
@@ -186,6 +186,8 @@ def get_entries(plugin_objects: plugin_helper.Plugin_Objects) -> plugin_helper.P
                 )
 
     # check if the lockfile needs to be adapted
+
+    mylog('verbose', [f'[UNFIMP] check if Lock file needs to be modified'])
     set_lock_file_value(FULL_IMPORT, lock_file_value)
 
 
@@ -224,34 +226,39 @@ def set_name(name: str, hostName: str) -> str:
 # -----------------------------------------------------------------------------
 def set_lock_file_value(config_value: str, lock_file_value: bool) -> None:
 
+    mylog('verbose', [f'[UNFIMP] Lock Params: config_value={config_value}, lock_file_value={lock_file_value}'])
     # set lock if 'once' is set and the lock is not set
     if config_value == 'once' and lock_file_value is False:
         out = 1
     # reset lock if not 'once' is set and the lock is present
-    if config_value != 'once' and lock_file_value is True:
+    elif config_value != 'once' and lock_file_value is True:
         out = 0
     else:
-        mylog('debug', [f'[UNFIMP] No change on lock file needed']))
+        mylog('verbose', [f'[UNFIMP] No change on lock file needed'])
         return
 
-    mylog('verbose', [f'[UNFIMP] Setting lock value for "full import" to {out}']))
-    with open(LOCK_FILE 'w') as lock_file:
-            lock_file.write(str(value))
+    mylog('verbose', [f'[UNFIMP] Setting lock value for "full import" to {out}'])
+    with open(LOCK_FILE, 'w') as lock_file:
+            lock_file.write(str(out))
 
 
 # -----------------------------------------------------------------------------
 def read_lock_file() -> bool:
-    with open(LOCK_FILE, 'w') as lock_file:
-        return bool(int(lock_file.readline()))
+
+    try:
+        with open(LOCK_FILE, 'r') as lock_file:
+            return bool(int(lock_file.readline()))
+    except (FileNotFoundError, ValueError):
+        return False
 
 
 # -----------------------------------------------------------------------------
 def check_full_run_state(config_value: str, lock_file_value: bool) -> bool:
     if config_value == 'always' or (config_value == 'once' and lock_file_value == False):
-        mylog('debug', [f'[UNFIMP] Full import needs to be done: config_value: {config_value} and lock_file_value: {lock_file_value}']))
+        mylog('verbose', [f'[UNFIMP] Full import needs to be done: config_value: {config_value} and lock_file_value: {lock_file_value}'])
         return True
     else:
-        mylog('debug', [f'[UNFIMP] Full import NOT needed: config_value: {config_value} and lock_file_value: {lock_file_value}']))
+        mylog('verbose', [f'[UNFIMP] Full import NOT needed: config_value: {config_value} and lock_file_value: {lock_file_value}'])
         return False
 
 #===============================================================================

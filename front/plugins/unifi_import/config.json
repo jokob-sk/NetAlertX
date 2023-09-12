@@ -463,7 +463,12 @@
             "name": "version",
             "type": "setting",
             "value": "UNFIMP_version"
-        }
+        },
+	{	
+            "name": "fullimport",
+            "type": "setting",
+            "value": "UNFIMP_fullimport"
+	}
     ],
     "settings": [
         {
