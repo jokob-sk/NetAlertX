@@ -230,8 +230,7 @@ def isNewVersion(newVersion: bool):
 
             if realeaseTimestamp > buildTimestamp + 600:
                 mylog('none', ["[Version check] New version of the container available!"])
-                newVersion = True
-                # updateState(db, 'Back_New_Version_Available', str(newVersionAvailable))     ## TO DO add this back in but avoid circular ref with database
+                newVersion = True                
 
     return newVersion
 

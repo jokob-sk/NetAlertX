@@ -148,9 +148,16 @@ def send_notifications (db):
 
     # Open html Template
     mylog('verbose', ['[Notification] Open html Template'])
-    template_file = open(pialertPath + '/back/report_template.html', 'r')
+
+
     if conf.newVersionAvailable :
-        template_file = open(pialertPath + '/back/report_template_new_version.html', 'r')
+        template_file_path = '/back/report_template_new_version.html'
+    else:
+        template_file_path = '/back/report_template.html'
+
+    mylog('verbose', ['[Notification] Using template', template_file_path])        
+
+    template_file = open(pialertPath + template_file_path, 'r')
 
     mail_html = template_file.read()
     template_file.close()
