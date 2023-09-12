@@ -34,6 +34,13 @@ timeZoneSetting = pialertConfigFile['TIMEZONE']
 timeZone = pytz.timezone(timeZoneSetting)
 
 # -------------------------------------------------------------------
+def handleEmpty(input):
+    if input == '' or None:
+        return 'null'
+    else:
+        return input
+
+# -------------------------------------------------------------------
 def decodeBase64(inputParamBase64):
 
     # Printing the input list to check its content.

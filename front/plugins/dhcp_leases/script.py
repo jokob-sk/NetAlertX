@@ -10,7 +10,7 @@ import sys
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Object, Plugin_Objects
+from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
 from logger import mylog
 from dhcp_leases import DhcpLeases
 
@@ -45,28 +45,28 @@ def get_entries(path, plugin_objects):
                 row = line.rstrip().split()
                 if len(row) == 5:
                     plugin_objects.add_object(
-                        primaryId=row[1],    
-                        secondaryId=row[2],  
-                        watched1='True',   
-                        watched2=row[3],
-                        watched3=row[4],
-                        watched4='True',
-                        extra=path,
-                        foreignKey=row[1]
+                        primaryId   = handleEmpty(row[1]),    
+                        secondaryId = handleEmpty(row[2]),  
+                        watched1    = handleEmpty('True'),   
+                        watched2    = handleEmpty(row[3]),
+                        watched3    = handleEmpty(row[4]),
+                        watched4    = handleEmpty('True'),
+                        extra       = handleEmpty(path),
+                        foreignKey  = handleEmpty(row[1])
                     )
     else:
         leases = DhcpLeases(path)
         leasesList = leases.get()
         for lease in leasesList:
             plugin_objects.add_object(
-                primaryId=lease.ethernet,    
-                secondaryId=lease.ip,  
-                watched1=lease.active,   
-                watched2=lease.hostname,
-                watched3=lease.hardware,
-                watched4=lease.binding_state,
-                extra=path,
-                foreignKey=lease.ethernet
+                primaryId   = handleEmpty(lease.ethernet),    
+                secondaryId = handleEmpty(lease.ip),  
+                watched1    = handleEmpty(lease.active),   
+                watched2    = handleEmpty(lease.hostname),
+                watched3    = handleEmpty(lease.hardware),
+                watched4    = handleEmpty(lease.binding_state),
+                extra       = handleEmpty(path),
+                foreignKey  = handleEmpty(lease.ethernet)
             )
     return plugin_objects
 
