@@ -471,6 +471,10 @@
 
       setCache('devicesListNew', JSON.stringify(devicesListnew))
 
+      // init global variable
+      deviceListGlobal = devicesListnew;
+
+      
       // create tree
       initTree(getHierarchy());
 
@@ -484,20 +488,6 @@
   // ---------------------------------------------------------------------------
   // Tree functionality
   // ---------------------------------------------------------------------------
-  // ---------------------------------------------------------------------------  
-  function getDevicesList()
-  {
-    // Read cache
-    devicesList = getCache('devicesListNew');
-    
-    if (devicesList != '') {
-        devicesList = JSON.parse (devicesList);
-    } else {
-        devicesList = [];
-    }
-    return devicesList;
-  }
-
   
   // ---------------------------------------------------------------------------
   var leafNodesCount = 0;
@@ -505,6 +495,7 @@
   var parentNodesCount = 0;
   var hiddenMacs = []; // hidden children
   var hiddenChildren = [];
+  var deviceListGlobal = null; 
   
 
   
@@ -559,14 +550,12 @@
   // ---------------------------------------------------------------------------
   
   function getHierarchy()
-  {    
-    list = getDevicesList();
-    
-    for(i in list)
+  {     
+    for(i in deviceListGlobal)
     {      
-      if(list[i].mac == 'Internet')
+      if(deviceListGlobal[i].mac == 'Internet')
       { 
-        return (getChildren(list[i], list, ''))
+        return (getChildren(deviceListGlobal[i], deviceListGlobal, ''))
         break;
       }
     }
@@ -586,8 +575,6 @@
     {
       removeItemFromArray(hiddenMacs, parentMac)
     }
-
-    list = getDevicesList();
 
     // updatedTree = myHierarchy;
     updatedTree = getHierarchy()
@@ -637,6 +624,8 @@
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
     $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${$('.content-header').width()}px`)
+
+    console.log('here')
 
     myTree = Treeviz.create({
       htmlId: "networkTree",
@@ -689,6 +678,10 @@
       onNodeClick: (nodeData) => handleNodeClick(nodeData),
       relationnalField: "children",      
       });
+
+      console.log('vvvv')
+      console.log(myHierarchy)
+      console.log('^^^^^^^')
       
       myTree.refresh(myHierarchy);      
     }
