@@ -577,7 +577,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     {
       $.ajax({
       method: "POST",
-      url: "../php/server/util.php",
+      url: "php/server/util.php",
       data: { 
         function: 'savesettings', 
         settings: JSON.stringify(collectSettings()) },
