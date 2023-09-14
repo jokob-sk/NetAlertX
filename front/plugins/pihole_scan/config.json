@@ -243,11 +243,11 @@
         "localized": ["name"],
         "name":[{
             "language_code":"en_us",
-            "string" : "IP"
+            "string" : "Link to device"
             },
             {
             "language_code":"es_es",
-            "string" : "IP"
+            "string" : "N/A"
             }]
     },
     {

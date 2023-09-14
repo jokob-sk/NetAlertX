@@ -22,7 +22,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 #### 🔝 Popular/Suggested
 
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
-- [Gmail as SMTP server for sending emails](/docs/SMTP_GMAIL.md)
+- [SMTP server config](/docs/SMTP.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [Home Assistant](/docs/HOME_ASSISTANT.md)
 

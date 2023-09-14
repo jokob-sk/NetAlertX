@@ -489,7 +489,7 @@
         "REPORT_MAIL_name" : "Habilitar email",
         "REPORT_MAIL_description" : "Si está habilitado, se envía un correo electrónico con una lista de cambios a los que se ha suscrito. Complete también todas las configuraciones restantes relacionadas con la configuración de SMTP a continuación",
         "SMTP_SERVER_name" : "URL del servidor SMTP",
-        "SMTP_SERVER_description" : "La URL del host del servidor SMTP. Por ejemplo, <code>smtp-relay.sendinblue.com</code>. Para utilizar Gmail como servidor SMTP <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SMTP_GMAIL.md\">siga esta guía</a >",
+        "SMTP_SERVER_description" : "La URL del host del servidor SMTP. Por ejemplo, <code>smtp-relay.sendinblue.com</code>. Para utilizar Gmail como servidor SMTP <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SMTP.md\">siga esta guía</a >",
         "SMTP_PORT_name" : "Puerto del servidor SMTP",
         "SMTP_PORT_description" : "Número de puerto utilizado para la conexión SMTP. Establézcalo en <code>0</code> si no desea utilizar un puerto al conectarse al servidor SMTP.",
         "SMTP_SKIP_LOGIN_name" : "Omitir autenticación",
