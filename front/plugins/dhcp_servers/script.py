@@ -15,8 +15,10 @@ from logger import mylog
 def main():
 
     mylog('verbose', ['[DHCPSRVS] In script'])
-
     RESULT_FILE = 'last_result.log'
+    last_run_logfile = open(RESULT_FILE, 'a') 
+    last_run_logfile.write("")
+    
     plugin_objects = Plugin_Objects(RESULT_FILE)
     timeoutSec = 10
 
