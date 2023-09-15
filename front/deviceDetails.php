@@ -540,15 +540,7 @@
               </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPresence">
-
-                  <!-- spinner -->
-                  <div id="loading" style="display: none">
-                    <div class="pa_semitransparent-panel"></div>
-                    <div class="panel panel-default pa_spinner">
-                      <table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>
-                    </div>
-                  </div>
+              <div class="tab-pane fade table-responsive" id="panPresence">                 
 
                   <!-- Calendar -->
                   <div id="calendar">
@@ -1136,9 +1128,9 @@ function initializeCalendar () {
       
     loading: function( isLoading, view ) {
         if (isLoading) {
-          $('#loading').show();
+          showSpinner()
         } else {
-          $('#loading').hide();
+          hideSpinner()
         }
     }
 

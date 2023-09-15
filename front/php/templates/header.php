@@ -83,9 +83,9 @@ if ($ENABLED_DARKMODE === True) {
 <script>
 
   function updateState(){
-    $.get('api/pialert_app_state.json?nocache=' + Date.now(), function(appState) {    
+    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {    
 
-      console.log(appState)
+      // console.log(appState)
 
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
 

@@ -148,18 +148,7 @@
             </div>
 
             <!-- box-body -->
-            <div class="box-body table-responsive">
-
-              <!-- spinner -->
-              <div id="loading" style="display: none">
-                <div class="pa_semitransparent-panel"></div>
-                <div class="panel panel-default pa_spinner">
-                  <table>
-                    <td width="130px" align="middle"><?= lang("Presence_Loading");?></td>
-                    <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
-                  </table>
-                </div>
-              </div>
+            <div class="box-body table-responsive">              
 
               <!-- Calendar -->
               <div id="calendar"></div>
@@ -344,9 +333,9 @@ function initializeCalendar () {
 
     loading: function( isLoading, view ) {
         if (isLoading) {
-          $("#loading").show();
+          showSpinner();
         } else {
-          $("#loading").hide();
+          hideSpinner();
         }
     }
 

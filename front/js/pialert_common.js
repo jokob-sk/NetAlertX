@@ -534,7 +534,41 @@ function isEmpty(value)
   return emptyArr.includes(value)
 }
 
+// -----------------------------------------------------------------------------
+//  Loading Spinner overlay
+// -----------------------------------------------------------------------------
+function showSpinner(stringKey='Loading')
+{
+  if($("#loadingSpinner"))
+  {
+    $("#loadingSpinner").show();
+  }
+  else{
+    html =  `
+    <!-- spinner -->
+    <div id="loadingSpinner" style="display: block">
+      <div class="pa_semitransparent-panel"></div>
+      <div class="panel panel-default pa_spinner">
+        <table>
+          <td width="130px" align="middle">${getString(stringKey)}</td>
+          <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
+        </table>
+      </div>
+    </div>
+    `
+
+    $(".wrapper").append(html)
+  }
+}
+// -----------------------------------------------------------------------------
+function hideSpinner()
+{
+  $("#loadingSpinner").hide()
+}
+
+// -----------------------------------------------------------------------------
 // initialize
+// -----------------------------------------------------------------------------
 cacheSettings()
 cacheStrings()
 initDeviceListAll_JSON()

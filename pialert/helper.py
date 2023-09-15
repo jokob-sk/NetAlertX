@@ -40,7 +40,7 @@ class app_state_class:
     def __init__(self, currentState):
         
         # json file containing the state to communicate with teh frontend
-        stateFile = apiPath + '/pialert_app_state.json'
+        stateFile = apiPath + '/app_state.json'
 
         #  update self
         self.currentState = currentState
@@ -69,7 +69,7 @@ class AppStateEncoder(json.JSONEncoder):
         return super().default(obj)
 
 #-------------------------------------------------------------------------------
-def updateState( newState):
+def updateState(newState):
 
     state = app_state_class(newState)
 
