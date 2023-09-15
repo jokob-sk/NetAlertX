@@ -107,7 +107,7 @@ def main ():
         last_cleanup = conf.last_cleanup
         last_version_check = conf.last_version_check
         
-
+        
         # check if new version is available / only check once an hour
         if conf.last_version_check  + datetime.timedelta(hours=1) < conf.loop_start_time :
             # if newVersionAvailable is already true the function does nothing and returns true again

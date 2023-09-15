@@ -159,11 +159,18 @@ def if_byte_then_to_str(input):
     return input
 
 #-------------------------------------------------------------------------------
-def collect_lang_strings(db, json, pref):
+def collect_lang_strings(db, json, pref, stringSqlParams):    
 
     for prop in json["localized"]:
         for language_string in json[prop]:
-            import_language_string(db, language_string["language_code"], pref + "_" + prop, language_string["string"])
+            # db.sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", 
+             
+            stringSqlParams.append((str(language_string["language_code"]), str(pref + "_" + prop), str(language_string["string"]), ""))
+
+            # db.commitDB()
+            # sqlParams = import_language_string(db, language_string["language_code"], pref + "_" + prop, language_string["string"])
+
+    return stringSqlParams
 
 
 #-------------------------------------------------------------------------------
@@ -178,13 +185,6 @@ def row_to_json(names, row):
         index += 1
 
     return rowEntry
-
-#-------------------------------------------------------------------------------
-def import_language_string(db, code, key, value, extra = ""):
-
-    db.sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", (str(code), str(key), str(value), str(extra)))
-
-    db.commitDB()
 
 
 

@@ -9,7 +9,7 @@ import json
 
 import conf 
 from const import fullConfPath
-from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject
+from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
@@ -72,6 +72,9 @@ def importConfigs (db):
     if (fileModifiedTime == conf.lastImportedConfFile) :
         mylog('debug', ['[Import Config] skipping config file import'])
         return
+
+    # Header
+    updateState(db,"Import config")  
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -197,9 +200,11 @@ def importConfigs (db):
         print_plugin_info(plugin, ['display_name','description'])
 
         # if plugin["enabled"] == 'true': 
+
+        stringSqlParams = []
         
         # collect plugin level language strings
-        collect_lang_strings(db, plugin, pref)
+        stringSqlParams = collect_lang_strings(db, plugin, pref, stringSqlParams)
         
         for set in plugin["settings"]:
             setFunction = set["function"]
@@ -230,12 +235,19 @@ def importConfigs (db):
 
             # Collect settings related language strings
             # Creates an entry with key, for example ARPSCAN_CMD_name
-            collect_lang_strings(db, set,  pref + "_" + set["function"])
+            stringSqlParams = collect_lang_strings(db, set,  pref + "_" + set["function"], stringSqlParams)
 
         # Collect column related language strings
         for clmn in plugin.get('database_column_definitions', []):
             # Creates an entry with key, for example ARPSCAN_Object_PrimaryID_name
-            collect_lang_strings(db, clmn,  pref + "_" + clmn.get("column", ""))
+            stringSqlParams = collect_lang_strings(db, clmn,  pref + "_" + clmn.get("column", ""), stringSqlParams)
+
+        #  bulk-import language strings
+        sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )
+
+        db.commitDB()
+
+
 
 
 

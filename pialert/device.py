@@ -165,72 +165,7 @@ def create_new_devices (db):
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
-    # Pi-hole - Insert events for new devices
-    # NOT STRICYLY NECESARY (Devices can be created through CurrentScan)
-    # Bugfix #2 - Pi-hole devices w/o IP
-    # mylog('debug','[New Devices] 3 Pi-hole Events')
-    # sql.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
-    #                     eve_EventType, eve_AdditionalInfo,
-    #                     eve_PendingAlertEmail)
-    #                 SELECT PH_MAC, IFNULL (PH_IP,'-'), ?, 'New Device',
-    #                     '(Pi-Hole) ' || PH_Vendor, 1
-    #                 FROM PiHole_Network
-    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
-    #                                   WHERE dev_MAC = PH_MAC) """,
-    #                 (startTime, ) ) 
-
-    # # Pi-hole - Create New Devices
-    # # Bugfix #2 - Pi-hole devices w/o IP
-    # mylog('debug','[New Devices] 4 Pi-hole Create devices')
-
-    # sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_Vendor,
-    #                     dev_LastIP, dev_FirstConnection, dev_LastConnection,
-    #                     {newDevColumns})
-    #                 SELECT PH_MAC, PH_Name, PH_Vendor, IFNULL (PH_IP,'-'),
-    #                     ?, ?,
-    #                     {newDevDefaults}
-    #                 FROM PiHole_Network
-    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
-    #                                   WHERE dev_MAC = PH_MAC) """
     
-    # mylog('debug',f'[New Devices] 4 Create devices SQL: {sqlQuery}')
-
-    # sql.execute (sqlQuery, (startTime, startTime) ) 
-
-    # # DHCP Leases - Insert events for new devices
-    # mylog('debug','[New Devices] 5 DHCP Leases Events')
-
-    # sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
-    #                     eve_EventType, eve_AdditionalInfo,
-    #                     eve_PendingAlertEmail)
-    #                 SELECT DHCP_MAC, DHCP_IP, '{startTime}', 'New Device', '(DHCP lease)',1
-    #                 FROM DHCP_Leases
-    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
-    #                                   WHERE dev_MAC = DHCP_MAC) """) 
-
-    # # DHCP Leases - Create New Devices
-    # mylog('debug','[New Devices] 6 DHCP Leases Create devices')
-
-    # sqlQuery = f"""INSERT INTO Devices (dev_MAC, dev_name, dev_LastIP, 
-    #                     dev_Vendor, dev_FirstConnection, dev_LastConnection,                        
-    #                     {newDevColumns})
-    #                 SELECT DISTINCT DHCP_MAC,
-    #                     (SELECT DHCP_Name FROM DHCP_Leases AS D2
-    #                      WHERE D2.DHCP_MAC = D1.DHCP_MAC
-    #                      ORDER BY DHCP_DateTime DESC LIMIT 1),
-    #                     (SELECT DHCP_IP FROM DHCP_Leases AS D2
-    #                      WHERE D2.DHCP_MAC = D1.DHCP_MAC
-    #                      ORDER BY DHCP_DateTime DESC LIMIT 1),
-    #                     '(unknown)', ?, ?, 
-    #                     {newDevDefaults}    
-    #                 FROM DHCP_Leases AS D1
-    #                 WHERE NOT EXISTS (SELECT 1 FROM Devices
-    #                                   WHERE dev_MAC = DHCP_MAC) """
-
-    # mylog('debug',f'[New Devices] 6 Create devices SQL: {sqlQuery}')
-
-    # sql.execute (sqlQuery, (startTime, startTime) ) 
-
     mylog('debug','[New Devices] New Devices end')
     db.commitDB()
 
