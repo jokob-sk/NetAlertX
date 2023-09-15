@@ -293,38 +293,38 @@ def send_notifications (db):
         send_api()
 
         if conf.REPORT_MAIL and check_config('email'):
-            updateState(db,"Send: Email")
+            updateState("Send: Email")
             mylog('minimal', ['[Notification] Sending report by Email'])
             send_email (msg )
         else :
             mylog('verbose', ['[Notification] Skip email'])
         if conf.REPORT_APPRISE and check_config('apprise'):
-            updateState(db,"Send: Apprise")
+            updateState("Send: Apprise")
             mylog('minimal', ['[Notification] Sending report by Apprise'])
             send_apprise (msg)
         else :
             mylog('verbose', ['[Notification] Skip Apprise'])
         if conf.REPORT_WEBHOOK and check_config('webhook'):
-            updateState(db,"Send: Webhook")
+            updateState("Send: Webhook")
             mylog('minimal', ['[Notification] Sending report by Webhook'])
             send_webhook (msg)
         else :
             mylog('verbose', ['[Notification] Skip webhook'])
         if conf.REPORT_NTFY and check_config('ntfy'):
-            updateState(db,"Send: NTFY")
+            updateState("Send: NTFY")
             mylog('minimal', ['[Notification] Sending report by NTFY'])
             send_ntfy (msg)
         else :
             mylog('verbose', ['[Notification] Skip NTFY'])
         if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
-            updateState(db,"Send: PUSHSAFER")
+            updateState("Send: PUSHSAFER")
             mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
             send_pushsafer (msg)
         else :
             mylog('verbose', ['[Notification] Skip PUSHSAFER'])
         # Update MQTT entities
         if conf.REPORT_MQTT and check_config('mqtt'):
-            updateState(db,"Send: MQTT")
+            updateState("Send: MQTT")
             mylog('minimal', ['[Notification] Establishing MQTT thread'])
             mqtt_start(db)
         else :

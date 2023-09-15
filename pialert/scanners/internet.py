@@ -21,7 +21,7 @@ from const import logPath
 def check_internet_IP ( db ):   
 
     # Header
-    updateState(db,"Scan: Internet IP")
+    updateState("Scan: Internet IP")
     mylog('verbose', ['[Internet IP] Check Internet IP started'])    
 
     # Get Internet IP

@@ -16,7 +16,7 @@ from logger import mylog
 def update_devices_MAC_vendors (db, pArg = ''):
     sql = db.sql # TO-DO
     # Header    
-    updateState(db,"Upkeep: Vendors")
+    updateState("Upkeep: Vendors")
     mylog('verbose', ['[', timeNowTZ(), '] Upkeep - Update HW Vendors:' ])
 
     # Update vendors DB (iab oui)

@@ -134,7 +134,7 @@ def main ():
             last_internet_IP_scan = conf.last_internet_IP_scan
 
             # Header
-            updateState(db,"Process: Start")      
+            updateState("Process: Start")      
 
             # Timestamp
             startTime = loop_start_time
@@ -197,7 +197,7 @@ def main ():
             db.commitDB()          
             
             # Footer
-            updateState(db,"Process: Wait")
+            updateState("Process: Wait")
             mylog('verbose', ['[MAIN] Process: Wait'])            
         else:
             # do something

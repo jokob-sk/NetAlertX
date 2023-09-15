@@ -19,6 +19,8 @@ from const import *
 from logger import mylog, logResult
 
 
+
+
 #-------------------------------------------------------------------------------
 def timeNowTZ():
     if isinstance(conf.TIMEZONE, str):
@@ -31,19 +33,46 @@ def timeNowTZ():
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
+
 #-------------------------------------------------------------------------------
-def updateState(db, newState):
+# A class to manage the application state and to provide a frontend accessible API point
+class app_state_class:
+    def __init__(self, currentState):
+        
+        # json file containing the state to communicate with teh frontend
+        stateFile = apiPath + '/pialert_app_state.json'
 
-    # ?? Why is the state written to the DB?
-    # The state is written to the DB so the front-end can use the value to display the current state in the header of the app
-    # The Parameters DB table is used to communicate with the front end. 
+        #  update self
+        self.currentState = currentState
+        self.lastUpdated = str(timeNowTZ())
 
-    #sql = db.sql
+        # update .json file
+        write_file(stateFile , json.dumps(self, cls=AppStateEncoder)) 
 
-    mylog('debug', '[updateState] changing state to: "' + newState +'"')
-    db.sql.execute ("UPDATE Parameters SET par_Value='"+ newState +"' WHERE par_ID='Back_App_State'")
+         
+    def isSet(self):  
 
-    db.commitDB()
+        result = False       
+
+        if self.currentState != "":
+            result = True
+
+        return result
+
+#-------------------------------------------------------------------------------
+# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
+class AppStateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, '__dict__'):
+            # If the object has a '__dict__', assume it's an instance of a class
+            return obj.__dict__
+        return super().default(obj)
+
+#-------------------------------------------------------------------------------
+def updateState( newState):
+
+    state = app_state_class(newState)
+
 #-------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
     subnets = []
@@ -163,12 +192,9 @@ def collect_lang_strings(db, json, pref, stringSqlParams):
 
     for prop in json["localized"]:
         for language_string in json[prop]:
-            # db.sql.execute ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", 
-             
+
             stringSqlParams.append((str(language_string["language_code"]), str(pref + "_" + prop), str(language_string["string"]), ""))
 
-            # db.commitDB()
-            # sqlParams = import_language_string(db, language_string["language_code"], pref + "_" + prop, language_string["string"])
 
     return stringSqlParams
 

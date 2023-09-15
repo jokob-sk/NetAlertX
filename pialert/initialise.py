@@ -74,7 +74,7 @@ def importConfigs (db):
         return
 
     # Header
-    updateState(db,"Import config")  
+    updateState("Import config")  
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -198,7 +198,7 @@ def importConfigs (db):
     index = 0
     for plugin in conf.plugins:
         # Header
-        updateState(db,f"Import plugin {index} of {len(conf.plugins)}") 
+        updateState(f"Import plugin {index} of {len(conf.plugins)}") 
         index +=1
 
         pref = plugin["unique_prefix"]  

@@ -106,7 +106,7 @@ class plugins_state:
 def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
 
     # Header
-    updateState(db,"Run: Plugins")
+    updateState("Run: Plugins")
 
     mylog('debug', ['[Plugins] Check if any plugins need to be executed on run type: ', runType])
 
@@ -129,7 +129,7 @@ def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
 
         if shouldRun:            
             # Header
-            updateState(db,f"Plugins: {prefix}")
+            updateState(f"Plugins: {prefix}")
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])

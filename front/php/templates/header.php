@@ -83,8 +83,15 @@ if ($ENABLED_DARKMODE === True) {
 <script>
 
   function updateState(){
-    getParam("state","Back_App_State", true)
-    setTimeout("updateState()", 5000);
+    $.get('api/pialert_app_state.json?nocache=' + Date.now(), function(appState) {    
+
+      console.log(appState)
+
+      document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
+
+      setTimeout("updateState()", 1000);
+        
+    })
   }
 
   function show_pia_servertime() {
@@ -276,26 +283,6 @@ if ($ENABLED_DARKMODE === True) {
 <script defer>
 
 //--------------------------------------------------------------
-
-  
-  //--------------------------------------------------------------
-  function getParam(targetId, key, skipCache = false) {  
-
-    skipCacheQuery = "";
-
-    if(skipCache)
-    {
-      skipCacheQuery = "&skipcache";
-    }
-
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=NULL&parameter='+ key + skipCacheQuery, function(data) {
-      var result = data;
-
-      document.getElementById(targetId).innerHTML = result.replaceAll('"', '');    
-
-    });
-  }
 
   //--------------------------------------------------------------
 

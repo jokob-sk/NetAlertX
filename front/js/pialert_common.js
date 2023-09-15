@@ -173,6 +173,7 @@ function cacheStrings()
   
 }
 
+// Get translated language string
 function getString (key) {
  
   UI_LANG = getSetting("UI_LANG");
@@ -195,12 +196,8 @@ function getString (key) {
 
 
   if(isEmpty(result))
-  {
-    console.log(`pia_lang_${key}_${lang_code}`)
-    console.log(key)    
+  {    
     result = getCache(`pia_lang_${key}_en_us`, true);
-    console.log(result)   
-  
   }
 
   return result;
