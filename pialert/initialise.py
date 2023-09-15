@@ -195,7 +195,12 @@ def importConfigs (db):
     mylog('none', ['[Config] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
 
     #  handle plugins
+    index = 0
     for plugin in conf.plugins:
+        # Header
+        updateState(db,f"Import plugin {index} of {len(conf.plugins)}") 
+        index +=1
+
         pref = plugin["unique_prefix"]  
         print_plugin_info(plugin, ['display_name','description'])
 

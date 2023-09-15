@@ -700,8 +700,8 @@
                     "string": "verificar SSL"
                 }
             ],
-            "options": [],
-            "type": "text"
+            "options": ["true", "false"],
+            "type": "text.select"
         },
         {
             "function": "version",
