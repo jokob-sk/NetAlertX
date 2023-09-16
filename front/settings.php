@@ -575,16 +575,24 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
     } else
     {
+
+      // trigger a save settings event in the backend
       $.ajax({
       method: "POST",
       url: "php/server/util.php",
       data: { 
         function: 'savesettings', 
         settings: JSON.stringify(collectSettings()) },
-      success: function(data, textStatus) {                    
+        success: function(data, textStatus) {                    
+          
           showModalOk ('Result', data );
+         
           // Remove navigation prompt "Are you sure you want to leave..."
-          window.onbeforeunload = null;
+          window.onbeforeunload = null;         
+
+          // Reloads the current page
+          setTimeout("window.location.reload()", 3000);
+          
          
         }
       });
@@ -607,25 +615,45 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       var result = data;   
       
-      if(key == "Back_Settings_Imported")
-      {
-        fileModificationTime = <?php echo filemtime($confPath)*1000;?>;        
-        importedMiliseconds = parseInt(result.match(  /\d+/g ).join('')); // sanitize the string and get only the numbers
-        
-        result = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" }); //.toDateString("");
-
-        // check if displayed settings are outdated
-        if(fileModificationTime > importedMiliseconds)
-        {
-          showModalOk('WARNING: Outdated settings displayed', "<?= lang("settings_old")?>");
-        }
-      } else{
-        result = result.replaceAll('"', '');
-      }
-
+      result = result.replaceAll('"', '');
+      
       document.getElementById(targetId).innerHTML = result.replaceAll('"', ''); 
     });
   }
+
+  // -----------------------------------------------------------------------------
+  function handleLoadingDialog()
+  {
+    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+
+      fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
+
+      console.log(appState["settingsImported"]*1000)
+      importedMiliseconds = parseInt((appState["settingsImported"]*1000));
+
+      humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+
+      console.log(humanReadable.replaceAll('"', ''))
+
+      // check if displayed settings are outdated
+      // if(fileModificationTime > importedMiliseconds)
+      if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
+      { 
+        showSpinner("settings_old")
+
+        setTimeout("handleLoadingDialog()", 1000);
+
+      } else
+      {
+        hideSpinner()        
+      }
+
+      document.getElementById('lastImportedTime').innerHTML = humanReadable; 
+
+     })
+
+  }
+  
   
   
   // -----------------------------------------------------------------------------
@@ -722,6 +750,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   // ---------------------------------------------------------
   // Show last time settings have been imported
-  getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
+  // getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
+
+  handleLoadingDialog()
+
+  
 
 </script>

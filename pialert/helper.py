@@ -37,17 +37,37 @@ def timeNow():
 #-------------------------------------------------------------------------------
 # A class to manage the application state and to provide a frontend accessible API point
 class app_state_class:
-    def __init__(self, currentState):
-        
-        # json file containing the state to communicate with teh frontend
+    def __init__(self, currentState, settingsSaved=None, settingsImported=None, showSpinner=False):
+        # json file containing the state to communicate with the frontend
         stateFile = apiPath + '/app_state.json'
 
-        #  update self
+        # Update self
         self.currentState = currentState
         self.lastUpdated = str(timeNowTZ())
 
-        # update .json file
-        write_file(stateFile , json.dumps(self, cls=AppStateEncoder)) 
+        # Check if the file exists and init values
+        if os.path.exists(stateFile):
+            with open(stateFile, 'r') as json_file:
+                previousState = json.load(json_file)
+                self.settingsSaved = previousState.get("settingsSaved", 0)
+                self.settingsImported = previousState.get("settingsImported", 0)
+                self.showSpinner = previousState.get("showSpinner", False)
+        else:
+            self.settingsSaved = 0
+            self.settingsImported = 0
+            self.showSpinner = False
+
+        # Overwrite with provided parameters if not None
+        if settingsSaved is not None:
+            self.settingsSaved = settingsSaved
+        if settingsImported is not None:
+            self.settingsImported = settingsImported
+        if showSpinner is not None:
+            self.showSpinner = showSpinner
+
+        # Update .json file
+        with open(stateFile, 'w') as json_file:
+            json.dump(self, json_file, cls=AppStateEncoder, indent=4)
 
          
     def isSet(self):  
@@ -69,9 +89,9 @@ class AppStateEncoder(json.JSONEncoder):
         return super().default(obj)
 
 #-------------------------------------------------------------------------------
-def updateState(newState):
+def updateState(newState, settingsSaved = None, settingsImported = None, showSpinner = False):
 
-    state = app_state_class(newState)
+    state = app_state_class(newState, settingsSaved, settingsImported, showSpinner)
 
 #-------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):

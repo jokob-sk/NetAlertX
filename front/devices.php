@@ -209,6 +209,8 @@
 // -----------------------------------------------------------------------------
 function main () {
 
+  handleLoadingDialog()
+
   // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
   cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  
 
@@ -541,6 +543,26 @@ function getDevicesList (status) {
   $('#tableDevices').DataTable().ajax.url(
     'php/server/devices.php?action=getDevicesList&status=' + deviceStatus).load();
 };
+
+function handleLoadingDialog()
+  {
+    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+     
+      console.log(appState["showSpinner"])
+      if(appState["showSpinner"])
+      { 
+        showSpinner("settings_old")
+
+        setTimeout("handleLoadingDialog()", 1000);
+
+      } else
+      {
+        hideSpinner()        
+      }      
+
+     })
+
+  }
 
 </script>
 

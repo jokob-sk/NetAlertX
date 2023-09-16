@@ -85,8 +85,6 @@ if ($ENABLED_DARKMODE === True) {
   function updateState(){
     $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {    
 
-      // console.log(appState)
-
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
 
       setTimeout("updateState()", 1000);
@@ -106,12 +104,6 @@ if ($ENABLED_DARKMODE === True) {
     setTimeout("show_pia_servertime()", 1000);
   }
 
-  // refresh page on focus - adds a lot of SQL queries overhead onto the DB - disabling for now
-  // document.addEventListener("visibilitychange",()=>{
-  //   if(document.visibilityState==="visible"){
-  //       window.location.href = window.location.href.split('#')[0];
-  //   }
-  // })
 
 </script>
 

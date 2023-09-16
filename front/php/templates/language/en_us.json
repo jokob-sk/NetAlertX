@@ -460,7 +460,7 @@
         "Settings_Metadata_Toggle" : "Show/hide metadata for the given setting.",
         "settings_missing" : "Not all settings loaded, refresh the page! This is probably caused by a high load on the database.",
         "settings_missing_block" : "You can not save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.",
-        "settings_old" : "The settings in the DB (shown on this page) are outdated. This is probably caused by a running scan. The settings were saved in the <code>pialert.conf</code> file, but the background process didn not have time to import it yet to the DB. You can wait until the settings get refreshed so you do not overwrite your old values. Feel free to save your settings either way if you do not mind losing the settings between the last save and now. There are also backup files created if you need to compare your settings later.",
+        "settings_old" : "Importing settings and re-initializing...",
         "settings_imported" : "Last time settings were imported from the pialert.conf file:",
         "settings_expand_all" : "Expand all",
         "Setting_Override" : "Override value",

@@ -74,7 +74,7 @@ def importConfigs (db):
         return
 
     # Header
-    updateState("Import config")  
+    updateState("Import config", showSpinner = True)  
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -170,15 +170,15 @@ def importConfigs (db):
     #cron_instance = Cron()
 
     # timestamps of last execution times
-    conf.startTime = conf.time_started
-    now_minus_24h = conf.time_started - datetime.timedelta(hours = 24)
+    conf.startTime  = conf.time_started
+    now_minus_24h   = conf.time_started - datetime.timedelta(hours = 24)
 
     # set these times to the past to force the first run     
-    conf.last_internet_IP_scan = now_minus_24h
-    conf.last_scan_run = now_minus_24h
-    conf.last_cleanup = now_minus_24h
-    conf.last_update_vendors = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
-    conf.last_version_check = now_minus_24h  
+    conf.last_internet_IP_scan  = now_minus_24h
+    conf.last_scan_run          = now_minus_24h
+    conf.last_cleanup           = now_minus_24h
+    conf.last_update_vendors    = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
+    conf.last_version_check     = now_minus_24h  
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     
@@ -254,8 +254,6 @@ def importConfigs (db):
 
 
 
-
-
     conf.plugins_once_run = False
     # -----------------
     # Plugins END
@@ -279,9 +277,9 @@ def importConfigs (db):
     run_plugin_scripts(db, 'before_config_save' )
 
     # Used to determine the next import
-    conf.lastImportedConfFile = os.path.getmtime(config_file)      
-    
-    #TO DO this creates a circular reference between API and HELPER !
+    conf.lastImportedConfFile = os.path.getmtime(config_file)   
+
+    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False)   
 
     mylog('minimal', '[Config] Imported new config')
 

@@ -539,11 +539,12 @@ function isEmpty(value)
 // -----------------------------------------------------------------------------
 function showSpinner(stringKey='Loading')
 {
-  if($("#loadingSpinner"))
+  if($("#loadingSpinner").length)
   {
+    
     $("#loadingSpinner").show();
   }
-  else{
+  else{    
     html =  `
     <!-- spinner -->
     <div id="loadingSpinner" style="display: block">

@@ -450,7 +450,7 @@
         "Settings_Title" : "<i class=\"fa fa-cog\"> Configuración</i>",
         "settings_missing" : "Actualiza la página, no todos los ajustes se han cargado. Probablemente sea por una sobrecarga de la base de datos.",
         "settings_missing_block" : "No puedes guardar los ajustes sin establecer todas las claves. Actualiza la página. Problabmente esté causado por una sobrecarga de la base de datos.",
-        "settings_old" : "Los ajustes mostrados en esta página están desactualizados. Probablemente sea por un escaneo en proceso. Los ajustes se guardan en el archivo <code>pialert.conf</code>, pero el proceso en segundo plano no las ha importado todavía a la base de datos. Puedes esperar a que los ajustes se actualicen para evitar sobreescribirlos con los ajustes antiguos. Si te da igual perder los ajustes desde la última vez que guardaste y ahora, siéntete libre de guardarlos de nuevo. También hay copias de seguridad creadas si necesitas comparar tus ajustes más tarde.",
+        "settings_old" : "N/A",
         "settings_imported" : "Última vez que los ajustes fueron importados desde el archivo pialert.conf:",
         "settings_expand_all" : "Expandir todo",
         "Setting_Override" : "Sobreescribir el valor",
