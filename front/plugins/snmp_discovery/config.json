@@ -389,7 +389,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices. "
             },
             {
                 "language_code":"es_es",

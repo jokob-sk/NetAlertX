@@ -33,12 +33,12 @@ function initFields() {
 
     // if the current mac has changed, reinitialize the data
     if(mac != undefined && $("#txtMacFilter").val() != mac)
-    {
-        $("#txtMacFilter").val(mac);
-        console.log("UPDATE");
+    {        
+        
+        $("#txtMacFilter").val(mac);        
 
         getData();
-    }
+    } 
 
 }
 
@@ -512,6 +512,7 @@ function shouldBeShown(entry, pluginObj)
             compare_use_quotes = dataFilters[i].compare_use_quotes;
             compare_field_id_value = $(`#${compare_field_id}`).val();            
 
+            // apply filter i sthe filter field has a valid value
             if(compare_field_id_value != undefined && compare_field_id_value != '--') 
             {
                 // valid value                

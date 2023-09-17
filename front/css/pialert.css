@@ -940,3 +940,20 @@ input[readonly] {
 {
     z-index: 100;
 }
+
+/* -----------------------------------------------------------------------------
+   Donations
+----------------------------------------------------------------------------- */
+.donations .box
+{
+    padding:15px;
+    margin-bottom: 0px;
+}
+.donations .box-header
+{
+    color:15px;
+}
+.donations h3
+{
+    margin-top: 10px;
+}

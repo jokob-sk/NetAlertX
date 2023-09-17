@@ -261,9 +261,9 @@ if ($ENABLED_DARKMODE === True) {
 	      <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
           <a href="help_faq.php"><i class="fa fa-question"></i> <span><?= lang('Navigation_HelpFAQ');?></span></a>
         </li>
-        <!-- <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php') ) ){ echo 'active'; } ?>">
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php') ) ){ echo 'active'; } ?>">
           <a href="donations.php"><i class="fa fa-heart"></i> <span><?= lang('Navigation_Donations');?></span></a>
-        </li> -->
+        </li>
       </ul>
 
       <!-- /.sidebar-menu -->

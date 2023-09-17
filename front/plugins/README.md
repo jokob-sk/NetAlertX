@@ -2,6 +2,8 @@
 
 ### 🏴 Community translations of this file
 
+> Please note there might be a delay between English and community translations.
+
 * <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
   </a> 
@@ -14,18 +16,18 @@
 
 | Required    | CurrentScan | Unique Prefix         | Plugin Type            | Link + Docs                                       | 
 |-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
-|             |    Yes      | ARPSCAN               | Script                 | [arp_scan](/front/plugins/arp_scan/)          |
-|             |             | CSVBCKP               | Script                 | [csv_backup](/front/plugins/csv_backup/)      |
-|             |    Yes      | DHCPLSS               | Script                 | [dhcp_leases](/front/plugins/dhcp_leases/)    |
-|             |             | DHCPSRVS              | Script                 | [dhcp_servers](/front/plugins/dhcp_servers/) |
-|     Yes     |             | NEWDEV                | Template               | [newdev_template](/front/plugins/newdev_template/) |
-|             |             | NMAP                  | Script                 | [nmap_scan](/front/plugins/nmap_scan/)            |
-|             |    Yes      | PIHOLE                | External SQLite DB     | [pihole_scan](/front/plugins/pihole_scan/)    |
-|             |             | SETPWD                | Script                 | [set_password](/front/plugins/set_password/)    |
-|             |             | SNMPDSC               | Script                 | [snmp_discovery](/front/plugins/snmp_discovery/) |
-|             |    Yes*     | UNDIS                 | Script                 | [undiscoverables](/front/plugins/undiscoverables/) |
-|             |    Yes      | UNFIMP                | Script                 | [unifi_import](/front/plugins/unifi_import/)    |
-|             |             | WEBMON                | Script                 | [website_monitor](/front/plugins/website_monitor/) |
+|             |    Yes      | ARPSCAN               | Script                 | 📚[arp_scan](/front/plugins/arp_scan/)          |
+|             |             | CSVBCKP               | Script                 | 📚[csv_backup](/front/plugins/csv_backup/)      |
+|             |    Yes      | DHCPLSS               | Script                 | 📚[dhcp_leases](/front/plugins/dhcp_leases/)    |
+|             |             | DHCPSRVS              | Script                 | 📚[dhcp_servers](/front/plugins/dhcp_servers/) |
+|     Yes     |             | NEWDEV                | Template               | 📚[newdev_template](/front/plugins/newdev_template/) |
+|             |             | NMAP                  | Script                 | 📚[nmap_scan](/front/plugins/nmap_scan/)            |
+|             |    Yes      | PIHOLE                | External SQLite DB     | 📚[pihole_scan](/front/plugins/pihole_scan/)    |
+|             |             | SETPWD                | Script                 | 📚[set_password](/front/plugins/set_password/)    |
+|             |             | SNMPDSC               | Script                 | 📚[snmp_discovery](/front/plugins/snmp_discovery/) |
+|             |    Yes*     | UNDIS                 | Script                 | 📚[undiscoverables](/front/plugins/undiscoverables/) |
+|             |    Yes      | UNFIMP                | Script                 | 📚[unifi_import](/front/plugins/unifi_import/)    |
+|             |             | WEBMON                | Script                 | 📚[website_monitor](/front/plugins/website_monitor/) |
 |     N/A     |             | N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
 
 >* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
