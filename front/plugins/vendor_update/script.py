@@ -7,6 +7,7 @@ import pathlib
 import argparse
 import sys
 import hashlib
+import subprocess
 import csv
 import sqlite3
 from io import StringIO
