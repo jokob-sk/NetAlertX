@@ -6,7 +6,7 @@ import re
 from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
-from mac_vendor import query_MAC_vendor
+from const import vendorsDB 
 
 #-------------------------------------------------------------------------------
 
@@ -23,8 +23,8 @@ def save_scanned_devices (db):
         # TESTING - Force IP
         # internet_IP = ""
     if internet_IP != "" :
-        sql.execute (f"""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
-                        VALUES ( 1, 'Internet', '{internet_IP}', Null, 'queryDNS') """)
+        sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
+                        VALUES ( 'Internet', '{internet_IP}', Null, 'queryDNS') """)
 
     # #76 Add Local MAC of default local interface
       # BUGFIX #106 - Device that pialert is running
@@ -50,7 +50,7 @@ def save_scanned_devices (db):
         # Check if local mac has been detected with other methods
         sql.execute (f"SELECT COUNT(*) FROM CurrentScan WHERE cur_MAC = '{local_mac}'")
         if sql.fetchone()[0] == 0 :
-            sql.execute (f"""INSERT INTO CurrentScan (cur_ScanCycle, cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( 1, '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
+            sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
 
 #-------------------------------------------------------------------------------
 def print_scan_stats(db):
@@ -311,3 +311,45 @@ def check_mac_or_internet(input_str):
         return True
     else:
         return False
+
+
+#===============================================================================
+# Lookup unknown vendors on devices
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+def query_MAC_vendor (pMAC):
+    try :
+        # BUGFIX #6 - Fix pMAC parameter as numbers
+        pMACstr = str(pMAC)
+        
+        # Check MAC parameter
+        mac = pMACstr.replace (':','')
+        if len(pMACstr) != 17 or len(mac) != 12 :
+            return -2
+
+        # Search vendor in HW Vendors DB
+        mac = mac[0:6]
+        grep_args = ['grep', '-i', mac, vendorsDB]
+        
+        # Execute command
+        if conf.LOG_LEVEL == 'debug':
+            # try runnning a subprocess
+            grep_output = subprocess.check_output (grep_args)
+        else:
+            try:
+                # try runnning a subprocess
+                grep_output = subprocess.check_output (grep_args)
+            except subprocess.CalledProcessError as e:
+                # An error occured, handle it
+                mylog('none', ["[Mac Vendor Check] Error: ", e.output])
+                grep_output = "       There was an error, check logs for details"
+
+        # Return Vendor
+        vendor = grep_output[7:]
+        vendor = vendor.rstrip()
+        return vendor
+
+    # not Found
+    except subprocess.CalledProcessError :
+        return -1

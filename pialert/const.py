@@ -18,7 +18,7 @@ fullDbPath   = pialertPath + dbPath
 
 
 
-vendorsDB              = '/usr/share/arp-scan/ieee-oui.txt'
+vendorsDB    = '/usr/share/arp-scan/ieee-oui.txt'
 
 
 

@@ -28,7 +28,6 @@ from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState, get
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
-from mac_vendor import update_devices_MAC_vendors
 from database import DB, get_all_devices
 from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
@@ -146,13 +145,6 @@ def main ():
                 conf.cycle = 'internet_IP'                
                 last_internet_IP_scan = loop_start_time
                 check_internet_IP(db)
-
-            # Update vendors once a week
-            if conf.last_update_vendors + datetime.timedelta(days = 7) < loop_start_time:
-                conf.last_update_vendors = loop_start_time
-                conf.cycle = 'update_vendors'
-                mylog('verbose', ['[MAIN] cycle:',conf.cycle])                  
-                update_devices_MAC_vendors(db)               
            
             # Run splugin scripts which are set to run every timne after a scans finished            
             pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)

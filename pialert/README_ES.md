@@ -18,7 +18,6 @@ El código pilaert.py original ahora se mueve a esta nueva carpeta y se divide e
 |```helper.py```| Helper como su nombre indica contiene múltiples pequeñas funciones y métodos utilizados en muchos de los otros módulos y ayuda a mantener las cosas limpias |
 |```initialise.py```| Initiatlise prepara el entorno y deja todo listo para funcionar |
 |```logger.py```| Logger está ahí para mantener todos los registros organizados y con el mismo aspecto |
-|```mac_vendor.py```| Este módulo ejecuta y gestiona el ``` update_vendors.sh ``` script desde Pi.Alert |
 |```networscan.py```| El escaneado de red organiza el escaneado real de la red, llamando a los escáneres individuales y gestionando los resultados |
 |```plugin.py```| Aquí es donde los plugins se integran en el backend de Pi.Alert |
 |```reporting.py```| La generación de informes genera los informes de correo electrónico, html y json que deben enviar los editores |

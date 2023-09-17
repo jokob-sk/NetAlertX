@@ -362,8 +362,7 @@ class DB():
         
         # indicates, if CurrentScan table is available
         self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-        self.sql.execute(""" CREATE TABLE CurrentScan (
-                                cur_ScanCycle INTEGER,
+        self.sql.execute(""" CREATE TABLE CurrentScan (                                
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
