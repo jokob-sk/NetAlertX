@@ -23,7 +23,6 @@ time_started = ''
 startTime = ''
 last_internet_IP_scan = ''
 last_scan_run = ''
-last_cleanup = ''
 last_update_vendors = ''
 last_version_check = ''
 arpscan_devices = []

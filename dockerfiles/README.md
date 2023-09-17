@@ -4,9 +4,10 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-# 🐳 A docker image for Pi.Alert 
+# PiAlert 💻🔍 Network security scanner
 
-🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) | 📑 [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) | 🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) |
+  |----------------------|----------------------| ----------------------|  ----------------------| 
 
 <a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" width="300px" />
@@ -14,7 +15,6 @@
 <a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" width="300px" />
 </a>
-
 
 ## 📕 Basic Usage 
 
@@ -79,8 +79,9 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 * `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. 
 * The above setting has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file).
 
+> [!NOTE]
 > It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
-
+ 
 ### **Common issues** 
 
 💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed). 
@@ -217,10 +218,19 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and
   <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
 </a>
 
-## ☕ Support me
+## ❤ Support me
 
-<a href="https://github.com/sponsors/jokob-sk" target="_blank"><img src="https://i.imgur.com/X6p5ACK.png" alt="Sponsor Me on GitHub" style="height: 30px !important;width: 117px !important;" width="150px" ></a>
-<a href="https://www.buymeacoffee.com/jokobsk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" width="117px" height="30px" ></a>
-<a href="https://www.patreon.com/user?u=84385063" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Patreon_logo_with_wordmark.svg/512px-Patreon_logo_with_wordmark.svg.png" alt="Support me on patreon" style="height: 30px !important;width: 117px !important;" width="117px" ></a>
+Get:
+- Regular updates to keep your data and family safe 🔄 
+- Better and more functionality➕
+- I don't get burned out and the app survives longer🔥🤯
+- Quicker and better support with issues 🆘
+- Less grumpy me 😄
 
-BTC: 1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM
+| [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
+| --- | --- | --- | 
+
+- Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
+- Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
+
+> 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.

@@ -53,16 +53,13 @@ main structure of Pi Alert
             (re)import plugin config
         run plugins (once)
         run frontend events
-        update API 
-        run scans
-            run plugins (scheduled)
-            check internet IP
-            check vendor            
-            run "scan_network()"
-                processing scan results
-            run plugins (after Scan)
-        reporting
-        cleanup
+        update API         
+        run plugins (scheduled)
+        check internet IP
+        check vendor                        
+        processing scan results
+        run plugins (after Scan)
+        reporting        
     end loop
 """
 
@@ -103,10 +100,8 @@ def main ():
         
         # TODO fix these
         loop_start_time = conf.loop_start_time # TODO fix
-        last_update_vendors = conf.last_update_vendors        
-        last_cleanup = conf.last_cleanup
-        last_version_check = conf.last_version_check
-        
+        last_update_vendors = conf.last_update_vendors                
+        last_version_check = conf.last_version_check        
         
         # check if new version is available / only check once an hour
         if conf.last_version_check  + datetime.timedelta(hours=1) < conf.loop_start_time :
@@ -185,13 +180,6 @@ def main ():
 
             # send all configured notifications
             send_notifications(db)
-
-            # clean up the DB once an hour
-            if conf.last_cleanup + datetime.timedelta(hours = 1) < loop_start_time:
-                conf.last_cleanup = loop_start_time
-                conf.cycle = 'cleanup'  
-                mylog('verbose', ['[MAIN] cycle:',conf.cycle])
-                db.cleanup_database(startTime, conf.DAYS_TO_KEEP_EVENTS, get_setting_value('PHOLUS_DAYS_DATA'), conf.HRS_TO_KEEP_NEWDEV, conf.PLUGINS_KEEP_HIST)   
 
             # Commit SQL
             db.commitDB()          

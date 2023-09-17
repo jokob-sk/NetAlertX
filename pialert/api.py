@@ -75,7 +75,7 @@ class api_endpoint_class:
 
             index = index + 1
         
-        # cehck if API endpoints have changed or if it's a new one
+        # check if API endpoints have changed or if it's a new one
         if not found or changed:
 
             mylog('verbose', [f'[API] Updating {self.fileName} file in /front/api'])

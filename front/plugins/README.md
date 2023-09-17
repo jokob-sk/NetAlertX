@@ -18,6 +18,7 @@
 |-------------|-------------|-----------------------|------------------------|----------------------------------------------------------|
 |             |    Yes      | ARPSCAN               | Script                 | 📚[arp_scan](/front/plugins/arp_scan/)          |
 |             |             | CSVBCKP               | Script                 | 📚[csv_backup](/front/plugins/csv_backup/)      |
+|     Yes*    |             | DBCLNP                | Script                 | 📚[db_cleanup](/front/plugins/db_cleanup/)      |
 |             |    Yes      | DHCPLSS               | Script                 | 📚[dhcp_leases](/front/plugins/dhcp_leases/)    |
 |             |             | DHCPSRVS              | Script                 | 📚[dhcp_servers](/front/plugins/dhcp_servers/) |
 |     Yes     |             | NEWDEV                | Template               | 📚[newdev_template](/front/plugins/newdev_template/) |
@@ -30,7 +31,8 @@
 |             |             | WEBMON                | Script                 | 📚[website_monitor](/front/plugins/website_monitor/) |
 |     N/A     |             | N/A                   | SQL query              | No example available, but the External SQLite based plugins work very similar |
 
->* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+> \* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+> \* The dabase cleanup plugin is not _required_ but the app will become unusable after a while if not executed.
 
 > [!NOTE] 
 > You soft-disable plugins via Settings or completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. The difference is that ignored plugins don't show up anywhere in the UI (Settings, Device details, Plugins pages). The app skips ignored plugins  completely. Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however it makes sense to have a least some device-detecting plugins (that insert entries into the `CurrentScan` table) enabled, such as ARPSCAN or PIHOLE.  

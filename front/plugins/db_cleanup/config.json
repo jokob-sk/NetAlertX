@@ -1,6 +1,6 @@
 {
-  "code_name": "csv_backup",
-  "unique_prefix": "CSVBCKP",
+  "code_name": "db_cleanup",
+  "unique_prefix": "DBCLNP",
   "enabled": true,
   "data_source": "script",  
   "show_ui": false,
@@ -9,54 +9,40 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "CSV backup"
-    },
-    {
-      "language_code": "es_es",
-      "string": "Backup CSV"
-    },
-    {
-      "language_code": "de_de",
-      "string": "CSV-Sicherung"
-    }    
+      "string": "DB cleanup"
+    }
   ],
   "icon": [
     {
       "language_code": "en_us",
-      "string": "<i class=\"fa-solid fa-save\"></i>"
-    },
-    {
-      "language_code": "es_es",
-      "string": "<i class=\"fa-solid fa-save\"></i>"
-    },
-    {
-      "language_code": "de_de",
-      "string": "<i class=\"fa-solid fa-save\"></i>"
-    }    
+      "string": "<i class=\"fa-solid fa-broom\"></i>"
+    }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "A plugin to auto-generate devices.csv backups."
-    },
-    {
-      "language_code": "es_es",
-      "string": "Un Plugin para generar automáticamente copias de seguridad de devices.csv."
-    },
-    {
-      "language_code": "de_de",
-      "string": "Ein Plugin zum automatischen Generieren von devices.csv-Backups."
-    }	    
+      "string": "A plugin to schedule database cleanup & upkeep tasks."
+    }  
   ],
     "params" : [{
-      "name"  : "overwrite",
+      "name"  : "pluginskeephistory",
       "type"  : "setting",
-      "value" : "CSVBCKP_overwrite"
+      "value" : "PLUGINS_KEEP_HIST"
     },
     {
-      "name"  : "location",
+      "name"  : "daystokeepevents",
       "type"  : "setting",
-      "value" : "CSVBCKP_location"
+      "value" : "DAYS_TO_KEEP_EVENTS"    
+    },
+    {
+      "name"  : "hourstokeepnewdevice",
+      "type"  : "setting",
+      "value" : "HRS_TO_KEEP_NEWDEV"
+    },
+    {
+      "name"  : "pholuskeepdays",
+      "type"  : "setting",
+      "value" : "PHOLUS_DAYS_DATA"
     }
   ],  
 
@@ -65,7 +51,7 @@
       "function": "RUN",            
       "type": "text.select",            
       "default_value":"schedule",
-      "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+      "options": ["disabled", "once", "schedule", "always_after_scan"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",
@@ -81,21 +67,13 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "When the backup should be created. A daily or weekly <code>SCHEDULE</code> is a good option."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Cuándo se debe crear la copia de seguridad. Un <code>SCHEDULE</code> diario o semanal es una buena opción."
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Wann das Backup erstellt werden soll. Ein täglicher oder wöchentlicher <code>SCHEDULE</code> ist eine gute Option."
+          "string" : "When the cleanup should be performed. An hourly or daily <code>SCHEDULE</code> is a good option."
       }]
   },    
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/csv_backup/script.py overwrite={overwrite} location={location}",
+      "default_value": "python3 /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory={pluginskeephistory} hourstokeepnewdevice={hourstokeepnewdevice} daystokeepevents={daystokeepevents} pholuskeepdays={pholuskeepdays}",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -130,7 +108,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"0 2 * * 3",
+      "default_value":"*/30 * * * *",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{
@@ -192,69 +170,7 @@
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }        
       ]
-    },
-    {
-      "function": "overwrite",
-      "type": "boolean",
-      "default_value":false,
-      "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "Overwrite file"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Sobrescribir archivo"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Datei überschreiben"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "If the <code>devices.csv</code> file should be always overwritten. If disabled, the date and time is added to the name."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Si el archivo <code>devices.csv</code> siempre debe sobrescribirse. Si está deshabilitado, la fecha y la hora se agregan al nombre."
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Wenn die Datei <code>devices.csv</code> immer überschrieben werden soll. Wenn deaktiviert, werden dem Namen Datum und Uhrzeit hinzugefügt."
-      }]
-    },
-    {
-      "function": "location",
-      "type": "text",
-      "default_value":"/home/pi/pialert/config",
-      "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "File location"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Ubicación del archivo"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Speicherort"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Where the <code>devices.csv</code> file should be saved. For example <code>/home/pi/pialert/config</code>."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/home/pi/pialert/config</code>."
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/home/pi/pialert/config</code>."
-      }]
-  }
+    }
   ],
 
   "database_column_definitions": 

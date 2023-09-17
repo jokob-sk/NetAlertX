@@ -332,9 +332,7 @@ function saveSettings()
   fwrite($newConfig, $txt);
   fclose($newConfig);
 
-  displayMessage("<br/>Settings saved to the <code>".$config_file."</code> file.  
-    <br/><br/>Backup of the previous ".$config_file." created here: <br/><br/><code>".$new_name."</code><br/><br/>
-    <b>Note:</b> Wait at least <b>5s</b> for the changes to reflect in the UI. (longer if for example a <a href='#state'>Scan is running</a>)", 
+  displayMessage("<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
     FALSE, TRUE, TRUE, TRUE);    
 
 }

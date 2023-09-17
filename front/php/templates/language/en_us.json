@@ -461,6 +461,7 @@
         "settings_missing" : "Not all settings loaded, refresh the page! This is probably caused by a high load on the database.",
         "settings_missing_block" : "You can not save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.",
         "settings_old" : "Importing settings and re-initializing...",
+        "settings_saved" : "<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>",
         "settings_imported" : "Last time settings were imported from the pialert.conf file:",
         "settings_expand_all" : "Expand all",
         "Setting_Override" : "Override value",

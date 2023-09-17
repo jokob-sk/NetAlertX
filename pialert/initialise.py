@@ -175,8 +175,7 @@ def importConfigs (db):
 
     # set these times to the past to force the first run     
     conf.last_internet_IP_scan  = now_minus_24h
-    conf.last_scan_run          = now_minus_24h
-    conf.last_cleanup           = now_minus_24h
+    conf.last_scan_run          = now_minus_24h    
     conf.last_update_vendors    = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
     conf.last_version_check     = now_minus_24h  
 
