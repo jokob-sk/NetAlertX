@@ -6,7 +6,7 @@ import re
 from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
-from const import vendorsPath 
+from const import vendorsPath6, vendorsPath9
 
 #-------------------------------------------------------------------------------
 
@@ -328,14 +328,22 @@ def query_MAC_vendor (pMAC):
         return -2 # return -2 if ignored MAC
 
     # Search vendor in HW Vendors DB
-    mac_start_string = mac[0:6]    
+    mac_start_string6 = mac[0:6]    
+    mac_start_string9 = mac[0:9]    
 
     try:
-        with open(vendorsPath, 'r') as f:
+        with open(vendorsPath6, 'r') as f:
             for line in f:
-                if line.startswith(mac_start_string):
+                if line.startswith(mac_start_string6):
                     vendor = line.split(' ', 1)[1].strip()
-                    mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}'"])
+                    mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath6}"])
+                    return vendor
+
+        with open(vendorsPath9, 'r') as f:
+            for line in f:
+                if line.startswith(mac_start_string9):
+                    vendor = line.split(' ', 1)[1].strip()
+                    mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath9}"])
                     return vendor
 
         return -1  # MAC address not found in the database

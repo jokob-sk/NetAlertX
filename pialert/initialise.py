@@ -75,6 +75,9 @@ def importConfigs (db):
 
     # Header
     updateState("Import config", showSpinner = True)  
+
+    # remove all plugin langauge strings
+    sql.execute("DELETE FROM Plugins_Language_Strings;")
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings

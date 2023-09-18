@@ -1,6 +1,6 @@
 ## Overview
 
-Plugin to run regular database cleanup tasks. It is strongly recommended to have an hourly or at least daily schedule running.
+A plugin to retrieve a MAC and vendor database to identify vendors for devices.
 
 ### Usage
 
