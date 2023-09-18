@@ -6,7 +6,7 @@ import re
 from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus
 from scanners.internet import check_IP_format, get_internet_IP
 from logger import mylog, print_log
-from const import vendorsDB 
+from const import vendorsPath 
 
 #-------------------------------------------------------------------------------
 
@@ -319,37 +319,27 @@ def check_mac_or_internet(input_str):
 
 #-------------------------------------------------------------------------------
 def query_MAC_vendor (pMAC):
-    try :
-        # BUGFIX #6 - Fix pMAC parameter as numbers
-        pMACstr = str(pMAC)
-        
-        # Check MAC parameter
-        mac = pMACstr.replace (':','')
-        if len(pMACstr) != 17 or len(mac) != 12 :
-            return -2
 
-        # Search vendor in HW Vendors DB
-        mac = mac[0:6]
-        grep_args = ['grep', '-i', mac, vendorsDB]
-        
-        # Execute command
-        if conf.LOG_LEVEL == 'debug':
-            # try runnning a subprocess
-            grep_output = subprocess.check_output (grep_args)
-        else:
-            try:
-                # try runnning a subprocess
-                grep_output = subprocess.check_output (grep_args)
-            except subprocess.CalledProcessError as e:
-                # An error occured, handle it
-                mylog('none', ["[Mac Vendor Check] Error: ", e.output])
-                grep_output = "       There was an error, check logs for details"
+    pMACstr = str(pMAC)
+    
+    # Check MAC parameter
+    mac = pMACstr.replace (':','')
+    if len(pMACstr) != 17 or len(mac) != 12 :
+        return -2 # return -2 if ignored MAC
 
-        # Return Vendor
-        vendor = grep_output[7:]
-        vendor = vendor.rstrip()
-        return vendor
+    # Search vendor in HW Vendors DB
+    mac_start_string = mac[0:6]    
 
-    # not Found
-    except subprocess.CalledProcessError :
+    try:
+        with open(vendorsPath, 'r') as f:
+            for line in f:
+                if line.startswith(mac_start_string):
+                    vendor = line.split(' ', 1)[1].strip()
+                    mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}'"])
+                    return vendor
+
+        return -1  # MAC address not found in the database
+    except FileNotFoundError:
+        mylog('none', [f"[Vendor Check] Error: Vendors file {vendorsPath} not found."])
         return -1
+

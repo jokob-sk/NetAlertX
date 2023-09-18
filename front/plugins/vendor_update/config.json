@@ -2,10 +2,13 @@
   "code_name": "vendor_update",
   "unique_prefix": "VNDRPDT",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "show_ui": true,
-  "localized": ["display_name", "description", "icon"],
-
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -22,41 +25,54 @@
     {
       "language_code": "en_us",
       "string": "A plugin to schedule vendor database updates for mac based vendor resolution."
-    }  
+    }
   ],
-    "params" : [
-  ],  
-
+  "params": [],
   "settings": [
     {
-      "function": "RUN",            
-      "type": "text.select",            
-      "default_value":"schedule",
-      "options": ["disabled", "once", "schedule", "always_after_scan"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "When to run"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Cuándo ejecutar"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Wann laufen"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "When the cleanup should be performed. An overnight weekly <code>SCHEDULE</code> is recommended."
-      }]
-  },    
+      "function": "RUN",
+      "type": "text.select",
+      "default_value": "schedule",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann laufen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the cleanup should be performed. An overnight weekly <code>SCHEDULE</code> is recommended."
+        }
+      ]
+    },
     {
       "function": "CMD",
       "type": "readonly",
       "default_value": "python3 /home/pi/pialert/front/plugins/vendor_update/script.py",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -69,7 +85,7 @@
         {
           "language_code": "de_de",
           "string": "Befehl"
-        }	        
+        }
       ],
       "description": [
         {
@@ -83,46 +99,56 @@
         {
           "language_code": "de_de",
           "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
-        }	        
+        }
       ]
     },
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"0 4 * * *",
+      "default_value": "0 4 * * *",
       "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "Schedule"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Schedule"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Schedule"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
-      }]
-  },    
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+        }
+      ]
+    },
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
-      "default_value": 300,
+      "default_value": 600,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -135,7 +161,7 @@
         {
           "language_code": "de_de",
           "string": "Zeitüberschreitung"
-        }	        
+        }
       ],
       "description": [
         {
@@ -149,260 +175,389 @@
         {
           "language_code": "de_de",
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
-        }        
+        }
+      ]
+    },
+    {
+      "function": "WATCH",
+      "type": "text.multiselect",
+      "default_value": [
+        "Watched_Value1"
+      ],
+      "options": [
+        "Watched_Value1",
+        "Watched_Value2",
+        "Watched_Value3",
+        "Watched_Value4"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Watched"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Visto"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Click</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es un código de estado de respuesta (por ejemplo: 200, 404) </li><li><code>Valor_observado2</code> es Latencia (no recomendado)</li><li><code>Valor_observado3</code> no utilizado </li><li><code>Valor_observado4 </ code> sin usar </li></ul>"
+        }
+      ]
+    },
+    {
+      "function": "REPORT_ON",
+      "type": "text.multiselect",
+      "default_value": [
+        "new",
+        "watched-changed"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."
+        }
       ]
     }
   ],
-
-  "database_column_definitions": 
-  [          
+  "database_column_definitions": [
     {
-      "column": "Index",            
+      "column": "Index",
       "css_classes": "col-sm-2",
       "show": false,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "N/A"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "N/A"
-          }]
-    } ,
-    {
-        "column": "Plugin",
-        "css_classes": "col-sm-2",
-        "show": false,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "N/A"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "N/A"
-            }]
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        },
+        {
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
     },
     {
-        "column": "Object_PrimaryID",
-        "mapped_to_column": "cur_MAC", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "device_mac",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "MAC address"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Dirección MAC"
-            }]
+      "column": "Plugin",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        },
+        {
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
     },
     {
-        "column": "Object_SecondaryID",
-        "mapped_to_column": "cur_IP", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "device_ip",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "IP"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "IP"
-            }]
-    } ,
-    {
-        "column": "DateTimeCreated",
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Created"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Creado"
-            }]
+      "column": "Object_PrimaryID",
+      "mapped_to_column": "cur_MAC",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC address"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Dirección MAC"
+        }
+      ]
     },
     {
-        "column": "DateTimeChanged",
-        "mapped_to_column": "cur_DateTime", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Changed"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Cambiado"
-            }]
+      "column": "Object_SecondaryID",
+      "mapped_to_column": "cur_IP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        },
+        {
+          "language_code": "es_es",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Creado"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "mapped_to_column": "cur_DateTime",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambiado"
+        }
+      ]
     },
     {
       "column": "Dummy",
-      "mapped_to_column": "cur_ScanMethod", 
+      "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "VNDRPDT"                
-      }, 
+        "value": "VNDRPDT"
+      },
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Scan method"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "Método de escaneo"
-          }]
-    } ,
-    {
-        "column": "Watched_Value1",
-        "mapped_to_column": "cur_Vendor", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Vendor" 
-            }]
-    },
-    {
-        "column": "Watched_Value2",
-        "mapped_to_column": "cur_Name", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Hostname"
-            },
+      "localized": [
+        "name"
+      ],
+      "name": [
         {
-            "language_code":"es_es",
-            "string" : "Nombre de host"
-            }]
+          "language_code": "en_us",
+          "string": "Scan method"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Método de escaneo"
+        }
+      ]
     },
     {
-        "column": "Watched_Value3",
-        "css_classes": "col-sm-2",
-        "show": false,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "N/A"
-            }]
-    } ,
+      "column": "Watched_Value1",
+      "mapped_to_column": "cur_Vendor",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Vendor"
+        }
+      ]
+    },
     {
-        "column": "Watched_Value4",
-        "css_classes": "col-sm-2",
-        "show": false,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "N/A"
-            }]
-    } ,       
+      "column": "Watched_Value2",
+      "mapped_to_column": "cur_Name",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Hostname"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Nombre de host"
+        }
+      ]
+    },
     {
-        "column": "UserData",
-        "css_classes": "col-sm-2",
-        "show": false,
-        "type": "textbox_save",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Comments"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Comentarios"
-            }]
-    },      
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
     {
-        "column": "Extra",
-        "css_classes": "col-sm-3",
-        "show": false,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "N/A"
-            }]
-    },       
+      "column": "Watched_Value4",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
     {
-        "column": "Status",
-        "css_classes": "col-sm-1",
-        "show": true,
-        "type": "replace",            
-        "default_value":"",
-        "options": [
-            {
-                "equals": "watched-not-changed",
-                "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
-            },
-            {
-                "equals": "watched-changed",
-                "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
-            },
-            {
-                "equals": "new",
-                "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"                
-            },
-            {
-                "equals": "missing-in-last-scan",
-                "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
-            }
-        ],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Status"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Estado"
-            }]
-    }       
+      "column": "UserData",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "textbox_save",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Comments"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comentarios"
+        }
+      ]
+    },
+    {
+      "column": "Extra",
+      "css_classes": "col-sm-3",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Estado"
+        }
+      ]
+    }
   ]
 }

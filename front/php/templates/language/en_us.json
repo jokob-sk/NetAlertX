@@ -458,7 +458,7 @@
         "Plugins_Out_of" : "out of",        
         "Plugins_no_control" : "No form control was found to render this value.",        
         "Settings_Metadata_Toggle" : "Show/hide metadata for the given setting.",
-        "settings_missing" : "Not all settings loaded, refresh the page! This is probably caused by a high load on the database.",
+        "settings_missing" : "Not all settings loaded, refresh the page! This is probably caused by a high load on the database or app startup sequence.",
         "settings_missing_block" : "You can not save your settings without specifying all setting keys. Refresh the page. This is probably caused by a high load on the database.",
         "settings_old" : "Importing settings and re-initializing...",
         "settings_saved" : "<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>",

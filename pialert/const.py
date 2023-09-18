@@ -15,10 +15,7 @@ logPath      = pialertPath + '/front/log'
 apiPath      = pialertPath + '/front/api/'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
-
-
-
-vendorsDB    = '/usr/share/arp-scan/ieee-oui.txt'
+vendorsPath  = '/usr/share/arp-scan/ieee-oui.txt'
 
 
 

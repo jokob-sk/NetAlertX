@@ -32,7 +32,7 @@ def main():
     mylog('verbose', ['[VNDRPDT] In script']) 
 
     # Get newest DB   
-    update_vendor_database()
+    # update_vendor_database() TODOz
 
     # Resolve missing vendors
     plugin_objects = Plugin_Objects(RESULT_FILE)
@@ -63,52 +63,65 @@ def update_vendor_database():
         mylog('none', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
         mylog('none', [e.output])        
 
-
+# ------------------------------------------------------------------------------
 # resolve missing vendors
 def update_vendors (dbPath, plugin_objects): 
    
     # Connect to the PiAlert SQLite database
-    conn    = sqlite3.connect(dbPath)
-    cursor  = conn.cursor()
+    conn = sqlite3.connect(dbPath)
+    sql  = conn.cursor()
 
     # Initialize variables
     recordsToUpdate = []
     ignored = 0
     notFound = 0
 
-    # All devices loop
-    mylog('verbose', ['    Searching devices vendor'])    
+    
+    mylog('verbose', ['    Searching devices vendor']) 
 
-    for device in cursor.execute ("""SELECT * FROM Devices
-                                        WHERE   dev_Vendor      = '(unknown)' 
-                                                OR dev_Vendor   =''
-                                                OR dev_Vendor   IS NULL""") :
+    # Get devices without a vendor
+    sql.execute  ("""SELECT 
+                            dev_MAC, 
+                            dev_LastIP, 
+                            dev_Name, 
+                            dev_Vendor 
+                            FROM Devices
+                            WHERE   dev_Vendor      = '(unknown)' 
+                                    OR dev_Vendor   = ''
+                                    OR dev_Vendor   IS NULL
+                        """)
+    devices = sql.fetchall() 
+    conn.commit()    
+
+    # Close the database connection
+    conn.close()  
+
+    # All devices loop
+    for device in devices:
         # Search vendor in HW Vendors DB
-        vendor = query_MAC_vendor (device['dev_MAC'])
+        vendor = query_MAC_vendor (device[0])
         if vendor == -1 :
             notFound += 1
         elif vendor == -2 :
             ignored += 1
         else :
             plugin_objects.add_object(
-                primaryId   = device['dev_MAC'],        # MAC (Device Name)
-                secondaryId = device['dev_LastIP'],     # IP Address (always 0.0.0.0)
+                primaryId   = device[0],        # MAC (Device Name)
+                secondaryId = device[1],     # IP Address (always 0.0.0.0)
                 watched1    = vendor,  
-                watched2    = device['dev_Name'],
+                watched2    = device[2],
                 watched3    = "",
                 watched4    = "",
                 extra       = "",            
-                foreignKey  = device['dev_MAC']           
+                foreignKey  = device[0]           
             )            
             
     # Print log    
-    mylog('verbose', ["    Devices Ignored:  ", ignored])
-    mylog('verbose', ["    Vendors Not Found:", notFound])
-    mylog('verbose', ["    Vendors updated:  ", len(plugin_objects) ])
+    mylog('verbose', ["    Devices Ignored             : ", ignored])
+    mylog('verbose', ["    Devices with missing vendor : ", len(devices)])
+    mylog('verbose', ["    Vendors Not Found           : ", notFound])
+    mylog('verbose', ["    Vendors updated             : ", len(plugin_objects) ])
 
-    conn.commit()    
-    # Close the database connection
-    conn.close()
 
     return plugin_objects
 
