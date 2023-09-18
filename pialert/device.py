@@ -3,8 +3,7 @@ import subprocess
 
 import conf
 import re
-from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus
-from scanners.internet import check_IP_format, get_internet_IP
+from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus, check_IP_format, get_internet_IP
 from logger import mylog, print_log
 from const import vendorsPath6, vendorsPath9
 
@@ -13,13 +12,9 @@ from const import vendorsPath6, vendorsPath9
 
 def save_scanned_devices (db):
     sql = db.sql #TO-DO
-    cycle = 1 # always 1, only one cycle supported
-
-    # handled by the ARPSCAN plugin
-    # handled by the Pi-hole plugin
 
     # Check Internet connectivity
-    internet_IP = get_internet_IP( conf.DIG_GET_IP_ARG )
+    internet_IP = get_internet_IP()
         # TESTING - Force IP
         # internet_IP = ""
     if internet_IP != "" :

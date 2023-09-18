@@ -18,10 +18,10 @@ import conf
 from const import *
 from logger import mylog, logResult
 
-
-
-
 #-------------------------------------------------------------------------------
+# DateTime
+#-------------------------------------------------------------------------------
+# Get the current time in the current TimeZone
 def timeNowTZ():
     if isinstance(conf.TIMEZONE, str):
         tz = pytz.timezone(conf.TIMEZONE)
@@ -34,6 +34,8 @@ def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
 
+#-------------------------------------------------------------------------------
+# App state
 #-------------------------------------------------------------------------------
 # A class to manage the application state and to provide a frontend accessible API point
 class app_state_class:
@@ -79,19 +81,13 @@ class app_state_class:
 
         return result
 
-#-------------------------------------------------------------------------------
-# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
-class AppStateEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, '__dict__'):
-            # If the object has a '__dict__', assume it's an instance of a class
-            return obj.__dict__
-        return super().default(obj)
 
 #-------------------------------------------------------------------------------
+# method to update the state
 def updateState(newState, settingsSaved = None, settingsImported = None, showSpinner = False):
 
     state = app_state_class(newState, settingsSaved, settingsImported, showSpinner)
+
 
 #-------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
@@ -109,6 +105,8 @@ def updateSubnets(scan_subnets):
 
 
 
+#-------------------------------------------------------------------------------
+# File system permission handling
 #-------------------------------------------------------------------------------
 # check RW access of DB and config file
 def checkPermissionsOK():
@@ -175,7 +173,7 @@ def initialiseFile(pathToCheck, defaultFile):
             mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
             mylog('none', [e.output])
 
-
+#-------------------------------------------------------------------------------
 def filePermissions():
     # check and initialize pialert.conf
     (confR_access, dbR_access) = checkPermissionsOK() # Initial check
@@ -192,162 +190,8 @@ def filePermissions():
 
 
 #-------------------------------------------------------------------------------
-
-def bytes_to_string(value):
-    # if value is of type bytes, convert to string
-    if isinstance(value, bytes):
-        value = value.decode('utf-8')
-    return value
-
+# File manipulation methods
 #-------------------------------------------------------------------------------
-
-def if_byte_then_to_str(input):
-    if isinstance(input, bytes):
-        input = input.decode('utf-8')
-        input = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
-    return input
-
-#-------------------------------------------------------------------------------
-def collect_lang_strings(db, json, pref, stringSqlParams):    
-
-    for prop in json["localized"]:
-        for language_string in json[prop]:
-
-            stringSqlParams.append((str(language_string["language_code"]), str(pref + "_" + prop), str(language_string["string"]), ""))
-
-
-    return stringSqlParams
-
-
-#-------------------------------------------------------------------------------
-#  Creates a JSON object from a DB row
-def row_to_json(names, row):
-
-    rowEntry = {}
-
-    index = 0
-    for name in names:
-        rowEntry[name]= if_byte_then_to_str(row[name])
-        index += 1
-
-    return rowEntry
-
-
-
-#-------------------------------------------------------------------------------
-def checkIPV4(ip):
-    """ Define a function to validate an Ip address
-    """
-    ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-
-    if(re.search(ipRegex, ip)):
-        return True
-    else:
-        return False
-
-
-#-------------------------------------------------------------------------------
-def isNewVersion(newVersion: bool):
-
-    mylog('debug', [f"[Version check] New version available? {newVersion}"])
-
-    if newVersion == False:
-
-        f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
-        buildTimestamp = int(f.read().strip())
-        f.close()
-
-        data = ""
-
-        try:
-            url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
-            text = url.text
-            data = json.loads(text)
-        except requests.exceptions.ConnectionError as e:
-            mylog('minimal', ["    Couldn't check for new release."])
-            data = ""
-
-        # make sure we received a valid response and not an API rate limit exceeded message
-        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
-
-            dateTimeStr = data[0]["published_at"]
-
-            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
-
-            if realeaseTimestamp > buildTimestamp + 600:
-                mylog('none', ["[Version check] New version of the container available!"])
-                newVersion = True                
-
-    return newVersion
-
-#-------------------------------------------------------------------------------
-def hide_email(email):
-    m = email.split('@')
-
-    if len(m) == 2:
-        return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
-
-    return email
-
-#-------------------------------------------------------------------------------
-def removeDuplicateNewLines(text):
-    if "\n\n\n" in text:
-        return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
-    else:
-        return text
-
-#-------------------------------------------------------------------------------
-
-def add_json_list (row, list):
-    new_row = []
-    for column in row :
-        column = bytes_to_string(column)
-
-        new_row.append(column)
-
-    list.append(new_row)
-
-    return list
-
-#-------------------------------------------------------------------------------
-
-def sanitize_string(input):
-    if isinstance(input, bytes):
-        input = input.decode('utf-8')
-    value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
-    return value
-
-
-#-------------------------------------------------------------------------------
-def generate_mac_links (html, deviceUrl):
-
-    p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
-
-    MACs = re.findall(p, html)
-
-    for mac in MACs:
-        html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
-
-    return html
-
-
-
-#-------------------------------------------------------------------------------
-def initOrSetParam(db, parID, parValue):
-    sql = db.sql
-
-    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")
-
-    db.commitDB()
-
-#-------------------------------------------------------------------------------
-class json_struc:
-    def __init__(self, jsn, columnNames):
-        self.json = jsn
-        self.columnNames = columnNames
-
-
-
 #-------------------------------------------------------------------------------
 def get_file_content(path):
 
@@ -382,16 +226,8 @@ def write_file(pPath, pText):
             file.close()
 
 #-------------------------------------------------------------------------------
-class noti_struc:
-    def __init__(self, json, text, html):
-        self.json = json
-        self.text = text
-        self.html = html        
-
+# Setting methods
 #-------------------------------------------------------------------------------
-def isJsonObject(value):
-    return isinstance(value, dict)
-
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
@@ -422,6 +258,100 @@ def get_setting_value(key):
         return setVal
 
     return ''
+
+
+
+#-------------------------------------------------------------------------------
+# IP validation methods
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+def checkIPV4(ip):
+    """ Define a function to validate an Ip address
+    """
+    ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+
+    if(re.search(ipRegex, ip)):
+        return True
+    else:
+        return False
+
+#-------------------------------------------------------------------------------
+def check_IP_format (pIP):
+    # Check IP format
+    IPv4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
+    IPv4ADDR = r'(?:(?:' + IPv4SEG + r'\.){3,3}' + IPv4SEG + r')'
+    IP = re.search(IPv4ADDR, pIP)
+
+    # Return error if not IP
+    if IP is None :
+        return ""
+
+    # Return IP
+    return IP.group(0)
+
+
+
+#-------------------------------------------------------------------------------
+def get_internet_IP ():
+    # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
+    # Using 'dig'
+    dig_args = ['dig', '+short'] + conf.DIG_GET_IP_ARG.strip().split()
+    try:
+        cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        mylog('none', [e.output])
+        cmd_output = '' # no internet
+
+    # Check result is an IP
+    IP = check_IP_format (cmd_output)
+
+    # Handle invalid response
+    if IP == '':
+        IP = '0.0.0.0'
+
+    return IP
+
+#-------------------------------------------------------------------------------
+def resolve_device_name_dig (pMAC, pIP):
+    
+    newName = ""
+
+    try :
+        dig_args = ['dig', '+short', '-x', pIP]
+
+        # Execute command
+        try:
+            # try runnning a subprocess
+            newName = subprocess.check_output (dig_args, universal_newlines=True)
+        except subprocess.CalledProcessError as e:
+            # An error occured, handle it
+            mylog('none', ['[device_name_dig] ', e.output])            
+            # newName = "Error - check logs"
+            return -1
+
+        # Check returns
+        newName = newName.strip()
+
+        if len(newName) == 0 :
+            return -1
+            
+        # Cleanup
+        newName = cleanResult(newName)
+
+        if newName == "" or  len(newName) == 0: 
+            return -1
+
+        # Return newName
+        return newName
+
+    # not Found
+    except subprocess.CalledProcessError :
+        return -1        
+
+
+#-------------------------------------------------------------------------------
+# DNS record (Pholus/Name resolution) cleanup methods
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
@@ -498,43 +428,7 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
 
     return -1
     
-#-------------------------------------------------------------------------------
-
-def resolve_device_name_dig (pMAC, pIP):
     
-    newName = ""
-
-    try :
-        dig_args = ['dig', '+short', '-x', pIP]
-
-        # Execute command
-        try:
-            # try runnning a subprocess
-            newName = subprocess.check_output (dig_args, universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ['[device_name_dig] ', e.output])            
-            # newName = "Error - check logs"
-            return -1
-
-        # Check returns
-        newName = newName.strip()
-
-        if len(newName) == 0 :
-            return -1
-            
-        # Cleanup
-        newName = cleanResult(newName)
-
-        if newName == "" or  len(newName) == 0: 
-            return -1
-
-        # Return newName
-        return newName
-
-    # not Found
-    except subprocess.CalledProcessError :
-        return -1            
 
 #-------------------------------------------------------------------------------
 def cleanResult(str):
@@ -553,3 +447,177 @@ def cleanResult(str):
         str = str[:-1]
 
     return str
+
+
+#-------------------------------------------------------------------------------
+# String manipulation methods
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+
+def bytes_to_string(value):
+    # if value is of type bytes, convert to string
+    if isinstance(value, bytes):
+        value = value.decode('utf-8')
+    return value
+
+#-------------------------------------------------------------------------------
+
+def if_byte_then_to_str(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+        input = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return input
+
+#-------------------------------------------------------------------------------
+def hide_email(email):
+    m = email.split('@')
+
+    if len(m) == 2:
+        return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+
+    return email
+
+#-------------------------------------------------------------------------------
+def removeDuplicateNewLines(text):
+    if "\n\n\n" in text:
+        return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
+    else:
+        return text
+
+#-------------------------------------------------------------------------------
+
+def sanitize_string(input):
+    if isinstance(input, bytes):
+        input = input.decode('utf-8')
+    value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    return value
+
+
+#-------------------------------------------------------------------------------
+def generate_mac_links (html, deviceUrl):
+
+    p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
+
+    MACs = re.findall(p, html)
+
+    for mac in MACs:
+        html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
+
+    return html
+
+#-------------------------------------------------------------------------------
+# JSON methods
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+def isJsonObject(value):
+    return isinstance(value, dict)
+
+#-------------------------------------------------------------------------------
+def add_json_list (row, list):
+    new_row = []
+    for column in row :
+        column = bytes_to_string(column)
+
+        new_row.append(column)
+
+    list.append(new_row)
+
+    return list
+
+
+#-------------------------------------------------------------------------------
+# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
+class AppStateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, '__dict__'):
+            # If the object has a '__dict__', assume it's an instance of a class
+            return obj.__dict__
+        return super().default(obj)
+
+#-------------------------------------------------------------------------------
+#  Creates a JSON object from a DB row
+def row_to_json(names, row):
+
+    rowEntry = {}
+
+    index = 0
+    for name in names:
+        rowEntry[name]= if_byte_then_to_str(row[name])
+        index += 1
+
+    return rowEntry
+
+#-------------------------------------------------------------------------------
+# Get language strings from plugin JSON
+def collect_lang_strings(json, pref, stringSqlParams):    
+
+    for prop in json["localized"]:
+        for language_string in json[prop]:
+
+            stringSqlParams.append((str(language_string["language_code"]), str(pref + "_" + prop), str(language_string["string"]), ""))
+
+
+    return stringSqlParams
+
+
+#-------------------------------------------------------------------------------
+#  Misc
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+def isNewVersion(newVersion: bool):
+
+    mylog('debug', [f"[Version check] New version available? {newVersion}"])
+
+    if newVersion == False:
+
+        f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
+        buildTimestamp = int(f.read().strip())
+        f.close()
+
+        data = ""
+
+        try:
+            url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+            text = url.text
+            data = json.loads(text)
+        except requests.exceptions.ConnectionError as e:
+            mylog('minimal', ["    Couldn't check for new release."])
+            data = ""
+
+        # make sure we received a valid response and not an API rate limit exceeded message
+        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
+
+            dateTimeStr = data[0]["published_at"]
+
+            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+
+            if realeaseTimestamp > buildTimestamp + 600:
+                mylog('none', ["[Version check] New version of the container available!"])
+                newVersion = True                
+
+    return newVersion
+
+
+#-------------------------------------------------------------------------------
+def initOrSetParam(db, parID, parValue):
+    sql = db.sql
+
+    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")
+
+    db.commitDB()
+
+#-------------------------------------------------------------------------------
+class json_struc:
+    def __init__(self, jsn, columnNames):
+        self.json = jsn
+        self.columnNames = columnNames
+
+#-------------------------------------------------------------------------------
+class noti_struc:
+    def __init__(self, json, text, html):
+        self.json = json
+        self.text = text
+        self.html = html  

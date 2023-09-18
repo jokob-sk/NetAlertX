@@ -98,8 +98,7 @@ def main ():
         conf.loop_start_time = timeNowTZ()
         
         # TODO fix these
-        loop_start_time = conf.loop_start_time # TODO fix
-        last_update_vendors = conf.last_update_vendors                
+        loop_start_time = conf.loop_start_time # TODO fix                      
         last_version_check = conf.last_version_check        
         
         # check if new version is available / only check once an hour

@@ -283,7 +283,7 @@ def send_notifications (db):
     write_file (logPath + '/report_output.html', mail_html)
 
     # Send Mail
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != [] or conf.debug_force_notification or plugins_report:
+    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != []  or plugins_report:
 
         mylog('none', ['[Notification] Changes detected, sending reports'])
 

@@ -78,6 +78,7 @@ def importConfigs (db):
 
     # remove all plugin langauge strings
     sql.execute("DELETE FROM Plugins_Language_Strings;")
+    db.commitDB()
     
     mylog('debug', ['[Import Config] importing config file'])
     conf.mySettings = [] # reset settings
@@ -169,8 +170,6 @@ def importConfigs (db):
     conf.time_started = datetime.datetime.now(conf.tz)
     conf.cycle = ""
     conf.plugins_once_run = False
-    
-    #cron_instance = Cron()
 
     # timestamps of last execution times
     conf.startTime  = conf.time_started
@@ -178,8 +177,7 @@ def importConfigs (db):
 
     # set these times to the past to force the first run     
     conf.last_internet_IP_scan  = now_minus_24h
-    conf.last_scan_run          = now_minus_24h    
-    conf.last_update_vendors    = conf.time_started - datetime.timedelta(days = 6) # update vendors 24h after first run and then once a week
+    conf.last_scan_run          = now_minus_24h        
     conf.last_version_check     = now_minus_24h  
 
     # TODO cleanup later ----------------------------------------------------------------------------------
@@ -211,7 +209,7 @@ def importConfigs (db):
         stringSqlParams = []
         
         # collect plugin level language strings
-        stringSqlParams = collect_lang_strings(db, plugin, pref, stringSqlParams)
+        stringSqlParams = collect_lang_strings(plugin, pref, stringSqlParams)
         
         for set in plugin["settings"]:
             setFunction = set["function"]
@@ -242,12 +240,12 @@ def importConfigs (db):
 
             # Collect settings related language strings
             # Creates an entry with key, for example ARPSCAN_CMD_name
-            stringSqlParams = collect_lang_strings(db, set,  pref + "_" + set["function"], stringSqlParams)
+            stringSqlParams = collect_lang_strings(set,  pref + "_" + set["function"], stringSqlParams)
 
         # Collect column related language strings
         for clmn in plugin.get('database_column_definitions', []):
             # Creates an entry with key, for example ARPSCAN_Object_PrimaryID_name
-            stringSqlParams = collect_lang_strings(db, clmn,  pref + "_" + clmn.get("column", ""), stringSqlParams)
+            stringSqlParams = collect_lang_strings(clmn,  pref + "_" + clmn.get("column", ""), stringSqlParams)
 
         #  bulk-import language strings
         sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )

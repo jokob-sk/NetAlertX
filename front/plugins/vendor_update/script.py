@@ -32,7 +32,7 @@ def main():
     mylog('verbose', ['[VNDRPDT] In script']) 
 
     # Get newest DB   
-    # update_vendor_database() TODOz
+    update_vendor_database() 
 
     # Resolve missing vendors
     plugin_objects = Plugin_Objects(RESULT_FILE)

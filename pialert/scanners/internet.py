@@ -6,13 +6,9 @@ import re
 # pialert modules
 
 import conf
-from helper import timeNowTZ, updateState
+from helper import timeNowTZ, updateState, check_IP_format, get_internet_IP
 from logger import append_line_to_file, mylog
 from const import logPath
-
-
-# need to find a better way to deal with settings !
-#global DDNS_ACTIVE, DDNS_DOMAIN, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD 
 
 
 #===============================================================================
@@ -26,7 +22,7 @@ def check_internet_IP ( db ):
 
     # Get Internet IP
     mylog('verbose', ['[Internet IP] - Retrieving Internet IP'])
-    internet_IP = get_internet_IP(conf.DIG_GET_IP_ARG)
+    internet_IP = get_internet_IP()
     # TESTING - Force IP
         # internet_IP = "1.2.3.4"
 
@@ -72,25 +68,6 @@ def check_internet_IP ( db ):
 
 
 
-#-------------------------------------------------------------------------------
-def get_internet_IP (DIG_GET_IP_ARG):
-    # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
-    # Using 'dig'
-    dig_args = ['dig', '+short'] + DIG_GET_IP_ARG.strip().split()
-    try:
-        cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [e.output])
-        cmd_output = '' # no internet
-
-    # Check result is an IP
-    IP = check_IP_format (cmd_output)
-
-    # Handle invalid response
-    if IP == '':
-        IP = '0.0.0.0'
-
-    return IP
 
 #-------------------------------------------------------------------------------
 def get_previous_internet_IP (db):
@@ -134,21 +111,6 @@ def save_new_internet_IP (db, pNewIP):
     # commit changes    
     db.commitDB()
     
-#-------------------------------------------------------------------------------
-def check_IP_format (pIP):
-    # Check IP format
-    IPv4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
-    IPv4ADDR = r'(?:(?:' + IPv4SEG + r'\.){3,3}' + IPv4SEG + r')'
-    IP = re.search(IPv4ADDR, pIP)
-
-    # Return error if not IP
-    if IP is None :
-        return ""
-
-    # Return IP
-    return IP.group(0)
-
-
 
 #-------------------------------------------------------------------------------
 def get_dynamic_DNS_IP ():

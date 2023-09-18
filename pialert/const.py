@@ -4,10 +4,9 @@
 # PATHS
 #===============================================================================
 pialertPath = '/home/pi/pialert'
-#pialertPath ='/home/roland/repos/Pi.Alert'
 
-confPath = "/config/pialert.conf"
-dbPath = '/db/pialert.db'
+confPath    = "/config/pialert.conf"
+dbPath      = '/db/pialert.db'
 
 
 pluginsPath  = pialertPath + '/front/plugins'
@@ -15,8 +14,8 @@ logPath      = pialertPath + '/front/log'
 apiPath      = pialertPath + '/front/api/'
 fullConfPath = pialertPath + confPath
 fullDbPath   = pialertPath + dbPath
-vendorsPath6  = '/usr/share/arp-scan/ieee-oui.txt'
-vendorsPath9  = '/usr/share/arp-scan/ieee-iab.txt'
+vendorsPath6 = '/usr/share/arp-scan/ieee-oui.txt'
+vendorsPath9 = '/usr/share/arp-scan/ieee-iab.txt'
 
 
 
