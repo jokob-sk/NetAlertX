@@ -101,10 +101,3 @@ MQTT_DELAY_SEC  = 2
 
 # API     
 API_CUSTOM_SQL  = 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0'
-
-# DynDNS
-DDNS_ACTIVE     = False 
-DDNS_DOMAIN     = 'your_domain.freeddns.org'
-DDNS_USER       = 'dynu_user' 
-DDNS_PASSWORD   = 'A0000000B0000000C0000000D0000000' 
-DDNS_UPDATE_URL = 'https://api.dynu.com/nic/update?'

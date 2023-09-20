@@ -1,7 +1,16 @@
 {
-  "code_name": "vendor_update",
-  "unique_prefix": "VNDRPDT",
-  "enabled": true,
+  "code_name": "ddns_update",
+  "unique_prefix": "DDNS",
+  "enabled": true,  
+  "data_filters": [
+    {
+      "compare_column": "Object_PrimaryID",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
   "data_source": "script",
   "show_ui": true,
   "localized": [
@@ -12,22 +21,48 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Vendor update"
+      "string": "Internet check"
     }
   ],
   "icon": [
     {
       "language_code": "en_us",
-      "string": "<i class=\"fa-solid fa-landmark-flag\"></i>"
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
     }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "A plugin to schedule vendor database updates for mac based vendor resolution."
+      "string": "A plugin update the DDNS record."
     }
   ],
-  "params": [],
+  "params": [
+    {
+      "name": "prev_ip",
+      "type": "sql",
+      "value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' "
+    },
+    {
+      "name": "DDNS_UPDATE_URL",
+      "type": "setting",
+      "value": "DDNS_UPDATE_URL"
+    },
+    {
+      "name": "DDNS_USER",
+      "type": "setting",
+      "value": "DDNS_USER"
+    },
+    {
+      "name": "DDNS_PASSWORD",
+      "type": "setting",
+      "value": "DDNS_PASSWORD"
+    },
+    {
+      "name": "DDNS_DOMAIN",
+      "type": "setting",
+      "value": "DDNS_DOMAIN"
+    }
+  ],
   "settings": [
     {
       "function": "RUN",
@@ -61,14 +96,14 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When the plugin should run. An overnight weekly <code>SCHEDULE</code> is recommended."
+          "string": "When the plugin should run. An hourly or daily <code>SCHEDULE</code> is a good option."
         }
       ]
     },
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/vendor_update/script.py",
+      "default_value": "python3 /home/pi/pialert/front/plugins/ddns_update/script.py prev_ip={prev_ip}  DDNS_UPDATE_URL={DDNS_UPDATE_URL} DDNS_USER={DDNS_USER} DDNS_PASSWORD={DDNS_PASSWORD} DDNS_DOMAIN={DDNS_DOMAIN} ",
       "options": [],
       "localized": [
         "name",
@@ -106,7 +141,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value": "0 4 * * *",
+      "default_value": "*/5 * * * *",
       "options": [],
       "localized": [
         "name",
@@ -129,22 +164,22 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#DDNS_RUN\"><code>DDNS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
         },
         {
           "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#DDNS_RUN\"><code>DDNS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
         },
         {
           "language_code": "de_de",
-          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#VNDRPDT_RUN\"><code>VNDRPDT_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#DDNS_RUN\"><code>DDNS_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
         }
       ]
     },
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
-      "default_value": 600,
+      "default_value": 30,
       "options": [],
       "localized": [
         "name",
@@ -180,6 +215,126 @@
       ]
     },
     {
+      "function": "DOMAIN",
+      "type": "text",
+      "default_value": "your_domain.freeddns.org",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "DynDNS domain URL"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL del dominio DynDNS"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "DynDNS host URL (do not include http:// or https://)."
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL del host DynDNS (no incluya http:// o https://)."
+        }
+      ]
+    },
+    {
+      "function": "USER",
+      "type": "text",
+      "default_value": "dynu_user",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "DynDNS user"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Usuario de DynDNS"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The username used to login to the DynDNS service (sometimes a full email address)."
+        },
+        {
+          "language_code": "es_es",
+          "string": "El nombre de usuario utilizado para iniciar sesión en el servicio DynDNS (a veces, una dirección de correo electrónico completa)."
+        }
+      ]
+    },
+    {
+      "function": "PASSWORD",
+      "type": "password",
+      "default_value": "A0000000B0000000C0000000D0000000",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "DynDNS password"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Contraseña de DynDNS"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The DynDNS service access password"
+        },
+        {
+          "language_code": "es_es",
+          "string": "La contraseña de acceso al servicio DynDNS."
+        }
+      ]
+    },
+    {
+      "function": "UPDATE_URL",
+      "type": "text",
+      "default_value": "https://api.dynu.com/nic/update?",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "DynDNS update URL"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL de actualización de DynDNS"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Update URL starting with <code>http://</code> or <code>https://</code>."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Actualice la URL que comienza con <code>http://</code> o <code>https://</code>."
+        }
+      ]
+    },
+    {
       "function": "WATCH",
       "type": "text.multiselect",
       "default_value": [
@@ -208,102 +363,40 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Click</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es un código de estado de respuesta (por ejemplo: 200, 404) </li><li><code>Valor_observado2</code> es Latencia (no recomendado)</li><li><code>Valor_observado3</code> no utilizado </li><li><code>Valor_observado4 </ code> sin usar </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
         }
       ]
     },
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": [
-        "new",
-        "watched-changed"
-      ],
-      "options": [
-        "new",
-        "watched-changed",
-        "watched-not-changed",
-        "missing-in-last-scan"
-      ],
-      "localized": [
-        "name",
-        "description"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Report on"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Informar sobre"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
-        },
-        {
-          "language_code": "es_es",
-          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."
-        }
-      ]
-    }
+      "default_value":["new","watched-changed"],
+      "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
+      "localized": ["name", "description"],
+      "name" :[{
+          "language_code":"en_us",
+          "string" : "Report on"
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Informar sobre"
+      }            ] ,
+      "description":[{
+          "language_code":"en_us",
+          "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+      }] 
+  }
   ],
   "database_column_definitions": [
     {
-      "column": "Index",
-      "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "N/A"
-        },
-        {
-          "language_code": "es_es",
-          "string": "N/A"
-        }
-      ]
-    },
-    {
-      "column": "Plugin",
-      "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "N/A"
-        },
-        {
-          "language_code": "es_es",
-          "string": "N/A"
-        }
-      ]
-    },
-    {
-      "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",
+      "column": "Object_PrimaryID",      
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "device_mac",
+      "type": "device_name_mac",
       "default_value": "",
       "options": [],
       "localized": [
@@ -312,17 +405,16 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "MAC address"
+          "string": "MAC"
         },
         {
           "language_code": "es_es",
-          "string": "Dirección MAC"
+          "string": "MAC"
         }
       ]
     },
     {
-      "column": "Object_SecondaryID",
-      "mapped_to_column": "cur_IP",
+      "column": "Object_SecondaryID",      
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_ip",
@@ -339,6 +431,47 @@
         {
           "language_code": "es_es",
           "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Extra"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",      
+      "mapped_to_column_data": {
+        "value": "DDNS"
+      },
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Método de escaneo"
         }
       ]
     },
@@ -364,8 +497,7 @@
       ]
     },
     {
-      "column": "DateTimeChanged",
-      "mapped_to_column": "cur_DateTime",
+      "column": "DateTimeChanged",      
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -382,143 +514,6 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
-        }
-      ]
-    },
-    {
-      "column": "Dummy",
-      "mapped_to_column": "cur_ScanMethod",
-      "mapped_to_column_data": {
-        "value": "VNDRPDT"
-      },
-      "css_classes": "col-sm-2",
-      "show": true,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Scan method"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Método de escaneo"
-        }
-      ]
-    },
-    {
-      "column": "Watched_Value1",
-      "mapped_to_column": "cur_Vendor",
-      "css_classes": "col-sm-2",
-      "show": true,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Vendor"
-        }
-      ]
-    },
-    {
-      "column": "Watched_Value2",
-      "mapped_to_column": "cur_Name",
-      "css_classes": "col-sm-2",
-      "show": true,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Hostname"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Nombre de host"
-        }
-      ]
-    },
-    {
-      "column": "Watched_Value3",
-      "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "N/A"
-        }
-      ]
-    },
-    {
-      "column": "Watched_Value4",
-      "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "N/A"
-        }
-      ]
-    },
-    {
-      "column": "UserData",
-      "css_classes": "col-sm-2",
-      "show": false,
-      "type": "textbox_save",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Comments"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Comentarios"
-        }
-      ]
-    },
-    {
-      "column": "Extra",
-      "css_classes": "col-sm-3",
-      "show": false,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "N/A"
         }
       ]
     },

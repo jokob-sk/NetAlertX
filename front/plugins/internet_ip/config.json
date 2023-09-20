@@ -44,31 +44,6 @@
       "value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' "
     },
     {
-      "name": "DDNS_ACTIVE",
-      "type": "setting",
-      "value": "DDNS_ACTIVE"
-    },
-    {
-      "name": "DDNS_UPDATE_URL",
-      "type": "setting",
-      "value": "DDNS_UPDATE_URL"
-    },
-    {
-      "name": "DDNS_USER",
-      "type": "setting",
-      "value": "DDNS_USER"
-    },
-    {
-      "name": "DDNS_PASSWORD",
-      "type": "setting",
-      "value": "DDNS_PASSWORD"
-    },
-    {
-      "name": "DDNS_DOMAIN",
-      "type": "setting",
-      "value": "DDNS_DOMAIN"
-    },
-    {
       "name": "DIG_GET_IP_ARG",
       "type": "setting",
       "value": "DIG_GET_IP_ARG",
@@ -108,14 +83,14 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When the cleanup should be performed. An hourly or daily <code>SCHEDULE</code> is a good option."
+          "string": "When the plugin should run. An hourly or daily <code>SCHEDULE</code> is a good option."
         }
       ]
     },
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/internet_ip/script.py prev_ip={prev_ip} DDNS_ACTIVE={DDNS_ACTIVE} DDNS_UPDATE_URL={DDNS_UPDATE_URL} DDNS_USER={DDNS_USER} DDNS_PASSWORD={DDNS_PASSWORD} DDNS_DOMAIN={DDNS_DOMAIN} DIG_GET_IP_ARG={DIG_GET_IP_ARG}",
+      "default_value": "python3 /home/pi/pialert/front/plugins/internet_ip/script.py prev_ip={prev_ip} DIG_GET_IP_ARG={DIG_GET_IP_ARG}",
       "options": [],
       "localized": [
         "name",
@@ -255,7 +230,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Internet IP/li><li><code>Watched_Value2</code> is Previous IP (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
         }
       ]
     },
@@ -307,7 +282,7 @@
       ]
     },
     {
-      "column": "Watched_Value1",
+      "column": "Object_SecondaryID",
       "mapped_to_column": "cur_IP",
       "css_classes": "col-sm-2",
       "show": true,
@@ -329,7 +304,7 @@
       ]
     },
     {
-      "column": "Watched_Value2",
+      "column": "Watched_Value1",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
