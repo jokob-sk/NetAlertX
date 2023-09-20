@@ -41,7 +41,8 @@
   ], 
   "settings":[
     {
-      "function": "RUN",            
+      "function": "RUN",    
+      "events": ["run"],        
       "type": "text.select",            
       "default_value":"disabled",
       "options": ["disabled", "before_config_save"],

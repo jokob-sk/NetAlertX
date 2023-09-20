@@ -488,6 +488,7 @@
                 }
             ],
             "function": "RUN",
+            "events": ["run"],
             "localized": [
                 "name",
                 "description"

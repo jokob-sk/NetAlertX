@@ -62,7 +62,8 @@
 
   "settings": [
     {
-      "function": "RUN",            
+      "function": "RUN",      
+      "events": ["run"],      
       "type": "text.select",            
       "default_value":"schedule",
       "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],

@@ -10,6 +10,7 @@ import hashlib
 import csv
 import subprocess
 import re
+import base64
 import sqlite3
 from io import StringIO
 from datetime import datetime
@@ -41,7 +42,7 @@ def main():
     parser.add_argument('DDNS_DOMAIN', action="store", help="Dynamic DNS (DDNS) domain name")
     parser.add_argument('DIG_GET_IP_ARG', action="store", help="Arguments for the 'dig' command to retrieve the IP address")
 
-    args = parser.parse_args()
+    values = parser.parse_args()
 
     PREV_IP         = values.prev_ip.split('=')[1]    
     DDNS_ACTIVE     = values.DDNS_ACTIVE.split('=')[1]    
@@ -54,9 +55,9 @@ def main():
     mylog('verbose', ['[INTRNT] DIG_GET_IP_ARG: ', DIG_GET_IP_ARG]) 
 
     # Decode the base64-encoded value to get the actual value in ASCII format.
-    DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG).decode('ascii')
+    DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG.split('b')[1]).decode('ascii')
     
-    mylog('verbose', ['[INTRNT] DIG_GET_IP_ARG resolved: ', DIG_GET_IP_ARG]) 
+    mylog('verbose', [f'[INTRNT] DIG_GET_IP_ARG resolved: {DIG_GET_IP_ARG} ']) 
 
     # if internet_IP != "" :
     #     sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
@@ -90,10 +91,10 @@ def main():
         primaryId   = 'Internet',       # MAC (Device Name)
         secondaryId = '', 
         watched1    = new_internet_IP,  # IP Address  
-        watched2    = f'Previous IP: {prev_ip}',  
+        watched2    = f'Previous IP: {PREV_IP}',  
         watched3    = '',  
         watched4    = '',
-        extra       = f'Previous IP: {prev_ip}', 
+        extra       = f'Previous IP: {PREV_IP}', 
         foreignKey  = 'Internet')
 
     plugin_objects.write_result_file() 
@@ -120,18 +121,18 @@ def check_internet_IP ( DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, 
     # Get previous stored IP    
     previous_IP = '0.0.0.0'
 
-    if  PREV_IP is not None and len(result) > 0 :
+    if  PREV_IP is not None and len(PREV_IP) > 0 :
         previous_IP = PREV_IP
 
     mylog('verbose', ['[INTRNT]      ', previous_IP])
 
     #  logging
-    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ pNewIP +'\n')
+    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ internet_IP +'\n')
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
         mylog('verbose', ['[DDNS]    Retrieving Dynamic DNS IP'])
-        dns_IP = get_dynamic_DNS_IP()
+        dns_IP = get_dynamic_DNS_IP(DDNS_DOMAIN)
 
         # Check Dynamic DNS IP
         if dns_IP == "" or dns_IP == "0.0.0.0" :
