@@ -19,7 +19,7 @@ sys.path.append('/home/pi/pialert/pialert')
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, get_internet_IP
+from helper import timeNowTZ, check_IP_format
 from const import logPath, pialertPath, fullDbPath
 
 
@@ -32,31 +32,71 @@ def main():
     mylog('verbose', ['[INTRNT] In script'])     
     
     parser = argparse.ArgumentParser(description='Check internet connectivity and IP')
-    parser.add_argument('pluginskeephistory', action="store", help="TBC")
-    parser.add_argument('hourstokeepnewdevice', action="store", help="TBC")
-    parser.add_argument('daystokeepevents', action="store", help="TBC")
-    parser.add_argument('pholuskeepdays', action="store", help="TBC")
     
-    values = parser.parse_args()
+    parser.add_argument('prev_ip', action="store", help="Previous IP address to compare against the current IP")
+    parser.add_argument('DDNS_ACTIVE', action="store", help="Indicates if Dynamic DNS (DDNS) is active (True/False)")
+    parser.add_argument('DDNS_UPDATE_URL', action="store", help="URL for updating Dynamic DNS (DDNS)")
+    parser.add_argument('DDNS_USER', action="store", help="Username for Dynamic DNS (DDNS) authentication")
+    parser.add_argument('DDNS_PASSWORD', action="store", help="Password for Dynamic DNS (DDNS) authentication")
+    parser.add_argument('DDNS_DOMAIN', action="store", help="Dynamic DNS (DDNS) domain name")
+    parser.add_argument('DIG_GET_IP_ARG', action="store", help="Arguments for the 'dig' command to retrieve the IP address")
 
-    DDNS_ACTIVE     = values.TBC.split('=')[1]    
-    DDNS_UPDATE_URL = values.TBC.split('=')[1]
-    DDNS_USER       = values.TBC.split('=')[1]
-    DDNS_PASSWORD   = values.TBC.split('=')[1]
-    DDNS_DOMAIN     = values.TBC.split('=')[1]   
+    args = parser.parse_args()
+
+    PREV_IP         = values.prev_ip.split('=')[1]    
+    DDNS_ACTIVE     = values.DDNS_ACTIVE.split('=')[1]    
+    DDNS_UPDATE_URL = values.DDNS_UPDATE_URL.split('=')[1]
+    DDNS_USER       = values.DDNS_USER.split('=')[1]
+    DDNS_PASSWORD   = values.DDNS_PASSWORD.split('=')[1]
+    DDNS_DOMAIN     = values.DDNS_DOMAIN.split('=')[1]   
+    DIG_GET_IP_ARG  = values.DIG_GET_IP_ARG.split('=')[1]   
+
+    mylog('verbose', ['[INTRNT] DIG_GET_IP_ARG: ', DIG_GET_IP_ARG]) 
+
+    # Decode the base64-encoded value to get the actual value in ASCII format.
+    DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG).decode('ascii')
     
-    # Connect to the PiAlert SQLite database
-    conn    = sqlite3.connect(fullDbPath)
-    cursor  = conn.cursor()
+    mylog('verbose', ['[INTRNT] DIG_GET_IP_ARG resolved: ', DIG_GET_IP_ARG]) 
+
+    # if internet_IP != "" :
+    #     sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
+    #                 VALUES ( 'Internet', '{internet_IP}', Null, 'queryDNS') """)
+   
+    # # Save event
+    # cursor.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+    #                     eve_EventType, eve_AdditionalInfo,
+    #                     eve_PendingAlertEmail)
+    #                 VALUES ('Internet', ?, ?, 'Internet IP Changed',
+    #                     'Previous Internet IP: '|| ?, 1) """,
+    #                 (pNewIP, timeNowTZ(), prevIp) )
+
+
+    # # Save new IP
+    # cursor.execute ("""UPDATE Devices SET dev_LastIP = ?
+    #                 WHERE dev_MAC = 'Internet' """,
+    #                 (pNewIP,) )
+
+
+    # Object_PrimaryID - cur_MAC
+    # Watched_Value1 - cur_IP
+    # Watched_Value2 - Extra / prev IP  
+
     
-    #  do stuff
-    check_internet_IP(conn, cursor, DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN)
+    new_internet_IP = check_internet_IP( DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN, PREV_IP, DIG_GET_IP_ARG)   
 
-    cursor.execute ("""SELECT from Online_History""") # TODO delete
+    plugin_objects = Plugin_Objects(RESULT_FILE)    
+    
+    plugin_objects.add_object(
+        primaryId   = 'Internet',       # MAC (Device Name)
+        secondaryId = '', 
+        watched1    = new_internet_IP,  # IP Address  
+        watched2    = f'Previous IP: {prev_ip}',  
+        watched3    = '',  
+        watched4    = '',
+        extra       = f'Previous IP: {prev_ip}', 
+        foreignKey  = 'Internet')
 
-    conn.commit()
-    # Close the database connection
-    conn.close()
+    plugin_objects.write_result_file() 
 
     mylog('verbose', ['[INTRNT] Finished '])   
     
@@ -67,37 +107,26 @@ def main():
 #===============================================================================
 # INTERNET IP CHANGE
 #===============================================================================
-def check_internet_IP (conn, cursor, DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN ):   
-
-    # Header
-    updateState("Scan: Internet IP")
-    mylog('verbose', ['[INTRNT] Check Internet IP started'])    
-
+def check_internet_IP ( DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN, PREV_IP, DIG_GET_IP_ARG ):   
+    
     # Get Internet IP
     mylog('verbose', ['[INTRNT] - Retrieving Internet IP'])
-    internet_IP = get_internet_IP()
-    # TESTING - Force IP
-        # internet_IP = "1.2.3.4"
+    internet_IP = get_internet_IP(DIG_GET_IP_ARG)
 
     # Check result = IP
     if internet_IP == "" :
-        mylog('none', ['[INTRNT]    Error retrieving Internet IP'])
-        mylog('none', ['[INTRNT]    Exiting...'])
-        return False
-    mylog('verbose', ['[INTRNT] IP:      ', internet_IP])
+        mylog('none', ['[INTRNT]    Error retrieving Internet IP'])                
+    
+    # Get previous stored IP    
+    previous_IP = '0.0.0.0'
 
-    # Get previous stored IP
-    mylog('verbose', ['[INTRNT]    Retrieving previous IP:'])    
-    previous_IP = get_previous_internet_IP (conn, cursor)
+    if  PREV_IP is not None and len(result) > 0 :
+        previous_IP = PREV_IP
+
     mylog('verbose', ['[INTRNT]      ', previous_IP])
 
-    # Check IP Change
-    if internet_IP != previous_IP :
-        mylog('minimal', ['[INTRNT]    New internet IP: ', internet_IP])
-        save_new_internet_IP (conn, cursor, internet_IP)
-        
-    else :
-        mylog('verbose', ['[INTRNT]    No changes to perform'])    
+    #  logging
+    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ pNewIP +'\n')
 
     # Get Dynamic DNS IP
     if DDNS_ACTIVE :
@@ -119,49 +148,7 @@ def check_internet_IP (conn, cursor, DDNS_ACTIVE, DDNS_UPDATE_URL, DDNS_USER, DD
     else :
         mylog('verbose', ['[DDNS]     Skipping Dynamic DNS update'])
 
-
-
-#-------------------------------------------------------------------------------
-def save_new_internet_IP (conn, cursor, pNewIP):
-    # Log new IP into logfile
-    append_line_to_file (logPath + '/IP_changes.log',
-        '['+str(timeNowTZ()) +']\t'+ pNewIP +'\n')
-
-    prevIp = get_previous_internet_IP(conn, cursor)     
-    # Save event
-    cursor.execute ("""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
-                        eve_EventType, eve_AdditionalInfo,
-                        eve_PendingAlertEmail)
-                    VALUES ('Internet', ?, ?, 'Internet IP Changed',
-                        'Previous Internet IP: '|| ?, 1) """,
-                    (pNewIP, timeNowTZ(), prevIp) )
-
-    # Save new IP
-    cursor.execute ("""UPDATE Devices SET dev_LastIP = ?
-                    WHERE dev_MAC = 'Internet' """,
-                    (pNewIP,) )
-
-    # commit changes    
-    conn.commit()
-
-#-------------------------------------------------------------------------------
-def get_previous_internet_IP (conn, cursor):
-    
-    previous_IP = '0.0.0.0'
-
-    # get previous internet IP stored in DB
-    cursor.execute ("SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' ")
-    result = db.sql.fetchone()
-
-    conn.commit()
-
-    if  result is not None and len(result) > 0 :
-        previous_IP = result[0]
-
-    # return previous IP
-    return previous_IP
-
-
+    return internet_IP
     
 
 #-------------------------------------------------------------------------------
@@ -194,18 +181,40 @@ def set_dynamic_DNS_IP (DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN):
     try:
         # try runnning a subprocess
         # Update Dynamic IP
-        curl_output = subprocess.check_output (['curl', '-s',
-            DDNS_UPDATE_URL +
-            'username='  + DDNS_USER +
-            '&password=' + DDNS_PASSWORD +
-            '&hostname=' + DDNS_DOMAIN],
-            universal_newlines=True)
+        curl_output = subprocess.check_output (['curl', 
+                                                '-s',
+                                                DDNS_UPDATE_URL +
+                                                'username='  + DDNS_USER +
+                                                '&password=' + DDNS_PASSWORD +
+                                                '&hostname=' + DDNS_DOMAIN],
+                                                universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         mylog('none', ['[DDNS] ERROR - ',e.output])
         curl_output = ""    
     
     return curl_output
+
+
+#-------------------------------------------------------------------------------
+def get_internet_IP (DIG_GET_IP_ARG):
+    # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
+    # Using 'dig'
+    dig_args = ['dig', '+short'] + DIG_GET_IP_ARG.strip().split()
+    try:
+        cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        mylog('none', [e.output])
+        cmd_output = '' # no internet
+
+    # Check result is an IP
+    IP = check_IP_format (cmd_output)
+
+    # Handle invalid response
+    if IP == '':
+        IP = '0.0.0.0'
+
+    return IP
 
 #===============================================================================
 # BEGIN

@@ -96,7 +96,7 @@ def importConfigs (db):
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
     conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
     conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['internet', 'new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'text.multiselect', "['internet', 'new_devices', 'down_devices', 'events', 'plugins']", 'General')    
+    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'text.multiselect', "['new_devices', 'down_devices', 'events', 'plugins']", 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
     conf.DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'German', 'Spanish']", 'General')
@@ -175,8 +175,7 @@ def importConfigs (db):
     conf.startTime  = conf.time_started
     now_minus_24h   = conf.time_started - datetime.timedelta(hours = 24)
 
-    # set these times to the past to force the first run     
-    conf.last_internet_IP_scan  = now_minus_24h
+    # set these times to the past to force the first run         
     conf.last_scan_run          = now_minus_24h        
     conf.last_version_check     = now_minus_24h  
 

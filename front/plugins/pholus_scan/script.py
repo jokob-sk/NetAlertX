@@ -54,15 +54,14 @@ def main():
     timeoutSec = values.timeoutSec[0].split('=')[1]
 
     # Printing the extracted base64-encoded subnet information.
-    print(userSubnetsParamBase64)
-    print(timeoutSec)
+    mylog('verbose', [f'[PHOLUS] { userSubnetsParamBase64 }'])
+    mylog('verbose', [f'[PHOLUS] { timeoutSec }'])
 
     # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
     userSubnetsParam = base64.b64decode(userSubnetsParamBase64).decode('ascii')
 
-    # Print the decoded subnet information.
-    print('userSubnetsParam:')
-    print(userSubnetsParam)
+    # Print the decoded subnet information.    
+    mylog('verbose', [f'[PHOLUS] userSubnetsParam { userSubnetsParam } '])
 
     # Check if the decoded subnet information contains multiple subnets separated by commas.
     # If it does, split the string into a list of individual subnets.
@@ -101,7 +100,7 @@ def execute_pholus_scan(userSubnets, timeoutSec):
 
     timeoutPerSubnet = float(timeoutSec) / len(userSubnets)
 
-    print(timeoutPerSubnet)
+    mylog('verbose', [f'[PHOLUS] { timeoutPerSubnet } '])
 
     # scan each interface
     
@@ -110,7 +109,7 @@ def execute_pholus_scan(userSubnets, timeoutSec):
         temp = interface.split("--interface=")
 
         if len(temp) != 2:
-            mylog('none', ["[PholusScan] Skip scan (need interface in format '192.168.1.0/24 --inteface=eth0'), got: ", interface])
+            mylog('none', ["[PHOLUS] Skip scan (need interface in format '192.168.1.0/24 --inteface=eth0'), got: ", interface])
             return
 
         mask = temp[0].strip()
@@ -118,7 +117,7 @@ def execute_pholus_scan(userSubnets, timeoutSec):
 
         pholus_output_list = execute_pholus_on_interface (interface, timeoutPerSubnet, mask)        
 
-        print(pholus_output_list)   
+        mylog('verbose', [f'[PHOLUS] { pholus_output_list } '])   
        
 
         result_list += pholus_output_list
@@ -134,8 +133,8 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
 
     # logging & updating app state        
       
-    mylog('verbose', ['[PholusScan] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
-    mylog('verbose', ["[PholusScan] Pholus scan on [interface] ", interface, " [mask] " , mask])
+    mylog('verbose', ['[PHOLUS] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
+    mylog('verbose', ["[PHOLUS] Pholus scan on [interface] ", interface, " [mask] " , mask])
     
     # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
     adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
@@ -151,15 +150,15 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
         output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[PholusScan]', e.output])
-        mylog('none', ["[PholusScan] Error - Pholus Scan - check logs"])            
+        mylog('none', ['[PHOLUS]', e.output])
+        mylog('none', ["[PHOLUS] Error - Pholus Scan - check logs"])            
     except subprocess.TimeoutExpired as timeErr:
-        mylog('none', ['[PholusScan] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
+        mylog('none', ['[PHOLUS] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
 
     if output == "": # check if the subprocess failed                    
-        mylog('none', ['[PholusScan] Scan: Pholus FAIL - check logs']) 
+        mylog('none', ['[PHOLUS] Scan: Pholus FAIL - check logs']) 
     else: 
-        mylog('verbose', ['[PholusScan] Scan: Pholus SUCCESS'])
+        mylog('verbose', ['[PHOLUS] Scan: Pholus SUCCESS'])
     
     #  check the last run output
     f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')

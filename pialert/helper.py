@@ -292,26 +292,6 @@ def check_IP_format (pIP):
 
 
 #-------------------------------------------------------------------------------
-def get_internet_IP ():
-    # BUGFIX #46 - curl http://ipv4.icanhazip.com repeatedly is very slow
-    # Using 'dig'
-    dig_args = ['dig', '+short'] + conf.DIG_GET_IP_ARG.strip().split()
-    try:
-        cmd_output = subprocess.check_output (dig_args, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [e.output])
-        cmd_output = '' # no internet
-
-    # Check result is an IP
-    IP = check_IP_format (cmd_output)
-
-    # Handle invalid response
-    if IP == '':
-        IP = '0.0.0.0'
-
-    return IP
-
-#-------------------------------------------------------------------------------
 def resolve_device_name_dig (pMAC, pIP):
     
     newName = ""

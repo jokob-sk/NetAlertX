@@ -3,7 +3,7 @@ import subprocess
 
 import conf
 import re
-from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus, check_IP_format, get_internet_IP
+from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus, check_IP_format
 from logger import mylog, print_log
 from const import vendorsPath6, vendorsPath9
 
@@ -13,13 +13,6 @@ from const import vendorsPath6, vendorsPath9
 def save_scanned_devices (db):
     sql = db.sql #TO-DO
 
-    # Check Internet connectivity
-    internet_IP = get_internet_IP()
-        # TESTING - Force IP
-        # internet_IP = ""
-    if internet_IP != "" :
-        sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
-                        VALUES ( 'Internet', '{internet_IP}', Null, 'queryDNS') """)
 
     # #76 Add Local MAC of default local interface
       # BUGFIX #106 - Device that pialert is running

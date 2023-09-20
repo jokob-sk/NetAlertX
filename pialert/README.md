@@ -8,7 +8,6 @@ The original pilaert.py code is now moved to this new folder and split into diff
 |```__init__.py```| an empty init file|
 |```README.md```| this readme file|
 |**publishers**| a folder containing all modules used to publish the results|
-|**scanners**| a folder containing all modules used to scan for devices |
 |```api.py```| updating the API endpoints with the relevant data. (Should move to publishers)|
 |```const.py```| A place to define the constants for Pi.Alert like log path or config path.|
 |```conf.py```| conf.py holds the configuration variables and makes them available for all modules. It is also the <b>workaround</b> for global variables that need to be resolved at some point|
@@ -35,12 +34,5 @@ publishers generally have a check_config method as well as a send method.
 |```pushsafer.py```| integrate with pushsafer |
 |```webhook.py```| integrate via webhook |
 
-## scanners
-different methods to scan the network for devices or to find more details about the discovered devices
 
-| Module | Description |
-|--------|-----------|
-|```__init__.py```| an empty init file (oops missing in the repo)|
-|```internet.py```| discover the internet interface and check the external IP also manage Dynamic DNS |
-|```nmapscan.py```| use Nmap to discover more about devices |
 

@@ -183,20 +183,20 @@ def send_notifications (db):
 	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
-    if 'internet' in conf.INCLUDED_SECTIONS :
-        # Compose Internet Section
-        sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
-                        WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
-                        ORDER BY eve_DateTime"""
+    # if 'internet' in conf.INCLUDED_SECTIONS :
+    #     # Compose Internet Section
+    #     sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
+    #                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
+    #                     ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "Internet IP change")
+    #     notiStruc = construct_notifications(db, sqlQuery, "Internet IP change")
 
-        # collect "internet" (IP changes) for the webhook json
-        json_internet = notiStruc.json["data"]
+    #     # collect "internet" (IP changes) for the webhook json
+    #     json_internet = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
-        mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
-        mylog('verbose', ['[Notification] Internet sections done.'])
+    #     mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
+    #     mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
+    #     mylog('verbose', ['[Notification] Internet sections done.'])
 
     if 'new_devices' in conf.INCLUDED_SECTIONS :
         # Compose New Devices Section

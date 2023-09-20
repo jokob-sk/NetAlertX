@@ -32,10 +32,6 @@ from database import DB, get_all_devices
 from reporting import check_and_run_event, send_notifications
 from plugin import run_plugin_scripts 
 
-# different scanners
-from scanners.internet import check_internet_IP
-
-
 
 #===============================================================================
 #===============================================================================
@@ -54,8 +50,6 @@ main structure of Pi Alert
         run frontend events
         update API         
         run plugins (scheduled)
-        check internet IP
-        check vendor                        
         processing scan results
         run plugins (after Scan)
         reporting        
@@ -123,8 +117,7 @@ def main ():
         if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time :
 
              # last time any scan or maintenance/upkeep was run
-            conf.last_scan_run = loop_start_time
-            last_internet_IP_scan = conf.last_internet_IP_scan
+            conf.last_scan_run = loop_start_time            
 
             # Header
             updateState("Process: Start")      
@@ -138,12 +131,6 @@ def main ():
 
             # determine run/scan type based on passed time
             # --------------------------------------------
-
-            # check for changes in Internet IP
-            if last_internet_IP_scan + datetime.timedelta(minutes=3) < loop_start_time:
-                conf.cycle = 'internet_IP'                
-                last_internet_IP_scan = loop_start_time
-                check_internet_IP(db)
            
             # Run splugin scripts which are set to run every timne after a scans finished            
             pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)

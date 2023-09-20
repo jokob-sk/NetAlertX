@@ -62,7 +62,7 @@ def main():
         subnets_list = userSubnetsParam.split(',')
     else:
         subnets_list = [userSubnetsParam]
-
+    
     # Execute the ARP scanning process on the list of subnets (whether it's one or multiple subnets).
     # The function 'execute_arpscan' is assumed to be defined elsewhere in the code.
     unique_devices = execute_arpscan(subnets_list)
