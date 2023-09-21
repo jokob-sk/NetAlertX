@@ -349,6 +349,38 @@ function getString ($codeName, $default) {
 
   return $default;
 }
+// -------------------------------------------------------------------------------------------
+function getSettingValue($codeName) {
+  // Define the JSON endpoint URL  
+  $url = dirname(__FILE__).'/../../../front/api/table_settings.json';  
+
+  // Fetch the JSON data
+  $json = file_get_contents($url);
+
+  // Check if the JSON data was successfully fetched
+  if ($json === false) {
+      return 'Could not get json data';
+  }
+
+  // Decode the JSON data
+  $data = json_decode($json, true);
+
+  // Check if the JSON decoding was successful
+  if (json_last_error() !== JSON_ERROR_NONE) {
+    return 'Could not decode json data';
+  }
+
+  // Search for the setting by Code_Name
+  foreach ($data['data'] as $setting) {
+      if ($setting['Code_Name'] === $codeName) {
+          return $setting['Value'];
+          // echo $setting['Value'];
+      }
+  }
+
+  // Return false if the setting was not found
+  return 'Could not find setting '.$codeName;
+}
 
 // -------------------------------------------------------------------------------------------
 
@@ -419,16 +451,7 @@ function handleNull ($text, $default = "") {
   
 }
 
-// -------------------------------------------------------------------------------------------
-// Currently unused - should be source of truth for network types (or define somewhere else?)
-function getNetworkTypes(){
 
-  $array = array(
-    "AP", "Gateway", "Firewall", "Hypervisor", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter"
-  );
-
-  return $array;
-}
 
 // -------------------------------------------------------------------------------------------
 function getDevicesColumns(){

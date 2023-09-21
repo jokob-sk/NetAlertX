@@ -29,7 +29,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 - In the (2) `Details` tab navigate to the the `Type` (3) dropdown and select the type `Switch` (4).
 
 > Note: Only the following device types will show up as selectable Network nodes ( = devices you can connect other devices to):
-> AP, Firewall, Gateway, Hypervisor, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN.
+> AP, Firewall, Gateway, Hypervisor, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN. Custom types can be added via the `NETWORK_DEVICE_TYPES` setting.
 
 - Assign a device to your root device from the `Node` (5) dropdown which has the MAC `Internet` (6) (Your name may differ, but the MAC needs to be set to `Internet` - this is done by default). 
 

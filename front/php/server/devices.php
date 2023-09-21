@@ -754,8 +754,13 @@ function getOwners() {
 function getNetworkNodes() {
   global $db;
 
-  // Device Data
-  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in (  "AP", "Gateway", "Firewall", "Hypervisor", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter")';
+  // Device Data  
+  $networkDeviceTypes = str_replace("]", "",(str_replace("[", "", getSettingValue("NETWORK_DEVICE_TYPES"))));
+  
+
+  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in ( '. $networkDeviceTypes .' )';
+
+  // echo $sql;
 
   $result = $db->query($sql);
 

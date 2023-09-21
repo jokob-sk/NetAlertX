@@ -6,9 +6,8 @@
   define('badge_online', '<div class="badge bg-green text-white" style="width: 60px;">Online</div>');
   define('badge_offline', '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>');
   define('circle_online', '<div class="badge bg-green text-white" style="width: 10px; height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
-  define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
+  define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>'); 
   
-  $NETWORKTYPES = getNetworkTypes();  
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -267,6 +266,8 @@
     //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
     //                          \
     //                          PC (leaf) <------- leafs are not included in this SQL query
+
+    $networkDeviceTypes = str_replace("]", "",(str_replace("[", "", getSettingValue("NETWORK_DEVICE_TYPES"))));
     
     $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
             FROM 
@@ -278,7 +279,7 @@
                         a.dev_Network_Node_MAC_ADDR as parent_mac,
                         a.dev_Icon as node_icon
                   FROM Devices a 
-                  WHERE a.dev_DeviceType in ('AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet')					
+                  WHERE a.dev_DeviceType in (".$networkDeviceTypes.")					
             ) t1
             LEFT JOIN
             (
