@@ -260,6 +260,7 @@
         "Maintenance_new_version" : "🆕 A new version is available. Check out the <a href=\"https://github.com/jokob-sk/Pi.Alert/releases\" target=\"_blank\">release notes</a>.",
         "Maintenance_current_version" : "You are up-to-date. Check out what <a href=\"https://github.com/jokob-sk/Pi.Alert/issues/138\" target=\"_blank\">I am working on</a>.",
         "Maintenance_built_on" : "Built on",
+        "Maintenance_Running_Version" : "Installed version",
         "Maintenance_database_path" : "Database-Path",
         "Maintenance_database_size" : "Database-Size",
         "Maintenance_database_rows" : "Table (Rows)",

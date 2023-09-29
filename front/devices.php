@@ -545,24 +545,24 @@ function getDevicesList (status) {
 };
 
 function handleLoadingDialog()
-  {
-    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
-     
-      console.log(appState["showSpinner"])
-      if(appState["showSpinner"])
-      { 
-        showSpinner("settings_old")
+{
+  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+    
+    console.log(appState["showSpinner"])
+    if(appState["showSpinner"])
+    { 
+      showSpinner("settings_old")
 
-        setTimeout("handleLoadingDialog()", 1000);
+      setTimeout("handleLoadingDialog()", 1000);
 
-      } else
-      {
-        hideSpinner()        
-      }      
+    } else
+    {
+      hideSpinner()        
+    }      
 
-     })
+    })
 
-  }
+}
 
 </script>
 

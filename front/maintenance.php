@@ -175,6 +175,12 @@ $db->close();
                         </div>
                     </div>
                     <div class="db_info_table_row">
+                        <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_Running_Version');?></div>
+                        <div class="db_info_table_cell">                               
+                          <?php include 'php/templates/version.php'; ?> 
+                        </div>
+                    </div>
+                    <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_database_path');?></div>
                         <div class="db_info_table_cell">
                             <?php echo $pia_db;?>
