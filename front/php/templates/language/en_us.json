@@ -533,6 +533,8 @@
         "WEBHOOK_REQUEST_METHOD_description" : "The HTTP request method to be used for the webhook call.",
         "WEBHOOK_SIZE_name" : "Max payload size",
         "WEBHOOK_SIZE_description" : "The maximum size of the webhook payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended.",        
+        "WEBHOOK_SECRET_name": "HMAC Secret",
+        "WEBHOOK_SECRET_description": "When set, use this secret to generate the SHA256-HMAC hex digest value of the request body, which will be passed as the <code>X-Webhook-Signature</code> header to the request. You can find more informations <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_SECRET.md\">here</a>.",
         "Apprise_display_name" : "Apprise",
         "Apprise_icon" : "<i class=\"fa fa-bullhorn\"></i>",
         "REPORT_APPRISE_name" : "Enable Apprise",
