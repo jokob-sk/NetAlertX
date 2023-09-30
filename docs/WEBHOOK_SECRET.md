@@ -1,0 +1,38 @@
+# Webhook Secrets
+
+## How does the signing work?
+
+Pi.Alert will use the configured secret to create a hash signature of the requests body. This SHA256-HMAC signature will appear in the `X-Webhook-Signature` header of each request to the webhook target URL. You can use the value of this header to validate the request was sent by Pi.Alert.
+
+## Activating webhook signatures
+
+All you need to do in order to add a signature to the requests headers is to set the `WEBHOOK_SECRET` config value to a non-empty string.
+
+## Validating webhook deliveries
+
+There are a few things to keep in mind when validating the webhook delivery:
+
+- Pi.Alert uses an HMAC hex digest to compute the hash
+- The signature in the `X-Webhook-Signature` header always starts with `sha256=`
+- The hash signature is generated using the configured `WEBHOOK_SECRET` and the request body.
+- Never use a plain `==` operator. Instead consider using a method like [`secure_compare`](https://www.rubydoc.info/gems/rack/Rack%2FUtils:secure_compare) or [`crypto.timingSafeEqual`](https://nodejs.org/api/crypto.html#cryptotimingsafeequala-b), which performs a "constant time" string comparison to help mitigate certain timing attacks against regular equality operators, or regular loops in JIT-optimized languages.
+
+## Testing the webhook payload validation
+
+You can use the following secret and request body to verify your implementation is working correctly.
+
+`secret`: 'this is my secret'
+
+`payload`: '{"test":"this is a test body"}'
+
+If your implementation is correct, the signature you generated should match the following:
+
+`signature`: bed21fcc34f98e94fd71c7edb75e51a544b4a3b38b069ebaaeb19bf4be8147e9
+
+`X-Webhook-Signature`: sha256=bed21fcc34f98e94fd71c7edb75e51a544b4a3b38b069ebaaeb19bf4be8147e9
+
+## More information
+
+If you want to learn more about webhook security, take a look at [Github's webhook documentation](https://docs.github.com/en/webhooks/about-webhooks).
+
+You can find examples for validating a webhook delivery [here](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#examples).

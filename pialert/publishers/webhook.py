@@ -1,5 +1,7 @@
 import json
 import subprocess
+import hashlib
+import hmac
 
 import conf
 from const import logPath
@@ -71,6 +73,7 @@ def send (msg: noti_struc):
     }]
     }
 
+
     # DEBUG - Write the json payload into a log file for debugging
     write_file (logPath + '/webhook_payload.json', json.dumps(_json_payload))
 
@@ -81,7 +84,13 @@ def send (msg: noti_struc):
         curlParams = ["curl","-i","-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
     else:
         _WEBHOOK_URL = conf.WEBHOOK_URL
-        curlParams = ["curl","-i","-X", conf.WEBHOOK_REQUEST_METHOD ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), _WEBHOOK_URL]
+        curlParams = ["curl","-i","-X", conf.WEBHOOK_REQUEST_METHOD , "-H", "Content-Type:application/json", "-d", json.dumps(_json_payload), _WEBHOOK_URL]
+
+    # Add HMAC signature if configured
+    if(conf.WEBHOOK_SECRET != ''):
+        h = hmac.new(conf.WEBHOOK_SECRET.encode("UTF-8"), json.dumps(_json_payload, separators=(',', ':')).encode(), hashlib.sha256).hexdigest()
+        curlParams.insert(4,"-H")
+        curlParams.insert(5,f"X-Webhook-Signature: sha256={h}")
 
     try:
         # Execute CURL call

@@ -132,6 +132,7 @@ def importConfigs (db):
     conf.WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'text.select', "['json', 'html', 'text']", 'Webhooks')
     conf.WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'text.select', "['GET', 'POST', 'PUT']", 'Webhooks')
     conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
+    conf.WEBHOOK_SECRET = ccd('WEBHOOK_SECRET', '' , c_d, 'Secret', 'text', '', 'Webhooks')
 
     # Apprise
     conf.REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise', ['test'])
