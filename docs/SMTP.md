@@ -1,6 +1,6 @@
 # 📧 SMTP guides
 
-## Use the GMX SMTP server
+## Using the GMX SMTP server
 
 1. Go to your GMX account https://account.gmx.com
 2. Under Security Options enable 2FA (Two-factor authentication)
@@ -22,7 +22,7 @@
 ```
 
 
-## Use the Gmail SMTP server
+## Using the Gmail SMTP server
     
 1. Create an app password by following the instructions from Google, you need to Enable 2FA for this to work.
 [https://support.google.com/accounts/answer/185833](https://support.google.com/accounts/answer/185833)

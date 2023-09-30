@@ -50,6 +50,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Settings system](/docs/SETTINGS_SYSTEM.md)
 - [New Version notifications](/docs/VERSIONS.md)
 - [Frontend development tips](/docs/FRONTEND_DEVELOPMENT.md)
+- [Webhook secrets](/docs/WEBHOOK_SECRET.md)
 
 Feel free to suggest or submit new docs via a PR. 
 

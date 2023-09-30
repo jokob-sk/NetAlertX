@@ -9,6 +9,11 @@ To edit device information:
   - Press the "Save" button
 
 
+> [!NOTE] 
+>
+> [Bulk-edit devices](/docs/DEVICES_BULK_EDITING.md) by using the `CSV Export` functionality in the `Maintenance` section.
+
+
 ![Device Details][screen1]
 
 

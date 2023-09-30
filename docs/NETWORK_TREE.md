@@ -20,7 +20,7 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 
 In this example you will setup a device named `rapberrypi` as a `Switch` in our network. 
 
-### 1) Device details page
+### 1. Device details page
 
 - Go to the `Devices` (1) page:
 
@@ -35,7 +35,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 
 - Save your changes (7)
 
-### 1) Network page
+### 2. Network page
 
 - Navigate to your `Network` (1) page:
 
@@ -45,7 +45,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 - As we asssigned the `raspberrypi` in the previous 1) Device details page section to the `Internet` parent network node in step (6), the link is also showing up in the tree diagram (4)
 - We can now assign the device `(AppleTV)` (5) to this `raspberrypi` node, representing a network Switch in this example
 
-### 1) Network page with 2 levels
+### 3. Network page with 2 levels
 
 - After clicking the `Assign` button in the previous section, the `(AppleTV)` (1) device is now connected to our `raspberrypi` (2).
 
@@ -54,6 +54,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 - You can see the `raspberrypi` represents the Network node type `Switch` (3)
 - The `(AppleTV)` to `raspberrypi` connection is also displayed in the table of `Connected devices` (4).
 - You can also see that our `raspberrypi` node is connected to it's Parent network device node with the MAC `Internet` (5). This connection again shows up in the tree (6) as well.
+
 
 
 
