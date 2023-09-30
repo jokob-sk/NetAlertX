@@ -3,12 +3,12 @@
 import io
 import sys
 import datetime
+# from datetime import strptime 
 import os
 import re
 import subprocess
 import pytz
 from pytz import timezone
-from datetime import timedelta
 import json
 import time
 from pathlib import Path
@@ -43,6 +43,9 @@ class app_state_class:
         # json file containing the state to communicate with the frontend
         stateFile = apiPath + '/app_state.json'
 
+        # if currentState == 'Initializing':
+        #     checkNewVersion(False)
+
         # Update self
         self.currentState = currentState
         self.lastUpdated = str(timeNowTZ())
@@ -50,22 +53,31 @@ class app_state_class:
         # Check if the file exists and init values
         if os.path.exists(stateFile):
             with open(stateFile, 'r') as json_file:
-                previousState = json.load(json_file)
-                self.settingsSaved = previousState.get("settingsSaved", 0)
-                self.settingsImported = previousState.get("settingsImported", 0)
-                self.showSpinner = previousState.get("showSpinner", False)
+                previousState               = json.load(json_file)
+                self.settingsSaved          = previousState.get("settingsSaved", 0)
+                self.settingsImported       = previousState.get("settingsImported", 0)
+                self.showSpinner            = previousState.get("showSpinner", False)
+                self.isNewVersion           = previousState.get("isNewVersion", False)
+                self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
         else:
-            self.settingsSaved = 0
-            self.settingsImported = 0
-            self.showSpinner = False
+            self.settingsSaved          = 0
+            self.settingsImported       = 0
+            self.showSpinner            = False
+            self.isNewVersion           = checkNewVersion()
+            self.isNewVersionChecked    = int(timeNow().timestamp())
 
-        # Overwrite with provided parameters if not None
+        # Overwrite with provided parameters if supplied
         if settingsSaved is not None:
             self.settingsSaved = settingsSaved
         if settingsImported is not None:
             self.settingsImported = settingsImported
         if showSpinner is not None:
             self.showSpinner = showSpinner
+
+        # check for new version every hour and if currently not running new version
+        if self.isNewVersion is False and self.isNewVersionChecked + 3600 < int(timeNow().timestamp()):
+            self.isNewVersion           = checkNewVersion()
+            self.isNewVersionChecked    = int(timeNow().timestamp())
 
         # Update .json file
         with open(stateFile, 'w') as json_file:
@@ -547,36 +559,38 @@ def collect_lang_strings(json, pref, stringSqlParams):
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-def isNewVersion(newVersion: bool):
+def checkNewVersion():
 
-    mylog('debug', [f"[Version check] New version available? {newVersion}"])
+    mylog('debug', [f"[Version check] Checking if new version available"])
 
-    if newVersion == False:
+    newVersion = False
 
-        f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
-        buildTimestamp = int(f.read().strip())
-        f.close()
+    f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
+    buildTimestamp = int(f.read().strip())
+    f.close()
 
+    data = ""
+
+    try:
+        url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+        text = url.text
+        data = json.loads(text)
+    except requests.exceptions.ConnectionError as e:
+        mylog('minimal', ["[Version check] Error: Couldn't check for new release."])
         data = ""
 
-        try:
-            url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
-            text = url.text
-            data = json.loads(text)
-        except requests.exceptions.ConnectionError as e:
-            mylog('minimal', ["    Couldn't check for new release."])
-            data = ""
+    # make sure we received a valid response and not an API rate limit exceeded message
+    if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
 
-        # make sure we received a valid response and not an API rate limit exceeded message
-        if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
+        dateTimeStr = data[0]["published_at"]
 
-            dateTimeStr = data[0]["published_at"]
+        realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
 
-            realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
-
-            if realeaseTimestamp > buildTimestamp + 600:
-                mylog('none', ["[Version check] New version of the container available!"])
-                newVersion = True                
+        if realeaseTimestamp > buildTimestamp + 600:
+            mylog('none', ["[Version check] New version of the container available!"])
+            newVersion = True       
+        else:
+            mylog('none', ["[Version check] Running the latest version."])
 
     return newVersion
 

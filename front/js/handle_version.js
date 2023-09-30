@@ -1,80 +1,51 @@
-function handleVersion(){
+//--------------------------------------------------------------
+// Handle the UI changes to show or hide notifications about a new version
+function versionUpdateUI(){
 
-    release_timestamp = getCookie("release_timestamp")
+  isNewVersion = getCookie("isNewVersion")
 
-    if(release_timestamp != "")
-    {
+  console.log(isNewVersion)
 
-      build_timestamp = parseInt($('#version').attr("data-build-time").match(  /\d+/g ).join(''))
-
-      // if the release_timestamp is older by 10 min or more as the build timestamp then there is a new release available 
-      if(release_timestamp > build_timestamp + 600 )
-      {
-        console.log("New release!")
-        // handling the navigation menu icon
-        $('#version').attr("class", $('#version').attr("class").replace("myhidden", ""))
-
-        maintenanceDiv = $('#new-version-text')
-      }
-      else{
-        console.log("All up-to-date!")    
-
-        maintenanceDiv = $('#current-version-text')  
-      }
-
-      // handling the maintenance section message      
-      if(emptyArr.includes(maintenanceDiv) == false && $(maintenanceDiv).length != 0)
-      { 
-        $(maintenanceDiv).attr("class", $(maintenanceDiv).attr("class").replace("myhidden", ""))
-      }
-    } 
-
-  }  
-
-  //--------------------------------------------------------------
-
-  function getVersion()
+  // if the release_timestamp is older by 10 min or more as the build timestamp then there is a new release available 
+  if(isNewVersion != "false")
   {
-    release_timestamp = getCookie("release_timestamp") 
+    console.log("New release!")
+    // handling the navigation menu icon
+    $('#version').attr("class", $('#version').attr("class").replace("myhidden", ""))
 
-    release_timestampNum = Number(release_timestamp)
+    maintenanceDiv = $('#new-version-text')
+  }
+  else{
+    console.log("All up-to-date!")    
 
-    // logging    
-    console.log(`Latest release in cookie: ${new Date(release_timestampNum*1000)}`)
-
-    // no cached value available
-    if(release_timestamp == "")
-    {
-      $.get('https://api.github.com/repos/jokob-sk/Pi.Alert/releases').done(function(response) {
-        // Handle successful response
-        var releases = response;
-
-        console.log(response)
-        
-        if(releases.length > 0)
-        {
-          
-          release_datetime = releases[0].published_at; // get latest release
-          release_timestamp = new Date(release_datetime).getTime() / 1000;          
-
-          // cache value
-          setCookie("release_timestamp", release_timestamp, 30);
-
-          handleVersion();
-        }
-        
-      }).fail(function(jqXHR, textStatus, errorThrown) {        
-       
-        $('.version').append(`<p>Github API: ${errorThrown} (${jqXHR.status}), ${jqXHR.responseJSON.message}</p>`)          
-
-      });
-    } else
-    {
-      // cache is available, just call the handler
-      handleVersion()
-    }
+    maintenanceDiv = $('#current-version-text')  
   }
 
+  // handling the maintenance section message      
+  if(emptyArr.includes(maintenanceDiv) == false && $(maintenanceDiv).length != 0)
+  { 
+    $(maintenanceDiv).attr("class", $(maintenanceDiv).attr("class").replace("myhidden", ""))
+  }    
+
+}  
+
+//--------------------------------------------------------------
+// Checks if a new version is available via the global app_state.json
+function checkIfNewVersionAvailable()
+{
+  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+    
+    console.log(appState["isNewVersionChecked"])
+    console.log(appState["isNewVersion"])
+    
+    // cache value
+    setCookie("isNewVersion", appState["isNewVersion"], 30);
+    setCookie("isNewVersionChecked", appState["isNewVersionChecked"], 30);
+
+    versionUpdateUI();
+
+  })
+}
 
 // handle the dispaly of the NEW icon
-getVersion()
+checkIfNewVersionAvailable()

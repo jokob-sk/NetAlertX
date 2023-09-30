@@ -24,7 +24,7 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, isNewVersion,  timeNowTZ, updateState, get_setting_value
+from helper import   filePermissions, timeNowTZ, updateState, get_setting_value
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
@@ -60,10 +60,6 @@ def main ():
     mylog('none', ['[MAIN] Setting up ...']) # has to be level 'none' as user config not loaded yet
 
     mylog('none', [f'[conf.tz] Setting up ...{conf.tz}'])
-
-    
-    # indicates, if a new version is available
-    conf.newVersionAvailable = False
     
     # check file permissions and fix if required
     filePermissions()
@@ -83,24 +79,18 @@ def main ():
 
     mylog('debug', '[MAIN] Starting loop')
 
+    # Header + init app state
+    updateState("Initializing")    
+
     while True:
 
         # re-load user configuration and plugins   
         importConfigs(db)
 
         # update time started
-        conf.loop_start_time = timeNowTZ()
+        conf.loop_start_time = timeNowTZ()       
         
-        # TODO fix these
         loop_start_time = conf.loop_start_time # TODO fix                      
-        last_version_check = conf.last_version_check        
-        
-        # check if new version is available / only check once an hour
-        if conf.last_version_check  + datetime.timedelta(hours=1) < conf.loop_start_time :
-            # if newVersionAvailable is already true the function does nothing and returns true again
-            mylog('debug', [f"[Version check] Last version check timestamp: {conf.last_version_check}"])
-            conf.last_version_check = conf.loop_start_time
-            conf.newVersionAvailable = isNewVersion(conf.newVersionAvailable)
 
         # Handle plugins executed ONCE
         if conf.plugins_once_run == False:

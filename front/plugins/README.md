@@ -19,6 +19,7 @@
 |             |    Yes      | ARPSCAN               | Script                 | 📚[arp_scan](/front/plugins/arp_scan/)                   |
 |             |             | CSVBCKP               | Script                 | 📚[csv_backup](/front/plugins/csv_backup/)               |
 |     Yes*    |             | DBCLNP                | Script                 | 📚[db_cleanup](/front/plugins/db_cleanup/)               |
+|             |             | DDNS                  | Script                 | 📚[ddns_update](/front/plugins/ddns_update/)               |
 |             |    Yes      | DHCPLSS               | Script                 | 📚[dhcp_leases](/front/plugins/dhcp_leases/)             |
 |             |             | DHCPSRVS              | Script                 | 📚[dhcp_servers](/front/plugins/dhcp_servers/)           |
 |             |    Yes      | INTRNT                | Script                 | 📚[internet_ip](/front/plugins/internet_ip/)             |

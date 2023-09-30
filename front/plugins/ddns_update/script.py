@@ -75,7 +75,7 @@ def ddns_update ( DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN, PREV_I
     mylog('none', ['[DDNS]    ', dns_IP])
 
     # Check DNS Change
-    if dns_IP != internet_IP :
+    if dns_IP != PREV_IP :
         mylog('none', ['[DDNS]     Updating Dynamic DNS IP'])
         message = set_dynamic_DNS_IP (DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN)
         mylog('none', ['[DDNS]        ', message])            
