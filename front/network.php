@@ -767,10 +767,18 @@
   // ---------------------------------------------------------------------------
   function updateLeaf(leafMac,nodeMac)
   {
-    console.log(leafMac)
-    console.log(nodeMac)
-    saveData('updateNetworkLeaf', leafMac, nodeMac);
-    setTimeout("location.reload();", 1000); // refresh page after 1s
+    console.log(leafMac) // child
+    console.log(nodeMac) // parent
+
+    // prevent the assignment of the Internet root node avoiding recursion when generating the network tree topology
+    if(leafMac.toLowerCase().includes('internet'))
+    {
+      showMessage(getString('Network_Cant_Assign'))
+    }
+    else{
+      saveData('updateNetworkLeaf', leafMac, nodeMac);
+      setTimeout("location.reload();", 500); // refresh page 
+    }
   }
 
 

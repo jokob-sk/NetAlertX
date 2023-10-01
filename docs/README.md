@@ -25,6 +25,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [SMTP server config](/docs/SMTP.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [Home Assistant](/docs/HOME_ASSISTANT.md)
+- [Bulk edit devices](/docs/DEVICES_BULK_EDITING.md)
 
 #### ⚙ System Management
 

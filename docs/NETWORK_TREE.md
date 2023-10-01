@@ -16,6 +16,10 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 * If port is empty or 0 a wifi icon is rendered, otherwise a ethernet port icon
 
 
+> [!NOTE] 
+>
+> [Bulk-edit devices](/docs/DEVICES_BULK_EDITING.md) by using the `CSV Export` functionality in the `Maintenance` section. You can use this to fix `Internet` node assignment issues. 
+
 ## 🔍Detailed example:
 
 In this example you will setup a device named `rapberrypi` as a `Switch` in our network. 

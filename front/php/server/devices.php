@@ -1006,8 +1006,8 @@ function getLocations() {
 // ----------------------------------------------------------------------------------------
 function updateNetworkLeaf()
 {
-  $nodeMac = $_REQUEST['value'];
-  $leafMac = $_REQUEST['id'];
+  $nodeMac = $_REQUEST['value']; // parent
+  $leafMac = $_REQUEST['id'];    // child
 
   if ((false === filter_var($nodeMac , FILTER_VALIDATE_MAC) && $nodeMac != "Internet" && $nodeMac != "") || false === filter_var($leafMac , FILTER_VALIDATE_MAC) ) {
     throw new Exception('Invalid mac address');

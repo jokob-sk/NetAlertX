@@ -1,4 +1,4 @@
-# Bulk-edit devices by using via CSV Export/Import
+# 📝Bulk-edit devices via CSV Export/Import
 
 > [!NOTE] 
 > As always, backup everything, just in case.
