@@ -50,7 +50,7 @@ Extend the app if you want to create your own scanner and handle the results and
  
 > Other Alternatives
 >
-> - Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly (maintained)
+> - Check out [leiweibau's on HW installed fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
 > - Check instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (unmaintained)
 > - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
 > - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
