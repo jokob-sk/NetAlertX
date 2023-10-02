@@ -1,5 +1,5 @@
 {    
-  "code_name": "Devices.known",
+  "code_name": "known_template",
   "template_type": "database-entry",
   "unique_prefix": "KNWN",
   "enabled": true,
@@ -56,7 +56,8 @@
               "trigger": [
                   {
                       "object_event": "new",
-                      "object_filter": ""                      
+                      "object_filter": "",                      
+                      "object": "Devices"                      
                   }
               ],
               "steps": [

@@ -29,7 +29,8 @@ from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
 from database import DB, get_all_devices
-from reporting import check_and_run_event, send_notifications
+from reporting import send_notifications
+from plugin_utils import check_and_run_user_event
 from plugin import run_plugin_scripts 
 
 
@@ -52,7 +53,7 @@ main structure of Pi Alert
         run plugins (scheduled)
         processing scan results
         run plugins (after Scan)
-        reporting        
+        reporting - could be replaced by run flows TODO
     end loop
 """
 
@@ -98,7 +99,7 @@ def main ():
             conf.plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
-        pluginsState = check_and_run_event(db, pluginsState)
+        pluginsState = check_and_run_user_event(db, pluginsState)
 
         # Update API endpoints              
         update_api(db)

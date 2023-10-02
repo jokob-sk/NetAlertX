@@ -44,8 +44,9 @@ Extend the app if you want to create your own scanner and handle the results and
 
 | Docs        | Link    | 
 |-------------|-------------|
-| 📥  | [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) (HW install not supported, but might be possible - submit a PR🙏 or start a discussion) |
-| 📚  | [All Documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/README.md) (App Usage and Configuration) |
+| 📥🐳  | [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) 
+| 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) |
+| 📚     | [All Documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/README.md) (App Usage and Configuration) |
  
 > Other Alternatives
 >

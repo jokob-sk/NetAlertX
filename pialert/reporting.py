@@ -25,7 +25,6 @@ import const
 from const import pialertPath, logPath, apiPath
 from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
-from plugin import execute_plugin
 
 from publishers.email import (check_config as email_check_config, 
                               send as send_email )
@@ -44,7 +43,7 @@ from publishers.mqtt import (check_config as mqtt_check_config,
 #===============================================================================
 # REPORTING
 #===============================================================================
-# create a json for webhook and mqtt notifications to provide further integration options
+# create a json of the notifications to provide further integration options (e.g. used in webhook, mqtt notifications)
 
 
 json_final = []
@@ -183,21 +182,6 @@ def send_notifications (db):
 	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
-    # if 'internet' in conf.INCLUDED_SECTIONS :
-    #     # Compose Internet Section
-    #     sqlQuery = """SELECT eve_MAC as MAC,  eve_IP as IP, eve_DateTime as Datetime, eve_EventType as "Event Type", eve_AdditionalInfo as "More info" FROM Events
-    #                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC = 'Internet'
-    #                     ORDER BY eve_DateTime"""
-
-    #     notiStruc = construct_notifications(db, sqlQuery, "Internet IP change")
-
-    #     # collect "internet" (IP changes) for the webhook json
-    #     json_internet = notiStruc.json["data"]
-
-    #     mail_text = mail_text.replace ('<SECTION_INTERNET>', notiStruc.text + '\n')
-    #     mail_html = mail_html.replace ('<INTERNET_TABLE>', notiStruc.html)
-    #     mylog('verbose', ['[Notification] Internet sections done.'])
-
     if 'new_devices' in conf.INCLUDED_SECTIONS :
         # Compose New Devices Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
@@ -223,7 +207,7 @@ def send_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Down devices")
 
-        # collect "new_devices" for the webhook json
+        # collect "down_devices" for the webhook json
         json_down_devices = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
@@ -282,7 +266,7 @@ def send_notifications (db):
     write_file (logPath + '/report_output.txt', mail_text)
     write_file (logPath + '/report_output.html', mail_html)
 
-    # Send Mail
+    # Notify is something to report
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != []  or plugins_report:
 
         mylog('none', ['[Notification] Changes detected, sending reports'])
@@ -356,38 +340,14 @@ def check_config(service):
     if service == 'email':
         return email_check_config()
     
-    #    if conf.SMTP_SERVER == '' or conf.REPORT_FROM == '' or conf.REPORT_TO == '':
-    #        mylog('none', ['[Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
-    #        return False
-    #    else:
-    #        return True
-
     if service == 'apprise':
         return apprise_check_config()
     
-    #    if conf.APPRISE_URL == '' or conf.APPRISE_HOST == '':
-    #        mylog('none', ['[Check Config] Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
-    #        return False
-    #    else:
-    #        return True
-
     if service == 'webhook':
         return webhook_check_config()
-    
-    #    if conf.WEBHOOK_URL == '':
-    #        mylog('none', ['[Check Config] Error: Webhook service not set up correctly. Check your pialert.conf WEBHOOK_* variables.'])
-    #        return False
-    #    else:
-    #        return True
 
     if service == 'ntfy':
         return ntfy_check_config ()
-    #
-    #    if conf.NTFY_HOST == '' or conf.NTFY_TOPIC == '':
-    #        mylog('none', ['[Check Config] Error: NTFY service not set up correctly. Check your pialert.conf NTFY_* variables.'])
-    #        return False
-    #    else:
-    #        return True
 
     if service == 'pushsafer':
         return pushsafer_check_config()
@@ -472,85 +432,3 @@ def skip_repeated_notifications (db):
     db.commitDB()
 
 
-#===============================================================================
-# UTIL
-#===============================================================================
-
-#-------------------------------------------------------------------------------
-def check_and_run_event(db, pluginsState):
-    
-    sql = db.sql # TO-DO
-    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
-    rows = sql.fetchall()    
-
-    event, param = ['','']
-    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
-        keyValue = rows[0]['par_Value'].split('|')
-
-        if len(keyValue) == 2:
-            event = keyValue[0]
-            param = keyValue[1]
-    else:
-        return pluginsState
-
-    if event == 'test':
-        handle_test(param)
-    if event == 'run':
-        pluginsState = handle_run(param, db, pluginsState)
-
-    # clear event execution flag
-    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
-
-    # commit to DB
-    db.commitDB()
-
-    mylog('debug', [f'[MAIN] processScan3: {pluginsState.processScan}'])
-
-    return pluginsState
-
-#-------------------------------------------------------------------------------
-def handle_run(runType, db, pluginsState):
-    
-    mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
-    
-    # run the plugin to run
-    for plugin in conf.plugins:
-        if plugin["unique_prefix"] == runType:                
-            pluginsState = execute_plugin(db, plugin, pluginsState) 
-
-    mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
-    return pluginsState
-
-
-
-#-------------------------------------------------------------------------------
-def handle_test(testType):
-
-    mylog('minimal', ['[', timeNowTZ(), '] START Test: ', testType])
-
-    # Open text sample
-    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
-
-    # Open html sample
-    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
-
-    # Open json sample and get only the payload part
-    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
-
-    sample_msg = noti_struc(sample_json_payload, sample_txt, sample_html )
-   
-
-    if testType == 'Email':
-        send_email(sample_msg)
-    elif testType == 'Webhooks':
-        send_webhook (sample_msg)
-    elif testType == 'Apprise':
-        send_apprise (sample_msg)
-    elif testType == 'NTFY':
-        send_ntfy (sample_msg)
-    elif testType == 'PUSHSAFER':
-        send_pushsafer (sample_msg)
-    else:
-        mylog('none', ['[Test Publishers] No test matches: ', testType])    
-
-    mylog('minimal', ['[Test Publishers] END Test: ', testType])

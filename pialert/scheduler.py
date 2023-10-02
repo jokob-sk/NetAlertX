@@ -25,9 +25,7 @@ class schedule_class:
         nowTime = datetime.datetime.now(conf.tz).replace(microsecond=0)
 
         # Run the schedule if the current time is past the schedule time we saved last time and 
-        #               (maybe the following check is unnecessary:)
-        # if the last run is past the last time we run a scheduled Pholus scan
-        # if nowTime > self.last_next_schedule and self.last_run < self.last_next_schedule:
+        #               (maybe the following check is unnecessary)                
         if nowTime > self.last_next_schedule:
             mylog('debug',f'[Scheduler] - Scheduler run for {self.service}: YES')
             self.was_last_schedule_used = True

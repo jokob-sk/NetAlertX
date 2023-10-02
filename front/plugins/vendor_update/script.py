@@ -106,10 +106,10 @@ def update_vendors (dbPath, plugin_objects):
             ignored += 1
         else :
             plugin_objects.add_object(
-                primaryId   = device[0],        # MAC (Device Name)
-                secondaryId = device[1],     # IP Address (always 0.0.0.0)
+                primaryId   = device[0],    # MAC (Device Name)
+                secondaryId = device[1],    # IP Address (always 0.0.0.0)
                 watched1    = vendor,  
-                watched2    = device[2],
+                watched2    = device[2],    # Device name
                 watched3    = "",
                 watched4    = "",
                 extra       = "",            

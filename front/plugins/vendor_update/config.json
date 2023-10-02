@@ -106,7 +106,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value": "0 4 * * *",
+      "default_value": "0 4 * * 3",
       "options": [],
       "localized": [
         "name",
@@ -208,11 +208,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is response status code (e.g.: 200, 404)</li><li><code>Watched_Value2</code> is Latency (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Click</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es un código de estado de respuesta (por ejemplo: 200, 404) </li><li><code>Valor_observado2</code> es Latencia (no recomendado)</li><li><code>Valor_observado3</code> no utilizado </li><li><code>Valor_observado4 </ code> sin usar </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is vendor name</li><li><code>Watched_Value2</code> is device name</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
         }
       ]
     },
