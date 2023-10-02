@@ -198,6 +198,7 @@
         "DevDetail_Nmap_buttonSkipDiscovery_text":"Ohne Erreichbarkeitsprüfung (-Pn Parameter): Standard Scan bei dem nmap annimmt, dass der Host erreichbar ist.",
         "DevDetail_Nmap_Scans":"Nmap Scans",
         "Maintenance_Title":"Wartungswerkzeuge",
+        "Maintenance_built_on" : "Gebaut auf",        
         "Maintenance_Running_Version" : "Installierte Version",        
         "Maintenance_database_path":"Datenbank-Pfad",
         "Maintenance_database_size":"Datenbank-Größe",
