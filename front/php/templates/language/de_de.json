@@ -200,6 +200,7 @@
         "Maintenance_Title":"Wartungswerkzeuge",
         "Maintenance_database_path":"Datenbank-Pfad",
         "Maintenance_database_size":"Datenbank-Größe",
+        "Maintenance_database_rows" : "Tabelle (Zeilen)",
         "Maintenance_database_lastmod":"Letzte Änderung",
         "Maintenance_database_backup":"DB Sicherungen",
         "Maintenance_database_backup_found":"Sicherungen verfügbar",
