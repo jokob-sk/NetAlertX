@@ -31,9 +31,7 @@ apt-get install -y \
 sudo apt-get install -y \
     nginx nginx-core mtr mtr-tiny php-fpm php7.4-fpm 
 
-sudo apt install php-cli php8.2 php8.2-fpm -y
 sudo apt install php-cli php7.4 php7.4-fpm -y
-
 sudo apt install php7.4-sqlite3 -y
 
 sudo phpenmod -v 7.4 sqlite3 
