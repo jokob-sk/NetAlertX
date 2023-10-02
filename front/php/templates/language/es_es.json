@@ -255,6 +255,7 @@
         "Maintenance_Running_Version" : "Versión instalada",        
         "Maintenance_database_path" : "Ruta de la base de datos:",
         "Maintenance_database_size" : "Tamaño de base de datos:",
+        "Maintenance_database_rows" : "Tabla (Filas)",        
         "Maintenance_database_lastmod" : "Última modificación:",
         "Maintenance_database_backup" : "Copias de seguridad de la BD:",
         "Maintenance_database_backup_found" : "copia(s) de seguridad encontrada(s)",
