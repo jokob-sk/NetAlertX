@@ -21,7 +21,9 @@ _PiAlert combines several network and other scanning tools 🔍 with notificatio
 
 Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
 
-Extend the app if you want to create your own scanner and handle the results and notifications in PiAlert. Check available [Plugins & Instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins). Looking forward to your contributions if you decide to share your work with the community ❤.
+Extend the app if you want to create your own scanner and handle the results and notifications in PiAlert. Check available [Plugins & Instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins). 
+
+Looking forward to your contributions if you decide to share your work with the community ❤.
 
   | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
   |----------------------|----------------------| ----------------------| 

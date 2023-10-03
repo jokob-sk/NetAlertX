@@ -1,6 +1,7 @@
 import os
 import json
 
+import conf 
 from logger import mylog
 from const import pluginsPath, logPath
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
@@ -215,9 +216,7 @@ def check_and_run_user_event(db, pluginsState):
     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
 
     # commit to DB
-    db.commitDB()
-
-    mylog('debug', [f'[MAIN] processScan3: {pluginsState.processScan}'])
+    db.commitDB()    
 
     return pluginsState
 

@@ -138,7 +138,7 @@
     {
         "function": "RUN_SCHD",
         "type": "text",
-        "default_value":"*/3 * * * *",
+        "default_value":"*/5 * * * *",
         "options": [],
         "localized": ["name", "description"],
         "name" : [{

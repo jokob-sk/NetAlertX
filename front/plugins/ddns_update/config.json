@@ -68,7 +68,7 @@
       "function": "RUN",
       "events": ["run"],
       "type": "text.select",
-      "default_value": "schedule",
+      "default_value": "disabled",
       "options": [
         "disabled",
         "once",

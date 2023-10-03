@@ -131,7 +131,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
             valueTmp = ''
 
             $.each(dbColumnDef.options, function(index, obj) {
-                if(Number(value) < obj.maximum && valueTmp == '') 
+                if(Number(value) < Number(obj.maximum) && valueTmp == '') 
                 {
                     valueTmp = `<div style="background-color:${obj.hexColor}">${value}</div>`
                     // return;

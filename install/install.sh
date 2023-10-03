@@ -41,7 +41,7 @@ curl -sSL https://bootstrap.pypa.io/get-pip.py | python3
 # ---------------------------------------------------------------
 
 # Install Python packages
-pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi
+pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli
 
 # Update alternatives for Python
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
