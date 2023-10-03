@@ -295,12 +295,8 @@
             }],
             "description": [{
                 "language_code": "en_us",
-                "string" : "Enable a regular scan of your services. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#INTRSPD_RUN_TIMEOUT\"><code>INTRSPD_RUN_TIMEOUT</code> setting</a>."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Habilite un escaneo regular de sus servicios. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el escaneo se ejecuta solo una vez al iniciar la aplicación (contenedor) durante el tiempo especificado en <a href=\"#INTRSPD_RUN_TIMEOUT\"><code>INTRSPD_RUN_TIMEOUT</code> configuración</a>."
-            }]
+                "string" : "Enable a regular internet speedtest. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#INTRSPD_RUN_TIMEOUT\"><code>INTRSPD_RUN_TIMEOUT</code> setting</a>."
+				}]
         },
         {
             "function": "CMD",
