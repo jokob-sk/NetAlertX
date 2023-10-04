@@ -551,7 +551,8 @@
   // ---------------------------------------------------------------------------
   
   function getHierarchy()
-  {     
+  { 
+
     for(i in deviceListGlobal)
     {      
       if(deviceListGlobal[i].mac == 'Internet')
@@ -613,6 +614,7 @@
   var treeAreaHeight = 800;
   var emSize;
   var nodeHeight;
+  var sizeCoefficient = 1
 
   function initTree(myHierarchy)
   {    
@@ -640,9 +642,9 @@
 
         // Build HTML for individual nodes in the network diagram
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
-        devicePort = `<div class='netPort ' style="width:${emSize*2.7}em;height:${emSize*2.7}em" >${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*2.5}em;">${portBckgIcon}</div>`;
+        devicePort = `<div class='netPort ' style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em" >${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*sizeCoefficient}em;">${portBckgIcon}</div>`;
         collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
-        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*2.5+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
+        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*sizeCoefficient+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
         statusCss = " netStatus-" + nodeData.data.status;
 
         selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
@@ -680,9 +682,9 @@
       relationnalField: "children",      
       });
 
-      console.log('vvvv')
+      
       console.log(myHierarchy)
-      console.log('^^^^^^^')
+      
       
       myTree.refresh(myHierarchy);      
     }

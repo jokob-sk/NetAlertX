@@ -1,0 +1,417 @@
+{
+    "code_name": "internet_speedtest",
+    "unique_prefix": "INTRSPD",
+    "enabled": true,    
+    "data_source":  "script",
+    "show_ui": true,
+    "localized": ["display_name", "description", "icon"],
+	"display_name" : [{
+		  "language_code": "en_us",
+		  "string" : "Internet speedtest"
+		}],
+    "icon":[{
+        "language_code": "en_us",
+        "string" : "<i class=\"fa-solid fa-gauge-high\"></i>"
+		}],     
+    "description": [{
+        "language_code": "en_us",
+        "string" : "A plugin to perform a scheduled internet speedtest."
+		}],
+    "params" : [],  
+    "database_column_definitions":
+    [          
+        {
+            "column": "Index",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
+                }]
+        },
+        {
+            "column": "Plugin",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
+                }]
+        },
+        {
+            "column": "Object_PrimaryID",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "url",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				}]
+        },
+        {
+            "column": "Object_SecondaryID",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
+                }]
+        },
+        {
+            "column": "DateTimeCreated",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Test run on"
+				}]
+        },
+        {
+            "column": "DateTimeChanged",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Changed"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Cambiado"					
+                }]
+        },
+        {
+            "column": "Watched_Value1",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "threshold",            
+            "default_value":"",
+            "options": [
+                {
+                    "maximum": 1,
+                    "hexColor": "#D33115"                
+                },                
+                {
+                    "maximum": 5,
+                    "hexColor": "#792D86"
+                },
+                {
+                    "maximum": 10,
+                    "hexColor": "#7D862D"                
+                },
+                {
+                    "maximum": 100,
+                    "hexColor": "#05483C"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Download"
+				}]
+        },
+        {
+            "column": "Watched_Value2",
+            "css_classes": "col-sm-2",
+            "show": true,
+            "type": "threshold",            
+            "default_value":"",
+            "options": [
+                {
+                    "maximum": 1,
+                    "hexColor": "#D33115"                
+                },                
+                {
+                    "maximum": 5,
+                    "hexColor": "#792D86"
+                },
+                {
+                    "maximum": 10,
+                    "hexColor": "#7D862D"                
+                },
+                {
+                    "maximum": 100,
+                    "hexColor": "#05483C"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Upload"
+				}]
+        },
+        {
+            "column": "Watched_Value3",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
+                }]
+        },
+        {
+            "column": "Watched_Value4",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "N/A"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "N/A"					
+                }]
+        },       
+        {
+            "column": "UserData",
+            "css_classes": "col-sm-2",
+            "show": false,
+            "type": "textbox_save",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Comments"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comentarios"					
+                }]
+        },        
+        {
+            "column": "Status",
+            "css_classes": "col-sm-1",
+            "show": false,
+            "type": "replace",            
+            "default_value":"",
+            "options": [
+                {
+                    "equals": "watched-not-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+                },
+                {
+                    "equals": "watched-changed",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+                },
+                {
+                    "equals": "new",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+                },
+                {
+                    "equals": "missing-in-last-scan",
+                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+                }
+            ],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Status"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Estado"					
+                }]
+        },        
+        {
+            "column": "Extra",
+            "css_classes": "col-sm-3",
+            "show": false,
+            "type": "label",            
+            "default_value":"",
+            "options": [],
+            "localized": ["name"],
+            "name":[{
+                "language_code": "en_us",
+                "string" : "Extra"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Extra"					
+                }]
+        }            
+    ],
+    "settings":[
+        {
+            "function": "RUN",         
+            "events": ["run"],   
+            "type": "text.select",            
+            "default_value":"disabled",
+            "options": ["disabled", "once", "schedule", "always_after_scan" ],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code": "en_us",
+                "string" : "When to run"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Cuando ejecuta"
+            }],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Enable a regular internet speedtest. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#INTRSPD_RUN_TIMEOUT\"><code>INTRSPD_RUN_TIMEOUT</code> setting</a>."
+				}]
+        },
+        {
+            "function": "CMD",
+            "type": "readonly",
+            "default_value":"python3 /home/pi/pialert/front/plugins/internet_speedtest/script.py",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Command"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comando"						
+            }],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Command to run"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Comando a ejecutar"	
+            }]
+        },
+        {
+            "function": "RUN_SCHD",
+            "type": "text",
+            "default_value":"*/30 * * * *",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Schedule"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Schedule"
+				}],
+				"description": [{
+                "language_code": "en_us",
+                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#INTRSPD_RUN\"><code>INTRSPD_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+				},
+				{
+                "language_code": "es_es",
+                "string": "Solo habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#INTRSPD_RUN\"><code>INTRSPD_RUN</code></a>. Asegúrese de ingresar el schedule en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingrese <code >0 4 * * *</code> ejecutará el escaneo después de las 4 am en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> que configuró arriba </a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+            }]
+        },
+        {
+            "function": "RUN_TIMEOUT",
+            "type": "integer",
+            "default_value":60,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Run timeout"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tiempo de espera de ejecución"				
+				},
+				{
+                "language_code": "de_de",
+                "string" : "Wartezeit"
+            }],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+            }]
+        },
+        {
+            "function": "WATCH",
+            "type": "text.multiselect",
+            "default_value":[],
+            "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code": "en_us",
+                "string" : "Watched"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Visto"				
+            }],
+            "description":[{
+                "language_code": "en_us",
+                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Download speed (not recommended)</li><li><code>Watched_Value2</code> is Upload speed (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+				}] 
+        },
+        {
+            "function": "REPORT_ON",
+            "type": "text.multiselect",
+            "default_value":[],
+            "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code": "en_us",
+                "string" : "Report on"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Informar sobre"					
+            }] ,
+            "description":[{
+                "language_code": "en_us",
+                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."					
+            }] 
+        }
+    ]
+}

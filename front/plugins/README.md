@@ -41,7 +41,7 @@
 > \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
 
 > [!NOTE] 
-> You soft-disable plugins via Settings or completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. The difference is that ignored plugins don't show up anywhere in the UI (Settings, Device details, Plugins pages). The app skips ignored plugins  completely. Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however it makes sense to have a least some device-detecting plugins (that insert entries into the `CurrentScan` table) enabled, such as ARPSCAN or PIHOLE.  
+> You soft-disable plugins via Settings or completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. The difference is that ignored plugins don't show up anywhere in the UI (Settings, Device details, Plugins pages). The app skips ignored plugins  completely. Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however it makes sense to have a least some device-detecting plugins (that insert entries into the `CurrentScan` table) enabled, such as `ARPSCAN` or `PIHOLE`.  
 
 > It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
