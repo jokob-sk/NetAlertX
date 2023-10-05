@@ -823,7 +823,7 @@ input[readonly] {
     display: block;
     position: absolute;
     margin-left: 170px;
-    top: -3px;
+    top: 5px;
     font-size: large;
     left: -15px;
 }

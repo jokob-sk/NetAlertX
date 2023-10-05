@@ -410,6 +410,7 @@
         "Network_Parent" : "Parent network device",
         "Network_Cant_Assign" : "Can't assign the root Internet node as a child leaf node.",
         "Network_NoAssignedDevices" : "This network node does not have any assigned devices (leaf nodes). Assign one from bellow or go to the <b><i class=\"fa fa-info-circle\"></i> Details</b> tab of any device in <a href=\"devices.php\"><b> <i class=\"fa fa-laptop\"></i> Devices</b></a>, and assign it to a network <b><i class=\"fa fa-server\"></i> Node (MAC)</b> and <b><i class=\"fa fa-ethernet\"></i> Port</b> there.",
+        "Network_Root_Unconfigurable": "Unconfigurable root",
         "HelpFAQ_Title" : "Help / FAQ",
         "HelpFAQ_Cat_General" : "General",
         "HelpFAQ_Cat_Detail" : "Details",

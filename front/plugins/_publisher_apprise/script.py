@@ -20,7 +20,7 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 def main():
     
-    mylog('verbose', ['[INTRSPD] In script'])    
+    mylog('verbose', ['[APPRISE] In script'])    
 
     parser = argparse.ArgumentParser(description='Speedtest Plugin for Pi.Alert')
     values = parser.parse_args()
@@ -51,7 +51,7 @@ def run_speedtest():
             'upload_speed': upload_speed,
         }
     except Exception as e:
-        mylog('verbose', [f"Error running speedtest: {str(e)}"]) 
+        mylog('verbose', [f"Error running speedtest: {str(e)}"])         
         return {
             'download_speed': -1,
             'upload_speed': -1,

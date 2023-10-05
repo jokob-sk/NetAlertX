@@ -857,8 +857,6 @@ function getDevices() {
 function getDeviceTypes() {
   global $db;
 
-  $networkTypes = getNetworkTypes();
-
   // SQL
   $sql = 'SELECT DISTINCT 9 as dev_Order, dev_DeviceType
           FROM Devices

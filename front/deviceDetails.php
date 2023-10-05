@@ -325,7 +325,7 @@
                       <div class="form-group" title="<?= lang('DevDetail_Network_Node_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
-                          <div class="input-group"> 
+                          <div class="input-group parentNetworkNode"> 
 
                             <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
                             <span class="input-group-addon"><i title="<?= lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right pointer" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
@@ -1295,8 +1295,8 @@ function getDeviceData (readAllData=false) {
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
         // disabling network node configuration if root Internet node
-        $('#txtNetworkNodeMac').prop('readonly', mac == 'Internet' );
-        $('#txtNetworkPort').prop('readonly', mac == 'Internet' );
+        toggleNetworkConfiguration(mac == 'Internet')         
+        
   
         $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
         $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
@@ -1398,8 +1398,6 @@ function performSwitch(direction)
     
   getDeviceData (true); 
 
-  // reload current tab
-  reloadTab()
 }
 
 // -----------------------------------------------------------------------------
@@ -1796,15 +1794,27 @@ window.onload = function async()
 {
   initializeTabsNew();
 
-  reloadTab();
+  
 }
 
 //-----------------------------------------------------------------------------------
-
-function reloadTab()
+// Disables network configuration for the root node
+function toggleNetworkConfiguration(disable)
 {
-  // tab loaded without switching 
+  $('#txtNetworkNodeMac').prop('readonly', true ); // disable direct input as should only be selected via the dropdown
 
+  if(disable)
+  {       
+    $('#txtNetworkNodeMac').val(getString('Network_Root_Unconfigurable'));   
+    $('#txtNetworkPort').val(getString('Network_Root_Unconfigurable'));     
+    $('#txtNetworkPort').prop('readonly', true );
+    $('.parentNetworkNode .input-group-btn').hide();
+  }
+  else
+  {    
+    $('#txtNetworkPort').prop('readonly', false );
+    $('.parentNetworkNode .input-group-btn').show();
+  }
 }
 
 </script>
