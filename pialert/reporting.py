@@ -184,7 +184,8 @@ def send_notifications (db):
 
     if 'new_devices' in conf.INCLUDED_SECTIONS :
         # Compose New Devices Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
+                        FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime"""
@@ -200,7 +201,8 @@ def send_notifications (db):
 
     if 'down_devices' in conf.INCLUDED_SECTIONS :
         # Compose Devices Down Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
+                        FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
                         ORDER BY eve_DateTime"""
@@ -216,7 +218,8 @@ def send_notifications (db):
 
     if 'events' in conf.INCLUDED_SECTIONS :
         # Compose Events Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
+                        FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')

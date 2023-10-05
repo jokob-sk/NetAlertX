@@ -24,7 +24,8 @@
                         "IP": "192.168.1.1",
                         "Event Type": "New Device",
                         "Device name": "(name not found)",
-                        "Comments": null
+                        "Comments": null,
+                        "Device Vendor": null
                       }],
                       "down_devices": [],
                       "events": [{
@@ -33,14 +34,16 @@
                         "IP": "192.168.1.92",
                         "Event Type": "Disconnected",
                         "Device name": "(name not found)",
-                        "Comments": null
+                        "Comments": null,
+                        "Device Vendor": null
                       }, {
                         "MAC": "74:ac:74:ac:74:ac",
                         "Datetime": "2023-01-30 22:15:09",
                         "IP": "192.168.1.150",
                         "Event Type": "Disconnected",
                         "Device name": "(name not found)",
-                        "Comments": null
+                        "Comments": null,
+                        "Device Vendor": null
                       }],
                       "ports": [{
                         "new": {
