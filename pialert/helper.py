@@ -529,6 +529,15 @@ class AppStateEncoder(json.JSONEncoder):
         return super().default(obj)
 
 #-------------------------------------------------------------------------------
+# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
+class NotiStrucEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, '__dict__'):
+            # If the object has a '__dict__', assume it's an instance of a class
+            return obj.__dict__
+        return super().default(obj)
+
+#-------------------------------------------------------------------------------
 #  Creates a JSON object from a DB row
 def row_to_json(names, row):
 
@@ -611,7 +620,17 @@ class json_struc:
 
 #-------------------------------------------------------------------------------
 class noti_struc:
-    def __init__(self, json, text, html):
+    def __init__(self, json, text, html, notificationType):
         self.json = json
         self.text = text
         self.html = html  
+
+        jsonFile = apiPath + f'/notifications_{notificationType}.json'
+
+        mylog('debug', [f"[Notifications] Writing {jsonFile}"])
+
+        if notificationType != '':
+            
+            # Update .json file
+            with open(jsonFile, 'w') as jsonFile:
+                json.dump(self, jsonFile, cls=NotiStrucEncoder, indent=4)

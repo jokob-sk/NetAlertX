@@ -50,10 +50,10 @@ json_final = []
 
 
 #-------------------------------------------------------------------------------
-def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
+def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None, notificationType=''):
 
     if suppliedJsonStruct is None and sqlQuery == "":
-        return noti_struc("", "", "")
+        return noti_struc("", "", "", notificationType)
 
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
     headerProps = "width='120px' style='color:white; font-size: 16px;' bgcolor='#64a0d6' "
@@ -97,7 +97,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         for header in headers:
             html = format_table(html, header, thProps)
 
-    notiStruc = noti_struc(jsn, text, html)
+    notiStruc = noti_struc(jsn, text, html, notificationType)
 
     
     if not notiStruc.json['data'] and not notiStruc.text and not notiStruc.html:
@@ -189,7 +189,7 @@ def send_notifications (db):
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "New devices")
+        notiStruc = construct_notifications(db, sqlQuery, "New devices", "new_devices")
 
         # collect "new_devices" for the webhook json
         json_new_devices = notiStruc.json["data"]
@@ -205,7 +205,7 @@ def send_notifications (db):
                         AND eve_EventType = 'Device Down'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "Down devices")
+        notiStruc = construct_notifications(db, sqlQuery, "Down devices", "down_Devices")
 
         # collect "down_devices" for the webhook json
         json_down_devices = notiStruc.json["data"]
@@ -222,7 +222,7 @@ def send_notifications (db):
                             'IP Changed')
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "Events")
+        notiStruc = construct_notifications(db, sqlQuery, "Events", "events")
 
         # collect "events" for the webhook json
         json_events = notiStruc.json["data"]
@@ -266,12 +266,15 @@ def send_notifications (db):
     write_file (logPath + '/report_output.txt', mail_text)
     write_file (logPath + '/report_output.html', mail_html)
 
+    # Write the notifications into the DB
+    # TODO
+
     # Notify is something to report
     if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != []  or plugins_report:
 
         mylog('none', ['[Notification] Changes detected, sending reports'])
 
-        msg = noti_struc(json_final, mail_text, mail_html)
+        msg = noti_struc(json_final, mail_text, mail_html, 'master')
 
         mylog('minimal', ['[Notification] Udating API files'])
         send_api()
@@ -430,5 +433,58 @@ def skip_repeated_notifications (db):
     mylog('verbose','[Skip Repeated Notifications] Skip Repeated end')
 
     db.commitDB()
+
+
+#-------------------------------------------------------------------------------
+# Notification object handling
+#-------------------------------------------------------------------------------
+class Notifications:
+    def __init__(self, db):
+
+        self.db = db
+
+        # Create Notifications table if missing        
+        self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "Notifications" (
+            "Index"	          INTEGER,
+            "DateTimeCreated" TEXT,
+            "DateTimePushed"  TEXT,
+            "Status"	      TEXT,
+            "JSON"      	  TEXT,
+            "Text"	          TEXT,
+            "HTML"            TEXT,
+            "PublishedVia"    TEXT,
+            "Extra"           TEXT,
+            PRIMARY KEY("Index" AUTOINCREMENT)
+        );
+        """)
+
+        self.save()
+
+    def create(self, JSON, Text, HTML, Extra):
+        self.JSON       = JSON
+        self.Text       = Text
+        self.HTML       = HTML
+        self.Extra      = Extra
+        self.Status     = "new"
+
+        # TODO Init values that can be auto initialized
+        # TODO Check for nulls
+        # TODO Index vs hash to minimize SQL calls, finish CRUD operations, expose via API, use API in plugins
+
+        # current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # self.db.sql.execute("""
+        #     INSERT INTO Notifications (DateTimeCreated, DateTimePushed, Status, JSON, Text, HTML, PublishedVia, Extra)
+        #     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        # """, (current_time, DateTimePushed, Status, JSON, Text, HTML, PublishedVia, Extra))
+
+        
+
+    def save(self):
+        
+        # Commit changes
+        self.db.commitDB()
+
+
+
 
 

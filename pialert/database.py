@@ -214,7 +214,7 @@ class DB():
         initOrSetParam(self, 'Back_App_State','Initializing')
 
         # -------------------------------------------------------------------------
-        # Parameters table setup DEPRECATED after 1/1/2024
+        # Nmap_Scan table setup DEPRECATED after 1/1/2024
         # -------------------------------------------------------------------------
 
         # indicates, if Nmap_Scan table is available
@@ -259,21 +259,6 @@ class DB():
             # Delete the Nmap_Scan table
             self.sql.execute("DROP TABLE Nmap_Scan;")
             nmapScanMissing = True
-
-        # if nmapScanMissing:
-        #     mylog('verbose', ["[upgradeDB] Re-creating Nmap_Scan table"])
-        #     self.sql.execute("""
-        #     CREATE TABLE "Nmap_Scan" (
-        #     "Index"	          INTEGER,
-        #     "MAC"	          TEXT,
-        #     "Port"	          TEXT,
-        #     "Time"	          TEXT,
-        #     "State"	          TEXT,
-        #     "Service"	      TEXT,
-        #     "Extra"           TEXT,
-        #     PRIMARY KEY("Index" AUTOINCREMENT)
-        #     );
-        #     """)
 
         # -------------------------------------------------------------------------
         # Plugins tables setup

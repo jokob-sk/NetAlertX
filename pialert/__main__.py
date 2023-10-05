@@ -30,8 +30,7 @@ from networkscan import process_scan
 from initialise import importConfigs
 from database import DB, get_all_devices
 from reporting import send_notifications
-from plugin_utils import check_and_run_user_event
-from plugin import run_plugin_scripts 
+from plugin import run_plugin_scripts, check_and_run_user_event 
 
 
 #===============================================================================

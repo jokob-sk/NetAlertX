@@ -727,3 +727,85 @@ class plugin_object_class:
 
         self.watchedHash  = str(hash(tmp))
 
+
+#===============================================================================
+# Handling of  user initialized front-end events
+#===============================================================================
+
+#-------------------------------------------------------------------------------
+def check_and_run_user_event(db, pluginsState):
+    
+    sql = db.sql # TO-DO
+    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
+    rows = sql.fetchall()    
+
+    event, param = ['','']
+    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
+        keyValue = rows[0]['par_Value'].split('|')
+
+        if len(keyValue) == 2:
+            event = keyValue[0]
+            param = keyValue[1]
+    else:
+        return pluginsState
+
+    if event == 'test':
+        handle_test(param)
+    if event == 'run':
+        pluginsState = handle_run(param, db, pluginsState)
+
+    # clear event execution flag
+    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
+
+    # commit to DB
+    db.commitDB()    
+
+    return pluginsState
+
+#-------------------------------------------------------------------------------
+def handle_run(runType, db, pluginsState):
+    
+    mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
+    
+    # run the plugin to run
+    for plugin in conf.plugins:
+        if plugin["unique_prefix"] == runType:                
+            pluginsState = execute_plugin(db, plugin, pluginsState) 
+
+    mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
+    return pluginsState
+
+
+
+#-------------------------------------------------------------------------------
+def handle_test(testType):
+
+    mylog('minimal', ['[', timeNowTZ(), '] START Test: ', testType])
+
+    # Open text sample
+    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
+
+    # Open html sample
+    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
+
+    # Open json sample and get only the payload part
+    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
+
+    sample_msg = noti_struc(sample_json_payload, sample_txt, sample_html, "test_sample")
+   
+
+    if testType == 'Email':
+        send_email(sample_msg)
+    elif testType == 'Webhooks':
+        send_webhook (sample_msg)
+    elif testType == 'Apprise':
+        send_apprise (sample_msg)
+    elif testType == 'NTFY':
+        send_ntfy (sample_msg)
+    elif testType == 'PUSHSAFER':
+        send_pushsafer (sample_msg)
+    else:
+        mylog('none', ['[Test Publishers] No test matches: ', testType])    
+
+    mylog('minimal', ['[Test Publishers] END Test: ', testType])
+
