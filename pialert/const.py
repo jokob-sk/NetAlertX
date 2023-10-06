@@ -36,6 +36,7 @@ sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is
 sql_settings = "SELECT  * FROM Settings"
 sql_plugins_objects = "SELECT  * FROM Plugins_Objects"
 sql_language_strings = "SELECT  * FROM Plugins_Language_Strings"
+sql_notifications_all = "SELECT  * FROM Notifications"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY DateTimeChanged DESC"
 sql_new_devices = """SELECT * FROM ( 

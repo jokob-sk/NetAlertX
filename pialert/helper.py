@@ -620,17 +620,8 @@ class json_struc:
 
 #-------------------------------------------------------------------------------
 class noti_struc:
-    def __init__(self, json, text, html, notificationType):
+    def __init__(self, json, text, html):
         self.json = json
         self.text = text
         self.html = html  
 
-        # jsonFile = apiPath + f'/notifications_{notificationType}.json'
-
-        # mylog('debug', [f"[Notifications] Writing {jsonFile}"])
-
-        # if notificationType != '':
-            
-        #     # Update .json file
-        #     with open(jsonFile, 'w') as jsonFile:
-        #         json.dump(self, jsonFile, cls=NotiStrucEncoder, indent=4)

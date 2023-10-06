@@ -24,12 +24,13 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, timeNowTZ, updateState, get_setting_value
+from helper import   filePermissions, timeNowTZ, updateState, get_setting_value, noti_struc
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
 from database import DB, get_all_devices
-from reporting import send_notifications
+from reporting import get_notifications
+from notifications import Notifications
 from plugin import run_plugin_scripts, check_and_run_user_event 
 
 
@@ -146,8 +147,24 @@ def main ():
                 #  run all plugins registered to be run when new devices are found                    
                 pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)                
 
+            # Notification handling
+            # ----------------------------------------
+
             # send all configured notifications
-            send_notifications(db)
+            notiStructure = get_notifications(db)
+
+            # Write the notifications into the DB
+            notification = Notifications(db)
+
+            # mylog('debug', f"[MAIN] notiStructure.text: {notiStructure.text} ")  
+            # mylog('debug', f"[MAIN] notiStructure.json: {notiStructure.json} ")              
+            # mylog('debug', f"[MAIN] notiStructure.html: {notiStructure.html} ")  
+
+            hasNotifications = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
+
+            if hasNotifications:
+                pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
+
 
             # Commit SQL
             db.commitDB()          
