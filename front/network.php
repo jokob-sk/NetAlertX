@@ -617,23 +617,20 @@
   var sizeCoefficient = 1
 
   function initTree(myHierarchy)
-  {    
+  {
     // calculate the font size of the leaf nodes to fit everything into the tree area
     leafNodesCount == 0 ? 1 : leafNodesCount;
-    emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));        
-    emSize = emSize > 1 ? 1 : emSize;      
-    
+    emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
+    emSize = emSize > 1 ? 1 : emSize;
+
     // nodeHeight = ((emSize*100*0.30).toFixed(0))
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
     $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${$('.content-header').width()}px`)
 
-    console.log('here')
-
     myTree = Treeviz.create({
       htmlId: "networkTree",
-      
-      renderNode:  nodeData =>  { 
+      renderNode:  nodeData =>  {
         var fontSize = "font-size:"+emSize+"em;";
 
         (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
@@ -641,52 +638,51 @@
         (port == "" || port == 0 ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
 
         // Build HTML for individual nodes in the network diagram
-        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  "<div class='netIcon ' ><i class='fa fa-"+nodeData.data.icon +"'></i></div>"    : "";
-        devicePort = `<div class='netPort ' style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em" >${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*sizeCoefficient}em;">${portBckgIcon}</div>`;
-        collapseExpandIcon = nodeData.data.hiddenChildren ?  "square-plus" :"square-minus";
-        collapseExpandHtml = (nodeData.data.hasChildren) ?  "<div class='netCollapse' style='font-size:"+emSize*sizeCoefficient+"em;' data-mytreepath='"+nodeData.data.path+"' data-mytreemac='"+nodeData.data.mac+"'><i class='fa fa-"+ collapseExpandIcon +" pointer'></i></div>"    : "";
-        statusCss = " netStatus-" + nodeData.data.status;
+        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  `<div class="netIcon"><i class="fa fa-${nodeData.data.icon}"></i></div>` : "";
+        devicePort = `<div class="netPort" style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*sizeCoefficient}em;">${portBckgIcon}</div>`;
+        collapseExpandIcon = nodeData.data.hiddenChildren ? "square-plus" : "square-minus";
+        collapseExpandHtml = nodeData.data.hasChildren ? `<div class="netCollapse" style="font-size:${emSize*sizeCoefficient}em;" data-mytreepath='${nodeData.data.path}" data-mytreemac="${nodeData.data.mac}"><i class='fa fa-${collapseExpandIcon} pointer"></i></div>` : "";
+        statusCss = ` netStatus-${nodeData.data.status}`;
 
         selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
 
-        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";        
+        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";
 
-        return result = `<div class='box ${(nodeData.data.hasChildren)? "pointer":""} ${statusCss} ${highlightedCss}'  
-                              data-mytreemacmain='${nodeData.data.mac}' 
-                              style='height:${nodeData.settings.nodeHeight}px;${fontSize}
+        return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
+                              data-mytreemacmain="${nodeData.data.mac}"
+                              style="height:${nodeData.settings.nodeHeight}px;${fontSize}"
                           >
-                          <div class='netNodeText '>\
-                            <strong>${devicePort}  ${deviceIcon} 
-                              <span class='spanNetworkTree anonymizeDev'>${nodeData.data.name}</span>\
-                            </strong>
-                            ${collapseExpandHtml}
-                          </div></div>`;
-        },
+                            <div class="netNodeText">
+                              <strong>${devicePort}  ${deviceIcon}
+                                <span class="spanNetworkTree anonymizeDev">${nodeData.data.name}</span>
+                              </strong>
+                              ${collapseExpandHtml}
+                            </div>
+                          </div>`;
+      },
 
-      onNodeClick:  nodeData =>  { 
-          console.log(this)  
-        },
+      onNodeClick:  nodeData =>  {
+        console.log(this)
+      },
       mainAxisNodeSpacing: 'auto',
       // mainAxisNodeSpacing: 3,
       secondaryAxisNodeSpacing: 0.3,
-      nodeHeight: nodeHeight.toString(),    
+      nodeHeight: nodeHeight.toString(),
       marginTop: '5',
       hasZoom: false,
       hasPan: false,
       // marginLeft: '15',
       idKey: "id",
-      hasFlatData: false,      
+      hasFlatData: false,
       linkWidth: (nodeData) => 3,
       linkColor: (nodeData) => "#ffcc80",
       onNodeClick: (nodeData) => handleNodeClick(nodeData),
-      relationnalField: "children",      
+        relationnalField: "children",
       });
 
-      
       console.log(myHierarchy)
-      
-      
-      myTree.refresh(myHierarchy);      
+
+      myTree.refresh(myHierarchy);
     }
 
   // ---------------------------------------------------------------------------
