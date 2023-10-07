@@ -146,10 +146,7 @@
                       <div class="form-group">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Name');?></label>
                         <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtName" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtName');"></i></span>
-                          </div>
+                          <input class="form-control" id="txtName" type="text" value="--">
                         </div>
                       </div>
 
@@ -159,7 +156,6 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtOwner');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down "></span></button>                                
@@ -176,7 +172,6 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtDeviceType');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span></button>
@@ -196,9 +191,9 @@
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
-                            <input class="form-control"  id="txtIcon" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa" id="txtIconFA" onclick="editDrp('txtIcon');"></i></span>
+                            <input class="form-control" id="txtIcon" type="text" value="--">
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtIcon');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
@@ -232,7 +227,6 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtGroup');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
@@ -250,7 +244,6 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtLocation');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
@@ -747,6 +740,11 @@ function main () {
             if ($(nav.target).attr('href') == '#panPresence') {
               $('#calendar').fullCalendar('rerenderEvents');
             }
+          });
+
+          // Show device icon as it changes
+          $('#txtIcon').on('change input', function() {
+            $('#txtIconFA').removeClass().addClass(`fa fa-${$(this).val()} pointer`)
           });
 
         });
@@ -1285,7 +1283,8 @@ function getDeviceData (readAllData=false) {
         $('#txtOwner').val                           (deviceData['dev_Owner']);
         $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
         $('#txtVendor').val                          (deviceData['dev_Vendor']);
-        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'laptop'));        
+        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'laptop'));
+        $('#txtIcon').trigger('change')
   
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
         $('#txtGroup').val                           (deviceData['dev_Group']);
@@ -1700,6 +1699,7 @@ function setTextValue (textElement, textValue) {
     $('#'+textElement).attr ('data-myvalue', textValue);
     $('#'+textElement).val (textValue);  
   }
+  $('#'+textElement).trigger('change')
 }
 
 // -----------------------------------------------------------------------------
@@ -1818,3 +1818,9 @@ function toggleNetworkConfiguration(disable)
 }
 
 </script>
+
+<style>
+  #txtIconFA {
+    min-width: 18px;
+  }
+</style>
