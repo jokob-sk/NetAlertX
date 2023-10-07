@@ -5,7 +5,7 @@ import hmac
 
 import conf
 from const import logPath
-from helper import noti_struc, write_file
+from helper import noti_obj, write_file
 from logger import logResult, mylog
 
 #-------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ def check_config():
         
 #-------------------------------------------------------------------------------        
 
-def send (msg: noti_struc):
+def send (msg: noti_obj):
 
     # limit = 1024 * 1024  # 1MB limit (1024 bytes * 1024 bytes = 1MB)
     limit = conf.WEBHOOK_SIZE

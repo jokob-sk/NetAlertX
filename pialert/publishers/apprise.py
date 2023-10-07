@@ -2,7 +2,7 @@
 import json
 import subprocess
 import conf
-from helper import noti_struc
+from helper import noti_obj
 from logger import logResult, mylog
 
 #-------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ def check_config():
             return True
 
 #-------------------------------------------------------------------------------
-def send(msg: noti_struc):
+def send(msg: noti_obj):
     html = msg.html
     text = msg.text
 

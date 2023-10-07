@@ -613,13 +613,13 @@ def initOrSetParam(db, parID, parValue):
     db.commitDB()
 
 #-------------------------------------------------------------------------------
-class json_struc:
+class json_obj:
     def __init__(self, jsn, columnNames):
         self.json = jsn
         self.columnNames = columnNames
 
 #-------------------------------------------------------------------------------
-class noti_struc:
+class noti_obj:
     def __init__(self, json, text, html):
         self.json = json
         self.text = text

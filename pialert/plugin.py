@@ -791,7 +791,7 @@ def handle_test(testType):
     # Open json sample and get only the payload part
     sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
 
-    sample_msg = noti_struc(sample_json_payload, sample_txt, sample_html, "test_sample")
+    sample_msg = noti_obj(sample_json_payload, sample_txt, sample_html, "test_sample")
    
 
     if testType == 'Email':

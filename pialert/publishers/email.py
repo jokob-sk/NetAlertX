@@ -7,7 +7,7 @@ import smtplib
 
 import conf
 import socket
-from helper import hide_email, noti_struc
+from helper import hide_email, noti_obj
 from logger import mylog, print_log
 
 #-------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ def check_config ():
         return True
     
 #-------------------------------------------------------------------------------
-def send (msg: noti_struc):
+def send (msg: noti_obj):
 
     pText = msg.text
     pHTML = msg.html

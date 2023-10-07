@@ -24,13 +24,13 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, timeNowTZ, updateState, get_setting_value, noti_struc
+from helper import   filePermissions, timeNowTZ, updateState, get_setting_value, noti_obj
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
-from database import DB, get_all_devices
+from database import DB
 from reporting import get_notifications
-from notifications import Notifications
+from notification import Notification_obj
 from plugin import run_plugin_scripts, check_and_run_user_event 
 
 
@@ -154,16 +154,13 @@ def main ():
             notiStructure = get_notifications(db)
 
             # Write the notifications into the DB
-            notification = Notifications(db)
+            notification = Notification_obj(db)
+            hasNotification = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
 
-            # mylog('debug', f"[MAIN] notiStructure.text: {notiStructure.text} ")  
-            # mylog('debug', f"[MAIN] notiStructure.json: {notiStructure.json} ")              
-            # mylog('debug', f"[MAIN] notiStructure.html: {notiStructure.html} ")  
-
-            hasNotifications = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
-
-            if hasNotifications:
+            # run all enabled publisher gateways 
+            if hasNotification:
                 pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
+                notification.setAllProcessed()
 
 
             # Commit SQL

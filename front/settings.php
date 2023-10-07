@@ -749,8 +749,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // ----------------------------------------------------------------------------- 
 
   // ---------------------------------------------------------
-  // Show last time settings have been imported
-  // getParam("lastImportedTime", "Back_Settings_Imported", skipCache = true);
+  // Show last time settings have been imported  
 
   handleLoadingDialog()
 

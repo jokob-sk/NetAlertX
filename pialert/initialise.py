@@ -134,13 +134,6 @@ def importConfigs (db):
     conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
     conf.WEBHOOK_SECRET = ccd('WEBHOOK_SECRET', '' , c_d, 'Secret', 'text', '', 'Webhooks')
 
-    # Apprise
-    conf.REPORT_APPRISE = ccd('REPORT_APPRISE', False , c_d, 'Enable Apprise', 'boolean', '', 'Apprise', ['test'])
-    conf.APPRISE_HOST = ccd('APPRISE_HOST', '' , c_d, 'Apprise host URL', 'text', '', 'Apprise')
-    conf.APPRISE_URL = ccd('APPRISE_URL', '' , c_d, 'Apprise notification URL', 'text', '', 'Apprise')
-    conf.APPRISE_PAYLOAD = ccd('APPRISE_PAYLOAD', 'html' , c_d, 'Payload type', 'text.select', "['html', 'text']", 'Apprise')
-    conf.APPRISE_SIZE = ccd('APPRISE_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Apprise')
-
     # NTFY
     conf.REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
     conf.NTFY_HOST = ccd('NTFY_HOST', 'https://ntfy.sh' , c_d, 'NTFY host URL', 'text', '', 'NTFY')
@@ -261,9 +254,6 @@ def importConfigs (db):
     sql.execute ("DELETE FROM Settings")    
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
-
-    # Is used to display a message in the UI when old (outdated) settings are loaded    
-    initOrSetParam(db, "Back_Settings_Imported",(round(time.time() * 1000),) )    
     
     #commitDB(sql_connection)
     db.commitDB()

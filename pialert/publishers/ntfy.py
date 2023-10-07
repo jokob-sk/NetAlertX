@@ -4,7 +4,7 @@ import requests
 from base64 import b64encode
 
 from logger import mylog
-from helper import noti_struc
+from helper import noti_obj
 
 #-------------------------------------------------------------------------------
 def check_config():
@@ -15,7 +15,7 @@ def check_config():
         return True
     
 #-------------------------------------------------------------------------------
-def send  (msg: noti_struc):
+def send  (msg: noti_obj):
 
     headers = {
         "Title": "Pi.Alert Notification",

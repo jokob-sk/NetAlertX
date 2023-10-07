@@ -3,7 +3,7 @@ import requests
 
 
 import conf
-from helper import  noti_struc
+from helper import  noti_obj
 from logger import mylog
 
 #-------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ def check_config():
             return True
 
 #-------------------------------------------------------------------------------
-def send ( msg:noti_struc ):
+def send ( msg:noti_obj ):
     _Text = msg.text
     url = 'https://www.pushsafer.com/api'
     post_fields = {

@@ -12,7 +12,7 @@ from helper import  timeNowTZ
 #-------------------------------------------------------------------------------
 # Notification object handling
 #-------------------------------------------------------------------------------
-class Notifications:
+class Notification_obj:
     def __init__(self, db):
         self.db = db
 
@@ -35,11 +35,9 @@ class Notifications:
         self.save()
 
     # Create a new DB entry if new notiifcations available, otherwise skip
-    def create(self, JSON, Text, HTML, Extra=""):
-
-        # Check if empty JSON
-        # _json = json.loads(JSON)
-        # Check if nothing to report
+    def create(self, JSON, Text, HTML, Extra=""):        
+        
+        # Check if nothing to report, end
         if JSON["internet"] == [] and JSON["new_devices"] == [] and JSON["down_devices"] == [] and JSON["events"] == [] and JSON["plugins"] == []:
             self.HasNotifications = False
             # end if nothing to report
@@ -75,6 +73,7 @@ class Notifications:
 
         # TODO Index vs hash to minimize SQL calls, finish CRUD operations, expose via API, use API in plugins
 
+    # create or update a notification 
     def upsert(self):
         self.db.sql.execute("""
             INSERT OR REPLACE INTO Notifications (GUID, DateTimeCreated, DateTimePushed, Status, JSON, Text, HTML, PublishedVia, Extra)
@@ -82,6 +81,28 @@ class Notifications:
         """, (self.GUID, self.DateTimeCreated, self.DateTimePushed, self.Status, json.dumps(self.JSON), self.Text, self.HTML, self.PublishedVia, self.Extra))
 
         self.save()
+
+    # Get all with the "new" status
+    def getNew(self):
+        self.db.sql.execute("""
+            SELECT * FROM Notifications
+            WHERE Status = "new"
+        """)
+        return self.db.sql.fetchall()
+
+    # Set all to "processed" status
+    def setAllProcessed(self):
+
+        # Execute an SQL query to update the status of all notifications
+        self.db.sql.execute("""
+            UPDATE Notifications
+            SET Status = "processed"
+            WHERE Status = "new"
+        """)
+
+        self.save()
+
+        
 
     def save(self):
         # Commit changes

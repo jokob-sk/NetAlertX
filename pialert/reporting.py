@@ -21,7 +21,7 @@ from json2table import convert
 import conf
 import const
 from const import pialertPath, logPath, apiPath
-from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
+from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
 from publishers.email import (check_config as email_check_config, 
@@ -51,7 +51,7 @@ json_final = []
 def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
 
     if suppliedJsonStruct is None and sqlQuery == "":
-        return noti_struc("", "", "")
+        return noti_obj("", "", "")
 
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
     headerProps = "width='120px' style='color:white; font-size: 16px;' bgcolor='#64a0d6' "
@@ -61,11 +61,11 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
     text_line = '{}\t{}\n'
 
     if suppliedJsonStruct is None:
-        json_struc = db.get_table_as_json(sqlQuery)
+        json_obj = db.get_table_as_json(sqlQuery)
     else:
-        json_struc = suppliedJsonStruct
+        json_obj = suppliedJsonStruct
 
-    jsn  = json_struc.json
+    jsn  = json_obj.json
     html = ""
     text = ""
 
@@ -78,7 +78,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         # Cleanup the generated HTML table notification
         html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">').replace("<td>null</td>", "<td></td>")
 
-        headers = json_struc.columnNames
+        headers = json_obj.columnNames
 
         # prepare text-only message
         if skipText == False:
@@ -95,7 +95,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         for header in headers:
             html = format_table(html, header, thProps)
 
-    notiStruc = noti_struc(jsn, text, html)
+    notiStruc = noti_obj(jsn, text, html)
 
     
     if not notiStruc.json['data'] and not notiStruc.text and not notiStruc.html:
@@ -263,14 +263,14 @@ def get_notifications (db):
     write_file (logPath + '/report_output.txt', final_text)
     write_file (logPath + '/report_output.html', final_html)
 
-    return noti_struc(final_json, final_text, final_html)
+    return noti_obj(final_json, final_text, final_html)
 
     # # Notify is something to report
     # if hasNotifications:
 
     #     mylog('none', ['[Notification] Changes detected, sending reports'])
 
-    #     msg = noti_struc(json_final, mail_text, mail_html)
+    #     msg = noti_obj(json_final, mail_text, mail_html)
 
     #     mylog('minimal', ['[Notification] Udating API files'])
     #     send_api()
