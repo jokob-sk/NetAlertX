@@ -15,7 +15,7 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 import conf
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, noti_obj
+from helper import timeNowTZ, noti_obj, get_setting_value
 from notification import Notification_obj
 from database import DB
 
@@ -70,7 +70,7 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config():
-        if conf.APPRISE_URL == '' or conf.APPRISE_HOST == '':            
+        if get_setting_value('APPRISE_URL') == '' or get_setting_value('APPRISE_HOST') == '':            
             return False
         else:
             return True
@@ -82,15 +82,15 @@ def send(html, text):
     result = ''
 
     # limit = 1024 * 1024  # 1MB limit (1024 bytes * 1024 bytes = 1MB)
-    limit = conf.APPRISE_SIZE
+    limit = get_setting_value('APPRISE_SIZE')
 
     #  truncate size
-    if conf.APPRISE_PAYLOAD == 'html':                 
+    if get_setting_value('APPRISE_PAYLOAD') == 'html':                 
         if len(msg.html) > limit:
             payloadData = msg.html[:limit] + "<h1>(text was truncated)</h1>"
         else:
             payloadData = msg.html
-    if conf.APPRISE_PAYLOAD == 'text':            
+    if get_setting_value('APPRISE_PAYLOAD') == 'text':            
         if len(msg.text) > limit:
             payloadData = msg.text[:limit] + " (text was truncated)"
         else:
@@ -99,15 +99,15 @@ def send(html, text):
     # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
 
     _json_payload = {
-        "urls": conf.APPRISE_URL,
+        "urls": get_setting_value('APPRISE_URL'),
         "title": "Pi.Alert Notifications",
-        "format": conf.APPRISE_PAYLOAD,
+        "format": get_setting_value('APPRISE_PAYLOAD'),
         "body": payloadData
     }
 
     try:
         # try runnning a subprocess
-        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), conf.APPRISE_HOST], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), get_setting_value('APPRISE_HOST')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = p.communicate()
 
         # write stdout and stderr into .log files for debugging if needed

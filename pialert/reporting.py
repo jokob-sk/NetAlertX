@@ -315,22 +315,6 @@ def get_notifications (db):
     # else :
     #     mylog('verbose', ['[Notification] No changes to report'])
 
-    # # Clean Pending Alert Events
-    # sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
-    #                 WHERE dev_MAC IN (SELECT eve_MAC FROM Events
-    #                                   WHERE eve_PendingAlertEmail = 1)
-    #              """, (datetime.datetime.now(conf.tz),) )
-    # sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-    #                 WHERE eve_PendingAlertEmail = 1""")
-
-    # # clear plugin events
-    # sql.execute ("DELETE FROM Plugins_Events")    
-
-    # # DEBUG - print number of rows updated
-    # mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
-
-    # # Commit changes
-    # db.commitDB()
 
 
 #-------------------------------------------------------------------------------

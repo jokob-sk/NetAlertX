@@ -154,7 +154,7 @@ def main ():
             notiStructure = get_notifications(db)
 
             # Write the notifications into the DB
-            notification = Notification_obj(db)
+            notification    = Notification_obj(db)
             hasNotification = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
 
             # run all enabled publisher gateways 
@@ -162,6 +162,21 @@ def main ():
                 pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
 
+                # Clean Pending Alert Events
+                sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
+                                    WHERE dev_MAC IN (
+                                        SELECT eve_MAC FROM Events
+                                            WHERE eve_PendingAlertEmail = 1
+                                    )
+                             """, (timeNowTZ(),) )
+                sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                                    WHERE eve_PendingAlertEmail = 1""")
+
+                # clear plugin events
+                sql.execute ("DELETE FROM Plugins_Events")
+
+                # DEBUG - print number of rows updated
+                mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
 
             # Commit SQL
             db.commitDB()          
