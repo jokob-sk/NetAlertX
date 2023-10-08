@@ -6,6 +6,9 @@ from cron_converter import Cron
 from pathlib import Path
 import datetime
 import json
+import shutil
+import re
+
 
 import conf 
 from const import fullConfPath
@@ -62,6 +65,9 @@ def importConfigs (db):
     # Only import file if the file was modifed since last import.
     # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
 
+    # rename settings that have changed names due to code cleanup and migration to plugins
+    renameSettings(config_file)
+
     fileModifiedTime = os.path.getmtime(config_file)
 
     mylog('debug', ['[Import Config] checking config file '])
@@ -113,18 +119,6 @@ def importConfigs (db):
 
     # Notification gateways
     # ----------------------------------------
-
-    # Email
-    conf.REPORT_MAIL = ccd('REPORT_MAIL', False , c_d, 'Enable email', 'boolean', '', 'Email', ['test'])
-    conf.SMTP_SERVER = ccd('SMTP_SERVER', '' , c_d,'SMTP server URL', 'text', '', 'Email')
-    conf.SMTP_PORT = ccd('SMTP_PORT', 587 , c_d, 'SMTP port', 'integer', '', 'Email')
-    conf.REPORT_TO = ccd('REPORT_TO', 'user@gmail.com' , c_d, 'Email to', 'text', '', 'Email')
-    conf.REPORT_FROM = ccd('REPORT_FROM', 'Pi.Alert <user@gmail.com>' , c_d, 'Email Subject', 'text', '', 'Email')
-    conf.SMTP_SKIP_LOGIN = ccd('SMTP_SKIP_LOGIN', False , c_d, 'SMTP skip login', 'boolean', '', 'Email')
-    conf.SMTP_USER = ccd('SMTP_USER', '' , c_d, 'SMTP user', 'text', '', 'Email')
-    conf.SMTP_PASS = ccd('SMTP_PASS', '' , c_d, 'SMTP password', 'password', '', 'Email')
-    conf.SMTP_SKIP_TLS = ccd('SMTP_SKIP_TLS', False , c_d, 'SMTP skip TLS', 'boolean', '', 'Email')
-    conf.SMTP_FORCE_SSL = ccd('SMTP_FORCE_SSL', False , c_d, 'Force SSL', 'boolean', '', 'Email')
 
     # Webhooks
     conf.REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
@@ -284,3 +278,55 @@ def read_config_file(filename):
     confDict = {} # config dictionary
     exec(code, {"__builtins__": {}}, confDict)
     return confDict 
+
+
+#-------------------------------------------------------------------------------
+replacements = {
+    r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
+    r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM'
+}
+
+def renameSettings(config_file):
+    # Check if the file contains any of the old setting code names
+    contains_old_settings = False
+
+    # Open the original config_file for reading
+    with open(str(config_file), 'r') as original_file:  # Convert config_file to a string
+        for line in original_file:
+            # Use regular expressions with word boundaries to check for the old setting code names
+            if any(re.search(key, line) for key in replacements.keys()):
+                contains_old_settings = True
+                break  # Exit the loop if any old setting is found
+
+    # If the file contains old settings, proceed with renaming and backup
+    if contains_old_settings:
+        # Create a backup file with the suffix "_old_setting_names" and timestamp
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        backup_file = f"{config_file}_old_setting_names_{timestamp}.bak"
+
+        mylog('debug', f'[Config] Old setting names will be replaced and a backup ({backup_file}) of the config created.')
+
+        shutil.copy(str(config_file), backup_file)  # Convert config_file to a string
+
+        # Open the original config_file for reading and create a temporary file for writing
+        with open(str(config_file), 'r') as original_file, open(str(config_file) + "_temp", 'w') as temp_file:  # Convert config_file to a string
+            for line in original_file:
+                # Use regular expressions with word boundaries for replacements
+                for key, value in replacements.items():
+                    line = re.sub(key, value, line)
+
+                # Write the modified line to the temporary file
+                temp_file.write(line)
+
+        # Close both files
+        original_file.close()
+        temp_file.close()
+
+        # Replace the original config_file with the temporary file
+        shutil.move(str(config_file) + "_temp", str(config_file))  # Convert config_file to a string
+    else:
+        mylog('debug', '[Config] No old setting names found in the file. No changes made.')
+
+        
+
+ 
