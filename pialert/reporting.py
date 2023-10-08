@@ -259,10 +259,12 @@ def get_notifications (db):
     write_file (logPath + '/report_output.txt', final_text)
     write_file (logPath + '/report_output.html', final_html)
 
+    mylog('minimal', ['[Notification] Udating API files'])
+    send_api()
+
     return noti_obj(final_json, final_text, final_html)   
 
-    #     mylog('minimal', ['[Notification] Udating API files'])
-    #     send_api()
+
 
     #     if conf.REPORT_MAIL and check_config('email'):
     #         updateState("Send: Email")
