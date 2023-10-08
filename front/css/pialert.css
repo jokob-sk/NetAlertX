@@ -795,7 +795,8 @@ input[readonly] {
 #networkTree .netPort
 {
     float:left;
-    display:inline;  
+    display:inline;
+    text-align: center;
 }
 
 #networkTree .portBckgIcon
@@ -816,7 +817,8 @@ input[readonly] {
 {
     width: 25px;;
     float:left;
-    display:inline;    
+    display:inline;
+    text-align: center;
 }
 #networkTree .netCollapse
 {
