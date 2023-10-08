@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Based on the work of https://github.com/leiweibau/Pi.Alert
 
 import json
 import subprocess
@@ -23,13 +22,15 @@ from database import DB
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+pluginName = 'APPRISE'
+
 def main():
     
-    mylog('verbose', ['[APPRISE](publisher) In script'])    
+    mylog('verbose', [f'[{pluginName}](publisher) In script'])    
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', ['[Check Config] Error: Apprise service not set up correctly. Check your pialert.conf APPRISE_* variables.'])
+        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -53,7 +54,7 @@ def main():
 
         # Log result
         plugin_objects.add_object(
-            primaryId   = 'APPRISE',
+            primaryId   = pluginName,
             secondaryId = timeNowTZ(),            
             watched1    = notification["GUID"],
             watched2    = result,            

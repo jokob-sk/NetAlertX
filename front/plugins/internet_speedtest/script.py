@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Based on the work of https://github.com/leiweibau/Pi.Alert
 
 import argparse
 import os
