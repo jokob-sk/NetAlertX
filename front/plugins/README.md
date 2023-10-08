@@ -619,7 +619,8 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | Supported Types | Description |
 | -------------- | ----------- |
 | `label` | Displays a column only. |
-| `text` | Makes a column editable, and a save icon is displayed next to it. See below for information on `threshold`, `replace`. |
+| `textarea_readonly` | Generates a read only text area and cleans up the text to display it somewhat formatted with new lines preserved. |
+| See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |

@@ -40,11 +40,8 @@ class Notification_obj:
         # Check if nothing to report, end
         if JSON["internet"] == [] and JSON["new_devices"] == [] and JSON["down_devices"] == [] and JSON["events"] == [] and JSON["plugins"] == []:
             self.HasNotifications = False
-            # end if nothing to report
-            return self.HasNotifications        
-
-        #  continue and save into DB if notifications available
-        self.HasNotifications = True 
+        else:            
+            self.HasNotifications = True 
 
         self.GUID               = str(uuid.uuid4())
         self.DateTimeCreated    = timeNowTZ()
@@ -56,9 +53,10 @@ class Notification_obj:
         self.PublishedVia       = ""
         self.Extra              = Extra
 
-        self.upsert()
+        if self.HasNotifications:
+            self.upsert()
         
-        return self.HasNotifications
+        return self
 
     # Only updates the status
     def updateStatus(self, newStatus):
@@ -69,9 +67,7 @@ class Notification_obj:
     def updatePublishedVia(self, newPublishedVia):
         self.PublishedVia = newPublishedVia
         self.DateTimePushed = timeNowTZ()
-        self.upsert()
-
-        # TODO Index vs hash to minimize SQL calls, finish CRUD operations, expose via API, use API in plugins
+        self.upsert()        
 
     # create or update a notification 
     def upsert(self):
@@ -80,6 +76,15 @@ class Notification_obj:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (self.GUID, self.DateTimeCreated, self.DateTimePushed, self.Status, json.dumps(self.JSON), self.Text, self.HTML, self.PublishedVia, self.Extra))
 
+        self.save()
+
+    # Remove notification object by GUID
+    def remove(self, GUID):
+        # Execute an SQL query to delete the notification with the specified GUID
+        self.db.sql.execute("""
+            DELETE FROM Notifications
+            WHERE GUID = ?
+        """, (GUID,))
         self.save()
 
     # Get all with the "new" status

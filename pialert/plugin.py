@@ -9,11 +9,12 @@ from collections import namedtuple
 
 # pialert modules
 import conf
-from const import pluginsPath, logPath
+from const import pluginsPath, logPath, pialertPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, get_plugin_setting_value, handle_empty, custom_plugin_decoder
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder
+from notification import Notification_obj
 
 
 #-------------------------------------------------------------------------------
@@ -484,10 +485,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             history_to_insert = []
             objects_to_update = []
 
-            statuses_to_report_on = get_plugin_setting_value(plugin, "REPORT_ON")
-
-            mylog('debug', ['[Plugins] statuses_to_report_on: ', statuses_to_report_on])
-
+            
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
@@ -505,6 +503,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     objects_to_update.append(values + (plugObj.index,))  # Include index for UPDATE
 
                 # only generate events that we want to be notified on
+                statuses_to_report_on = get_setting_value(plugObj.pluginPref + "_REPORT_ON")                
+                
                 if plugObj.status in statuses_to_report_on:
                     events_to_insert.append(values)
 
@@ -777,39 +777,24 @@ def handle_run(runType, db, pluginsState):
 #-------------------------------------------------------------------------------
 def handle_test(runType, db, pluginsState):
 
-    mylog('minimal', ['[', timeNowTZ(), '] START Test: ', testType])
+    mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
     
-    # TODO finish
+    # Prepare test samples
+    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')    
+    sample_html = get_file_content(pialertPath + '/back/report_sample.html')    
+    sample_json = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
+    
+    # Create fake notification
+    notification    = Notification_obj(db)
+    notificationObj = notification.create(sample_json, sample_txt, sample_html, "")
 
-    # # Open text sample
-    # sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
+    # Run test
+    pluginsState = handle_run(runType, db, pluginsState)
 
-    # # Open html sample
-    # sample_html = get_file_content(pialertPath + '/back/report_sample.html')
+    # Remove sample notification
+    notificationObj.remove(notificationObj.GUID)    
 
-    # # Open json sample and get only the payload part
-    # sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
-
-    # sample_msg = noti_obj(sample_json_payload, sample_txt, sample_html, "test_sample")
-
-
-    pluginsState = handle_run(param, db, pluginsState)
-   
-
-    # if testType == 'Email':
-    #     send_email(sample_msg)
-    # elif testType == 'Webhooks':
-    #     send_webhook (sample_msg)
-    # elif testType == 'Apprise':
-    #     send_apprise (sample_msg)
-    # elif testType == 'NTFY':
-    #     send_ntfy (sample_msg)
-    # elif testType == 'PUSHSAFER':
-    #     send_pushsafer (sample_msg)
-    # else:
-    #     mylog('none', ['[Test Publishers] No test matches: ', testType])    
-
-    # mylog('minimal', ['[Test Publishers] END Test: ', testType])
+    mylog('minimal', ['[Test] END Test: ', runType])
 
     return pluginsState
 

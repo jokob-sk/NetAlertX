@@ -155,10 +155,10 @@ def main ():
 
             # Write the notifications into the DB
             notification    = Notification_obj(db)
-            hasNotification = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
+            notificationObj = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
 
             # run all enabled publisher gateways 
-            if hasNotification:
+            if notificationObj.HasNotifications:
                 pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
 
@@ -177,6 +177,8 @@ def main ():
 
                 # DEBUG - print number of rows updated
                 mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
+            else:
+                mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL
             db.commitDB()          

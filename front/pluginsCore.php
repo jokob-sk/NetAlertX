@@ -89,6 +89,11 @@ function processColumnValue(dbColumnDef, value, index, type) {
         case 'label':            
             value = `<span>${value}<span>`;
             break;
+        case 'textarea_readonly':            
+            value = `<textarea cols="70" rows="3" wrap="off" readonly style="white-space: pre-wrap;">
+                    ${value.replace(/^b'(.*)'$/gm, '$1').replace(/\\n/g, '\n').replace(/\\r/g, '\r')}
+                    </textarea>`;
+            break;
         case 'textbox_save':
 
             value = value == 'null' ? '' : value; // hide 'null' values

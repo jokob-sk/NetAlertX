@@ -137,9 +137,9 @@
         },
         {
             "column": "Watched_Value2",
-            "css_classes": "col-sm-2",
+            "css_classes": "col-sm-8",
             "show": true,
-            "type": "label",            
+            "type": "textarea_readonly",            
             "default_value":"",
             "options": [],
             "localized": ["name"],

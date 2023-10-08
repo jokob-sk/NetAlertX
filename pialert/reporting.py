@@ -192,7 +192,7 @@ def get_notifications (db):
         # collect "new_devices" for the webhook json
         json_new_devices = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] New Devices sections done.'])
 
@@ -208,7 +208,7 @@ def get_notifications (db):
         # collect "down_devices" for the webhook json
         json_down_devices = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Down Devices sections done.'])
 
@@ -225,7 +225,7 @@ def get_notifications (db):
         # collect "events" for the webhook json
         json_events = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<EVENTS_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Events sections done.'])    
 
@@ -256,7 +256,7 @@ def get_notifications (db):
     final_text = removeDuplicateNewLines(mail_text)
 
     # Create clickable MAC links
-    final_html = generate_mac_links (mail_html, deviceUrl)
+    final_html = generate_mac_links (mail_html, deviceUrl)    
 
     #  Write output emails for debug
     write_file (logPath + '/report_output.json', json.dumps(final_json))
@@ -265,12 +265,7 @@ def get_notifications (db):
 
     return noti_obj(final_json, final_text, final_html)
 
-    # # Notify is something to report
-    # if hasNotifications:
-
-    #     mylog('none', ['[Notification] Changes detected, sending reports'])
-
-    #     msg = noti_obj(json_final, mail_text, mail_html)
+    
 
     #     mylog('minimal', ['[Notification] Udating API files'])
     #     send_api()
@@ -281,12 +276,8 @@ def get_notifications (db):
     #         send_email (msg )
     #     else :
     #         mylog('verbose', ['[Notification] Skip email'])
-    #     if conf.REPORT_APPRISE and check_config('apprise'):
-    #         updateState("Send: Apprise")
-    #         mylog('minimal', ['[Notification] Sending report by Apprise'])
-    #         send_apprise (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip Apprise'])
+    #     
+    
     #     if conf.REPORT_WEBHOOK and check_config('webhook'):
     #         updateState("Send: Webhook")
     #         mylog('minimal', ['[Notification] Sending report by Webhook'])

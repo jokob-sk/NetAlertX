@@ -1,90 +1,76 @@
 [
-    {
-        "headers": {
-            "host": "192.168.1.82:5678",
-            "user-agent": "curl/7.74.0",
-            "accept": "*/*",
-            "content-type": "application/json",
-            "content-length": "872"
-        },
-        "params": {},
-        "query": {},
-        "body": {
-            "username": "Pi.Alert",
-            "text": "There are new notifications",
-            "attachments": [
-                {
-                    "title": "Pi.Alert Notifications",
-                    "title_link": "",
-                    "text": {
-                      "internet": [],
-                      "new_devices": [{
-                        "MAC": "74:ac:74:ac:74:ac",
-                        "Datetime": "2023-01-30 22:15:09",
-                        "IP": "192.168.1.1",
-                        "Event Type": "New Device",
-                        "Device name": "(name not found)",
-                        "Comments": null,
-                        "Device Vendor": null
-                      }],
-                      "down_devices": [],
-                      "events": [{
-                        "MAC": "74:ac:74:ac:74:ac",
-                        "Datetime": "2023-01-30 22:15:09",
-                        "IP": "192.168.1.92",
-                        "Event Type": "Disconnected",
-                        "Device name": "(name not found)",
-                        "Comments": null,
-                        "Device Vendor": null
-                      }, {
-                        "MAC": "74:ac:74:ac:74:ac",
-                        "Datetime": "2023-01-30 22:15:09",
-                        "IP": "192.168.1.150",
-                        "Event Type": "Disconnected",
-                        "Device name": "(name not found)",
-                        "Comments": null,
-                        "Device Vendor": null
-                      }],
-                      "ports": [{
-                        "new": {
-                          "Name": "New device",
-                          "MAC": "74:ac:74:ac:74:ac",
-                          "Port": "22/tcp",
-                          "State": "open",
-                          "Service": "ssh",
-                          "Extra": ""
-                        }
-                      }, {
-                        "new": {
-                          "Name": "New device",
-                          "MAC": "74:ac:74:ac:74:ac",
-                          "Port": "53/tcp",
-                          "State": "open",
-                          "Service": "domain",
-                          "Extra": ""
-                        }
-                      }, {
-                        "new": {
-                          "Name": "New device",
-                          "MAC": "74:ac:74:ac:74:ac",
-                          "Port": "80/tcp",
-                          "State": "open",
-                          "Service": "http",
-                          "Extra": ""
-                        }
-                      }, {
-                        "new": {
-                          "Name": "New device",
-                          "MAC": "74:ac:74:ac:74:ac",
-                          "Port": "443/tcp",
-                          "State": "open",
-                          "Service": "https",
-                          "Extra": ""
-                        }
-                      }]
-                    }
-                }
+  {
+    "headers": {
+      "host": "192.168.1.82:5678",
+      "user-agent": "curl/7.74.0",
+      "accept": "*/*",
+      "content-type": "application/json",
+      "content-length": "872"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+      "username": "Pi.Alert",
+      "text": "There are new notifications",
+      "attachments": [
+        {
+          "title": "Pi.Alert Notifications",
+          "title_link": "",
+          "text": {
+            "internet": [],
+            "new_devices": [
+              {
+                "MAC": "74:ac:74:ac:74:ac",
+                "Datetime": "2023-01-30 22:15:09",
+                "IP": "192.168.1.1",
+                "Event Type": "New Device",
+                "Device name": "(name not found)",
+                "Comments": null,
+                "Device Vendor": null
+              }
+            ],
+            "down_devices": [],
+            "events": [
+              {
+                "MAC": "74:ac:74:ac:74:ac",
+                "Datetime": "2023-01-30 22:15:09",
+                "IP": "192.168.1.92",
+                "Event Type": "Disconnected",
+                "Device name": "(name not found)",
+                "Comments": null,
+                "Device Vendor": null
+              },
+              {
+                "MAC": "74:ac:74:ac:74:ac",
+                "Datetime": "2023-01-30 22:15:09",
+                "IP": "192.168.1.150",
+                "Event Type": "Disconnected",
+                "Device name": "(name not found)",
+                "Comments": null,
+                "Device Vendor": null
+              }
+            ],
+            "plugins": [
+              {
+                "Index": 138,
+                "Plugin": "INTRSPD",
+                "Object_PrimaryID": "Speedtest",
+                "Object_SecondaryID": "2023-10-08 02:01:16+02:00",
+                "DateTimeCreated": "2023-10-08 02:01:16",
+                "DateTimeChanged": "2023-10-08 02:32:15",
+                "Watched_Value1": "-1",
+                "Watched_Value2": "-1",
+                "Watched_Value3": "null",
+                "Watched_Value4": "null",
+                "Status": "missing-in-last-scan",
+                "Extra": "null",
+                "UserData": "null",
+                "ForeignKey": "null"
+              }
             ]
+          }
         }
+      ]
     }
+  }
 ]

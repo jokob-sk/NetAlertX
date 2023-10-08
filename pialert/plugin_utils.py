@@ -77,11 +77,8 @@ def list_to_csv(arr):
     arrayItemStr = ''
 
     mylog('debug', '[Plugins] Flattening the below array')    
-    mylog('debug', arr)
-
-    
-    mylog('debug', f'[Plugins] isinstance(arr, list) : {isinstance(arr, list)}')
-    mylog('debug', f'[Plugins] isinstance(arr, str) : {isinstance(arr, str)}')
+    mylog('debug', arr)    
+    mylog('debug', f'[Plugins] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}')    
 
     if isinstance(arr, str):
         return arr.replace('[','').replace(']','').replace("'", '')  # removing brackets and single quotes (not allowed)    
@@ -171,18 +168,6 @@ def get_plugins_configs():
     
     return pluginsList  # Return the list of plugin configurations
 
-
-    
-#-------------------------------------------------------------------------------
-# Gets the setting value
-def get_plugin_setting_value(plugin, function_key):
-    
-    resultObj = get_plugin_setting(plugin, function_key)
-
-    if resultObj != None:
-        return resultObj["value"]
-
-    return None
 
 #-------------------------------------------------------------------------------
 def custom_plugin_decoder(pluginDict):
