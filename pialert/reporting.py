@@ -28,8 +28,6 @@ from publishers.email import (check_config as email_check_config,
                               send as send_email )
 from publishers.ntfy  import (check_config as ntfy_check_config,
                               send as send_ntfy )
-from publishers.apprise import (check_config as apprise_check_config,
-                                send as send_apprise) 
 from publishers.webhook import (check_config as webhook_check_config,
                                 send as send_webhook) 
 from publishers.pushsafer import (check_config as pushsafer_check_config,
@@ -263,9 +261,7 @@ def get_notifications (db):
     write_file (logPath + '/report_output.txt', final_text)
     write_file (logPath + '/report_output.html', final_html)
 
-    return noti_obj(final_json, final_text, final_html)
-
-    
+    return noti_obj(final_json, final_text, final_html)   
 
     #     mylog('minimal', ['[Notification] Udating API files'])
     #     send_api()
@@ -306,28 +302,6 @@ def get_notifications (db):
     # else :
     #     mylog('verbose', ['[Notification] No changes to report'])
 
-
-
-# #-------------------------------------------------------------------------------
-# def check_config(service):
-
-#     if service == 'email':
-#         return email_check_config()
-    
-#     if service == 'apprise':
-#         return apprise_check_config()
-    
-#     if service == 'webhook':
-#         return webhook_check_config()
-
-#     if service == 'ntfy':
-#         return ntfy_check_config ()
-
-#     if service == 'pushsafer':
-#         return pushsafer_check_config()
-
-#     if service == 'mqtt':
-#         return mqtt_check_config()
 
 #-------------------------------------------------------------------------------
 # Replacing table headers

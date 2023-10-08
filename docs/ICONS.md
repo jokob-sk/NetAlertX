@@ -1,12 +1,14 @@
 ## Icons overview
 
-Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](/docs/NETWORK_TREE.md). Currently only free [Font Awesome](https://fontawesome.com/search?o=r&m=free) icons (up-to v 6.4.0) are supported (I have an unblockable [sponsorship goal](https://github.com/sponsors/jokob-sk) to add the material design icon pack).  
+Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](/docs/NETWORK_TREE.md). Currently only free [Font Awesome](https://fontawesome.com/search?o=r&m=free) icons (up-to v 6.4.0) are supported.
 
 ![Raspberry Pi with a brand icon](/docs/img/ICONS/devices-icons.png)
 
 ## ⚙ How to use custom device Icons
 
 You can assign icons individually on each device in the Details tab.
+
+![preview](/docs/img/ICONS/device_icons_preview.gif)
 
 ![Raspberry Pi device details](/docs/img/ICONS/device-icon.png)
 

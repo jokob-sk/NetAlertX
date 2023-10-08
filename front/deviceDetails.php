@@ -146,7 +146,10 @@
                       <div class="form-group">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Name');?></label>
                         <div class="col-sm-9">
-                          <input class="form-control" id="txtName" type="text" value="--">
+                          <div class="input-group">
+                            <input class="form-control" id="txtName" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtName');"></i></span>
+                          </div>                          
                         </div>
                       </div>
 
@@ -156,6 +159,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtOwner" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtOwner');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down "></span></button>                                
@@ -172,6 +176,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtDeviceType" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtDeviceType');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span></button>
@@ -227,6 +232,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtGroup" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtGroup');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span>
@@ -244,6 +250,7 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <input class="form-control" id="txtLocation" type="text" value="--">
+                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtLocation');"></i></span>
                             <div class="input-group-btn">
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
@@ -1818,9 +1825,3 @@ function toggleNetworkConfiguration(disable)
 }
 
 </script>
-
-<style>
-  #txtIconFA {
-    min-width: 18px;
-  }
-</style>

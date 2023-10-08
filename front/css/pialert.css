@@ -718,6 +718,10 @@ input[readonly] {
   }
 
 /* Devices */
+#txtIconFA {
+    min-width: 18px;
+}
+
 .drp-edit
 {
     cursor: pointer;

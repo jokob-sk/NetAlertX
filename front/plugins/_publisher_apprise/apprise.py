@@ -36,9 +36,6 @@ def main():
     db = DB()  # instance of class DB
     db.open()
 
-    # parser = argparse.ArgumentParser(description='APPRISE publisher Plugin')
-    # values = parser.parse_args()
-
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 

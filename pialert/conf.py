@@ -70,12 +70,6 @@ WEBHOOK_PAYLOAD = 'json'
 WEBHOOK_REQUEST_METHOD = 'GET' 
 WEBHOOK_SECRET  = ''
 
-# Apprise
-REPORT_APPRISE  = False 
-APPRISE_HOST    = '' 
-APPRISE_URL     = '' 
-APPRISE_PAYLOAD = 'html' 
-
 # NTFY
 REPORT_NTFY     = False 
 NTFY_HOST       = 'https://ntfy.sh'
