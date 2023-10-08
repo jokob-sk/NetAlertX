@@ -72,8 +72,8 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config ():
-    if get_setting_value('SMTP_SERVER') == '' or get_setting_value('REPORT_FROM') == '' or get_setting_value('REPORT_TO') == '':
-        mylog('none', ['[Email Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, REPORT_FROM and REPORT_TO variables.'])
+    if get_setting_value('SMTP_SERVER') == '' or get_setting_value('SMTP_REPORT_FROM') == '' or get_setting_value('SMTP_REPORT_TO') == '':
+        mylog('none', ['[Email Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
         return False
     else:
         return True
@@ -81,13 +81,13 @@ def check_config ():
 #-------------------------------------------------------------------------------
 def send(pHTML, pText):
 
-    mylog('debug', [f'[{pluginName}] REPORT_TO: {hide_email(str(get_setting_value('REPORT_TO')))} SMTP_USER: {hide_email(str(get_setting_value('SMTP_USER')))}'])
+    mylog('debug', [f'[{pluginName}] SMTP_REPORT_TO: {hide_email(str(get_setting_value("SMTP_REPORT_TO")))} SMTP_USER: {hide_email(str(get_setting_value("SMTP_USER")))}'])
 
     # Compose email
     msg             = MIMEMultipart('alternative')
     msg['Subject']  = 'Pi.Alert Report'
-    msg['From']     = get_setting_value('REPORT_FROM')
-    msg['To']       = get_setting_value('REPORT_TO')
+    msg['From']     = get_setting_value('SMTP_REPORT_FROM')
+    msg['To']       = get_setting_value('SMTP_REPORT_TO')
     msg.attach (MIMEText (pText, 'plain'))
     msg.attach (MIMEText (pHTML, 'html'))
 
@@ -135,11 +135,11 @@ def send(pHTML, pText):
             failedAt = print_log('SMTP_SKIP_TLS == False so sending .ehlo()')
             smtp_connection.ehlo()
         if not get_setting_value('SMTP_SKIP_LOGIN'):
-            failedAt = print_log('SMTP_SKIP_LOGIN') == False so sending .login()')
+            failedAt = print_log('SMTP_SKIP_LOGIN == False so sending .login()')
             smtp_connection.login (get_setting_value('SMTP_USER'), get_setting_value('SMTP_PASS'))
 
         failedAt = print_log('Sending .sendmail()')
-        smtp_connection.sendmail (get_setting_value('REPORT_FROM'), get_setting_value('REPORT_TO'), msg.as_string())
+        smtp_connection.sendmail (get_setting_value('SMTP_REPORT_FROM'), get_setting_value('SMTP_REPORT_TO'), msg.as_string())
         smtp_connection.quit()
     except smtplib.SMTPAuthenticationError as e:
         mylog('none', ['      ERROR: Failed at - ', failedAt])
