@@ -317,26 +317,26 @@ def get_notifications (db):
 
 
 
-#-------------------------------------------------------------------------------
-def check_config(service):
+# #-------------------------------------------------------------------------------
+# def check_config(service):
 
-    if service == 'email':
-        return email_check_config()
+#     if service == 'email':
+#         return email_check_config()
     
-    if service == 'apprise':
-        return apprise_check_config()
+#     if service == 'apprise':
+#         return apprise_check_config()
     
-    if service == 'webhook':
-        return webhook_check_config()
+#     if service == 'webhook':
+#         return webhook_check_config()
 
-    if service == 'ntfy':
-        return ntfy_check_config ()
+#     if service == 'ntfy':
+#         return ntfy_check_config ()
 
-    if service == 'pushsafer':
-        return pushsafer_check_config()
+#     if service == 'pushsafer':
+#         return pushsafer_check_config()
 
-    if service == 'mqtt':
-        return mqtt_check_config()
+#     if service == 'mqtt':
+#         return mqtt_check_config()
 
 #-------------------------------------------------------------------------------
 # Replacing table headers

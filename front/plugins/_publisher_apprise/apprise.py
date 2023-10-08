@@ -43,7 +43,7 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Create a Notification_obj instance
-    Notification_obj(db)
+    notifications = Notification_obj(db)
 
     # Retrieve new notifications
     new_notifications = notifications.getNew()
@@ -86,15 +86,15 @@ def send(html, text):
 
     #  truncate size
     if get_setting_value('APPRISE_PAYLOAD') == 'html':                 
-        if len(msg.html) > limit:
-            payloadData = msg.html[:limit] + "<h1>(text was truncated)</h1>"
+        if len(html) > limit:
+            payloadData = html[:limit] + "<h1>(text was truncated)</h1>"
         else:
-            payloadData = msg.html
+            payloadData = html
     if get_setting_value('APPRISE_PAYLOAD') == 'text':            
-        if len(msg.text) > limit:
-            payloadData = msg.text[:limit] + " (text was truncated)"
+        if len(text) > limit:
+            payloadData = text[:limit] + " (text was truncated)"
         else:
-            payloadData = msg.text
+            payloadData = text
 
     # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
 

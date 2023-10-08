@@ -13,7 +13,7 @@ from const import pluginsPath, logPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, flatten_array, combine_plugin_objects, resolve_wildcards_arr, get_plugin_setting_value, handle_empty, custom_plugin_decoder
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, get_plugin_setting_value, handle_empty, custom_plugin_decoder
 
 
 #-------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ class plugin_param:
             inputValue = get_setting(param["value"])
 
             if inputValue != None:
-                setVal = inputValue[6] # setting value
-                setTyp = inputValue[3] # setting type
+                setVal = inputValue["Value"] # setting value
+                setTyp = inputValue["Type"]  # setting type
 
                 noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
                 arrayConversion         = ['text.multiselect', 'list', 'subnets']                 
@@ -45,11 +45,8 @@ class plugin_param:
                 
                 elif setTyp in arrayConversion:
                     #  make them safely passable to a python or linux script
-                    resolved =  flatten_array(setVal)
+                    resolved =  list_to_csv(setVal)
 
-                elif setTyp in arrayConversionBase64:                    
-                    #  make them safely passable to a python or linux script by converting them to a base64 string if necessary (if the arg contains spaces)
-                    resolved =  flatten_array(setVal)
                 else:
                     for item in jsonConversion:
                         if setTyp.endswith(item):
@@ -66,7 +63,7 @@ class plugin_param:
             paramValuesCount = len(inputValue)
 
             #  make them safely passable to a python or linux script
-            resolved = flatten_array(inputValue)
+            resolved = list_to_csv(inputValue)
 
         
         mylog('debug', f'[Plugins] Resolved value: {resolved}')
@@ -750,7 +747,7 @@ def check_and_run_user_event(db, pluginsState):
         return pluginsState
 
     if event == 'test':
-        handle_test(param)
+        pluginsState = handle_test(param, db, pluginsState)
     if event == 'run':
         pluginsState = handle_run(param, db, pluginsState)
 
@@ -778,34 +775,41 @@ def handle_run(runType, db, pluginsState):
 
 
 #-------------------------------------------------------------------------------
-def handle_test(testType):
+def handle_test(runType, db, pluginsState):
 
     mylog('minimal', ['[', timeNowTZ(), '] START Test: ', testType])
+    
+    # TODO finish
 
-    # Open text sample
-    sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
+    # # Open text sample
+    # sample_txt = get_file_content(pialertPath + '/back/report_sample.txt')
 
-    # Open html sample
-    sample_html = get_file_content(pialertPath + '/back/report_sample.html')
+    # # Open html sample
+    # sample_html = get_file_content(pialertPath + '/back/report_sample.html')
 
-    # Open json sample and get only the payload part
-    sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
+    # # Open json sample and get only the payload part
+    # sample_json_payload = json.loads(get_file_content(pialertPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
 
-    sample_msg = noti_obj(sample_json_payload, sample_txt, sample_html, "test_sample")
+    # sample_msg = noti_obj(sample_json_payload, sample_txt, sample_html, "test_sample")
+
+
+    pluginsState = handle_run(param, db, pluginsState)
    
 
-    if testType == 'Email':
-        send_email(sample_msg)
-    elif testType == 'Webhooks':
-        send_webhook (sample_msg)
-    elif testType == 'Apprise':
-        send_apprise (sample_msg)
-    elif testType == 'NTFY':
-        send_ntfy (sample_msg)
-    elif testType == 'PUSHSAFER':
-        send_pushsafer (sample_msg)
-    else:
-        mylog('none', ['[Test Publishers] No test matches: ', testType])    
+    # if testType == 'Email':
+    #     send_email(sample_msg)
+    # elif testType == 'Webhooks':
+    #     send_webhook (sample_msg)
+    # elif testType == 'Apprise':
+    #     send_apprise (sample_msg)
+    # elif testType == 'NTFY':
+    #     send_ntfy (sample_msg)
+    # elif testType == 'PUSHSAFER':
+    #     send_pushsafer (sample_msg)
+    # else:
+    #     mylog('none', ['[Test Publishers] No test matches: ', testType])    
 
-    mylog('minimal', ['[Test Publishers] END Test: ', testType])
+    # mylog('minimal', ['[Test Publishers] END Test: ', testType])
+
+    return pluginsState
 

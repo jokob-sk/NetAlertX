@@ -243,18 +243,32 @@ def write_file(pPath, pText):
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
-    result = None
-    # index order: key, name, desc, inputtype, options, regex, result, group, events
-    for set in conf.mySettings:
-        if set[0] == key:
-            result = set
-    
-    if result is None:
-        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
-        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
-        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
-    return result
+    settingsFile = apiPath + '/table_settings.json'
+
+    try:
+        with open(settingsFile, 'r') as json_file:
+
+            data = json.load(json_file)
+
+            # if not isinstance(data, list):
+            #     mylog('minimal', [f' [Settings] Data is not a list of dictionaries (file: {settingsFile})'])              
+
+            for item in data.get("data",[]):
+                if item.get("Code_Name") == key:
+                    return item
+
+            mylog('minimal', [f'[Settings] Error - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
+
+            return None
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
+        mylog('minimal', [f'[Settings] Error - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
+
+        return None
+
+
 
 #-------------------------------------------------------------------------------
 #  Return setting value
@@ -264,8 +278,8 @@ def get_setting_value(key):
 
     if get_setting(key) is not None:
 
-        setVal = set[6] # setting value
-        setTyp = set[3] # setting type
+        setVal = set["Value"] # setting value
+        setTyp = set["Type"] # setting type
 
         return setVal
 

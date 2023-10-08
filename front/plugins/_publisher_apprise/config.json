@@ -254,7 +254,7 @@
     "settings":[
         {
             "function": "RUN",         
-            "events": ["run"],   
+            "events": ["test"],   
             "type": "text.select",            
             "default_value":"disabled",
             "options": ["disabled", "on_notification" ],
