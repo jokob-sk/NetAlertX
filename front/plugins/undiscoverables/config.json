@@ -18,6 +18,10 @@
     {
       "language_code": "es_es",
       "string": "Dispositivos no detectables"
+    },
+    {
+      "language_code": "de_de",
+      "string": "Nicht erkennbare Geräte"
     }
   ],
   "icon": [
@@ -27,6 +31,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-binoculars\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-binoculars\"></i>"
     }
   ],
@@ -38,6 +46,10 @@
     {
       "language_code": "es_es",
       "string": "Este complemento es para importar dispositivos no detectables desde un archivo."
+    },
+    {
+      "language_code": "en_us",
+      "string": "Ein Plugin zum Importieren von nicht erkennbaren Geräten aus einer Datei."
     }
   ],
   "params": [
@@ -72,6 +84,10 @@
         {
           "language_code": "es_es",
           "string": "Cuándo ejecuta"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -82,6 +98,10 @@
         {
           "language_code": "es_es",
           "string": "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wenn dieses Plugin aktiviert ist, ist <code>once</code> die bevorzugte Methode. Das Plugin wird dann bei jedem Start und nach jedem Speichern der Einstellungen ausgeführt.</br>Änderungen scheinen in den Geräten erst <b>nach dem nächsten Scan</b> auf!"
         }
       ]
     },
@@ -102,6 +122,10 @@
         {
           "language_code": "es_es",
           "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
         }
       ],
       "description": [
@@ -112,6 +136,10 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar. Esto no se puede cambiar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
         }
       ]
     },
@@ -132,6 +160,10 @@
         {
           "language_code": "es_es",
           "string": "Tiempo límite de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -142,6 +174,10 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
@@ -162,6 +198,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
@@ -172,6 +212,10 @@
         {
           "language_code": "es_es",
           "string": "Los dispositivos no detectables no pueden cambiar su estado, ningún reloj está habilitado."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status von nicht erkennbaren Geräten können sich nicht ändern, keine Überwachung aktiviert."
         }
       ]
     },
@@ -197,6 +241,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "description": [
@@ -207,6 +255,10 @@
         {
           "language_code": "es_es",
           "string": "No se enviarán notificaciones."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Keine Benachrichtigungen werden versendet."
         }
       ]
     },
@@ -229,6 +281,10 @@
         {
           "language_code": "es_es",
           "string": "Dispositivo no detectable"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nicht erkennbare Geräte"
         }
       ],
       "description": [
@@ -239,6 +295,10 @@
         {
           "language_code": "es_es",
           "string": "Dispositivos que se añadirán a la lista de dispositivos."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geräte, welche der Geräteliste hinzugefügt werden."
         }
       ]
     }
@@ -263,6 +323,10 @@
         {
           "language_code": "es_es",
           "string": "Nombre del dispositivo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Gerätename"
         }
       ]
     },
@@ -285,6 +349,10 @@
         {
           "language_code": "es_es",
           "string": "Dirección MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC-Adresse"
         }
       ]
     },
@@ -307,6 +375,10 @@
         {
           "language_code": "es_es",
           "string": "IP"
+        },
+        {
+          "language_code": "de_de",
+          "string": "IP"
         }
       ]
     },
@@ -328,6 +400,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -350,6 +426,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     },
@@ -375,6 +455,10 @@
         {
           "language_code": "es_es",
           "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
         }
       ]
     },
@@ -395,6 +479,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "MAC"
+        },
+        {
+          "language_code": "de_de",
           "string": "MAC"
         }
       ]
