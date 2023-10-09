@@ -1,7 +1,7 @@
 {
   "code_name": "ddns_update",
   "unique_prefix": "DDNS",
-  "enabled": true,  
+  "enabled": true,
   "data_filters": [
     {
       "compare_column": "Object_PrimaryID",
@@ -66,7 +66,9 @@
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": "text.select",
       "default_value": "disabled",
       "options": [
@@ -370,30 +372,45 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value":["new","watched-changed"],
-      "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "Report on"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Informar sobre"
-      }            ] ,
-      "description":[{
-          "language_code":"en_us",
-          "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
-      }] 
-  }
+      "default_value": [
+        "new",
+        "watched-changed"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        }
+      ]
+    }
   ],
   "database_column_definitions": [
     {
-      "column": "Object_PrimaryID",      
+      "column": "Object_PrimaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_name_mac",
@@ -414,7 +431,7 @@
       ]
     },
     {
-      "column": "Object_SecondaryID",      
+      "column": "Object_SecondaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_ip",
@@ -452,7 +469,7 @@
       ]
     },
     {
-      "column": "Dummy",      
+      "column": "Dummy",
       "mapped_to_column_data": {
         "value": "DDNS"
       },
@@ -497,7 +514,7 @@
       ]
     },
     {
-      "column": "DateTimeChanged",      
+      "column": "DateTimeChanged",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
