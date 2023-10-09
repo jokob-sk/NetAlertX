@@ -24,12 +24,13 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import   filePermissions, timeNowTZ, updateState, get_setting_value
+from helper import  filePermissions, timeNowTZ, updateState, get_setting_value, noti_obj
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
-from database import DB, get_all_devices
-from reporting import send_notifications
+from database import DB
+from reporting import get_notifications
+from notification import Notification_obj
 from plugin import run_plugin_scripts, check_and_run_user_event 
 
 
@@ -146,8 +147,38 @@ def main ():
                 #  run all plugins registered to be run when new devices are found                    
                 pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)                
 
+            # Notification handling
+            # ----------------------------------------
+
             # send all configured notifications
-            send_notifications(db)
+            notiStructure = get_notifications(db)
+
+            # Write the notifications into the DB
+            notification    = Notification_obj(db)
+            notificationObj = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
+
+            # run all enabled publisher gateways 
+            if notificationObj.HasNotifications:
+                pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
+                notification.setAllProcessed()
+
+                # Clean Pending Alert Events
+                sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
+                                    WHERE dev_MAC IN (
+                                        SELECT eve_MAC FROM Events
+                                            WHERE eve_PendingAlertEmail = 1
+                                    )
+                             """, (timeNowTZ(),) )
+                sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                                    WHERE eve_PendingAlertEmail = 1""")
+
+                # clear plugin events
+                sql.execute ("DELETE FROM Plugins_Events")
+
+                # DEBUG - print number of rows updated
+                mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
+            else:
+                mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL
             db.commitDB()          

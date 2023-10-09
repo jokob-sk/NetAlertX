@@ -542,8 +542,8 @@ Required attributes are:
 | `"name"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
 | `"description"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
 | (optional) `"events"` | Specifies whether to generate an execution button next to the input field of the setting. Supported values: |
-|  | - `test` |
-|  | - `run` |
+|  | - `"test"` - For notification plugins testing |
+|  | - `"run"` - Regular plugins testing |
 | (optional) `"override_value"` | Used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (Work in progress) |
 | (optional) `"events"` | Used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. |
 
@@ -619,7 +619,8 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | Supported Types | Description |
 | -------------- | ----------- |
 | `label` | Displays a column only. |
-| `text` | Makes a column editable, and a save icon is displayed next to it. See below for information on `threshold`, `replace`. |
+| `textarea_readonly` | Generates a read only text area and cleans up the text to display it somewhat formatted with new lines preserved. |
+| See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |

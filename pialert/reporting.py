@@ -12,9 +12,7 @@
 
 import datetime
 import json
-
 import socket
-
 import subprocess
 import requests
 from json2table import convert
@@ -23,15 +21,11 @@ from json2table import convert
 import conf
 import const
 from const import pialertPath, logPath, apiPath
-from helper import noti_struc, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
+from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
-from publishers.email import (check_config as email_check_config, 
-                              send as send_email )
 from publishers.ntfy  import (check_config as ntfy_check_config,
                               send as send_ntfy )
-from publishers.apprise import (check_config as apprise_check_config,
-                                send as send_apprise) 
 from publishers.webhook import (check_config as webhook_check_config,
                                 send as send_webhook) 
 from publishers.pushsafer import (check_config as pushsafer_check_config,
@@ -50,10 +44,10 @@ json_final = []
 
 
 #-------------------------------------------------------------------------------
-def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None, notificationType=''):
+def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
 
     if suppliedJsonStruct is None and sqlQuery == "":
-        return noti_struc("", "", "", notificationType)
+        return noti_obj("", "", "")
 
     table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
     headerProps = "width='120px' style='color:white; font-size: 16px;' bgcolor='#64a0d6' "
@@ -63,11 +57,11 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
     text_line = '{}\t{}\n'
 
     if suppliedJsonStruct is None:
-        json_struc = db.get_table_as_json(sqlQuery)
+        json_obj = db.get_table_as_json(sqlQuery)
     else:
-        json_struc = suppliedJsonStruct
+        json_obj = suppliedJsonStruct
 
-    jsn  = json_struc.json
+    jsn  = json_obj.json
     html = ""
     text = ""
 
@@ -80,7 +74,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         # Cleanup the generated HTML table notification
         html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">').replace("<td>null</td>", "<td></td>")
 
-        headers = json_struc.columnNames
+        headers = json_obj.columnNames
 
         # prepare text-only message
         if skipText == False:
@@ -97,7 +91,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
         for header in headers:
             html = format_table(html, header, thProps)
 
-    notiStruc = noti_struc(jsn, text, html, notificationType)
+    notiStruc = noti_obj(jsn, text, html)
 
     
     if not notiStruc.json['data'] and not notiStruc.text and not notiStruc.html:
@@ -108,7 +102,7 @@ def construct_notifications(db, sqlQuery, tableTitle, skipText = False, supplied
     return notiStruc
 
 
-def send_notifications (db):
+def get_notifications (db):
 
     sql = db.sql  #TO-DO
     global mail_text, mail_html, json_final, partial_html, partial_txt, partial_json
@@ -184,53 +178,50 @@ def send_notifications (db):
 
     if 'new_devices' in conf.INCLUDED_SECTIONS :
         # Compose New Devices Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
-                        FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "New devices", "new_devices")
+        notiStruc = construct_notifications(db, sqlQuery, "New devices")
 
         # collect "new_devices" for the webhook json
         json_new_devices = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_NEW_DEVICES>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] New Devices sections done.'])
 
     if 'down_devices' in conf.INCLUDED_SECTIONS :
         # Compose Devices Down Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
-                        FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "Down devices", "down_Devices")
+        notiStruc = construct_notifications(db, sqlQuery, "Down devices")
 
         # collect "down_devices" for the webhook json
         json_down_devices = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_DEVICES_DOWN>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Down Devices sections done.'])
 
     if 'events' in conf.INCLUDED_SECTIONS :
         # Compose Events Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments, dev_Vendor as "Device Vendor"
-                        FROM Events_Devices
+        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')
                         ORDER BY eve_DateTime"""
 
-        notiStruc = construct_notifications(db, sqlQuery, "Events", "events")
+        notiStruc = construct_notifications(db, sqlQuery, "Events")
 
         # collect "events" for the webhook json
         json_events = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<SECTION_EVENTS>', notiStruc.text + '\n')
+        mail_text = mail_text.replace ('<EVENTS_TABLE>', notiStruc.text + '\n')
         mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
         mylog('verbose', ['[Notification] Events sections done.'])    
 
@@ -250,116 +241,67 @@ def send_notifications (db):
         plugins_report = len(json_plugins) > 0
         mylog('verbose', ['[Notification] Plugins sections done.'])
 
-    json_final = {
+    final_json = {
                     "internet": json_internet,
                     "new_devices": json_new_devices,
                     "down_devices": json_down_devices,
-                    "events": json_events,
-                    "ports": json_ports,
+                    "events": json_events,                    
                     "plugins": json_plugins,
                     }
 
-    mail_text = removeDuplicateNewLines(mail_text)
+    final_text = removeDuplicateNewLines(mail_text)
 
     # Create clickable MAC links
-    mail_html = generate_mac_links (mail_html, deviceUrl)
+    final_html = generate_mac_links (mail_html, deviceUrl)    
 
     #  Write output emails for debug
-    write_file (logPath + '/report_output.json', json.dumps(json_final))
-    write_file (logPath + '/report_output.txt', mail_text)
-    write_file (logPath + '/report_output.html', mail_html)
+    write_file (logPath + '/report_output.json', json.dumps(final_json))
+    write_file (logPath + '/report_output.txt', final_text)
+    write_file (logPath + '/report_output.html', final_html)
 
-    # Write the notifications into the DB
-    # TODO
+    mylog('minimal', ['[Notification] Udating API files'])
+    send_api()
 
-    # Notify is something to report
-    if json_internet != [] or json_new_devices != [] or json_down_devices != [] or json_events != [] or json_ports != []  or plugins_report:
-
-        mylog('none', ['[Notification] Changes detected, sending reports'])
-
-        msg = noti_struc(json_final, mail_text, mail_html, 'master')
-
-        mylog('minimal', ['[Notification] Udating API files'])
-        send_api()
-
-        if conf.REPORT_MAIL and check_config('email'):
-            updateState("Send: Email")
-            mylog('minimal', ['[Notification] Sending report by Email'])
-            send_email (msg )
-        else :
-            mylog('verbose', ['[Notification] Skip email'])
-        if conf.REPORT_APPRISE and check_config('apprise'):
-            updateState("Send: Apprise")
-            mylog('minimal', ['[Notification] Sending report by Apprise'])
-            send_apprise (msg)
-        else :
-            mylog('verbose', ['[Notification] Skip Apprise'])
-        if conf.REPORT_WEBHOOK and check_config('webhook'):
-            updateState("Send: Webhook")
-            mylog('minimal', ['[Notification] Sending report by Webhook'])
-            send_webhook (msg)
-        else :
-            mylog('verbose', ['[Notification] Skip webhook'])
-        if conf.REPORT_NTFY and check_config('ntfy'):
-            updateState("Send: NTFY")
-            mylog('minimal', ['[Notification] Sending report by NTFY'])
-            send_ntfy (msg)
-        else :
-            mylog('verbose', ['[Notification] Skip NTFY'])
-        if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
-            updateState("Send: PUSHSAFER")
-            mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
-            send_pushsafer (msg)
-        else :
-            mylog('verbose', ['[Notification] Skip PUSHSAFER'])
-        # Update MQTT entities
-        if conf.REPORT_MQTT and check_config('mqtt'):
-            updateState("Send: MQTT")
-            mylog('minimal', ['[Notification] Establishing MQTT thread'])
-            mqtt_start(db)
-        else :
-            mylog('verbose', ['[Notification] Skip MQTT'])
-    else :
-        mylog('verbose', ['[Notification] No changes to report'])
-
-    # Clean Pending Alert Events
-    sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
-                    WHERE dev_MAC IN (SELECT eve_MAC FROM Events
-                                      WHERE eve_PendingAlertEmail = 1)
-                 """, (datetime.datetime.now(conf.tz),) )
-    sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                    WHERE eve_PendingAlertEmail = 1""")
-
-    # clear plugin events
-    sql.execute ("DELETE FROM Plugins_Events")    
-
-    # DEBUG - print number of rows updated
-    mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
-
-    # Commit changes
-    db.commitDB()
+    return noti_obj(final_json, final_text, final_html)   
 
 
-#-------------------------------------------------------------------------------
-def check_config(service):
 
-    if service == 'email':
-        return email_check_config()
+    #     if conf.REPORT_MAIL and check_config('email'):
+    #         updateState("Send: Email")
+    #         mylog('minimal', ['[Notification] Sending report by Email'])
+    #         send_email (msg )
+    #     else :
+    #         mylog('verbose', ['[Notification] Skip email'])
+    #     
     
-    if service == 'apprise':
-        return apprise_check_config()
-    
-    if service == 'webhook':
-        return webhook_check_config()
+    #     if conf.REPORT_WEBHOOK and check_config('webhook'):
+    #         updateState("Send: Webhook")
+    #         mylog('minimal', ['[Notification] Sending report by Webhook'])
+    #         send_webhook (msg)
+    #     else :
+    #         mylog('verbose', ['[Notification] Skip webhook'])
+    #     if conf.REPORT_NTFY and check_config('ntfy'):
+    #         updateState("Send: NTFY")
+    #         mylog('minimal', ['[Notification] Sending report by NTFY'])
+    #         send_ntfy (msg)
+    #     else :
+    #         mylog('verbose', ['[Notification] Skip NTFY'])
+    #     if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
+    #         updateState("Send: PUSHSAFER")
+    #         mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
+    #         send_pushsafer (msg)
+    #     else :
+    #         mylog('verbose', ['[Notification] Skip PUSHSAFER'])
+    #     # Update MQTT entities
+    #     if conf.REPORT_MQTT and check_config('mqtt'):
+    #         updateState("Send: MQTT")
+    #         mylog('minimal', ['[Notification] Establishing MQTT thread'])
+    #         mqtt_start(db)
+    #     else :
+    #         mylog('verbose', ['[Notification] Skip MQTT'])
+    # else :
+    #     mylog('verbose', ['[Notification] No changes to report'])
 
-    if service == 'ntfy':
-        return ntfy_check_config ()
-
-    if service == 'pushsafer':
-        return pushsafer_check_config()
-
-    if service == 'mqtt':
-        return mqtt_check_config()
 
 #-------------------------------------------------------------------------------
 # Replacing table headers
@@ -436,56 +378,6 @@ def skip_repeated_notifications (db):
     mylog('verbose','[Skip Repeated Notifications] Skip Repeated end')
 
     db.commitDB()
-
-
-#-------------------------------------------------------------------------------
-# Notification object handling
-#-------------------------------------------------------------------------------
-class Notifications:
-    def __init__(self, db):
-
-        self.db = db
-
-        # Create Notifications table if missing        
-        self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "Notifications" (
-            "Index"	          INTEGER,
-            "DateTimeCreated" TEXT,
-            "DateTimePushed"  TEXT,
-            "Status"	      TEXT,
-            "JSON"      	  TEXT,
-            "Text"	          TEXT,
-            "HTML"            TEXT,
-            "PublishedVia"    TEXT,
-            "Extra"           TEXT,
-            PRIMARY KEY("Index" AUTOINCREMENT)
-        );
-        """)
-
-        self.save()
-
-    def create(self, JSON, Text, HTML, Extra):
-        self.JSON       = JSON
-        self.Text       = Text
-        self.HTML       = HTML
-        self.Extra      = Extra
-        self.Status     = "new"
-
-        # TODO Init values that can be auto initialized
-        # TODO Check for nulls
-        # TODO Index vs hash to minimize SQL calls, finish CRUD operations, expose via API, use API in plugins
-
-        # current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        # self.db.sql.execute("""
-        #     INSERT INTO Notifications (DateTimeCreated, DateTimePushed, Status, JSON, Text, HTML, PublishedVia, Extra)
-        #     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        # """, (current_time, DateTimePushed, Status, JSON, Text, HTML, PublishedVia, Extra))
-
-        
-
-    def save(self):
-        
-        # Commit changes
-        self.db.commitDB()
 
 
 

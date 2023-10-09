@@ -1,22 +1,30 @@
 {
-    "code_name": "internet_speedtest",
-    "unique_prefix": "INTRSPD",
+    "code_name": "_publisher_apprise",
+    "unique_prefix": "APPRISE",
     "enabled": true,    
     "data_source":  "script",
     "show_ui": true,
     "localized": ["display_name", "description", "icon"],
-	"display_name" : [{
+	"display_name" : [
+        {
 		  "language_code": "en_us",
-		  "string" : "Internet speedtest"
-		}],
+		  "string" : "Apprise publisher"
+		},
+        {
+		  "language_code": "es_es",
+		  "string" : "Habilitar Apprise"
+		}
+    ],
     "icon":[{
         "language_code": "en_us",
-        "string" : "<i class=\"fa-solid fa-gauge-high\"></i>"
+        "string" : "<i class=\"fa-solid fa-bullhorn\"></i>"
 		}],     
-    "description": [{
+    "description": [
+        {
         "language_code": "en_us",
-        "string" : "A plugin to perform a scheduled internet speedtest."
-		}],
+        "string" : "A plugin to publish a notification via the Apprise gateway."
+		}
+    ],
     "params" : [],  
     "database_column_definitions":
     [          
@@ -94,7 +102,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Test run on"
+                "string" : "Sent when"
 				}]
         },
         {
@@ -118,60 +126,26 @@
             "column": "Watched_Value1",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "threshold",            
+            "type": "label",            
             "default_value":"",
-            "options": [
-                {
-                    "maximum": 1,
-                    "hexColor": "#D33115"                
-                },                
-                {
-                    "maximum": 5,
-                    "hexColor": "#792D86"
-                },
-                {
-                    "maximum": 10,
-                    "hexColor": "#7D862D"                
-                },
-                {
-                    "maximum": 100,
-                    "hexColor": "#05483C"
-                }
-            ],
+            "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Download"
+                "string" : "Notification GUID"
 				}]
         },
         {
             "column": "Watched_Value2",
-            "css_classes": "col-sm-2",
+            "css_classes": "col-sm-8",
             "show": true,
-            "type": "threshold",            
+            "type": "textarea_readonly",            
             "default_value":"",
-            "options": [
-                {
-                    "maximum": 1,
-                    "hexColor": "#D33115"                
-                },                
-                {
-                    "maximum": 5,
-                    "hexColor": "#792D86"
-                },
-                {
-                    "maximum": 10,
-                    "hexColor": "#7D862D"                
-                },
-                {
-                    "maximum": 100,
-                    "hexColor": "#05483C"
-                }
-            ],
+            "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Upload"
+                "string" : "Result"
 				}]
         },
         {
@@ -280,10 +254,10 @@
     "settings":[
         {
             "function": "RUN",         
-            "events": ["run"],   
+            "events": ["test"],   
             "type": "text.select",            
             "default_value":"disabled",
-            "options": ["disabled", "once", "schedule", "always_after_scan" ],
+            "options": ["disabled", "on_notification" ],
             "localized": ["name", "description"],
             "name" :[{
                 "language_code": "en_us",
@@ -293,15 +267,21 @@
                 "language_code": "es_es",
                 "string" : "Cuando ejecuta"
             }],
-            "description": [{
+            "description": [
+                {
                 "language_code": "en_us",
-                "string" : "Enable a regular internet speedtest. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) for the time specified in <a href=\"#INTRSPD_RUN_TIMEOUT\"><code>INTRSPD_RUN_TIMEOUT</code> setting</a>."
-				}]
+                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a>."
+				},
+                {
+                "language_code": "es_es",
+                "string" : "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a>."
+				}
+            ]
         },
         {
             "function": "CMD",
             "type": "readonly",
-            "default_value":"python3 /home/pi/pialert/front/plugins/internet_speedtest/script.py",
+            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_apprise/apprise.py",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -322,32 +302,9 @@
             }]
         },
         {
-            "function": "RUN_SCHD",
-            "type": "text",
-            "default_value":"*/30 * * * *",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Schedule"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Schedule"
-				}],
-				"description": [{
-                "language_code": "en_us",
-                "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#INTRSPD_RUN\"><code>INTRSPD_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-				},
-				{
-                "language_code": "es_es",
-                "string": "Solo habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#INTRSPD_RUN\"><code>INTRSPD_RUN</code></a>. Asegúrese de ingresar el schedule en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingrese <code >0 4 * * *</code> ejecutará el escaneo después de las 4 am en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> que configuró arriba </a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-            }]
-        },
-        {
             "function": "RUN_TIMEOUT",
             "type": "integer",
-            "default_value":60,
+            "default_value": 10,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -372,46 +329,96 @@
             }]
         },
         {
-            "function": "WATCH",
-            "type": "text.multiselect",
-            "default_value":[],
-            "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
+            "function": "HOST",
+            "type": "text",
+            "default_value": "",
+            "options": [],
             "localized": ["name", "description"],
-            "name" :[{
+            "name" : [{
                 "language_code": "en_us",
-                "string" : "Watched"
+                "string" : "Apprise host URL"
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Visto"				
-            }],
-            "description":[{
+                "string" : "URL del host de Apprise"				
+				}],
+            "description": [{
                 "language_code": "en_us",
-                "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Download speed (not recommended)</li><li><code>Watched_Value2</code> is Upload speed (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
-				}] 
+                "string" : "Apprise host URL starting with <code>http://</code> or <code>https://</code>. (do not forget to include <code>/notify</code> at the end)"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "URL del host de Apprise que comienza con <code>http://</code> o <code>https://</code>. (no olvide incluir <code>/notify</code> al final)"
+            }]
         },
         {
-            "function": "REPORT_ON",
-            "type": "text.multiselect",
-            "default_value":[],
-            "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
+            "function": "URL",
+            "type": "text",
+            "default_value": "",
+            "options": [],
             "localized": ["name", "description"],
-            "name" :[{
+            "name" : [{
                 "language_code": "en_us",
-                "string" : "Report on"
+                "string" : "Apprise notification URL"
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Informar sobre"					
-            }] ,
-            "description":[{
+                "string" : "URL de notificación de Apprise"				
+				}],
+            "description": [{
                 "language_code": "en_us",
-                "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+                "string" : "Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>."
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."					
-            }] 
-        }
+                "string" : "Informar de la URL de destino de la notificación. Por ejemplo, para Telegram sería <code>tgram://{bot_token}/{chat_id}</code>."
+            }]
+        },
+        {
+            "function": "PAYLOAD",
+            "type": "text.select",
+            "default_value": "html",
+            "options": ["html", "text"],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Payload type"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tipo de carga"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Seleccione el tipo de carga útil enviada a Apprise. Por ejemplo, <code>html</code> funciona bien con correos electrónicos, <code>text</code> con aplicaciones de chat, como Telegram."
+            }]
+        },
+        {
+            "function": "SIZE",
+            "type": "integer",
+            "default_value": 1024,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Max payload size"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tamaño máximo de carga útil"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The maximum size of the apprise payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "El tamaño máximo de la carga útil de información como número de caracteres en la cadena pasada. Si supera el límite, se truncará y se agregará un mensaje <code>(text was truncated)</code>."
+            }]
+        }         
     ]
 }

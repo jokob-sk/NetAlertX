@@ -71,30 +71,39 @@ def get_plugin_string(props, el):
 
 
 #-------------------------------------------------------------------------------
-def flatten_array(arr):
+#  generates a comma separated list of values from a list (or a string representing a list)
+def list_to_csv(arr):
     tmp = ''
     arrayItemStr = ''
 
-    mylog('debug', '[Plugins] Flattening the below array')
-    
-    mylog('debug', arr)
+    mylog('debug', '[Plugins] Flattening the below array')    
+    mylog('debug', arr)    
+    mylog('debug', f'[Plugins] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}')    
 
-    for arrayItem in arr:
-        # only one column flattening is supported
-        if isinstance(arrayItem, list):            
-            arrayItemStr = str(arrayItem[0]).replace("'", '')  # removing single quotes - not allowed            
-        else:
-            # is string already
-            arrayItemStr = arrayItem
+    if isinstance(arr, str):
+        return arr.replace('[','').replace(']','').replace("'", '')  # removing brackets and single quotes (not allowed)    
+
+    elif isinstance(arr, list):
+        for arrayItem in arr:
+            # only one column flattening is supported
+            if isinstance(arrayItem, list):            
+                arrayItemStr = str(arrayItem[0]).replace("'", '')  # removing single quotes - not allowed            
+            else:
+                # is string already
+                arrayItemStr = arrayItem
 
 
-        tmp += f'{arrayItemStr},'
+            tmp += f'{arrayItemStr},'
 
-    tmp = tmp[:-1]  # Remove last comma ','
+        tmp = tmp[:-1]  # Remove last comma ','
 
-    mylog('debug', f'[Plugins] Flattened array: {tmp}')    
+        mylog('debug', f'[Plugins] Flattened array: {tmp}')    
 
-    return tmp
+        return tmp
+
+    else:
+        mylog('none', f'[Plugins] ERROR Could not convert array: {arr}')    
+
 
 
 
@@ -159,18 +168,6 @@ def get_plugins_configs():
     
     return pluginsList  # Return the list of plugin configurations
 
-
-    
-#-------------------------------------------------------------------------------
-# Gets the setting value
-def get_plugin_setting_value(plugin, function_key):
-    
-    resultObj = get_plugin_setting(plugin, function_key)
-
-    if resultObj != None:
-        return resultObj["value"]
-
-    return None
 
 #-------------------------------------------------------------------------------
 def custom_plugin_decoder(pluginDict):

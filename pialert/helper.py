@@ -243,33 +243,57 @@ def write_file(pPath, pText):
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
-    result = None
-    # index order: key, name, desc, inputtype, options, regex, result, group, events
-    for set in conf.mySettings:
-        if set[0] == key:
-            result = set
-    
-    if result is None:
-        mylog('minimal', [' Error - setting_missing - Setting not found for key: ', key])           
-        mylog('minimal', [' Error - logging the settings into file: ', logPath + '/setting_missing.json'])           
-        write_file (logPath + '/setting_missing.json', json.dumps({ 'data' : conf.mySettings}))    
 
-    return result
+    settingsFile = apiPath + 'table_settings.json'
+
+    try:
+        with open(settingsFile, 'r') as json_file:
+
+            data = json.load(json_file)
+
+            for item in data.get("data",[]):
+                if item.get("Code_Name") == key:
+                    return item
+
+            mylog('debug', [f'[Settings] Error - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
+
+            return None
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
+        mylog('none', [f'[Settings] Error - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
+
+        return None
+
+
 
 #-------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
     
-    set = get_setting(key)
+    setting = get_setting(key)
 
-    if get_setting(key) is not None:
+    if setting is not None:
 
-        setVal = set[6] # setting value
-        setTyp = set[3] # setting type
+        set_value = setting["Value"]  # Setting value
+        set_type = setting["Type"]  # Setting type
 
-        return setVal
+        # Handle different types of settings
+        if set_type in ['text', 'string', 'password', 'readonly', 'text.select']:
+            return str(set_value)
+        elif set_type in ['boolean', 'integer.checkbox']:
+            return bool(set_value)
+        elif set_type in ['integer.select', 'integer']:
+            return int(set_value)
+        elif set_type in ['text.multiselect', 'list', 'subnets']:
+            # Assuming set_value is a list in this case
+            return set_value
+        elif set_type == '.template':
+            # Assuming set_value is a JSON object in this case
+            return json.loads(set_value)
 
     return ''
+
 
 
 
@@ -613,24 +637,15 @@ def initOrSetParam(db, parID, parValue):
     db.commitDB()
 
 #-------------------------------------------------------------------------------
-class json_struc:
+class json_obj:
     def __init__(self, jsn, columnNames):
         self.json = jsn
         self.columnNames = columnNames
 
 #-------------------------------------------------------------------------------
-class noti_struc:
-    def __init__(self, json, text, html, notificationType):
+class noti_obj:
+    def __init__(self, json, text, html):
         self.json = json
         self.text = text
         self.html = html  
 
-        # jsonFile = apiPath + f'/notifications_{notificationType}.json'
-
-        # mylog('debug', [f"[Notifications] Writing {jsonFile}"])
-
-        # if notificationType != '':
-            
-        #     # Update .json file
-        #     with open(jsonFile, 'w') as jsonFile:
-        #         json.dump(self, jsonFile, cls=NotiStrucEncoder, indent=4)

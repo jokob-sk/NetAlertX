@@ -6,7 +6,7 @@ import sqlite3
 from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
-from helper import json_struc, initOrSetParam, row_to_json, timeNowTZ #, updateState
+from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ #, updateState
 
 
 
@@ -208,10 +208,7 @@ class DB():
             "par_ID" TEXT PRIMARY KEY,
             "par_Value"	TEXT
           );
-          """)
-
-        # Initialize Parameters if unavailable
-        initOrSetParam(self, 'Back_App_State','Initializing')
+          """)        
 
         # -------------------------------------------------------------------------
         # Nmap_Scan table setup DEPRECATED after 1/1/2024
@@ -384,7 +381,7 @@ class DB():
             rows = self.sql.fetchall()
         except sqlite3.Error as e:
             mylog('none',[ '[Database] - SQL ERROR: ', e])
-            return None
+            return json_obj({}, []) # return empty object
 
         result = {"data":[]}
         for row in rows:
@@ -392,7 +389,7 @@ class DB():
             result["data"].append(tmp)
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
-        return json_struc(result, columnNames)
+        return json_obj(result, columnNames)
 
     #-------------------------------------------------------------------------------
     # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases

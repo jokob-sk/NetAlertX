@@ -3,8 +3,7 @@ import json
 
 # pialert modules
 import conf  
-from const import (apiPath, sql_devices_all, sql_events_pending_alert, 
-                   sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings)
+from const import (apiPath, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all)
 from logger import mylog
 from helper import write_file
 
@@ -19,8 +18,6 @@ def update_api(db, isNotification = False, updateOnlyDataSources = []):
 
     folder = apiPath 
 
-    # update notifications moved to reporting send_api()
-
     # Save plugins    
     write_file(folder + 'plugins.json'  , json.dumps({"data" : conf.plugins}))  
 
@@ -33,6 +30,7 @@ def update_api(db, isNotification = False, updateOnlyDataSources = []):
         ["plugins_history", sql_plugins_history],
         ["plugins_objects", sql_plugins_objects],
         ["plugins_language_strings", sql_language_strings],
+        ["notifications", sql_notifications_all],
         ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 
