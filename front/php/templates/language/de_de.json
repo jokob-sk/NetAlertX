@@ -474,7 +474,7 @@
         "Gen_Action": "Action",
         "Gen_Upd": "Updated successfully",
         "Gen_Upd_Fail": "Update failed",
-        "Gen_ReadDocs": "Read more in the docs.",
+        "Gen_ReadDocs": "Mehr in der Dokumentation.",
         "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is runnig.",
         "Gen_LockedDB": "ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.",
         "Login_Default_PWD": "Standardpasswort \"123456\" noch immer aktiv.",
