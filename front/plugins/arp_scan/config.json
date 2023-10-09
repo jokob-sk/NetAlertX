@@ -167,7 +167,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Maximale Zeit in Sekunden, welche das Skript zur Verfügung hat. Skript wird abgebrochen, wenn diese Zeit überschritten wird."
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
