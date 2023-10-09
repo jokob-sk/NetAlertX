@@ -3,10 +3,13 @@
   "unique_prefix": "UNDIS",
   "enabled": true,
   "data_source": "script",
-  "mapped_to_table": "CurrentScan", 
+  "mapped_to_table": "CurrentScan",
   "show_ui": true,
-  "localized": ["display_name", "description", "icon"],
-
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -15,7 +18,7 @@
     {
       "language_code": "es_es",
       "string": "Dispositivos no detectables"
-    }	
+    }
   ],
   "icon": [
     {
@@ -25,7 +28,7 @@
     {
       "language_code": "es_es",
       "string": "<i class=\"fa-solid fa-binoculars\"></i>"
-    }	
+    }
   ],
   "description": [
     {
@@ -35,46 +38,62 @@
     {
       "language_code": "es_es",
       "string": "Este complemento es para importar dispositivos no detectables desde un archivo."
-    }	
+    }
   ],
-    "params" : [
+  "params": [
     {
-        "name"  : "devices",
-        "type"  : "setting",
-        "value" : "UNDIS_devices_to_import"
-    }],  
-
+      "name": "devices",
+      "type": "setting",
+      "value": "UNDIS_devices_to_import"
+    }
+  ],
   "settings": [
     {
-      "function": "RUN",            
-      "events": ["run"],
-      "type": "text.select",            
-      "default_value":"disabled",
-      "options": ["disabled", "once", "always_after_scan"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "When to run"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Cuándo ejecuta"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
-      },
-	    {
-          "language_code":"es_es",
-          "string" : "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
-      }]
-  },    
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": "text.select",
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "always_after_scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecuta"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
+        }
+      ]
+    },
     {
       "function": "CMD",
       "type": "text",
       "default_value": "python3 /home/pi/pialert/front/plugins/undiscoverables/script.py devices={devices}",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -83,7 +102,7 @@
         {
           "language_code": "es_es",
           "string": "Comando"
-        }		
+        }
       ],
       "description": [
         {
@@ -93,16 +112,18 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar. Esto no se puede cambiar"
-        }		
+        }
       ]
     },
-    
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
       "default_value": 10,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -111,7 +132,7 @@
         {
           "language_code": "es_es",
           "string": "Tiempo límite de ejecución"
-        }		
+        }
       ],
       "description": [
         {
@@ -121,7 +142,7 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-        }		
+        }
       ]
     },
     {
@@ -129,7 +150,10 @@
       "type": "readonly",
       "default_value": [],
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -138,7 +162,8 @@
         {
           "language_code": "es_es",
           "string": "Visto"
-        }],
+        }
+      ],
       "description": [
         {
           "language_code": "en_us",
@@ -147,15 +172,23 @@
         {
           "language_code": "es_es",
           "string": "Los dispositivos no detectables no pueden cambiar su estado, ningún reloj está habilitado."
-        }		
+        }
       ]
     },
     {
       "function": "REPORT_ON",
       "type": "readonly",
       "default_value": [],
-      "options": ["new", "watched-changed", "watched-not-changed", "missing-in-last-scan"],
-      "localized": ["name", "description"],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -164,7 +197,7 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
-        }		
+        }
       ],
       "description": [
         {
@@ -174,162 +207,197 @@
         {
           "language_code": "es_es",
           "string": "No se enviarán notificaciones."
-        }		
+        }
       ]
     },
     {
       "function": "devices_to_import",
       "type": "list",
-      "default_value":["dummy_router"],
+      "default_value": [
+        "dummy_router"
+      ],
       "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "UnDiscoverable Devices"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Dispositivo no detectable"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Devices to be added to the devices list."
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Dispositivos que se añadirán a la lista de dispositivos."
-      }]
-  }
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "UnDiscoverable Devices"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Dispositivo no detectable"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Devices to be added to the devices list."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Dispositivos que se añadirán a la lista de dispositivos."
+        }
+      ]
+    }
   ],
-
-  "database_column_definitions": 
-  [          
+  "database_column_definitions": [
     {
       "column": "Watched_Value1",
-      "mapped_to_column": "cur_Name",         
+      "mapped_to_column": "cur_Name",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Device Name"
-          },
-		  {
-          "language_code":"es_es",
-          "string" : "Nombre del dispositivo"
-          }]
-    }, 
-    {
-        "column": "Object_PrimaryID",
-        "mapped_to_column": "cur_MAC", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "MAC address"
-            },
-			{
-            "language_code":"es_es",
-            "string" : "Dirección MAC"
-            }]
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Name"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Nombre del dispositivo"
+        }
+      ]
     },
     {
-        "column": "Object_SecondaryID",
-        "mapped_to_column": "cur_IP", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "device_ip",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "IP"
-            },
-			{
-            "language_code":"es_es",
-            "string" : "IP"
-            }]
-    } ,
+      "column": "Object_PrimaryID",
+      "mapped_to_column": "cur_MAC",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC address"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Dirección MAC"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "mapped_to_column": "cur_IP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        },
+        {
+          "language_code": "es_es",
+          "string": "IP"
+        }
+      ]
+    },
     {
       "column": "DateTimeCreated",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Created"
-          },
-		  {
-          "language_code":"es_es",
-          "string" : "Creado"
-          }]
-    },   
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Creado"
+        }
+      ]
+    },
     {
-        "column": "DateTimeChanged",
-        "mapped_to_column": "cur_DateTime", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Changed"
-            },
-			{
-            "language_code":"es_es",
-            "string" : "Cambiado"
-            }]
+      "column": "DateTimeChanged",
+      "mapped_to_column": "cur_DateTime",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambiado"
+        }
+      ]
     },
     {
       "column": "Dummy",
-      "mapped_to_column": "cur_ScanMethod", 
+      "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "UNDIS"                
-      }, 
+        "value": "UNDIS"
+      },
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Scan method"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "Método de escaneo"
-          }]
-  } ,
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Método de escaneo"
+        }
+      ]
+    },
     {
       "column": "ForeignKey",
       "css_classes": "col-sm-2",
       "show": false,
-      "type": "device_mac",            
-      "default_value":"",
+      "type": "device_mac",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "MAC"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "MAC"
-          }]
-      }        
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        },
+        {
+          "language_code": "es_es",
+          "string": "MAC"
+        }
+      ]
+    }
   ]
 }
