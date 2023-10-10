@@ -27,11 +27,19 @@
         {
             "language_code": "es_es",
             "string": "DHCP Leases (Importación de dispositivos)"
+        },
+        {
+            "language_code": "de_de",
+            "string": "DHCP Leases (Geräteimport)"
         }
     ],
     "icon": [
         {
             "language_code": "en_us",
+            "string": "<i class=\"fa-solid fa-hourglass-half\"></i>"
+        },
+        {
+            "language_code": "de_de",
             "string": "<i class=\"fa-solid fa-hourglass-half\"></i>"
         }
     ],
@@ -43,6 +51,10 @@
         {
             "language_code": "es_es",
             "string": "Este plugin es para importar dispositivos desde archivos dhcp.leases."
+        },
+        {
+            "language_code": "de_de",
+            "string": "Ein Plugin zum Importieren von Geräten aus dhcp.leases-Dateien."
         }
     ],
     "params": [
@@ -71,6 +83,10 @@
                 {
                     "language_code": "es_es",
                     "string": "N/A"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "N/A"
                 }
             ]
         },
@@ -91,6 +107,10 @@
                 },
                 {
                     "language_code": "es_es",
+                    "string": "N/A"
+                },
+                {
+                    "language_code": "de_de",
                     "string": "N/A"
                 }
             ]
@@ -114,6 +134,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Dirección MAC"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "MAC-Adresse"
                 }
             ]
         },
@@ -136,6 +160,10 @@
                 {
                     "language_code": "es_es",
                     "string": "IP"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "IP"
                 }
             ]
         },
@@ -157,6 +185,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Creado"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Erstellt"
                 }
             ]
         },
@@ -179,6 +211,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Cambiado"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Geändert"
                 }
             ]
         },
@@ -200,6 +236,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Está activo"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Ist aktiv"
                 }
             ]
         },
@@ -222,6 +262,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Nombre de host"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Hostname"
                 }
             ]
         },
@@ -242,6 +286,10 @@
                 },
                 {
                     "language_code": "es_es",
+                    "string": "Hardware"
+                },
+                {
+                    "language_code": "de_de",
                     "string": "Hardware"
                 }
             ]
@@ -264,6 +312,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Estado"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Zustand"
                 }
             ]
         },
@@ -285,6 +337,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Comentarios"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Kommentare"
                 }
             ]
         },
@@ -306,6 +362,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Archivo DHCP leases"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "DHCP Leases Datei"
                 }
             ]
         },
@@ -331,6 +391,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Método de escaneo"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Scanmethode"
                 }
             ]
         },
@@ -369,6 +433,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Estado"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Status"
                 }
             ]
         }
@@ -400,6 +468,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Cuándo ejecutar"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Wann ausführen"
                 }
             ],
             "description": [
@@ -410,6 +482,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Habilite la importación de dispositivos desde archivos <code>dhcp.leases</code>. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el análisis se ejecuta solo una vez al inicio de la aplicación (contenedor) o después de actualizar su configuración."
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Aktiviere den Import aus <code>dhcp.leases</code>-Dateien. Wenn <code>schedule</code> ausgewählt ist, werden die unten gesetzten Zeitplan-Einstellungen verwendet. Ist <code>once</code> ausgewählt, so wird bei jedem Start der Applikation (Container) und nach jedem Speichern der Einstellungen der Imnport durchgeführt."
                 }
             ]
         },
@@ -430,6 +506,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Comando"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Befehl"
                 }
             ],
             "description": [
@@ -440,6 +520,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Comando a ejecutar"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Auszuführender Befehl"
                 }
             ]
         },
@@ -463,6 +547,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Archivos"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Dateien"
                 }
             ],
             "description": [
@@ -473,6 +561,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Agregue todas las rutas asignadas de dhcp.leases para observar. Ingrese la ruta completa dentro del contenedor, p.e. <code>/mnt/dhcp2.leases</code>. Debe asignar estos archivos en consecuencia en su archivo <code>docker-compose.yml</code>. (Si está asignando un archivo PiHole dhcp.leases, la ruta en el contenedor debe contener <code>pihole</code>, por ejemplo: <code>:/etc/pihole/dhcp.leases</code>)"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Alle zu überwachenden dhcp.leases-Pfade hinzufügen. Den absoluten Pfad innerhalb des Containers angeben, z.B. <code>/mnt/dchp2.leases</code>. Diese Dateien müssen korrekt in der <code>docker-compose.yml</code> gemapped werden. Wird eine PiHole dhcp.leases-Datei in den Container gemapped, so muss der Pfad im Container <code>pihole</code> inkludieren, z.B. <code>:/etc/pihole/dhcp.leases</code>"
                 }
             ]
         },
@@ -493,6 +585,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Schedule"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Zeitplan"
                 }
             ],
             "description": [
@@ -503,6 +599,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#DHCPLSS_RUN\"><code>DHCPLSS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code>Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
                 }
             ]
         },
@@ -526,7 +626,7 @@
                 },
                 {
                     "language_code": "de_de",
-                    "string": "Wartezeit"
+                    "string": "Zeitlimit"
                 }
             ],
             "description": [
@@ -537,6 +637,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
                 }
             ]
         },
@@ -565,6 +669,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Visto"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Überwacht"
                 }
             ],
             "description": [
@@ -575,6 +683,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Enviar una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> está activo </li><li><code>Watched_Value2</code> es el nombre de host </li><li><code>Watched_Value3</code > es hardware </li><li><code>Watched_Value4</code> es Estado </li></ul>"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Aktivstatus</li><li><code>Watched_Value2</code> ist der Hostname</li><li><code>Watched_Value3</code> ist die Hardware</li><li><code>Watched_Value4</code> ist der Zustand </li></ul>"
                 }
             ]
         },
@@ -603,6 +715,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Informar sobre"
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Benachrichtige wenn"
                 }
             ],
             "description": [
@@ -613,6 +729,10 @@
                 {
                     "language_code": "es_es",
                     "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+                },
+                {
+                    "language_code": "de_de",
+                    "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
                 }
             ]
         }
