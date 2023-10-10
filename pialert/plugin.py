@@ -485,6 +485,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             history_to_insert = []
             objects_to_update = []
 
+            # only generate events that we want to be notified on (we only need to do this once as all plugObj have the same prefix)
+            statuses_to_report_on = get_setting_value(pluginPref + "_REPORT_ON")  
             
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
@@ -500,10 +502,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                 if plugObj.status == 'new':
                     objects_to_insert.append(values)
                 else:
-                    objects_to_update.append(values + (plugObj.index,))  # Include index for UPDATE
-
-                # only generate events that we want to be notified on
-                statuses_to_report_on = get_setting_value(plugObj.pluginPref + "_REPORT_ON")                
+                    objects_to_update.append(values + (plugObj.index,))  # Include index for UPDATE              
                 
                 if plugObj.status in statuses_to_report_on:
                     events_to_insert.append(values)

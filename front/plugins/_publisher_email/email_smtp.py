@@ -10,6 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 import socket
+import ssl
 
 # Replace these paths with the actual paths to your Pi.Alert directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
@@ -72,7 +73,12 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config ():
-    if get_setting_value('SMTP_SERVER') == '' or get_setting_value('SMTP_REPORT_FROM') == '' or get_setting_value('SMTP_REPORT_TO') == '':
+
+    server      = get_setting_value('SMTP_SERVER')
+    report_to   = get_setting_value("SMTP_REPORT_TO")
+    report_from = get_setting_value("SMTP_REPORT_FROM")
+    
+    if server == '' or report_from == '' or report_to == '':
         mylog('none', ['[Email Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
         return False
     else:
@@ -86,75 +92,81 @@ def send(pHTML, pText):
     # Compose email
     msg             = MIMEMultipart('alternative')
     msg['Subject']  = 'Pi.Alert Report'
-    msg['From']     = get_setting_value('SMTP_REPORT_FROM')
-    msg['To']       = get_setting_value('SMTP_REPORT_TO')
+    msg['From']     = get_setting_value("SMTP_REPORT_FROM")
+    msg['To']       = get_setting_value("SMTP_REPORT_TO")
     msg.attach (MIMEText (pText, 'plain'))
     msg.attach (MIMEText (pHTML, 'html'))
 
-    failedAt = ''
+    # Set a timeout for the SMTP connection (in seconds)
+    smtp_timeout = 30
 
-    failedAt = print_log ('SMTP try')
+    mylog('debug', ['Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT'))])
 
-    try:
-        # Send mail
-        failedAt = print_log('Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT')))
+    if get_setting_value("LOG_LEVEL") == 'debug':
 
-        # Set a timeout for the SMTP connection (in seconds)
-        smtp_timeout = 30
+        send_email(msg)
 
-        if get_setting_value('SMTP_FORCE_SSL'):
-            failedAt = print_log('SMTP_FORCE_SSL == True so using .SMTP_SSL()')
-            if get_setting_value('SMTP_PORT') == 0:
-                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER)')
-                smtp_connection = smtplib.SMTP_SSL(get_setting_value('SMTP_SERVER'))
-            else:
-                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER, SMTP_PORT)')
-                smtp_connection = smtplib.SMTP_SSL(get_setting_value('SMTP_SERVER'), get_setting_value('SMTP_PORT'), timeout=smtp_timeout)
+    else:
 
+        try:
+            send_email(msg)
+            
+        except smtplib.SMTPAuthenticationError as e:            
+            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
+            mylog('none', ['      ERROR: Double-check your SMTP_USER and SMTP_PASS settings.)'])
+            mylog('none', ['      ERROR: ', str(e)])
+        except smtplib.SMTPServerDisconnected as e:            
+            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected)'])
+            mylog('none', ['      ERROR: ', str(e)])
+        except socket.gaierror as e:            
+            mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror)'])
+            mylog('none', ['      ERROR: ', str(e)])      
+        except ssl.SSLError as e:                        
+            mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
+            mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
+            mylog('none', ['      ERROR: ', str(e)])                     
+
+def send_email(msg):
+    # Send mail
+    if get_setting_value('SMTP_FORCE_SSL'):
+        mylog('debug', ['SMTP_FORCE_SSL == True so using .SMTP_SSL()'])
+        if get_setting_value("SMTP_PORT") == 0:
+            mylog('debug', ['SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER)'])
+            smtp_connection = smtplib.SMTP_SSL(get_setting_value('SMTP_SERVER'))
         else:
-            failedAt = print_log('SMTP_FORCE_SSL == False so using .SMTP()')
-            if get_setting_value('SMTP_PORT') == 0:
-                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER)')
-                smtp_connection = smtplib.SMTP (get_setting_value('SMTP_SERVER'))
-            else:
-                failedAt = print_log('SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER, SMTP_PORT)')
-                smtp_connection = smtplib.SMTP (get_setting_value('SMTP_SERVER'), get_setting_value('SMTP_PORT'))
+            mylog('debug', ['SMTP_PORT == 0 so sending .SMTP_SSL(SMTP_SERVER, SMTP_PORT)'])
+            smtp_connection = smtplib.SMTP_SSL(get_setting_value('SMTP_SERVER'), get_setting_value('SMTP_PORT'), timeout=smtp_timeout)
 
-        failedAt = print_log('Setting SMTP debug level')
+    else:
+        mylog('debug', ['SMTP_FORCE_SSL == False so using .SMTP()'])
+        if get_setting_value("SMTP_PORT") == 0:
+            mylog('debug', ['SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER)'])
+            smtp_connection = smtplib.SMTP (get_setting_value('SMTP_SERVER'))
+        else:
+            mylog('debug', ['SMTP_PORT == 0 so sending .SMTP(SMTP_SERVER, SMTP_PORT)'])
+            smtp_connection = smtplib.SMTP (get_setting_value('SMTP_SERVER'), get_setting_value('SMTP_PORT'))
 
-        # Log level set to debug of the communication between SMTP server and client
-        if get_setting_value('LOG_LEVEL') == 'debug':
-            smtp_connection.set_debuglevel(1)
+    mylog('debug', ['Setting SMTP debug level'])
 
-        failedAt = print_log( 'Sending .ehlo()')
+    # Log level set to debug of the communication between SMTP server and client
+    if get_setting_value('LOG_LEVEL') == 'debug':
+        smtp_connection.set_debuglevel(1)
+
+    mylog('debug', [ 'Sending .ehlo()'])
+    smtp_connection.ehlo()
+
+    if not get_setting_value('SMTP_SKIP_TLS'):
+        mylog('debug', ['SMTP_SKIP_TLS == False so sending .starttls()'])
+        smtp_connection.starttls()
+        mylog('debug', ['SMTP_SKIP_TLS == False so sending .ehlo()'])
         smtp_connection.ehlo()
+    if not get_setting_value('SMTP_SKIP_LOGIN'):
+        mylog('debug', ['SMTP_SKIP_LOGIN == False so sending .login()'])
+        smtp_connection.login (get_setting_value('SMTP_USER'), get_setting_value('SMTP_PASS'))
 
-        if not get_setting_value('SMTP_SKIP_TLS'):
-            failedAt = print_log('SMTP_SKIP_TLS == False so sending .starttls()')
-            smtp_connection.starttls()
-            failedAt = print_log('SMTP_SKIP_TLS == False so sending .ehlo()')
-            smtp_connection.ehlo()
-        if not get_setting_value('SMTP_SKIP_LOGIN'):
-            failedAt = print_log('SMTP_SKIP_LOGIN == False so sending .login()')
-            smtp_connection.login (get_setting_value('SMTP_USER'), get_setting_value('SMTP_PASS'))
-
-        failedAt = print_log('Sending .sendmail()')
-        smtp_connection.sendmail (get_setting_value('SMTP_REPORT_FROM'), get_setting_value('SMTP_REPORT_TO'), msg.as_string())
-        smtp_connection.quit()
-    except smtplib.SMTPAuthenticationError as e:
-        mylog('none', ['      ERROR: Failed at - ', failedAt])
-        mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError), skipping Email (enable LOG_LEVEL=debug for more logging)'])
-        mylog('none', ['      ERROR: ', str(e)])
-    except smtplib.SMTPServerDisconnected as e:
-        mylog('none', ['      ERROR: Failed at - ', failedAt])
-        mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected), skipping Email (enable LOG_LEVEL=debug for more logging)'])
-        mylog('none', ['      ERROR: ', str(e)])
-    except socket.gaierror as e:
-        mylog('none', ['      ERROR: Failed at - ', failedAt])
-        mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror), skipping Email (enable LOG_LEVEL=debug for more logging)'])
-        mylog('none', ['      ERROR: ', str(e)])                
-
-    mylog('debug', [f'[{pluginName}] Last executed - {str(failedAt)}'])
+    mylog('debug', ['Sending .sendmail()'])
+    smtp_connection.sendmail (get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), msg.as_string())
+    smtp_connection.quit()
 
 if __name__ == '__main__':
     sys.exit(main())

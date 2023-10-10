@@ -142,7 +142,7 @@ def create_new_devices (db):
                     FROM CurrentScan"""
 
 
-    mylog('debug',f'[New Devices] 2 Create devices SQL: {sqlQuery}')
+    # mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 

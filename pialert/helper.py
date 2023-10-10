@@ -273,26 +273,43 @@ def get_setting_value(key):
     
     setting = get_setting(key)
 
+    value = ''
+
     if setting is not None:
 
+        mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])
+        
+
+        set_type  = 'Error: Not handled'
+        set_value = 'Error: Not handled'
+
         set_value = setting["Value"]  # Setting value
-        set_type = setting["Type"]  # Setting type
+        set_type = setting["Type"]  # Setting type        
 
         # Handle different types of settings
         if set_type in ['text', 'string', 'password', 'readonly', 'text.select']:
-            return str(set_value)
+            value = str(set_value)
         elif set_type in ['boolean', 'integer.checkbox']:
-            return bool(set_value)
+            
+            value = True
+
+            if set_value in ['false', 'False', 'FALSE', 0]:
+                value = False
+            
         elif set_type in ['integer.select', 'integer']:
-            return int(set_value)
+            value = int(set_value)
         elif set_type in ['text.multiselect', 'list', 'subnets']:
             # Assuming set_value is a list in this case
-            return set_value
+            value = set_value
         elif set_type == '.template':
             # Assuming set_value is a JSON object in this case
-            return json.loads(set_value)
+            value = json.loads(set_value)
+        else:
+            mylog('none', [f'[SETTINGS] ERROR - set_type not handled:{set_type}'])
+            mylog('none', [f'[SETTINGS] ERROR - setting json:{json.dumps(setting)}'])
 
-    return ''
+
+    return value
 
 
 
