@@ -324,142 +324,188 @@ function initializeDatatable () {
       tableColumnHide.push(mapIndx(tableColumnOrder[i]));
     }    
   }
+
+  $.get('api/table_devices.json', function(result) {    
+        // var list = data["data"];
+
+        // Convert JSON data into the desired format
+        var dataArray = {
+          data: result.data.map(function(item) {
+            return [
+              item.dev_Icon || "",
+              item.dev_Name || "",
+              item.dev_Status || "",
+              item.dev_MAC || "",
+              item.dev_LastIP || "",
+              item.dev_Group || "",
+              item.dev_DeviceType || "",
+              item.dev_StaticIP || 0,
+              item.dev_Favorite || "",
+              item.dev_FirstConnection || "",
+              item.dev_LastConnection || "",
+              item.dev_NewDevice || 0,
+              item.dev_MAC_full || "",
+              item.connected_devices || 0,
+              item.dev_Network_Node_MAC_ADDR || "",
+              item.dev_Network_Node_port || 0,
+              item.dev_Network_Node_MAC_ADDR || "",
+              item.dev_Vendor || "",
+              item.dev_Network_Node_port || ""
+            ];
+          })
+        };
+
+        console.log("aaaaa")
+        console.log(JSON.stringify(dataArray))
+        console.log(dataArray)
+        console.log()        
+
+        // TODO Filter
+        // TODO displayed columns
+        // TODO columns order        
+
+        var table=
+        $('#tableDevices').DataTable({
+          'data'         : dataArray["data"],
+          'paging'       : true,
+          'lengthChange' : true,
+          'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, '<?= lang('Device_Tablelenght_all');?>']],
+          'searching'    : true,
+
+          'ordering'     : true,
+          'info'         : true,
+          'autoWidth'    : false,
+
+          // Parameters
+          'pageLength'   : tableRows,
+          'order'        : tableOrder,
+          // 'order'       : [[3,'desc'], [0,'asc']],
+
+          'columnDefs'   : [
+            {visible:   false,         targets: tableColumnHide },      
+            {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15)] },      
+            {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
+            {width:     '30px',        targets: [mapIndx(10), mapIndx(13)] },      
+            {orderData: [mapIndx(12)],          targets: mapIndx(8) },
+
+            // Device Name
+            {targets: [mapIndx(0)],
+              'createdCell': function (td, cellData, rowData, row, col) {      
+                  
+                  console.log(cellData)      
+                  $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            } },
+
+            // Connected Devices       
+            {targets: [mapIndx(15)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                  $(td).html ('<b><a href="./network.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            } },
+
+            // Icon      
+            {targets: [mapIndx(3)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                if (!emptyArr.includes(cellData)){
+                  $(td).html ('<i class="fa fa-'+cellData+' " style="font-size:16px"></i>');
+                } else {
+                  $(td).html ('');
+                }
+            } },
+
+            // Full MAC      
+            {targets: [mapIndx(11)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                if (!emptyArr.includes(cellData)){
+                  $(td).html ('<span class="anonymizeMac">'+cellData+'</span>');
+                } else {
+                  $(td).html ('');
+                }
+            } },
+            
+            // IP address      
+            {targets: [mapIndx(12)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                if (!emptyArr.includes(cellData)){
+                  $(td).html ('<span class="anonymizeIp">'+cellData+'</span>');
+                } else {
+                  $(td).html ('');
+                }
+            } },
+            
+            // Favorite      
+            {targets: [mapIndx(4)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                if (cellData == 1){
+                  $(td).html ('<i class="fa fa-star text-yellow" style="font-size:16px"></i>');
+                } else {
+                  $(td).html ('');
+                }
+            } },
+              
+            // Dates      
+            {targets: [mapIndx(6), mapIndx(7)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                $(td).html (translateHTMLcodes (cellData));
+            } },
+
+            // Random MAC      
+            {targets: [mapIndx(9)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                if (cellData == 1){
+                  $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
+                } else {
+                  $(td).html ('');
+                }
+            } },
+
+            // Status color      
+            {targets: [mapIndx(10)],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                switch (cellData) {
+                  case 'Down':      color='red';              break;
+                  case 'New':       color='yellow';           break;
+                  case 'On-line':   color='green';            break;
+                  case 'Off-line':  color='gray text-white';  break;
+                  case 'Archived':  color='gray text-white';  break;
+                  default:          color='aqua';             break;
+                };
+            
+                $(td).html ('<a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
+            } },
+          ],
+          
+          // Processing
+          'processing'  : true,
+          'language'    : {
+            processing: '<table> <td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td> </table>',
+            emptyTable: 'No data',
+            "lengthMenu": "<?= lang('Device_Tablelenght');?>",
+            "search":     "<?= lang('Device_Searchbox');?>: ",
+            "paginate": {
+                "next":       "<?= lang('Device_Table_nav_next');?>",
+                "previous":   "<?= lang('Device_Table_nav_prev');?>"
+            },
+            "info":           "<?= lang('Device_Table_info');?>",
+          }
+        });
+
+        // Save cookie Rows displayed, and Parameters rows & order
+        $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
+          setParameter (parTableRows, len);
+        } );
+          
+        $('#tableDevices').on( 'order.dt', function () {
+          setParameter (parTableOrder, JSON.stringify (table.order()) );
+          setCache ('devicesList', getDevicesFromTable(table) );
+        } );
+
+        $('#tableDevices').on( 'search.dt', function () {
+          setCache ('devicesList', getDevicesFromTable(table) ); 
+        } );
+
+
+      });    
   
-  var table=
-  $('#tableDevices').DataTable({
-    'paging'       : true,
-    'lengthChange' : true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, '<?= lang('Device_Tablelenght_all');?>']],
-    'searching'    : true,
-
-    'ordering'     : true,
-    'info'         : true,
-    'autoWidth'    : false,
-
-    // Parameters
-    'pageLength'   : tableRows,
-    'order'        : tableOrder,
-    // 'order'       : [[3,'desc'], [0,'asc']],
-
-    'columnDefs'   : [
-      {visible:   false,         targets: tableColumnHide },      
-      {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15)] },      
-      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
-      {width:     '30px',        targets: [mapIndx(10), mapIndx(13)] },      
-      {orderData: [mapIndx(12)],          targets: mapIndx(8) },
-
-      // Device Name
-      {targets: [mapIndx(0)],
-        'createdCell': function (td, cellData, rowData, row, col) {            
-            $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
-      } },
-
-      // Connected Devices       
-      {targets: [mapIndx(15)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html ('<b><a href="./network.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
-      } },
-
-      // Icon      
-      {targets: [mapIndx(3)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          if (!emptyArr.includes(cellData)){
-            $(td).html ('<i class="fa fa-'+cellData+' " style="font-size:16px"></i>');
-          } else {
-            $(td).html ('');
-          }
-      } },
-
-      // Full MAC      
-      {targets: [mapIndx(11)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          if (!emptyArr.includes(cellData)){
-            $(td).html ('<span class="anonymizeMac">'+cellData+'</span>');
-          } else {
-            $(td).html ('');
-          }
-      } },
-      
-      // IP address      
-      {targets: [mapIndx(12)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          if (!emptyArr.includes(cellData)){
-            $(td).html ('<span class="anonymizeIp">'+cellData+'</span>');
-          } else {
-            $(td).html ('');
-          }
-      } },
-      
-      // Favorite      
-      {targets: [mapIndx(4)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          if (cellData == 1){
-            $(td).html ('<i class="fa fa-star text-yellow" style="font-size:16px"></i>');
-          } else {
-            $(td).html ('');
-          }
-      } },
-        
-      // Dates      
-      {targets: [mapIndx(6), mapIndx(7)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          $(td).html (translateHTMLcodes (cellData));
-      } },
-
-      // Random MAC      
-      {targets: [mapIndx(9)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          if (cellData == 1){
-            $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
-          } else {
-            $(td).html ('');
-          }
-      } },
-
-      // Status color      
-      {targets: [mapIndx(10)],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          switch (cellData) {
-            case 'Down':      color='red';              break;
-            case 'New':       color='yellow';           break;
-            case 'On-line':   color='green';            break;
-            case 'Off-line':  color='gray text-white';  break;
-            case 'Archived':  color='gray text-white';  break;
-            default:          color='aqua';             break;
-          };
-      
-          $(td).html ('<a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
-      } },
-    ],
-    
-    // Processing
-    'processing'  : true,
-    'language'    : {
-      processing: '<table> <td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td> </table>',
-      emptyTable: 'No data',
-      "lengthMenu": "<?= lang('Device_Tablelenght');?>",
-      "search":     "<?= lang('Device_Searchbox');?>: ",
-      "paginate": {
-          "next":       "<?= lang('Device_Table_nav_next');?>",
-          "previous":   "<?= lang('Device_Table_nav_prev');?>"
-      },
-      "info":           "<?= lang('Device_Table_info');?>",
-    }
-  });
-
-  // Save cookie Rows displayed, and Parameters rows & order
-  $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
-    setParameter (parTableRows, len);
-  } );
-    
-  $('#tableDevices').on( 'order.dt', function () {
-    setParameter (parTableOrder, JSON.stringify (table.order()) );
-    setCache ('devicesList', getDevicesFromTable(table) );
-  } );
-
-  $('#tableDevices').on( 'search.dt', function () {
-    setCache ('devicesList', getDevicesFromTable(table) ); 
-  } );
 
 };
 
@@ -513,11 +559,6 @@ function getDevicesTotals () {
   } );
 }
 
-
-// -----------------------------------------------------------------------------
-function getDeviceColumns () {
-
-}
 // -----------------------------------------------------------------------------
 function getDevicesList (status) {
   // Save status selected
@@ -539,9 +580,60 @@ function getDevicesList (status) {
   $('#tableDevicesBox')[0].className = 'box box-'+ color;
   $('#tableDevicesTitle').html (tableTitle);
 
+  
+
+  $.get('api/table_devices.json', function(result_1) {    
+        // var list = data["data"];
+
+        // Convert JSON data into the desired format
+        var dataArray = {
+          data: result_1.data.map(function(item) {
+            return [
+              item.dev_Icon || "",
+              item.dev_Name || "",
+              item.dev_Status || "",
+              item.dev_MAC || "",
+              item.dev_LastIP || "",
+              item.dev_Group || "",
+              item.dev_DeviceType || "",
+              item.dev_StaticIP || 0,
+              item.dev_Favorite || "",
+              item.dev_FirstConnection || "",
+              item.dev_LastConnection || "",
+              item.dev_NewDevice || 0,
+              item.dev_MAC_full || "",
+              item.connected_devices || 0,
+              item.dev_Network_Node_MAC_ADDR || "",
+              item.dev_Network_Node_port || 0,
+              item.dev_Network_Node_MAC_ADDR || "",
+              item.dev_Vendor || "",
+              item.dev_Network_Node_port || ""
+            ];
+          })
+        };
+
+        console.log("aaaaa")
+        console.log(JSON.stringify(dataArray))
+        console.log(dataArray)
+        console.log(dataArray["data"])
+        // console.log(result_2)
+
+        // $('#tableDevices').DataTable();
+
+        // TODO Filter
+        // TODO displayed columns
+        // TODO columns order
+
+        // Initialize DataTable with your data
+        // $('#tableDevices').DataTable(dataArray);
+
+
+      });   
+
   // Define new datasource URL and reload
-  $('#tableDevices').DataTable().ajax.url(
-    'php/server/devices.php?action=getDevicesList&status=' + deviceStatus).load();
+  // $('#tableDevices').DataTable().ajax.url(
+  //   'php/server/devices.php?action=getDevicesList&status=' + deviceStatus
+  //   ).load();
 };
 
 function handleLoadingDialog()

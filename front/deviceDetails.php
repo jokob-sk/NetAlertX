@@ -1177,7 +1177,7 @@ function getDeviceData (readAllData=false) {
     $("body").css                 ("cursor", "progress");
   }
 
-  // get data from server
+  // get data from server 
   $.get('php/server/devices.php?action=getDeviceData&mac='+ mac + '&period='+ period, function(data) {
 
     var deviceData = JSON.parse(data);
