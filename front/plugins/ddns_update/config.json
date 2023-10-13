@@ -1,7 +1,7 @@
 {
   "code_name": "ddns_update",
   "unique_prefix": "DDNS",
-  "enabled": true,  
+  "enabled": true,
   "data_filters": [
     {
       "compare_column": "Object_PrimaryID",
@@ -22,11 +22,19 @@
     {
       "language_code": "en_us",
       "string": "DDNS update"
+    },
+    {
+      "language_code": "de_de",
+      "string": "DDNS-Aktualisierung"
     }
   ],
   "icon": [
     {
       "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-globe\"></i>"
     }
   ],
@@ -34,6 +42,10 @@
     {
       "language_code": "en_us",
       "string": "A plugin update the DDNS record."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zur regelmäßigen Aktualisierung eines DynDNS-Eintrags."
     }
   ],
   "params": [
@@ -66,7 +78,9 @@
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": "text.select",
       "default_value": "disabled",
       "options": [
@@ -90,13 +104,17 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wann laufen"
+          "string": "Wann ausführen"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "When the plugin should run. An hourly or daily <code>SCHEDULE</code> is a good option."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann das Plugin ausgeführt werden soll. Eine stündliche oder tägliche <code>SCHEDULE</code> wird empfohlen."
         }
       ]
     },
@@ -158,7 +176,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Schedule"
+          "string": "Zeitplan"
         }
       ],
       "description": [
@@ -172,7 +190,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#DDNS_RUN\"><code>DDNS_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#DDNS_RUN\"><code>DDNS_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt."
         }
       ]
     },
@@ -196,7 +214,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Zeitüberschreitung"
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -231,6 +249,10 @@
         {
           "language_code": "es_es",
           "string": "URL del dominio DynDNS"
+        },
+        {
+          "language_code": "de_de",
+          "string": "DynDNS Domain URL"
         }
       ],
       "description": [
@@ -241,6 +263,10 @@
         {
           "language_code": "es_es",
           "string": "URL del host DynDNS (no incluya http:// o https://)."
+        },
+        {
+          "language_code": "de_de",
+          "string": "DynDNS Host URL (do not include http:// or https://)."
         }
       ]
     },
@@ -261,6 +287,10 @@
         {
           "language_code": "es_es",
           "string": "Usuario de DynDNS"
+        },
+        {
+          "language_code": "de_de",
+          "string": "DynDNS Benutzer"
         }
       ],
       "description": [
@@ -271,6 +301,10 @@
         {
           "language_code": "es_es",
           "string": "El nombre de usuario utilizado para iniciar sesión en el servicio DynDNS (a veces, una dirección de correo electrónico completa)."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benutzername, welcher zum Login beim DynDNS-Service verwendet wird (manchmal die E-Mail-Adresse)."
         }
       ]
     },
@@ -291,6 +325,10 @@
         {
           "language_code": "es_es",
           "string": "Contraseña de DynDNS"
+        },
+        {
+          "language_code": "de_de",
+          "string": "DynDNS Passwort"
         }
       ],
       "description": [
@@ -301,6 +339,10 @@
         {
           "language_code": "es_es",
           "string": "La contraseña de acceso al servicio DynDNS."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Passwort, welches zum Login beim DynDNS-Service verwendet wird."
         }
       ]
     },
@@ -321,6 +363,10 @@
         {
           "language_code": "es_es",
           "string": "URL de actualización de DynDNS"
+        },
+        {
+          "language_code": "de_de",
+          "string": "DynDNS Aktualisierungs-URL"
         }
       ],
       "description": [
@@ -331,6 +377,10 @@
         {
           "language_code": "es_es",
           "string": "Actualice la URL que comienza con <code>http://</code> o <code>https://</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Aktualisierungs-URL beginnend mit <code>http://</code> oder <code>https://</code>."
         }
       ]
     },
@@ -358,42 +408,73 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die Vorige IP (nicht empfohlen)</li><li><code>Watched_Value2</code> ist nicht in Verwendung</li><li><code>Watched_Value3</code> ist nicht in Verwendung </li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
         }
       ]
     },
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value":["new","watched-changed"],
-      "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "Report on"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Informar sobre"
-      }            ] ,
-      "description":[{
-          "language_code":"en_us",
-          "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
-      }] 
-  }
+      "default_value": [
+        "new",
+        "watched-changed"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
+        }
+      ]
+    }
   ],
   "database_column_definitions": [
     {
-      "column": "Object_PrimaryID",      
+      "column": "Object_PrimaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_name_mac",
@@ -410,11 +491,15 @@
         {
           "language_code": "es_es",
           "string": "MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC"
         }
       ]
     },
     {
-      "column": "Object_SecondaryID",      
+      "column": "Object_SecondaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_ip",
@@ -430,6 +515,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "IP"
+        },
+        {
+          "language_code": "de_de",
           "string": "IP"
         }
       ]
@@ -448,11 +537,15 @@
         {
           "language_code": "en_us",
           "string": "Extra"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Extra"
         }
       ]
     },
     {
-      "column": "Dummy",      
+      "column": "Dummy",
       "mapped_to_column_data": {
         "value": "DDNS"
       },
@@ -472,6 +565,10 @@
         {
           "language_code": "es_es",
           "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
         }
       ]
     },
@@ -493,11 +590,15 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
     {
-      "column": "DateTimeChanged",      
+      "column": "DateTimeChanged",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -514,6 +615,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     },
@@ -552,6 +657,10 @@
         {
           "language_code": "es_es",
           "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
         }
       ]
     }

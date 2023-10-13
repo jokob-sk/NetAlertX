@@ -1,6 +1,6 @@
 ## Overview
 
-Plugin to run regular DDNS update tasks. 
+Plugin to run regular DDNS update tasks.
 
 ### Usage
 

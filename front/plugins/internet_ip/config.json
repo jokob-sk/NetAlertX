@@ -23,11 +23,19 @@
     {
       "language_code": "en_us",
       "string": "Internet check"
+    },
+    {
+      "language_code": "en_us",
+      "string": "Internet-Check"
     }
   ],
   "icon": [
     {
       "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-globe\"></i>"
     }
   ],
@@ -35,6 +43,10 @@
     {
       "language_code": "en_us",
       "string": "A plugin to check your internet connectivity and IP."
+    },
+    {
+      "language_code": "en_us",
+      "string": "Ein Plugin zur Prüfung der Internetverbindung und externen IP."
     }
   ],
   "params": [
@@ -53,7 +65,9 @@
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": "text.select",
       "default_value": "schedule",
       "options": [
@@ -77,13 +91,17 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wann laufen"
+          "string": "Wann ausführen"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "When the plugin should run. An hourly or daily <code>SCHEDULE</code> is a good option."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann das Plugin ausgeführt werden soll. Eine stündliche oder tägliche <code>SCHEDULE</code> wird empfohlen."
         }
       ]
     },
@@ -145,7 +163,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Schedule"
+          "string": "Zeitplan"
         }
       ],
       "description": [
@@ -159,7 +177,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code>Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ]
     },
@@ -183,7 +201,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Zeitüberschreitung"
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -225,38 +243,69 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die Vorige IP (nicht empfohlen)</li><li><code>Watched_Value2</code> ist nicht in Verwendung</li><li><code>Watched_Value3</code> ist nicht in Verwendung </li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
         }
       ]
     },
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value":["new","watched-changed"],
-      "options": ["new","watched-changed","watched-not-changed", "missing-in-last-scan"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "Report on"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Informar sobre"
-      }            ] ,
-      "description":[{
-          "language_code":"en_us",
-          "string" : "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
-      }] 
-  }
+      "default_value": [
+        "new",
+        "watched-changed"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
+        }
+      ]
+    }
   ],
   "database_column_definitions": [
     {
@@ -277,6 +326,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "MAC"
+        },
+        {
+          "language_code": "de_de",
           "string": "MAC"
         }
       ]
@@ -300,6 +353,10 @@
         {
           "language_code": "es_es",
           "string": "IP"
+        },
+        {
+          "language_code": "de_de",
+          "string": "IP"
         }
       ]
     },
@@ -316,6 +373,10 @@
       "name": [
         {
           "language_code": "en_us",
+          "string": "Extra"
+        },
+        {
+          "language_code": "de_de",
           "string": "Extra"
         }
       ]
@@ -342,6 +403,10 @@
         {
           "language_code": "es_es",
           "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
         }
       ]
     },
@@ -363,6 +428,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -385,6 +454,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     },
@@ -423,6 +496,10 @@
         {
           "language_code": "es_es",
           "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
         }
       ]
     }
