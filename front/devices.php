@@ -330,8 +330,35 @@ function filterDataByStatus(data, status) {
     }
   });
 }
-// -----------------------------------------------------------------------------
 
+// -----------------------------------------------------------------------------
+function getDeviceStatus(item)
+{
+    if(item.dev_PresentLastScan === 1)
+    {
+      return 'On-line';
+    }
+    else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  === 1)
+    {
+      return 'Down';
+    }
+    else if(item.dev_NewDevice === 1)
+    {
+      return 'New';
+    }
+    else if(item.dev_Archived === 1)
+    {
+      return 'Archived';
+    }
+    else if(item.dev_PresentLastScan === 0)
+    {
+      return 'Off-line';
+    }
+
+    return "Unknown status"
+}
+
+// -----------------------------------------------------------------------------
 function initializeDatatable (status) {
 
   // Save status selected
@@ -354,7 +381,6 @@ function initializeDatatable (status) {
   $('#tableDevicesTitle').html (tableTitle);
 
 
-
   for(i = 0; i < tableColumnOrder.length; i++)
   {    
     // hide this column if not in the tableColumnVisible variable (we need to keep the MAC address (index 11) for functionality reasons)    
@@ -364,14 +390,6 @@ function initializeDatatable (status) {
     }    
   }
 
-  console.log("tableColumnOrder")
-  console.log(tableColumnOrder)
-  console.log("tableColumnVisible")
-  console.log(tableColumnVisible)
-  console.log("tableColumnHide")
-  console.log(tableColumnHide)
-  console.log(headersDefaultOrder)
-
   $.get('api/table_devices.json', function(result) {           
     
     // Filter the data based on deviceStatus
@@ -380,7 +398,7 @@ function initializeDatatable (status) {
     // Convert JSON data into the desired format
     var dataArray = {
       data: filteredData.map(function(item) {            
-        return [
+        var originalRow = [
           item.dev_Name || "",
           item.dev_Owner || "",          
           item.dev_DeviceType || "",
@@ -392,7 +410,7 @@ function initializeDatatable (status) {
           item.dev_LastConnection || "",          
           item.dev_LastIP || "",
           item.dev_MAC || "",          // TODO handle internet node mac
-          "status",
+          getDeviceStatus(item) || "",
           item.dev_MAC || "",      // hidden          
           item.dev_LastIP || "",  // IP orderable
           item.rowid || "",
@@ -401,14 +419,19 @@ function initializeDatatable (status) {
           item.dev_Location || "",
           item.dev_Vendor || "",
           item.dev_Network_Node_port || 0
-        ].map(function(value, oldIndex, arr) {
-            const newIndex = mapIndx(oldIndex); // Get the new index for this column
-            return arr[newIndex]; // Reorder the values based on the new index
-    });
+        ]
+
+        var newRow = []
+        
+        // reorder data based on user-definer columns order
+        for(index = 0; index < tableColumnOrder.length; index++)
+        {
+          newRow.push(originalRow[tableColumnOrder[index]]);
+        }
+
+        return newRow;      
       })
     };
-
-    console.log(dataArray["data"])
     
     // TODO displayed columns
 
@@ -527,7 +550,7 @@ function initializeDatatable (status) {
               default:          color='aqua';             break;
             };
         
-            // $(td).html ('<a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
+            $(td).html ('<a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
         } },
       ],
       
