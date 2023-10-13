@@ -646,12 +646,14 @@ function getDevicesList() {
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
-    $defaultOrder = array ($row['dev_Name'],
+    $defaultOrder = array (
+                            $row['dev_Name'],
                             $row['dev_Owner'],
                             handleNull($row['dev_DeviceType']),
                             handleNull($row['dev_Icon'], "laptop"),
                             $row['dev_Favorite'],
                             $row['dev_Group'],
+                            // ----
                             formatDate ($row['dev_FirstConnection']),
                             formatDate ($row['dev_LastConnection']),
                             $row['dev_LastIP'],

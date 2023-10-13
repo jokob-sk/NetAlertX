@@ -25,7 +25,7 @@ Specify the network filter (which **significantly** speeds up the scan process).
 
 **Example value: `--interface=eth0`**
 
-The adapter will probably be `eth0` or `eth1`. (Run `iwconfig` in the container to find your interface name(s)) 
+The adapter will probably be `eth0` or `eth1`. (Check `System info` > `Network Hardware` or run `iwconfig` in the container to find your interface name(s)) 
 
 > Run `iwconfig` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
 

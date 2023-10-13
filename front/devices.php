@@ -198,9 +198,30 @@
   var tableRows       = 10;
   var tableOrder      = [[3,'desc'], [0,'asc']];
   
+  var tableColumnHide = [];
   var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]';
   var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; 
   var tableColumnVisible = tableColumnOrder;
+  //initialize the table headers in the correct order
+  var headersDefaultOrder = [ getString('Device_TableHead_Name'),
+                                  getString('Device_TableHead_Owner'),
+                                  getString('Device_TableHead_Type'),   
+                                  getString('Device_TableHead_Icon'),
+                                  getString('Device_TableHead_Favorite'),
+                                  getString('Device_TableHead_Group'),
+                                  getString('Device_TableHead_FirstSession'),
+                                  getString('Device_TableHead_LastSession'),
+                                  getString('Device_TableHead_LastIP'),
+                                  getString('Device_TableHead_MAC'),
+                                  getString('Device_TableHead_Status'),
+                                  getString('Device_TableHead_MAC_full'),
+                                  getString('Device_TableHead_LastIPOrder'),
+                                  getString('Device_TableHead_Rowid'),
+                                  getString('Device_TableHead_Parent_MAC'),
+                                  getString('Device_TableHead_Connected_Devices'),
+                                  getString('Device_TableHead_Location'),
+                                  getString('Device_TableHead_Vendor')
+                                ];
 
   // Read parameters & Initialize components
   main();
@@ -232,29 +253,6 @@ function main () {
     
       // save the columns order in the Devices page 
       tableColumnOrder = numberArrayFromString(data);
-
-
-
-      //initialize the table headers in the correct order
-      var headersDefaultOrder = [ getString('Device_TableHead_Name'),
-                                  getString('Device_TableHead_Owner'),
-                                  getString('Device_TableHead_Type'),   
-                                  getString('Device_TableHead_Icon'),
-                                  getString('Device_TableHead_Favorite'),
-                                  getString('Device_TableHead_Group'),
-                                  getString('Device_TableHead_FirstSession'),
-                                  getString('Device_TableHead_LastSession'),
-                                  getString('Device_TableHead_LastIP'),
-                                  getString('Device_TableHead_MAC'),
-                                  getString('Device_TableHead_Status'),
-                                  getString('Device_TableHead_MAC_full'),
-                                  getString('Device_TableHead_LastIPOrder'),
-                                  getString('Device_TableHead_Rowid'),
-                                  getString('Device_TableHead_Parent_MAC'),
-                                  getString('Device_TableHead_Connected_Devices'),
-                                  getString('Device_TableHead_Location'),
-                                  getString('Device_TableHead_Vendor')
-                                ];
 
       html = '';
                                   
@@ -298,8 +296,6 @@ function main () {
 }
 
 // -----------------------------------------------------------------------------
-var tableColumnHide = [];
-
 // mapping the default order to the user specified one
 function mapIndx(oldIndex)
 {
@@ -368,9 +364,13 @@ function initializeDatatable (status) {
     }    
   }
 
+  console.log("tableColumnOrder")
   console.log(tableColumnOrder)
+  console.log("tableColumnVisible")
   console.log(tableColumnVisible)
+  console.log("tableColumnHide")
   console.log(tableColumnHide)
+  console.log(headersDefaultOrder)
 
   $.get('api/table_devices.json', function(result) {           
     
@@ -387,13 +387,13 @@ function initializeDatatable (status) {
           item.dev_Icon || "",
           item.dev_Favorite || "",
           item.dev_Group || "",
+          // ---
           item.dev_FirstConnection || "",
           item.dev_LastConnection || "",          
           item.dev_LastIP || "",
           item.dev_MAC || "",          // TODO handle internet node mac
           "status",
-          item.dev_MAC || "",      // hidden
-          item.dev_StaticIP || 0,
+          item.dev_MAC || "",      // hidden          
           item.dev_LastIP || "",  // IP orderable
           item.rowid || "",
           item.dev_Network_Node_MAC_ADDR || "",
@@ -401,9 +401,14 @@ function initializeDatatable (status) {
           item.dev_Location || "",
           item.dev_Vendor || "",
           item.dev_Network_Node_port || 0
-        ];
+        ].map(function(value, oldIndex, arr) {
+            const newIndex = mapIndx(oldIndex); // Get the new index for this column
+            return arr[newIndex]; // Reorder the values based on the new index
+    });
       })
     };
+
+    console.log(dataArray["data"])
     
     // TODO displayed columns
 
@@ -442,7 +447,7 @@ function initializeDatatable (status) {
         {targets: [mapIndx(0)],
           'createdCell': function (td, cellData, rowData, row, col) {      
               
-              console.log(cellData)      
+              // console.log(cellData)      
               $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
         } },
 
@@ -512,7 +517,7 @@ function initializeDatatable (status) {
         {targets: [mapIndx(10)],
           'createdCell': function (td, cellData, rowData, row, col) {
 
-            console.log(cellData)
+            // console.log(cellData)
             switch (cellData) {
               case 'Down':      color='red';              break;
               case 'New':       color='yellow';           break;
