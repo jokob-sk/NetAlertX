@@ -169,9 +169,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
     if set == None:   
         set_RUN_TIMEOUT = 10
     else:     
-        set_RUN_TIMEOUT = set["value"] 
-
-        
+        set_RUN_TIMEOUT = set["value"]         
 
     #  Prepare custom params    
     params = []
@@ -324,13 +322,15 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         
         fullSqlitePath = set["value"]
 
+
         #  try attaching the sqlite DB
         try:
             sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL_"+plugin["unique_prefix"])
-        except sqlite3.Error as e:
-            mylog('none',[ '[Plugin] - ATTACH DATABASE failed with SQL ERROR: ', e])
-
-        arr = db.get_sql_array (q) 
+            arr = db.get_sql_array (q) 
+        except sqlite3.Error as e:            
+            mylog('none',[f'[Plugins] Error: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
+            mylog('none',[f'[Plugins] Error: ATTACH DATABASE failed with SQL ERROR: ', e])
+            return pluginsState            
 
         for row in arr:
             # There has to be always 9 columns
