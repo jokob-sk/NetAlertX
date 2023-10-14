@@ -79,19 +79,15 @@
         {
             "column": "Object_SecondaryID",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+                "string" : "Sensor ID"
+				}]
         },
         {
             "column": "DateTimeCreated",
@@ -109,7 +105,7 @@
         {
             "column": "DateTimeChanged",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
@@ -133,55 +129,48 @@
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Notification GUID"
+                "string" : "Device name"
 				}]
         },
         {
             "column": "Watched_Value2",
             "css_classes": "col-sm-8",
             "show": true,
-            "type": "textarea_readonly",            
+            "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Result"
+                "string" : "Sensor type"
 				}]
         },
         {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+                "string" : "Sensor name"
+				}]
         },
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+                "string" : "Hash"
+				}
+				]
         },       
         {
             "column": "UserData",
@@ -203,7 +192,7 @@
         {
             "column": "Status",
             "css_classes": "col-sm-1",
-            "show": false,
+            "show": true,
             "type": "replace",            
             "default_value":"",
             "options": [

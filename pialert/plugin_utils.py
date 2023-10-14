@@ -6,6 +6,7 @@ from logger import mylog
 from const import pluginsPath, logPath
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 
+module_name = 'Plugin utils'
 
 #-------------------------------------------------------------------------------
 def logEventStatusCounts(objName, pluginEvents):
@@ -19,17 +20,17 @@ def logEventStatusCounts(objName, pluginEvents):
             status_counts[status] = 1
 
     for status, count in status_counts.items():
-        mylog('debug', [f'[Plugins] In {objName} there are {count} events with the status "{status}" '])
+        mylog('debug', [f'[{module_name}] In {objName} there are {count} events with the status "{status}" '])
 
 
 #-------------------------------------------------------------------------------
 def print_plugin_info(plugin, elements = ['display_name']):
 
-    mylog('verbose', ['[Plugins] ---------------------------------------------']) 
+    mylog('verbose', [f'[{module_name}] ---------------------------------------------']) 
 
     for el in elements:
         res = get_plugin_string(plugin, el)
-        mylog('verbose', ['[Plugins] ', el ,': ', res]) 
+        mylog('verbose', [f'[{module_name}] ', el ,': ', res]) 
 
 
 #-------------------------------------------------------------------------------
@@ -41,9 +42,9 @@ def get_plugin_setting(plugin, function_key):
     for set in plugin['settings']:
         if set["function"] == function_key:
           result =  set 
-
-    if result == None:
-        mylog('debug', ['[Plugins] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
+          
+    # if result == None:
+    #     mylog('debug', [f'[{module_name}] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
 
     return result
 
@@ -76,9 +77,9 @@ def list_to_csv(arr):
     tmp = ''
     arrayItemStr = ''
 
-    mylog('debug', '[Plugins] Flattening the below array')    
+    mylog('debug', f'[{module_name}] Flattening the below array')    
     mylog('debug', arr)    
-    mylog('debug', f'[Plugins] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}')    
+    mylog('debug', f'[{module_name}] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}')    
 
     if isinstance(arr, str):
         return arr.replace('[','').replace(']','').replace("'", '')  # removing brackets and single quotes (not allowed)    
@@ -97,12 +98,12 @@ def list_to_csv(arr):
 
         tmp = tmp[:-1]  # Remove last comma ','
 
-        mylog('debug', f'[Plugins] Flattened array: {tmp}')    
+        mylog('debug', f'[{module_name}] Flattened array: {tmp}')    
 
         return tmp
 
     else:
-        mylog('none', f'[Plugins] ERROR Could not convert array: {arr}')    
+        mylog('none', f'[{module_name}] ERROR Could not convert array: {arr}')    
 
 
 
@@ -128,7 +129,7 @@ def combine_plugin_objects(old, new):
 # Replace {wildcars} with parameters
 def resolve_wildcards_arr(commandArr, params):
 
-    mylog('debug', ['[Plugins] Pre-Resolved CMD: '] + commandArr)   
+    mylog('debug', [f'[{module_name}] Pre-Resolved CMD: '] + commandArr)   
 
     for param in params:
         # mylog('debug', ['[Plugins] key     : {', param[0], '}'])
@@ -181,5 +182,36 @@ def handle_empty(value):
 
     return value    
 
+#-------------------------------------------------------------------------------
+# Get and return a plugin object based on key-value pairs
+# keyValues example: getPluginObject({"Plugin":"MQTT", "Watched_Value4":"someValue"})
+def getPluginObject(keyValues):
+
+    plugins_objects = apiPath + 'table_plugins_objects.json'
+
+    try:
+        with open(plugins_objects, 'r') as json_file:
+            data = json.load(json_file)
+
+            for item in data.get("data", []):
+                # Initialize a flag to check if all key-value pairs match
+                all_match = True
+                for key, value in keyValues.items():
+                    if item.get(key) != value:
+                        all_match = False
+                        break  # No need to continue checking if one pair doesn't match
+                
+                if all_match:
+                    return item
+
+            mylog('debug', [f'[{module_name}] Error - Object not found {json.dumps(keyValues)} '])  
+
+            return None
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
+        mylog('none', [f'[{module_name}] Error - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
+
+        return None
 
 

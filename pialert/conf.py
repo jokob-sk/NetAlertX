@@ -24,12 +24,6 @@ last_scan_run = ''
 last_version_check = ''
 arpscan_devices = []
 
-# for MQTT
-mqtt_connected_to_broker = False
-mqtt_sensors = []
-client = None  # mqtt client
-
-
 # ACTUAL CONFIGRATION ITEMS set to defaults
 
 # -------------------------------------------

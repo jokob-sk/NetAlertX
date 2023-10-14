@@ -123,3 +123,63 @@ class AppEvent_obj:
         # Commit changes
         self.db.commitDB()
 
+
+def getPluginObject(**kwargs):
+
+    # Check if nothing, end
+    if not any(kwargs.values()):
+            return None
+
+    # Optional parameters
+    GUID          = kwargs.get("GUID", "")
+    Plugin        = kwargs.get("Plugin", "")
+    MAC           = kwargs.get("MAC", "")
+    IP            = kwargs.get("IP", "")
+    PrimaryID     = kwargs.get("PrimaryID", "")
+    SecondaryID   = kwargs.get("SecondaryID", "")
+    ForeignKey    = kwargs.get("ForeignKey", "")
+    Index         = kwargs.get("Index", "")
+    RowID         = kwargs.get("RowID", "")
+
+    # we need the plugin
+    if Plugin == "":
+        return None
+
+    plugins_objects = apiPath + 'table_plugins_objects.json'
+
+    try:
+        with open(plugins_objects, 'r') as json_file:
+
+            data = json.load(json_file)
+
+            for item in data.get("data",[]):
+                if item.get("Index") == Index:
+                    return item
+
+            for item in data.get("data",[]):
+                if item.get("ObjectPrimaryID") == PrimaryID and item.get("ObjectSecondaryID") == SecondaryID:                    
+                    return item
+            
+            for item in data.get("data",[]):
+                if item.get("ObjectPrimaryID") == MAC and item.get("ObjectSecondaryID") == IP:
+                    return item
+
+            for item in data.get("data",[]):
+                if item.get("ObjectPrimaryID") == PrimaryID and item.get("ObjectSecondaryID") == IP:
+                    return item
+
+            for item in data.get("data",[]):
+                if item.get("ObjectPrimaryID") == MAC and item.get("ObjectSecondaryID") == IP:
+                    return item
+                
+
+            mylog('debug', [f'[{module_name}] Error - Object not found - GUID:{GUID} | Plugin:{Plugin} | MAC:{MAC} | IP:{IP} | PrimaryID:{PrimaryID} | SecondaryID:{SecondaryID} | ForeignKey:{ForeignKey} | Index:{Index} | RowID:{RowID} '])  
+
+            return None
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
+        mylog('none', [f'[{module_name}] Error - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
+
+        return None
+

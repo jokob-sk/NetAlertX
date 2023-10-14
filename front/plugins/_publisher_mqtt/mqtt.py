@@ -17,7 +17,9 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 #  PiAlert modules
 import conf
-from plugin_helper import Plugin_Objects
+from const import apiPath
+from plugin_helper import getPluginObject
+from plugin_utils import Plugin_Objects
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, noti_obj, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
@@ -27,7 +29,17 @@ from database import DB, get_all_devices, get_device_stats
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+
+# Initialize the Plugin obj output file
+plugin_objects = Plugin_Objects(RESULT_FILE)
+
 pluginName = 'MQTT'
+
+# globals
+
+mqtt_sensors                = []
+mqtt_connected_to_broker    = False
+client                      = None  # mqtt client
 
 def main():
     
@@ -43,6 +55,8 @@ def main():
     db.open()
 
     mqtt_start(db)
+
+    plugin_objects.write_result_file()
 
 
 
@@ -68,6 +82,21 @@ class sensor_config:
         self.sensorName = sensorName
         self.icon = icon 
         self.hash = str(hash(str(deviceId) + str(deviceName)+ str(sensorType)+ str(sensorName)+ str(icon)))
+        self.isNew = getPluginObject({"Plugin":"MQTT", "Watched_Value4":hash}) is None
+
+        # Log sensor
+        global plugin_objects
+
+        plugin_objects.add_object(
+            primaryId   = pluginName,
+            secondaryId = deviceId,            
+            watched1    = deviceName,
+            watched2    = sensorType,            
+            watched3    = sensorName,
+            watched4    = hash,
+            extra       = 'null',
+            foreignKey  = deviceId
+        )
 
 #-------------------------------------------------------------------------------
 
@@ -105,68 +134,70 @@ def create_generic_device(client):
 #-------------------------------------------------------------------------------
 def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):    
 
-    new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon)
+    global mqtt_sensors
 
-    # check if config already in list and if not, add it, otherwise skip
-    is_unique = True
-
-    mylog('minimal', [f"[{pluginName}] Already previously published sensors: {len(conf.mqtt_sensors)}"])
-
-    for sensor in conf.mqtt_sensors:
-        if sensor.hash == new_sensor_config.hash:
-            is_unique = False
-            break
+    new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon) 
            
-    # save if unique
-    if is_unique:             
+    # save if new
+    if new_sensor_config.isNew:   
+        mylog('minimal', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])          
         publish_sensor(client, new_sensor_config)        
 
 
 
 
 #-------------------------------------------------------------------------------
-def publish_sensor(client, sensorConf):         
+def publish_sensor(client, sensorConfig):      
+
+    global mqtt_sensors   
 
     message = '{ \
-                "name":"'+ sensorConf.deviceName +' '+sensorConf.sensorName+'", \
-                "state_topic":"system-sensors/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/state", \
-                "value_template":"{{value_json.'+sensorConf.sensorName+'}}", \
-                "unique_id":"'+sensorConf.deviceId+'_sensor_'+sensorConf.sensorName+'", \
+                "name":"'+ sensorConfig.deviceName +' '+sensorConfig.sensorName+'", \
+                "state_topic":"system-sensors/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/state", \
+                "value_template":"{{value_json.'+sensorConfig.sensorName+'}}", \
+                "unique_id":"'+sensorConfig.deviceId+'_sensor_'+sensorConfig.sensorName+'", \
                 "device": \
                     { \
-                        "identifiers": ["'+sensorConf.deviceId+'_sensor"], \
+                        "identifiers": ["'+sensorConfig.deviceId+'_sensor"], \
                         "manufacturer": "PiAlert", \
-                        "name":"'+sensorConf.deviceName+'" \
+                        "name":"'+sensorConfig.deviceName+'" \
                     }, \
-                "icon":"mdi:'+sensorConf.icon+'" \
+                "icon":"mdi:'+sensorConfig.icon+'" \
                 }'
 
-    topic='homeassistant/'+sensorConf.sensorType+'/'+sensorConf.deviceId+'/'+sensorConf.sensorName+'/config'
+    topic='homeassistant/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/'+sensorConfig.sensorName+'/config'
 
     # add the sensor to the global list to keep track of succesfully added sensors
     if publish_mqtt(client, topic, message):        
                                      # hack - delay adding to the queue in case the process is 
         time.sleep(get_setting_value('MQTT_DELAY_SEC'))   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
-        conf.mqtt_sensors.append(sensorConf)
+        mqtt_sensors.append(sensorConfig)
 
 #-------------------------------------------------------------------------------
-def mqtt_create_client():
+def mqtt_create_client():    
     def on_disconnect(client, userdata, rc):
-        conf.mqtt_connected_to_broker = False
+        
+        global mqtt_connected_to_broker
+
+        mqtt_connected_to_broker = False
         
         # not sure is below line is correct / necessary        
         # client = mqtt_create_client() 
 
     def on_connect(client, userdata, flags, rc):
         
+        global mqtt_connected_to_broker
+
         if rc == 0: 
             mylog('verbose', [f"[{pluginName}]         Connected to broker"])            
-            conf.mqtt_connected_to_broker = True     # Signal connection 
+            mqtt_connected_to_broker = True     # Signal connection 
         else: 
             mylog('none', [f"[{pluginName}]         Connection failed"])
-            conf.mqtt_connected_to_broker = False
+            mqtt_connected_to_broker = False
 
+
+    global client
 
     client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
     client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
@@ -180,13 +211,12 @@ def mqtt_create_client():
 #-------------------------------------------------------------------------------
 def mqtt_start(db):    
 
-    #global client
+    global client, mqtt_connected_to_broker
 
-    if conf.mqtt_connected_to_broker == False:
-        conf.mqtt_connected_to_broker = True           
-        conf.client = mqtt_create_client() 
+    if mqtt_connected_to_broker == False:
+        mqtt_connected_to_broker = True           
+        client = mqtt_create_client()     
     
-    client = conf.client
     # General stats    
 
     # Create a generic device for overal stats
