@@ -626,6 +626,8 @@ height: 50px;
 .settings-group
 {   
     font-size: 20px;
+    padding-top: 7px;
+    padding-bottom: 9px;
 }
 
 .settings-group i{

@@ -72,29 +72,35 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       </h1>
       <div class="settingsImported"><?= lang("settings_imported");?> <span id="lastImportedTime"></span></div>      
     </section>
-    <div class="content settingswrap col-sm-12" id="accordion_gen">
+    <div class="content settingswrap " id="accordion_gen">
 
-      <div class ="settings-group col-sm-12" >        
-          <?= lang("Plugins_type_core");?> (<i class="<?= lang("Plugins_type_core_icon");?>"></i>)        
-      </div>      
-      <div class =" col-sm-12" id="core_content"></div>
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+          <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_type_core_icon");?>"></i>  <?= lang("Plugins_type_core");?>       
+          </div>        
+          <div class =" col-sm-12" id="core_content"></div>
+      </div>    
 
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+          <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_type_system_icon");?>"></i>  <?= lang("Plugins_type_system");?>       
+          </div>        
+          <div class =" col-sm-12" id="system_content"></div>
+      </div> 
 
-      <div class ="settings-group col-sm-12" >        
-          <?= lang("Plugins_type_system");?> (<i class="<?= lang("Plugins_type_system_icon");?>"></i>)        
-      </div>      
-      <div class =" col-sm-12" id="system_content"></div>
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+          <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_type_scanner_icon");?>"></i>  <?= lang("Plugins_type_scanner");?>       
+          </div>        
+          <div class =" col-sm-12" id="scanner_content"></div>
+      </div> 
 
-      <div class ="settings-group col-sm-12" >        
-          <?= lang("Plugins_type_scanner");?> (<i class="<?= lang("Plugins_type_scanner_icon");?>"></i>)        
-      </div>      
-      <div class =" col-sm-12" id="scanner_content"></div>
-
-      <div class ="settings-group col-sm-12" >        
-          <?= lang("Plugins_type_publisher");?> (<i class="<?= lang("Plugins_type_publisher_icon");?>"></i>)        
-      </div>      
-      <div class =" col-sm-12" id="publisher_content"></div>
-
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+          <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_type_publisher_icon");?>"></i>  <?= lang("Plugins_type_publisher");?>       
+          </div>        
+          <div class =" col-sm-12" id="publisher_content"></div>
+      </div> 
      
    </div>
    
@@ -187,7 +193,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     for (const group of settingGroups) {
       let isPlugin = false;
 
-      headerHtml = `<div class="box panel panel-default">
+      headerHtml = `<div class="box box-solid box-primary panel panel-default">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
                     <div class="panel-heading">
                       <h4 class="panel-title">${getString(group+"_icon")} ${getString(group+"_display_name")}</h4>
