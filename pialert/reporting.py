@@ -143,13 +143,13 @@ def get_notifications (db):
     mylog('verbose', ['[Notification] Open html Template'])
 
 
+    # select template type depoending if running latest version or an older one
     if conf.newVersionAvailable :
         template_file_path = '/back/report_template_new_version.html'
     else:
         template_file_path = '/back/report_template.html'
 
-    mylog('verbose', ['[Notification] Using template', template_file_path])        
-
+    mylog('verbose', ['[Notification] Using template', template_file_path])
     template_file = open(pialertPath + template_file_path, 'r')
 
     mail_html = template_file.read()

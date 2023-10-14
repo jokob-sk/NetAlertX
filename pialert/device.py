@@ -63,6 +63,36 @@ def print_scan_stats(db):
     mylog('verbose', f'[Scan Stats] Disconnections.........: {stats[0]["disconnections"]}')
     mylog('verbose', f'[Scan Stats] IP Changes.............: {stats[0]["ip_changes"]}')
 
+    if str(stats[0]["new_devices"]) != '0':
+        mylog('debug', f'   ================ DEVICES table content  ================')
+        sql.execute('select * from Devices')
+        rows = sql.fetchall()
+        for row in rows:
+            row_dict = dict(row)
+            mylog('debug', f'    {row_dict}')
+        
+        mylog('debug', f'   ================ CurrentScan table content  ================')
+        sql.execute('select * from CurrentScan')
+        rows = sql.fetchall()
+        for row in rows:
+            row_dict = dict(row)
+            mylog('debug', f'    {row_dict}')
+        
+        mylog('debug', f'   ================ Events table content where eve_PendingAlertEmail = 1  ================')
+        sql.execute('select * from Events where eve_PendingAlertEmail = 1')
+        rows = sql.fetchall()
+        for row in rows:
+            row_dict = dict(row)
+            mylog('debug', f'    {row_dict}')
+
+        mylog('debug', f'   ================ Events table COUNT  ================')
+        sql.execute('select count(*) from Events')
+        rows = sql.fetchall()
+        for row in rows:
+            row_dict = dict(row)
+            mylog('debug', f'    {row_dict}')
+        
+
     mylog('verbose', '[Scan Stats] Scan Method Statistics:')
     for row in stats:
         if row["cur_ScanMethod"] is not None:
