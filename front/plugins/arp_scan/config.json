@@ -1,6 +1,7 @@
 {
   "code_name": "arp_scan",
   "unique_prefix": "ARPSCAN",
+  "plugin_type": "scanner",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",

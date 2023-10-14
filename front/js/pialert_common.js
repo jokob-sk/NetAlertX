@@ -487,7 +487,21 @@ function getNameByMacAddress(macAddress) {
 }
 
 // -----------------------------------------------------------------------------
-// 
+// A function used to make the IP address orderable
+function formatIPlong(ipAddress) {
+  const parts = ipAddress.split('.');
+  if (parts.length !== 4) {
+      throw new Error('Invalid IP address format');
+  }
+  return (parseInt(parts[0]) << 24) |
+         (parseInt(parts[1]) << 16) |
+         (parseInt(parts[2]) << 8) |
+         parseInt(parts[3]);
+}
+
+// -----------------------------------------------------------------------------
+// A function to get a device property using the mac address as key and DB column nakme as parameter
+//  for the value to be returned
 function getDeviceDataByMacAddress(macAddress, dbColumn) {
 
   const sessionDataKey = 'devicesListAll_JSON';  

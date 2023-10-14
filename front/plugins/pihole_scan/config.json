@@ -1,6 +1,7 @@
 {
   "code_name": "pihole_scan",
   "unique_prefix": "PIHOLE",
+  "plugin_type": "scanner",
   "enabled": true,
   "data_source": "sqlite-db-query",
   "mapped_to_table": "CurrentScan",  

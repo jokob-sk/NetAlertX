@@ -1,12 +1,48 @@
+#!/usr/bin/env python
 
+import json
+import subprocess
+import argparse
+import os
+import pathlib
+import sys
+from datetime import datetime
 import time
 import re
 from paho.mqtt import client as mqtt_client
 
+
+# Replace these paths with the actual paths to your Pi.Alert directories
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+
+#  PiAlert modules
 import conf
-from logger import mylog
-from database import get_all_devices, get_device_stats
-from helper import bytes_to_string, sanitize_string
+from plugin_helper import Plugin_Objects
+from logger import mylog, append_line_to_file
+from helper import timeNowTZ, noti_obj, get_setting_value, bytes_to_string, sanitize_string
+from notification import Notification_obj
+from database import DB, get_all_devices, get_device_stats
+
+
+CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
+RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+
+pluginName = 'MQTT'
+
+def main():
+    
+    mylog('verbose', [f'[{pluginName}](publisher) In script'])    
+    
+    # Check if basic config settings supplied
+    if check_config() == False:
+        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        return
+
+    # Create a database connection
+    db = DB()  # instance of class DB
+    db.open()
+
+    mqtt_start(db)
 
 
 
@@ -16,7 +52,7 @@ from helper import bytes_to_string, sanitize_string
 
 #-------------------------------------------------------------------------------
 def check_config():
-        if conf.MQTT_BROKER == '' or conf.MQTT_PORT == '' or conf.MQTT_USER == '' or conf.MQTT_PASSWORD == '':
+        if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
             mylog('none', ['[Check Config] Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
@@ -41,14 +77,14 @@ def publish_mqtt(client, topic, message):
         result = client.publish(
                 topic=topic,
                 payload=message,
-                qos=conf.MQTT_QOS,
+                qos=get_setting_value('MQTT_QOS'),
                 retain=True,
             )
 
         status = result[0]
 
         if status != 0:            
-            mylog('minimal', ["Waiting to reconnect to MQTT broker"])
+            mylog('minimal', [f"[{pluginName}] Waiting to reconnect to MQTT broker"])
             time.sleep(0.1) 
     return True
 
@@ -73,6 +109,8 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):
 
     # check if config already in list and if not, add it, otherwise skip
     is_unique = True
+
+    mylog('minimal', [f"[{pluginName}] Already previously published sensors: {len(conf.mqtt_sensors)}"])
 
     for sensor in conf.mqtt_sensors:
         if sensor.hash == new_sensor_config.hash:
@@ -108,7 +146,7 @@ def publish_sensor(client, sensorConf):
     # add the sensor to the global list to keep track of succesfully added sensors
     if publish_mqtt(client, topic, message):        
                                      # hack - delay adding to the queue in case the process is 
-        time.sleep(conf.MQTT_DELAY_SEC)   # restarted and previous publish processes aborted 
+        time.sleep(get_setting_value('MQTT_DELAY_SEC'))   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
         conf.mqtt_sensors.append(sensorConf)
 
@@ -123,18 +161,18 @@ def mqtt_create_client():
     def on_connect(client, userdata, flags, rc):
         
         if rc == 0: 
-            mylog('verbose', ["        Connected to broker"])            
+            mylog('verbose', [f"[{pluginName}]         Connected to broker"])            
             conf.mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            mylog('none', ["        Connection failed"])
+            mylog('none', [f"[{pluginName}]         Connection failed"])
             conf.mqtt_connected_to_broker = False
 
 
     client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
-    client.username_pw_set(conf.MQTT_USER, conf.MQTT_PASSWORD)    
+    client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
-    client.connect(conf.MQTT_BROKER, conf.MQTT_PORT)
+    client.connect(get_setting_value('MQTT_BROKER'), get_setting_value('MQTT_PORT'))
     client.loop_start() 
 
     return client
@@ -178,9 +216,9 @@ def mqtt_start(db):
     # Get all devices
     devices = get_all_devices(db)
 
-    sec_delay = len(devices) * int(conf.MQTT_DELAY_SEC)*5
+    sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
 
-    mylog('minimal', ["        Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
+    mylog('minimal', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
     for device in devices:        
 
@@ -243,3 +281,13 @@ def to_binary_sensor(input):
         if bytes_to_string(input) == "1":
             result = "ON"
     return result
+
+
+
+
+#  -------------INIT---------------------
+if __name__ == '__main__':
+    sys.exit(main())
+
+
+

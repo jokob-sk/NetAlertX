@@ -397,41 +397,41 @@ function initializeDatatable (status) {
 
     // Convert JSON data into the desired format
     var dataArray = {
-      data: filteredData.map(function(item) {            
-        var originalRow = [
-          item.dev_Name || "",
-          item.dev_Owner || "",          
-          item.dev_DeviceType || "",
-          item.dev_Icon || "",
-          item.dev_Favorite || "",
-          item.dev_Group || "",
-          // ---
-          item.dev_FirstConnection || "",
-          item.dev_LastConnection || "",          
-          item.dev_LastIP || "",
-          item.dev_MAC || "",          // TODO handle internet node mac
-          getDeviceStatus(item) || "",
-          item.dev_MAC || "",      // hidden          
-          item.dev_LastIP || "",  // IP orderable
-          item.rowid || "",
-          item.dev_Network_Node_MAC_ADDR || "",
-          item.connected_devices || 0,
-          item.dev_Location || "",
-          item.dev_Vendor || "",
-          item.dev_Network_Node_port || 0
-        ]
+        data: filteredData.map(function(item) {
+            var originalRow = [
+                item.dev_Name || "",
+                item.dev_Owner || "",
+                item.dev_DeviceType || "",
+                item.dev_Icon || "",
+                item.dev_Favorite || "",
+                item.dev_Group || "",
+                // ---
+                item.dev_FirstConnection || "",
+                item.dev_LastConnection || "",
+                item.dev_LastIP || "",
+                (["2", "6", "A", "E", "a", "e"].includes(item.dev_MAC[1]) ? 1 : 0) || "", // Check if randomized MAC
+                getDeviceStatus(item) || "",
+                item.dev_MAC || "", // hidden
+                formatIPlong(item.dev_LastIP) || "", // IP orderable
+                item.rowid || "",
+                item.dev_Network_Node_MAC_ADDR || "",
+                item.connected_devices || 0,
+                item.dev_Location || "",
+                item.dev_Vendor || "",
+                item.dev_Network_Node_port || 0
+            ];
 
-        var newRow = []
-        
-        // reorder data based on user-definer columns order
-        for(index = 0; index < tableColumnOrder.length; index++)
-        {
-          newRow.push(originalRow[tableColumnOrder[index]]);
-        }
+            var newRow = [];
 
-        return newRow;      
-      })
+            // reorder data based on user-defined columns order
+            for (index = 0; index < tableColumnOrder.length; index++) {
+                newRow.push(originalRow[tableColumnOrder[index]]);
+            }
+
+            return newRow;
+        })
     };
+
     
     // TODO displayed columns
 
@@ -529,6 +529,7 @@ function initializeDatatable (status) {
         // Random MAC      
         {targets: [mapIndx(9)],
           'createdCell': function (td, cellData, rowData, row, col) {
+            console.log(cellData)
             if (cellData == 1){
               $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
             } else {

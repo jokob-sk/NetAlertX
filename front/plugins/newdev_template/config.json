@@ -2,6 +2,7 @@
   "code_name": "Devices.new",
   "template_type": "database-entry",
   "unique_prefix": "NEWDEV",
+  "plugin_type": "system",
   "enabled": true,
   "data_source": "template",  
   "show_ui": false,

@@ -1,6 +1,7 @@
 {
     "code_name": "_publisher_email",
     "unique_prefix": "SMTP",
+    "plugin_type": "publisher",
     "enabled": true,
     "data_source": "script",
     "show_ui": true,

@@ -277,8 +277,7 @@ def get_setting_value(key):
 
     if setting is not None:
 
-        mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])
-        
+        # mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])        
 
         set_type  = 'Error: Not handled'
         set_value = 'Error: Not handled'

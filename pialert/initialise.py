@@ -138,15 +138,6 @@ def importConfigs (db):
     # PUSHSAFER
     conf.REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER', ['test'])
     conf.PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
-
-    # MQTT
-    conf.REPORT_MQTT = ccd('REPORT_MQTT', False , c_d, 'Enable MQTT', 'boolean', '', 'MQTT')
-    conf.MQTT_BROKER = ccd('MQTT_BROKER', '' , c_d, 'MQTT broker', 'text', '', 'MQTT')
-    conf.MQTT_PORT = ccd('MQTT_PORT', 1883 , c_d, 'MQTT broker port', 'integer', '', 'MQTT')
-    conf.MQTT_USER = ccd('MQTT_USER', '' , c_d, 'MQTT user', 'text', '', 'MQTT')
-    conf.MQTT_PASSWORD = ccd('MQTT_PASSWORD', '' , c_d, 'MQTT password', 'password', '', 'MQTT')
-    conf.MQTT_QOS = ccd('MQTT_QOS', 0 , c_d, 'MQTT Quality of Service', 'integer.select', "['0', '1', '2']", 'MQTT')
-    conf.MQTT_DELAY_SEC = ccd('MQTT_DELAY_SEC', 2 , c_d, 'MQTT delay', 'integer.select', "['2', '3', '4', '5']", 'MQTT')
     
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
@@ -281,9 +272,16 @@ def read_config_file(filename):
 
 
 #-------------------------------------------------------------------------------
+# DEPERECATED after 1/1/2024
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
-    r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM'
+    r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
+    r'REPORT_MAIL=True': 'SMTP_RUN=\'on_notification\'',
+    r'REPORT_APPRISE=True': 'APPRISE_RUN=\'on_notification\'',
+    r'REPORT_NTFY=True': 'NTFY_RUN=\'on_notification\'',
+    r'REPORT_WEBHOOK=True': 'WEBHOOK_RUN=\'on_notification\'',
+    r'REPORT_PUSHSAFER=True': 'PUSHSAFER_RUN=\'on_notification\'',
+    r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\''
 }
 
 def renameSettings(config_file):

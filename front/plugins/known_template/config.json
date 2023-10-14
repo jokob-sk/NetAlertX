@@ -2,6 +2,7 @@
   "code_name": "known_template",
   "template_type": "database-entry",
   "unique_prefix": "KNWN",
+  "plugin_type": "system",
   "enabled": true,
   "data_source": "template", 
   "show_ui": false, 

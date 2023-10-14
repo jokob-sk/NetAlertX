@@ -30,16 +30,12 @@ from publishers.webhook import (check_config as webhook_check_config,
                                 send as send_webhook) 
 from publishers.pushsafer import (check_config as pushsafer_check_config,
                                 send as send_pushsafer) 
-from publishers.mqtt import (check_config as mqtt_check_config,
-                             mqtt_start )
 
 
 #===============================================================================
 # REPORTING
 #===============================================================================
-# create a json of the notifications to provide further integration options (e.g. used in webhook, mqtt notifications)
-
-
+# create a json of the notifications to provide further integration options
 json_final = []
 
 

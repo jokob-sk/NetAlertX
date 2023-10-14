@@ -1,6 +1,7 @@
 {
   "code_name": "csv_backup",
   "unique_prefix": "CSVBCKP",
+  "plugin_type": "system",
   "enabled": true,
   "data_source": "script",  
   "show_ui": false,

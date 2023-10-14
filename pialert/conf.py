@@ -81,15 +81,6 @@ NTFY_PASSWORD   = ''
 REPORT_PUSHSAFER    = False 
 PUSHSAFER_TOKEN     = 'ApiKey'
 
-# MQTT
-REPORT_MQTT     = False 
-MQTT_BROKER     = '' 
-MQTT_PORT       = 1883 
-MQTT_USER       = '' 
-MQTT_PASSWORD   = '' 
-MQTT_QOS        = 0 
-MQTT_DELAY_SEC  = 2 
-
 # -------------------------------------------
 # Misc
 # -------------------------------------------

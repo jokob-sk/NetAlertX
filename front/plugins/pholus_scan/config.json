@@ -1,6 +1,7 @@
 {
   "code_name": "pholus_scan",
   "unique_prefix": "PHOLUS",
+  "plugin_type": "scanner",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "Pholus_Scan",

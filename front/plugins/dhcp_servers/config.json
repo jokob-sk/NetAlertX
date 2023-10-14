@@ -1,6 +1,7 @@
 {
     "code_name": "dhcp_servers",
     "unique_prefix": "DHCPSRVS",
+    "plugin_type": "scanner",
     "enabled": true,    
     "data_source":  "script",
     "show_ui": true,

@@ -1,6 +1,7 @@
 {
     "code_name": "nmap_scan",
     "unique_prefix": "NMAP",
+    "plugin_type": "scanner",
     "enabled": true,    
     "data_source":  "script",
     "data_filters": [
