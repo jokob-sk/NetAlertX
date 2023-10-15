@@ -26,7 +26,6 @@ services:
       - ${DEV_LOCATION}/pialert:/home/pi/pialert/pialert            
       - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/8.2/fpm/php.ini      
-      - ${DEV_LOCATION}/back:/home/pi/pialert/back
       - ${DEV_LOCATION}/install:/home/pi/pialert/install
       - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
       - ${DEV_LOCATION}/front/lib/AdminLTE:/home/pi/pialert/front/lib/AdminLTE

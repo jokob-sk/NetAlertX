@@ -15,3 +15,5 @@ __pycache__/
 
 **/last_result.log
 **/script.log
+**/pialert.conf_bak
+**/pialert.db_bak
