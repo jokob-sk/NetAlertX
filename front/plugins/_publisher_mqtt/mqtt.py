@@ -78,7 +78,7 @@ def check_config():
 
 #-------------------------------------------------------------------------------
 class sensor_config:
-    def __init__(self, deviceId, deviceName, sensorType, sensorName, icon):
+    def __init__(self, deviceId, deviceName, sensorType, sensorName, icon, mac):
         self.deviceId = deviceId
         self.deviceName = deviceName
         self.sensorType = sensorType
@@ -102,13 +102,16 @@ class sensor_config:
         # Log sensor
         global plugin_objects
 
+        if mac == '':
+            mac = "N/A"
+
         plugin_objects.add_object(
             primaryId   = deviceId,
             secondaryId = sensorName,            
             watched1    = deviceName,
             watched2    = sensorType,            
-            watched3    = hash,
-            watched4    = 'null',
+            watched3    = hash_value,
+            watched4    = mac,
             extra       = 'null',
             foreignKey  = deviceId
         )
@@ -147,11 +150,11 @@ def create_generic_device(client):
         
 
 #-------------------------------------------------------------------------------
-def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon):    
+def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):    
 
     global mqtt_sensors
 
-    new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon) 
+    new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac) 
            
     # save if new
     if new_sensor_config.isNew:   
@@ -271,11 +274,11 @@ def mqtt_start(db):
         deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
         deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network')
-        create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi')
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network')
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline')
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog')
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
+        create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
+        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
     
         # update device sensors in home assistant              
 

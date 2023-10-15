@@ -44,25 +44,31 @@ def main():
 def get_entries(path, plugin_objects):
 
     # Check if the path exists
-    if os.path.exists(path) == False:        
-        mylog('none', [f'[{pluginName}] Error: "{path}"  does not exist.']) 
+    if not os.path.exists(path):
+        mylog('none', [f'[{pluginName}] Error: "{path}" does not exist.'])
     else:
-        #  Handle pihole specific dhcp.leases files
-        if 'pihole' in path:        
-            
-            with open(path, 'r') as f:
-                for line in f:                
+        # Detect file encoding
+        with open(path, 'rb') as f:
+            result = chardet.detect(f.read())
+
+        # Use the detected encoding
+        encoding = result['encoding']
+
+        # Handle pihole-specific dhcp.leases files
+        if 'pihole' in path:
+            with open(path, 'r', encoding=encoding, errors='replace') as f:
+                for line in f:
                     row = line.rstrip().split()
                     if len(row) == 5:
                         plugin_objects.add_object(
-                            primaryId   = handleEmpty(row[1]),    
-                            secondaryId = handleEmpty(row[2]),  
-                            watched1    = handleEmpty('True'),   
-                            watched2    = handleEmpty(row[3]),
-                            watched3    = handleEmpty(row[4]),
-                            watched4    = handleEmpty('True'),
-                            extra       = handleEmpty(path),
-                            foreignKey  = handleEmpty(row[1])
+                            primaryId=handleEmpty(row[1]),
+                            secondaryId=handleEmpty(row[2]),
+                            watched1=handleEmpty('True'),
+                            watched2=handleEmpty(row[3]),
+                            watched3=handleEmpty(row[4]),
+                            watched4=handleEmpty('True'),
+                            extra=handleEmpty(path),
+                            foreignKey=handleEmpty(row[1])
                         )
         else:
             #  Handle generic dhcp.leases files

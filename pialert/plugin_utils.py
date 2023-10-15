@@ -82,13 +82,24 @@ def list_to_csv(arr):
     mylog('debug', f'[{module_name}] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}')    
 
     if isinstance(arr, str):
-        return arr.replace('[','').replace(']','').replace("'", '')  # removing brackets and single quotes (not allowed)    
+        tmpStr =  arr.replace('[','').replace(']','').replace("'", '')  # removing brackets and single quotes (not allowed)    
+        
+        if ',' in tmpStr:            
+            # Split the string into a list and trim whitespace
+            cleanedStr = [tmpSubStr.strip() for tmpSubStr in tmpStr.split(',')]
+
+            # Join the list elements using a comma
+            result_string = ",".join(cleanedStr)   
+        else:
+            result_string = tmpStr
+
+        return result_string
 
     elif isinstance(arr, list):
         for arrayItem in arr:
             # only one column flattening is supported
-            if isinstance(arrayItem, list):            
-                arrayItemStr = str(arrayItem[0]).replace("'", '')  # removing single quotes - not allowed            
+            if isinstance(arrayItem, list):  
+                arrayItemStr = str(arrayItem[0]).replace("'", '').strip()  # removing single quotes - not allowed            
             else:
                 # is string already
                 arrayItemStr = arrayItem
