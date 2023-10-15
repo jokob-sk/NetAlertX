@@ -65,7 +65,7 @@ def process_scan (db):
     skip_repeated_notifications (db)
 
     # Clear current scan as processed 
-    db.sql.execute ("DELETE FROM CurrentScan")
+    db.sql.execute ("DELETE FROM CurrentScan") 
   
     # Commit changes    
     db.commitDB()

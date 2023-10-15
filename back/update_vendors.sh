@@ -14,7 +14,9 @@
 #    /usr/share/ieee-data
 #    /var/lib/ieee-data
 # ----------------------------------------------------------------------
-
+echo "---------------------------------------------------------"
+echo "[INSTALL]                           Run update_vendors.sh"
+echo "---------------------------------------------------------"
 
 # ----------------------------------------------------------------------
 echo Updating... /usr/share/ieee-data/
@@ -50,6 +52,9 @@ sudo cp *.txt 2_backup
 # Update from /usb/lib/ieee-data
 sudo get-iab -v
 sudo get-oui -v
+
+# make files readable
+sudo chmod +r /usr/share/arp-scan/ieee-oui.txt
 
 # Update from ieee website
 # sudo get-iab -v -u http://standards-oui.ieee.org/iab/iab.txt

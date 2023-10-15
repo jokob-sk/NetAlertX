@@ -346,5 +346,134 @@ location ^~ /pialert/ {
 ```
 
 
+## Traefik
 
+> Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/Pi.Alert/discussions/449#discussioncomment-7281442))
+
+Asuming the user already has a working Traefik setup, this is what's needed to make Pi.Alert work at a URL like www.domain.com/pialert/. 
+
+Note: Everything in these configs assumes '**www.domain.com**' as your domainname and '**section31**' as an arbitrary name for your certificate setup. You will have to substitute these with your own.
+
+Also, I use the prefix '**pialert**'. If you want to use another prefix, change it in these files: dynamic.toml and default.
+
+Content of my yaml-file (this is the generic Traefik config, which defines which ports to listen on, redirect http to https and sets up the certificate process).
+It also contains Authelia, which I use for authentication.
+This part contains nothing specific to Pi.Alert.
+
+```yaml
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik
+    container_name: traefik
+    command:
+      - "--api=true"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.filename=/traefik-config/dynamic.toml"
+      - "--providers.file.watch=true"
+      - "--log.level=ERROR"
+      - "--certificatesresolvers.section31.acme.email=postmaster@domain.com"
+      - "--certificatesresolvers.section31.acme.storage=/traefik-config/acme.json"
+      - "--certificatesresolvers.section31.acme.httpchallenge=true"
+      - "--certificatesresolvers.section31.acme.httpchallenge.entrypoint=web"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - /appl/docker/traefik/config:/traefik-config
+    depends_on:
+      - authelia
+    restart: unless-stopped
+  authelia:
+    container_name: authelia
+    image: authelia/authelia:latest
+    ports:
+      - "9091:9091"
+    volumes:
+      - /appl/docker/authelia:/config
+    restart: u
+    nless-stopped
+```
+Snippet of the dynamic.toml file (referenced in the yml-file above) that defines the config for Pi.Alert:
+The following are self-defined keywords, everything else is traefik keywords:
+- pialert-router
+- pialert-service
+- auth
+- pialert-stripprefix
+
+
+```toml
+[http.routers]
+  [http.routers.pialert-router]
+    entryPoints = ["websecure"]
+    rule = "Host(`www.domain.com`) && PathPrefix(`/pialert`)"
+    service = "pialert-service"
+    middlewares = "auth,pialert-stripprefix"
+    [http.routers.pialert-router.tls]
+       certResolver = "section31"
+       [[http.routers.pialert-router.tls.domains]]
+         main = "www.domain.com"
+
+[http.services]
+  [http.services.pialert-service]
+    [[http.services.pialert-service.loadBalancer.servers]]
+      url = "http://internal-ip-address:20211/"
+
+[http.middlewares]
+  [http.middlewares.auth.forwardAuth]
+    address = "http://authelia:9091/api/verify?rd=https://www.domain.com/authelia/"
+    trustForwardHeader = true
+    authResponseHeaders = ["Remote-User", "Remote-Groups", "Remote-Name", "Remote-Email"]
+  [http.middlewares.pialert-stripprefix.stripprefix]
+    prefixes = "/pialert"
+    forceSlash = false
+
+```
+To make Pi.Alert work with this setup I modified the default file at `/etc/nginx/sites-available/default` in the docker container by copying it to my local filesystem, adding the changes as specified by [cvc90](https://github.com/cvc90) and mounting the new file into the docker container, overwriting the original one. By mapping the file instead of changing the file in-place, the changes persist if an updated dockerimage is pulled. This is also a downside when the default file is updated, so I only use this as a temporary solution, until the dockerimage is updated with this change.
+
+Default-file:
+
+```
+server {
+    listen 80 default_server;
+    root /var/www/html;
+    index index.php;
+    #rewrite /pialert/(.*) / permanent;
+    add_header X-Forwarded-Prefix "/pialert" always;
+    proxy_set_header X-Forwarded-Prefix "/pialert";
+
+  location ~* \.php$ {
+    fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    include         fastcgi_params;
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+    fastcgi_connect_timeout 75;
+          fastcgi_send_timeout 600;
+          fastcgi_read_timeout 600;
+  }
+}
+```
+
+Mapping the updated file (on the local filesystem at `/appl/docker/pialert/default`) into the docker container:
+
+
+```bash
+docker run -d --rm --network=host \
+  --name=pi.alert \
+  -v /appl/docker/pialert/config:/home/pi/pialert/config \
+  -v /appl/docker/pialert/db:/home/pi/pialert/db \
+  -v /appl/docker/pialert/default:/etc/nginx/sites-available/default \
+  -e TZ=Europe/Amsterdam \
+  -e PORT=20211 \
+  jokobsk/pi.alert:latest
+
+```
 

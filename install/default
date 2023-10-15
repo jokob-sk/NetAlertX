@@ -2,18 +2,17 @@ server {
     listen 80 default_server;
     root /var/www/html;
     index index.php;
-    rewrite /pialert/(.*) / permanent;
+    #rewrite /pialert/(.*) / permanent;
+    add_header X-Forwarded-Prefix "/pialert" always;
+    proxy_set_header X-Forwarded-Prefix "/pialert";
 
-    location ~* \.php$ {
-        set $php_version "7.4";  # Default PHP version
-
-        # Use the selected PHP version
-        fastcgi_pass unix:/run/php/php$php_version-fpm.sock;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-        fastcgi_connect_timeout 75;
-        fastcgi_send_timeout 600;
-        fastcgi_read_timeout 600;
-    }
+  location ~* \.php$ {
+    fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+    include         fastcgi_params;
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+    fastcgi_connect_timeout 75;
+          fastcgi_send_timeout 600;
+          fastcgi_read_timeout 600;
+  }
 }

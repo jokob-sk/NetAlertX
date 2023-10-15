@@ -66,14 +66,14 @@
         {
             "column": "Object_PrimaryID",
             "css_classes": "col-sm-2",
-            "show": false,
+            "show": true,
             "type": "url",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "N/A"
+                "string" : "MQTT Device ID"
 				}]
         },
         {
@@ -86,7 +86,7 @@
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Sensor ID"
+                "string" : "Sensor Name"
 				}]
         },
         {
@@ -134,7 +134,7 @@
         },
         {
             "column": "Watched_Value2",
-            "css_classes": "col-sm-8",
+            "css_classes": "col-sm-2",
             "show": true,
             "type": "label",            
             "default_value":"",
@@ -155,20 +155,20 @@
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Sensor name"
+                "string" : "Hash"
 				}]
         },
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Hash"
+                "string" : "N/A"
 				}
 				]
         },       

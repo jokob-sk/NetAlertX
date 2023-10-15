@@ -10,6 +10,7 @@ from datetime import datetime
 import time
 import re
 from paho.mqtt import client as mqtt_client
+import hashlib
 
 
 # Replace these paths with the actual paths to your Pi.Alert directories
@@ -18,8 +19,8 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 #  PiAlert modules
 import conf
 from const import apiPath
-from plugin_helper import getPluginObject
-from plugin_utils import Plugin_Objects
+from plugin_utils import getPluginObject
+from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, noti_obj, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
@@ -32,6 +33,8 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
+# Create an MD5 hash object
+md5_hash = hashlib.md5()
 
 pluginName = 'MQTT'
 
@@ -81,19 +84,31 @@ class sensor_config:
         self.sensorType = sensorType
         self.sensorName = sensorName
         self.icon = icon 
-        self.hash = str(hash(str(deviceId) + str(deviceName)+ str(sensorType)+ str(sensorName)+ str(icon)))
-        self.isNew = getPluginObject({"Plugin":"MQTT", "Watched_Value4":hash}) is None
+
+        # Define your input string
+        input_string = str(deviceId) + str(deviceName) + str(sensorType) + str(sensorName) + str(icon)
+
+        # Hash the input string and convert the hash to a string
+        # Update the hash object with the bytes of the input string
+        md5_hash.update(input_string.encode('utf-8'))
+
+        # Get the hexadecimal representation of the MD5 hash
+        md5_hash_hex = md5_hash.hexdigest()
+        hash_value = str(md5_hash_hex)
+
+        self.hash = hash_value
+        self.isNew = getPluginObject({"Plugin":"MQTT", "Watched_Value4":hash_value}) is None
 
         # Log sensor
         global plugin_objects
 
         plugin_objects.add_object(
-            primaryId   = pluginName,
-            secondaryId = deviceId,            
+            primaryId   = deviceId,
+            secondaryId = sensorName,            
             watched1    = deviceName,
             watched2    = sensorType,            
-            watched3    = sensorName,
-            watched4    = hash,
+            watched3    = hash,
+            watched4    = 'null',
             extra       = 'null',
             foreignKey  = deviceId
         )
