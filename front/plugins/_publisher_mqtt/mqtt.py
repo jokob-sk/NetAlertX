@@ -37,6 +37,7 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 md5_hash = hashlib.md5()
 
 pluginName = 'MQTT'
+module_name = pluginName
 
 # globals
 
@@ -66,7 +67,6 @@ def main():
 #-------------------------------------------------------------------------------
 # MQTT
 #-------------------------------------------------------------------------------
-
 #-------------------------------------------------------------------------------
 def check_config():
         if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
@@ -97,7 +97,12 @@ class sensor_config:
         hash_value = str(md5_hash_hex)
 
         self.hash = hash_value
-        self.isNew = getPluginObject({"Plugin":"MQTT", "Watched_Value4":hash_value}) is None
+
+        plugObj = getPluginObject({"Plugin":"MQTT", "Watched_Value3":hash_value}) 
+
+        mylog('verbose', [f"[{pluginName}] Previous plugin object entry: {json.dumps(plugObj)}"])        
+
+        self.isNew = plugObj == {}
 
         # Log sensor
         global plugin_objects
@@ -150,9 +155,10 @@ def create_generic_device(client):
         
 
 #-------------------------------------------------------------------------------
+
 def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):    
 
-    global mqtt_sensors
+    global mqtt_sensors    
 
     new_sensor_config = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac) 
            
@@ -268,8 +274,10 @@ def mqtt_start(db):
 
     mylog('minimal', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
-    for device in devices:        
+    
+    for device in devices:      
 
+    
         # Create devices in Home Assistant - send config messages
         deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
         deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 

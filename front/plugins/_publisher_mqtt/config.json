@@ -121,7 +121,7 @@
         },
         {
             "column": "Watched_Value1",
-            "css_classes": "col-sm-2",
+            "css_classes": "col-sm-3",
             "show": true,
             "type": "label",            
             "default_value":"",

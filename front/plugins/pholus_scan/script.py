@@ -94,8 +94,7 @@ def main():
 
 
 def execute_pholus_scan(userSubnets, timeoutSec):
-    # output of possible multiple interfaces
-    arpscan_output = ""
+    # output of possible multiple interfaces    
     result_list = []
 
     timeoutPerSubnet = float(timeoutSec) / len(userSubnets)

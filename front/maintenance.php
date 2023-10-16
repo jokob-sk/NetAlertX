@@ -395,7 +395,7 @@ $db->close();
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
                     <div class="db_info_table">
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly >
                                 <?php                               
@@ -421,7 +421,18 @@ $db->close();
                               </div>
                             </div>
                         </div>   
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary ">
+                            <div class="row logs-row">
+                              <textarea id="nginx_error_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "/var/log/nginx/error.log" ); ?>
+                              </textarea>
+                            </div>
+                            <div class="row logs-row" >                            
+                              <div>
+                                <div class="log-file">nginx/error.log</div>
+                              </div>
+                            </div>
+                        </div> 
+                        <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="pialert_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
                               </textarea>
@@ -437,7 +448,7 @@ $db->close();
                               </div>
                             </div>
                         </div> 
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="pialert_php_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert.php_errors.log" ); ?>
                               </textarea>
@@ -454,7 +465,7 @@ $db->close();
                             </div>
                         </div>                         
                         
-                         <div class="log-area">
+                         <div class="log-area box box-solid box-primary">
                              
                              <div class="row logs-row">
                                <textarea id="pialert_pholus_lastrun_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus_lastrun.log" ); ?>
@@ -472,7 +483,7 @@ $db->close();
                              </div>                            
  
                          </div>    
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary">
                              
                             <div class="row logs-row">
                               <textarea id="IP_changes_log" class="logs logs-small" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
@@ -490,7 +501,7 @@ $db->close();
                             </div>                            
 
                         </div> 
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
                               </textarea>
@@ -507,7 +518,7 @@ $db->close();
                           </div>
 
                         </div> 
-                        <div class="log-area">
+                        <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="stderr_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stderr.log" ); ?>
                               </textarea>

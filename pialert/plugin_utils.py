@@ -204,9 +204,12 @@ def getPluginObject(keyValues):
         with open(plugins_objects, 'r') as json_file:
             data = json.load(json_file)
 
-            for item in data.get("data", []):
+            objectEntries = data.get("data", [])            
+
+            for item in objectEntries:
                 # Initialize a flag to check if all key-value pairs match
-                all_match = True
+                all_match = True                
+
                 for key, value in keyValues.items():
                     if item.get(key) != value:
                         all_match = False
@@ -215,14 +218,14 @@ def getPluginObject(keyValues):
                 if all_match:
                     return item
 
-            mylog('debug', [f'[{module_name}] Error - Object not found {json.dumps(keyValues)} '])  
+            mylog('verbose', [f'[{module_name}] Error - Object not found {json.dumps(keyValues)} '])  
 
-            return None
+            return {}
 
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
         # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[{module_name}] Error - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
+        mylog('verbose', [f'[{module_name}] Error - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
 
-        return None
+        return {}
 
 
