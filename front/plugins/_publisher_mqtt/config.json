@@ -26,7 +26,14 @@
         "string" : "A plugin to publish a notification via the Apprise gateway."
 		}
     ],
-    "params" : [],  
+    "params" : [
+        {
+            "name"              : "devices",
+            "type"              : "sql",
+            "value"             : "SELECT dev_LastIP from DEVICES",
+            "timeoutMultiplier" : true
+        }
+    ],  
     "database_column_definitions":
     [          
         {
@@ -271,7 +278,7 @@
         {
             "function": "CMD",
             "type": "readonly",
-            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_mqtt/mqtt.py",
+            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -294,7 +301,7 @@
         {
             "function": "RUN_TIMEOUT",
             "type": "integer",
-            "default_value": 600,
+            "default_value": 10,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

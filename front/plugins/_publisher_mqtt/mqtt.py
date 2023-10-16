@@ -100,9 +100,16 @@ class sensor_config:
 
         plugObj = getPluginObject({"Plugin":"MQTT", "Watched_Value3":hash_value}) 
 
-        mylog('verbose', [f"[{pluginName}] Previous plugin object entry: {json.dumps(plugObj)}"])        
+        # mylog('verbose', [f"[{pluginName}] Previous plugin object entry: {json.dumps(plugObj)}"])        
 
-        self.isNew = plugObj == {}
+        if plugObj == {}:
+            self.isNew = True
+            mylog('verbose', [f"[{pluginName}] New sensor entry mac          : {mac}"])  
+            mylog('verbose', [f"[{pluginName}] New sensor entry input_string : {input_string}"])  
+            mylog('verbose', [f"[{pluginName}] New sensor entry hash_value   : {hash_value}"])  
+        else:
+            self.isNew = False
+
 
         # Log sensor
         global plugin_objects
@@ -117,7 +124,7 @@ class sensor_config:
             watched2    = sensorType,            
             watched3    = hash_value,
             watched4    = mac,
-            extra       = 'null',
+            extra       = input_string,
             foreignKey  = deviceId
         )
 

@@ -102,11 +102,11 @@ date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"
 /etc/init.d/nginx start
 
 # Start Nginx and your application to start at boot (if needed)
-systemctl start nginx
-systemctl enable nginx
+# systemctl start nginx
+# systemctl enable nginx
 
-# systemctl enable pi-alert
-sudo systemctl restart nginx
+# # systemctl enable pi-alert
+# sudo systemctl restart nginx
 
 #  Activate the virtual python environment
 source myenv/bin/activate

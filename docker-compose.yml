@@ -22,7 +22,8 @@ services:
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases      
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      
-      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.dba    
+      - ${APP_DATA_LOCATION}/pialert/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases      
+      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
       - ${DEV_LOCATION}/pialert:/home/pi/pialert/pialert            
       - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
       - ${APP_DATA_LOCATION}/pialert/php.ini:/etc/php/8.2/fpm/php.ini      
