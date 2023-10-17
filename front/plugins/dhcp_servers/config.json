@@ -18,6 +18,10 @@
     {
       "language_code": "es_es",
       "string": "Rogue DHCP (DHCP no autorizado)"
+    },
+    {
+      "language_code": "de_de",
+      "string": "Rogue DHCP (\"Schurken\" DHCP)"
     }
   ],
   "icon": [
@@ -27,6 +31,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-skull-crossbones\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-skull-crossbones\"></i>"
     }
   ],
@@ -38,6 +46,10 @@
     {
       "language_code": "es_es",
       "string": "Este complemento es para usar NMAP para monitorear servidores DHCP no autorizados."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zum Erkennen von Rogue DHCP-Servern mithilfe von NMAP."
     }
   ],
   "params": [],
@@ -60,6 +72,10 @@
         {
           "language_code": "es_es",
           "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
+          "string": "N/A"
         }
       ]
     },
@@ -80,6 +96,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -102,6 +122,10 @@
         {
           "language_code": "es_es",
           "string": "Identificador de servidor"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Serverbezeichnung"
         }
       ]
     },
@@ -123,6 +147,10 @@
         {
           "language_code": "es_es",
           "string": "Nombre de dominio"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Domainname"
         }
       ]
     },
@@ -144,6 +172,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -165,6 +197,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     },
@@ -186,6 +222,10 @@
         {
           "language_code": "es_es",
           "string": "Servidor de nombres de dominio"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Domain Namen Server"
         }
       ]
     },
@@ -207,6 +247,10 @@
         {
           "language_code": "es_es",
           "string": "IP ofrecida"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Angebotene IP"
         }
       ]
     },
@@ -228,6 +272,10 @@
         {
           "language_code": "es_es",
           "string": "Interfaz"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Schnittstelle"
         }
       ]
     },
@@ -248,6 +296,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "Router"
+        },
+        {
+          "language_code": "de_de",
           "string": "Router"
         }
       ]
@@ -270,6 +322,10 @@
         {
           "language_code": "es_es",
           "string": "Comentarios"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Kommentare"
         }
       ]
     },
@@ -308,6 +364,10 @@
         {
           "language_code": "es_es",
           "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
         }
       ]
     },
@@ -329,6 +389,10 @@
         {
           "language_code": "es_es",
           "string": "Información extra"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Extra Information"
         }
       ]
     }
@@ -360,6 +424,10 @@
         {
           "language_code": "es_es",
           "string": "Cuando ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -370,6 +438,10 @@
         {
           "language_code": "es_es",
           "string": "Habilite un escaneo regular de servidores DHCP no autorizados. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el análisis se ejecuta solo una vez al inicio de la aplicación (contenedor) o después de actualizar su configuración."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Aktiviere periodischen Scan nach Rogue DHCP-Servern. Wenn <code>schedule</code> ausgewählt ist, werden die unten gesetzten Zeitplan-Einstellungen verwendet. Ist <code>once</code> ausgewählt, so wird bei jedem Start der Applikation (Container) und nach jedem Speichern der Einstellungen der Imnport durchgeführt."
         }
       ]
     },
@@ -390,6 +462,10 @@
         {
           "language_code": "es_es",
           "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
         }
       ],
       "description": [
@@ -400,6 +476,10 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auszuführender Befehl"
         }
       ]
     },
@@ -420,6 +500,10 @@
         {
           "language_code": "es_es",
           "string": "Programar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
         }
       ],
       "description": [
@@ -430,6 +514,10 @@
         {
           "language_code": "es_es",
           "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración de <a href=\"#DHCPSRVS_RUN\"><code>DHCPSRVS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#DHCPSRVS_RUN\"><code>DHCPSRVS_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ]
     },
@@ -453,7 +541,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wartezeit"
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -464,6 +552,10 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
@@ -491,6 +583,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
@@ -501,6 +597,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es servidor de nombres de dominio</li><li><code>Watched_Value2</code> es IP ofrecida</li><li><code>Watched_Value3</code> es Interfaz </li><li><code>Watched_Value4</code> es enrutador </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Domain Name Server</li><li><code>Watched_Value2</code> ist die angebotene IP</li><li><code>Watched_Value3</code> ist die Schnittstelle</li><li><code>Watched_Value4</code> ist der Router</li></ul>"
         }
       ]
     },
@@ -528,6 +628,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "description": [
@@ -538,6 +642,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
         }
       ]
     }
