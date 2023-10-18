@@ -16,7 +16,7 @@ from datetime import datetime
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
 from const import logPath, pialertPath
@@ -106,14 +106,14 @@ def update_vendors (dbPath, plugin_objects):
             ignored += 1
         else :
             plugin_objects.add_object(
-                primaryId   = device[0],    # MAC (Device Name)
-                secondaryId = device[1],    # IP Address (always 0.0.0.0)
-                watched1    = vendor,  
-                watched2    = device[2],    # Device name
+                primaryId   = handleEmpty(device[0]),    # MAC (Device Name)
+                secondaryId = handleEmpty(device[1]),    # IP Address (always 0.0.0.0)
+                watched1    = handleEmpty(vendor),  
+                watched2    = handleEmpty(device[2]),    # Device name
                 watched3    = "",
                 watched4    = "",
                 extra       = "",            
-                foreignKey  = device[0]           
+                foreignKey  = handleEmpty(device[0])           
             )            
             
     # Print log    

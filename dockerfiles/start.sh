@@ -30,11 +30,6 @@ echo "[INSTALL] Run setup scripts"
 "$INSTALL_DIR/pialert/install/install_dependencies.sh"
 "$INSTALL_DIR/pialert/install/install_python.sh"
 
-# # executes a new shell session with the user specified in the USER variable.
-# if [ -n "$USER" ]; then
-#     exec su - "${USER}"
-# fi
-
 # Change port number if set
 if [ -n "${PORT}" ]; then  
   sed -ie 's/listen 20211/listen '${PORT}'/g' /etc/nginx/sites-available/default

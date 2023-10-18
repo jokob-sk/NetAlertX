@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 import json
@@ -6,7 +7,9 @@ import argparse
 import os
 import pathlib
 import sys
+import requests
 from datetime import datetime
+from base64 import b64encode
 
 # Replace these paths with the actual paths to your Pi.Alert directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
@@ -22,7 +25,7 @@ from database import DB
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
-pluginName = 'APPRISE'
+pluginName = 'NTFY'
 
 def main():
     
@@ -50,15 +53,15 @@ def main():
     for notification in new_notifications:
 
         # Send notification
-        result = send(notification["HTML"], notification["Text"])    
+        response_text, response_status_code = send(notification["HTML"], notification["Text"])    
 
         # Log result
         plugin_objects.add_object(
             primaryId   = pluginName,
             secondaryId = timeNowTZ(),            
             watched1    = notification["GUID"],
-            watched2    = result,            
-            watched3    = 'null',
+            watched2    = response_text,            
+            watched3    = response_status_code,
             watched4    = 'null',
             extra       = 'null',
             foreignKey  = notification["GUID"]
@@ -66,63 +69,60 @@ def main():
 
     plugin_objects.write_result_file()
 
+
+
 #-------------------------------------------------------------------------------
 def check_config():
-        if get_setting_value('APPRISE_URL') == '' or get_setting_value('APPRISE_HOST') == '':            
-            return False
-        else:
-            return True
-
+    if get_setting_value('NTFY_HOST') == '' or get_setting_value('NTFY_TOPIC') == '':        
+        return False
+    else:
+        return True
+    
 #-------------------------------------------------------------------------------
 def send(html, text):
 
-    payloadData = ''
-    result = ''
+    response_text = ''
+    response_status_code = ''
 
-    # limit = 1024 * 1024  # 1MB limit (1024 bytes * 1024 bytes = 1MB)
-    limit = get_setting_value('APPRISE_SIZE')
 
-    #  truncate size
-    if get_setting_value('APPRISE_PAYLOAD') == 'html':                 
-        if len(html) > limit:
-            payloadData = html[:limit] + "<h1>(text was truncated)</h1>"
-        else:
-            payloadData = html
-    if get_setting_value('APPRISE_PAYLOAD') == 'text':            
-        if len(text) > limit:
-            payloadData = text[:limit] + " (text was truncated)"
-        else:
-            payloadData = text
-
-    # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
-
-    _json_payload = {
-        "urls": get_setting_value('APPRISE_URL'),
-        "title": "Pi.Alert Notifications",
-        "format": get_setting_value('APPRISE_PAYLOAD'),
-        "body": payloadData
+    headers = {
+        "Title": "Pi.Alert Notification",
+        "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
+        "Priority": "urgent",
+        "Tags": "warning"
     }
+    
+    # if username and password are set generate hash and update header
+    if get_setting_value('NTFY_USER') != "" and get_setting_value('NTFY_PASSWORD') != "":
+	# Generate hash for basic auth
+        # usernamepassword = "{}:{}".format(get_setting_value('NTFY_USER'),get_setting_value('NTFY_PASSWORD'))
+        basichash = b64encode(bytes(get_setting_value('NTFY_USER') + ':' + get_setting_value('NTFY_PASSWORD'), "utf-8")).decode("ascii")
+
+	# add authorization header with hash
+        headers["Authorization"] = "Basic {}".format(basichash)
 
     try:
-        # try runnning a subprocess
-        p = subprocess.Popen(["curl","-i","-X", "POST" ,"-H", "Content-Type:application/json" ,"-d", json.dumps(_json_payload), get_setting_value('APPRISE_HOST')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout, stderr = p.communicate()
+        response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
+                                        get_setting_value('NTFY_TOPIC')),
+                                        data    = text,
+                                        headers = headers)
 
-        # write stdout and stderr into .log files for debugging if needed
-        # Log the stdout and stderr
-        mylog('debug', [stdout, stderr])  
+        response_status_code = response.status_code
 
-        # log result
-        result = stdout
+        # Check if the request was successful (status code 200)
+        if response_status_code == 200:
+            response_text = response.text  # This captures the response body/message                    
 
-    except subprocess.CalledProcessError as e:
-        # An error occurred, handle it
-        mylog('none', [e.output])
+    except requests.exceptions.RequestException as e:  
+        mylog('none', [f'[{pluginName}] Error: ', e])
 
-        # log result
-        result = e.output
+        response_text = e
 
-    return result
+        return response_text, response_status_code
+
+    return response_text, response_status_code    
+
 
 if __name__ == '__main__':
     sys.exit(main())
+

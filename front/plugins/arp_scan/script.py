@@ -12,7 +12,7 @@ from time import strftime
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Object, Plugin_Objects
+from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
 from const import logPath, pialertPath
@@ -70,14 +70,14 @@ def main():
 
     for device in unique_devices:
         plugin_objects.add_object(
-            primaryId=device['mac'],  # MAC (Device Name)
-            secondaryId=device['ip'],  # IP Address            
-            watched1=device['ip'],    # Device Name
-            watched2=device.get('hw', ''),  # Vendor (assuming it's in the 'hw' field)
-            watched3=device.get('interface', ''),  # Add the interface             
-            watched4='',
-            extra='arp-scan', 
-            foreignKey="")
+            primaryId   = handleEmpty(device['mac']),  # MAC (Device Name)
+            secondaryId = handleEmpty(device['ip']),  # IP Address            
+            watched1    = handleEmpty(device['ip']),    # Device Name
+            watched2    = handleEmpty(device.get('hw', '')),  # Vendor (assuming it's in the 'hw' field)
+            watched3    = handleEmpty(device.get('interface', '')),  # Add the interface             
+            watched4    = '',
+            extra       = 'arp-scan', 
+            foreignKey  = "")
 
     plugin_objects.write_result_file()
 

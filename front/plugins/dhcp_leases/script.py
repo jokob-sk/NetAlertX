@@ -62,14 +62,14 @@ def get_entries(path, plugin_objects):
                     row = line.rstrip().split()
                     if len(row) == 5:
                         plugin_objects.add_object(
-                            primaryId=handleEmpty(row[1]),
-                            secondaryId=handleEmpty(row[2]),
-                            watched1=handleEmpty('True'),
-                            watched2=handleEmpty(row[3]),
-                            watched3=handleEmpty(row[4]),
-                            watched4=handleEmpty('True'),
-                            extra=handleEmpty(path),
-                            foreignKey=handleEmpty(row[1])
+                            primaryId   = handleEmpty(row[1]),
+                            secondaryId = handleEmpty(row[2]),
+                            watched1    = handleEmpty('True'),
+                            watched2    = handleEmpty(row[3]),
+                            watched3    = handleEmpty(row[4]),
+                            watched4    = handleEmpty('True'),
+                            extra       = handleEmpty(path),
+                            foreignKey  = handleEmpty(row[1])
                         )
         else:
             #  Handle generic dhcp.leases files

@@ -45,18 +45,6 @@ REPORT_DASHBOARD_URL    = 'http://pi.alert/'
 # Notification gateways
 # -------------------------------------------
 
-# Email
-REPORT_MAIL     = False 
-SMTP_SERVER     = '' 
-SMTP_PORT       = 587 
-REPORT_TO       = 'user@gmail.com'
-REPORT_FROM     = 'Pi.Alert <user@gmail.com>' 
-SMTP_SKIP_LOGIN = False 
-SMTP_USER       = '' 
-SMTP_PASS       = '' 
-SMTP_SKIP_TLS   = False 
-SMTP_FORCE_SSL  = False 
-
 # Webhooks
 REPORT_WEBHOOK  = False 
 WEBHOOK_URL     = '' 
@@ -64,12 +52,6 @@ WEBHOOK_PAYLOAD = 'json'
 WEBHOOK_REQUEST_METHOD = 'GET' 
 WEBHOOK_SECRET  = ''
 
-# NTFY
-REPORT_NTFY     = False 
-NTFY_HOST       = 'https://ntfy.sh'
-NTFY_TOPIC      = '' 
-NTFY_USER       = '' 
-NTFY_PASSWORD   = '' 
 
 # PUSHSAFER
 REPORT_PUSHSAFER    = False 

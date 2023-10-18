@@ -5,9 +5,12 @@ import argparse
 import os
 import pathlib
 import sys
+import re
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.header import Header
+from email.utils import parseaddr
 import smtplib
 import socket
 import ssl
@@ -66,7 +69,7 @@ def main():
             watched3    = 'null',
             watched4    = 'null',
             extra       = 'null',
-            foreignKey  = 'null'
+            foreignKey  = notification["GUID"]
         )
 
     plugin_objects.write_result_file()
@@ -89,13 +92,16 @@ def send(pHTML, pText):
 
     mylog('debug', [f'[{pluginName}] SMTP_REPORT_TO: {hide_email(str(get_setting_value("SMTP_REPORT_TO")))} SMTP_USER: {hide_email(str(get_setting_value("SMTP_USER")))}'])
 
+
+    subject, from_email, to_email, message_html, message_text = sanitize_email_content('Pi.Alert Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
+
     # Compose email
     msg             = MIMEMultipart('alternative')
-    msg['Subject']  = 'Pi.Alert Report'
-    msg['From']     = get_setting_value("SMTP_REPORT_FROM")
-    msg['To']       = get_setting_value("SMTP_REPORT_TO")
-    msg.attach (MIMEText (pText, 'plain'))
-    msg.attach (MIMEText (pHTML, 'html'))
+    msg['Subject']  = subject
+    msg['From']     = from_email
+    msg['To']       = to_email
+    msg.attach (MIMEText (message_text, 'plain'))
+    msg.attach (MIMEText (message_html, 'html'))
 
     # Set a timeout for the SMTP connection (in seconds)
     smtp_timeout = 30
@@ -124,8 +130,9 @@ def send(pHTML, pText):
         except ssl.SSLError as e:                        
             mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
             mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
-            mylog('none', ['      ERROR: ', str(e)])                     
+            mylog('none', ['      ERROR: ', str(e)])      
 
+# ----------------------------------------------------------------------------------
 def send_email(msg):
     # Send mail
     if get_setting_value('SMTP_FORCE_SSL'):
@@ -168,5 +175,26 @@ def send_email(msg):
     smtp_connection.sendmail (get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), msg.as_string())
     smtp_connection.quit()
 
+# ----------------------------------------------------------------------------------
+def sanitize_email_content(subject, from_email, to_email, message_html, message_text):
+    # Validate and sanitize subject
+    subject = Header(subject, 'utf-8').encode()
+
+    # Validate and sanitize sender's email address
+    from_name, from_address = parseaddr(from_email)
+    from_email = Header(from_name, 'utf-8').encode() + ' <' + from_address + '>'
+
+    # Validate and sanitize recipient's email address
+    to_name, to_address = parseaddr(to_email)
+    to_email = Header(to_name, 'utf-8').encode() + ' <' + to_address + '>'
+
+    # Validate and sanitize message content
+    # Remove potentially problematic characters
+    message_html = re.sub(r'[^\x00-\x7F]+', ' ', message_html)
+    message_text = re.sub(r'[^\x00-\x7F]+', ' ', message_text)
+
+    return subject, from_email, to_email, message_html, message_text
+
+# ----------------------------------------------------------------------------------
 if __name__ == '__main__':
     sys.exit(main())

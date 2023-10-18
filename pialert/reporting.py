@@ -24,8 +24,6 @@ from const import pialertPath, logPath, apiPath
 from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
-from publishers.ntfy  import (check_config as ntfy_check_config,
-                              send as send_ntfy )
 from publishers.webhook import (check_config as webhook_check_config,
                                 send as send_webhook) 
 from publishers.pushsafer import (check_config as pushsafer_check_config,
