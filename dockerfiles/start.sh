@@ -30,7 +30,12 @@ echo "[INSTALL] Run setup scripts"
 "$INSTALL_DIR/pialert/install/install_dependencies.sh"
 "$INSTALL_DIR/pialert/install/install_python.sh"
 
-# Chaneg port number if set
+# # executes a new shell session with the user specified in the USER variable.
+# if [ -n "$USER" ]; then
+#     exec su - "${USER}"
+# fi
+
+# Change port number if set
 if [ -n "${PORT}" ]; then  
   sed -ie 's/listen 20211/listen '${PORT}'/g' /etc/nginx/sites-available/default
 fi 
@@ -77,6 +82,7 @@ chmod -R a+rwx $INSTALL_DIR
 chmod -R a+rwx /var/www/html
 chmod -R a+rw $INSTALL_DIR/pialert/front/log
 chmod -R a+rw $INSTALL_DIR/pialert/config
+sudo chgrp -R www-data  $INSTALL_DIR/pialert
 
 FILEDB=$INSTALL_DIR/pialert/db/pialert.db
 

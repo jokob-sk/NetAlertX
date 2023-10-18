@@ -25,6 +25,11 @@ array=( ${LINE//:/ } )
 # home is 5th element
 USER_HOME=${array[4]}
 
+# print debug output
+echo  USER_ID: ${USER_ID};
+echo  USER_GID: ${USER_GID};
+echo  USER_HOME: ${USER_HOME};
+
 sed -i -e "s/^${USER}:\([^:]*\):[0-9]*:[0-9]*/${USER}:\1:${USER_ID}:${USER_GID}/"  /etc/passwd
 sed -i -e "s/^${USER}:\([^:]*\):[0-9]*/${USER}:\1:${USER_GID}/"  /etc/group
 

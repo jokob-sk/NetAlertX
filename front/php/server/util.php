@@ -328,9 +328,16 @@ function saveSettings()
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
   // open new file and write the new configuration      
-  $newConfig = fopen($fullConfPath, "w") or die("Unable to open file!"); 
-  fwrite($newConfig, $txt);
-  fclose($newConfig);
+  // Create a temporary file
+  $tempConfPath = $fullConfPath . ".tmp";
+
+  // Write your changes to the temporary file
+  $tempConfig = fopen($tempConfPath, "w") or die("Unable to open file!");
+  fwrite($tempConfig, $txt);
+  fclose($tempConfig);
+
+  // Replace the original file with the temporary file
+  rename($tempConfPath, $fullConfPath);
 
   displayMessage("<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
     FALSE, TRUE, TRUE, TRUE);    
