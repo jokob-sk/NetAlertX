@@ -15,7 +15,7 @@ from base64 import b64encode
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 import conf
-from plugin_helper import Plugin_Objects
+from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, noti_obj, get_setting_value
 from notification import Notification_obj
@@ -60,7 +60,7 @@ def main():
             primaryId   = pluginName,
             secondaryId = timeNowTZ(),            
             watched1    = notification["GUID"],
-            watched2    = response_text,            
+            watched2    = handleEmpty(response_text),            
             watched3    = response_status_code,
             watched4    = 'null',
             extra       = 'null',
@@ -109,9 +109,13 @@ def send(html, text):
 
         response_status_code = response.status_code
 
+        
+
         # Check if the request was successful (status code 200)
         if response_status_code == 200:
-            response_text = response.text  # This captures the response body/message                    
+            response_text = response.text  # This captures the response body/message      
+        else:
+            response_text = json.dumps(response.text) 
 
     except requests.exceptions.RequestException as e:  
         mylog('none', [f'[{pluginName}] Error: ', e])
