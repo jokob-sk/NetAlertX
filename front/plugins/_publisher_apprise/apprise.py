@@ -14,7 +14,7 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 import conf
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, noti_obj, get_setting_value
+from helper import timeNowTZ, get_setting_value
 from notification import Notification_obj
 from database import DB
 

@@ -24,7 +24,7 @@ import multiprocessing
 import conf
 from const import *
 from logger import  mylog
-from helper import  filePermissions, timeNowTZ, updateState, get_setting_value, noti_obj
+from helper import  filePermissions, timeNowTZ, updateState, get_setting_value
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs

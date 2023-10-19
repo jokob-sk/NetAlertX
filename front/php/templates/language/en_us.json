@@ -533,15 +533,7 @@
         "WEBHOOK_SIZE_description" : "The maximum size of the webhook payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended.",        
         "WEBHOOK_SECRET_name": "HMAC Secret",
         "WEBHOOK_SECRET_description": "When set, use this secret to generate the SHA256-HMAC hex digest value of the request body, which will be passed as the <code>X-Webhook-Signature</code> header to the request. You can find more informations <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_SECRET.md\">here</a>.",        
-        
-        "PUSHSAFER_display_name" : "Pushsafer",
-        "PUSHSAFER_icon" : "<i class=\"fa fa-bell\"></i>",
-        "REPORT_PUSHSAFER_name" : "Enable Pushsafer",
-        "REPORT_PUSHSAFER_description" : "Enable sending notifications via <a target=\"_blank\" href=\"https://www.pushsafer.com/\">Pushsafer</a>.",
-        "PUSHSAFER_TOKEN_name" : "Pushsafer token",
-        "PUSHSAFER_TOKEN_description" : "Your secret Pushsafer API key (token).",        
-        "MQTT_display_name" : "MQTT",
-        "MQTT_icon" : "<i class=\"fa fa-square-rss\"></i>",
+
         "REPORT_TITLE" : "Report",
         "REPORT_ERROR" : "The page you are looking for is temporarily unavailable, please try again after a few seconds",       
 

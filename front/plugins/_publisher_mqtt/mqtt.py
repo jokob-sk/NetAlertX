@@ -22,7 +22,7 @@ from const import apiPath
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, noti_obj, get_setting_value, bytes_to_string, sanitize_string
+from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
 from database import DB, get_all_devices, get_device_stats
 

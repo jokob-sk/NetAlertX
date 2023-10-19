@@ -21,11 +21,10 @@ from helper import timeNowTZ, get_setting_value
 from notification import Notification_obj
 from database import DB
 
-
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
-pluginName = 'NTFY'
+pluginName = 'PUSHSAFER'
 
 def main():
     
@@ -70,46 +69,31 @@ def main():
     plugin_objects.write_result_file()
 
 
-
-#-------------------------------------------------------------------------------
-def check_config():
-    if get_setting_value('NTFY_HOST') == '' or get_setting_value('NTFY_TOPIC') == '':        
-        return False
-    else:
-        return True
     
 #-------------------------------------------------------------------------------
-def send(html, text):
+def send(text):
 
     response_text = ''
     response_status_code = ''
 
-
-    headers = {
-        "Title": "Pi.Alert Notification",
-        "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
-        "Priority": "urgent",
-        "Tags": "warning"
-    }
-    
-    # if username and password are set generate hash and update header
-    if get_setting_value('NTFY_USER') != "" and get_setting_value('NTFY_PASSWORD') != "":
-	# Generate hash for basic auth
-        # usernamepassword = "{}:{}".format(get_setting_value('NTFY_USER'),get_setting_value('NTFY_PASSWORD'))
-        basichash = b64encode(bytes(get_setting_value('NTFY_USER') + ':' + get_setting_value('NTFY_PASSWORD'), "utf-8")).decode("ascii")
-
-	# add authorization header with hash
-        headers["Authorization"] = "Basic {}".format(basichash)
-
     try:
-        response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
-                                        get_setting_value('NTFY_TOPIC')),
-                                        data    = text,
-                                        headers = headers)
-
+        url = 'https://www.pushsafer.com/api'
+        post_fields = {
+            "t" : 'Pi.Alert Message',
+            "m" : text,
+            "s" : 11,
+            "v" : 3,
+            "i" : 148,
+            "c" : '#ef7f7f',
+            "d" : 'a',
+            "u" : get_setting_value('REPORT_DASHBOARD_URL'),
+            "ut" : 'Open Pi.Alert',
+            "k" : get_setting_value('PUSHSAFER_TOKEN'),
+            }
+        response = requests.post(url, data=post_fields)
+        
         response_status_code = response.status_code
 
-        
 
         # Check if the request was successful (status code 200)
         if response_status_code == 200:
@@ -123,10 +107,22 @@ def send(html, text):
         response_text = e
 
         return response_text, response_status_code
+    
 
     return response_text, response_status_code    
 
 
+
+
+
+#-------------------------------------------------------------------------------
+def check_config():
+        if get_setting_value('PUSHSAFER_TOKEN') == 'ApiKey':           
+            return False
+        else:
+            return True
+
+#  -------------------------------------------------------
 if __name__ == '__main__':
     sys.exit(main())
 

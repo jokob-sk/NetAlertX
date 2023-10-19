@@ -128,10 +128,6 @@ def importConfigs (db):
     conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
     conf.WEBHOOK_SECRET = ccd('WEBHOOK_SECRET', '' , c_d, 'Secret', 'text', '', 'Webhooks')
 
-    # PUSHSAFER
-    conf.REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER', ['test'])
-    conf.PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
-    
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
 

@@ -258,15 +258,6 @@ def get_notifications (db):
 
     return noti_obj(final_json, final_text, final_html)   
 
-
-
-    #     if conf.REPORT_MAIL and check_config('email'):
-    #         updateState("Send: Email")
-    #         mylog('minimal', ['[Notification] Sending report by Email'])
-    #         send_email (msg )
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip email'])
-    #     
     
     #     if conf.REPORT_WEBHOOK and check_config('webhook'):
     #         updateState("Send: Webhook")
@@ -274,27 +265,13 @@ def get_notifications (db):
     #         send_webhook (msg)
     #     else :
     #         mylog('verbose', ['[Notification] Skip webhook'])
-    #     if conf.REPORT_NTFY and check_config('ntfy'):
-    #         updateState("Send: NTFY")
-    #         mylog('minimal', ['[Notification] Sending report by NTFY'])
-    #         send_ntfy (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip NTFY'])
+
     #     if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
     #         updateState("Send: PUSHSAFER")
     #         mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
     #         send_pushsafer (msg)
     #     else :
     #         mylog('verbose', ['[Notification] Skip PUSHSAFER'])
-    #     # Update MQTT entities
-    #     if conf.REPORT_MQTT and check_config('mqtt'):
-    #         updateState("Send: MQTT")
-    #         mylog('minimal', ['[Notification] Establishing MQTT thread'])
-    #         mqtt_start(db)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip MQTT'])
-    # else :
-    #     mylog('verbose', ['[Notification] No changes to report'])
 
 
 #-------------------------------------------------------------------------------
