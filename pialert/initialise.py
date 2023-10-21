@@ -117,17 +117,6 @@ def importConfigs (db):
     # ARPSCAN (+ more settings are provided by the ARPSCAN plugin)    
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'ARPSCAN')    
 
-    # Notification gateways
-    # ----------------------------------------
-
-    # Webhooks
-    conf.REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
-    conf.WEBHOOK_URL = ccd('WEBHOOK_URL', '' , c_d, 'Target URL', 'text', '', 'Webhooks')
-    conf.WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'text.select', "['json', 'html', 'text']", 'Webhooks')
-    conf.WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'text.select', "['GET', 'POST', 'PUT']", 'Webhooks')
-    conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
-    conf.WEBHOOK_SECRET = ccd('WEBHOOK_SECRET', '' , c_d, 'Secret', 'text', '', 'Webhooks')
-
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
 

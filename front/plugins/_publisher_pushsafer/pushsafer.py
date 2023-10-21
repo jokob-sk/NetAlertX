@@ -17,7 +17,7 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 import conf
 from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, get_setting_value
+from helper import timeNowTZ, get_setting_value, hide_string
 from notification import Notification_obj
 from database import DB
 
@@ -48,11 +48,11 @@ def main():
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
-    # Process the new notifications
+    # Process the new notifications (see the Notifications DB table for structure or check the /api/table_notifications.json endpoint)
     for notification in new_notifications:
 
         # Send notification
-        response_text, response_status_code = send(notification["HTML"], notification["Text"])    
+        response_text, response_status_code = send(notification["Text"])    
 
         # Log result
         plugin_objects.add_object(
@@ -76,6 +76,11 @@ def send(text):
     response_text = ''
     response_status_code = ''
 
+    token = get_setting_value('PUSHSAFER_TOKEN')
+
+    mylog('verbose', [f'[{pluginName}] PUSHSAFER_TOKEN: "{hide_string(token)}"'])    
+    
+
     try:
         url = 'https://www.pushsafer.com/api'
         post_fields = {
@@ -88,7 +93,7 @@ def send(text):
             "d" : 'a',
             "u" : get_setting_value('REPORT_DASHBOARD_URL'),
             "ut" : 'Open Pi.Alert',
-            "k" : get_setting_value('PUSHSAFER_TOKEN'),
+            "k" : token,
             }
         response = requests.post(url, data=post_fields)
         

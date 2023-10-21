@@ -53,7 +53,7 @@ def send (msg: noti_obj):
             payloadData = truncate_json(json_data)
     if conf.WEBHOOK_PAYLOAD == 'html':                 
         if len(msg.html) > limit:
-            payloadData = msg.html[:limit] + " <h1> (text was truncated)</h1>"
+            payloadData = msg.html[:limit] + " <h1>(text was truncated)</h1>"
         else:
             payloadData = msg.html
     if conf.WEBHOOK_PAYLOAD == 'text':            

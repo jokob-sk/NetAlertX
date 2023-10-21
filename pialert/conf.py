@@ -42,22 +42,6 @@ DAYS_TO_KEEP_EVENTS     = 90
 REPORT_DASHBOARD_URL    = 'http://pi.alert/' 
 
 # -------------------------------------------
-# Notification gateways
-# -------------------------------------------
-
-# Webhooks
-REPORT_WEBHOOK  = False 
-WEBHOOK_URL     = '' 
-WEBHOOK_PAYLOAD = 'json' 
-WEBHOOK_REQUEST_METHOD = 'GET' 
-WEBHOOK_SECRET  = ''
-
-
-# PUSHSAFER
-REPORT_PUSHSAFER    = False 
-PUSHSAFER_TOKEN     = 'ApiKey'
-
-# -------------------------------------------
 # Misc
 # -------------------------------------------
 

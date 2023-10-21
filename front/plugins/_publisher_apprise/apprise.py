@@ -46,7 +46,7 @@ def main():
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
-    # Process the new notifications
+    # Process the new notifications (see the Notifications DB table for structure or check the /api/table_notifications.json endpoint)
     for notification in new_notifications:
 
         # Send notification

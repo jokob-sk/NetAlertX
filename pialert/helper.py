@@ -511,6 +511,14 @@ def hide_email(email):
     return email
 
 #-------------------------------------------------------------------------------
+def hide_string(input_string):
+    if len(input_string) < 3:
+        return input_string  # Strings with 2 or fewer characters remain unchanged
+    else:
+        return input_string[0] + "*" * (len(input_string) - 2) + input_string[-1]
+
+
+#-------------------------------------------------------------------------------
 def removeDuplicateNewLines(text):
     if "\n\n\n" in text:
         return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))

@@ -26,8 +26,7 @@ from logger import logResult, mylog, print_log
 
 from publishers.webhook import (check_config as webhook_check_config,
                                 send as send_webhook) 
-from publishers.pushsafer import (check_config as pushsafer_check_config,
-                                send as send_pushsafer) 
+
 
 
 #===============================================================================
@@ -257,21 +256,6 @@ def get_notifications (db):
     send_api()
 
     return noti_obj(final_json, final_text, final_html)   
-
-    
-    #     if conf.REPORT_WEBHOOK and check_config('webhook'):
-    #         updateState("Send: Webhook")
-    #         mylog('minimal', ['[Notification] Sending report by Webhook'])
-    #         send_webhook (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip webhook'])
-
-    #     if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
-    #         updateState("Send: PUSHSAFER")
-    #         mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
-    #         send_pushsafer (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip PUSHSAFER'])
 
 
 #-------------------------------------------------------------------------------
