@@ -322,6 +322,28 @@
           "string": "Wann Benachrichtigungen gesendet werden sollen."
         }
       ]
+    },
+    {
+      "function": "ARGS",
+      "type": "text",
+      "default_value": "sudo arp-scan --ignoredups --retry=6",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Arguments"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Arguments to run arps-scan with. Recommended and tested only with the setting <code>sudo arp-scan --ignoredups --retry=6</code>."
+        }
+      ]
     }
   ],
   "database_column_definitions": [
