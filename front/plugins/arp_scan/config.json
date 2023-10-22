@@ -341,7 +341,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Arguments to run arps-scan with. Recommended and tested only with the setting <code>sudo arp-scan --ignoredups --retry=6</code>."
+          "string": "Arguments to run arps-scan with. Recommended and tested only with the setting: <br/> <code>sudo arp-scan --ignoredups --retry=6</code>."
         }
       ]
     }
