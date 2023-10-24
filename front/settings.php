@@ -54,6 +54,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <!-- Page ------------------------------------------------------------------ -->
 
 <script src="js/pialert_common.js"></script>
+<script src="js/settings_utils.js"></script>
 
 
 <div id="settingsPage" class="content-wrapper">
@@ -86,9 +87,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     <div id="settingsOverview" class ="bg-white color-palette box panel panel-default col-sm-12 box-default box-info" > 
       <!-- Settings imported time -->
-      
 
-    
+      <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_enabled_settings_icon");?>"></i>  <?= lang("Plugins_enabled_settings");?>       
+          </div>        
+          <div class =" col-sm-12" id=""></div>
 
     </section>
 
@@ -111,9 +114,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_scanner_icon");?>"></i>  <?= lang("Plugins_type_scanner");?>       
+            <i class="<?= lang("Plugins_type_device_scanner_icon");?>"></i>  <?= lang("Plugins_type_device_scanner");?>     
           </div>        
-          <div class =" col-sm-12" id="scanner_content"></div>
+          <div class =" col-sm-12" id="device_scanner_content"></div>
+      </div> 
+
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+          <div class ="settings-group col-sm-12">
+            <i class="<?= lang("Plugins_type_other_icon");?>"></i>  <?= lang("Plugins_type_other");?>       
+          </div>        
+          <div class =" col-sm-12" id="other_content"></div>
       </div> 
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
@@ -144,127 +154,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 
 <script>
-  // -------------------------------------------------------------------
-  // Get plugin type base on prefix
-  function getPluginType(pluginsData, prefix)
-  {
+  
 
-    result = "core"
-
-    pluginsData.forEach((plug) => {
-
-      if (plug.unique_prefix == prefix ) {
-        id = plug.plugin_type;
-        
-        // console.log(id)
-        result = plug.plugin_type;        
-      }
-    });
-
-    return result;
-  }
-
-  // -------------------------------------------------------------------
-  // Generate plugin HTML card based on prefixes in an array 
-  function pluginCards(prefixesOfEnabledPlugins, includeSettings)
-  {    
-    html = ""
-
-    prefixesOfEnabledPlugins.forEach((prefix) => {
-
-      includeSettings_html = ''
-
-      includeSettings.forEach((set) => {
-
-        includeSettings_html += `<div><code>${getSetting(prefix+set)}</code></div>`
-
-      });
-
-      html += `<div class="col-sm-3 ">
-                <div class="info-box bg-aqua">
-                  <span class="info-box-icon"> ${getString(prefix+"_icon")} </span> 
-                  <div class="info-box-content">
-                    <span class="info-box-text">
-                    ${getString(prefix+"_display_name")}
-                    ${includeSettings_html}
-                    </span>
-                  </div>
-                </div>
-              </div>`
-    });
-
-    return html;    
-  }
-
-  // -------------------------------------------------------------------
-  // Gets scanners that write into the CurrentScan table
-  function getMappedToCurrentScan(prefixesOfEnabledPlugins, pluginsData, onlyEnabled)
-  {    
-    plug_schedules = []
-    plug_prefixes = []
-
-    prefixesOfEnabledPlugins.forEach((prefix) => {
-      pluginsData.forEach((plug) => {
-
-        // enabled plugin is mapping to the CurrentScan table -> save the data to check the schedule
-        if (plug.unique_prefix == prefix && plug.mapped_to_table == "CurrentScan") {
-          
-          shouldContinue = true;
-
-          // skip if not enabled and should return only enabled
-          if(onlyEnabled && getSetting(prefix+"_RUN") != 'schedule')
-          {
-            shouldContinue = false
-          }   
-
-          if(shouldContinue)
-          {
-            plug_prefixes.push(prefix)          
-            plug_schedules.push(getSetting(prefix+"_RUN_SCHD").replace(/\s/g, "")) // replace all white characters to compare them easier
-
-          }
-        }
-
-      });
-    });
-    
-    return plug_prefixes;    
-  }
-
-  // // -------------------------------------------------------------------
-  // // Gets scanners that write into the CurrentScan table
-  // function getMappedToCurrentScan(prefixesOfEnabledPlugins, pluginsData, onlyEnabled)
-  // {    
-  //   plug_schedules = []
-  //   plug_prefixes = []
-
-  //   prefixesOfEnabledPlugins.forEach((prefix) => {
-  //     pluginsData.forEach((plug) => {
-
-  //       // enabled plugin is mapping to the CurrentScan table -> save the data to check the schedule
-  //       if (plug.unique_prefix == prefix && plug.mapped_to_table == "CurrentScan") {
-          
-  //         shouldContinue = true;
-
-  //         // skip if not enabled and should return only enabled
-  //         if(onlyEnabled && getSetting(prefix+"_RUN") != 'schedule')
-  //         {
-  //           shouldContinue = false
-  //         }   
-
-  //         if(shouldContinue)
-  //         {
-  //           plug_prefixes.push(prefix)          
-  //           plug_schedules.push(getSetting(prefix+"_RUN_SCHD").replace(/\s/g, "")) // replace all white characters to compare them easier
-
-  //         }
-  //       }
-
-  //     });
-  //   });
-
-  //   return plug_prefixes;    
-  // }
 
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
@@ -288,15 +179,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function initSettingsPage(settingsData, pluginsData){
 
     const settingGroups = [];
-    
-    const enabledScanners   = [];
-    
-    const enabledPublishers = [];
-    const pluginTypes = [];
     const settingKeyOfLists = [];
+    
+    const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);    
+    const enabledOthers         = getPluginsByType(pluginsData, "other", true);    
+    const enabledPublishers     = getPluginsByType(pluginsData, "publisher", true);
 
-    // core groups are the ones not generated by plugins
-    const settingCoreGroups = ['General'];
+
 
     // Loop through the settingsArray and:
     //    - collect unique settingGroups
@@ -306,74 +195,52 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       // settingGroups
       if (!settingGroups.includes(set.Group)) {
         settingGroups.push(set.Group); // = Unique plugin prefix
-      }
-      // check if NOT disabled
-      if (set.Code_Name.endsWith("_RUN") && set.Value != 'disabled') {
-
-        switch(getPluginType(pluginsData, set.Group))
-        {
-          case "scanner": 
-            enabledScanners.push(set.Group);
-            break;
-          case "publisher": 
-            enabledPublishers.push(set.Group);
-            break;
-          default:
-            break;
-        }
-      }
-    });
-
-    const enabledDeviceScanners = getMappedToCurrentScan(enabledScanners, pluginsData, true);
+      }      
+    });    
 
     // Init the overview section
     overviewSections      = [
-                              'scanners_enabled', 
-                              'publishers_enabled', 
-                              'device_scanners'
+                              'device_scanners',  
+                              'other_scanners', 
+                              'publishers_enabled'                                                          
                             ]
     overviewSectionsHtml  = [
-                              pluginCards(enabledScanners, []), 
+                              pluginCards(enabledDeviceScanners,['RUN', 'RUN_SCHD']),
+                              pluginCards(enabledOthers, ['RUN', 'RUN_SCHD']), 
                               pluginCards(enabledPublishers, []), 
-                              pluginCards(enabledDeviceScanners,['_RUN', '_RUN_SCHD'])
+                              
                             ]
-
-    // "settings_device_scanners_label"
-    // <!-- Enabled scanners -->
-    // <div class="col-sm-2" title="<?= lang("settings_scanners_enabled");?> ">
-    //     <div class="">
-    //       <?= lang("settings_scanners_enabled_label");?>           
-    //     </div>
-    //   </div>
-    //   <div class="col-sm-10" id="enabledScanners">
-        
-    //   </div>  
 
     index = 0
     overviewSections_html = ''
 
     overviewSections.forEach((section) => {
 
-      overviewSections_html += `<div>
-                                  <div class="col-sm-2 " title="${getString("settings_"+section)}">
-                                    <div class="">
-                                      ${getString("settings_"+section+"_label")}
-                                    </div>
+      overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
+                                  <div class="col-sm-12 " title="${getString("settings_"+section)}">
+                                    <div class="overview-group col-sm-12">
+                                      ${getString("settings_"+section+"_label")}                                      
+                                    </div>                                    
                                   </div>
-                                  <div class="col-sm-10">
+                                  <div class="col-sm-12">
                                     ${overviewSectionsHtml[index]}        
                                   </div>
                                 </div>`
-
       index++;
-
     });
-
-    
-    // checkSchedules(enabledScanners, pluginsData)
 
     $('#settingsOverview').append(overviewSections_html);
 
+    // Display warning 
+    if(schedulesAreSynchronized(enabledDeviceScanners, pluginsData) == false)
+    {
+      $("#device_scanners").append(
+        `
+          <small class="label pull-right bg-red pointer" onClick="showModalOk('WARNING', '${getString("Settings_device_Scanners_desync_popup")}')">
+            ${getString('Settings_device_Scanners_desync')}
+          </small>
+        `)
+    } 
     
     // Start constructing the main settings HTML 
     let pluginHtml = `
@@ -381,25 +248,45 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             <div class="table_cell bold">
               <i class="fa-regular fa-book fa-sm"></i>
               <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">
-              <?= lang('Gen_ReadDocs');?>
+                ${getString('Gen_ReadDocs')}
               </a>
             </div>
           </div>
         `;
+
     let isIn = ' in '; // to open the active panel in AdminLTE
 
-    for (const group of settingGroups) {
-      let isPlugin = false;
+    for (const group of settingGroups) {     
+
+      // enabled / disabled icons
+      enabledHtml = ''
+
+      if(getSetting(group+"_RUN") != "")
+      {
+        let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save"  ].includes(getSetting(group+"_RUN"));      
+
+        isEnabled ? onOff = 'on' : onOff = 'off';
+
+        enabledHtml = `
+                      <div class="enabled-disabled-icon">
+                        <i class="fa-solid fa-toggle-${onOff}"></i>
+                      </div>
+                      `
+      }      
 
       headerHtml = `<div class="box box-solid box-primary panel panel-default">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
                     <div class="panel-heading">
-                      <h4 class="panel-title">${getString(group+"_icon")} ${getString(group+"_display_name")}</h4>
+                      <h4 class="panel-title">
+                        <div class="col-sm-1 col-xs-1">${getString(group+"_icon")}   </div>
+                        <div class="col-sm-10 col-xs-8">${getString(group+"_display_name")} </div>     
+                        <div class="col-sm-1 col-xs-1">${enabledHtml} </div>
+                      </h4>                      
                     </div>
                   </a>
                   <div id="${group}" data-myid="collapsible" class="panel-collapse collapse ${isIn}">
                     <div class="panel-body">
-                    ${isPlugin ? pluginHtml: ""}                    
+                    ${group != "general" ? pluginHtml: ""}                    
                     </div>
                   </div>
                 </div>

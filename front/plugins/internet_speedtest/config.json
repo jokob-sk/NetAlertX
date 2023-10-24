@@ -1,7 +1,7 @@
 {
   "code_name": "internet_speedtest",
   "unique_prefix": "INTRSPD",
-  "plugin_type": "scanner",
+  "plugin_type": "other",
   "enabled": true,
   "data_source": "script",
   "show_ui": true,

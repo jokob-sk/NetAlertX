@@ -173,6 +173,7 @@
 @media (max-width: 767px) {
     .main-header .logo {
         width: 100%;
+        display:none;
     }
 
     .main-header .navbar {
@@ -623,6 +624,11 @@ height: 50px;
     display: none;
 }
 
+.settingswrap .enabled-disabled-icon
+{
+    float: right;
+}
+
 .settings-group
 {   
     font-size: 20px;
@@ -630,7 +636,36 @@ height: 50px;
     padding-bottom: 9px;
 }
 
+.overview-section .small-box  .icon
+{
+    font-size: 38px;
+    top:0px;
+}
+
+.overview-section
+{
+    border: solid;
+    border-width: medium;
+    border-width: medium;
+    border-width: 1px;
+    border-radius: 15px;
+    margin-bottom: 3px;
+  
+}
+
 .settings-group i{
+    font-size: 16px;
+}
+
+.overview-group
+{   
+    font-size: 20px;
+    padding-top: 7px;
+    padding-bottom: 9px;
+
+}
+
+.overview-group i{
     font-size: 16px;
 }
 
@@ -683,6 +718,18 @@ height: 50px;
 }
 
 /* Settings */
+
+#settingsPage .overview-setting-value{    
+    display:unset;    
+}
+#settingsPage .panel-title{
+    /* display: inline-block; */
+    /* width: 120px; */
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
 
 .settings_content {
     padding: 10px;
@@ -901,29 +948,42 @@ input[readonly] {
 
 /*Hidden special button*/
 
-@media (max-width: 464px) {
+@media (max-width: 365px) {
   #back-button {
     display: none;
   }
 }
 
-@media (max-width: 432px) {
+@media (max-width: 335px) {
   #next-button {
     display: none;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 300px) {
   #reload-button {
     display: none;
   }
 }
 
-@media (max-width: 365px) {
+@media (max-width: 300px) {
   #fullscreen-button {
     display: none;
   }
 }
+
+@media (max-width: 500px) {
+    .header-server-time {
+      display: none;      
+    }
+  }
+
+#settingsPage .small-box .inner .card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;        
+    white-space: nowrap;
+}
+  
 
 /* -----------------------------------------------------------------------------
    Spin

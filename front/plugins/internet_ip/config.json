@@ -1,7 +1,7 @@
 {
   "code_name": "internet_ip",
   "unique_prefix": "INTRNT",
-  "plugin_type": "scanner",
+  "plugin_type": "device_scanner",
   "enabled": true,
   "mapped_to_table": "CurrentScan",
   "data_filters": [
