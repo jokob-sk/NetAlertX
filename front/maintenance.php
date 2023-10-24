@@ -760,7 +760,7 @@ function performLogManage() {
         showModalOk ('Result', data );
     }
   })
-  }
+}
 
 // --------------------------------------------------------
 function scrollDown()

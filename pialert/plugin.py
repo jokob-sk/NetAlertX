@@ -729,34 +729,65 @@ class plugin_object_class:
 #===============================================================================
 
 #-------------------------------------------------------------------------------
-def check_and_run_user_event(db, pluginsState):
+# def check_and_run_user_event(db, pluginsState):
     
-    sql = db.sql # TO-DO
-    sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
-    rows = sql.fetchall()    
+#     sql = db.sql # TO-DO
+#     sql.execute(""" select * from Parameters where par_ID = "Front_Event" """)
+#     rows = sql.fetchall()    
 
-    event, param = ['','']
-    if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
-        keyValue = rows[0]['par_Value'].split('|')
+#     event, param = ['','']
+#     if len(rows) > 0 and rows[0]['par_Value'] != 'finished':
+#         keyValue = rows[0]['par_Value'].split('|')
 
-        if len(keyValue) == 2:
-            event = keyValue[0]
-            param = keyValue[1]
-    else:
+#         if len(keyValue) == 2:
+#             event = keyValue[0]
+#             param = keyValue[1]
+#     else:
+#         return pluginsState
+
+#     if event == 'test':
+#         pluginsState = handle_test(param, db, pluginsState)
+#     if event == 'run':
+#         pluginsState = handle_run(param, db, pluginsState)
+
+#     # clear event execution flag
+#     sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
+
+#     # commit to DB
+#     db.commitDB()    
+
+#     return pluginsState
+
+
+def check_and_run_user_event(db, pluginsState):
+    # Check if the log file exists
+    logFile = os.path.join(logPath, "execution_queue.log")
+    
+    if not os.path.exists(logFile):
         return pluginsState
 
-    if event == 'test':
-        pluginsState = handle_test(param, db, pluginsState)
-    if event == 'run':
-        pluginsState = handle_run(param, db, pluginsState)
+    with open(logFile, "r") as file:
+        lines = file.readlines()
 
-    # clear event execution flag
-    sql.execute ("UPDATE Parameters SET par_Value='finished' WHERE par_ID='Front_Event'")
+    for line in lines:
+        # Split the line by '|', and take the third and fourth columns (indices 2 and 3)
+        columns = line.strip().split('|')[2:4]
 
-    # commit to DB
-    db.commitDB()    
+        if len(columns) != 2:
+            continue
+
+        event, param = columns
+
+        if event == 'test':
+            pluginsState = handle_test(param, db, pluginsState)
+        if event == 'run':
+            pluginsState = handle_run(param, db, pluginsState)
+
+    # Clear the log file
+    open(logFile, "w").close()
 
     return pluginsState
+
 
 #-------------------------------------------------------------------------------
 def handle_run(runType, db, pluginsState):

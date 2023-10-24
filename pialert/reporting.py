@@ -24,10 +24,6 @@ from const import pialertPath, logPath, apiPath
 from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
-from publishers.webhook import (check_config as webhook_check_config,
-                                send as send_webhook) 
-
-
 
 #===============================================================================
 # REPORTING
@@ -178,7 +174,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "New devices")
 
-        # collect "new_devices" for the webhook json
+        # collect "new_devices" for the json
         json_new_devices = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', notiStruc.text + '\n')
@@ -194,7 +190,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Down devices")
 
-        # collect "down_devices" for the webhook json
+        # collect "down_devices" for the json
         json_down_devices = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', notiStruc.text + '\n')
@@ -211,7 +207,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Events")
 
-        # collect "events" for the webhook json
+        # collect "events" for the json
         json_events = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<EVENTS_TABLE>', notiStruc.text + '\n')
@@ -224,7 +220,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Plugins")
 
-        # collect "plugins" for the webhook json
+        # collect "plugins" for the json
         json_plugins = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<PLUGINS_TABLE>', notiStruc.text + '\n')

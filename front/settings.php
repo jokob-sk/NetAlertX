@@ -489,7 +489,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 data-myparam="${codeName}"
                 data-myparam-plugin="${group}"
                 data-myevent="${event}"
-                onclick="handleEvent(this)"
+                onclick="addToExecutionQueue(this)"
               >
                 <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}">                 
                 </i>
@@ -856,22 +856,73 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   }
 
 
-  function updateModalState(){
+  // function updateModalState(){
 
-    setTimeout(function(){
-      displayedEvent = $('#'+modalEventStatusId).html()
+  //   setTimeout(function(){
+  //     displayedEvent = $('#'+modalEventStatusId).html()
 
-      // loop until finished  
-      if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 2s
-      {
+  //     // loop until finished  
+  //     if(displayedEvent.indexOf('finished') == -1) // if the message is different from finished, check again in 2s
+  //     {
         
-        getParam(modalEventStatusId,"Front_Event", true)
+  //       getParam(modalEventStatusId,"Front_Event", true)
 
-        updateModalState()
+  //       updateModalState()
         
-      }
+  //     }
+  //   }, 2000);
+  // }
+
+
+// --------------------------------------------------------
+// Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
+function addToExecutionQueue(element)
+{
+
+  // value has to be in format event|param. e.g. run|ARPSCAN
+  action = `${getGuid()}|${$(element).attr('data-myevent')}|${$(element).attr('data-myparam-plugin')}`
+
+  // addToExecutionQueue(action)
+
+  $.ajax({
+    method: "POST",
+    url: "php/server/util.php",
+    data: { function: "addToExecutionQueue", action: action  },
+    success: function(data, textStatus) {
+        showModalOk ('Result', data );
+    }
+  })
+}
+
+// TODO
+function updateModalState() {
+    setTimeout(function() {
+        // Fetch the content from the log file using an AJAX request
+        $.ajax({
+            url: '~/log/execution_queue.log',
+            type: 'GET',
+            success: function(data) {
+                // Update the content of the HTML element (e.g., a div with id 'logContent')
+                $('#logContent').html(data);
+
+                // Check if the displayed content contains 'finished'
+                if (data.indexOf('finished') === -1) {
+                    // If not finished, continue to update
+                    updateModalState();
+                }
+            },
+            error: function() {
+                // Handle error, such as the file not being found
+                $('#logContent').html('Error: Log file not found.');
+            }
+        });
     }, 2000);
-  }
+}
+
+// Call the function to start the periodic updates
+updateModalState();
+
+
 
 
   // ----------------------------------------------------------------------------- 
