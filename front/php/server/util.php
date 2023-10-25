@@ -20,20 +20,20 @@ if(array_key_exists('function', $_REQUEST) != FALSE)
 {  
   $FUNCTION = $_REQUEST['function']; 
 }
+if(array_key_exists('settings', $_REQUEST) != FALSE)
+{
+  $SETTINGS = $_REQUEST['settings'];
+}
 
 
 // call functions based on requested params
 switch ($FUNCTION) {
   case 'savesettings':
+      
       saveSettings();
       break;
 
   case 'cleanLog':      
-
-      if(array_key_exists('settings', $_REQUEST) != FALSE)
-      {
-        $SETTINGS = $_REQUEST['settings'];
-      }
 
       cleanLog($SETTINGS);
       break;

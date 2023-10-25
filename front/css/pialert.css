@@ -585,8 +585,24 @@ height: 50px;
 .infobox_label {
     font-size: 16px !important;
 }
+/* --------------------------------------------------------- */
+/*                         report                            */
+/* --------------------------------------------------------- */
 
-/*settings*/
+#notificationData textarea{
+    width: 100%;
+}
+
+#notificationData pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; }
+
+/* --------------------------------------------------------- */
+/*                          settings                         */
+/* --------------------------------------------------------- */
 
 @media (max-width: 767px) {
     /* hide on mobile */
