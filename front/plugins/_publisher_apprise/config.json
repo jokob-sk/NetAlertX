@@ -132,7 +132,7 @@
             "options": [
                 {
                     "type": "eval",
-                    "param": "`<a href='/report?guid=${value}'>${value}</a>`"
+                    "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
                 }          
             ],
             "localized": ["name"],

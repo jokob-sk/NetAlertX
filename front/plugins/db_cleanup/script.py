@@ -92,6 +92,23 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     cursor.execute(delete_query)
 
+    # Trim Notifications entries to less than DBCLNP_NOTIFI_HIST setting
+    mylog('verbose', [f'[DBCLNP] Plugins_History: Trim Notifications entries to less than {str(get_setting_value('DBCLNP_NOTIFI_HIST'))} )'])
+
+    # Build the SQL query to delete entries 
+    delete_query = f"""DELETE FROM Notifications 
+                            WHERE "Index" NOT IN (
+                               SELECT "Index"
+                                        FROM (
+                                            SELECT "Index", 
+                                                ROW_NUMBER() OVER(PARTITION BY "Notifications" ORDER BY DateTimeCreated DESC) AS row_num
+                                            FROM Notifications
+                                        ) AS ranked_objects
+                                        WHERE row_num <= {str(get_setting_value('DBCLNP_NOTIFI_HIST'))}
+                            );"""
+
+    cursor.execute(delete_query)
+
     # Cleanup Pholus_Scan
     if PHOLUS_DAYS_DATA != 0:
         mylog('verbose', ['[DBCLNP] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])

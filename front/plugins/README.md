@@ -641,7 +641,8 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
 | `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |
-
+| `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. ``<b>${value}<b>`` ) |
+            
 
 > [!NOTE] 
 > Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
