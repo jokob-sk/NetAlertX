@@ -346,7 +346,7 @@
         {
             "function": "RUN_TIMEOUT",
             "type": "integer",
-            "default_value":5,
+            "default_value":10,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

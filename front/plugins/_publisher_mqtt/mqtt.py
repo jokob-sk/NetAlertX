@@ -125,7 +125,7 @@ class sensor_config:
             watched3    = hash_value,
             watched4    = mac,
             extra       = input_string,
-            foreignKey  = notification["GUID"]
+            foreignKey  = mac
         )
 
 #-------------------------------------------------------------------------------
