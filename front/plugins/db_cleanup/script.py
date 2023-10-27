@@ -17,7 +17,7 @@ sys.path.append('/home/pi/pialert/pialert')
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ
+from helper import timeNowTZ, get_setting_value
 from const import logPath, pialertPath
 
 
@@ -92,8 +92,12 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     cursor.execute(delete_query)
 
+    
     # Trim Notifications entries to less than DBCLNP_NOTIFI_HIST setting
-    mylog('verbose', [f'[DBCLNP] Plugins_History: Trim Notifications entries to less than {str(get_setting_value('DBCLNP_NOTIFI_HIST'))} )'])
+
+    histCount = get_setting_value('DBCLNP_NOTIFI_HIST')
+
+    mylog('verbose', [f'[DBCLNP] Plugins_History: Trim Notifications entries to less than {histCount}'])
 
     # Build the SQL query to delete entries 
     delete_query = f"""DELETE FROM Notifications 
@@ -104,7 +108,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
                                                 ROW_NUMBER() OVER(PARTITION BY "Notifications" ORDER BY DateTimeCreated DESC) AS row_num
                                             FROM Notifications
                                         ) AS ranked_objects
-                                        WHERE row_num <= {str(get_setting_value('DBCLNP_NOTIFI_HIST'))}
+                                        WHERE row_num <= {histCount}
                             );"""
 
     cursor.execute(delete_query)

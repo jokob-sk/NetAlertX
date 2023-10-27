@@ -903,8 +903,7 @@ input[readonly] {
 {
     display: block;
     position: absolute;
-    margin-left: 170px;
-    top: 5px;
+    margin-left: 170px;    
     font-size: large;
     left: -15px;
 }
