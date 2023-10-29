@@ -27,8 +27,7 @@ fi
 echo "[INSTALL] Run setup scripts"
 
 "$INSTALL_DIR/pialert/dockerfiles/user-mapping.sh"
-"$INSTALL_DIR/pialert/install/install_dependencies.sh"
-"$INSTALL_DIR/pialert/install/install_python.sh"
+"$INSTALL_DIR/pialert/install/install_dependencies.sh" # if modifying this file transfer the chanegs into the root Dockerfile as well!
 
 # Change port number if set
 if [ -n "${PORT}" ]; then  
@@ -73,11 +72,10 @@ fi
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
 
-chmod -R a+rwx $INSTALL_DIR
+
 chmod -R a+rwx /var/www/html
 chmod -R a+rw $INSTALL_DIR/pialert/front/log
-chmod -R a+rw $INSTALL_DIR/pialert/config
-sudo chgrp -R www-data  $INSTALL_DIR/pialert
+chmod -R a+rwx $INSTALL_DIR
 
 FILEDB=$INSTALL_DIR/pialert/db/pialert.db
 
@@ -85,14 +83,16 @@ if [ -f "$FILEDB" ]; then
     chown -R www-data:www-data $INSTALL_DIR/pialert/db/pialert.db
 fi
 
+echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
 
-echo "[INSTALL] Create pialert.db and pialert.conf backups"
+# Copy starter pialert.db and pialert.conf if they don't exist
+cp -n "$INSTALL_DIR/pialert/back/pialert.conf" "$INSTALL_DIR/pialert/config/pialert.conf" 
+cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$INSTALL_DIR/pialert/db/pialert.db" 
 
-# Create a backup of pialert.conf
-cp "$INSTALL_DIR/pialert/config/pialert.conf" "$INSTALL_DIR/pialert/back/pialert.conf_bak"
 
-# Create a backup of pialert.db
-cp "$INSTALL_DIR/pialert/db/pialert.db" "$INSTALL_DIR/pialert/back/pialert.db_bak"
+chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
+chmod -R a+rw $INSTALL_DIR/pialert/config
+sudo chgrp -R www-data  $INSTALL_DIR/pialert
 
 # Create buildtimestamp.txt
 date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"

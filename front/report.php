@@ -58,9 +58,14 @@
     </div>
 
 
-    <div class="col-sm-8">
+    <div class="col-sm-4">
       <label><?= lang('report_time') ;?></label>
-      <span id="timestamp">Timestamp</span>
+      <span id="timestamp"></span>
+    </div>
+
+    <div class="col-sm-4">
+      <label><?= lang('report_guid') ;?></label>
+      <span id="guid"></span>
     </div>
 
 
@@ -77,6 +82,7 @@
       document.addEventListener('DOMContentLoaded', function() {
     const notificationData = document.getElementById('notificationData');
     const timestamp = document.getElementById('timestamp');
+    const notiGuid = document.getElementById('guid');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
     const formatSelect = document.getElementById('formatSelect');
@@ -113,7 +119,10 @@
                         break;
                 }
 
+                // console.log(notification)
+
                 timestamp.textContent = notification.DateTimeCreated;
+                notiGuid.textContent = notification.GUID;
                 currentIndex = index;
 
                 $("#notificationOutOff").html(`${currentIndex + 1}/${data.data.length}`);
@@ -125,7 +134,7 @@
 
     // Function to find the index of a notification by GUID
     function findIndexByGUID(data, guid) {
-        return data.findIndex(notification => notification.GUID === guid);
+        return data.findIndex(notification => notification.GUID == guid);
     }
 
     // Listen for format selection changes
@@ -151,10 +160,16 @@
             .then(response => response.json())
             .then(data => {
                 const index = findIndexByGUID(data.data, guid);
-                if (index !== -1) {
-                    // Load the notification with the specified GUID
-                    updateData(formatSelect.value, index);
+
+                console.log(index)
+
+                if (index == -1) {
+                  showModalOk('WARNING', `${getString("report_guid_missing")} <br/> <br/> <code>${guid}</code>`)                  
                 }
+
+                // Load the notification with the specified GUID
+                updateData(formatSelect.value, index);
+            
             })
             .catch(error => {
                 console.error('Error:', error);

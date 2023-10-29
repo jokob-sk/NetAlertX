@@ -191,11 +191,11 @@ def filePermissions():
     (confR_access, dbR_access) = checkPermissionsOK() # Initial check
 
     if confR_access == False:
-        initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf_bak" )
+        initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf" )
 
     # check and initialize pialert.db
     if dbR_access == False:
-        initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db_bak")
+        initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db")
 
     # last attempt
     fixPermissions()
