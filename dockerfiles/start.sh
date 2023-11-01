@@ -48,6 +48,10 @@ sudo ln -s "$INSTALL_DIR/pialert/install/default" /etc/nginx/sites-available/def
 # use user-supplied port
 sudo sed -i 's/listen 80/listen '"$PORT"'/g' /etc/nginx/sites-available/default
 
+# Change web interface address if set
+if [ -n "${LISTEN_ADDR}" ]; then  
+  sed -ie 's/listen /listen '${LISTEN_ADDR}:'/g' /etc/nginx/sites-available/default
+fi
 
 # Run the hardware vendors update at least once
 echo "[INSTALL] Run the hardware vendors update"
