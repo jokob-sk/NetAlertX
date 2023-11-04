@@ -46,7 +46,7 @@
       "string": "A plugin to check your internet connectivity and IP."
     },
     {
-      "language_code": "en_us",
+      "language_code": "de_de",
       "string": "Ein Plugin zur Prüfung der Internetverbindung und externen IP."
     }
   ],
@@ -379,6 +379,21 @@
         {
           "language_code": "de_de",
           "string": "Extra"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "textarea_readonly",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[
+        {
+          "language_code": "en_us",
+          "string" : "Response"
         }
       ]
     },

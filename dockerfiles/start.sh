@@ -86,7 +86,6 @@ fi
 echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
 
 # Copy starter pialert.db and pialert.conf if they don't exist
-# cp -n "/home/pi/pialert/back/pialert.conf" "/home/pi/pialert/config/pialert.conf" 
 cp -n "$INSTALL_DIR/pialert/back/pialert.conf" "$INSTALL_DIR/pialert/config/pialert.conf" 
 cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$INSTALL_DIR/pialert/db/pialert.db" 
 

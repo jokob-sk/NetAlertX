@@ -329,12 +329,16 @@ def checkIPV4(ip):
 
 #-------------------------------------------------------------------------------
 def check_IP_format (pIP):
-    # Check IP format
+    # check if TCP communication error ocurred 
+    if 'communications error to' in pIP:
+        return ''
+
+    # Check IP format 
     IPv4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
     IPv4ADDR = r'(?:(?:' + IPv4SEG + r'\.){3,3}' + IPv4SEG + r')'
     IP = re.search(IPv4ADDR, pIP)
 
-    # Return error if not IP
+    # Return empty if not IP
     if IP is None :
         return ""
 
@@ -346,39 +350,37 @@ def check_IP_format (pIP):
 #-------------------------------------------------------------------------------
 def resolve_device_name_dig (pMAC, pIP):
     
-    newName = ""
+    nameNotFound = "(name not found)"
 
-    try :
-        dig_args = ['dig', '+short', '-x', pIP]
+    dig_args = ['dig', '+short', '-x', pIP]
 
-        # Execute command
-        try:
-            # try runnning a subprocess
-            newName = subprocess.check_output (dig_args, universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ['[device_name_dig] ', e.output])            
-            # newName = "Error - check logs"
-            return -1
+    # Execute command
+    try:
+        # try runnning a subprocess
+        newName = subprocess.check_output (dig_args, universal_newlines=True)
 
         # Check returns
         newName = newName.strip()
 
         if len(newName) == 0 :
-            return -1
+            return nameNotFound
             
         # Cleanup
-        newName = cleanResult(newName)
+        newName = cleanDeviceName(newName, True)
 
-        if newName == "" or  len(newName) == 0: 
-            return -1
+        if newName == "" or  len(newName) == 0 or newName == '-1' or newName == -1 or "communications error" in newName: 
+            return nameNotFound
 
-        # Return newName
+        # all checks passed
+        mylog('debug', [f'[resolve_device_name_dig] Found a new name: "{newName}"'])  
+
         return newName
 
-    # not Found
-    except subprocess.CalledProcessError :
-        return -1        
+    except subprocess.CalledProcessError as e:
+        # An error occured, handle it
+        mylog('none', ['[resolve_device_name_dig] ERROR: ', e.output])            
+        # newName = "Error - check logs"
+        return nameNotFound
 
 
 #-------------------------------------------------------------------------------
@@ -389,14 +391,17 @@ def resolve_device_name_dig (pMAC, pIP):
 # Disclaimer - I'm interfacing with a script I didn't write (pholus3.py) so it's possible I'm missing types of answers
 # it's also possible the pholus3.py script can be adjusted to provide a better output to interface with it
 # Hit me with a PR if you know how! :)
-def resolve_device_name_pholus (pMAC, pIP, allRes):
+def resolve_device_name_pholus (pMAC, pIP, allRes, nameNotFound, matchIpOnly = False):
     
     pholusMatchesIndexes = []
 
+    result = nameNotFound
+
+    # Collect all Pholus entries  with matching MAC and of type Answer
     index = 0
     for result in allRes:
         #  limiting entries used for name resolution to the ones containing the current IP (v4 only)
-        if result["MAC"] == pMAC and result["Record_Type"] == "Answer" and result["IP_v4_or_v6"] == pIP and '._googlezone' not in result["Value"]:
+        if ((matchIpOnly and result["IP_v4_or_v6"] == pIP ) or ( result["MAC"] == pMAC )) and result["Record_Type"] == "Answer" and result["IP_v4_or_v6"] == pIP and '._googlezone' not in result["Value"]:
             # found entries with a matching MAC address, let's collect indexes             
             pholusMatchesIndexes.append(index)
 
@@ -404,66 +409,117 @@ def resolve_device_name_pholus (pMAC, pIP, allRes):
 
     # return if nothing found
     if len(pholusMatchesIndexes) == 0:
-        return -1
+        return nameNotFound   
 
     # we have some entries let's try to select the most useful one
+    # Do I need to pre-order allRes to have the most valuable onse on the top?
 
-    # airplay matches contain a lot of information
-    # Matches for example: 
-    # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
-            return allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0]
+        if not checkIPV4(allRes[i]['IP_v4_or_v6']):
+            continue
+
+        value = allRes[i]["Value"]
+
+        # airplay matches contain a lot of information
+        # Matches for example:
+        # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        if '._airplay._tcp.local. TXT Class:32769' in value:
+            return cleanDeviceName(value.split('._airplay._tcp.local. TXT Class:32769')[0], matchIpOnly)
+        
+        # second best - contains airplay
+        # Matches for example:
+        # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
+        if '_airplay._tcp.local. PTR Class:IN' in value and ('._googlecast') not in value:
+            return cleanDeviceName(value.split('"')[1], matchIpOnly)    
+
+        # Contains PTR Class:32769
+        # Matches for example:
+        # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
+        if 'PTR Class:32769' in value:
+            return cleanDeviceName(value.split('"')[1], matchIpOnly)
+
+        # Contains AAAA Class:IN
+        # Matches for example:
+        # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
+        if 'AAAA Class:IN' in value:
+            return cleanDeviceName(value.split('.local.')[0], matchIpOnly)
+
+        # Contains _googlecast._tcp.local. PTR Class:IN
+        # Matches for example:
+        # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
+        if '_googlecast._tcp.local. PTR Class:IN' in value and ('Google-Cast-Group') not in value:
+            return cleanDeviceName(value.split('"')[1], matchIpOnly)
+
+        # Contains A Class:32769
+        # Matches for example:
+        # Android.local. A Class:32769 "192.168.1.6"
+        if ' A Class:32769' in value:
+            return cleanDeviceName(value.split(' A Class:32769')[0], matchIpOnly)
+
+        # Contains PTR Class:IN
+        # Matches for example:
+        # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
+        if 'PTR Class:IN' in value and len(value.split('"')) > 1:
+            return cleanDeviceName(value.split('"')[1], matchIpOnly)
+
+
+    # # airplay matches contain a lot of information
+    # # Matches for example: 
+    # # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
+    #         return cleanDeviceName(allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0], matchIpOnly)
     
-    # second best - contains airplay
-    # Matches for example: 
-    # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])    
+    # # second best - contains airplay
+    # # Matches for example: 
+    # # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
+    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], matchIpOnly)    
 
-    # Contains PTR Class:32769
-    # Matches for example: 
-    # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
+    # # Contains PTR Class:32769
+    # # Matches for example: 
+    # # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
+    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], matchIpOnly)
 
-    # Contains AAAA Class:IN
-    # Matches for example: 
-    # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('.local.')[0])
+    # # Contains AAAA Class:IN
+    # # Matches for example: 
+    # # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
+    #         return cleanDeviceName(allRes[i]["Value"].split('.local.')[0], matchIpOnly)
 
-    # Contains _googlecast._tcp.local. PTR Class:IN
-    # Matches for example: 
-    # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split('"')[1])
+    # # Contains _googlecast._tcp.local. PTR Class:IN
+    # # Matches for example: 
+    # # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
+    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], matchIpOnly)
 
-    # Contains A Class:32769
-    # Matches for example: 
-    # Android.local. A Class:32769 "192.168.1.6"
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
-            return cleanResult(allRes[i]["Value"].split(' A Class:32769')[0])
+    # # Contains A Class:32769
+    # # Matches for example: 
+    # # Android.local. A Class:32769 "192.168.1.6"
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
+    #         return cleanDeviceName(allRes[i]["Value"].split(' A Class:32769')[0], matchIpOnly)
 
-    # # Contains PTR Class:IN
-    # Matches for example: 
-    # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
-    for i in pholusMatchesIndexes:
-        if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
-            if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
-                return cleanResult(allRes[i]["Value"].split('"')[1])
 
-    return -1
+    # # # Contains PTR Class:IN
+    # # Matches for example: 
+    # # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
+    # for i in pholusMatchesIndexes:
+    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
+    #         if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
+    #             return cleanDeviceName(allRes[i]["Value"].split('"')[1], matchIpOnly)
+
+    return nameNotFound
     
     
 
 #-------------------------------------------------------------------------------
-def cleanResult(str):
+def cleanDeviceName(str, matchIpOnly):
     # alternative str.split('.')[0]
     str = str.replace("._airplay", "")
     str = str.replace("._tcp", "")
@@ -477,6 +533,10 @@ def cleanResult(str):
     # remove trailing dots
     if str.endswith('.'):
         str = str[:-1]
+
+
+    if matchIpOnly:
+        str = str + " (IP match)"
 
     return str
 
