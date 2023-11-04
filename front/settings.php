@@ -89,7 +89,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       <!-- Settings imported time -->
 
       <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_enabled_settings_icon");?>"></i>  <?= lang("Plugins_enabled_settings");?>       
+            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>       
           </div>        
           <div class =" col-sm-12" id=""></div>
 
@@ -100,35 +100,35 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_core_icon");?>"></i>  <?= lang("Plugins_type_core");?>       
+            <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>       
           </div>        
           <div class =" col-sm-12" id="core_content"></div>
       </div>    
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_system_icon");?>"></i>  <?= lang("Plugins_type_system");?>       
+            <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>       
           </div>        
           <div class =" col-sm-12" id="system_content"></div>
       </div> 
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_device_scanner_icon");?>"></i>  <?= lang("Plugins_type_device_scanner");?>     
+            <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
           </div>        
           <div class =" col-sm-12" id="device_scanner_content"></div>
       </div> 
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_other_icon");?>"></i>  <?= lang("Plugins_type_other");?>       
+            <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>       
           </div>        
           <div class =" col-sm-12" id="other_content"></div>
       </div> 
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("Plugins_type_publisher_icon");?>"></i>  <?= lang("Plugins_type_publisher");?>       
+            <i class="<?= lang("settings_publisher_icon");?>"></i>  <?= lang("settings_publisher_label");?>       
           </div>        
           <div class =" col-sm-12" id="publisher_content"></div>
       </div> 
@@ -219,6 +219,9 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
                                   <div class="col-sm-12 " title="${getString("settings_"+section)}">
                                     <div class="overview-group col-sm-12">
+                                    
+                                      <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>       
+          
                                       ${getString("settings_"+section+"_label")}                                      
                                     </div>                                    
                                   </div>
