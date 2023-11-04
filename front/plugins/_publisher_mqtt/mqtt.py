@@ -51,7 +51,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -70,7 +70,7 @@ def main():
 #-------------------------------------------------------------------------------
 def check_config():
         if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
-            mylog('none', ['[Check Config] Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
+            mylog('none', ['[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
             return True

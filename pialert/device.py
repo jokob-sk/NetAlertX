@@ -172,7 +172,7 @@ def create_new_devices (db):
                     FROM CurrentScan"""
 
 
-    # mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
+    mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
@@ -291,7 +291,7 @@ def update_devices_names (db):
             # Try IP matching only
             if newName == nameNotFound:
                 newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, True)
-                
+
             # count
             if newName != nameNotFound:
                 foundPholus += 1
@@ -359,6 +359,6 @@ def query_MAC_vendor (pMAC):
 
         return -1  # MAC address not found in the database
     except FileNotFoundError:
-        mylog('none', [f"[Vendor Check] Error: Vendors file {vendorsPath} not found."])
+        mylog('none', [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
         return -1
 

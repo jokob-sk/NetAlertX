@@ -7,15 +7,15 @@ echo "---------------------------------------------------------"
 
 INSTALL_DIR=/home/pi  # Specify the installation directory here
 
-# # if custom variables not set we do not need to do anything
-# if [ -n "${TZ}" ]; then    
-#   FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
-#   if [ -f "$FILECONF" ]; then
-#     sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/config/pialert.conf 
-#   else 
-#     sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/back/pialert.conf_bak 
-#   fi
-# fi
+# if custom variables not set we do not need to do anything
+if [ -n "${TZ}" ]; then    
+  FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
+  if [ -f "$FILECONF" ]; then
+    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/config/pialert.conf 
+  else 
+    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/back/pialert.conf_bak 
+  fi
+fi
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then

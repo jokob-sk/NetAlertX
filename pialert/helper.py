@@ -23,12 +23,16 @@ from logger import mylog, logResult
 #-------------------------------------------------------------------------------
 # Get the current time in the current TimeZone
 def timeNowTZ():
-    if isinstance(conf.TIMEZONE, str):
-        tz = pytz.timezone(conf.TIMEZONE)
+    if conf.tz:
+        return datetime.datetime.now(conf.tz).replace(microsecond=0)
     else:
-        tz = conf.TIMEZONE
+        return datetime.datetime.now().replace(microsecond=0)
+    # if isinstance(conf.TIMEZONE, str):
+    #     tz = pytz.timezone(conf.TIMEZONE)
+    # else:
+    #     tz = conf.TIMEZONE
 
-    return datetime.datetime.now(tz).replace(microsecond=0)
+    # return datetime.datetime.now(tz).replace(microsecond=0)
 
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
@@ -173,7 +177,7 @@ def initialiseFile(pathToCheck, defaultFile):
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                mylog('none', ["[Setup] Error copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
+                mylog('none', ["[Setup] ⚠ ERROR copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
             else:
                 mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
 
@@ -182,7 +186,7 @@ def initialiseFile(pathToCheck, defaultFile):
 
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', ["[Setup] Error copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
+            mylog('none', ["[Setup] ⚠ ERROR copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
             mylog('none', [e.output])
 
 #-------------------------------------------------------------------------------
@@ -255,13 +259,13 @@ def get_setting(key):
                 if item.get("Code_Name") == key:
                     return item
 
-            mylog('debug', [f'[Settings] Error - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
+            mylog('debug', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
 
             return None
 
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
         # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[Settings] Error - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
+        mylog('none', [f'[Settings] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
 
         return None
 
@@ -290,10 +294,14 @@ def get_setting_value(key):
             value = str(set_value)
         elif set_type in ['boolean', 'integer.checkbox']:
             
-            value = True
+            value = False
 
-            if set_value in ['false', 'False', 'FALSE', 0]:
-                value = False
+            if isinstance(set_value, str) and set_value.lower() in ['true', '1']:
+                value = True
+            elif isinstance(set_value, int) and set_value == 1:
+                value = True
+            elif isinstance(set_value, bool):
+                value = set_value
             
         elif set_type in ['integer.select', 'integer']:
             value = int(set_value)
@@ -304,8 +312,8 @@ def get_setting_value(key):
             # Assuming set_value is a JSON object in this case
             value = json.loads(set_value)
         else:
-            mylog('none', [f'[SETTINGS] ERROR - set_type not handled:{set_type}'])
-            mylog('none', [f'[SETTINGS] ERROR - setting json:{json.dumps(setting)}'])
+            mylog('none', [f'[SETTINGS] ⚠ ERROR - set_type not handled:{set_type}'])
+            mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(setting)}'])
 
 
     return value
@@ -378,7 +386,7 @@ def resolve_device_name_dig (pMAC, pIP):
 
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[resolve_device_name_dig] ERROR: ', e.output])            
+        mylog('none', ['[resolve_device_name_dig] ⚠ ERROR: ', e.output])            
         # newName = "Error - check logs"
         return nameNotFound
 
@@ -693,7 +701,7 @@ def checkNewVersion():
         text = url.text
         data = json.loads(text)
     except requests.exceptions.ConnectionError as e:
-        mylog('minimal', ["[Version check] Error: Couldn't check for new release."])
+        mylog('minimal', ["[Version check] ⚠ ERROR: Couldn't check for new release."])
         data = ""
 
     # make sure we received a valid response and not an API rate limit exceeded message

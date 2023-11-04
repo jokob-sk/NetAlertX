@@ -36,7 +36,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -177,7 +177,7 @@ def send (text_data, html_data, json_data):
 
     except subprocess.CalledProcessError as e:
         # An error occurred, handle it
-        mylog('none', [f'[{pluginName}] Error: ', e.output])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: ', e.output])
 
         response_stderr = e.output
 

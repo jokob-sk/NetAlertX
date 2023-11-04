@@ -46,7 +46,7 @@ def get_entries(path, plugin_objects):
 
     # Check if the path exists
     if not os.path.exists(path):
-        mylog('none', [f'[{pluginName}] Error: "{path}" does not exist.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: "{path}" does not exist.'])
     else:
         # Detect file encoding
         with open(path, 'rb') as f:

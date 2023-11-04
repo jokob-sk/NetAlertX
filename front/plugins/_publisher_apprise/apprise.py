@@ -30,7 +30,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection

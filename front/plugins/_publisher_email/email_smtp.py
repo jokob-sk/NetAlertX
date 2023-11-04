@@ -38,7 +38,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -82,7 +82,7 @@ def check_config ():
     report_from = get_setting_value("SMTP_REPORT_FROM")
     
     if server == '' or report_from == '' or report_to == '':
-        mylog('none', ['[Email Check Config] Error: Email service not set up correctly. Check your pialert.conf SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
+        mylog('none', ['[Email Check Config] ⚠ ERROR: Email service not set up correctly. Check your pialert.conf SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
         return False
     else:
         return True

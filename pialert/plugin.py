@@ -53,7 +53,7 @@ class plugin_param:
                         if setTyp.endswith(item):
                             return json.dumps(setVal)
                         else:
-                            mylog('none', ['[Plugins] ERROR: Parameter not converted.'])  
+                            mylog('none', ['[Plugins] ⚠ ERROR: Parameter not converted.'])  
                 
 
         #  Get SQL result
@@ -213,7 +213,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
             mylog('none', [e.output])
-            mylog('none', ['[Plugins] Error - enable LOG_LEVEL=debug and check logs'])            
+            mylog('none', ['[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs'])            
         except subprocess.TimeoutExpired as timeErr:
             mylog('none', ['[Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
@@ -317,7 +317,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
 
         #  handle missing "function":"DB_PATH" setting
         if set == None:                
-            mylog('none', ['[Plugins] Error: DB_PATH setting for plugin type sqlite-db-query missing.'])
+            mylog('none', ['[Plugins] ⚠ ERROR: DB_PATH setting for plugin type sqlite-db-query missing.'])
             return pluginsState
         
         fullSqlitePath = set["value"]
@@ -328,8 +328,8 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL_"+plugin["unique_prefix"])
             arr = db.get_sql_array (q) 
         except sqlite3.Error as e:            
-            mylog('none',[f'[Plugins] Error: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
-            mylog('none',[f'[Plugins] Error: ATTACH DATABASE failed with SQL ERROR: ', e])
+            mylog('none',[f'[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
+            mylog('none',[f'[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: ', e])
             return pluginsState            
 
         for row in arr:
@@ -580,7 +580,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
     except Exception as e:
         # Rollback the transaction in case of an error
         conn.rollback()
-        mylog('none', ['[Plugins] Error: ', e])
+        mylog('none', ['[Plugins] ⚠ ERROR: ', e])
         raise e   
 
     # Perform database table mapping if enabled for the plugin

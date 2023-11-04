@@ -123,8 +123,7 @@ def importConfigs (db):
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings
-    conf.time_started = datetime.datetime.now(conf.tz)
-    conf.cycle = ""
+    conf.time_started = datetime.datetime.now(conf.tz)    
     conf.plugins_once_run = False
 
     # timestamps of last execution times

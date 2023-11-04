@@ -187,8 +187,7 @@ def main ():
             updateState("Process: Wait")
             mylog('verbose', ['[MAIN] Process: Wait'])            
         else:
-            # do something
-            conf.cycle = "" 
+            # do something            
             mylog('verbose', ['[MAIN] waiting to start next loop'])
 
         #loop     

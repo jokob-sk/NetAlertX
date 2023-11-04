@@ -109,7 +109,7 @@ def get_dynamic_DNS_IP (DDNS_DOMAIN):
         mylog('none', [f'[{pluginName}] DIG output :', dig_output])
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [f'[{pluginName}] ERROR - ', e.output])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - ', e.output])
         dig_output = '' # probably no internet
 
     # Check result is an IP
@@ -135,7 +135,7 @@ def set_dynamic_DNS_IP (DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN):
                                                 universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', [f'[{pluginName}] ERROR - ',e.output])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - ',e.output])
         curl_output = ""    
     
     return curl_output

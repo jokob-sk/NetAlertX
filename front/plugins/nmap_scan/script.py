@@ -119,7 +119,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
             except subprocess.CalledProcessError as e:
                 # An error occured, handle it
                 mylog('none', ["[NMAP Scan] " ,e.output])
-                mylog('none', ["[NMAP Scan] Error - Nmap Scan - check logs", progress])            
+                mylog('none', ["[NMAP Scan] ⚠ ERROR - Nmap Scan - check logs", progress])            
             except subprocess.TimeoutExpired as timeErr:
                 mylog('verbose', ['[NMAP Scan] Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', ip, progress]) 
 
