@@ -287,8 +287,9 @@ def update_devices_names (db):
 
         # Resolve with Pholus 
         if newName == nameNotFound:
+            # Try MAC matching
             newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, False)
-            # Try IP matching only
+            # Try IP matching 
             if newName == nameNotFound:
                 newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, True)
 

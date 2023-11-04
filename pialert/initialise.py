@@ -250,7 +250,7 @@ def read_config_file(filename):
 
 
 #-------------------------------------------------------------------------------
-# DEPERECATED after 1/1/2024
+# DEPERECATED soonest after 3/3/2024
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
