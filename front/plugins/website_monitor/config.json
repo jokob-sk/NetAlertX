@@ -18,6 +18,10 @@
     {
       "language_code": "es_es",
       "string": "Monitor de sitio web"
+    },
+    {
+      "language_code": "de_de",
+      "string": "Webseitenüberwachung"
     }
   ],
   "icon": [
@@ -27,6 +31,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-globe\"></i>"
     }
   ],
@@ -38,6 +46,10 @@
     {
       "language_code": "es_es",
       "string": "Este complemento es para monitorear los cambios de estado de los servicios o sitios web."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zur Statusüberwachung von Diensten oder Webseiten."
     }
   ],
   "params": [
@@ -76,6 +88,10 @@
         {
           "language_code": "es_es",
           "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
+          "string": "N/A"
         }
       ]
     },
@@ -96,6 +112,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -118,6 +138,10 @@
         {
           "language_code": "es_es",
           "string": "URL monitoreada"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwachte URL"
         }
       ]
     },
@@ -138,6 +162,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -160,6 +188,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -181,6 +213,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     },
@@ -223,6 +259,10 @@
         {
           "language_code": "es_es",
           "string": "Código de estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Statuscode"
         }
       ]
     },
@@ -244,6 +284,10 @@
         {
           "language_code": "es_es",
           "string": "Latencia"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Latenz"
         }
       ]
     },
@@ -264,6 +308,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -286,6 +334,10 @@
         {
           "language_code": "es_es",
           "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
+          "string": "N/A"
         }
       ]
     },
@@ -307,6 +359,10 @@
         {
           "language_code": "es_es",
           "string": "Comentarios"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Kommentare"
         }
       ]
     },
@@ -345,6 +401,10 @@
         {
           "language_code": "es_es",
           "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
         }
       ]
     },
@@ -365,6 +425,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "Extra"
+        },
+        {
+          "language_code": "de_de",
           "string": "Extra"
         }
       ]
@@ -397,6 +461,10 @@
         {
           "language_code": "es_es",
           "string": "Cuando ejecuta"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -407,6 +475,10 @@
         {
           "language_code": "es_es",
           "string": "Habilite un escaneo regular de sus servicios. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el escaneo se ejecuta solo una vez al iniciar la aplicación (contenedor) durante el tiempo especificado en <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> configuración</a>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Aktiviere periodischen Scan von Diensten. Wenn <code>schedule</code> ausgewählt ist, werden die unten gesetzten Zeitplan-Einstellungen verwendet. Ist <code>once</code> ausgewählt, so wird der Scan bei jedem Start der Applikation (Container) für die in der <a href=\"#WEBMON_RUN_TIMEOUT\"><code>WEBMON_RUN_TIMEOUT</code> Einstellung</a> gesetzten Zeit ausgeführt."
         }
       ]
     },
@@ -427,6 +499,10 @@
         {
           "language_code": "es_es",
           "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
         }
       ],
       "description": [
@@ -437,6 +513,10 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auszuführender Befehl."
         }
       ]
     },
@@ -457,6 +537,10 @@
         {
           "language_code": "es_es",
           "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
         }
       ],
       "description": [
@@ -467,6 +551,10 @@
         {
           "language_code": "es_es",
           "string": "Solo habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code></a>. Asegúrese de ingresar el schedule en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingrese <code >0 4 * * *</code> ejecutará el escaneo después de las 4 am en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> que configuró arriba </a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#WEBMON_RUN\"><code>WEBMON_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt."
         }
       ]
     },
@@ -487,6 +575,10 @@
         {
           "language_code": "es_es",
           "string": "Punto de conexión de la API (no implementado)"
+        },
+        {
+          "language_code": "de_de",
+          "string": "API-Endpunkt (nicht implementiert)"
         }
       ],
       "description": [
@@ -497,6 +589,10 @@
         {
           "language_code": "es_es",
           "string": "Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través de <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code> punto final del archivo</a>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sie können eine eigene SQL-Abfrage erstellen welche eine JSON-Datei erstellt und über den <a href=\"/api/plugin_website_monitor.json\" target=\"_blank\"><code>plugin_website_monitor.json</code></a> Endpunkt freigibt."
         }
       ]
     },
@@ -520,7 +616,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wartezeit"
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -531,6 +627,10 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
@@ -558,6 +658,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
@@ -568,6 +672,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Click</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es un código de estado de respuesta (por ejemplo: 200, 404) </li><li><code>Valor_observado2</code> es Latencia (no recomendado)</li><li><code>Valor_observado3</code> no utilizado </li><li><code>Valor_observado4 </ code> sin usar </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Statuscode (z.B.: 200, 404)</li><li><code>Watched_Value2</code> ist die Latenz (nicht empfohlen)</li><li><code>Watched_Value3</code> ist nicht in Verwendung</li><li><code>Watched_Value4</code> ist nicht in Verwendung</li></ul>"
         }
       ]
     },
@@ -596,6 +704,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "description": [
@@ -606,6 +718,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que seleccionó <code>Watched_ValueN Las columnas </code> cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
         }
       ]
     },
@@ -629,6 +745,10 @@
         {
           "language_code": "es_es",
           "string": "Argumentos"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Argumente"
         }
       ],
       "description": [
@@ -639,6 +759,10 @@
         {
           "language_code": "es_es",
           "string": "Servicios para ver. Ingrese la URL completa, por ejemplo, <code>https://google.com</code>. Los valores de esta configuración se usarán para reemplazar el comodín <code>{urls}</code> en la configuración < code>WEBMON_CMD</code>."
+        },
+        {
+          "language_code": "en_us",
+          "string": "Zu überwachende Dienste. Gesamte URL eingeben, z.B. <code>https://google.com</code>. Die Werte dieser Einstellung werden genutzt um den <code>{urls}</code> Platzhalter in der <code>WEBMON_CMD</code> Einstellung zu ersetzen."
         }
       ]
     },
@@ -659,6 +783,10 @@
         {
           "language_code": "es_es",
           "string": "Variable de ayuda"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Hilfsvariable"
         }
       ],
       "description": [
@@ -669,6 +797,10 @@
         {
           "language_code": "es_es",
           "string": "Configuración no utilizada: solo para demostración. Obtener la dirección IP del enrutador / Internet."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Einstellung nicht in Verwendung - lediglich für Demonstrationszwecke. IP-Adresse von Router / Internet erhalten."
         }
       ]
     }
