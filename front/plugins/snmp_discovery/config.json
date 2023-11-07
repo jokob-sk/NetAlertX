@@ -56,6 +56,10 @@
     {
       "language_code": "es_es",
       "string": "Este complemento se utiliza para descubrir dispositivos a través de las tablas arp de un enrutador o conmutador compatible con RFC1213."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zur Erkennung von Geräten mittels ARP-Tabellen von RFC1213-konformen Routern oder Switches."
     }
   ],
   "params": [
@@ -84,6 +88,10 @@
         {
           "language_code": "es_es",
           "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
+          "string": "N/A"
         }
       ]
     },
@@ -104,6 +112,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -127,6 +139,10 @@
         {
           "language_code": "es_es",
           "string": "Dirección MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC-Adresse"
         }
       ]
     },
@@ -148,6 +164,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "IP"
+        },
+        {
+          "language_code": "de_de",
           "string": "IP"
         }
       ]
@@ -171,6 +191,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -193,6 +217,10 @@
         {
           "language_code": "es_es",
           "string": "Nombre de host"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Hostname"
         }
       ]
     },
@@ -213,6 +241,10 @@
         },
         {
           "language_code": "es_es",
+          "string": "Router IP"
+        },
+        {
+          "language_code": "de_de",
           "string": "Router IP"
         }
       ]
@@ -235,6 +267,10 @@
         {
           "language_code": "es_es",
           "string": "Tipo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Typ"
         }
       ]
     },
@@ -256,6 +292,10 @@
         {
           "language_code": "es_es",
           "string": "Red"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Netzwerk"
         }
       ]
     },
@@ -277,6 +317,10 @@
         {
           "language_code": "es_es",
           "string": "Comentarios"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Kommentare"
         }
       ]
     },
@@ -298,6 +342,10 @@
         {
           "language_code": "es_es",
           "string": "salida RAW"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Rohausgabe"
         }
       ]
     },
@@ -323,6 +371,10 @@
         {
           "language_code": "es_es",
           "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
         }
       ]
     },
@@ -361,6 +413,10 @@
         {
           "language_code": "es_es",
           "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
         }
       ]
     }
@@ -392,6 +448,10 @@
         {
           "language_code": "es_es",
           "string": "Cuándo ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -402,6 +462,10 @@
         {
           "language_code": "es_es",
           "string": "Habilite la importación de dispositivos desde un dispositivo habilitado para SNMP. Si selecciona <code>schedule</code>, se aplican las configuraciones de programación de abajo. Si selecciona <code>once</code>, el análisis se ejecuta solo una vez al inicio de la aplicación (contenedor) o después de actualizar su configuración."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Aktiviere Geräteimport von SNMP-Geräten. Wenn <code>schedule</code> ausgewählt ist, werden die unten gesetzten Zeitplan-Einstellungen verwendet. Ist <code>once</code> ausgewählt, so wird bei jedem Start der Applikation (Container) und nach jedem Speichern der Einstellungen der Imnport durchgeführt."
         }
       ]
     },
@@ -422,6 +486,10 @@
         {
           "language_code": "es_es",
           "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
         }
       ],
       "description": [
@@ -432,6 +500,10 @@
         {
           "language_code": "es_es",
           "string": "Comando para ejecutar. No se recomienda cambiar."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auszuführender Befehl. Anpassung nicht empfohlen"
         }
       ]
     },
@@ -454,16 +526,24 @@
         {
           "language_code": "es_es",
           "string": "Routers"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Router"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "A list of <code>snmpwalk</code> commands to execute against IP addresses of roputers/switches with SNMP turned on. <br/> <br/> Example with the router on the IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported. More info on the plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>here</a>."
+          "string": "A list of <code>snmpwalk</code> commands to execute against IP addresses of routers/switches with SNMP turned on. <br/> <br/> Example with the router on the IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Only IPv4 supported. Authentication is not supported. More info on the plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>here</a>."
         },
         {
           "language_code": "es_es",
           "string": "Una lista de comandos <code>snmpwalk</code> para ejecutar en direcciones IP de computadoras/conmutadores con SNMP activado. <br/> <br/> Ejemplo con el enrutador en la IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1. 2.1.3.1.1.2</code> <br/><br/> Solo se admite IPv4. No se admite la autenticación. Más información sobre el complemento <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>aquí</a>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Eine Liste an <code>snmpwalk</code>-Befehle, welche auf IP-Adressen von SNMP-aktivierte Routern/Switches ausgeführt werden. <br/> <br/> Beispiel mit einem Router mit der IP <code>192.168.1.1</code>: <br/> <code>snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2</code> <br/><br/> Nur IPv4 wird unterstützt. Authentifizierung wird nicht unterstützt. Mehr Informationen zum Plugin <a href='https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/snmp_discovery' target='_blank'>hier</a>."
         }
       ]
     },
@@ -484,6 +564,10 @@
         {
           "language_code": "es_es",
           "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
         }
       ],
       "description": [
@@ -494,6 +578,10 @@
         {
           "language_code": "es_es",
           "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#SNMPDSC_RUN\"><code>SNMPDSC_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ]
     },
@@ -517,7 +605,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wartezeit"
+          "string": "Zeitlimit"
         }
       ],
       "description": [
@@ -528,6 +616,10 @@
         {
           "language_code": "es_es",
           "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se excede este tiempo, el script se cancela.."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
@@ -555,6 +647,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
@@ -565,6 +661,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el nombre de host (no detectable) </li><li><code>Watched_Value2</code> es la IP del enrutador </li><li><code>Watched_Value3< /code> no se utiliza </li><li><code>Watched_Value4</code> no se utiliza </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Hostname (nicht erkennbar)</li><li><code>Watched_Value2</code> ist die Router-IP</li><li><code>Watched_Value3</code> ist nicht in Verwendung</li><li><code>Watched_Value4</code> ist nicht in Verwendung</li></ul>"
         }
       ]
     },
@@ -593,6 +693,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "description": [
@@ -603,6 +707,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
         }
       ]
     }
