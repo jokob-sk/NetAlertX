@@ -21,18 +21,7 @@ The original pilaert.py code is now moved to this new folder and split into diff
 |```reporting.py```| Reporting generates the email, html and json reports to be sent by the publishers |
 |```scheduler.py```| All things scheduling |
 
-## publishers
-publishers generally have a check_config method as well as a send method.
 
-| Module | Description |
-|--------|-----------|
-|```__init__.py```| an empty init file|
-|```apprise.py```| use apprise to integrate to "everywhere" https://github.com/caronc/apprise |
-|```email.py```| Configure and send the reports and notifications via email |
-|```mqtt.py```| integrate with a MQTT broker and even make the devices automatically discoverable in Home-Assistant |
-|```ntfy.py```| integrate with ntfy |
-|```pushsafer.py```| integrate with pushsafer |
-|```webhook.py```| integrate via webhook |
 
 
 

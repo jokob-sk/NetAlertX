@@ -25,8 +25,24 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 
 COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . /home/pi/pialert/
 
-# ENTRYPOINT ["tini", "--"]
+
+# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.sh file as well ❗ 
+
+RUN apt-get install -y \
+    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
+    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
+    python3 iproute2 nmap python3-pip zip systemctl usbutils traceroute
+
+# Alternate dependencies
+RUN apt-get install nginx nginx-core mtr php-fpm php8.2-fpm php-cli php8.2 php8.2-sqlite3 -y
+RUN phpenmod -v 8.2 sqlite3 
+
+# Setup virtual python environment and use pip3 to install packages
+RUN apt-get install -y python3-venv
+RUN python3 -m venv myenv
+RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet"
+
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
 
-## command to build docker:  DOCKER_BUILDKIT=1  docker build . --iidfile dockerID
+

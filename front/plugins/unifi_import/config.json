@@ -2,7 +2,77 @@
     "code_name": "unifi_import",
     "show_ui": true,
     "unique_prefix": "UNFIMP",
-    "plugin_type": "scanner",
+    "plugin_type": "device_scanner",
+    "data_source": "script",
+    "localized": [
+        "display_name",
+        "description",
+        "icon"
+    ],
+    "display_name": [
+        {
+            "language_code": "en_us",
+            "string": "UniFi import"
+        },
+        {
+            "language_code": "es_es",
+            "string": "Importación UniFi"
+        }
+    ],
+    "enabled": true,
+    "mapped_to_table": "CurrentScan",    
+    "icon": [
+        {
+            "language_code": "en_us",
+            "string": "<i class=\"fa-solid fa-upload\"></i>"
+        },
+        {
+            "language_code": "es_es",
+            "string": "<i class=\"fa-solid fa-upload\"></i>"
+        }
+    ],    
+    "params": [
+        {
+            "name": "username",
+            "type": "setting",
+            "value": "UNFIMP_username"
+        },
+        {
+            "name": "password",
+            "type": "setting",
+            "value": "UNFIMP_password"
+        },
+        {
+            "name": "host",
+            "type": "setting",
+            "value": "UNFIMP_host"
+        },
+        {
+            "name": "sites",
+            "type": "setting",
+            "value": "UNFIMP_sites"
+        },
+        {
+            "name": "port",
+            "type": "setting",
+            "value": "UNFIMP_port"
+        },
+        {
+            "name": "verifyssl",
+            "type": "setting",
+            "value": "UNFIMP_verifyssl"
+        },
+        {
+            "name": "version",
+            "type": "setting",
+            "value": "UNFIMP_version"
+        },
+        {	
+            "name": "fullimport",
+            "type": "setting",
+            "value": "UNFIMP_fullimport"
+        }
+    ],
     "data_filters": [
         {
             "compare_column": "Object_PrimaryID",
@@ -11,8 +81,7 @@
             "compare_operator": "==",
             "compare_use_quotes": true
         }
-    ],
-    "data_source": "script",
+    ],    
     "database_column_definitions": [
         {
             "column": "Index",
@@ -403,76 +472,7 @@
             "language_code": "de_de",
             "string": "Dieses Plugin imporiert die Geräte von einem UNIFI Controller."
         }
-    ],
-    "display_name": [
-        {
-            "language_code": "en_us",
-            "string": "UniFi import"
-        },
-        {
-            "language_code": "es_es",
-            "string": "Importación UniFi"
-        }
-    ],
-    "enabled": true,
-    "icon": [
-        {
-            "language_code": "en_us",
-            "string": "<i class=\"fa-solid fa-upload\"></i>"
-        },
-        {
-            "language_code": "es_es",
-            "string": "<i class=\"fa-solid fa-upload\"></i>"
-        }
-    ],
-    "localized": [
-        "display_name",
-        "description",
-        "icon"
-    ],
-    "mapped_to_table": "CurrentScan",
-    "params": [
-        {
-            "name": "username",
-            "type": "setting",
-            "value": "UNFIMP_username"
-        },
-        {
-            "name": "password",
-            "type": "setting",
-            "value": "UNFIMP_password"
-        },
-        {
-            "name": "host",
-            "type": "setting",
-            "value": "UNFIMP_host"
-        },
-        {
-            "name": "sites",
-            "type": "setting",
-            "value": "UNFIMP_sites"
-        },
-        {
-            "name": "port",
-            "type": "setting",
-            "value": "UNFIMP_port"
-        },
-        {
-            "name": "verifyssl",
-            "type": "setting",
-            "value": "UNFIMP_verifyssl"
-        },
-        {
-            "name": "version",
-            "type": "setting",
-            "value": "UNFIMP_version"
-        },
-	{	
-            "name": "fullimport",
-            "type": "setting",
-            "value": "UNFIMP_fullimport"
-	}
-    ],
+    ],    
     "settings": [
         {
             "default_value": "disabled",

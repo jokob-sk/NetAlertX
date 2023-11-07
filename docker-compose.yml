@@ -33,11 +33,10 @@ services:
       - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
       - ${DEV_LOCATION}/dockerfiles/start.sh:/home/pi/pialert/dockerfiles/start.sh
       - ${DEV_LOCATION}/dockerfiles/user-mapping.sh:/home/pi/pialert/dockerfiles/user-mapping.sh
-      - ${DEV_LOCATION}/install/install.sh:/home/pi/pialert/install/install.sh
-      - ${DEV_LOCATION}/install/install_python.sh:/home/pi/pialert/install/install_python.sh
+      - ${DEV_LOCATION}/install/install.sh:/home/pi/pialert/install/install.sh      
       - ${DEV_LOCATION}/install/install_dependencies.sh:/home/pi/pialert/install/install_dependencies.sh      
       - ${DEV_LOCATION}/front/api:/home/pi/pialert/front/api
-      - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php
+      - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php
       - ${DEV_LOCATION}/front/deviceDetailsTools.php:/home/pi/pialert/front/deviceDetailsTools.php
       - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php

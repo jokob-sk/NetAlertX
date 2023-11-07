@@ -305,6 +305,32 @@ function showMessage (textMessage="") {
 
 
 // -----------------------------------------------------------------------------
+// String utilities
+// -----------------------------------------------------------------------------
+function jsonSyntaxHighlight(json) {
+  if (typeof json != 'string') {
+       json = JSON.stringify(json, undefined, 2);
+  }
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      var cls = 'number';
+      if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+              cls = 'key';
+          } else {
+              cls = 'string';
+          }
+      } else if (/true|false/.test(match)) {
+          cls = 'boolean';
+      } else if (/null/.test(match)) {
+          cls = 'null';
+      }
+      return '<span class="' + cls + '">' + match + '</span>';
+  });
+}
+
+
+// -----------------------------------------------------------------------------
 // General utilities
 // -----------------------------------------------------------------------------
 
@@ -546,6 +572,15 @@ var devicesListAll_JSON      = [];   // this will contain a list off all devices
 function isEmpty(value)
 {
   return emptyArr.includes(value)
+}
+
+
+// -----------------------------------------------------------------------------
+// Generate a GUID
+function getGuid() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
 
 // -----------------------------------------------------------------------------

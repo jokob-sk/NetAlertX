@@ -22,7 +22,7 @@ from const import apiPath
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, noti_obj, get_setting_value, bytes_to_string, sanitize_string
+from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
 from database import DB, get_all_devices, get_device_stats
 
@@ -51,7 +51,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -70,7 +70,7 @@ def main():
 #-------------------------------------------------------------------------------
 def check_config():
         if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
-            mylog('none', ['[Check Config] Error: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
+            mylog('none', ['[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
             return True
@@ -125,7 +125,7 @@ class sensor_config:
             watched3    = hash_value,
             watched4    = mac,
             extra       = input_string,
-            foreignKey  = deviceId
+            foreignKey  = mac
         )
 
 #-------------------------------------------------------------------------------

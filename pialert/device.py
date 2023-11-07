@@ -172,7 +172,7 @@ def create_new_devices (db):
                     FROM CurrentScan"""
 
 
-    # mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
+    mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
 
@@ -247,6 +247,8 @@ def update_devices_names (db):
     recordsToUpdate = []
     recordsNotFound = []
 
+    nameNotFound = "(name not found)"
+
     ignored = 0
     notFound = 0
 
@@ -274,30 +276,35 @@ def update_devices_names (db):
     mylog('verbose', ['[Update Device Name] Pholus entries from prev scans: ', len(pholusResults)])
 
     for device in unknownDevices:
-        newName = -1
+        newName = nameNotFound
         
         # Resolve device name with DiG
         newName = resolve_device_name_dig (device['dev_MAC'], device['dev_LastIP'])
         
         # count
-        if newName != -1:
+        if newName != nameNotFound:
             foundDig += 1
 
         # Resolve with Pholus 
-        if newName == -1:
-            newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults)
+        if newName == nameNotFound:
+            # Try MAC matching
+            newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, False)
+            # Try IP matching 
+            if newName == nameNotFound:
+                newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, True)
+
             # count
-            if newName != -1:
+            if newName != nameNotFound:
                 foundPholus += 1
         
         # isf still not found update name so we can distinguish the devices where we tried already
-        if newName == -1 :
+        if newName == nameNotFound :
             # if dev_Name is the same as what we will change it to, take no action
             # this mitigates a race condition which would overwrite a users edits that occured since the select earlier
-            if device['dev_Name'] != "(name not found)":
+            if device['dev_Name'] != nameNotFound:
                 recordsNotFound.append (["(name not found)", device['dev_MAC']])          
         else:
-            # name wa sfound with DiG or Pholus
+            # name was found with DiG or Pholus
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
@@ -353,6 +360,6 @@ def query_MAC_vendor (pMAC):
 
         return -1  # MAC address not found in the database
     except FileNotFoundError:
-        mylog('none', [f"[Vendor Check] Error: Vendors file {vendorsPath} not found."])
+        mylog('none', [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
         return -1
 

@@ -173,13 +173,13 @@ def getPluginObject(**kwargs):
                     return item
                 
 
-            mylog('debug', [f'[{module_name}] Error - Object not found - GUID:{GUID} | Plugin:{Plugin} | MAC:{MAC} | IP:{IP} | PrimaryID:{PrimaryID} | SecondaryID:{SecondaryID} | ForeignKey:{ForeignKey} | Index:{Index} | RowID:{RowID} '])  
+            mylog('debug', [f'[{module_name}] ⚠ ERROR - Object not found - GUID:{GUID} | Plugin:{Plugin} | MAC:{MAC} | IP:{IP} | PrimaryID:{PrimaryID} | SecondaryID:{SecondaryID} | ForeignKey:{ForeignKey} | Index:{Index} | RowID:{RowID} '])  
 
             return None
 
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
         # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[{module_name}] Error - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
+        mylog('none', [f'[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
 
         return None
 

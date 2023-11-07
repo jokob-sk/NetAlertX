@@ -14,7 +14,7 @@ sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 import conf
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, noti_obj, get_setting_value
+from helper import timeNowTZ, get_setting_value
 from notification import Notification_obj
 from database import DB
 
@@ -30,7 +30,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] Error: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -46,7 +46,7 @@ def main():
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
-    # Process the new notifications
+    # Process the new notifications (see the Notifications DB table for structure or check the /api/table_notifications.json endpoint)
     for notification in new_notifications:
 
         # Send notification
@@ -61,7 +61,7 @@ def main():
             watched3    = 'null',
             watched4    = 'null',
             extra       = 'null',
-            foreignKey  = 'null'
+            foreignKey  = notification["GUID"]
         )
 
     plugin_objects.write_result_file()

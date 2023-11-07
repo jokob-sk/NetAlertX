@@ -1,6 +1,7 @@
 from time import strftime
 import pytz
 import sys
+import re
 import base64
 from datetime import datetime
 
@@ -38,7 +39,11 @@ def handleEmpty(input):
     if input == '' or None:
         return 'null'
     else:
-        return input
+        # Validate and sanitize message content
+        # Remove potentially problematic characters if string
+        if isinstance(input, str):  
+            input = re.sub(r'[^\x00-\x7F]+', ' ', input)
+        return  input
 
 # -------------------------------------------------------------------
 def decodeBase64(inputParamBase64):

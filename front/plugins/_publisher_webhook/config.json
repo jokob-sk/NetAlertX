@@ -1,6 +1,6 @@
 {
-    "code_name": "_publisher_mqtt",
-    "unique_prefix": "MQTT",
+    "code_name": "_publisher_webhook",
+    "unique_prefix": "WEBHOOK",
     "plugin_type": "publisher",
     "enabled": true,    
     "data_source":  "script",
@@ -9,30 +9,24 @@
 	"display_name" : [
         {
 		  "language_code": "en_us",
-		  "string" : "MQTT publisher"
+		  "string" : "Webhook publisher"
 		},
         {
 		  "language_code": "es_es",
-		  "string" : "Habilitar MQTT"
+		  "string" : "Habilitar Webhook"
 		}
     ],
     "icon":[{
         "language_code": "en_us",
-        "string" : "<i class=\"fa-solid fa-square-rss\"></i>"
+        "string" : "<i class=\"fa-solid fa-circle-nodes\"></i>"
 		}],     
     "description": [
         {
         "language_code": "en_us",
-        "string" : "A plugin to publish a notification via the Apprise gateway."
+        "string" : "A plugin to publish a notification via Webhooks."
 		}
     ],
-    "params" : [
-        {
-            "name"              : "devices",
-            "type"              : "sql",
-            "value"             : "SELECT dev_LastIP from DEVICES",
-            "timeoutMultiplier" : true
-        }
+    "params" : [        
     ],  
     "database_column_definitions":
     [          
@@ -73,14 +67,14 @@
         {
             "column": "Object_PrimaryID",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "label",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "MQTT Device ID"
+                "string" : "N/A"
 				}]
         },
         {
@@ -93,82 +87,57 @@
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Sensor Name"
-				}]
-        },
-        {
-            "column": "DateTimeCreated",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
                 "string" : "Sent when"
 				}]
-        },
-        {
-            "column": "DateTimeChanged",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Changed"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Cambiado"					
-                }]
         },
         {
             "column": "Watched_Value1",
             "css_classes": "col-sm-3",
             "show": true,
-            "type": "label",            
+            "type": "eval",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "type": "eval",
+                    "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
+                }          
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Device name"
+                "string" : "Notification GUID"
 				}]
         },
         {
             "column": "Watched_Value2",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "textarea_readonly",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Sensor type"
+                "string" : "Response (stdout)"
 				}]
         },
         {
             "column": "Watched_Value3",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "textarea_readonly",            
             "default_value":"",
             "options": [],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",
-                "string" : "Hash"
+                "string" : "Response (stderr)"
 				}]
         },
         {
             "column": "Watched_Value4",
             "css_classes": "col-sm-2",
-            "show": true,
+            "show": false,
             "type": "device_mac",            
             "default_value":"",
             "options": [],
@@ -199,7 +168,7 @@
         {
             "column": "Status",
             "css_classes": "col-sm-1",
-            "show": true,
+            "show": false,
             "type": "replace",            
             "default_value":"",
             "options": [
@@ -267,18 +236,18 @@
             "description": [
                 {
                 "language_code": "en_us",
-                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance."
+                "string" : "Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a> to name a few. Check out this simple <a href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md\" target=\"_blank\">n8n guide here</a> to get started. If enabled, configure related settings below."
 				},
                 {
                 "language_code": "es_es",
-                "string" : "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> a su Home Assistance."
+                "string" : "Habilite webhooks para notificaciones. Los webhooks lo ayudan a conectarse a muchas herramientas de terceros, como IFTTT, Zapier o <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a>, por nombrar algunas. Consulte esta sencilla <a href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md\" target=\"_blank\">guía de n8n aquí</a> para obtener comenzó. Si está habilitado, configure los ajustes relacionados a continuación."
 				}
             ]
         },
         {
             "function": "CMD",
             "type": "readonly",
-            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
+            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_webhook/webhook.py",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -324,144 +293,117 @@
                 "language_code": "es_es",
                 "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
             }]
-        },
-        {
-            "function": "BROKER",
+        },        
+        { 
+            "function": "URL",
             "type": "text",
             "default_value": "",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code": "en_us",
-                "string" : "MQTT broker URL"
+                "string" : "Target URL"
 				},
 				{
                 "language_code": "es_es",
-                "string" : "URL del broker MQTT"				
+                "string" : "URL de destino"				
 				}],
             "description": [{
                 "language_code": "en_us",
-                "string" : "MQTT host URL (do not include <code>http://</code> or <code>https://</code>)."
+                "string" : "Target URL starting with <code>http://</code> or <code>https://</code>."
 				},
 				{
                 "language_code": "es_es",
-                "string" : "URL del host MQTT (no incluya <code>http://</code> o <code>https://</code>)."
+                "string" : "URL de destino comienza con <code>http://</code> o <code>https://</code>."
             }]
         },
-        {
-            "function": "PORT",
+        { 
+            "function": "PAYLOAD",
+            "type": "text.select",
+            "default_value": "json",
+            "options": ["json", "html", "text"],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Payload type"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Tipo de carga"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json\">here</a>. (e.g.: for discord use <code>text</code>)"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json\">aquí</a>. (por ejemplo: para discord use <code>text</code>)"
+            }]
+        },
+        { 
+            "function": "REQUEST_METHOD",
+            "type": "text.select",
+            "default_value": "GET",
+            "options": ["GET", "POST", "PUT"],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Request method"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Método de solicitud"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The HTTP request method to be used for the webhook call."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "El método de solicitud HTTP que se utilizará para la llamada de webhook."
+            }]
+        },
+        { 
+            "function": "SIZE",
             "type": "integer",
-            "default_value": 1883,
+            "default_value": 1024,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code": "en_us",
-                "string" : "MQTT broker port"
+                "string" : "Max payload size"
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Puerto del broker MQTT"				
+                "string" : "Tamaño máximo de carga útil"				
 				}],
             "description": [{
                 "language_code": "en_us",
-                "string" : "Port number where the broker is listening. Usually <code>1883</code>."
+                "string" : "The maximum size of the webhook payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended."
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Puerto donde escucha el broker MQTT. Normalmente <code>1883</code>."
-                }]
-        },
-        {
-            "function": "USER",
+                "string" : "El tamaño máximo de la carga útil del webhook como número de caracteres en la cadena pasada. Si supera el límite, se truncará y se agregará un mensaje <code>(text was truncated)</code>."
+            }]
+        },           
+        { 
+            "function": "SECRET",
             "type": "text",
             "default_value": "",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
                 "language_code": "en_us",
-                "string" : "MQTT user"
+                "string" : "HMAC Secret"
 				},
 				{
                 "language_code": "es_es",
-                "string" : "Usuario de MQTT"				
+                "string" : ""				
 				}],
             "description": [{
                 "language_code": "en_us",
-                "string" : "User name used to login into your MQTT broker instance."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Nombre de usuario utilizado para iniciar sesión en su instancia de agente de MQTT."
-            }]
-        },
-        {
-            "function": "PASSWORD",
-            "type": "password",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "MQTT password"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Contraseña de MQTT"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Password used to login into your MQTT broker instance."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Contraseña utilizada para iniciar sesión en su instancia de agente de MQTT."
-            }]
-        },
-        {
-            "function": "QOS",
-            "type": "integer.select",
-            "default_value": 0,
-            "options": [0, 1, 2],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "MQTT Quality of Service"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Calidad de servicio MQTT"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Quality of service setting for MQTT message sending. <code>0</code> - Low quality to <code>2</code> - High quality. The higher the quality the longer the delay."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Configuración de calidad de servicio para el envío de mensajes MQTT. <code>0</code>: baja calidad a <code>2</code>: alta calidad. Cuanto mayor sea la calidad, mayor será el retraso."
-            }]
-        },
-        {
-            "function": "DELAY_SEC",
-            "type": "integer",
-            "default_value": 2,
-            "options": [2, 3, 4, 5],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "MQTT delay per device"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Retraso de MQTT por dispositivo"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn not affect subsequent scans or notifications."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Un pequeño truco: retrase la adición a la cola en caso de que el proceso se reinicie y los procesos de publicación anteriores se anulen (se necesitan ~<code>2</code>s para actualizar la configuración de un sensor en el intermediario). Probado con <code>2</code>-<code>3</code> segundos de retraso. Este retraso solo se aplica cuando se crean dispositivos (durante el primer bucle de notificación). No afecta los escaneos o notificaciones posteriores."
-            }]
-        }         
+                "string" : "When set, use this secret to generate the SHA256-HMAC hex digest value of the request body, which will be passed as the <code>X-Webhook-Signature</code> header to the request. You can find more information <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_SECRET.md\">here</a>."
+				}]
+        }   
     ]
 }

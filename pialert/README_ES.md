@@ -23,24 +23,4 @@ El código pilaert.py original ahora se mueve a esta nueva carpeta y se divide e
 |```reporting.py```| La generación de informes genera los informes de correo electrónico, html y json que deben enviar los editores |
 |```scheduler.py```| Todo sobre la planificación |
 
-## Editores
-Los editores suelen tener un método check_config además de un método send.
 
-| Módulo | Descripción |
-|--------|-----------|
-|```__init__.py```| Un archivo init vacío|
-|```apprise.py```| Utilice apprise para integrarse en "todas partes" ([Github Apprise](https://github.com/caronc/apprise)). |
-|```email.py```| Configurar y enviar los informes y notificaciones por correo electrónico |
-|```mqtt.py```| Integrar con un broker MQTT e incluso hacer que los dispositivos sean automáticamente detectables en Home-Assistant |
-|```ntfy.py```| Integración con ntfy |
-|```pushsafer.py```| Integrar con pushsafer |
-|```webhook.py```| Integración mediante webhook |
-
-## Escáneres
-Diferentes métodos para escanear la red en busca de dispositivos o para encontrar más detalles sobre los dispositivos descubiertos
-
-| Módulo | Descripción |
-|--------|-----------|
-|```__init__.py```| Un archivo init vacío (oops falta en el repo)|
-|```internet.py```| Descubra la interfaz de Internet y verifique la IP externa y también administre DNS dinámico |
-|```nmapscan.py```| Utilice Nmap para descubrir más sobre los dispositivos |

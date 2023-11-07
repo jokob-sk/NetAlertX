@@ -597,18 +597,19 @@
   }
 
   // --------------------------------------------------------------------------- 
+  // Handle network node click - select correct tab in teh bottom table
   function handleNodeClick(event)
   {
-    
-    console.log(event.target.offsetParent)
-    
-    const targetTabMAC = $(event.target.offsetParent).attr("data-mytreemacmain");
+    console.log(event.target.offsetParent.offsetParent)
+
+    const targetTabMAC = $(event.target.offsetParent.offsetParent).attr("data-mytreemacmain");    
 
     var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
   
     // Simulate a click event on the target tab
     targetTab.click();
   }
+
   // --------------------------------------------------------------------------- 
   var myTree;
   var treeAreaHeight = 800;
@@ -637,16 +638,37 @@
 
         (port == "" || port == 0 ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
 
-        // Build HTML for individual nodes in the network diagram
-        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  `<div class="netIcon"><i class="fa fa-${nodeData.data.icon}"></i></div>` : "";
-        devicePort = `<div class="netPort" style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">${port}</div> <div class="portBckgIcon" style="margin-left:-${emSize*sizeCoefficient}em;">${portBckgIcon}</div>`;
-        collapseExpandIcon = nodeData.data.hiddenChildren ? "square-plus" : "square-minus";
-        collapseExpandHtml = nodeData.data.hasChildren ? `<div class="netCollapse" style="font-size:${emSize*sizeCoefficient}em;" data-mytreepath='${nodeData.data.path}" data-mytreemac="${nodeData.data.mac}"><i class='fa fa-${collapseExpandIcon} pointer"></i></div>` : "";
-        statusCss = ` netStatus-${nodeData.data.status}`;
+        // Build HTML for individual nodes in the network diagram        
+        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
+                  `<div class="netIcon">
+                        <i class="fa fa-${nodeData.data.icon}"></i>
+                  </div>` : "";
+        devicePort = `<div  class="netPort" 
+                            style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
+                        ${port}</div> 
+                      <div  class="portBckgIcon" 
+                            style="margin-left:-${emSize*sizeCoefficient}em;">
+                            ${portBckgIcon}
+                      </div>`;
+        collapseExpandIcon = nodeData.data.hiddenChildren ? 
+                            "square-plus" : "square-minus";
+                            
+        // generate +/- icon if node has children nodes
+        collapseExpandHtml = nodeData.data.hasChildren ? 
+                      `<div class="netCollapse" 
+                            style="font-size:${emSize*sizeCoefficient}em;top:${1/2*emSize*sizeCoefficient}em" 
+                            data-mytreepath="${nodeData.data.path}" 
+                            data-mytreemac="${nodeData.data.mac}">
+                        <i class="fa fa-${collapseExpandIcon} pointer"></i>
+                      </div>` : "";
 
         selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
 
-        highlightedCss = nodeData.data.mac == selectedNodeMac ? " highlightedNode" : "";
+        highlightedCss = nodeData.data.mac == selectedNodeMac ? 
+                      " highlightedNode" : "";
+
+        // css indicating online/offline status
+        statusCss = ` netStatus-${nodeData.data.status}`;
 
         return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
                               data-mytreemacmain="${nodeData.data.mac}"

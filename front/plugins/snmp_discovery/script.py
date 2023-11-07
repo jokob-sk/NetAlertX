@@ -75,15 +75,14 @@ def main():
                             ipAddress = '.'.join(ipStr)
 
                             mylog('verbose', [f'[SNMPDSC] IP: {ipAddress} MAC: {macAddress}']) 
-
                             
                             plugin_objects.add_object(
-                                primaryId=macAddress,
-                                secondaryId=ipAddress.strip(), # Remove leading/trailing spaces from IP
-                                watched1='(unknown)',
-                                watched2=snmpwalkArgs[6],  # router IP
-                                extra=line,
-                                foreignKey=macAddress  # Use the primary ID as the foreign key
+                                primaryId   = handleEmpty(macAddress),
+                                secondaryId = handleEmpty(ipAddress.strip()), # Remove leading/trailing spaces from IP
+                                watched1    = '(unknown)',
+                                watched2    = handleEmpty(snmpwalkArgs[6]),  # router IP
+                                extra       = handleEmpty(line),
+                                foreignKey  = handleEmpty(macAddress)  # Use the primary ID as the foreign key
                             )
 
     mylog('verbose', ['[SNMPDSC] Entries found: ', len(plugin_objects)]) 

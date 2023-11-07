@@ -12,9 +12,11 @@ from time import strftime
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Object, Plugin_Objects
+# pialert modules
+from database import DB
+from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ
+from helper import timeNowTZ, get_setting_value
 from const import logPath, pialertPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -62,6 +64,11 @@ def main():
         subnets_list = userSubnetsParam.split(',')
     else:
         subnets_list = [userSubnetsParam]
+
+
+    # Create a database connection
+    db = DB()  # instance of class DB
+    db.open()
     
     # Execute the ARP scanning process on the list of subnets (whether it's one or multiple subnets).
     # The function 'execute_arpscan' is assumed to be defined elsewhere in the code.
@@ -70,14 +77,14 @@ def main():
 
     for device in unique_devices:
         plugin_objects.add_object(
-            primaryId=device['mac'],  # MAC (Device Name)
-            secondaryId=device['ip'],  # IP Address            
-            watched1=device['ip'],    # Device Name
-            watched2=device.get('hw', ''),  # Vendor (assuming it's in the 'hw' field)
-            watched3=device.get('interface', ''),  # Add the interface             
-            watched4='',
-            extra='arp-scan', 
-            foreignKey="")
+            primaryId   = handleEmpty(device['mac']),  # MAC (Device Name)
+            secondaryId = handleEmpty(device['ip']),  # IP Address            
+            watched1    = handleEmpty(device['ip']),    # Device Name
+            watched2    = handleEmpty(device.get('hw', '')),  # Vendor (assuming it's in the 'hw' field)
+            watched3    = handleEmpty(device.get('interface', '')),  # Add the interface             
+            watched4    = '',
+            extra       = 'arp-scan', 
+            foreignKey  = "")
 
     plugin_objects.write_result_file()
 
@@ -132,7 +139,7 @@ def execute_arpscan(userSubnets):
 
 def execute_arpscan_on_interface(interface):
     # Prepare command arguments
-    arpscan_args = ['sudo', 'arp-scan', '--ignoredups', '--retry=6'] + interface.split()
+    arpscan_args = get_setting_value('ARPSCAN_ARGS').split() + interface.split()
 
     # Execute command
     try:

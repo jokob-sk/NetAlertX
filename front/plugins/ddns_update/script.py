@@ -28,9 +28,11 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+pluginName = 'DDNS'
+
 def main():
 
-    mylog('verbose', ['[DDNS] In script'])     
+    mylog('verbose', [f'[{pluginName}] In script'])     
     
     parser = argparse.ArgumentParser(description='Check internet connectivity and IP')
     
@@ -52,7 +54,7 @@ def main():
     # perform the new IP lookup and DDNS tasks if enabled
     ddns_update( DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN, PREV_IP)   
 
-    mylog('verbose', ['[DDNS] Finished '])   
+    mylog('verbose', [f'[{pluginName}] Finished '])   
     
     return 0
   
@@ -65,20 +67,20 @@ def ddns_update ( DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN, PREV_I
     # Update DDNS record if enabled and IP is different
     # Get Dynamic DNS IP
     
-    mylog('verbose', ['[DDNS]    Retrieving Dynamic DNS IP'])
+    mylog('verbose', [f'[{pluginName}]    Retrieving Dynamic DNS IP'])
     dns_IP = get_dynamic_DNS_IP(DDNS_DOMAIN)
 
     # Check Dynamic DNS IP
     if dns_IP == "" or dns_IP == "0.0.0.0" :
-        mylog('none', ['[DDNS]     Error retrieving Dynamic DNS IP'])       
+        mylog('none', [f'[{pluginName}]     Error retrieving Dynamic DNS IP'])       
 
-    mylog('none', ['[DDNS]    ', dns_IP])
+    mylog('none', [f'[{pluginName}]    ', dns_IP])
 
     # Check DNS Change
     if dns_IP != PREV_IP :
-        mylog('none', ['[DDNS]     Updating Dynamic DNS IP'])
+        mylog('none', [f'[{pluginName}]     Updating Dynamic DNS IP'])
         message = set_dynamic_DNS_IP (DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN)
-        mylog('none', ['[DDNS]        ', message])            
+        mylog('none', [f'[{pluginName}]        ', message])            
 
     # plugin_objects = Plugin_Objects(RESULT_FILE)    
     
@@ -104,9 +106,10 @@ def get_dynamic_DNS_IP (DDNS_DOMAIN):
     try:
         # try runnning a subprocess
         dig_output = subprocess.check_output (dig_args, universal_newlines=True)
+        mylog('none', [f'[{pluginName}] DIG output :', dig_output])
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[DDNS] ERROR - ', e.output])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - ', e.output])
         dig_output = '' # probably no internet
 
     # Check result is an IP
@@ -132,7 +135,7 @@ def set_dynamic_DNS_IP (DDNS_UPDATE_URL, DDNS_USER, DDNS_PASSWORD, DDNS_DOMAIN):
                                                 universal_newlines=True)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[DDNS] ERROR - ',e.output])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - ',e.output])
         curl_output = ""    
     
     return curl_output

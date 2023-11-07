@@ -1,5 +1,6 @@
 .vscode
 .DS_Store
+config/*
 config/pialert.conf
 db/*
 db/pialert.db

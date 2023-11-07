@@ -150,7 +150,7 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         mylog('none', ['[PHOLUS]', e.output])
-        mylog('none', ["[PHOLUS] Error - Pholus Scan - check logs"])            
+        mylog('none', ["[PHOLUS] ⚠ ERROR - Pholus Scan - check logs"])            
     except subprocess.TimeoutExpired as timeErr:
         mylog('none', ['[PHOLUS] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
 

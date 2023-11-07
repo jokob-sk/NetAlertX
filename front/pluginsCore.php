@@ -169,6 +169,15 @@ function processColumnValue(dbColumnDef, value, index, type) {
                 }
             }
             break;
+        case 'eval':
+            
+            for (const option of dbColumnDef.options) {
+                if (option.type === type) {
+                    console.log(option.param)
+                    value =  eval(option.param);
+                }
+            }
+            break;
             
         default:
             value = value + `<div style='text-align:center' title="${getString("Plugins_no_control")}"><i class='fa-solid fa-circle-question'></i></div>` ;           

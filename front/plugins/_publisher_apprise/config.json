@@ -127,9 +127,14 @@
             "column": "Watched_Value1",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "label",            
+            "type": "eval",            
             "default_value":"",
-            "options": [],
+            "options": [
+                {
+                    "type": "eval",
+                    "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
+                }          
+            ],
             "localized": ["name"],
             "name":[{
                 "language_code": "en_us",

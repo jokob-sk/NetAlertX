@@ -20,9 +20,12 @@ def timeNowTZ():
 
 
 #-------------------------------------------------------------------------------
+# More verbose as the numbers go up
 debugLevels =   [
                     ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3)
                 ]
+
+currentLevel = 0
 
 def mylog(requestedDebugLevel, n):
 

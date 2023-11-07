@@ -13,27 +13,46 @@ require dirname(__FILE__).'/../templates/skinUI.php';
 
 $FUNCTION = [];
 $SETTINGS = [];
+$ACTION   = "";
 
 // init request params
 if(array_key_exists('function', $_REQUEST) != FALSE)
 {  
   $FUNCTION = $_REQUEST['function']; 
 }
-
 if(array_key_exists('settings', $_REQUEST) != FALSE)
 {
   $SETTINGS = $_REQUEST['settings'];
 }
 
+
 // call functions based on requested params
-if ($FUNCTION  == 'savesettings') 
-{
-  saveSettings();
-} 
-elseif ($FUNCTION  == 'cleanLog')
-{
-  cleanLog($SETTINGS);
+switch ($FUNCTION) {
+  case 'savesettings':
+      
+      saveSettings();
+      break;
+
+  case 'cleanLog':      
+
+      cleanLog($SETTINGS);
+      break;
+
+  case 'addToExecutionQueue':
+
+      if(array_key_exists('action', $_REQUEST) != FALSE)
+      {
+        $ACTION = $_REQUEST['action'];
+      }
+
+      addToExecutionQueue($ACTION);
+      break;
+
+  default:
+      // Handle any other cases or errors if needed
+      break;
 }
+
 
 //------------------------------------------------------------------------------
 // Formatting data functions
@@ -195,6 +214,25 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
 
 }
 
+// Adds an action to perform into the execution_queue.log file
+function addToExecutionQueue($action)
+{
+    global $logFolderPath, $timestamp;
+
+    $logFile = 'execution_queue.log';
+    $fullPath = $logFolderPath . $logFile;
+
+    // Open the file or skip if it can't be opened
+    if ($file = fopen($fullPath, 'a')) {
+        fwrite($file, "[" . $timestamp . "]|" . $action . PHP_EOL);
+        fclose($file);
+        displayMessage('Action "'.$action.'" added to the execution queue.', false, true, true, true);
+    } else {
+        displayMessage('Log file not found or couldn\'t be created.', false, true, true, true);
+    }
+}
+
+
 // ----------------------------------------------------------------------------------------
 function cleanLog($logFile)
 {  
@@ -328,9 +366,16 @@ function saveSettings()
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
   // open new file and write the new configuration      
-  $newConfig = fopen($fullConfPath, "w") or die("Unable to open file!"); 
-  fwrite($newConfig, $txt);
-  fclose($newConfig);
+  // Create a temporary file
+  $tempConfPath = $fullConfPath . ".tmp";
+
+  // Write your changes to the temporary file
+  $tempConfig = fopen($tempConfPath, "w") or die("Unable to open file!");
+  fwrite($tempConfig, $txt);
+  fclose($tempConfig);
+
+  // Replace the original file with the temporary file
+  rename($tempConfPath, $fullConfPath);
 
   displayMessage("<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
     FALSE, TRUE, TRUE, TRUE);    

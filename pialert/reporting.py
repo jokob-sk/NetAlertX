@@ -24,13 +24,6 @@ from const import pialertPath, logPath, apiPath
 from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
-from publishers.ntfy  import (check_config as ntfy_check_config,
-                              send as send_ntfy )
-from publishers.webhook import (check_config as webhook_check_config,
-                                send as send_webhook) 
-from publishers.pushsafer import (check_config as pushsafer_check_config,
-                                send as send_pushsafer) 
-
 
 #===============================================================================
 # REPORTING
@@ -181,7 +174,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "New devices")
 
-        # collect "new_devices" for the webhook json
+        # collect "new_devices" for the json
         json_new_devices = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', notiStruc.text + '\n')
@@ -197,7 +190,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Down devices")
 
-        # collect "down_devices" for the webhook json
+        # collect "down_devices" for the json
         json_down_devices = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', notiStruc.text + '\n')
@@ -214,7 +207,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Events")
 
-        # collect "events" for the webhook json
+        # collect "events" for the json
         json_events = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<EVENTS_TABLE>', notiStruc.text + '\n')
@@ -227,7 +220,7 @@ def get_notifications (db):
 
         notiStruc = construct_notifications(db, sqlQuery, "Plugins")
 
-        # collect "plugins" for the webhook json
+        # collect "plugins" for the json
         json_plugins = notiStruc.json["data"]
 
         mail_text = mail_text.replace ('<PLUGINS_TABLE>', notiStruc.text + '\n')
@@ -259,44 +252,6 @@ def get_notifications (db):
     send_api()
 
     return noti_obj(final_json, final_text, final_html)   
-
-
-
-    #     if conf.REPORT_MAIL and check_config('email'):
-    #         updateState("Send: Email")
-    #         mylog('minimal', ['[Notification] Sending report by Email'])
-    #         send_email (msg )
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip email'])
-    #     
-    
-    #     if conf.REPORT_WEBHOOK and check_config('webhook'):
-    #         updateState("Send: Webhook")
-    #         mylog('minimal', ['[Notification] Sending report by Webhook'])
-    #         send_webhook (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip webhook'])
-    #     if conf.REPORT_NTFY and check_config('ntfy'):
-    #         updateState("Send: NTFY")
-    #         mylog('minimal', ['[Notification] Sending report by NTFY'])
-    #         send_ntfy (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip NTFY'])
-    #     if conf.REPORT_PUSHSAFER and check_config('pushsafer'):
-    #         updateState("Send: PUSHSAFER")
-    #         mylog('minimal', ['[Notification] Sending report by PUSHSAFER'])
-    #         send_pushsafer (msg)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip PUSHSAFER'])
-    #     # Update MQTT entities
-    #     if conf.REPORT_MQTT and check_config('mqtt'):
-    #         updateState("Send: MQTT")
-    #         mylog('minimal', ['[Notification] Establishing MQTT thread'])
-    #         mqtt_start(db)
-    #     else :
-    #         mylog('verbose', ['[Notification] Skip MQTT'])
-    # else :
-    #     mylog('verbose', ['[Notification] No changes to report'])
 
 
 #-------------------------------------------------------------------------------

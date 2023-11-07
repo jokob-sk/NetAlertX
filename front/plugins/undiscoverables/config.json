@@ -1,7 +1,7 @@
 {
   "code_name": "undiscoverables",
   "unique_prefix": "UNDIS",
-  "plugin_type": "scanner",
+  "plugin_type": "device_scanner",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",
@@ -49,7 +49,7 @@
       "string": "Este complemento es para importar dispositivos no detectables desde un archivo."
     },
     {
-      "language_code": "en_us",
+      "language_code": "de_de",
       "string": "Ein Plugin zum Importieren von nicht erkennbaren Geräten aus einer Datei."
     }
   ],

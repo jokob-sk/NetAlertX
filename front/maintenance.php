@@ -420,17 +420,6 @@ $db->close();
                                 </div>
                               </div>
                             </div>
-                        </div>   
-                        <div class="log-area box box-solid box-primary ">
-                            <div class="row logs-row">
-                              <textarea id="nginx_error_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "/var/log/nginx/error.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >                            
-                              <div>
-                                <div class="log-file">nginx/error.log</div>
-                              </div>
-                            </div>
                         </div> 
                         <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
@@ -463,44 +452,18 @@ $db->close();
                                 </div>
                               </div>
                             </div>
-                        </div>                         
-                        
-                         <div class="log-area box box-solid box-primary">
-                             
-                             <div class="row logs-row">
-                               <textarea id="pialert_pholus_lastrun_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_pholus_lastrun.log" ); ?>
-                               </textarea>                              
-                             </div>                          
-                             <div class="row logs-row" >
-                               <div> 
-                                 <div class="log-file">pialert_pholus_lastrun.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_pholus_lastrun.log") / 1000000),2,",",".") . ' MB';?> 
-                                 <span class="span-padding"><a href="./log/pialert_pholus_lastrun.log"><i class="fa fa-download"></i> </a></span>
-                                </div></div>                          
-                                 <div class="log-purge">                                 
-                                   <button class="btn btn-primary" onclick="logManage('pialert_pholus_lastrun.log','cleanLog')"><?= lang('Gen_Purge');?></button> 
-                                 </div>                            
-                               </div>                            
-                             </div>                            
- 
-                         </div>    
-                        <div class="log-area box box-solid box-primary">
-                             
+                        </div>         
+                        <div class="log-area box box-solid box-primary ">
                             <div class="row logs-row">
-                              <textarea id="IP_changes_log" class="logs logs-small" cols="70" rows="10" readonly><?php echo file_get_contents( "./log/IP_changes.log" ); ?>
-                              </textarea>                              
-                            </div>                          
-                            <div class="row logs-row" >
-                              <div> 
-                                <div class="log-file">IP_changes.log<div class="logs-size"><?php echo number_format((filesize("./log/IP_changes.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/IP_changes.log"><i class="fa fa-download"></i> </a></span>
-                              </div></div>                          
-                                <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('IP_changes.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                </div>                            
-                              </div>                            
-                            </div>                            
-
-                        </div> 
+                              <textarea id="nginx_error_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "/var/log/nginx/error.log" ); ?>
+                              </textarea>
+                            </div>
+                            <div class="row logs-row" >                            
+                              <div>
+                                <div class="log-file" title="/var/log/nginx/error.log">nginx/error.log</div>
+                              </div>
+                            </div>
+                        </div>                                        
                         <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
                               <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
@@ -797,7 +760,7 @@ function performLogManage() {
         showModalOk ('Result', data );
     }
   })
-  }
+}
 
 // --------------------------------------------------------
 function scrollDown()

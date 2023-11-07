@@ -111,41 +111,19 @@ def importConfigs (db):
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')    
+    conf.DBCLNP_NOTIFI_HIST = ccd('DBCLNP_NOTIFI_HIST', 100 , c_d, 'Keep notification', 'integer', "0", 'General')    
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
 
     # ARPSCAN (+ more settings are provided by the ARPSCAN plugin)    
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'ARPSCAN')    
 
-    # Notification gateways
-    # ----------------------------------------
-
-    # Webhooks
-    conf.REPORT_WEBHOOK = ccd('REPORT_WEBHOOK', False , c_d, 'Enable Webhooks', 'boolean', '', 'Webhooks', ['test'])
-    conf.WEBHOOK_URL = ccd('WEBHOOK_URL', '' , c_d, 'Target URL', 'text', '', 'Webhooks')
-    conf.WEBHOOK_PAYLOAD = ccd('WEBHOOK_PAYLOAD', 'json' , c_d, 'Payload type', 'text.select', "['json', 'html', 'text']", 'Webhooks')
-    conf.WEBHOOK_REQUEST_METHOD = ccd('WEBHOOK_REQUEST_METHOD', 'GET' , c_d, 'Req type', 'text.select', "['GET', 'POST', 'PUT']", 'Webhooks')
-    conf.WEBHOOK_SIZE = ccd('WEBHOOK_SIZE', 1024 , c_d, 'Payload size', 'integer', '', 'Webhooks')
-    conf.WEBHOOK_SECRET = ccd('WEBHOOK_SECRET', '' , c_d, 'Secret', 'text', '', 'Webhooks')
-
-    # NTFY
-    conf.REPORT_NTFY = ccd('REPORT_NTFY', False , c_d, 'Enable NTFY', 'boolean', '', 'NTFY', ['test'])
-    conf.NTFY_HOST = ccd('NTFY_HOST', 'https://ntfy.sh' , c_d, 'NTFY host URL', 'text', '', 'NTFY')
-    conf.NTFY_TOPIC = ccd('NTFY_TOPIC', '' , c_d, 'NTFY topic', 'text', '', 'NTFY')
-    conf.NTFY_USER = ccd('NTFY_USER', '' , c_d, 'NTFY user', 'text', '', 'NTFY')
-    conf.NTFY_PASSWORD = ccd('NTFY_PASSWORD', '' , c_d, 'NTFY password', 'password', '', 'NTFY')
-
-    # PUSHSAFER
-    conf.REPORT_PUSHSAFER = ccd('REPORT_PUSHSAFER', False , c_d, 'Enable PUSHSAFER', 'boolean', '', 'PUSHSAFER', ['test'])
-    conf.PUSHSAFER_TOKEN = ccd('PUSHSAFER_TOKEN', 'ApiKey' , c_d, 'PUSHSAFER token', 'text', '', 'PUSHSAFER')
-    
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings
-    conf.time_started = datetime.datetime.now(conf.tz)
-    conf.cycle = ""
+    conf.time_started = datetime.datetime.now(conf.tz)    
     conf.plugins_once_run = False
 
     # timestamps of last execution times
@@ -272,7 +250,7 @@ def read_config_file(filename):
 
 
 #-------------------------------------------------------------------------------
-# DEPERECATED after 1/1/2024
+# DEPERECATED soonest after 3/3/2024
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',

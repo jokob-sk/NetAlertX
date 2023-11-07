@@ -1,7 +1,7 @@
 {
   "code_name": "dhcp_servers",
   "unique_prefix": "DHCPSRVS",
-  "plugin_type": "scanner",
+  "plugin_type": "other",
   "enabled": true,
   "data_source": "script",
   "show_ui": true,
@@ -524,7 +524,7 @@
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
-      "default_value": 5,
+      "default_value": 10,
       "options": [],
       "localized": [
         "name",
