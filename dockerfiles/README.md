@@ -35,6 +35,7 @@ docker run -d --rm --network=host \
 | Variable | Description | Default |
 | :------------- |:-------------| -----:|
 | `PORT`      |Port of the web interface  |  `20211` |
+| `LISTEN_ADDR`      |Set the specific IP Address for the web interface  |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
 |`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
