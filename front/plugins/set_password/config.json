@@ -1,28 +1,36 @@
-{    
+{
   "code_name": "set_password",
   "template_type": "database-entry",
   "unique_prefix": "SETPWD",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "show_ui": false,
-  "localized": ["display_name", "description", "icon"],
-  "display_name": [{
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
       "language_code": "en_us",
       "string": "Set password"
     },
-	{
+    {
       "language_code": "es_es",
       "string": "Establecer contraseña"
-    }],
-  "description": [{
-    "language_code": "en_us",
-    "string": "A simple plugin to set the web ui password on app start."
-  },
-  {
-    "language_code": "es_es",
-    "string": "Un complemento simple para configurar la contraseña de la interfaz de usuario web al iniciar la aplicación."
-  }],
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A simple plugin to set the web ui password on app start."
+    },
+    {
+      "language_code": "es_es",
+      "string": "Un complemento simple para configurar la contraseña de la interfaz de usuario web al iniciar la aplicación."
+    }
+  ],
   "icon": [
     {
       "language_code": "en_us",
@@ -31,93 +39,112 @@
     {
       "language_code": "es_es",
       "string": "<i class=\"fa fa-lock\"></i>"
-    }	
-  ],
-  "params" : [
-    {
-        "name"  : "password",
-        "type"  : "setting",
-        "value" : "SETPWD_password"
     }
-  ], 
-  "settings":[
+  ],
+  "params": [
     {
-      "function": "RUN",    
-      "events": ["run"],        
-      "type": "text.select",            
-      "default_value":"disabled",
-      "options": ["disabled", "before_config_save"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "When to run"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Cuándo ejecuta"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>. You can set to <code>disabled</code> once the password is changed."
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Configure en <code>before_config_save</code> y especifique la contraseña para restablecer su contraseña en <code>SETPWD_password</code>. Puede establecer <code>deshabilitado</code> una vez que se cambia la contraseña."
-      }]
-  },
-  {
+      "name": "password",
+      "type": "setting",
+      "value": "SETPWD_password"
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": "text.select",
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "before_config_save"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecuta"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>. You can set to <code>disabled</code> once the password is changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Configure en <code>before_config_save</code> y especifique la contraseña para restablecer su contraseña en <code>SETPWD_password</code>. Puede establecer <code>deshabilitado</code> una vez que se cambia la contraseña."
+        }
+      ]
+    },
+    {
       "function": "CMD",
       "type": "text",
-      "default_value":"/home/pi/pialert/back/pialert-cli set_password {password}",
+      "default_value": "/home/pi/pialert/back/pialert-cli set_password {password}",
       "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "Command"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Comando"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Command to run"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Comando a ejecutar"
-      }]
-  },
-  {
-    "function": "password",
-    "type": "password",
-    "maxLength": 50,
-    "default_value": "123456",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Password"
-      },
-      {
-        "language_code": "es_es",
-        "string": "Contraseña"
-      }	  
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> in the container"
-      },
-      {
-        "language_code": "es_es",
-        "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> en el contenedor"
-      }	  
-    ]
-  }
-    
-          
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar"
+        }
+      ]
+    },
+    {
+      "function": "password",
+      "type": "password",
+      "maxLength": 50,
+      "default_value": "123456",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Password"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Contraseña"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> in the container"
+        },
+        {
+          "language_code": "es_es",
+          "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> en el contenedor"
+        }
+      ]
+    }
   ]
-    
-  }
+}
