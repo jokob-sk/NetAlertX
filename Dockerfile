@@ -42,6 +42,8 @@ RUN apt-get install -y python3-venv
 RUN python3 -m venv myenv
 RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet"
 
+# Create a buildtimestamp.txt to later check if a new version was released
+RUN date +%s > /home/pi/pialert/front/buildtimestamp.txt
 
 CMD ["/home/pi/pialert/dockerfiles/start.sh"]
 

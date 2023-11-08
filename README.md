@@ -11,9 +11,9 @@ Scans for devices, port changes on your WIFI/LAN and alerts you if unknown devic
   | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
-## Why PiAlert❓ Isn't this scary 👻...
+## Why PiAlert❓ 
 
-...most of us don't know what's going on on our home network, but we want our family and data to _be safe_.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist 😖.
+Most of us don't know what's going on on our home network, but we want our family and data to _be safe_.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist 😖.
 
 PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 

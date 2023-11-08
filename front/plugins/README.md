@@ -14,36 +14,37 @@
 
 ### 🔌 Plugins & 📚 Docs 
 
-| Required | CurrentScan | Unique Prefix | Data source        |   Type       | Link + Docs                                                      | 
-|----------|-------------|---------------|--------------------|--------------|------------------------------------------------------------------|
-|          |             | APPRISE       | Script             | 💬 publisher | 📚[_publisher_apprise](/front/plugins/_publisher_apprise/)      |
-|          |    Yes      | ARPSCAN       | Script             | 🔍dev scanner| 📚[arp_scan](/front/plugins/arp_scan/)                          |
-|          |             | CSVBCKP       | Script             | ⚙ system     | 📚[csv_backup](/front/plugins/csv_backup/)                      |
-|  Yes*    |             | DBCLNP        | Script             | ⚙ system     | 📚[db_cleanup](/front/plugins/db_cleanup/)                      |
-|          |             | DDNS          | Script             | ⚙ system     | 📚[ddns_update](/front/plugins/ddns_update/)                    |
-|          |    Yes      | DHCPLSS       | Script             | 🔍dev scanner| 📚[dhcp_leases](/front/plugins/dhcp_leases/)                    |
-|          |             | DHCPSRVS      | Script             | ♻ other      | 📚[dhcp_servers](/front/plugins/dhcp_servers/)                  |
-|          |    Yes      | INTRNT        | Script             | 🔍dev scanner| 📚[internet_ip](/front/plugins/internet_ip/)                    |
-|          |             | INTRSPD       | Script             | ♻ other      | 📚[internet_speedtest](/front/plugins/internet_speedtest/)      |
-|  Yes     |             | NEWDEV        | Template           | ⚙ system     | 📚[newdev_template](/front/plugins/newdev_template/)            |
-|          |             | PHOLUS        | Script             | ♻ other      | 📚[pholus_scan](/front/plugins/pholus_scan/)                    |
-|          |             | MQTT          | Script             | 💬 publisher | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)            |
-|          |             | NMAP          | Script             | ♻ other      | 📚[nmap_scan](/front/plugins/nmap_scan/)                        |
-|          |             | NTFY          | Script             | 💬 publisher | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)            |
-|          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner| 📚[pihole_scan](/front/plugins/pihole_scan/)                    |
-|          |             | PUSHSAFER     | Script             | 💬 publisher | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)  |
-|          |             | SETPWD        | Script             | ⚙ system     | 📚[set_password](/front/plugins/set_password/)                  |
-|          |             | SMTP          | Script             | 💬 publisher | 📚[_publisher_email](/front/plugins/_publisher_email/)          |
-|          |             | SNMPDSC       | Script             | 🔍dev scanner| 📚[snmp_discovery](/front/plugins/snmp_discovery/)              |
-|          |    Yes**    | UNDIS         | Script             | ♻ other      | 📚[undiscoverables](/front/plugins/undiscoverables/)            |
-|          |    Yes      | UNFIMP        | Script             | 🔍dev scanner| 📚[unifi_import](/front/plugins/unifi_import/)                  |
-|          |             | VNDRPDT       | Script             | ⚙ system     | 📚[vendor_update](/front/plugins/vendor_update/)                |
-|          |             | WEBHOOK       | Script             | 💬 publisher | 📚[_publisher_webhook](/front/plugins/_publisher_webhook/)      |
-|          |             | WEBMON        | Script             | ♻ other      | 📚[website_monitor](/front/plugins/website_monitor/)            |
-|  N/A     |             | N/A           | SQL query          |               | N/A, but the External SQLite DB plugins work similar            |
+| Required | CurrentScan | Unique Prefix | Data source        |   Type         | Link + Docs                                                      | 
+|----------|-------------|---------------|--------------------|----------------|------------------------------------------------------------------|
+|          |             | APPRISE       | Script             | 💬 publisher   | 📚[_publisher_apprise](/front/plugins/_publisher_apprise/)      |
+|          |    Yes      | ARPSCAN       | Script             | 🔍dev scanner  | 📚[arp_scan](/front/plugins/arp_scan/)                          |
+|          |             | CSVBCKP       | Script             | ⚙ system       | 📚[csv_backup](/front/plugins/csv_backup/)                      |
+|  Yes*    |             | DBCLNP        | Script             | ⚙ system       | 📚[db_cleanup](/front/plugins/db_cleanup/)                      |
+|          |             | DDNS          | Script             | ⚙ system       | 📚[ddns_update](/front/plugins/ddns_update/)                    |
+|          |    Yes      | DHCPLSS       | Script             | 🔍dev scanner  | 📚[dhcp_leases](/front/plugins/dhcp_leases/)                    |
+|          |             | DHCPSRVS      | Script             | ♻ other        | 📚[dhcp_servers](/front/plugins/dhcp_servers/)                  |
+|          |    Yes      | INTRNT        | Script             | 🔍dev scanner  | 📚[internet_ip](/front/plugins/internet_ip/)                    |
+|          |             | INTRSPD       | Script             | ♻ other        | 📚[internet_speedtest](/front/plugins/internet_speedtest/)      |
+|  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)            |
+|          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                    |
+|          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)            |
+|          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                        |
+|          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)            |
+|          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner  | 📚[pihole_scan](/front/plugins/pihole_scan/)                    |
+|          |             | PUSHSAFER     | Script             | 💬 publisher   | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)  |
+|          |             | SETPWD        | Script             | ⚙ system       | 📚[set_password](/front/plugins/set_password/)                  |
+|          |             | SMTP          | Script             | 💬 publisher   | 📚[_publisher_email](/front/plugins/_publisher_email/)          |
+|          |    Yes      | SNMPDSC       | Script             | 🔍dev scanner  | 📚[snmp_discovery](/front/plugins/snmp_discovery/)              |
+|          |    Yes**    | UNDIS         | Script             | ♻ other        | 📚[undiscoverables](/front/plugins/undiscoverables/)            |
+|          |    Yes      | UNFIMP        | Script             | 🔍dev scanner  | 📚[unifi_import](/front/plugins/unifi_import/)                  |
+|          |             | VNDRPDT       | Script             | ⚙ system       | 📚[vendor_update](/front/plugins/vendor_update/)                |
+|          |             | WEBHOOK       | Script             | 💬 publisher   | 📚[_publisher_webhook](/front/plugins/_publisher_webhook/)      |
+|          |             | WEBMON        | Script             | ♻ other        | 📚[website_monitor](/front/plugins/website_monitor/)            |
+|  N/A     |             | N/A           | SQL query          |                 | N/A, but the External SQLite DB plugins work similar            |
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
+>
 > \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
 
 > [!NOTE] 

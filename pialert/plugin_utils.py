@@ -218,7 +218,7 @@ def getPluginObject(keyValues):
                 if all_match:
                     return item
 
-            mylog('verbose', [f'[{module_name}] ⚠ ERROR - Object not found {json.dumps(keyValues)} '])  
+            mylog('verbose', [f'[{module_name}] 💬 INFO - Object not found {json.dumps(keyValues)} '])  
 
             return {}
 

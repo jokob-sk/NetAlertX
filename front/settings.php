@@ -128,7 +128,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_publisher_icon");?>"></i>  <?= lang("settings_publisher_label");?>       
+            <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        
           <div class =" col-sm-12" id="publisher_content"></div>
       </div> 
@@ -202,7 +202,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     overviewSections      = [
                               'device_scanners',  
                               'other_scanners', 
-                              'publishers_enabled'                                                          
+                              'publishers'                                                          
                             ]
     overviewSectionsHtml  = [
                               pluginCards(enabledDeviceScanners,['RUN', 'RUN_SCHD']),

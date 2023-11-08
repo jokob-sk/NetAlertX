@@ -94,8 +94,11 @@ chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
 chmod -R a+rw $INSTALL_DIR/pialert/config
 sudo chgrp -R www-data  $INSTALL_DIR/pialert
 
-# Create buildtimestamp.txt
-date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"
+# Check if buildtimestamp.txt doesn't exist
+if [ ! -f "$INSTALL_DIR/pialert/front/buildtimestamp.txt" ]; then
+    # Create buildtimestamp.txt
+    date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"
+fi
 
 
 # start PHP
