@@ -17,6 +17,10 @@
     {
       "language_code": "es_es",
       "string": "Importación UniFi"
+    },
+    {
+      "language_code": "de_de",
+      "string": "UniFi-Import"
     }
   ],
   "enabled": true,
@@ -28,6 +32,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-upload\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-upload\"></i>"
     }
   ],
@@ -152,7 +160,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "MAC Adresse"
+          "string": "MAC-Adresse"
         }
       ],
       "options": [],
@@ -229,7 +237,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Angepasst"
+          "string": "Geändert"
         }
       ],
       "options": [],
@@ -255,7 +263,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Name des Hosts"
+          "string": "Hostname"
         }
       ],
       "options": [],
@@ -355,7 +363,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Kommentar"
+          "string": "Kommentare"
         }
       ],
       "options": [],
@@ -384,7 +392,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Scan Methode"
+          "string": "Scanmethode"
         }
       ],
       "options": [],
@@ -569,6 +577,10 @@
         {
           "language_code": "es_es",
           "string": "El nombre de usuario utilizado para iniciar sesión en su controlador UNIFI. Se recomienda crear una cuenta de usuario de sólo lectura."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benutzername welcher zum Einloggen beim UNIFI-Controller verwendet wird. Ein Benutzer nur mit Leseberechtigungen wird empfohlen."
         }
       ],
       "function": "username",
@@ -584,6 +596,10 @@
         {
           "language_code": "es_es",
           "string": "Nombre de usuario"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benutzername"
         }
       ],
       "options": [],
@@ -599,6 +615,10 @@
         {
           "language_code": "es_es",
           "string": "La contraseña utilizada para iniciar sesión en su controlador UNIFI."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Passwort welches zum Einloggen beim UNIFI-Controller verwendet wird."
         }
       ],
       "function": "password",
@@ -614,6 +634,10 @@
         {
           "language_code": "es_es",
           "string": "Contraseña"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Passwort"
         }
       ],
       "options": [],
@@ -624,11 +648,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The host (IP) where the UNIFI controller is runnig. Do NOT include the protocol (e.g. <code>https://</code>)"
+          "string": "The host (IP) where the UNIFI controller is running. Do NOT include the protocol (e.g. <code>https://</code>)"
         },
         {
           "language_code": "es_es",
           "string": "El host (IP) donde se ejecuta el controlador UNIFI. NO incluya el protocolo (por ejemplo, <code>https://</code>)"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Der Host (IP) auf welchem der UNIFI-Controller läuft. Das Protokoll NICHT mit angeben (z.B. <code>https://</code>)"
         }
       ],
       "function": "host",
@@ -644,6 +672,10 @@
         {
           "language_code": "es_es",
           "string": "Host"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Host"
         }
       ],
       "options": [],
@@ -654,11 +686,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>, for UDM(P) devices its 443."
+          "string": "The port number where the UNIFI controller is running. Usually it is <code>8443</code>, for UDM(P) devices its 443."
         },
         {
           "language_code": "es_es",
           "string": "El número de puerto donde se ejecuta el controlador UNIFI. Normalmente es <code>8443</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Port auf welchem der UNIFI-Controller läuft. Standardmäßig <code>8443</code>, für UDM(P)-Geräte <code>443</code>."
         }
       ],
       "function": "port",
@@ -674,6 +710,10 @@
         {
           "language_code": "es_es",
           "string": "Número de puerto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Portnummer"
         }
       ],
       "options": [],
@@ -684,11 +724,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "verify SSL certificate validity <code>true|false</code>."
+          "string": "Verify SSL certificate validity <code>true|false</code>."
         },
         {
           "language_code": "es_es",
-          "string": "verificar la validez del certificado SSL <code>true|false</code>."
+          "string": "Verificar la validez del certificado SSL <code>true|false</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Gültigkeit des SSL-Zertifikats prüfen. <code>true|false</code>"
         }
       ],
       "function": "verifyssl",
@@ -699,11 +743,15 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "verify SSL"
+          "string": "Verify SSL"
         },
         {
           "language_code": "es_es",
-          "string": "verificar SSL"
+          "string": "Verificar SSL"
+        },
+        {
+          "language_code": "de_de",
+          "string": "SSL-Überprüfung"
         }
       ],
       "options": [
@@ -729,6 +777,10 @@
         {
           "language_code": "es_es",
           "string": "Versión API"
+        },
+        {
+          "language_code": "de_de",
+          "string": "API-Version"
         }
       ],
       "description": [
@@ -739,6 +791,10 @@
         {
           "language_code": "es_es",
           "string": "La versión base de la API del controlador Unify. Los valores admitidos al momento de escribir este artículo son <code>v4|v5|unifiOS|UDMP-unifiOS</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Basisversion der Unify Controller API. Unterstützte Werte zum Zeitpunkt der Verfassung dieses Textes sind <code>v4|v5|unifiOS|UDMP-unifiOS</code>."
         }
       ]
     },
@@ -754,6 +810,10 @@
         {
           "language_code": "es_es",
           "string": "Los sitios a los que desea conectarse. Generalmente es solo uno y el nombre es <code>default</code>. Verifique la URL en la interfaz de usuario de su controlador UniFi si no está seguro."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Standorte zu welchen verbunden werden soll. Normalerweise ist es nur einer mit dem Namen <code>default</code>. Um sicherzugehen, die URL im UniFi Controller - UI überprüfen."
         }
       ],
       "function": "sites",
@@ -769,6 +829,10 @@
         {
           "language_code": "es_es",
           "string": "Sitios UNIFI"
+        },
+        {
+          "language_code": "de_de",
+          "string": "UNIFI Standorte"
         }
       ],
       "options": [],
@@ -784,6 +848,10 @@
         {
           "language_code": "es_es",
           "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#UNFIMP_RUN\"><code>UNFIMP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#UNFIMP_RUN\"><code>UNFIMP_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ],
       "function": "RUN_SCHD",
@@ -799,6 +867,10 @@
         {
           "language_code": "es_es",
           "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
         }
       ],
       "options": [],
@@ -817,7 +889,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Maximale Laufzeit des Scripts. Nach Ablauf der Zeit wird das Script abgebrochen."
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ],
       "function": "RUN_TIMEOUT",
@@ -836,7 +908,7 @@
         },
         {
           "language_code": "de_de",
-          "string": "Wartezeit"
+          "string": "Zeitlimit"
         }
       ],
       "options": [],
@@ -855,6 +927,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es el nombre de host </li><li><code>Watched_Value2</code> es el proveedor </li><li><code>Watched_Value3</code> es el tipo </li><li><code>Watched_Value4</code> es Online </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Hostname</li><li><code>Watched_Value2</code> ist der Hersteller</li><li><code>Watched_Value3</code> ist der Typ</li><li><code>Watched_Value4</code> ist der Onlinestatus</li></ul>"
         }
       ],
       "function": "WATCH",
@@ -870,6 +946,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "options": [
@@ -893,6 +973,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>Watched_ValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
         }
       ],
       "function": "REPORT_ON",
@@ -908,6 +992,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "options": [
