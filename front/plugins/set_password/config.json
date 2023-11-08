@@ -19,6 +19,10 @@
     {
       "language_code": "es_es",
       "string": "Establecer contraseña"
+    },
+    {
+      "language_code": "de_de",
+      "string": "Passwort setzen"
     }
   ],
   "description": [
@@ -29,6 +33,10 @@
     {
       "language_code": "es_es",
       "string": "Un complemento simple para configurar la contraseña de la interfaz de usuario web al iniciar la aplicación."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zum Setzen des Passworts beim Applikationsstart."
     }
   ],
   "icon": [
@@ -38,6 +46,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa fa-lock\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa fa-lock\"></i>"
     }
   ],
@@ -72,6 +84,10 @@
         {
           "language_code": "es_es",
           "string": "Cuándo ejecuta"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -82,6 +98,10 @@
         {
           "language_code": "es_es",
           "string": "Configure en <code>before_config_save</code> y especifique la contraseña para restablecer su contraseña en <code>SETPWD_password</code>. Puede establecer <code>deshabilitado</code> una vez que se cambia la contraseña."
+        },
+        {
+          "language_code": "de_de",
+          "string": "<code>before_config_save</code> auswählen und ein neues Passwort in <code>SETPWD_password</code> eingeben um das Passwort zurückzusetzen. Kann auf <code>disabled</code> gestellt werden, sobald das Passwort geändert wurde."
         }
       ]
     },
@@ -102,6 +122,10 @@
         {
           "language_code": "es_es",
           "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
         }
       ],
       "description": [
@@ -112,6 +136,10 @@
         {
           "language_code": "es_es",
           "string": "Comando a ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auszuführender Befehl."
         }
       ]
     },
@@ -133,6 +161,10 @@
         {
           "language_code": "es_es",
           "string": "Contraseña"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Passwort"
         }
       ],
       "description": [
@@ -143,6 +175,10 @@
         {
           "language_code": "es_es",
           "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> en el contenedor"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Das standardmäßige Passwort ist <code>123456</code>. Den Befehl <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> im Container ausführen, um ein neues Passwort zu setzen."
         }
       ]
     }
