@@ -4,19 +4,22 @@
   "plugin_type": "device_scanner",
   "enabled": true,
   "data_source": "sqlite-db-query",
-  "mapped_to_table": "CurrentScan",  
+  "mapped_to_table": "CurrentScan",
   "data_filters": [
     {
-        "compare_column" : "Object_PrimaryID",
-        "compare_operator" : "==",
-        "compare_field_id": "txtMacFilter",
-        "compare_js_template": "'{value}'.toString()", 
-        "compare_use_quotes": true 
+      "compare_column": "Object_PrimaryID",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
     }
   ],
   "show_ui": true,
-  "localized": ["display_name", "description", "icon"],
-
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -25,7 +28,7 @@
     {
       "language_code": "es_es",
       "string": "PiHole (Sincronización de dispositivos)"
-    }    
+    }
   ],
   "icon": [
     {
@@ -35,7 +38,7 @@
     {
       "language_code": "es_es",
       "string": "<i class=\"fa-solid fa-search\"></i>"
-    }    
+    }
   ],
   "description": [
     {
@@ -45,139 +48,200 @@
     {
       "language_code": "es_es",
       "string": "Este complemento sincroniza dispositivos desde la base de datos de PiHole"
-    }    
+    }
   ],
-    "params" : [
+  "params": [
     {
-        "name"  : "subnets",
-        "type"  : "setting",
-        "value" : "SCAN_SUBNETS",
-        "base64": true
-    }],  
-
+      "name": "subnets",
+      "type": "setting",
+      "value": "SCAN_SUBNETS",
+      "base64": true
+    }
+  ],
   "settings": [
-      {
-        "function": "RUN",         
-        "events": ["run"],   
-        "type": "text.select",            
-        "default_value":"disabled",
-        "options": ["disabled", "once", "schedule", "always_after_scan",  "on_new_device"],
-        "localized": ["name", "description"],
-        "name" :[{
-            "language_code":"en_us",
-            "string" : "When to run"
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": "text.select",
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan",
+        "on_new_device"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
         },
         {
-            "language_code":"es_es",
-            "string" : "Cuando ejecutar"
-        }],
-        "description": [{
-            "language_code":"en_us",
-            "string" : "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting."
+          "language_code": "es_es",
+          "string": "Cuando ejecutar"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Specify when your PiHole device import from the PiHole databse will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting."
         },
         {
-            "language_code":"es_es",
-            "string" : "Especifique cuándo se ejecutará la importación de su dispositivo PiHole desde la base de datos de PiHole. La configuración típica sería <code>schedule</code> y luego especifica una programación similar a cron en la configuración <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code></a>. Si está habilitado, debe asignar la base de datos pihole en su contenedor a la ruta de montaje <code>:/etc/pihole/pihole-FTL.db</code> como se especifica en la configuración <code>DB_PATH</code>."
-        }]
+          "language_code": "es_es",
+          "string": "Especifique cuándo se ejecutará la importación de su dispositivo PiHole desde la base de datos de PiHole. La configuración típica sería <code>schedule</code> y luego especifica una programación similar a cron en la configuración <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code></a>. Si está habilitado, debe asignar la base de datos pihole en su contenedor a la ruta de montaje <code>:/etc/pihole/pihole-FTL.db</code> como se especifica en la configuración <code>DB_PATH</code>."
+        }
+      ]
     },
     {
-        "function": "CMD",
-        "type": "text",
-        "default_value":"SELECT n.hwaddr AS Object_PrimaryID, {s-quote}null{s-quote} AS Object_SecondaryID, datetime() AS DateTime, na.ip  AS Watched_Value1, n.lastQuery AS Watched_Value2, na.name AS Watched_Value3, n.macVendor AS Watched_Value4, {s-quote}null{s-quote} AS Extra, n.hwaddr AS ForeignKey FROM EXTERNAL_PIHOLE.Network AS n LEFT JOIN EXTERNAL_PIHOLE.Network_Addresses AS na ON na.network_id = n.id WHERE n.hwaddr NOT LIKE {s-quote}ip-%{s-quote} AND n.hwaddr <> {s-quote}00:00:00:00:00:00{s-quote} AND na.ip <> null;",
-        "options": [],
-        "localized": ["name", "description"],
-        "name" : [{
-            "language_code":"en_us",
-            "string" : "SQL to run"
+      "function": "CMD",
+      "type": "text",
+      "default_value": "SELECT n.hwaddr AS Object_PrimaryID, {s-quote}null{s-quote} AS Object_SecondaryID, datetime() AS DateTime, na.ip  AS Watched_Value1, n.lastQuery AS Watched_Value2, na.name AS Watched_Value3, n.macVendor AS Watched_Value4, {s-quote}null{s-quote} AS Extra, n.hwaddr AS ForeignKey FROM EXTERNAL_PIHOLE.Network AS n LEFT JOIN EXTERNAL_PIHOLE.Network_Addresses AS na ON na.network_id = n.id WHERE n.hwaddr NOT LIKE {s-quote}ip-%{s-quote} AND n.hwaddr <> {s-quote}00:00:00:00:00:00{s-quote} AND na.ip <> null;",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "SQL to run"
         },
         {
-            "language_code":"es_es",
-            "string" : "Consulta SQL"
-        }],
-        "description": [{
-            "language_code":"en_us",
-            "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
+          "language_code": "es_es",
+          "string": "Consulta SQL"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
         },
         {
-            "language_code":"es_es",
-            "string" : "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos. Este en particular selecciona datos de una base de datos PiHole SQLite asignada y los asigna a las columnas correspondientes del complemento."
-        }]
+          "language_code": "es_es",
+          "string": "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos. Este en particular selecciona datos de una base de datos PiHole SQLite asignada y los asigna a las columnas correspondientes del complemento."
+        }
+      ]
     },
     {
-        "function": "DB_PATH",
-        "type": "readonly",
-        "default_value":"/etc/pihole/pihole-FTL.db",
-        "options": [],
-        "localized": ["name", "description"],
-        "name" : [{
-            "language_code":"en_us",
-            "string" : "DB Path"
+      "function": "DB_PATH",
+      "type": "readonly",
+      "default_value": "/etc/pihole/pihole-FTL.db",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "DB Path"
         },
         {
-            "language_code":"es_es",
-            "string" : "Ruta de la base de datos"
-        }],
-        "description": [{
-            "language_code":"en_us",
-            "string" : "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
+          "language_code": "es_es",
+          "string": "Ruta de la base de datos"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
         },
         {
-            "language_code":"es_es",
-            "string" : "Configuración requerida para el tipo de complemento <code>sqlite-db-query</code>. Se utiliza para montar una base de datos SQLite externa y ejecutar la consulta SQL almacenada en la configuración <code>CMD</code>."
-        }]    
+          "language_code": "es_es",
+          "string": "Configuración requerida para el tipo de complemento <code>sqlite-db-query</code>. Se utiliza para montar una base de datos SQLite externa y ejecutar la consulta SQL almacenada en la configuración <code>CMD</code>."
+        }
+      ]
     },
     {
-        "function": "RUN_SCHD",
-        "type": "text",
-        "default_value":"*/30 * * * *",
-        "options": [],
-        "localized": ["name", "description"],
-        "name" : [{
-            "language_code":"en_us",
-            "string" : "Schedule"
+      "function": "RUN_SCHD",
+      "type": "text",
+      "default_value": "*/30 * * * *",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
         },
         {
-            "language_code":"es_es",
-            "string" : "Programar"
-        }],
-        "description": [{
-            "language_code":"en_us",
-            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
+          "language_code": "es_es",
+          "string": "Programar"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
         },
         {
-            "language_code":"es_es",
-            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
-        }]
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+        }
+      ]
     },
     {
-        "function": "WATCH",
-        "type": "text.multiselect",
-        "default_value":["Watched_Value1", "Watched_Value2"],
-        "options": ["Watched_Value1","Watched_Value2","Watched_Value3","Watched_Value4"],
-        "localized": ["name", "description"],
-        "name" :[{
-            "language_code":"en_us",
-            "string" : "Watched"
+      "function": "WATCH",
+      "type": "text.multiselect",
+      "default_value": [
+        "Watched_Value1",
+        "Watched_Value2"
+      ],
+      "options": [
+        "Watched_Value1",
+        "Watched_Value2",
+        "Watched_Value3",
+        "Watched_Value4"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Watched"
         },
         {
-            "language_code":"es_es",
-            "string" : "Visto"
-        }] ,
-        "description":[{
-            "language_code":"en_us",
-            "string" : "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Last Query</li><li><code>Watched_Value3</code> is Name </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+          "language_code": "es_es",
+          "string": "Visto"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Last Query</li><li><code>Watched_Value3</code> is Name </li><li><code>Watched_Value4</code> is N/A </li></ul>"
         },
         {
-            "language_code":"es_es",
-            "string" : "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es IP</li><li><code>Watched_Value2</code> es Proveedor</li><li><code>Watched_Value3</code> is es Interfaz</li><li><code>Watched_Value4</code> es N/A</li></ul>"
-        }] 
+          "language_code": "es_es",
+          "string": "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es IP</li><li><code>Watched_Value2</code> es Proveedor</li><li><code>Watched_Value3</code> is es Interfaz</li><li><code>Watched_Value4</code> es N/A</li></ul>"
+        }
+      ]
     },
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": ["new"],
-      "options": ["new", "watched-changed", "watched-not-changed", "missing-in-last-scan"],
-      "localized": ["name", "description"],
+      "default_value": [
+        "new"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -186,7 +250,7 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
-        }        
+        }
       ],
       "description": [
         {
@@ -196,158 +260,192 @@
         {
           "language_code": "es_es",
           "string": "¿Cuándo se debe enviar la notificación?."
-        }        
+        }
       ]
     }
   ],
-
-  "database_column_definitions": 
-  [          
+  "database_column_definitions": [
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",         
+      "mapped_to_column": "cur_MAC",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "device_mac",            
-      "default_value":"",
+      "type": "device_mac",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "MAC"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "MAC"
-          }]
-    }, 
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        },
+        {
+          "language_code": "es_es",
+          "string": "MAC"
+        }
+      ]
+    },
     {
-      "column": "Object_SecondaryID",           
+      "column": "Object_SecondaryID",
       "css_classes": "col-sm-2",
       "show": false,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "N/A"
-          }]
-    }, 
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
     {
-        "column": "Watched_Value1",
-        "mapped_to_column": "cur_IP", 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "device_ip",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Link to device"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "N/A"
-            }]
+      "column": "Watched_Value1",
+      "mapped_to_column": "cur_IP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Link to device"
+        },
+        {
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_LastQuery", 
+      "mapped_to_column": "cur_LastQuery",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Last Query"
-          }]
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Query"
+        }
+      ]
     },
     {
       "column": "Watched_Value3",
-      "mapped_to_column": "cur_Name", 
+      "mapped_to_column": "cur_Name",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Name"
-          }]
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
     },
     {
-      "column": "Watched_Value4",   
-      "mapped_to_column": "cur_Vendor",    
+      "column": "Watched_Value4",
+      "mapped_to_column": "cur_Vendor",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Vendor"
-          }]
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Vendor"
+        }
+      ]
     },
     {
-        "column": "Dummy",
-        "mapped_to_column": "cur_ScanMethod", 
-        "mapped_to_column_data": {
-          "value": "PIHOLE"                
-        }, 
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Scan method"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Método de escaneo"
-            }]
-    } ,
+      "column": "Dummy",
+      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column_data": {
+        "value": "PIHOLE"
+      },
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Método de escaneo"
+        }
+      ]
+    },
     {
       "column": "DateTimeCreated",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
-      "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Created"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "Creado"
-          }]
-    },   
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Creado"
+        }
+      ]
+    },
     {
-        "column": "DateTimeChanged",        
-        "css_classes": "col-sm-2",
-        "show": true,
-        "type": "label",            
-        "default_value":"",
-        "options": [],
-        "localized": ["name"],
-        "name":[{
-            "language_code":"en_us",
-            "string" : "Changed"
-            },
-            {
-            "language_code":"es_es",
-            "string" : "Cambiado"
-            }]
-    }        
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambiado"
+        }
+      ]
+    }
   ]
 }
