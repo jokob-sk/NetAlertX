@@ -28,6 +28,10 @@
     {
       "language_code": "es_es",
       "string": "PiHole (Sincronización de dispositivos)"
+    },
+    {
+      "language_code": "de_de",
+      "string": "PiHole (Gerätesynchronisierung)"
     }
   ],
   "icon": [
@@ -37,6 +41,10 @@
     },
     {
       "language_code": "es_es",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    },
+    {
+      "language_code": "de_de",
       "string": "<i class=\"fa-solid fa-search\"></i>"
     }
   ],
@@ -48,6 +56,10 @@
     {
       "language_code": "es_es",
       "string": "Este complemento sincroniza dispositivos desde la base de datos de PiHole"
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zur Gerätesynchronisierung aus einer PiHole-Datenbank."
     }
   ],
   "params": [
@@ -85,6 +97,10 @@
         {
           "language_code": "es_es",
           "string": "Cuando ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
         }
       ],
       "description": [
@@ -95,6 +111,10 @@
         {
           "language_code": "es_es",
           "string": "Especifique cuándo se ejecutará la importación de su dispositivo PiHole desde la base de datos de PiHole. La configuración típica sería <code>schedule</code> y luego especifica una programación similar a cron en la configuración <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code></a>. Si está habilitado, debe asignar la base de datos pihole en su contenedor a la ruta de montaje <code>:/etc/pihole/pihole-FTL.db</code> como se especifica en la configuración <code>DB_PATH</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auswählen wann der Geräteimport aus der PiHole-Datenbank laufen soll. Typischerweise wird <code>schedule</code> ausgewählt und ein cron-Intervall in der <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>Einstellung</a> gesetzt. Die PiHole-Datenbank muss in den Container <code>:/etc/pihole/pihole-FTL.db</code>-Mountpfad entsprechend der <code>DB_PATH</code>-Einstellung gemapped werden."
         }
       ]
     },
@@ -115,6 +135,10 @@
         {
           "language_code": "es_es",
           "string": "Consulta SQL"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Auszuführende SQL-Abfrage"
         }
       ],
       "description": [
@@ -125,6 +149,10 @@
         {
           "language_code": "es_es",
           "string": "Esta consulta SQL se usa para completar las tablas de IU correspondientes en la sección Complementos. Este en particular selecciona datos de una base de datos PiHole SQLite asignada y los asigna a las columnas correspondientes del complemento."
+        },
+        {
+          "language_code": "de_de",
+          "string": "SQL-Abfrage welche genutzt wird um die UI-Tabelle in der Plugins-Seite zu füllen. Die voreingestellte Abfrage wählt Daten aus der PiHole SQLite-Datenbank aus und schreibt diese in die entsprechenden Plugin-Spalten."
         }
       ]
     },
@@ -145,6 +173,10 @@
         {
           "language_code": "es_es",
           "string": "Ruta de la base de datos"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Pfad zur Datenbank"
         }
       ],
       "description": [
@@ -155,6 +187,10 @@
         {
           "language_code": "es_es",
           "string": "Configuración requerida para el tipo de complemento <code>sqlite-db-query</code>. Se utiliza para montar una base de datos SQLite externa y ejecutar la consulta SQL almacenada en la configuración <code>CMD</code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erforderliche Einstellung für den <code>sqlite-db-query</code> Plugin-Typ. Wird verwendet, um eine externe SQLite-Datenbank zu öffnen und die SQL-Abfrage in der <code>CMD</code>-Einstellung auszuführen."
         }
       ]
     },
@@ -175,16 +211,24 @@
         {
           "language_code": "es_es",
           "string": "Programar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#PIHOLE_RUN\"><code>PIHOLE_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
         },
         {
           "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#PIHOLE_RUN\"><code>PIHOLE_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#PIHOLE_RUN\"><code>PIHOLE_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>*/3 * * * *</code> würde den Scan alle 3 Minuten starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ]
     },
@@ -213,6 +257,10 @@
         {
           "language_code": "es_es",
           "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
         }
       ],
       "description": [
@@ -223,6 +271,10 @@
         {
           "language_code": "es_es",
           "string": "Envíe una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es IP</li><li><code>Watched_Value2</code> es Proveedor</li><li><code>Watched_Value3</code> is es Interfaz</li><li><code>Watched_Value4</code> es N/A</li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die IP</li><li><code>Watched_Value2</code> ist die letzte Abfrage</li><li><code>Watched_Value3</code> ist der Name</li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
         }
       ]
     },
@@ -250,6 +302,10 @@
         {
           "language_code": "es_es",
           "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
         }
       ],
       "description": [
@@ -260,6 +316,10 @@
         {
           "language_code": "es_es",
           "string": "¿Cuándo se debe enviar la notificación?."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann Benachrichtigungen gesendet werden sollen."
         }
       ]
     }
@@ -284,6 +344,10 @@
         {
           "language_code": "es_es",
           "string": "MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC"
         }
       ]
     },
@@ -300,6 +364,10 @@
       "name": [
         {
           "language_code": "en_us",
+          "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
           "string": "N/A"
         }
       ]
@@ -323,6 +391,10 @@
         {
           "language_code": "es_es",
           "string": "N/A"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Link zum Gerät"
         }
       ]
     },
@@ -341,6 +413,10 @@
         {
           "language_code": "en_us",
           "string": "Last Query"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Letzte Abfrage"
         }
       ]
     },
@@ -358,6 +434,10 @@
       "name": [
         {
           "language_code": "en_us",
+          "string": "Name"
+        },
+        {
+          "language_code": "de_de",
           "string": "Name"
         }
       ]
@@ -377,6 +457,10 @@
         {
           "language_code": "en_us",
           "string": "Vendor"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Hersteller"
         }
       ]
     },
@@ -402,6 +486,10 @@
         {
           "language_code": "es_es",
           "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
         }
       ]
     },
@@ -423,6 +511,10 @@
         {
           "language_code": "es_es",
           "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
         }
       ]
     },
@@ -444,6 +536,10 @@
         {
           "language_code": "es_es",
           "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
         }
       ]
     }
