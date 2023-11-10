@@ -25,15 +25,7 @@
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-save\"></i>"
-    },
-    {
-      "language_code": "es_es",
-      "string": "<i class=\"fa-solid fa-save\"></i>"
-    },
-    {
-      "language_code": "de_de",
-      "string": "<i class=\"fa-solid fa-save\"></i>"
-    }    
+    }
   ],
   "description": [
     {

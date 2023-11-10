@@ -25,11 +25,12 @@
 |          |             | DHCPSRVS      | Script             | ♻ other        | 📚[dhcp_servers](/front/plugins/dhcp_servers/)                  |
 |          |    Yes      | INTRNT        | Script             | 🔍dev scanner  | 📚[internet_ip](/front/plugins/internet_ip/)                    |
 |          |             | INTRSPD       | Script             | ♻ other        | 📚[internet_speedtest](/front/plugins/internet_speedtest/)      |
-|  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)            |
-|          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                    |
+|          |             | MAINT         | Script             | ⚙ system       | 📚[maintenance](/front/plugins/maintenance/)                    |
 |          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)            |
+|  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)            |
 |          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                        |
 |          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)            |
+|          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                    |
 |          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner  | 📚[pihole_scan](/front/plugins/pihole_scan/)                    |
 |          |             | PUSHSAFER     | Script             | 💬 publisher   | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)  |
 |          |             | SETPWD        | Script             | ⚙ system       | 📚[set_password](/front/plugins/set_password/)                  |

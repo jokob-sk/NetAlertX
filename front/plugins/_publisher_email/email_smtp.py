@@ -15,7 +15,6 @@ import smtplib
 import socket
 import ssl
 
-# Replace these paths with the actual paths to your Pi.Alert directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 # PiAlert modules
