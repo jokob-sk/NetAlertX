@@ -123,7 +123,7 @@ def main ():
             # determine run/scan type based on passed time
             # --------------------------------------------
            
-            # Run splugin scripts which are set to run every timne after a scans finished            
+            # Runs plugin scripts which are set to run every timne after a scans finished            
             pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)
 
             
