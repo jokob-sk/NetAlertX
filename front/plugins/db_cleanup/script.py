@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # test script by running:
-# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90
+# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90 pholuskeepdays=30
 
 import os
 import pathlib
@@ -35,10 +35,10 @@ def main():
     
     values = parser.parse_args()
 
-    PLUGINS_KEEP_HIST     = values.pluginskeephistory.split('=')[1]
-    HRS_TO_KEEP_NEWDEV    = values.hourstokeepnewdevice.split('=')[1]
-    DAYS_TO_KEEP_EVENTS   = values.daystokeepevents.split('=')[1]
-    PHOLUS_DAYS_DATA      = values.pholuskeepdays.split('=')[1]
+    PLUGINS_KEEP_HIST     = int(values.pluginskeephistory.split('=')[1])
+    HRS_TO_KEEP_NEWDEV    = int(values.hourstokeepnewdevice.split('=')[1])
+    DAYS_TO_KEEP_EVENTS   = int(values.daystokeepevents.split('=')[1])
+    PHOLUS_DAYS_DATA      = int(values.pholuskeepdays.split('=')[1])
 
     mylog('verbose', ['[DBCLNP] In script'])     
 
