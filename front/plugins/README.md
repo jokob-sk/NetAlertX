@@ -91,13 +91,13 @@ Follow the below very carefully and check example plugin(s) if you'd like to wri
 * Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
 * ...
 
-## ❗ Known issues:
+## ❗ Known limitations:
 
 These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
 
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
+* Existing plugin objects are sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
 * Occasional (experienced twice) hanging of processing plugin script file.
-UI displays outdated values until the API endpoints get refreshed. 
+* UI displays outdated values until the API endpoints get refreshed. 
 
 ## Plugin file structure overview 
 
@@ -143,7 +143,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
-| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general>|<system>|<scanner>|<publisher>`). | 
+| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general|system|scanner|other|publisher>`). | 
 
 
 > 🔎Example
@@ -643,7 +643,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
 | `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |
-| `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. ``<b>${value}<b>`` ) |
+| `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. `'<b>${value}<b>'` (replace ' with ` in your code) ) |
             
 
 > [!NOTE] 
