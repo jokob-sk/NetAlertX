@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "---------------------------------------------------------"
 echo "[INSTALL]                                    Run start.sh"
@@ -10,6 +10,7 @@ INSTALL_DIR=/home/pi  # Specify the installation directory here
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 WEB_UI_DIR=/var/www/html/pialert
 NGINX_CONFIG_FILE=/etc/nginx/conf.d/pialert.conf
+OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
 # if custom variables not set we do not need to do anything
@@ -76,11 +77,8 @@ fi
 # Run the hardware vendors update at least once
 echo "[INSTALL] Run the hardware vendors update"
 
-# Define the path to ieee-oui.txt and ieee-iab.txt
-oui_file="/usr/share/arp-scan/ieee-oui.txt"
-
 # Check if ieee-oui.txt or ieee-iab.txt exist
-if [ -f "$oui_file" ]; then
+if [ -f "$OUI_FILE" ]; then
   echo "The file ieee-oui.txt exists. Skipping update_vendors.sh..."
 else
   echo "The file ieee-oui.txt does not exist. Running update_vendors..."

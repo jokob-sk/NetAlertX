@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
 # ------------------------------------------------------------------------------
 #  Pi.Alert
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
