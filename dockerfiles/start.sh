@@ -46,6 +46,13 @@ sudo rm /etc/nginx/conf.d/pialert.conf
 # create symbolic link to NGINX configuaration coming with PiAlert
 sudo ln -s "$INSTALL_DIR/pialert/install/pialert.conf" /etc/nginx/conf.d/pialert.conf
 
+# remove default NGINX site if it is symlinked, or backup it otherwise
+if [ -L /etc/nginx/sites-enabled/default ] ; then
+  sudo rm /etc/nginx/sites-enabled/default
+else
+  sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_pialert
+fi
+
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then  
   sudo sed -i 's/listen 20211/listen '"$PORT"'/g' /etc/nginx/conf.d/pialert.conf
