@@ -37,10 +37,10 @@ fi
 echo "[INSTALL] Setup NGINX"
 
 # Remove /html folder if exists
-sudo rm -R /var/www/html 
+sudo rm -R /var/www/html/pialert 
 
 # create symbolic link to the pialert install directory
-ln -s $INSTALL_DIR/pialert/front /var/www/html 
+ln -s $INSTALL_DIR/pialert/front /var/www/html/pialert 
 # remove dfault NGINX site
 sudo rm /etc/nginx/sites-available/default
 # create symbolic link to NGINX configuaration coming with PiAlert
@@ -77,7 +77,7 @@ fi
 echo "[INSTALL] Fixing file permissions"
 
 
-chmod -R a+rwx /var/www/html
+chmod -R a+rwx /var/www/html/pialert
 chmod -R a+rw $INSTALL_DIR/pialert/front/log
 chmod -R a+rwx $INSTALL_DIR
 
