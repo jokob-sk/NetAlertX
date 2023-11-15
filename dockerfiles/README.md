@@ -82,6 +82,18 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 
 > [!NOTE]
 > It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
+
+#### Community guides
+
+> Primarily use the official installation guides in this document and use community content as suplementary material. Open an issue if you'd like to add your link to the list 🙏 
+
+- [How to Install Pi.Alert on Your Synology NAS by Marius hosting (English)](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
+- [시놀/헤놀에서 네트워크 스캐너 Pi.Alert Docker로 설치 및 사용하기 (Korean)](https://blog.dalso.org/article/%EC%8B%9C%EB%86%80-%ED%97%A4%EB%86%80%EC%97%90%EC%84%9C-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%8A%A4%EC%BA%90%EB%84%88-pi-alert-docker%EB%A1%9C-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%82%AC%EC%9A%A9) (July 2023)
+- [Pi.Alert auf Synology & Docker (German)](https://www.youtube.com/watch?v=-ouvA2UNu-A) (March 2023)
+- [Top Docker Container for Home Server Security by VirtualizationHowto (English)](https://www.youtube.com/watch?v=tY-w-enLF6Q) (March 2023)
+- [Pi.Alert or WatchYourLAN can alert you to unknown devices appearing on your WiFi or LAN network by Danie van der Merwe (English)](https://www.youtube.com/watch?v=v6an9QG2xF0) (November 2022)
+
+> Ordered by last update time. 
  
 ### **Common issues** 
 
@@ -89,7 +101,7 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 
 ⚠ Check also common issues and [debugging tips](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md). 
 
-## 📄 Examples
+## 📄 docker-compose.yml Examples
 
 ### Example 1
 
