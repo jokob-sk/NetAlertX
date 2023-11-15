@@ -41,16 +41,16 @@ sudo rm -R /var/www/html/pialert
 
 # create symbolic link to the pialert install directory
 ln -s $INSTALL_DIR/pialert/front /var/www/html/pialert 
-# remove dfault NGINX site
-sudo rm /etc/nginx/sites-available/default
+# remove existing pialert site
+sudo rm /etc/nginx/conf.d/pialert.conf
 # create symbolic link to NGINX configuaration coming with PiAlert
-sudo ln -s "$INSTALL_DIR/pialert/install/default" /etc/nginx/sites-available/default
+sudo ln -s "$INSTALL_DIR/pialert/install/pialert.conf" /etc/nginx/conf.d/pialert.conf
 # use user-supplied port
-sudo sed -i 's/listen 80/listen '"$PORT"'/g' /etc/nginx/sites-available/default
+sudo sed -i 's/listen 80/listen '"$PORT"'/g' /etc/nginx/conf.d/pialert.conf
 
 # Change web interface address if set
 if [ -n "${LISTEN_ADDR}" ]; then  
-  sed -ie 's/listen /listen '${LISTEN_ADDR}:'/g' /etc/nginx/sites-available/default
+  sed -ie 's/listen /listen '${LISTEN_ADDR}:'/g' /etc/nginx/conf.d/pialert.conf
 fi
 
 # Run the hardware vendors update at least once
