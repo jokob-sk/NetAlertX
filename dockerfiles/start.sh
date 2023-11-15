@@ -31,7 +31,7 @@ echo "[INSTALL] Run setup scripts"
 
 # Change port number if set
 if [ -n "${PORT}" ]; then  
-  sed -ie 's/listen 20211/listen '${PORT}'/g' /etc/nginx/sites-available/default
+  sed -ie 's/listen 20211/listen '"${PORT}"'/g' /etc/nginx/sites-available/default
 fi 
 
 echo "[INSTALL] Setup NGINX"
@@ -60,7 +60,7 @@ fi
 
 # Change web interface address if set
 if [ -n "${LISTEN_ADDR}" ]; then  
-  sed -ie 's/listen /listen '${LISTEN_ADDR}:'/g' /etc/nginx/conf.d/pialert.conf
+  sed -ie 's/listen /listen '"${LISTEN_ADDR}":'/g' /etc/nginx/conf.d/pialert.conf
 fi
 
 # Run the hardware vendors update at least once

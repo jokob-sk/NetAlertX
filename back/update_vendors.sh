@@ -20,15 +20,15 @@ echo "---------------------------------------------------------"
 
 # ----------------------------------------------------------------------
 echo Updating... /usr/share/ieee-data/
-cd /usr/share/ieee-data/
+cd /usr/share/ieee-data/ || { echo "could not enter /usr/share/ieee-data directory"; exit 1; }
 
 sudo mkdir -p 2_backup
-sudo cp *.txt 2_backup
-sudo cp *.csv 2_backup
+sudo cp -- *.txt 2_backup
+sudo cp -- *.csv 2_backup
 echo ""
 echo Download Start
 echo ""
-sudo curl $1  -LO https://standards-oui.ieee.org/iab/iab.csv \
+sudo curl "$1"  -LO https://standards-oui.ieee.org/iab/iab.csv \
               -LO https://standards-oui.ieee.org/iab/iab.txt \
               -LO https://standards-oui.ieee.org/oui28/mam.csv \
               -LO https://standards-oui.ieee.org/iab/iab.txt \
@@ -44,10 +44,10 @@ echo Download Finished
 # ----------------------------------------------------------------------
 echo ""
 echo Updating... /usr/share/arp-scan/
-cd /usr/share/arp-scan
+cd /usr/share/arp-scan || { echo "could not enter /usr/share/arp-scan directory"; exit 1; }
 
 sudo mkdir -p 2_backup
-sudo cp *.txt 2_backup
+sudo cp -- *.txt 2_backup
 
 # Update from /usb/lib/ieee-data
 sudo get-iab -v
