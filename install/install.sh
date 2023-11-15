@@ -27,8 +27,8 @@ rm -R $INSTALL_DIR/pialert
 git clone https://github.com/jokob-sk/Pi.Alert "$INSTALL_DIR/pialert"
 
 # Check for buildtimestamp.txt existence, otherwise create it
-if [ ! -f /home/pi/pialert/front/buildtimestamp.txt ]; then
-  date +%s > /home/pi/pialert/front/buildtimestamp.txt
+if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then
+  date +%s > $INSTALL_DIR/pialert/front/buildtimestamp.txt
 fi
 
 # Start PiAlert

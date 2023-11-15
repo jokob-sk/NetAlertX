@@ -7,6 +7,11 @@ echo "---------------------------------------------------------"
 
 INSTALL_DIR=/home/pi  # Specify the installation directory here
 
+# DO NOT CHANGE ANYTHING BELOW THIS LINE!
+WEB_UI_DIR=/var/www/html/pialert
+NGINX_CONFIG_FILE=/etc/nginx/conf.d/pialert.conf
+# DO NOT CHANGE ANYTHING ABOVE THIS LINE!
+
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then    
   FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
@@ -29,37 +34,42 @@ echo "[INSTALL] Run setup scripts"
 "$INSTALL_DIR/pialert/dockerfiles/user-mapping.sh"
 "$INSTALL_DIR/pialert/install/install_dependencies.sh" # if modifying this file transfer the chanegs into the root Dockerfile as well!
 
-# Change port number if set
-if [ -n "${PORT}" ]; then  
-  sed -ie 's/listen 20211/listen '"${PORT}"'/g' /etc/nginx/sites-available/default
-fi 
-
 echo "[INSTALL] Setup NGINX"
 
-# Remove /html folder if exists
-sudo rm -R /var/www/html/pialert 
-
-# create symbolic link to the pialert install directory
-ln -s $INSTALL_DIR/pialert/front /var/www/html/pialert 
-# remove existing pialert site
-sudo rm /etc/nginx/conf.d/pialert.conf
-# create symbolic link to NGINX configuaration coming with PiAlert
-sudo ln -s "$INSTALL_DIR/pialert/install/pialert.conf" /etc/nginx/conf.d/pialert.conf
-
-# remove default NGINX site if it is symlinked, or backup it otherwise
+# Remove default NGINX site if it is symlinked, or backup it otherwise
 if [ -L /etc/nginx/sites-enabled/default ] ; then
+  echo "Disabling default NGINX site, removing sym-link in /etc/nginx/sites-enabled"
   sudo rm /etc/nginx/sites-enabled/default
-else
+elif [ -f /etc/nginx/sites-enabled/default ]; then
+  echo "Disabling default NGINX site, moving config to /etc/nginx/sites-available"
   sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_pialert
 fi
 
+# Clear existing directories and files
+if [ -d $WEB_UI_DIR ]; then
+  echo "Removing existing PiAlert web-UI"
+  sudo rm -R $WEB_UI_DIR
+fi
+
+if [ -f $NGINX_CONFIG_FILE ]; then
+  echo "Removing existing PiAlert NGINX config"
+  sudo rm $NGINX_CONFIG_FILE
+fi
+
+# create symbolic link to the pialert install directory
+ln -s $INSTALL_DIR/pialert/front $WEB_UI_DIR
+# create symbolic link to NGINX configuaration coming with PiAlert
+sudo ln -s "$INSTALL_DIR/pialert/install/pialert.conf" /etc/nginx/conf.d/pialert.conf
+
 # Use user-supplied port if set
-if [ -n "${PORT}" ]; then  
+if [ -n "${PORT}" ]; then
+  echo "Setting webserver to user-supplied port ($PORT)"
   sudo sed -i 's/listen 20211/listen '"$PORT"'/g' /etc/nginx/conf.d/pialert.conf
 fi
 
 # Change web interface address if set
-if [ -n "${LISTEN_ADDR}" ]; then  
+if [ -n "${LISTEN_ADDR}" ]; then
+  echo "Setting webserver to user-supplied address ($LISTEN_ADDR)"
   sed -ie 's/listen /listen '"${LISTEN_ADDR}":'/g' /etc/nginx/conf.d/pialert.conf
 fi
 
@@ -87,7 +97,7 @@ fi
 echo "[INSTALL] Fixing file permissions"
 
 
-chmod -R a+rwx /var/www/html/pialert
+chmod -R a+rwx $WEB_UI_DIR
 chmod -R a+rw $INSTALL_DIR/pialert/front/log
 chmod -R a+rwx $INSTALL_DIR
 
