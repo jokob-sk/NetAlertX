@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "---------------------------------------------------------"
 echo "[INSTALL]                                  Run install.sh"
@@ -26,6 +26,10 @@ rm -R $INSTALL_DIR/pialert
 # Clone the application repository
 git clone https://github.com/jokob-sk/Pi.Alert "$INSTALL_DIR/pialert"
 
+# Check for buildtimestamp.txt existence, otherwise create it
+if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then
+  date +%s > $INSTALL_DIR/pialert/front/buildtimestamp.txt
+fi
 
 # Start PiAlert
 "$INSTALL_DIR/pialert/dockerfiles/start.sh"
