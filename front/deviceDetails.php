@@ -1812,8 +1812,8 @@ function toggleNetworkConfiguration(disable)
 
   if(disable)
   {       
-    $('#txtNetworkNodeMac').val(getString('Network_Root_Unconfigurable'));   
-    $('#txtNetworkPort').val(getString('Network_Root_Unconfigurable'));     
+  //   $('#txtNetworkNodeMac').val(getString('Network_Root_Unconfigurable'));   
+  //   $('#txtNetworkPort').val(getString('Network_Root_Unconfigurable'));     
     $('#txtNetworkPort').prop('readonly', true );
     $('.parentNetworkNode .input-group-btn').hide();
   }
