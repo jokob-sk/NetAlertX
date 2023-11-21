@@ -32,6 +32,9 @@ LOCK_FILE = os.path.join(CUR_PATH, 'full_run.lock')
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
+pluginName = 'UNFIMP'
+
 # Workflow
 
 def main():
@@ -131,9 +134,15 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
             name = set_name(name, hostName)
 
+            ipTmp = get_unifi_val(ap, 'ip')
+            
+            #  if IP not found use a default value
+            if ipTmp == "null":
+                ipTmp = '0.0.0.0'
+
             plugin_objects.add_object(
                 primaryId=ap['mac'],
-                secondaryId=get_unifi_val(ap, 'ip'),
+                secondaryId=ipTmp,
                 watched1=name,
                 watched2='Ubiquiti Networks Inc.',
                 watched3=deviceType,
@@ -175,6 +184,10 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
                 if ipTmp == 'null':
                     ipTmp = get_unifi_val(user, 'fixed_ip')
 
+                #  if IP not found use a default value
+                if ipTmp == "null":
+                    ipTmp = '0.0.0.0'
+
                 plugin_objects.add_object(
                     primaryId=user['mac'],
                     secondaryId=ipTmp,
@@ -206,6 +219,7 @@ def get_unifi_val(obj, key):
     if res not in ['','None', None]:
         return res
 
+    mylog('debug', [f'[{pluginName}] Value not found for key "{key}" in obj "{json.dumps(obj)}"'])       
 
     return 'null'
 
