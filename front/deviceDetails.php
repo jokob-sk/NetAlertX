@@ -644,14 +644,15 @@ if ($ENABLED_DARKMODE === True) {
   // ------------------------------------------------------------
   function getDevicesList()
   {
-    // Read cache
-    devicesList = getCache('devicesList');
+    // Read cache (skip cookie expiry check)
+    devicesList = getCache('devicesListAll_JSON', true);
     
     if (devicesList != '') {
         devicesList = JSON.parse (devicesList);
     } else {
         devicesList = [];
     }
+
     return devicesList;
   }
 
@@ -1283,7 +1284,7 @@ function getDeviceData (readAllData=false) {
         history.pushState(null, '', newRelativePathQuery);
         getSessionsPresenceEvents();
         
-        devicesList = getDevicesList();
+        devicesList = getDevicesList();        
 
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
@@ -1324,7 +1325,8 @@ function getDeviceData (readAllData=false) {
       }
 
       // Check if device is part of the devicesList      
-      pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);      
+      pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);          
+      
       if (pos == -1) {
         devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['dev_MAC'], "name": deviceData['dev_Name'], "type": deviceData['dev_DeviceType']});
         pos=0;
@@ -1398,7 +1400,7 @@ function performSwitch(direction)
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
   
-  mac = devicesList[pos].mac.toString();
+  mac = devicesList[pos].dev_MAC.toString();
 
   setCache("piaDeviceDetailsMac", mac);
     
