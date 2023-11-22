@@ -200,16 +200,29 @@ def update_devices_data_from_scan (db):
                     WHERE NOT EXISTS (SELECT 1 FROM CurrentScan 
                                       WHERE dev_MAC = cur_MAC) """)
 
-    # Update IP & Vendor
-    mylog('debug', '[Update Devices] - 3 LastIP & Vendor')
+    # Update IP 
+    mylog('debug', '[Update Devices] - 3 LastIP ')
     sql.execute("""UPDATE Devices
                     SET dev_LastIP = (SELECT cur_IP FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC),
-                        dev_Vendor = (SELECT cur_Vendor FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC
-                                        )
+                                      WHERE dev_MAC = cur_MAC)
                     WHERE EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE dev_MAC = cur_MAC) """)
+
+    # Update only devices with empty or NULL vendors
+    mylog('debug', '[Update Devices] - 3 Vendor')
+    sql.execute("""UPDATE Devices
+                    SET dev_Vendor = (
+                        SELECT cur_Vendor
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_Vendor = "" OR dev_Vendor IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
 
     # Update (unknown) or (name not found) Names if available
     mylog('debug','[Update Devices] - 4 Unknown Name')
