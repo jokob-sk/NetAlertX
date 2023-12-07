@@ -1,6 +1,6 @@
-# 💻🔍 Network security scanner
+# 💻🔍 Network security scanner & notification framework
 
-Scans for devices, port changes on your WIFI/LAN and alerts you if unknown devices or changes are found.
+Get visibility of what's going on on your WIFI/LAN network. Scan for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. 
 
 [![Docker](https://img.shields.io/github/actions/workflow/status/jokob-sk/Pi.Alert/docker_prod.yml?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker_prod.yml)
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
@@ -13,15 +13,15 @@ Scans for devices, port changes on your WIFI/LAN and alerts you if unknown devic
 
 ## Why PiAlert❓ 
 
-Most of us don't know what's going on on our home network, but we want our family and data to _be safe_.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist 😖.
+Most of us don't know what's going on on our home network, but we want our family and data to be safe.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist.
 
 PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 
-_PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦_. You get an overview of network device Sessions, Connected devices, Favorites, Events, Presence, Down alerts, and IPs. You can schedule Nmap scans to detect changes in device ports and visualize your Network topology (even with undetectable, dummy devices). 
+_PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦_. You get an overview of network device Sessions, Connected devices, Events, Presence, Down alerts, and IPs. You can schedule Nmap scans to detect changes in device ports and visualize your Network topology (even with undetectable, dummy devices).
 
 Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
 
-Extend the app if you want to create your own scanner and handle the results and notifications in PiAlert. Check available [Plugins & Instructions](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins). 
+Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
 
 Looking forward to your contributions if you decide to share your work with the community ❤.
 
@@ -34,11 +34,10 @@ Looking forward to your contributions if you decide to share your work with the 
 
 | Features    | Details    | 
 |-------------|-------------|
-|      🔍     |   The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**.  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) docs for more info on individual scans. |
+|      🔍     |   The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**.  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) docs for more info on individual scans. |
 |📧           | Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use [Pushsafer](https://www.pushsafer.com/), or [NTFY](https://ntfy.sh/). |
 |🧩           | Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows.  |
-|➕           | Build your own scanners with the [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins) |
-
+|➕           | Build your own scanners with the [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) |
 
 
 ## Installation & Documentation

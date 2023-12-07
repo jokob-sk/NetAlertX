@@ -381,7 +381,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
 
 
 >🔍 Beispiel:

@@ -241,7 +241,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 if len(columns) == 9:
                     # Create a tuple containing values to be inserted into the database.
                     # Each value corresponds to a column in the table in the order of the columns.
-                    # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class.
+                    # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
                     sqlParams.append(
                         (
                             0,                          # "Index" placeholder
@@ -281,7 +281,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
+                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
                 sqlParams.append(
                     (
                         0,                          # "Index" placeholder
@@ -337,7 +337,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
+                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
                 sqlParams.append((
                     0,                            #  "Index" placeholder
                     plugin["unique_prefix"],      #  "Plugin" 

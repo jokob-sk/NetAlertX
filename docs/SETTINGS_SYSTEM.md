@@ -10,7 +10,7 @@ The source of truth for user-defined values is the `pialert.conf` file. Editing 
 
 #### Settings database table
 
-The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `pialert.conf` file. A high-level overview on the databse structure can be found in the [database documentation](/docs/DATABASE.md). 
+The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `pialert.conf` file. A high-level overview on the database structure can be found in the [database documentation](/docs/DATABASE.md). 
 
 #### table_settings.json
 
