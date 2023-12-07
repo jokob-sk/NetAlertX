@@ -709,9 +709,9 @@ def checkNewVersion():
 
         dateTimeStr = data[0]["published_at"]
 
-        realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+        releaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%S%z').timestamp())
 
-        if realeaseTimestamp > buildTimestamp + 600:
+        if releaseTimestamp > buildTimestamp + 600:
             mylog('none', ["[Version check] New version of the container available!"])
             newVersion = True       
         else:
