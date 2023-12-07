@@ -183,7 +183,7 @@ def publish_sensor(client, sensorConfig):
     global mqtt_sensors   
 
     message = '{ \
-                "name":"'+ sensorConfig.deviceName +' '+sensorConfig.sensorName+'", \
+                "name":"'+sensorConfig.sensorName+'", \
                 "state_topic":"system-sensors/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/state", \
                 "value_template":"{{value_json.'+sensorConfig.sensorName+'}}", \
                 "unique_id":"'+sensorConfig.deviceId+'_sensor_'+sensorConfig.sensorName+'", \
