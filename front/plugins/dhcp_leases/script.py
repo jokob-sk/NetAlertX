@@ -11,7 +11,7 @@ import chardet
 sys.path.append("/home/pi/pialert/front/plugins")
 sys.path.append('/home/pi/pialert/pialert') 
 
-from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
+from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty, is_mac
 from logger import mylog
 from dhcp_leases import DhcpLeases
 
@@ -76,16 +76,20 @@ def get_entries(path, plugin_objects):
             leases = DhcpLeases(path)
             leasesList = leases.get()
             for lease in leasesList:
-                plugin_objects.add_object(
-                    primaryId   = handleEmpty(lease.ethernet),    
-                    secondaryId = handleEmpty(lease.ip),  
-                    watched1    = handleEmpty(lease.active),   
-                    watched2    = handleEmpty(lease.hostname),
-                    watched3    = handleEmpty(lease.hardware),
-                    watched4    = handleEmpty(lease.binding_state),
-                    extra       = handleEmpty(path),
-                    foreignKey  = handleEmpty(lease.ethernet)
-                )
+
+                # filter out irrelevant entries (e.g. from OPNsense dhcp.leases files)
+                if is_mac(lease.ethernet):
+
+                    plugin_objects.add_object(
+                        primaryId   = handleEmpty(lease.ethernet),    
+                        secondaryId = handleEmpty(lease.ip),  
+                        watched1    = handleEmpty(lease.active),   
+                        watched2    = handleEmpty(lease.hostname),
+                        watched3    = handleEmpty(lease.hardware),
+                        watched4    = handleEmpty(lease.binding_state),
+                        extra       = handleEmpty(path),
+                        foreignKey  = handleEmpty(lease.ethernet)
+                    )
     return plugin_objects
 
 if __name__ == '__main__':    
