@@ -649,12 +649,8 @@ function handleLoadingDialog()
   $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {   
     
 
-    console.log(data)
-    console.log("hree")
-
     if(data.includes("update_api|devices"))
-    { 
-      spinnerShown = true;
+    {       
       showSpinner("devices_old")
 
       setTimeout("handleLoadingDialog()", 1000);
