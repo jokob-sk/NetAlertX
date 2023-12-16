@@ -12,98 +12,29 @@
 
 import datetime
 import json
-import socket
-import subprocess
-import requests
-from json2table import convert
 
 # pialert modules
 import conf
 import const
 from const import pialertPath, logPath, apiPath
-from helper import noti_obj, generate_mac_links, removeDuplicateNewLines, timeNowTZ, hide_email,  updateState, get_file_content, write_file
+from helper import timeNowTZ, get_file_content, write_file
 from logger import logResult, mylog, print_log
 
 
 #===============================================================================
 # REPORTING
 #===============================================================================
-# create a json of the notifications to provide further integration options
-json_final = []
 
 
 #-------------------------------------------------------------------------------
-def construct_notifications(db, sqlQuery, tableTitle, skipText = False, suppliedJsonStruct = None):
-
-    if suppliedJsonStruct is None and sqlQuery == "":
-        return noti_obj("", "", "")
-
-    table_attributes = {"style" : "border-collapse: collapse; font-size: 12px; color:#70707", "width" : "100%", "cellspacing" : 0, "cellpadding" : "3px", "bordercolor" : "#C0C0C0", "border":"1"}
-    headerProps = "width='120px' style='color:white; font-size: 16px;' bgcolor='#64a0d6' "
-    thProps = "width='120px' style='color:#F0F0F0' bgcolor='#64a0d6' "
-
-    build_direction = "TOP_TO_BOTTOM"
-    text_line = '{}\t{}\n'
-
-    if suppliedJsonStruct is None:
-        json_obj = db.get_table_as_json(sqlQuery)
-    else:
-        json_obj = suppliedJsonStruct
-
-    jsn  = json_obj.json
-    html = ""
-    text = ""
-
-    if len(jsn["data"]) > 0:
-        text = tableTitle + "\n---------\n"
-
-        # Convert a JSON into an HTML table
-        html = convert(jsn, build_direction=build_direction, table_attributes=table_attributes)
-        
-        # Cleanup the generated HTML table notification
-        html = format_table(html, "data", headerProps, tableTitle).replace('<ul>','<ul style="list-style:none;padding-left:0">').replace("<td>null</td>", "<td></td>")
-
-        headers = json_obj.columnNames
-
-        # prepare text-only message
-        if skipText == False:
-
-            for device in jsn["data"]:
-                for header in headers:
-                    padding = ""
-                    if len(header) < 4:
-                        padding = "\t"
-                    text += text_line.format ( header + ': ' + padding, device[header])
-                text += '\n'
-
-        #  Format HTML table headers
-        for header in headers:
-            html = format_table(html, header, thProps)
-
-    notiStruc = noti_obj(jsn, text, html)
-
-    
-    if not notiStruc.json['data'] and not notiStruc.text and not notiStruc.html:
-        mylog('debug', '[Notification] notiStruc is empty')
-    else:
-        mylog('debug', ['[Notification] notiStruc:', json.dumps(notiStruc.__dict__, indent=4)])
-
-    return notiStruc
-
-
 def get_notifications (db):
 
     sql = db.sql  #TO-DO
-    global mail_text, mail_html, json_final, partial_html, partial_txt, partial_json
-
-    deviceUrl              = conf.REPORT_DASHBOARD_URL + '/deviceDetails.php?mac='
-    plugins_report         = False
-
+    
     # Reporting section
     mylog('verbose', ['[Notification] Check if something to report'])
 
-    # prepare variables for JSON construction
-    json_internet = []
+    # prepare variables for JSON construction    
     json_new_devices = []
     json_down_devices = []
     json_events = []
@@ -122,46 +53,6 @@ def get_notifications (db):
                             SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0
 						)""")
 
-    # Open text Template
-    mylog('verbose', ['[Notification] Open text Template'])
-    template_file = open(pialertPath + '/back/report_template.txt', 'r')
-    mail_text = template_file.read()
-    template_file.close()
-
-    # Open html Template
-    mylog('verbose', ['[Notification] Open html Template'])
-
-
-    # select template type depoending if running latest version or an older one
-    if conf.newVersionAvailable :
-        template_file_path = '/back/report_template_new_version.html'
-    else:
-        template_file_path = '/back/report_template.html'
-
-    mylog('verbose', ['[Notification] Using template', template_file_path])
-    template_file = open(pialertPath + template_file_path, 'r')
-
-    mail_html = template_file.read()
-    template_file.close()
-
-    # Report "REPORT_DATE" in Header & footer
-    timeFormated = timeNowTZ().strftime ('%Y-%m-%d %H:%M')
-    mail_text = mail_text.replace ('<REPORT_DATE>', timeFormated)
-    mail_html = mail_html.replace ('<REPORT_DATE>', timeFormated)
-
-    # Report "SERVER_NAME" in Header & footer
-    mail_text = mail_text.replace ('<SERVER_NAME>', socket.gethostname() )
-    mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
-
-    # Report "VERSION" in Header & footer
-    VERSIONFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/version.php']).decode('utf-8')
-    mail_text = mail_text.replace ('<VERSION_PIALERT>', VERSIONFILE)
-    mail_html = mail_html.replace ('<VERSION_PIALERT>', VERSIONFILE)	
-
-    # Report "BUILD" in Header & footer
-    BUILDFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/build.php']).decode('utf-8')
-    mail_text = mail_text.replace ('<BUILD_PIALERT>', BUILDFILE)
-    mail_html = mail_html.replace ('<BUILD_PIALERT>', BUILDFILE)
 	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
@@ -170,16 +61,16 @@ def get_notifications (db):
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime"""
+                        ORDER BY eve_DateTime"""   
 
-        notiStruc = construct_notifications(db, sqlQuery, "New devices")
+        # Get the events as JSON
+        json_obj = db.get_table_as_json(sqlQuery)
 
-        # collect "new_devices" for the json
-        json_new_devices = notiStruc.json["data"]
-
-        mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', notiStruc.text + '\n')
-        mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', notiStruc.html)
-        mylog('verbose', ['[Notification] New Devices sections done.'])
+        json_new_devices_meta = {
+            "title": "New devices",
+            "columnNames": json_obj.columnNames
+        }
+        json_new_devices = json_obj.json["data"]    
 
     if 'down_devices' in conf.INCLUDED_SECTIONS :
         # Compose Devices Down Section
@@ -187,15 +78,15 @@ def get_notifications (db):
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'Device Down'
                         ORDER BY eve_DateTime"""
+        
+        # Get the events as JSON        
+        json_obj = db.get_table_as_json(sqlQuery)
 
-        notiStruc = construct_notifications(db, sqlQuery, "Down devices")
-
-        # collect "down_devices" for the json
-        json_down_devices = notiStruc.json["data"]
-
-        mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', notiStruc.text + '\n')
-        mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', notiStruc.html)
-        mylog('verbose', ['[Notification] Down Devices sections done.'])
+        json_down_devices_meta = {
+            "title": "Down devices",
+            "columnNames": json_obj.columnNames
+        }
+        json_down_devices = json_obj.json["data"]     
 
     if 'events' in conf.INCLUDED_SECTIONS :
         # Compose Events Section
@@ -203,110 +94,44 @@ def get_notifications (db):
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')
-                        ORDER BY eve_DateTime"""
+                        ORDER BY eve_DateTime"""        
+        
+        # Get the events as JSON        
+        json_obj = db.get_table_as_json(sqlQuery)
 
-        notiStruc = construct_notifications(db, sqlQuery, "Events")
-
-        # collect "events" for the json
-        json_events = notiStruc.json["data"]
-
-        mail_text = mail_text.replace ('<EVENTS_TABLE>', notiStruc.text + '\n')
-        mail_html = mail_html.replace ('<EVENTS_TABLE>', notiStruc.html)
-        mylog('verbose', ['[Notification] Events sections done.'])    
+        json_events_meta = {
+            "title": "Events",
+            "columnNames": json_obj.columnNames
+        }
+        json_events = json_obj.json["data"]     
 
     if 'plugins' in conf.INCLUDED_SECTIONS:
         # Compose Plugins Section
-        sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""
+        sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""        
+        
+        # Get the events as JSON        
+        json_obj = db.get_table_as_json(sqlQuery)
 
-        notiStruc = construct_notifications(db, sqlQuery, "Plugins")
+        json_plugins_meta = {
+            "title": "Plugins",
+            "columnNames": json_obj.columnNames
+        }
+        json_plugins = json_obj.json["data"]   
 
-        # collect "plugins" for the json
-        json_plugins = notiStruc.json["data"]
 
-        mail_text = mail_text.replace ('<PLUGINS_TABLE>', notiStruc.text + '\n')
-        mail_html = mail_html.replace ('<PLUGINS_TABLE>', notiStruc.html)
-
-        # check if we need to report something
-        plugins_report = len(json_plugins) > 0
-        mylog('verbose', ['[Notification] Plugins sections done.'])
-
-    final_json = {
-                    "internet": json_internet,
+    final_json = {                    
                     "new_devices": json_new_devices,
+                    "new_devices_meta": json_new_devices_meta,
                     "down_devices": json_down_devices,
+                    "down_devices_meta": json_down_devices_meta,
                     "events": json_events,                    
+                    "events_meta": json_events_meta,                    
                     "plugins": json_plugins,
+                    "plugins_meta": json_plugins_meta,
                     }
 
-    final_text = removeDuplicateNewLines(mail_text)
+    return final_json
 
-    # Create clickable MAC links
-    final_html = generate_mac_links (mail_html, deviceUrl)    
-
-    #  Write output emails for debug
-    write_file (logPath + '/report_output.json', json.dumps(final_json))
-    write_file (logPath + '/report_output.txt', final_text)
-    write_file (logPath + '/report_output.html', final_html)
-
-    mylog('minimal', ['[Notification] Udating API files'])
-    send_api()
-
-    return noti_obj(final_json, final_text, final_html)   
-
-
-#-------------------------------------------------------------------------------
-# Replacing table headers
-def format_table (html, thValue, props, newThValue = ''):
-
-    if newThValue == '':
-        newThValue = thValue
-
-    return html.replace("<th>"+thValue+"</th>", "<th "+props+" >"+newThValue+"</th>" )
-
-#-------------------------------------------------------------------------------
-def format_report_section (pActive, pSection, pTable, pText, pHTML):
-
-
-    # Replace section text
-    if pActive :
-        conf.mail_text = conf.mail_text.replace ('<'+ pTable +'>', pText)
-        conf.mail_html = conf.mail_html.replace ('<'+ pTable +'>', pHTML)
-
-        conf.mail_text = remove_tag (conf.mail_text, pSection)
-        conf.mail_html = remove_tag (conf.mail_html, pSection)
-    else:
-        conf.mail_text = remove_section (conf.mail_text, pSection)
-        conf.mail_html = remove_section (conf.mail_html, pSection)
-
-#-------------------------------------------------------------------------------
-def remove_section (pText, pSection):
-    # Search section into the text
-    if pText.find ('<'+ pSection +'>') >=0 \
-    and pText.find ('</'+ pSection +'>') >=0 :
-        # return text without the section
-        return pText[:pText.find ('<'+ pSection+'>')] + \
-               pText[pText.find ('</'+ pSection +'>') + len (pSection) +3:]
-    else :
-        # return all text
-        return pText
-
-#-------------------------------------------------------------------------------
-def remove_tag (pText, pTag):
-    # return text without the tag
-    return pText.replace ('<'+ pTag +'>','').replace ('</'+ pTag +'>','')
-
-
-#-------------------------------------------------------------------------------
-# Reporting
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
-def send_api():
-        mylog('verbose', ['[Send API] Updating notification_* files in ', apiPath])
-
-        write_file(apiPath + 'notification_text.txt'  , mail_text)
-        write_file(apiPath + 'notification_text.html'  , mail_html)
-        write_file(apiPath + 'notification_json_final.json'  , json.dumps(json_final))
 
 
 #-------------------------------------------------------------------------------

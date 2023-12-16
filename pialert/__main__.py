@@ -151,11 +151,11 @@ def main ():
             # ----------------------------------------
 
             # send all configured notifications
-            notiStructure = get_notifications(db)
+            final_json = get_notifications(db)
 
             # Write the notifications into the DB
             notification    = Notification_obj(db)
-            notificationObj = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
+            notificationObj = notification.create(final_json, "")
 
             # run all enabled publisher gateways 
             if notificationObj.HasNotifications:

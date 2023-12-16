@@ -17,7 +17,17 @@
           "title": "Pi.Alert Notifications",
           "title_link": "",
           "text": {
-            "internet": [],
+            "new_devices_meta": {
+              "title": "New devices",
+              "columnNames": [
+                "MAC",
+                "Datetime",
+                "IP",
+                "Event Type",
+                "Device name",
+                "Comments"
+              ]
+            },
             "new_devices": [
               {
                 "MAC": "74:ac:74:ac:74:ac",
@@ -29,7 +39,29 @@
                 "Device Vendor": null
               }
             ],
+            "down_devices_meta": {
+              "title": "Down devices",
+              "columnNames": [
+                "MAC",
+                "Datetime",
+                "IP",
+                "Event Type",
+                "Device name",
+                "Comments"
+              ]
+            },
             "down_devices": [],
+            "events_meta": {
+              "title": "Events",
+              "columnNames": [
+                "MAC",
+                "Datetime",
+                "IP",
+                "Event Type",
+                "Device name",
+                "Comments"
+              ]
+            },
             "events": [
               {
                 "MAC": "74:ac:74:ac:74:ac",
@@ -50,6 +82,20 @@
                 "Device Vendor": null
               }
             ],
+            "plugins_meta": {
+              "title": "Plugins",
+              "columnNames": [
+                "Plugin",
+                "Object_PrimaryID",
+                "Object_SecondaryID",
+                "DateTimeChanged",
+                "Watched_Value1",
+                "Watched_Value2",
+                "Watched_Value3",
+                "Watched_Value4",
+                "Status"
+              ]
+            },
             "plugins": [
               {
                 "Index": 138,
