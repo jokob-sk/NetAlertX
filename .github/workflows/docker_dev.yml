@@ -74,9 +74,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Disable this after use
-      - name: Prune Docker Builder
-        run: docker builder prune --force
+      # # Disable this after use
+      # - name: Prune Docker Builder
+      #   run: docker builder prune --force
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -86,5 +86,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # # ⚠ disable cache if build is failing to download debian packages
           # cache-from: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
           # cache-to: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache,mode=max
