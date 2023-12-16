@@ -27,7 +27,7 @@ jobs:
 
       # Disable this after use
       - name: Prune Docker Builder
-        run: docker builder prune --all --force
+        run: docker builder prune --force
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
