@@ -288,7 +288,12 @@ function main () {
           initializeDatatable();
 
           // query data
-          getDevicesTotals();          
+          getDevicesTotals();      
+          
+          // check if dat outdated and show spinner if so
+          handleLoadingDialog()
+
+
         });
       });
     });
@@ -390,7 +395,7 @@ function initializeDatatable (status) {
     }    
   }
 
-  $.get('api/table_devices.json', function(result) {           
+  $.get('api/table_devices.json?nocache=' + Date.now(), function(result) {           
     
     // Filter the data based on deviceStatus
     var filteredData = filterDataByStatus(result.data, deviceStatus);
@@ -641,21 +646,26 @@ function getDevicesTotals () {
 // -----------------------------------------------------------------------------
 function handleLoadingDialog()
 {
-  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+  $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {   
     
-    console.log(appState["showSpinner"])
-    if(appState["showSpinner"])
+
+    console.log(data)
+    console.log("hree")
+
+    if(data.includes("update_api|devices"))
     { 
-      showSpinner("settings_old")
+      spinnerShown = true;
+      showSpinner("devices_old")
 
       setTimeout("handleLoadingDialog()", 1000);
 
-    } else
+    } else if ($("#loadingSpinner").is(":visible"))
     {
-      hideSpinner()        
+      hideSpinner();     
+      location.reload();    
     }      
 
-    })
+  })
 
 }
 

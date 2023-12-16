@@ -1459,12 +1459,34 @@ function setDeviceData (direction='', refreshCallback='') {
     window.onbeforeunload = null;
     somethingChanged      = false;
 
+    // refresh API
+    updateApi()
+
     // Callback fuction
     if (typeof refreshCallback == 'function') {
       refreshCallback(direction);
     }
   });
 }
+
+// --------------------------------------------------------
+// Calls a backend function to add a front-end event to an execution queue
+function updateApi()
+{
+
+  // value has to be in format event|param. e.g. run|ARPSCAN
+  action = `update_api|devices`
+
+  $.ajax({
+    method: "POST",
+    url: "php/server/util.php",
+    data: { function: "addToExecutionQueue", action: action  },
+    success: function(data, textStatus) {
+        console.log(data)
+    }
+  })
+}
+
 
 // -----------------------------------------------------------------------------
 function askSkipNotifications () {
@@ -1632,36 +1654,10 @@ function deleteDevice () {
 
   // Deactivate controls
   $('#panDetails :input').attr('disabled', true);
+
+  // refresh API
+  updateApi()
 }
-// -----------------------------------------------------------------------------
-function askDeleteDevice () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Ask delete device
-  showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDevice');
-}
-
-
-// -----------------------------------------------------------------------------
-function deleteDevice () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Delete device
-  $.get('php/server/devices.php?action=deleteDevice&mac='+ mac, function(msg) {
-    showMessage (msg);
-  });
-
-  // Deactivate controls
-  $('#panDetails :input').attr('disabled', true);
-}
-
 
 // -----------------------------------------------------------------------------
 function getSessionsPresenceEvents () {

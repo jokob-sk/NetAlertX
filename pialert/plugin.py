@@ -750,6 +750,9 @@ def check_and_run_user_event(db, pluginsState):
             pluginsState = handle_test(param, db, pluginsState)
         if event == 'run':
             pluginsState = handle_run(param, db, pluginsState)
+        if event == 'update_api':
+            # update API endpoints
+            update_api(db, False, param.split(','))  
 
     # Clear the log file
     open(logFile, "w").close()
