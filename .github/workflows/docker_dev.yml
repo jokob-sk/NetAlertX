@@ -25,10 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Disable this after use
-      - name: Prune Docker Builder
-        run: docker builder prune --force
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -77,6 +73,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Disable this after use
+      - name: Prune Docker Builder
+        run: docker builder prune --force
 
       - name: Build and push
         uses: docker/build-push-action@v3
