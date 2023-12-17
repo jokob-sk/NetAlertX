@@ -1,0 +1,150 @@
+{
+  "code_name": "notification_processing",
+  "unique_prefix": "NTFPRCS",
+  "plugin_type": "system",
+  "enabled": true,
+  "data_source": "script",  
+  "show_ui": false,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Notification Processing"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-envelopes-bulk\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to for advanced notification processing."
+    }  
+  ],
+    "params" : [
+  ],  
+
+  "settings": [
+    {
+      "function": "RUN",   
+      "events": ["run"],         
+      "type": "text.select",            
+      "default_value":"schedule",
+      "options": ["disabled", "before_notification"],
+      "localized": ["name", "description"],
+      "name" :[{
+          "language_code":"en_us",
+          "string" : "When to run"
+      },
+      {
+          "language_code":"es_es",
+          "string" : "Cuándo ejecutar"
+      },
+      {
+          "language_code":"de_de",
+          "string" : "Wann laufen"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "When the Notification manipulation should happen. Usually set to <code>before_notification</code>."
+      }]
+  },    
+    {
+      "function": "CMD",
+      "type": "readonly",
+      "default_value": "python3 /home/pi/pialert/front/plugins/notification_processing/script.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
+        }	        
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar. Esto no se puede cambiar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }	        
+      ]
+    },    
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 30,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitüberschreitung"
+        }	        
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
+        }        
+      ]
+    },
+    {
+      "function": "alert_down_time",
+      "type": "integer",
+      "default_value": 8,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Alert Down After"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "After how many minutes a down device is reported."
+        }    
+      ]    
+    }
+  ],
+
+  "database_column_definitions": 
+  [          
+           
+  ]
+}

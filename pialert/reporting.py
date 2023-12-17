@@ -17,7 +17,7 @@ import json
 import conf
 import const
 from const import pialertPath, logPath, apiPath
-from helper import timeNowTZ, get_file_content, write_file
+from helper import timeNowTZ, get_file_content, write_file, get_timezone_offset, get_setting_value
 from logger import logResult, mylog, print_log
 
 
@@ -74,10 +74,21 @@ def get_notifications (db):
 
     if 'down_devices' in conf.INCLUDED_SECTIONS :
         # Compose Devices Down Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
-                        WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'Device Down'
-                        ORDER BY eve_DateTime"""
+        sqlQuery = f"""
+                    SELECT *
+                        FROM Events AS down_events
+                        WHERE eve_PendingAlertEmail = 1 
+                        AND down_events.eve_EventType = 'Device Down' 
+                        AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
+                        AND NOT EXISTS (
+                            SELECT 1
+                            FROM Events AS connected_events
+                            WHERE connected_events.eve_MAC = down_events.eve_MAC
+                                AND connected_events.eve_EventType = 'Connected'
+                                AND connected_events.eve_DateTime > down_events.eve_DateTime        
+                        )
+                        ORDER BY down_events.eve_DateTime;
+                    """
         
         # Get the events as JSON        
         json_obj = db.get_table_as_json(sqlQuery)
@@ -139,7 +150,8 @@ def skip_repeated_notifications (db):
 
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"
-    mylog('verbose','[Skip Repeated Notifications] Skip Repeated start')
+    mylog('verbose','[Skip Repeated Notifications] Skip Repeated')
+    
     db.sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
                         (
@@ -151,7 +163,7 @@ def skip_repeated_notifications (db):
                               (strftime('%s','now','localtime')/60 )
                         )
                  """ )
-    mylog('verbose','[Skip Repeated Notifications] Skip Repeated end')
+   
 
     db.commitDB()
 

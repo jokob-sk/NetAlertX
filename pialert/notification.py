@@ -10,7 +10,7 @@ import conf
 import const
 from const import pialertPath, logPath, apiPath
 from logger import logResult, mylog, print_log
-from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file
+from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
 
 #-------------------------------------------------------------------------------
 # Notification object handling
@@ -209,7 +209,34 @@ class Notification_obj:
 
         self.save()
 
-        
+    def clearPendingEmailFlag(self):
+
+        # Clean Pending Alert Events
+        self.db.sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
+                            WHERE dev_MAC IN (
+                                SELECT eve_MAC FROM Events
+                                    WHERE eve_PendingAlertEmail = 1
+                            )
+                        """, (timeNowTZ(),) )
+
+        self.db.sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
+                                    WHERE eve_PendingAlertEmail = 1 
+                                    AND eve_EventType !='Device Down' """)
+
+        # Clear down events flag after the reporting window passed
+        self.db.sql.execute (f"""UPDATE Events SET eve_PendingAlertEmail = 0
+                                    WHERE eve_PendingAlertEmail = 1 
+                                    AND eve_EventType =='Device Down' 
+                                    AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
+                            """)
+
+        # clear plugin events
+        self.db.sql.execute ("DELETE FROM Plugins_Events")
+
+        # DEBUG - print number of rows updated
+        mylog('minimal', ['[Notification] Notifications changes: ', self.db.sql.rowcount])    
+
+        self.save()
 
     def save(self):
         # Commit changes
