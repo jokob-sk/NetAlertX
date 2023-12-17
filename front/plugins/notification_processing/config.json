@@ -125,7 +125,7 @@
     {
       "function": "alert_down_time",
       "type": "integer",
-      "default_value": 8,
+      "default_value": 5,
       "options": [],
       "localized": ["name", "description"],
       "name": [

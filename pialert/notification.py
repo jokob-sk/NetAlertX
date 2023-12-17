@@ -250,6 +250,11 @@ class Notification_obj:
 def construct_notifications(JSON, section):
 
     jsn         = JSON[section]
+
+    # Return if empty
+    if jsn == []:
+        return '',''
+
     tableTitle  = JSON[section + "_meta"]["title"]
     headers     = JSON[section + "_meta"]["columnNames"]
 

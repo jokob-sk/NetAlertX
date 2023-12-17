@@ -36,10 +36,13 @@ def get_notifications (db):
 
     # prepare variables for JSON construction    
     json_new_devices = []
+    json_new_devices_meta = {}
     json_down_devices = []
-    json_events = []
-    json_ports = []
+    json_down_devices_meta = {}
+    json_events = []    
+    json_events_meta = {}
     json_plugins = []
+    json_plugins_meta = {}
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
