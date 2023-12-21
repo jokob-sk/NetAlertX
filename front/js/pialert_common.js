@@ -349,6 +349,7 @@ function sanitize(data)
 // -----------------------------------------------------------------------------
 function numberArrayFromString(data)
 {
+  console.log(data)
   data = JSON.parse(sanitize(data));
   return data.replace(/\[|\]/g, '').split(',').map(Number);
 }
@@ -516,6 +517,9 @@ function getNameByMacAddress(macAddress) {
 // A function used to make the IP address orderable
 function formatIPlong(ipAddress) {
   const parts = ipAddress.split('.');
+
+  console.log(ipAddress)
+
   if (parts.length !== 4) {
       throw new Error('Invalid IP address format');
   }

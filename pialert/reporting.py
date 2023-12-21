@@ -59,7 +59,7 @@ def get_notifications (db):
 	
     mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
 
-    if 'new_devices' in conf.INCLUDED_SECTIONS :
+    if 'new_devices' in conf.INCLUDED_SECTIONS:
         # Compose New Devices Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -75,8 +75,9 @@ def get_notifications (db):
         }
         json_new_devices = json_obj.json["data"]    
 
-    if 'down_devices' in conf.INCLUDED_SECTIONS :
-        # Compose Devices Down Section
+    if 'down_devices' in conf.INCLUDED_SECTIONS:
+        # Compose Devices Down Section 
+        # - select only Down Alerts with pending email of devices that didn't reconnect within the specified time window
         sqlQuery = f"""
                     SELECT *
                         FROM Events AS down_events
@@ -102,7 +103,7 @@ def get_notifications (db):
         }
         json_down_devices = json_obj.json["data"]     
 
-    if 'events' in conf.INCLUDED_SECTIONS :
+    if 'events' in conf.INCLUDED_SECTIONS:
         # Compose Events Section
         sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
@@ -142,7 +143,7 @@ def get_notifications (db):
                     "events_meta": json_events_meta,                    
                     "plugins": json_plugins,
                     "plugins_meta": json_plugins_meta,
-                    }
+                }
 
     return final_json
 

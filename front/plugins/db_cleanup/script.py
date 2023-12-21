@@ -18,7 +18,7 @@ sys.path.append('/home/pi/pialert/pialert')
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath
+from const import logPath, pialertPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -44,7 +44,7 @@ def main():
 
 
     # Execute cleanup/upkeep    
-    cleanup_database('/home/pi/pialert/db/pialert.db', DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST)
+    cleanup_database(fullDbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST)
     
     mylog('verbose', ['[DBCLNP] Cleanup complete file '])   
     

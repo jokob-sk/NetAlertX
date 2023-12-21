@@ -16,21 +16,21 @@ sys.path.append('/home/pi/pialert/pialert')
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath
+from const import logPath, pialertPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
-pluginName= 'NTFPRCS'
+pluginName = 'NTFPRCS'
 
 def main():
 
     mylog('verbose', [f'[{pluginName}] In script'])
     
     # TODO
-    # process_notifications('/home/pi/pialert/db/pialert.db')
+    # process_notifications(fullDbPath)
     
     mylog('verbose', [f'[{pluginName}] Script finished'])
     
@@ -40,9 +40,7 @@ def main():
 # Cleanup / upkeep database
 #===============================================================================
 def process_notifications (dbPath):
-    """
-    Cleaning out old records from the tables that don't need to keep all data.
-    """
+   
     # Connect to the PiAlert SQLite database
     conn    = sqlite3.connect(dbPath)
     cursor  = conn.cursor()

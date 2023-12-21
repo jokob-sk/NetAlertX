@@ -327,6 +327,8 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         try:
             sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL_"+plugin["unique_prefix"])
             arr = db.get_sql_array (q) 
+            sql.execute ("DETACH DATABASE EXTERNAL_"+plugin["unique_prefix"])
+             
         except sqlite3.Error as e:            
             mylog('none',[f'[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
             mylog('none',[f'[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: ', e])

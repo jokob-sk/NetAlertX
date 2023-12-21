@@ -18,7 +18,7 @@ sys.path.append('/home/pi/pialert/pialert')
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
-from const import logPath, pialertPath
+from const import logPath, pialertPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -43,7 +43,7 @@ def main():
     mylog('verbose', ['[CSVBCKP] In script'])     
 
     # Connect to the PiAlert SQLite database
-    conn = sqlite3.connect('/home/pi/pialert/db/pialert.db')
+    conn = sqlite3.connect(fullDbPath)
     cursor = conn.cursor()
 
     # Execute your SQL query
