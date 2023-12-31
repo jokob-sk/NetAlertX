@@ -11,6 +11,7 @@ INSTALL_DIR=/home/pi  # Specify the installation directory here
 WEB_UI_DIR=/var/www/html/pialert
 NGINX_CONFIG_FILE=/etc/nginx/conf.d/pialert.conf
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
+FILEDB=$INSTALL_DIR/pialert/db/pialert.db
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
 # if custom variables not set we do not need to do anything
@@ -94,23 +95,26 @@ fi
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
 
+echo "[INSTALL] Fixing WEB_UI_DIR: $WEB_UI_DIR"
 
 chmod -R a+rwx $WEB_UI_DIR
+
+echo "[INSTALL] Fixing INSTALL_DIR: $INSTALL_DIR"
+
 chmod -R a+rw $INSTALL_DIR/pialert/front/log
 chmod -R a+rwx $INSTALL_DIR
-
-FILEDB=$INSTALL_DIR/pialert/db/pialert.db
-
-if [ -f "$FILEDB" ]; then
-    chown -R www-data:www-data $INSTALL_DIR/pialert/db/pialert.db
-fi
 
 echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
 
 # Copy starter pialert.db and pialert.conf if they don't exist
 cp -n "$INSTALL_DIR/pialert/back/pialert.conf" "$INSTALL_DIR/pialert/config/pialert.conf" 
-cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$INSTALL_DIR/pialert/db/pialert.db" 
+cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$FILEDB"
 
+echo "[INSTALL] Fixing permissions after copied starter config & DB"
+
+if [ -f "$FILEDB" ]; then
+    chown -R www-data:www-data $FILEDB
+fi
 
 chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
 chmod -R a+rw $INSTALL_DIR/pialert/config
@@ -121,7 +125,6 @@ if [ ! -f "$INSTALL_DIR/pialert/front/buildtimestamp.txt" ]; then
     # Create buildtimestamp.txt
     date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"
 fi
-
 
 # start PHP
 /etc/init.d/php8.2-fpm start
