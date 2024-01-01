@@ -789,7 +789,7 @@ def handle_test(runType, db, pluginsState):
     
     # Create fake notification
     notification    = Notification_obj(db)
-    notificationObj = notification.create(sample_json, sample_txt, sample_html, "")
+    notificationObj = notification.create(sample_json, "")
 
     # Run test
     pluginsState = handle_run(runType, db, pluginsState)
