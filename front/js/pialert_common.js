@@ -516,17 +516,34 @@ function getNameByMacAddress(macAddress) {
 // -----------------------------------------------------------------------------
 // A function used to make the IP address orderable
 function formatIPlong(ipAddress) {
-  const parts = ipAddress.split('.');
+  if (ipAddress.includes(':')) {
+    // IPv6 address
+    const parts = ipAddress.split(':');
 
-  console.log(ipAddress)
+    if (parts.length !== 8) {
+      throw new Error('Invalid IPv6 address format');
+    }
 
-  if (parts.length !== 4) {
-      throw new Error('Invalid IP address format');
+    return parts.reduce((acc, part, index) => {
+      const hexValue = parseInt(part, 16);
+      if (isNaN(hexValue) || hexValue < 0 || hexValue > 0xFFFF) {
+        throw new Error('Invalid IPv6 address format');
+      }
+      return acc | (hexValue << (112 - index * 16));
+    }, 0);
+  } else {
+    // IPv4 address
+    const parts = ipAddress.split('.');
+
+    if (parts.length !== 4) {
+      throw new Error('Invalid IPv4 address format');
+    }
+
+    return (parseInt(parts[0]) << 24) |
+           (parseInt(parts[1]) << 16) |
+           (parseInt(parts[2]) << 8) |
+           parseInt(parts[3]);
   }
-  return (parseInt(parts[0]) << 24) |
-         (parseInt(parts[1]) << 16) |
-         (parseInt(parts[2]) << 8) |
-         parseInt(parts[3]);
 }
 
 // -----------------------------------------------------------------------------

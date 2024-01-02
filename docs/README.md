@@ -18,6 +18,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Debugging tips](/docs/DEBUG_TIPS.md)
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
+- [Troubleshooting Plugins](/docs/DEBUG_PLUGINS.md)
 
 #### 🔝 Popular/Suggested
 
