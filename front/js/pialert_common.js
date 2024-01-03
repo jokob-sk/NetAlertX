@@ -515,28 +515,33 @@ function getNameByMacAddress(macAddress) {
 
 // -----------------------------------------------------------------------------
 // A function used to make the IP address orderable
+function isValidIPv6(ipAddress) {
+  // Regular expression for IPv6 validation
+  const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,7}:|^([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}$|^([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}$|^([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}$|^([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})$/;
+
+  return ipv6Regex.test(ipAddress);
+}
+
 function formatIPlong(ipAddress) {
-  if (ipAddress.includes(':')) {
-    // IPv6 address
+  if (ipAddress.includes(':') && isValidIPv6(ipAddress)) {
     const parts = ipAddress.split(':');
 
-    if (parts.length !== 8) {
-      throw new Error('Invalid IPv6 address format');
-    }
-
     return parts.reduce((acc, part, index) => {
-      const hexValue = parseInt(part, 16);
-      if (isNaN(hexValue) || hexValue < 0 || hexValue > 0xFFFF) {
-        throw new Error('Invalid IPv6 address format');
+      if (part === '') {
+        const remainingGroups = 8 - parts.length + 1;
+        return acc << (16 * remainingGroups);
       }
+
+      const hexValue = parseInt(part, 16);
       return acc | (hexValue << (112 - index * 16));
     }, 0);
   } else {
-    // IPv4 address
+    // Handle IPv4 address
     const parts = ipAddress.split('.');
 
     if (parts.length !== 4) {
-      throw new Error('Invalid IPv4 address format');
+      console.log("⚠ Invalid IPv4 address: " + ipAddress);
+      return -1; // or any other default value indicating an error
     }
 
     return (parseInt(parts[0]) << 24) |
