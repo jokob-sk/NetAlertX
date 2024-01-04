@@ -57,7 +57,7 @@
       "value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' "
     },
     {
-      "name": "DIG_GET_IP_ARG",
+      "name": "INTRNT_DIG_GET_IP_ARG",
       "type": "setting",
       "value": "INTRNT_DIG_GET_IP_ARG",
       "base64": true
@@ -109,7 +109,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/internet_ip/script.py prev_ip={prev_ip} DIG_GET_IP_ARG={DIG_GET_IP_ARG}",
+      "default_value": "python3 /home/pi/pialert/front/plugins/internet_ip/script.py prev_ip={prev_ip} INTRNT_DIG_GET_IP_ARG={INTRNT_DIG_GET_IP_ARG}",
       "options": [],
       "localized": [
         "name",
