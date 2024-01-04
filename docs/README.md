@@ -1,16 +1,27 @@
 ## Documentation overview
 
-In the app hover over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.
+<details>
+  <summary>:information_source: In the app hover over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.</summary>
 
-![In-app help](/docs/img/GENERAL/in-app-help.png)
+  ![In-app help](/docs/img/GENERAL/in-app-help.png)
+
+</details>
 
 There is also an in-app Help / FAQ section that should be answering frequently asked questions.
 
 ### 📥 Installation
 
- ⚠ Only tested as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
- > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+#### 🐳 Docker (Fully supported)
 
+- The main installation method is as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
+
+#### 💻 Bare-metal / On-server (Experimental/community supported 🧪)
+
+- [(Experimental 🧪) On-hardware instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) 
+
+- Alternative forks: 
+  - [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
+  - [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (un-maintained)
 
 ### 📚 Table of contents
 

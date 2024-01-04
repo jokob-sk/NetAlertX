@@ -44,8 +44,8 @@ docker run -d --rm --network=host \
 
 | | Path | Description |
 | :------------- | :------------- |:-------------| 
-| **Required** | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
-| **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
+| ⚠ **Required** | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
+| ⚠ **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
 |Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 |Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
 |Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 

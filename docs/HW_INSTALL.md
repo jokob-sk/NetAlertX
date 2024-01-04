@@ -1,6 +1,6 @@
 # How to install PiAlert on the server hardware
 
-To download and install PiAlert on the hardware/server directly use `curl` or `wget` commands.
+To download and install PiAlert on the hardware/server directly use the `curl` or `wget` commands at the bottom of this page.
 
 > [!NOTE]
 > This is an Experimental feature 🧪 and it relies on community support.
@@ -32,13 +32,13 @@ Some facts about what and where something will be changed/installed by the HW in
 - Only tested to work on Debian Bookworm (Debian 12).
 - **EXPERIMENTAL** and not recommended way to install PiAlert.
 
-## CURL
+## 📥 Installation via CURL
 
 ```bash
 curl -o install.sh https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/install/install.sh && sudo chmod +x install.sh && sudo ./install.sh
 ```
 
-## WGET
+## 📥 Installation via WGET
 
 ```bash
 wget https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/install/install.sh -O install.sh && sudo chmod +x install.sh && sudo ./install.sh

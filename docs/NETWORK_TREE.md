@@ -8,12 +8,11 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 
 ## ⚡Quick setup:
 
-* Go to Devices > Device Details. 
-* Find the device(s) you want to use as network devices (network nodes). 
-* Set the Type of such a device to one of the following: AP, Firewall, Gateway, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN.
+* Go to a Device you want to use as network device (network nodes, such as a Switch). 
+* Set the **Type** of such a device to one of the following: AP, Firewall, Gateway, PLC, Powerline, Router, Switch, USB LAN Adapter, USB WIFI Adapter and WLAN (you can create a custom network type device with in Settings -> General -> `NETWORK_DEVICE_TYPES`).
 * Save and go to Network where the devices you've marked as network devices (by selecting the Type as mentioned above) will show up as tabs.
-* You can now assign the Unassigend devices to the correct network node.
-* If port is empty or 0 a wifi icon is rendered, otherwise a ethernet port icon
+* You can now assign the Unassigend devices to the network node.
+* If port is empty or 0 a wifi icon is rendered, otherwise a ethernet port icon.
 
 
 > [!NOTE] 
@@ -46,7 +45,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 ![Network page](/docs/img/NETWORK_TREE/Network_Page.png)
 
 - Notice the newly added `raspberrypi` (2) tab which now represents a network node, also showing up in the tree (3).
-- As we asssigned the `raspberrypi` in the previous 1) Device details page section to the `Internet` parent network node in step (6), the link is also showing up in the tree diagram (4)
+- As we asssigned the `raspberrypi` in the previous (1) Device details page section to the `Internet` parent network node in step (6), the link is also showing up in the tree diagram (4)
 - We can now assign the device `(AppleTV)` (5) to this `raspberrypi` node, representing a network Switch in this example
 
 ### 3. Network page with 2 levels
