@@ -29,7 +29,7 @@
 |          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 |  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)                |
 |          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                            |
-|          |    Yes      | NTFPRCS       | Template           | ⚙ system       | 📚[notification_processing](/front/plugins/notification_processing/)|
+|  Yes     |             | NTFPRCS       | Template           | ⚙ system       | 📚[notification_processing](/front/plugins/notification_processing/)|
 |          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
 |          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                        |
 |          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner  | 📚[pihole_scan](/front/plugins/pihole_scan/)                        |
