@@ -32,7 +32,6 @@ arpscan_devices = []
 SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL       = 'verbose' 
 TIMEZONE        = 'Europe/Berlin'
-DIG_GET_IP_ARG  = '-4 myip.opendns.com @resolver1.opendns.com' 
 UI_LANG         = 'English' 
 UI_PRESENCE     = ['online', 'offline', 'archived']  
 PIALERT_WEB_PROTECTION  = False 

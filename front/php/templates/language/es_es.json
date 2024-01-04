@@ -477,8 +477,6 @@
         "HRS_TO_KEEP_NEWDEV_description": "Esta es una configuración de mantenimiento. Si está habilitado (<code>0</code> está deshabilitado), los dispositivos marcados como <b>Nuevo dispositivo</b> se eliminarán si su <b>Primera sesión</ b> el tiempo era anterior a las horas especificadas en esta configuración. Utilice esta configuración si desea eliminar automáticamente <b>Nuevos dispositivos</b> después de <code>X</code> horas.",
         "REPORT_DASHBOARD_URL_name" : "URL de Pi.Alert",
         "REPORT_DASHBOARD_URL_description" : "Esta URL se utiliza como base para generar enlaces en los correos electrónicos. Ingrese la URL completa que comienza con <code>http://</code>, incluido el número de puerto (sin barra inclinada al final <code>/</code>).",
-        "DIG_GET_IP_ARG_name" : "Descubrir de IP de Internet",
-        "DIG_GET_IP_ARG_description" : "Cambie los argumentos de la <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">utilidad de dig</a> si tiene problemas para resolver su IP de Internet. Los argumentos se agregan al final del siguiente comando: <code>dig +short </code>.",
         "UI_LANG_name" : "Idioma de interfaz",
         "UI_LANG_description" : "Seleccione el idioma de interfaz de usuario preferido.",
         "UI_PRESENCE_name" : "Mostrar en el gráfico de presencia",

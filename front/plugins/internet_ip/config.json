@@ -59,7 +59,7 @@
     {
       "name": "DIG_GET_IP_ARG",
       "type": "setting",
-      "value": "DIG_GET_IP_ARG",
+      "value": "INTRNT_DIG_GET_IP_ARG",
       "base64": true
     }
   ],
@@ -141,6 +141,44 @@
         {
           "language_code": "de_de",
           "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }
+      ]
+    },
+    {
+      "function": "DIG_GET_IP_ARG",
+      "type": "text",
+      "default_value": "-4 myip.opendns.com @resolver1.opendns.com",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Internet IP discovery"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Descubrir de IP de Internet"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erkennung externer IP (\"Internet IP\")"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambie los argumentos de la <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">utilidad de dig</a> si tiene problemas para resolver su IP de Internet. Los argumentos se agregan al final del siguiente comando: <code>dig +short </code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Ändere die Argumente des <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig Dienstprogramms</a>, wenn Probleme beim Auflösen der externen IP auftreten. Argumente werden an das Ende des folgenden Befehls angehängt: <code>dig +short </code>."
         }
       ]
     },

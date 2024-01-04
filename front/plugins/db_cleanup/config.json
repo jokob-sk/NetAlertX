@@ -172,6 +172,25 @@
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }        
       ]
+    },
+    {
+      "function": "NOTIFI_HIST",
+      "type": "integer",
+      "default_value": 100,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notifications History"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "How many historical entries of Notifications should be kept. This influences how mane entries are also available in the Report section in the UI"
+        }
+      ]
     }
   ],
 

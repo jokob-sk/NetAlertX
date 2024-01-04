@@ -565,8 +565,6 @@
         "HRS_TO_KEEP_NEWDEV_description": "Dies ist eine Wartungseinstellung. Geräte markiert als <b>Neues Gerät</b> werden gelöscht, wenn ihre <b>Erste Sitzung</b> länger her ist als die angegebenen Stunden in dieser Einstellung. <code>0</code> deaktiviert diese Funktion. Nutzen Sie diese Einstellung, um <b>Neue Geräte</b> automatisch nach <code>X</code> Stunden zu löschen.",
         "REPORT_DASHBOARD_URL_name": "Pi.Alert URL",
         "REPORT_DASHBOARD_URL_description": "Diese URL wird als Basis fürs Erstellen von Links in E-Mails genutzt. Geben Sie die gesamte URL startend mit <code>http://</code> inklusive der genutzten Portnummer ein (keinen nachfolgenden Schrägstrich <code>/</code> nutzen).",
-        "DIG_GET_IP_ARG_name": "Erkennung externer IP (\"Internet IP\")",
-        "DIG_GET_IP_ARG_description": "Ändere die Argumente des <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig Dienstprogramms</a>, wenn Probleme beim Auflösen der externen IP auftreten. Argumente werden an das Ende des folgenden Befehls angehängt: <code>dig +short </code>.",
         "NETWORK_DEVICE_TYPES_name": "Netzwerkgeräte-Typen",
         "NETWORK_DEVICE_TYPES_description": "Welche Gerätetypen als Netzwerkgeräte in der Netzwerkansicht verwendet werden können. Der Gerätetyp muss genau der <code>Typ</code>-Einstellung eines spezifischen Geräts in den Gerätedetails übereinstimmen. Entfernen Sie keine existierenden Typen, sondern fügen Sie nur neue ein.",
         "UI_LANG_name": "UI Sprache",
