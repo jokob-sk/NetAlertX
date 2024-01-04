@@ -260,7 +260,7 @@ replacements = {
     r'REPORT_WEBHOOK=True': 'WEBHOOK_RUN=\'on_notification\'',
     r'REPORT_PUSHSAFER=True': 'PUSHSAFER_RUN=\'on_notification\'',
     r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\'',
-    r'PIHOLE_CMD': 'PIHOLE_CMD_OLD'
+    r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD='
 }
 
 def renameSettings(config_file):
