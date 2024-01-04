@@ -61,9 +61,10 @@ def get_notifications (db):
 
     if 'new_devices' in conf.INCLUDED_SECTIONS:
         # Compose New Devices Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
+                        {get_setting_value('NTFPRCS_new_dev_condition')}
                         ORDER BY eve_DateTime"""   
 
         # Get the events as JSON
@@ -73,6 +74,7 @@ def get_notifications (db):
             "title": "New devices",
             "columnNames": json_obj.columnNames
         }
+
         json_new_devices = json_obj.json["data"]    
 
     if 'down_devices' in conf.INCLUDED_SECTIONS:
@@ -105,10 +107,11 @@ def get_notifications (db):
 
     if 'events' in conf.INCLUDED_SECTIONS:
         # Compose Events Section
-        sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
                             'IP Changed')
+                            {get_setting_value('NTFPRCS_event_condition')}
                         ORDER BY eve_DateTime"""        
         
         # Get the events as JSON        

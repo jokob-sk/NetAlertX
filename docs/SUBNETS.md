@@ -4,6 +4,9 @@ You need to specify the network interface and the network mask. You can also con
 
 ## Examples
 
+> [!NOTE] 
+> Please use the UI to configure settings as that ensures that the config file is in the correct format. Edit `pialert.conf` directly only when really necessary.
+
 * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
    * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
    * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1 -vlan=107']` 

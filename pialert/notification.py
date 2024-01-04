@@ -46,7 +46,7 @@ class Notification_obj:
     # Create a new DB entry if new notifications available, otherwise skip
     def create(self, JSON, Extra=""):  
 
-        JSON, Extra = self.on_before_create(self, JSON, Extra)
+        JSON, Extra = self.on_before_create(JSON, Extra)
 
         #  Write output data for debug
         write_file (logPath + '/report_output.json', json.dumps(JSON))
