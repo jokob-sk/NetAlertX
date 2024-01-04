@@ -1,6 +1,6 @@
 ## Overview
 
-Plugin to run regular database cleanup tasks. It is strongly recommended to have an hourly or at least daily schedule running.
+Plugin supplying settings for Notification Processing.
 
 ### Usage
 

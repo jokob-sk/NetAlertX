@@ -103,8 +103,7 @@ def importConfigs (db):
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
     conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
-    conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'text.multiselect', "['new_devices', 'down_devices', 'events', 'plugins']", 'General')    
+    conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
     conf.DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'German', 'Spanish']", 'General')
@@ -260,7 +259,8 @@ replacements = {
     r'REPORT_WEBHOOK=True': 'WEBHOOK_RUN=\'on_notification\'',
     r'REPORT_PUSHSAFER=True': 'PUSHSAFER_RUN=\'on_notification\'',
     r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\'',
-    r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD='
+    r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
+    r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS'
 }
 
 def renameSettings(config_file):

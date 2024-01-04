@@ -55,17 +55,20 @@ def get_notifications (db):
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0
 						)""")
+    
+    sections = get_setting_value('NTFPRCS_INCLUDED_SECTIONS')
 
-	
-    mylog('verbose', ['[Notification] included sections: ', conf.INCLUDED_SECTIONS ])
+    mylog('verbose', ['[Notification] Included sections: ', sections ])
 
-    if 'new_devices' in conf.INCLUDED_SECTIONS:
+    if 'new_devices' in sections:
         # Compose New Devices Section
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'New Device'
-                        {get_setting_value('NTFPRCS_new_dev_condition')}
+                        AND eve_EventType = 'New Device' 
+                        {get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""   
+
+        mylog('debug', ['[Notification] new_devices SQL query: ', sqlQuery ])
 
         # Get the events as JSON
         json_obj = db.get_table_as_json(sqlQuery)
@@ -77,7 +80,7 @@ def get_notifications (db):
 
         json_new_devices = json_obj.json["data"]    
 
-    if 'down_devices' in conf.INCLUDED_SECTIONS:
+    if 'down_devices' in sections:
         # Compose Devices Down Section 
         # - select only Down Alerts with pending email of devices that didn't reconnect within the specified time window
         sqlQuery = f"""
@@ -105,14 +108,16 @@ def get_notifications (db):
         }
         json_down_devices = json_obj.json["data"]     
 
-    if 'events' in conf.INCLUDED_SECTIONS:
+    if 'events' in sections:
         # Compose Events Section
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected','Disconnected',
-                            'IP Changed')
-                            {get_setting_value('NTFPRCS_event_condition')}
-                        ORDER BY eve_DateTime"""        
+                            'IP Changed') 
+                            {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
+                        ORDER BY eve_DateTime"""      
+
+        mylog('debug', ['[Notification] events SQL query: ', sqlQuery ])
         
         # Get the events as JSON        
         json_obj = db.get_table_as_json(sqlQuery)
@@ -123,7 +128,7 @@ def get_notifications (db):
         }
         json_events = json_obj.json["data"]     
 
-    if 'plugins' in conf.INCLUDED_SECTIONS:
+    if 'plugins' in sections:
         # Compose Plugins Section
         sqlQuery = """SELECT Plugin, Object_PrimaryId, Object_SecondaryId, DateTimeChanged, Watched_Value1, Watched_Value2, Watched_Value3, Watched_Value4, Status from Plugins_Events"""        
         

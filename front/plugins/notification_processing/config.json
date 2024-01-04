@@ -29,6 +29,41 @@
 
   "settings": [   
     {
+      "function": "INCLUDED_SECTIONS",
+      "type": "text.multiselect",
+      "default_value": ["new_devices", "down_devices", "events"],
+      "options": ["new_devices", "down_devices", "events", "plugins"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notify on"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtigungen"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Notificar en"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Specifies which events trigger notifications. Remove the event type(s) you do not want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select/deselect)."
+        },    
+        {
+          "language_code": "de_de",
+          "string": "Spezifiziert, bei welchen Events Benachrichtigungen versendet werden. Entfernen Sie die Eventtypen, bei welchen Sie nicht benachrichtigt werden wollen. Diese Einstellung überschreibt gerätespezifische Einstellungen im UI. (<code>STRG + klicken</code> zum aus-/abwählen)."
+        },    
+        {
+          "language_code": "es_es",
+          "string": "Especifica que eventos envían notificaciones. Elimina los tipos de eventos de los que no quieras recibir notificaciones. Este ajuste sobreescribe los ajustes específicos de los dispositivos en la interfaz. (<code>CTRL + Clic</code> para seleccionar / deseleccionar)."
+        }
+      ]    
+    },
+    {
       "function": "alert_down_time",
       "type": "integer",
       "default_value": 5,
