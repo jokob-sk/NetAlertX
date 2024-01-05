@@ -395,7 +395,7 @@
         {
           "function": "dev_NewDevice",
           "type": "integer.checkbox",
-          "default_value": true,
+          "default_value": 1,
           "options": [],
           "localized": ["name", "description"],
           "name": [

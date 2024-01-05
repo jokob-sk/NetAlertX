@@ -46,6 +46,11 @@ mqtt_connected_to_broker    = False
 client                      = None  # mqtt client
 
 def main():
+
+    mylog('debug', [f"[{pluginName}] DEBUG TEST"])
+    mylog('verbose', [f"[{pluginName}] VERBOSE TEST"])    
+    mylog('minimal', [f"[{pluginName}] MINIMAL TEST"])
+    mylog('none', [f"[{pluginName}] NONE TEST"])
     
     mylog('verbose', [f'[{pluginName}](publisher) In script'])    
     
@@ -132,6 +137,12 @@ class sensor_config:
 
 def publish_mqtt(client, topic, message):
     status = 1
+
+
+
+    mylog('verbose', [f"[{pluginName}] Sending MQTT topic: {topic}"])
+    mylog('verbose', [f"[{pluginName}] Sending MQTT message: {message}"])
+
     while status != 0:
         result = client.publish(
                 topic=topic,
