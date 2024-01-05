@@ -46,11 +46,6 @@ mqtt_connected_to_broker    = False
 client                      = None  # mqtt client
 
 def main():
-
-    mylog('debug', [f"[{pluginName}] DEBUG TEST"])
-    mylog('verbose', [f"[{pluginName}] VERBOSE TEST"])    
-    mylog('minimal', [f"[{pluginName}] MINIMAL TEST"])
-    mylog('none', [f"[{pluginName}] NONE TEST"])
     
     mylog('verbose', [f'[{pluginName}](publisher) In script'])    
     
