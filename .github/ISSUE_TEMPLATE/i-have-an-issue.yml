@@ -1,13 +1,13 @@
 name: Bug Report
-description: 'When submitting an issue ❗ https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md ❗ and have a look at the docs https://github.com/jokob-sk/Pi.Alert/tree/main/docs'
-labels: ['bug🐛']
+description: 'When submitting an issue enable debug and have a look at the docs.'
+labels: ['bug 🐛']
 body:
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
     description: Please search to see if an open or closed issue already exists for the bug you encountered.
     options:
-    - label: I have searched the existing open and closed issues
+    - label: I have searched the existing open and closed issues amd I cheked the docs https://github.com/jokob-sk/Pi.Alert/tree/main/docs
       required: true
 - type: textarea
   attributes:
