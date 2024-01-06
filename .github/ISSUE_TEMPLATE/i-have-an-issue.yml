@@ -1,5 +1,5 @@
 name: Bug Report
-description: 'When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗ and [have a look at the docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs)'
+description: 'When submitting an issue ❗ https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md ❗ and have a look at the docs https://github.com/jokob-sk/Pi.Alert/tree/main/docs'
 labels: ['bug🐛']
 body:
 - type: checkboxes
@@ -52,10 +52,8 @@ body:
   attributes:
     label: What branch are you running?
     options:
-      - Master
-      - Develop
-      - Nightly
-      - Other (This issue will be closed)
+      - Production
+      - Dev
   validations:
     required: true
 - type: textarea
