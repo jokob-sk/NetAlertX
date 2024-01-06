@@ -257,76 +257,80 @@ def mqtt_start(db):
     # General stats    
 
     # Create a generic device for overal stats
-    create_generic_device(client)
+    if get_setting_value('MQTT_SEND_STATS') == True: 
+        # Create a new device representing overall PiAlert stats   
+        create_generic_device(client)
 
-    # Get the data
-    row = get_device_stats(db)   
+        # Get the data
+        row = get_device_stats(db)   
 
-    columns = ["online","down","all","archived","new","unknown"]
+        columns = ["online","down","all","archived","new","unknown"]
 
-    payload = ""
+        payload = ""
 
-    # Update the values 
-    for column in columns:       
-        payload += '"'+column+'": ' + str(row[column]) +','       
+        # Update the values 
+        for column in columns:       
+            payload += '"'+column+'": ' + str(row[column]) +','       
 
-    # Publish (warap into {} and remove last ',' from above)
-    publish_mqtt(client, "system-sensors/sensor/pialert/state",              
-            '{ \
-                '+ payload[:-1] +'\
-            }'
-        )
+        # Publish (wrap into {} and remove last ',' from above)
+        publish_mqtt(client, "system-sensors/sensor/pialert/state",              
+                '{ \
+                    '+ payload[:-1] +'\
+                }'
+            )
 
+    # Generate device-specific MQTT messages if enabled
+    if get_setting_value('MQTT_SEND_DEVICES') == True:
 
-    # Specific devices
+        # Specific devices
 
-    # Get all devices
-    devices = get_all_devices(db)
+        # Get all devices
+        devices = get_all_devices(db)
 
-    sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
+        sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
 
-    mylog('minimal', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
+        mylog('minimal', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
-    
-    for device in devices:      
+        
+        for device in devices:      
 
-    
-        # Create devices in Home Assistant - send config messages
-        deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
-        deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
+        
+            # Create devices in Home Assistant - send config messages
+            deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
+            deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
-        create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
-        create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
-    
-        # update device sensors in home assistant              
+            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
+            create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
+            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
+            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
+        
+            # update device sensors in home assistant              
 
-        publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
-            '{ \
-                "last_ip": "' + device["dev_LastIP"] +'", \
-                "is_new": "' + str(device["dev_NewDevice"]) +'", \
-                "vendor": "' + sanitize_string(device["dev_Vendor"]) +'", \
-                "mac_address": "' + str(device["dev_MAC"]) +'" \
-            }'
-        ) 
+            publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
+                '{ \
+                    "last_ip": "' + device["dev_LastIP"] +'", \
+                    "is_new": "' + str(device["dev_NewDevice"]) +'", \
+                    "vendor": "' + sanitize_string(device["dev_Vendor"]) +'", \
+                    "mac_address": "' + str(device["dev_MAC"]) +'" \
+                }'
+            ) 
 
-        publish_mqtt(client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
-            '{ \
-                "is_present": "' + to_binary_sensor(str(device["dev_PresentLastScan"])) +'"\
-            }'
-        ) 
+            publish_mqtt(client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
+                '{ \
+                    "is_present": "' + to_binary_sensor(str(device["dev_PresentLastScan"])) +'"\
+                }'
+            ) 
 
-        # delete device / topic
-        #  homeassistant/sensor/mac_44_ef_bf_c4_b1_af/is_present/config
-        # client.publish(
-        #     topic="homeassistant/sensor/"+deviceId+"/is_present/config",
-        #     payload="",
-        #     qos=1,
-        #     retain=True,
-        # )        
-    # time.sleep(10)
+            # delete device / topic
+            #  homeassistant/sensor/mac_44_ef_bf_c4_b1_af/is_present/config
+            # client.publish(
+            #     topic="homeassistant/sensor/"+deviceId+"/is_present/config",
+            #     payload="",
+            #     qos=1,
+            #     retain=True,
+            # )        
+        # time.sleep(10)
 
 
 #===============================================================================

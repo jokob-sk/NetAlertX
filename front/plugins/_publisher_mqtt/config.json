@@ -267,7 +267,7 @@
             "description": [
                 {
                 "language_code": "en_us",
-                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended."
+                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md\">PiAlert Home Assistant guide</a> for details."
 				},
                 {
                 "language_code": "es_es",
@@ -493,6 +493,40 @@
                 "language_code": "es_es",
                 "string" : "Un pequeño truco: retrase la adición a la cola en caso de que el proceso se reinicie y los procesos de publicación anteriores se anulen (se necesitan ~<code>2</code>s para actualizar la configuración de un sensor en el intermediario). Probado con <code>2</code>-<code>3</code> segundos de retraso. Este retraso solo se aplica cuando se crean dispositivos (durante el primer bucle de notificación). No afecta los escaneos o notificaciones posteriores."
             }]
+        },
+        {
+            "function": "SEND_STATS",
+            "type": "boolean",
+            "default_value":true,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Send stats"
+            }
+            ],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Check to send overal device stats, such as number of Online and Offline devices."
+            }
+            ]
+        },         
+        {
+            "function": "SEND_DEVICES",
+            "type": "boolean",
+            "default_value":true,
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code":"en_us",
+                "string" : "Send devices"
+            }
+            ],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "Check to send individual devices to the broker with details, such as <code>is_new</code>, <code>is_present</code>, or <code>mac_address</code> of the devices."
+            }
+            ]
         }         
     ]
 }

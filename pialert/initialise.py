@@ -248,6 +248,7 @@ def read_config_file(filename):
 
 #-------------------------------------------------------------------------------
 # DEPERECATED soonest after 3/3/2024
+# 🤔Idea/TODO: Check and compare versions/timestamps amd only perform a replacement if config/version older than...
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
