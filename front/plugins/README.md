@@ -1,18 +1,11 @@
-## 📚 Docs for individual plugins 
+> Community translations of this file (might be out-of-date): <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">Spanish(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a>, <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">German(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a> 
 
-### 🏴 Community translations of this file
+# 📚 Docs for individual plugins 
 
-> Please note there might be a delay between English and community translations.
+>[!NOTE]
+> Please check this [Plugins debugging guide](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
-   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
-  </a> 
-
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">
-   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 20px !important;width: 20px !important;"> German (Germany)
-  </a> 
-
-### 🔌 Plugins & 📚 Docs 
+## 🔌 Plugins & 📚 Docs 
 
 | Required | CurrentScan | Unique Prefix | Data source        |   Type         | Link + Docs                                                        | 
 |----------|-------------|---------------|--------------------|----------------|---------------------------------------------------------------------|

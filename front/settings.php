@@ -245,21 +245,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         `)
     } 
     
-    // Start constructing the main settings HTML 
-    let pluginHtml = `
-          <div class="row table_row">
-            <div class="table_cell bold">
-              <i class="fa-regular fa-book fa-sm"></i>
-              <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">
-                ${getString('Gen_ReadDocs')}
-              </a>
-            </div>
-          </div>
-        `;
+
 
     let isIn = ' in '; // to open the active panel in AdminLTE
 
-    for (const group of settingGroups) {     
+    for (const group of settingGroups) {   
 
       // enabled / disabled icons
       enabledHtml = ''
@@ -276,6 +266,18 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       </div>
                       `
       }      
+
+      // Start constructing the main settings HTML 
+      let pluginHtml = `
+        <div class="row table_row">
+          <div class="table_cell bold">
+            <i class="fa-regular fa-book fa-sm"></i>
+            <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
+              ${getString('Gen_ReadDocs')}
+            </a>
+          </div>
+        </div>
+      `;
 
       headerHtml = `<div class="box box-solid box-primary panel panel-default">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">

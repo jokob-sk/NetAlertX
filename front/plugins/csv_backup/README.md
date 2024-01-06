@@ -16,4 +16,4 @@ Plugin generating CSV backups of your Devices database table, including the netw
 
 ### Usage
 
-- If the devices.csv file can be overwritten or the date and time timestamp added to the name. This is toggled with the `CSVBCKP_overwrite` setting.
+- The `devices.csv` file can be overwritten or the date and time timestamp added to the name. This is toggled with the `CSVBCKP_overwrite` setting.

@@ -290,7 +290,7 @@
             }],
             "description": [{
                 "language_code":"en_us",
-                "string" : "Enable a regular scan of rogue DHCP servers. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings."
+                "string" : "Enable a regular scan of rogue DHCP servers. If you select <code>schedule</code> the scheduling settings from below are applied. If you select <code>once</code> the scan is run only once on start of the application (container) or after you update your settings. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled."
             },
             {
                 "language_code":"es_es",

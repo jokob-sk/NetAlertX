@@ -18,7 +18,7 @@
 
 ## 📕 Basic Usage 
 
-- You will have to run the container on the host network, e.g: 
+- You will have to run the container on the `host` network, e.g: 
 
 ```yaml
 docker run -d --rm --network=host \
@@ -27,8 +27,8 @@ docker run -d --rm --network=host \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   jokobsk/pi.alert:latest
-  ```
-- The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
+```
+- The initial scan can take up to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ### Docker environment variables
 
@@ -42,22 +42,22 @@ docker run -d --rm --network=host \
 
 ### Docker paths
 
-| | Path | Description |
+| Required | Path | Description |
 | :------------- | :------------- |:-------------| 
-| ⚠ **Required** | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
-| ⚠ **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
-|Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
-|Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
-|Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
-|Optional| `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-|Optional| `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](/front/plugins/README.md).  | 
+| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
+| ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
+| | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+| | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
+| | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
+| | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
+| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](/front/plugins/README.md).  | 
 
 
-### Config (`pialert.conf`)
+### Modify the config (`pialert.conf`) only if UI is not available
 
-- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
 - The preferred way is to manage the configuration via the Settings section in the UI.
 - You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
+- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
 
 #### Important settings
 
@@ -230,11 +230,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 ## 🏅 Recognitions
 
-Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
-
-<a href="https://github.com/Macleykun">
-  <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
-</a>
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s).
 
 ## ❤ Support me
 

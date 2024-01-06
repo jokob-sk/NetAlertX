@@ -6,6 +6,7 @@ You need to specify the network interface and the network mask. You can also con
 
 > [!NOTE] 
 > Please use the UI to configure settings as that ensures that the config file is in the correct format. Edit `pialert.conf` directly only when really necessary.
+> ![settings](/front/plugins/arp_scan/arp-scan-settings.png)
 
 * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
    * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`

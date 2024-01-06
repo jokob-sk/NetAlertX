@@ -73,7 +73,7 @@
         }],
         "description": [{
             "language_code":"en_us",
-            "string" : "Specify when your PiHole device import from the PiHole database will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting."
+            "string" : "Specify when your PiHole device import from the PiHole database will run. The typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#PIHOLE_RUN_SCHD\"><code>PIHOLE_RUN_SCHD</code>setting</a>. If enabled, you must map the pihole db into your container to the <code>:/etc/pihole/pihole-FTL.db</code> mount path as specified in the <code>DB_PATH</code> setting. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled."
         },
         {
             "language_code":"es_es",

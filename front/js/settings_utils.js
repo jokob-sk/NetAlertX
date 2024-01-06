@@ -19,6 +19,25 @@
     return result;
   }
 
+  // -------------------------------------------------------------------
+  // Get plugin type base on prefix
+  function getPluginCodeName(pluginsData, prefix)
+  {
+    var result = ""
+
+    pluginsData.forEach((plug) => {
+
+      if (plug.unique_prefix == prefix ) {
+        id = plug.code_name;
+        
+        // console.log(id)
+        result = plug.code_name;        
+      }
+    });
+
+    return result;
+  }
+
 
   // -------------------------------------------------------------------
   // Get plugin type base on prefix
