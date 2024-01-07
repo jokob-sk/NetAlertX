@@ -279,7 +279,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         </div>
       `;
 
-      headerHtml = `<div class="box box-solid box-primary panel panel-default">
+      // Plugin HEADER
+      headerHtml = `<div class="box box-solid box-primary panel panel-default" id="${group}_header">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
                     <div class="panel-heading">
                       <h4 class="panel-title">
@@ -789,37 +790,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   }
   
-  
-  
-  // -----------------------------------------------------------------------------
-  function toggleAllSettings()
-  {
-    inStr = ' in';
-    allOpen = true;
-    openIcon = 'fa-angle-double-down';
-    closeIcon = 'fa-angle-double-up';    
-
-    $('.panel-collapse').each(function(){
-      if($(this).attr('class').indexOf(inStr) == -1)
-      {
-        allOpen = false;
-      }
-    })
-    
-    if(allOpen)
-    {
-      // close all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})      
-      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
-    }
-    else{
-      // open all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
-      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
-    }
-    
-  }
 
   getData()
 
