@@ -12,7 +12,7 @@
   | CurrentScan | Result of the current scan | ![Screen1][screen1]  |  
   | Devices     | The main devices database that also contains the Network tree mappings. If `ScanCycle` is set to `0` device is not scanned. | ![Screen2][screen2]  |   
   | Events | Used to collect connection/disconnection events. | ![Screen4][screen4]  |   
-  | Online_History   | Used to display the `Device presence over time` chart  | ![Screen6][screen6]  | 
+  | Online_History   | Used to display the `Device presence` chart  | ![Screen6][screen6]  | 
   | Parameters       | Used to pass values between the frontend and backend. | ![Screen7][screen7]  | 
   | Pholus_Scan      | Scan results of the Pholus python network penetration script. | ![Screen8][screen8]  |   
   | Plugins_Events   | For capturing events exposed by a plugin via the `last_result.log` file. If unique then saved into the `Plugins_Objects` table. Entries are deleted once processed and stored in the `Plugins_History` and/or `Plugins_Objects` tables.  | ![Screen10][screen10]  | 
