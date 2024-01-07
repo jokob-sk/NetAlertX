@@ -19,7 +19,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [(Experimental 🧪) On-hardware instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) 
 
-- Alternative forks: 
+- Alternative bare-metal install forks: 
   - [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
   - [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (un-maintained)
 
@@ -43,7 +43,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
 - [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
-- [Custom Icons configuration and support](/docs/ICONS.md)
+- [Custom Icon configuration and support](/docs/ICONS.md)
 
 #### 🔎 Examples
 
@@ -108,7 +108,7 @@ Suggested test cases:
 - Blank setup with no DB or config
 - Existing DB / config
 - Sending a notification (e. g. Delete a device and wait for a scan to run) and testing all notification gateways, especially:
--   Email, Apprise (e.g. via Telegram), webhook (e.g. via Discord), MQTT (e.g. via HomeAssitant)
+   - Email, Apprise (e.g. via Telegram), webhook (e.g. via Discord), MQTT (e.g. via Home Assistant)
 - Saving settings
 - Test a couple of plugins
 - Check the Error log for anything unusual
@@ -122,7 +122,7 @@ Some additional context:
 
 Before submitting a new issue please spend a couple of minutes on research:
 
-* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-common-issues) 
+* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md#common-issues) 
 * Check [💡 Closed issues](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
 * When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗
 
