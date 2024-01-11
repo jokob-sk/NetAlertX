@@ -46,6 +46,11 @@ def handleEmpty(input):
         return  input
 
 # -------------------------------------------------------------------
+# Check if a valid MAC address
+def is_mac(input):
+    return re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", input.lower())
+
+# -------------------------------------------------------------------
 def decodeBase64(inputParamBase64):
 
     # Printing the input list to check its content.

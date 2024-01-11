@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # test script by running:
-# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90
+# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90 pholuskeepdays=30
 
 import os
 import pathlib
@@ -18,7 +18,7 @@ sys.path.append('/home/pi/pialert/pialert')
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath
+from const import logPath, pialertPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -35,16 +35,16 @@ def main():
     
     values = parser.parse_args()
 
-    PLUGINS_KEEP_HIST     = values.pluginskeephistory.split('=')[1]
-    HRS_TO_KEEP_NEWDEV    = values.hourstokeepnewdevice.split('=')[1]
-    DAYS_TO_KEEP_EVENTS   = values.daystokeepevents.split('=')[1]
-    PHOLUS_DAYS_DATA      = values.pholuskeepdays.split('=')[1]
+    PLUGINS_KEEP_HIST     = int(values.pluginskeephistory.split('=')[1])
+    HRS_TO_KEEP_NEWDEV    = int(values.hourstokeepnewdevice.split('=')[1])
+    DAYS_TO_KEEP_EVENTS   = int(values.daystokeepevents.split('=')[1])
+    PHOLUS_DAYS_DATA      = int(values.pholuskeepdays.split('=')[1])
 
     mylog('verbose', ['[DBCLNP] In script'])     
 
 
     # Execute cleanup/upkeep    
-    cleanup_database('/home/pi/pialert/db/pialert.db', DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST)
+    cleanup_database(fullDbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST)
     
     mylog('verbose', ['[DBCLNP] Cleanup complete file '])   
     

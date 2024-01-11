@@ -15,7 +15,6 @@ import smtplib
 import socket
 import ssl
 
-# Replace these paths with the actual paths to your Pi.Alert directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 # PiAlert modules
@@ -110,12 +109,12 @@ def send(pHTML, pText):
 
     if get_setting_value("LOG_LEVEL") == 'debug':
 
-        send_email(msg)
+        send_email(msg,smtp_timeout)
 
     else:
 
         try:
-            send_email(msg)
+            send_email(msg,smtp_timeout)
             
         except smtplib.SMTPAuthenticationError as e:            
             mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
@@ -133,7 +132,7 @@ def send(pHTML, pText):
             mylog('none', ['      ERROR: ', str(e)])      
 
 # ----------------------------------------------------------------------------------
-def send_email(msg):
+def send_email(msg,smtp_timeout):
     # Send mail
     if get_setting_value('SMTP_FORCE_SSL'):
         mylog('debug', ['SMTP_FORCE_SSL == True so using .SMTP_SSL()'])

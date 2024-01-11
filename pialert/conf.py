@@ -32,12 +32,10 @@ arpscan_devices = []
 SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL       = 'verbose' 
 TIMEZONE        = 'Europe/Berlin'
-DIG_GET_IP_ARG  = '-4 myip.opendns.com @resolver1.opendns.com' 
 UI_LANG         = 'English' 
 UI_PRESENCE     = ['online', 'offline', 'archived']  
 PIALERT_WEB_PROTECTION  = False 
 PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' 
-INCLUDED_SECTIONS       = ['new_devices', 'down_devices', 'events']   
 DAYS_TO_KEEP_EVENTS     = 90 
 REPORT_DASHBOARD_URL    = 'http://pi.alert/' 
 

@@ -20,7 +20,7 @@ sys.path.append('/home/pi/pialert/pialert')
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, check_IP_format
+from helper import timeNowTZ, check_IP_format, get_setting_value
 from const import logPath, pialertPath, fullDbPath
 
 
@@ -37,19 +37,19 @@ def main():
     parser = argparse.ArgumentParser(description='Check internet connectivity and IP')
     
     parser.add_argument('prev_ip', action="store", help="Previous IP address to compare against the current IP")
-    parser.add_argument('DIG_GET_IP_ARG', action="store", help="Arguments for the 'dig' command to retrieve the IP address")
+    parser.add_argument('DIG_GET_IP_ARG', action="store", help="Arguments for the 'dig' command to retrieve the IP address") # unused
 
     values = parser.parse_args()
 
     PREV_IP         = values.prev_ip.split('=')[1]        
-    DIG_GET_IP_ARG  = values.DIG_GET_IP_ARG.split('=b')[1]   # byte64 encoded
+    DIG_GET_IP_ARG  = get_setting_value("INTRNT_DIG_GET_IP_ARG")
 
-    mylog('verbose', [f'[{pluginName}] DIG_GET_IP_ARG: ', DIG_GET_IP_ARG])     
+    mylog('verbose', [f'[{pluginName}] INTRNT_DIG_GET_IP_ARG: ', DIG_GET_IP_ARG])     
 
     # Decode the base64-encoded value to get the actual value in ASCII format.
-    DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG).decode('ascii')
+    # DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG).decode('ascii')
     
-    mylog('verbose', [f'[{pluginName}] DIG_GET_IP_ARG resolved: {DIG_GET_IP_ARG} ']) 
+    # mylog('verbose', [f'[{pluginName}] DIG_GET_IP_ARG resolved: {DIG_GET_IP_ARG} ']) 
 
     # perform the new IP lookup
     new_internet_IP, cmd_output = check_internet_IP( PREV_IP, DIG_GET_IP_ARG)   

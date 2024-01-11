@@ -123,7 +123,7 @@ def main ():
             # determine run/scan type based on passed time
             # --------------------------------------------
            
-            # Run splugin scripts which are set to run every timne after a scans finished            
+            # Runs plugin scripts which are set to run every timne after a scans finished            
             pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)
 
             
@@ -151,32 +151,19 @@ def main ():
             # ----------------------------------------
 
             # send all configured notifications
-            notiStructure = get_notifications(db)
+            final_json = get_notifications(db)
 
             # Write the notifications into the DB
             notification    = Notification_obj(db)
-            notificationObj = notification.create(notiStructure.json, notiStructure.text, notiStructure.html, "")
+            notificationObj = notification.create(final_json, "")
 
             # run all enabled publisher gateways 
             if notificationObj.HasNotifications:
                 pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
+                notification.clearPendingEmailFlag()
 
-                # Clean Pending Alert Events
-                sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
-                                    WHERE dev_MAC IN (
-                                        SELECT eve_MAC FROM Events
-                                            WHERE eve_PendingAlertEmail = 1
-                                    )
-                             """, (timeNowTZ(),) )
-                sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                                    WHERE eve_PendingAlertEmail = 1""")
-
-                # clear plugin events
-                sql.execute ("DELETE FROM Plugins_Events")
-
-                # DEBUG - print number of rows updated
-                mylog('minimal', ['[Notification] Notifications changes: ', sql.rowcount])
+                
             else:
                 mylog('verbose', ['[Notification] No changes to report'])
 

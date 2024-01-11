@@ -41,8 +41,8 @@ def print_scan_stats(db):
     SELECT
         (SELECT COUNT(*) FROM CurrentScan) AS devices_detected,
         (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE dev_MAC = cur_MAC)) AS new_devices,
-        (SELECT COUNT(*) FROM Devices WHERE dev_AlertDeviceDown = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE dev_MAC = cur_MAC)) AS down_alerts,
-        (SELECT COUNT(*) FROM Devices WHERE dev_AlertDeviceDown = 1 AND dev_PresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE dev_MAC = cur_MAC)) AS new_down_alerts,
+        (SELECT COUNT(*) FROM Devices WHERE dev_AlertDeviceDown != 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE dev_MAC = cur_MAC)) AS down_alerts,
+        (SELECT COUNT(*) FROM Devices WHERE dev_AlertDeviceDown != 0 AND dev_PresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE dev_MAC = cur_MAC)) AS new_down_alerts,
         (SELECT COUNT(*) FROM Devices WHERE dev_PresentLastScan = 0) AS new_connections,
         (SELECT COUNT(*) FROM Devices WHERE dev_PresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE dev_MAC = cur_MAC)) AS disconnections,
         (SELECT COUNT(*) FROM Devices, CurrentScan WHERE dev_MAC = cur_MAC AND dev_LastIP <> cur_IP) AS ip_changes,
@@ -200,16 +200,29 @@ def update_devices_data_from_scan (db):
                     WHERE NOT EXISTS (SELECT 1 FROM CurrentScan 
                                       WHERE dev_MAC = cur_MAC) """)
 
-    # Update IP & Vendor
-    mylog('debug', '[Update Devices] - 3 LastIP & Vendor')
+    # Update IP 
+    mylog('debug', '[Update Devices] - 3 LastIP ')
     sql.execute("""UPDATE Devices
                     SET dev_LastIP = (SELECT cur_IP FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC),
-                        dev_Vendor = (SELECT cur_Vendor FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC
-                                        )
+                                      WHERE dev_MAC = cur_MAC)
                     WHERE EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE dev_MAC = cur_MAC) """)
+
+    # Update only devices with empty or NULL vendors
+    mylog('debug', '[Update Devices] - 3 Vendor')
+    sql.execute("""UPDATE Devices
+                    SET dev_Vendor = (
+                        SELECT cur_Vendor
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_Vendor = "" OR dev_Vendor IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
 
     # Update (unknown) or (name not found) Names if available
     mylog('debug','[Update Devices] - 4 Unknown Name')

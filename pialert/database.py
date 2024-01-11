@@ -24,7 +24,7 @@ class DB():
     def open (self):
         # Check if DB is open
         if self.sql_connection != None :
-            mylog('debug','openDB: databse already open')
+            mylog('debug','openDB: database already open')
             return
 
         mylog('none', '[Database] Opening DB' )
@@ -42,7 +42,7 @@ class DB():
     #-------------------------------------------------------------------------------
     def commitDB (self):
         if self.sql_connection == None :
-            mylog('debug','commitDB: databse is not open')
+            mylog('debug','commitDB: database is not open')
             return False
 
         # Commit changes to DB
@@ -57,7 +57,7 @@ class DB():
     #-------------------------------------------------------------------------------    
     def get_sql_array(self, query):
         if self.sql_connection == None :
-            mylog('debug','getQueryArray: databse is not open')
+            mylog('debug','getQueryArray: database is not open')
             return
 
         self.sql.execute(query)

@@ -349,6 +349,7 @@ function sanitize(data)
 // -----------------------------------------------------------------------------
 function numberArrayFromString(data)
 {
+  console.log(data)
   data = JSON.parse(sanitize(data));
   return data.replace(/\[|\]/g, '').split(',').map(Number);
 }
@@ -514,15 +515,40 @@ function getNameByMacAddress(macAddress) {
 
 // -----------------------------------------------------------------------------
 // A function used to make the IP address orderable
+function isValidIPv6(ipAddress) {
+  // Regular expression for IPv6 validation
+  const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,7}:|^([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}$|^([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}$|^([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}$|^([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}$|^([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})$/;
+
+  return ipv6Regex.test(ipAddress);
+}
+
 function formatIPlong(ipAddress) {
-  const parts = ipAddress.split('.');
-  if (parts.length !== 4) {
-      throw new Error('Invalid IP address format');
+  if (ipAddress.includes(':') && isValidIPv6(ipAddress)) {
+    const parts = ipAddress.split(':');
+
+    return parts.reduce((acc, part, index) => {
+      if (part === '') {
+        const remainingGroups = 8 - parts.length + 1;
+        return acc << (16 * remainingGroups);
+      }
+
+      const hexValue = parseInt(part, 16);
+      return acc | (hexValue << (112 - index * 16));
+    }, 0);
+  } else {
+    // Handle IPv4 address
+    const parts = ipAddress.split('.');
+
+    if (parts.length !== 4) {
+      console.log("⚠ Invalid IPv4 address: " + ipAddress);
+      return -1; // or any other default value indicating an error
+    }
+
+    return (parseInt(parts[0]) << 24) |
+           (parseInt(parts[1]) << 16) |
+           (parseInt(parts[2]) << 8) |
+           parseInt(parts[3]);
   }
-  return (parseInt(parts[0]) << 24) |
-         (parseInt(parts[1]) << 16) |
-         (parseInt(parts[2]) << 8) |
-         parseInt(parts[3]);
 }
 
 // -----------------------------------------------------------------------------

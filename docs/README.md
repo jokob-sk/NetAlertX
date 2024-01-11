@@ -1,16 +1,27 @@
 ## Documentation overview
 
-In the app hover over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.
+<details>
+  <summary>:information_source: In the app hover over settings or fields/labels or click blue in-app ❔ (question-mark) icons to get to relevant documentation pages.</summary>
 
-![In-app help](/docs/img/GENERAL/in-app-help.png)
+  ![In-app help](/docs/img/GENERAL/in-app-help.png)
+
+</details>
 
 There is also an in-app Help / FAQ section that should be answering frequently asked questions.
 
 ### 📥 Installation
 
- ⚠ Only tested as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
- > Check out [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) if you want to install Pi.Alert on the server directly or original instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/)
+#### 🐳 Docker (Fully supported)
 
+- The main installation method is as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
+
+#### 💻 Bare-metal / On-server (Experimental/community supported 🧪)
+
+- [(Experimental 🧪) On-hardware instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) 
+
+- Alternative bare-metal install forks: 
+  - [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
+  - [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (un-maintained)
 
 ### 📚 Table of contents
 
@@ -18,6 +29,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Debugging tips](/docs/DEBUG_TIPS.md)
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
+- [Troubleshooting Plugins](/docs/DEBUG_PLUGINS.md)
 
 #### 🔝 Popular/Suggested
 
@@ -31,7 +43,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
 - [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
-- [Custom Icons configuration and support](/docs/ICONS.md)
+- [Custom Icon configuration and support](/docs/ICONS.md)
 
 #### 🔎 Examples
 
@@ -96,7 +108,7 @@ Suggested test cases:
 - Blank setup with no DB or config
 - Existing DB / config
 - Sending a notification (e. g. Delete a device and wait for a scan to run) and testing all notification gateways, especially:
--   Email, Apprise (e.g. via Telegram), webhook (e.g. via Discord), MQTT (e.g. via HomeAssitant)
+   - Email, Apprise (e.g. via Telegram), webhook (e.g. via Discord), MQTT (e.g. via Home Assistant)
 - Saving settings
 - Test a couple of plugins
 - Check the Error log for anything unusual
@@ -110,7 +122,7 @@ Some additional context:
 
 Before submitting a new issue please spend a couple of minutes on research:
 
-* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/tree/main/dockerfiles#-common-issues) 
+* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md#common-issues) 
 * Check [💡 Closed issues](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
 * When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗
 

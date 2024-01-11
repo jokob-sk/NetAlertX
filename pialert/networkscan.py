@@ -187,7 +187,7 @@ def insert_events (db):
                         eve_PendingAlertEmail)
                     SELECT dev_MAC, dev_LastIP, '{startTime}', 'Device Down', '', 1
                     FROM Devices 
-                    WHERE dev_AlertDeviceDown = 1
+                    WHERE dev_AlertDeviceDown != 0
                       AND dev_PresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC

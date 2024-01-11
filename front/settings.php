@@ -128,7 +128,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_publisher_icon");?>"></i>  <?= lang("settings_publisher_label");?>       
+            <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        
           <div class =" col-sm-12" id="publisher_content"></div>
       </div> 
@@ -202,7 +202,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     overviewSections      = [
                               'device_scanners',  
                               'other_scanners', 
-                              'publishers_enabled'                                                          
+                              'publishers'                                                          
                             ]
     overviewSectionsHtml  = [
                               pluginCards(enabledDeviceScanners,['RUN', 'RUN_SCHD']),
@@ -245,21 +245,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         `)
     } 
     
-    // Start constructing the main settings HTML 
-    let pluginHtml = `
-          <div class="row table_row">
-            <div class="table_cell bold">
-              <i class="fa-regular fa-book fa-sm"></i>
-              <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins" target="_blank">
-                ${getString('Gen_ReadDocs')}
-              </a>
-            </div>
-          </div>
-        `;
+
 
     let isIn = ' in '; // to open the active panel in AdminLTE
 
-    for (const group of settingGroups) {     
+    for (const group of settingGroups) {   
 
       // enabled / disabled icons
       enabledHtml = ''
@@ -277,7 +267,20 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       `
       }      
 
-      headerHtml = `<div class="box box-solid box-primary panel panel-default">
+      // Start constructing the main settings HTML 
+      let pluginHtml = `
+        <div class="row table_row">
+          <div class="table_cell bold">
+            <i class="fa-regular fa-book fa-sm"></i>
+            <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
+              ${getString('Gen_ReadDocs')}
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Plugin HEADER
+      headerHtml = `<div class="box box-solid box-primary panel panel-default" id="${group}_header">
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
                     <div class="panel-heading">
                       <h4 class="panel-title">
@@ -787,37 +790,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   }
   
-  
-  
-  // -----------------------------------------------------------------------------
-  function toggleAllSettings()
-  {
-    inStr = ' in';
-    allOpen = true;
-    openIcon = 'fa-angle-double-down';
-    closeIcon = 'fa-angle-double-up';    
-
-    $('.panel-collapse').each(function(){
-      if($(this).attr('class').indexOf(inStr) == -1)
-      {
-        allOpen = false;
-      }
-    })
-    
-    if(allOpen)
-    {
-      // close all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})      
-      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
-    }
-    else{
-      // open all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
-      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
-    }
-    
-  }
 
   getData()
 

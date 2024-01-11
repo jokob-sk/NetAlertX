@@ -1,49 +1,45 @@
-## 📚 Docs for individual plugins 
+> Community translations of this file (might be out-of-date): <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">Spanish(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a>, <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">German(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a> 
 
-### 🏴 Community translations of this file
+# 📚 Docs for individual plugins 
 
-> Please note there might be a delay between English and community translations.
+>[!NOTE]
+> Please check this [Plugins debugging guide](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
-   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
-  </a> 
+## 🔌 Plugins & 📚 Docs 
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">
-   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 20px !important;width: 20px !important;"> German (Germany)
-  </a> 
-
-### 🔌 Plugins & 📚 Docs 
-
-| Required | CurrentScan | Unique Prefix | Data source        |   Type       | Link + Docs                                                      | 
-|----------|-------------|---------------|--------------------|--------------|------------------------------------------------------------------|
-|          |             | APPRISE       | Script             | 💬 publisher | 📚[_publisher_apprise](/front/plugins/_publisher_apprise/)      |
-|          |    Yes      | ARPSCAN       | Script             | 🔍dev scanner| 📚[arp_scan](/front/plugins/arp_scan/)                          |
-|          |             | CSVBCKP       | Script             | ⚙ system     | 📚[csv_backup](/front/plugins/csv_backup/)                      |
-|  Yes*    |             | DBCLNP        | Script             | ⚙ system     | 📚[db_cleanup](/front/plugins/db_cleanup/)                      |
-|          |             | DDNS          | Script             | ⚙ system     | 📚[ddns_update](/front/plugins/ddns_update/)                    |
-|          |    Yes      | DHCPLSS       | Script             | 🔍dev scanner| 📚[dhcp_leases](/front/plugins/dhcp_leases/)                    |
-|          |             | DHCPSRVS      | Script             | ♻ other      | 📚[dhcp_servers](/front/plugins/dhcp_servers/)                  |
-|          |    Yes      | INTRNT        | Script             | 🔍dev scanner| 📚[internet_ip](/front/plugins/internet_ip/)                    |
-|          |             | INTRSPD       | Script             | ♻ other      | 📚[internet_speedtest](/front/plugins/internet_speedtest/)      |
-|  Yes     |             | NEWDEV        | Template           | ⚙ system     | 📚[newdev_template](/front/plugins/newdev_template/)            |
-|          |             | PHOLUS        | Script             | ♻ other      | 📚[pholus_scan](/front/plugins/pholus_scan/)                    |
-|          |             | MQTT          | Script             | 💬 publisher | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)            |
-|          |             | NMAP          | Script             | ♻ other      | 📚[nmap_scan](/front/plugins/nmap_scan/)                        |
-|          |             | NTFY          | Script             | 💬 publisher | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)            |
-|          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner| 📚[pihole_scan](/front/plugins/pihole_scan/)                    |
-|          |             | PUSHSAFER     | Script             | 💬 publisher | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)  |
-|          |             | SETPWD        | Script             | ⚙ system     | 📚[set_password](/front/plugins/set_password/)                  |
-|          |             | SMTP          | Script             | 💬 publisher | 📚[_publisher_email](/front/plugins/_publisher_email/)          |
-|          |             | SNMPDSC       | Script             | 🔍dev scanner| 📚[snmp_discovery](/front/plugins/snmp_discovery/)              |
-|          |    Yes**    | UNDIS         | Script             | ♻ other      | 📚[undiscoverables](/front/plugins/undiscoverables/)            |
-|          |    Yes      | UNFIMP        | Script             | 🔍dev scanner| 📚[unifi_import](/front/plugins/unifi_import/)                  |
-|          |             | VNDRPDT       | Script             | ⚙ system     | 📚[vendor_update](/front/plugins/vendor_update/)                |
-|          |             | WEBHOOK       | Script             | 💬 publisher | 📚[_publisher_webhook](/front/plugins/_publisher_webhook/)      |
-|          |             | WEBMON        | Script             | ♻ other      | 📚[website_monitor](/front/plugins/website_monitor/)            |
-|  N/A     |             | N/A           | SQL query          |               | N/A, but the External SQLite DB plugins work similar            |
+| Required | CurrentScan | Unique Prefix | Data source        |   Type         | Link + Docs                                                        | 
+|----------|-------------|---------------|--------------------|----------------|---------------------------------------------------------------------|
+|          |             | APPRISE       | Script             | 💬 publisher   | 📚[_publisher_apprise](/front/plugins/_publisher_apprise/)          |
+|          |    Yes      | ARPSCAN       | Script             | 🔍dev scanner  | 📚[arp_scan](/front/plugins/arp_scan/)                              |
+|          |             | CSVBCKP       | Script             | ⚙ system       | 📚[csv_backup](/front/plugins/csv_backup/)                          |
+|  Yes*    |             | DBCLNP        | Script             | ⚙ system       | 📚[db_cleanup](/front/plugins/db_cleanup/)                          |
+|          |             | DDNS          | Script             | ⚙ system       | 📚[ddns_update](/front/plugins/ddns_update/)                        |
+|          |    Yes      | DHCPLSS       | Script             | 🔍dev scanner  | 📚[dhcp_leases](/front/plugins/dhcp_leases/)                        |
+|          |             | DHCPSRVS      | Script             | ♻ other        | 📚[dhcp_servers](/front/plugins/dhcp_servers/)                      |
+|          |    Yes      | INTRNT        | Script             | 🔍dev scanner  | 📚[internet_ip](/front/plugins/internet_ip/)                        |
+|          |             | INTRSPD       | Script             | ♻ other        | 📚[internet_speedtest](/front/plugins/internet_speedtest/)          |
+|          |             | MAINT         | Script             | ⚙ system       | 📚[maintenance](/front/plugins/maintenance/)                        |
+|          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
+|  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)                |
+|          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                            |
+|  Yes     |             | NTFPRCS       | Template           | ⚙ system       | 📚[notification_processing](/front/plugins/notification_processing/)|
+|          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
+|          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                        |
+|          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner  | 📚[pihole_scan](/front/plugins/pihole_scan/)                        |
+|          |             | PUSHSAFER     | Script             | 💬 publisher   | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
+|          |             | SETPWD        | Script             | ⚙ system       | 📚[set_password](/front/plugins/set_password/)                      |
+|          |             | SMTP          | Script             | 💬 publisher   | 📚[_publisher_email](/front/plugins/_publisher_email/)              |
+|          |    Yes      | SNMPDSC       | Script             | 🔍dev scanner  | 📚[snmp_discovery](/front/plugins/snmp_discovery/)                  |
+|          |    Yes**    | UNDIS         | Script             | ♻ other        | 📚[undiscoverables](/front/plugins/undiscoverables/)                |
+|          |    Yes      | UNFIMP        | Script             | 🔍dev scanner  | 📚[unifi_import](/front/plugins/unifi_import/)                      |
+|          |             | VNDRPDT       | Script             | ⚙ system       | 📚[vendor_update](/front/plugins/vendor_update/)                    |
+|          |             | WEBHOOK       | Script             | 💬 publisher   | 📚[_publisher_webhook](/front/plugins/_publisher_webhook/)          |
+|          |             | WEBMON        | Script             | ♻ other        | 📚[website_monitor](/front/plugins/website_monitor/)                |
+|  N/A     |             | N/A           | SQL query          |                 | N/A, but the External SQLite DB plugins work similarly             |
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
+>
 > \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
 
 > [!NOTE] 
@@ -89,13 +85,13 @@ Follow the below very carefully and check example plugin(s) if you'd like to wri
 * Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
 * ...
 
-## ❗ Known issues:
+## ❗ Known limitations:
 
 These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
 
-* Existing plugin objects sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
+* Existing plugin objects are sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
 * Occasional (experienced twice) hanging of processing plugin script file.
-UI displays outdated values until the API endpoints get refreshed. 
+* UI displays outdated values until the API endpoints get refreshed. 
 
 ## Plugin file structure overview 
 
@@ -141,7 +137,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
-| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general>|<system>|<scanner>|<publisher>`). | 
+| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general|system|scanner|other|publisher>`). | 
 
 
 > 🔎Example
@@ -398,7 +394,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no databse source column. 
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
 
 
 >🔍 Example:
@@ -641,7 +637,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
 | `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |
-| `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. ``<b>${value}<b>`` ) |
+| `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. `'<b>${value}<b>'` (replace ' with ` in your code) ) |
             
 
 > [!NOTE] 

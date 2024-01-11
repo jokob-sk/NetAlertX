@@ -241,7 +241,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
                 if len(columns) == 9:
                     # Create a tuple containing values to be inserted into the database.
                     # Each value corresponds to a column in the table in the order of the columns.
-                    # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class.
+                    # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
                     sqlParams.append(
                         (
                             0,                          # "Index" placeholder
@@ -281,7 +281,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
+                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
                 sqlParams.append(
                     (
                         0,                          # "Index" placeholder
@@ -327,6 +327,8 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         try:
             sql.execute ("ATTACH DATABASE '"+ fullSqlitePath +"' AS EXTERNAL_"+plugin["unique_prefix"])
             arr = db.get_sql_array (q) 
+            sql.execute ("DETACH DATABASE EXTERNAL_"+plugin["unique_prefix"])
+             
         except sqlite3.Error as e:            
             mylog('none',[f'[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
             mylog('none',[f'[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: ', e])
@@ -337,7 +339,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             if len(row) == 9 and (row[0] in ['','null']) == False :
                 # Create a tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events databse tables and can be used as input for the plugin_object_class
+                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
                 sqlParams.append((
                     0,                            #  "Index" placeholder
                     plugin["unique_prefix"],      #  "Plugin" 
@@ -750,6 +752,9 @@ def check_and_run_user_event(db, pluginsState):
             pluginsState = handle_test(param, db, pluginsState)
         if event == 'run':
             pluginsState = handle_run(param, db, pluginsState)
+        if event == 'update_api':
+            # update API endpoints
+            update_api(db, False, param.split(','))  
 
     # Clear the log file
     open(logFile, "w").close()
@@ -784,7 +789,7 @@ def handle_test(runType, db, pluginsState):
     
     # Create fake notification
     notification    = Notification_obj(db)
-    notificationObj = notification.create(sample_json, sample_txt, sample_html, "")
+    notificationObj = notification.create(sample_json, "")
 
     # Run test
     pluginsState = handle_run(runType, db, pluginsState)

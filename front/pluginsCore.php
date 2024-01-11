@@ -173,7 +173,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
             
             for (const option of dbColumnDef.options) {
                 if (option.type === type) {
-                    console.log(option.param)
+                    // console.log(option.param)
                     value =  eval(option.param);
                 }
             }

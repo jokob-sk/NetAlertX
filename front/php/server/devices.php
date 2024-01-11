@@ -77,7 +77,7 @@ function getDeviceData() {
 
   // Device Data
   $sql = 'SELECT rowid, *,
-            CASE WHEN dev_AlertDeviceDown=1 AND dev_PresentLastScan=0 THEN "Down"
+            CASE WHEN dev_AlertDeviceDown !=0 AND dev_PresentLastScan=0 THEN "Down"
                  WHEN dev_PresentLastScan=1 THEN "On-line"
                  ELSE "Off-line" END as dev_Status
           FROM Devices
@@ -626,7 +626,7 @@ function getDevicesList() {
 
   $sql = 'SELECT * FROM (
               SELECT rowid, *, CASE
-                      WHEN t1.dev_AlertDeviceDown=1 AND t1.dev_PresentLastScan=0 THEN "Down"
+                      WHEN t1.dev_AlertDeviceDown !=0 AND t1.dev_PresentLastScan=0 THEN "Down"
                       WHEN t1.dev_NewDevice=1 THEN "New"
                       WHEN t1.dev_PresentLastScan=1 THEN "On-line"
                       ELSE "Off-line"  END AS dev_Status
@@ -1133,14 +1133,14 @@ function copyFromDevice() {
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {
   switch ($deviceStatus) {
-    case 'all':        return 'WHERE dev_Archived=0';                                                      break;
-    case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                            break;
-    case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                   break;
-    case 'new':        return 'WHERE dev_Archived=0 AND dev_NewDevice=1';                                  break;
-    case 'down':       return 'WHERE dev_Archived=0 AND dev_AlertDeviceDown=1 AND dev_PresentLastScan=0';  break;
-    case 'archived':   return 'WHERE dev_Archived=1';                                                      break;
-    default:           return 'WHERE 1=0';                                                                 break;
-  }
+    case 'all':        return 'WHERE dev_Archived=0';                                                        break;
+    case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                              break;
+    case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                     break;
+    case 'new':        return 'WHERE dev_Archived=0 AND dev_NewDevice=1';                                    break;
+    case 'down':       return 'WHERE dev_Archived=0 AND dev_AlertDeviceDown !=0 AND dev_PresentLastScan=0';  break;
+    case 'archived':   return 'WHERE dev_Archived=1';                                                        break;
+    default:           return 'WHERE 1=0';                                                                   break;
+  }  
 }
 
 

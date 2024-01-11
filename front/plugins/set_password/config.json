@@ -107,7 +107,7 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": "readonly",
       "default_value": "/home/pi/pialert/back/pialert-cli set_password {password}",
       "options": [],
       "localized": [

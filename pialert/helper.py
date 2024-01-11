@@ -37,6 +37,12 @@ def timeNowTZ():
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
+def get_timezone_offset():    
+    now = datetime.datetime.now(conf.tz)
+    offset_hours = now.utcoffset().total_seconds() / 3600        
+    offset_formatted =  "{:+03d}:{:02d}".format(int(offset_hours), int((offset_hours % 1) * 60))
+    return offset_formatted
+
 
 #-------------------------------------------------------------------------------
 # App state
@@ -470,58 +476,6 @@ def resolve_device_name_pholus (pMAC, pIP, allRes, nameNotFound, match_IP = Fals
         if 'PTR Class:IN' in value and len(value.split('"')) > 1:
             return cleanDeviceName(value.split('"')[1], match_IP)
 
-
-    # # airplay matches contain a lot of information
-    # # Matches for example: 
-    # # Brand Tv (50)._airplay._tcp.local. TXT Class:32769 "acl=0 deviceid=66:66:66:66:66:66 features=0x77777,0x38BCB46 rsf=0x3 fv=p20.T-FFFFFF-03.1 flags=0x204 model=XXXX manufacturer=Brand serialNumber=XXXXXXXXXXX protovers=1.1 srcvers=777.77.77 pi=FF:FF:FF:FF:FF:FF psi=00000000-0000-0000-0000-FFFFFFFFFF gid=00000000-0000-0000-0000-FFFFFFFFFF gcgl=0 pk=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '._airplay._tcp.local. TXT Class:32769' in str(allRes[i]["Value"]) :
-    #         return cleanDeviceName(allRes[i]["Value"].split('._airplay._tcp.local. TXT Class:32769')[0], match_IP)
-    
-    # # second best - contains airplay
-    # # Matches for example: 
-    # # _airplay._tcp.local. PTR Class:IN "Brand Tv (50)._airplay._tcp.local."
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_airplay._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('._googlecast') not in allRes[i]["Value"]:
-    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], match_IP)    
-
-    # # Contains PTR Class:32769
-    # # Matches for example: 
-    # # 3.1.168.192.in-addr.arpa. PTR Class:32769 "MyPc.local."
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:32769' in allRes[i]["Value"]:
-    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], match_IP)
-
-    # # Contains AAAA Class:IN
-    # # Matches for example: 
-    # # DESKTOP-SOMEID.local. AAAA Class:IN "fe80::fe80:fe80:fe80:fe80"
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'AAAA Class:IN' in allRes[i]["Value"]:
-    #         return cleanDeviceName(allRes[i]["Value"].split('.local.')[0], match_IP)
-
-    # # Contains _googlecast._tcp.local. PTR Class:IN
-    # # Matches for example: 
-    # # _googlecast._tcp.local. PTR Class:IN "Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77._googlecast._tcp.local."
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and '_googlecast._tcp.local. PTR Class:IN' in allRes[i]["Value"] and ('Google-Cast-Group') not in allRes[i]["Value"]:
-    #         return cleanDeviceName(allRes[i]["Value"].split('"')[1], match_IP)
-
-    # # Contains A Class:32769
-    # # Matches for example: 
-    # # Android.local. A Class:32769 "192.168.1.6"
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and ' A Class:32769' in allRes[i]["Value"]:
-    #         return cleanDeviceName(allRes[i]["Value"].split(' A Class:32769')[0], match_IP)
-
-
-    # # # Contains PTR Class:IN
-    # # Matches for example: 
-    # # _esphomelib._tcp.local. PTR Class:IN "ceiling-light-1._esphomelib._tcp.local."
-    # for i in pholusMatchesIndexes:
-    #     if checkIPV4(allRes[i]['IP_v4_or_v6']) and 'PTR Class:IN' in allRes[i]["Value"]:
-    #         if allRes[i]["Value"] and len(allRes[i]["Value"].split('"')) > 1:
-    #             return cleanDeviceName(allRes[i]["Value"].split('"')[1], match_IP)
-
     return nameNotFound
     
     
@@ -709,9 +663,9 @@ def checkNewVersion():
 
         dateTimeStr = data[0]["published_at"]
 
-        realeaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%SZ').strftime('%s'))
+        releaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%S%z').timestamp())
 
-        if realeaseTimestamp > buildTimestamp + 600:
+        if releaseTimestamp > buildTimestamp + 600:
             mylog('none', ["[Version check] New version of the container available!"])
             newVersion = True       
         else:

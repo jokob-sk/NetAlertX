@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
 
-# PiAlert 💻🔍 Network security scanner
+# PiAlert 💻🔍 Network security scanner & notification framework
 
   | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
@@ -18,7 +18,7 @@
 
 ## 📕 Basic Usage 
 
-- You will have to run the container on the host network, e.g: 
+- You will have to run the container on the `host` network, e.g: 
 
 ```yaml
 docker run -d --rm --network=host \
@@ -27,36 +27,37 @@ docker run -d --rm --network=host \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   jokobsk/pi.alert:latest
-  ```
-- The initial scan can take up-to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
+```
+- The initial scan can take up to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
 ### Docker environment variables
 
 | Variable | Description | Default |
 | :------------- |:-------------| -----:|
 | `PORT`      |Port of the web interface  |  `20211` |
+| `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
 |`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
 
 ### Docker paths
 
-| | Path | Description |
+| Required | Path | Description |
 | :------------- | :------------- |:-------------| 
-| **Required** | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
-| **Required** | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
-|Optional| `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
-|Optional| `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
-|Optional| `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
-|Optional| `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-|Optional| `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](/front/plugins/README.md).  | 
+| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
+| ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
+| | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+| | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
+| | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
+| | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
+| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](/front/plugins/README.md).  | 
 
 
-### Config (`pialert.conf`)
+### Modify the config (`pialert.conf`) only if UI is not available
 
-- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
 - The preferred way is to manage the configuration via the Settings section in the UI.
 - You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
+- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
 
 #### Important settings
 
@@ -81,6 +82,20 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 
 > [!NOTE]
 > It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
+
+
+#### 🧭 Community guides
+
+> Use the official installation guides at first and use community content as suplementary material. Open an issue if you'd like to add your link to the list 🙏 
+
+- 📄 [How to Install Pi.Alert on Your Synology NAS - Marius hosting (English)](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
+- 📄 [시놀/헤놀에서 네트워크 스캐너 Pi.Alert Docker로 설치 및 사용하기 (Korean)](https://blog.dalso.org/article/%EC%8B%9C%EB%86%80-%ED%97%A4%EB%86%80%EC%97%90%EC%84%9C-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%8A%A4%EC%BA%90%EB%84%88-pi-alert-docker%EB%A1%9C-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%82%AC%EC%9A%A9) (July 2023)
+- 📄 [网络入侵探测器Pi.Alert (Chinese)](https://codeantenna.com/a/VgUvIAjZ7J) (May 2023)
+- ▶ [Pi.Alert auf Synology & Docker by - Jürgen Barth (German)](https://www.youtube.com/watch?v=-ouvA2UNu-A) (March 2023)
+- ▶ [Top Docker Container for Home Server Security - VirtualizationHowto (English)](https://www.youtube.com/watch?v=tY-w-enLF6Q) (March 2023)
+- ▶ [Pi.Alert or WatchYourLAN can alert you to unknown devices appearing on your WiFi or LAN network - Danie van der Merwe (English)](https://www.youtube.com/watch?v=v6an9QG2xF0) (November 2022)
+
+> Ordered by last update time. 
  
 ### **Common issues** 
 
@@ -88,7 +103,10 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 
 ⚠ Check also common issues and [debugging tips](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md). 
 
-## 📄 Examples
+> [!NOTE]
+> You can bulk-update devices via the [CSV import method](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md).
+
+## 📄 docker-compose.yml Examples
 
 ### Example 1
 
@@ -212,11 +230,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 ## 🏅 Recognitions
 
-Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s):
-
-<a href="https://github.com/Macleykun">
-  <img src="https://avatars.githubusercontent.com/u/26381427?size=50"> 
-</a>
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s).
 
 ## ❤ Support me
 

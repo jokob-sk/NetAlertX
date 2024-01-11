@@ -158,7 +158,7 @@
     },
     {
       "function": "DB_PATH",
-      "type": "readonly",
+      "type": "text",
       "default_value": "/etc/pihole/pihole-FTL.db",
       "options": [],
       "localized": [

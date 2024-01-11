@@ -12,3 +12,9 @@ Arp-scan is a command-line tool that uses the ARP protocol to discover and finge
 - SAVE
 - Wait for the next scan to finish
 
+#### Examples
+
+Settings:
+
+![settings](/front/plugins/arp_scan/arp-scan-settings.png)
+

@@ -19,6 +19,25 @@
     return result;
   }
 
+  // -------------------------------------------------------------------
+  // Get plugin type base on prefix
+  function getPluginCodeName(pluginsData, prefix)
+  {
+    var result = ""
+
+    pluginsData.forEach((plug) => {
+
+      if (plug.unique_prefix == prefix ) {
+        id = plug.code_name;
+        
+        // console.log(id)
+        result = plug.code_name;        
+      }
+    });
+
+    return result;
+  }
+
 
   // -------------------------------------------------------------------
   // Get plugin type base on prefix
@@ -61,25 +80,63 @@
 
       });
 
-      html += `
-            
+      html += `            
               <div class="col-sm-4 ">
                 <div class="small-box bg-green " >
                 <div class="inner ">
+                  <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
                     <h5 class="card-title">
-                      ${getString(prefix+"_display_name")}
+                      <b>${getString(prefix+"_display_name")}</b>
                     </h5>
-                    ${includeSettings_html}
+                  </a>
+                  ${includeSettings_html}
                 </div>
-                <div class="icon"> ${getString(prefix+"_icon")} </div> 
-                  
+                  <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
+                    <div class="icon"> ${getString(prefix+"_icon")} </div> 
+                  </a>  
                 </div>
+                
               </div>
             `
     });
 
     return html;    
   }
+
+
+  // -----------------------------------------------------------------------------
+  // Open or close all settings
+  // -----------------------------------------------------------------------------
+  function toggleAllSettings(openOrClose = '')
+  {
+    inStr = ' in';
+    allOpen = true;
+    openIcon = 'fa-angle-double-down';
+    closeIcon = 'fa-angle-double-up';    
+
+    $('.panel-collapse').each(function(){
+      if($(this).attr('class').indexOf(inStr) == -1)
+      {
+        allOpen = false;
+      }
+    })
+    
+    if(allOpen == false || openOrClose == 'open')
+    {
+      // open all
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
+      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
+      
+    }
+    else{
+      // close all
+      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse  ')})      
+      $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
+    }
+    
+  }
+
 
   // -------------------------------------------------------------------
   // Checks if all schedules are the same

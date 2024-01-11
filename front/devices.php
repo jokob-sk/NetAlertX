@@ -288,7 +288,12 @@ function main () {
           initializeDatatable();
 
           // query data
-          getDevicesTotals();          
+          getDevicesTotals();      
+          
+          // check if dat outdated and show spinner if so
+          handleLoadingDialog()
+
+
         });
       });
     });
@@ -322,7 +327,7 @@ function filterDataByStatus(data, status) {
       case 'new':
         return item.dev_NewDevice === 1;
       case 'down':
-        return item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  === 1;
+        return item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0;
       case 'archived':
         return item.dev_Archived === 1;
       default:
@@ -338,7 +343,7 @@ function getDeviceStatus(item)
     {
       return 'On-line';
     }
-    else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  === 1)
+    else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0)
     {
       return 'Down';
     }
@@ -390,7 +395,7 @@ function initializeDatatable (status) {
     }    
   }
 
-  $.get('api/table_devices.json', function(result) {           
+  $.get('api/table_devices.json?nocache=' + Date.now(), function(result) {           
     
     // Filter the data based on deviceStatus
     var filteredData = filterDataByStatus(result.data, deviceStatus);
@@ -641,21 +646,22 @@ function getDevicesTotals () {
 // -----------------------------------------------------------------------------
 function handleLoadingDialog()
 {
-  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+  $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {   
     
-    console.log(appState["showSpinner"])
-    if(appState["showSpinner"])
-    { 
-      showSpinner("settings_old")
+
+    if(data.includes("update_api|devices"))
+    {       
+      showSpinner("devices_old")
 
       setTimeout("handleLoadingDialog()", 1000);
 
-    } else
+    } else if ($("#loadingSpinner").is(":visible"))
     {
-      hideSpinner()        
+      hideSpinner();     
+      location.reload();    
     }      
 
-    })
+  })
 
 }
 

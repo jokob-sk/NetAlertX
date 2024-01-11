@@ -1,59 +1,38 @@
 {
-  "code_name": "db_cleanup",
-  "unique_prefix": "DBCLNP",
+  "code_name": "maintenance",
+  "unique_prefix": "MAINT",
   "plugin_type": "system",
   "enabled": true,
   "data_source": "script",  
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
-
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "DB cleanup"
-    }
+      "string": "Maintenance"
+    } 
   ],
   "icon": [
     {
       "language_code": "en_us",
-      "string": "<i class=\"fa-solid fa-broom\"></i>"
+      "string": "<i class=\"fa-solid fa-wrench\"></i>"
     }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "A plugin to schedule database cleanup & upkeep tasks."
-    }  
-  ],
-    "params" : [{
-      "name"  : "pluginskeephistory",
-      "type"  : "setting",
-      "value" : "PLUGINS_KEEP_HIST"
-    },
-    {
-      "name"  : "daystokeepevents",
-      "type"  : "setting",
-      "value" : "DAYS_TO_KEEP_EVENTS"    
-    },
-    {
-      "name"  : "hourstokeepnewdevice",
-      "type"  : "setting",
-      "value" : "HRS_TO_KEEP_NEWDEV"
-    },
-    {
-      "name"  : "pholuskeepdays",
-      "type"  : "setting",
-      "value" : "PHOLUS_DAYS_DATA"
+      "string": "A plugin for maintenance tasks."
     }
+  ],
+    "params" : [
   ],  
-
   "settings": [
     {
-      "function": "RUN",   
-      "events": ["run"],         
+      "function": "RUN",      
+      "events": ["run"],      
       "type": "text.select",            
       "default_value":"schedule",
-      "options": ["disabled", "once", "schedule", "always_after_scan"],
+      "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",
@@ -69,13 +48,13 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "When the cleanup should be performed. An hourly or daily <code>SCHEDULE</code> is a good option."
+          "string" : "When the maintenance tasks should run. A daily or weekly <code>SCHEDULE</code> is a good option."
       }]
   },    
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory={pluginskeephistory} hourstokeepnewdevice={hourstokeepnewdevice} daystokeepevents={daystokeepevents} pholuskeepdays={pholuskeepdays}",
+      "default_value": "python3 /home/pi/pialert/front/plugins/maintenance/maintenance.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -110,7 +89,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"*/30 * * * *",
+      "default_value":"0 2 * * 3",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{
@@ -127,15 +106,15 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+          "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#MAINT_RUN\"><code>MAINT_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
       },
       {
           "language_code":"es_es",
-          "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+          "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#MAINT_RUN\"><code>MAINT_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
       },
       {
           "language_code":"de_de",
-          "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+          "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#CSVBCKP_RUN\"><code>CSVBCKP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
       }]
   },    
     {
@@ -174,23 +153,19 @@
       ]
     },
     {
-      "function": "NOTIFI_HIST",
+      "function": "LOG_LENGTH",
       "type": "integer",
-      "default_value": 100,
+      "default_value": 250000,
       "options": [],
       "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Notifications History"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "How many historical entries of Notifications should be kept. This influences how mane entries are also available in the Report section in the UI"
-        }
-      ]
+      "name" : [{
+          "language_code":"en_us",
+          "string" : "Log length"
+      }],
+      "description": [{
+          "language_code":"en_us",
+          "string" : "How many last <code>pialert.log</code> lines to keep. If <code>LOG_LEVEL</code> is set to <code>debug</code> the app generates about 10000 lines per hour, so when debugging an issue the recommended setting should cover the bug occurence timeframe. For example for a bug with a 3 day periodical appearence the value <code>1000000</code> should be sufficient. Setting this value to <code>1000000</code> generates approximatelly a 50MB <code>pialert.log</code> file. Set to <code>0</code> to disable log purging."
+      }]
     }
   ],
 

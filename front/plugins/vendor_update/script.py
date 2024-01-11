@@ -19,7 +19,7 @@ sys.path.append('/home/pi/pialert/pialert')
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
-from const import logPath, pialertPath
+from const import logPath, pialertPath, fullDbPath
 from device import query_MAC_vendor
 
 
@@ -37,7 +37,7 @@ def main():
     # Resolve missing vendors
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    plugin_objects = update_vendors('/home/pi/pialert/db/pialert.db', plugin_objects)
+    plugin_objects = update_vendors(fullDbPath, plugin_objects)
 
     plugin_objects.write_result_file()
     

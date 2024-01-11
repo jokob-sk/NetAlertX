@@ -56,7 +56,7 @@ services:
 * If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
 * To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
 * Map to local User and Group IDs. Specify the enviroment variables `HOST_USER_ID` and `HOST_USER_GID` if needed.
-* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see Examples below for details)
+* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see [docker-compose Examples](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
 
 ### Container restarts / crashes
 

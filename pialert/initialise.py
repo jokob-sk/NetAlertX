@@ -103,15 +103,12 @@ def importConfigs (db):
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
     conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
-    conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')
-    conf.INCLUDED_SECTIONS = ccd('INCLUDED_SECTIONS', ['new_devices', 'down_devices', 'events']   , c_d, 'Notify on', 'text.multiselect', "['new_devices', 'down_devices', 'events', 'plugins']", 'General')    
+    conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
-    conf.DIG_GET_IP_ARG = ccd('DIG_GET_IP_ARG', '-4 myip.opendns.com @resolver1.opendns.com' , c_d, 'DIG arguments', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'German', 'Spanish']", 'General')
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
-    conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')    
-    conf.DBCLNP_NOTIFI_HIST = ccd('DBCLNP_NOTIFI_HIST', 100 , c_d, 'Keep notification', 'integer', "0", 'General')    
+    conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
 
@@ -251,6 +248,7 @@ def read_config_file(filename):
 
 #-------------------------------------------------------------------------------
 # DEPERECATED soonest after 3/3/2024
+# 🤔Idea/TODO: Check and compare versions/timestamps amd only perform a replacement if config/version older than...
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
@@ -259,7 +257,10 @@ replacements = {
     r'REPORT_NTFY=True': 'NTFY_RUN=\'on_notification\'',
     r'REPORT_WEBHOOK=True': 'WEBHOOK_RUN=\'on_notification\'',
     r'REPORT_PUSHSAFER=True': 'PUSHSAFER_RUN=\'on_notification\'',
-    r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\''
+    r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\'',
+    r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
+    r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS',
+    r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG'
 }
 
 def renameSettings(config_file):
