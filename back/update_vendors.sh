@@ -29,10 +29,7 @@ sudo cp -- *.csv 2_backup
 echo ""
 echo Download Start
 echo ""
-sudo curl "$1"  -LO https://standards-oui.ieee.org/iab/iab.csv \
-              -LO https://standards-oui.ieee.org/iab/iab.txt \
-              -LO https://standards-oui.ieee.org/oui28/mam.csv \
-              -LO https://standards-oui.ieee.org/iab/iab.txt \
+sudo curl "$1" -LO https://standards-oui.ieee.org/oui28/mam.csv \              
               -LO https://standards-oui.ieee.org/oui28/mam.csv \
               -LO https://standards-oui.ieee.org/oui28/mam.txt \
               -LO https://standards-oui.ieee.org/oui36/oui36.csv \

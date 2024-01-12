@@ -84,8 +84,8 @@ def get_notifications (db):
         # Compose Devices Down Section 
         # - select only Down Alerts with pending email of devices that didn't reconnect within the specified time window
         sqlQuery = f"""
-                    SELECT *
-                        FROM Events AS down_events
+                    SELECT dev_Name, eve_MAC, dev_Vendor, eve_IP, eve_DateTime, eve_EventType  
+                        FROM Events_Devices AS down_events
                         WHERE eve_PendingAlertEmail = 1 
                         AND down_events.eve_EventType = 'Device Down' 
                         AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')

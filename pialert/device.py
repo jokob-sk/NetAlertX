@@ -366,9 +366,12 @@ def query_MAC_vendor (pMAC):
         with open(vendorsPath, 'r') as f:
             for line in f:
                 if line.startswith(mac_start_string6):
-                    vendor = line.split(' ', 1)[1].strip()
-                    mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"])
-                    return vendor
+                    mylog('debug', [f"[Vendor Check] Macth found, line to process: {line}"])
+                    parts = line.split(' ', 1)
+                    if len(parts) > 1:
+                        vendor = parts[1].strip()
+                        mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"])
+                        return vendor
 
 
         return -1  # MAC address not found in the database

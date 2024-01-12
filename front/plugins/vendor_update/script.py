@@ -60,8 +60,8 @@ def update_vendor_database():
         update_output = subprocess.check_output (update_args)
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
-        mylog('none', [e.output])        
+        mylog('verbose', ['    FAILED: Updating vendors DB, set LOG_LEVEL=debug for more info'])  
+        mylog('verbose', [e.output])        
 
 # ------------------------------------------------------------------------------
 # resolve missing vendors

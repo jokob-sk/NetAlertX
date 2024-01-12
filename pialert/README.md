@@ -18,7 +18,7 @@ The original pilaert.py code is now moved to this new folder and split into diff
 |```helper.py```| Helper as the name suggest contains multiple little functions and methods used in many of the other modules and helps keep things clean |
 |```initialise.py```| Initiatlise sets up the environment and makes everything ready to go |
 |```logger.py```| Logger is there the keep all the logs organised and looking identical. |
-|```networscan.py```| Networkscan collects teh scan results (maybe to merge with `reporting.py`) |
+|```networscan.py```| Networkscan collects the scan results (maybe to merge with `reporting.py`) |
 |```notification.py```| Creates and handles the notification object and generates ther HTML and text variants of the message |
 |```plugin.py```| This is where the plugins get integrated into the backend of Pi.Alert |
 |```plugin_utils.py```| Helper utilities for `plugin.py` |
