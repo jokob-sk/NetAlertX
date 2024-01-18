@@ -15,7 +15,7 @@
 ![Settings > CSV Backup](/docs/img/DEVICES_BULK_EDITING/CSV_BACKUP_SETTINGS.png)
 
 > [!NOTE] 
-> Keep Linux line endings (sugegsted editors: Nano, Notepad++)
+> Keep Linux line endings (suggested editors: Nano, Notepad++)
 
 ![Nodepad++ line endings](/docs/img/DEVICES_BULK_EDITING/NOTEPAD++.png)
 

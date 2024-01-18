@@ -16,6 +16,9 @@
   <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" width="300px" />
 </a>
 
+> [!NOTE]
+> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) method available. 
+
 ## 📕 Basic Usage 
 
 - You will have to run the container on the `host` network, e.g: 
