@@ -382,7 +382,7 @@ def resolve_device_name_dig (pMAC, pIP):
         # Cleanup
         newName = cleanDeviceName(newName, True)
 
-        if newName == "" or  len(newName) == 0 or newName == '-1' or newName == -1 or "communications error" in newName: 
+        if newName == "" or  len(newName) == 0 or newName == '-1' or newName == -1 or "communications error" in newName or 'malformed message packet' in newName : 
             return nameNotFound
 
         # all checks passed
