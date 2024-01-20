@@ -2,6 +2,7 @@ function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_
         var xValues = pia_js_graph_online_history_time;
         new Chart("OnlineChart", {
           type: "bar",
+          scaleIntegersOnly: true,
           data: {
             labels: xValues,
             datasets: [{
