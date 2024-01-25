@@ -346,10 +346,27 @@ function sanitize(data)
   return data.replace(/(\r\n|\n|\r)/gm,"").replace(/[^\x00-\x7F]/g, "")
 }
 
+
+// -----------------------------------------------------------------------------
+// Check and handle locked database
+function handle_locked_DB(data)
+{
+  if(data.includes('database is locked'))
+  {
+    console.log(data)    
+    showSpinner()
+
+    setTimeout(function() {
+      location.reload(); 
+    }, 5000);
+  }
+}
+
 // -----------------------------------------------------------------------------
 function numberArrayFromString(data)
 {
-  console.log(data)
+
+  
   data = JSON.parse(sanitize(data));
   return data.replace(/\[|\]/g, '').split(',').map(Number);
 }

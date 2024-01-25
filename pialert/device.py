@@ -8,8 +8,28 @@ from logger import mylog, print_log
 from const import vendorsPath
 
 #-------------------------------------------------------------------------------
+# Device object handling (WIP)
+#-------------------------------------------------------------------------------
+class Device_obj:
+    def __init__(self, db):
+        self.db = db
+
+    # Get all
+    def getAll(self):
+        self.db.sql.execute("""
+            SELECT * FROM Devices
+        """)
+        return self.db.sql.fetchall()
+    
+    # Get all with unknown names
+    def getUnknown(self):
+        self.db.sql.execute("""
+            SELECT * FROM Devices WHERE dev_Name in ("(unknown)", "(name not found)", "" )
+        """)
+        return self.db.sql.fetchall()
 
 
+#-------------------------------------------------------------------------------
 def save_scanned_devices (db):
     sql = db.sql #TO-DO
 

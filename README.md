@@ -56,9 +56,8 @@ Looking forward to your contributions if you decide to share your work with the 
 > - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
 > - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
 
-## ❤ Support me
+## ❤ Support me for...
 
-Get:
 - Regular updates to keep your data and family safe 🔄 
 - Better and more functionality➕
 - I don't get burned out and the app survives longer🔥🤯

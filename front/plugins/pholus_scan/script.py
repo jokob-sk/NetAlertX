@@ -23,6 +23,7 @@ LOG_FILE        = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE     = os.path.join(CUR_PATH, 'last_result.log')
 fullPholusPath  = os.path.join(CUR_PATH, 'pholus/pholus3.py')
 
+pluginName = 'PHOLUS'
 
 def main():
     # sample
@@ -40,13 +41,13 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    mylog('verbose',['[PHOLUS] In script'])
+    mylog('verbose',[f'[{pluginName}] In script'])
 
     # Assuming 'values' is a dictionary or object that contains a key 'userSubnets'
     # which holds a list of user-submitted subnets.
     # Printing the userSubnets list to check its content.
-    mylog('verbose',['[PHOLUS] Subnets: ', values.userSubnets])
-    mylog('verbose',['[PHOLUS] len Subnets: ', len(values.userSubnets)])
+    mylog('verbose',[f'[{pluginName}] Subnets: ', values.userSubnets])
+    mylog('verbose',[f'[{pluginName}] len Subnets: ', len(values.userSubnets)])
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
     # The format of the element is assumed to be like 'userSubnets=b<base64-encoded-data>'.
@@ -54,14 +55,14 @@ def main():
     timeoutSec = values.timeoutSec[0].split('=')[1]
 
     # Printing the extracted base64-encoded subnet information.
-    mylog('verbose', [f'[PHOLUS] { userSubnetsParamBase64 }'])
-    mylog('verbose', [f'[PHOLUS] { timeoutSec }'])
+    mylog('verbose', [f'[{pluginName}] { userSubnetsParamBase64 }'])
+    mylog('verbose', [f'[{pluginName}] { timeoutSec }'])
 
     # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
     userSubnetsParam = base64.b64decode(userSubnetsParamBase64).decode('ascii')
 
     # Print the decoded subnet information.    
-    mylog('verbose', [f'[PHOLUS] userSubnetsParam { userSubnetsParam } '])
+    mylog('verbose', [f'[{pluginName}] userSubnetsParam { userSubnetsParam } '])
 
     # Check if the decoded subnet information contains multiple subnets separated by commas.
     # If it does, split the string into a list of individual subnets.
@@ -99,16 +100,15 @@ def execute_pholus_scan(userSubnets, timeoutSec):
 
     timeoutPerSubnet = float(timeoutSec) / len(userSubnets)
 
-    mylog('verbose', [f'[PHOLUS] { timeoutPerSubnet } '])
+    mylog('verbose', [f'[{pluginName}] { timeoutPerSubnet } '])
 
-    # scan each interface
-    
+    # scan each interface    
     for interface in userSubnets:           
 
         temp = interface.split("--interface=")
 
         if len(temp) != 2:
-            mylog('none', ["[PHOLUS] Skip scan (need interface in format '192.168.1.0/24 --inteface=eth0'), got: ", interface])
+            mylog('verbose', [f'[{pluginName}] Skip scan (need interface in format "192.168.1.0/24 --inteface=eth0"), got: ', interface])
             return
 
         mask = temp[0].strip()
@@ -116,14 +116,14 @@ def execute_pholus_scan(userSubnets, timeoutSec):
 
         pholus_output_list = execute_pholus_on_interface (interface, timeoutPerSubnet, mask)        
 
-        mylog('verbose', [f'[PHOLUS] { pholus_output_list } '])   
+        mylog('verbose', [f'[{pluginName}] { pholus_output_list } '])   
        
 
         result_list += pholus_output_list
 
     
-    mylog('verbose', ["[PHOLUS] Pholus output number of entries:", len(result_list)])  
-    mylog('verbose', ["[PHOLUS] List:", result_list])  
+    mylog('verbose', [f'[{pluginName}] Pholus output number of entries:', len(result_list)])  
+    mylog('verbose', [f'[{pluginName}] List:', result_list])  
 
     return result_list
 
@@ -132,8 +132,8 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
 
     # logging & updating app state        
       
-    mylog('verbose', ['[PHOLUS] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
-    mylog('verbose', ["[PHOLUS] Pholus scan on [interface] ", interface, " [mask] " , mask])
+    mylog('verbose', [f'[{pluginName}] Scan: Pholus for ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min)'])  
+    mylog('verbose', [f'[{pluginName}] Pholus scan on [interface] ', interface, ' [mask] ' , mask])
     
     # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
     adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
@@ -149,15 +149,15 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
         output = subprocess.check_output (pholus_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeoutSec + 30))
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
-        mylog('none', ['[PHOLUS]', e.output])
-        mylog('none', ["[PHOLUS] ⚠ ERROR - Pholus Scan - check logs"])            
+        mylog('verbose', [f'[{pluginName}]', e.output])
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Pholus Scan - check logs'])            
     except subprocess.TimeoutExpired as timeErr:
-        mylog('none', ['[PHOLUS] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
+        mylog('verbose', [f'[{pluginName}] Pholus TIMEOUT - the process forcefully terminated as timeout reached']) 
 
     if output == "": # check if the subprocess failed                    
-        mylog('none', ['[PHOLUS] Scan: Pholus FAIL - check logs']) 
+        mylog('verbose', [f'[{pluginName}] Scan: Pholus FAIL - check logs']) 
     else: 
-        mylog('verbose', ['[PHOLUS] Scan: Pholus SUCCESS'])
+        mylog('verbose', [f'[{pluginName}] Scan: Pholus SUCCESS'])
     
     #  check the last run output
     f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')

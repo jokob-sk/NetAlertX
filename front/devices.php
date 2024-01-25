@@ -239,6 +239,8 @@ function main () {
 
   // get visible columns
   $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
+
+    handle_locked_DB(data)
     
     // save which columns are in the Devices page visible
     tableColumnVisible = numberArrayFromString(data);
@@ -250,6 +252,8 @@ function main () {
 
     // get the custom order specified by the user
     $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
+
+      handle_locked_DB(data)
     
       // save the columns order in the Devices page 
       tableColumnOrder = numberArrayFromString(data);

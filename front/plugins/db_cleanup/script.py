@@ -25,6 +25,8 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+pluginName = 'DBCLNP'
+
 def main():
     
     parser = argparse.ArgumentParser(description='DB cleanup tasks')
@@ -40,13 +42,13 @@ def main():
     DAYS_TO_KEEP_EVENTS   = int(values.daystokeepevents.split('=')[1])
     PHOLUS_DAYS_DATA      = int(values.pholuskeepdays.split('=')[1])
 
-    mylog('verbose', ['[DBCLNP] In script'])     
+    mylog('verbose', [f'[{pluginName}] In script'])     
 
 
     # Execute cleanup/upkeep    
     cleanup_database(fullDbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, PLUGINS_KEEP_HIST)
     
-    mylog('verbose', ['[DBCLNP] Cleanup complete file '])   
+    mylog('verbose', [f'[{pluginName}] Cleanup complete'])   
     
     return 0
 
@@ -58,25 +60,25 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     Cleaning out old records from the tables that don't need to keep all data.
     """
 
-    mylog('verbose', ['[DBCLNP] Upkeep Database:' ])
+    mylog('verbose', [f'[{pluginName}] Upkeep Database:' ])
 
     # Connect to the PiAlert SQLite database
     conn    = sqlite3.connect(dbPath)
     cursor  = conn.cursor()
 
     # Cleanup Online History
-    mylog('verbose', ['[DBCLNP] Online_History: Delete all but keep latest 150 entries'])
+    mylog('verbose', [f'[{pluginName}] Online_History: Delete all but keep latest 150 entries'])
     cursor.execute ("""DELETE from Online_History where "Index" not in (
                             SELECT "Index" from Online_History 
                             order by Scan_Date desc limit 150)""")
-    mylog('verbose', ['[DBCLNP] Optimize Database'])
+    mylog('verbose', [f'[{pluginName}] Optimize Database'])
     # Cleanup Events
-    mylog('verbose', [f'[DBCLNP] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)'])
+    mylog('verbose', [f'[{pluginName}] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)'])
     cursor.execute (f"""DELETE FROM Events 
                             WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
                             
     # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
-    mylog('verbose', [f'[DBCLNP] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)'])
+    mylog('verbose', [f'[{pluginName}] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)'])
 
     # Build the SQL query to delete entries that exceed the limit per unique "Plugin" column entry
     delete_query = f"""DELETE FROM Plugins_History 
@@ -97,7 +99,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     histCount = get_setting_value('DBCLNP_NOTIFI_HIST')
 
-    mylog('verbose', [f'[DBCLNP] Plugins_History: Trim Notifications entries to less than {histCount}'])
+    mylog('verbose', [f'[{pluginName}] Plugins_History: Trim Notifications entries to less than {histCount}'])
 
     # Build the SQL query to delete entries 
     delete_query = f"""DELETE FROM Notifications 
@@ -115,20 +117,20 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     # Cleanup Pholus_Scan
     if PHOLUS_DAYS_DATA != 0:
-        mylog('verbose', ['[DBCLNP] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
+        mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
         # todo: improvement possibility: keep at least N per mac
         cursor.execute (f"""DELETE FROM Pholus_Scan 
                                 WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
     # Cleanup New Devices
     if HRS_TO_KEEP_NEWDEV != 0:
-        mylog('verbose', [f'[DBCLNP] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
+        mylog('verbose', [f'[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
         cursor.execute (f"""DELETE FROM Devices 
                                 WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
 
 
     # De-dupe (de-duplicate) from the Plugins_Objects table 
     # TODO This shouldn't be necessary - probably a concurrency bug somewhere in the code :(        
-    mylog('verbose', ['[DBCLNP] Plugins_Objects: Delete all duplicates'])
+    mylog('verbose', [f'[{pluginName}] Plugins_Objects: Delete all duplicates'])
     cursor.execute("""
         DELETE FROM Plugins_Objects
         WHERE rowid > (
@@ -141,7 +143,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     """)
 
     # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
-    mylog('verbose', ['[DBCLNP] Pholus_Scan: Delete all duplicates'])
+    mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all duplicates'])
     cursor.execute ("""DELETE  FROM Pholus_Scan
                     WHERE rowid > (
                     SELECT MIN(rowid) FROM Pholus_Scan p2
@@ -153,7 +155,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     conn.commit()
 
     # Shrink DB
-    mylog('verbose', ['[DBCLNP] Shrink Database'])
+    mylog('verbose', [f'[{pluginName}] Shrink Database'])
     cursor.execute ("VACUUM;")
 
     # Close the database connection

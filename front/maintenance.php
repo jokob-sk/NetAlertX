@@ -816,6 +816,8 @@ function saveSelectedColumns () {
 function initializeSelectedColumns () { 
   $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+colDefaultOrderTxt+'&parameter=Front_Devices_Columns_Visible', function(data) {
 
+    handle_locked_DB(data)
+    
     tableColumnShow = numberArrayFromString(data);
 
     for(i=0; i < tableColumnShow.length; i++)
