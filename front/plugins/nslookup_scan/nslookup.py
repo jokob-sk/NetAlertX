@@ -97,8 +97,8 @@ def execute_nslookup (ip, timeout):
         domain_pattern = re.compile(r'Name:\s+(.+)')        
         server_pattern = re.compile(r'Server:\s+(.+)')
 
-        domain_match = domain_pattern.search(output.stdout)        
-        server_match = server_pattern.search(output.stdout)
+        domain_match = domain_pattern.search(output)        
+        server_match = server_pattern.search(output)
 
         if domain_match:
             domain_name = domain_match.group(1)
