@@ -99,10 +99,7 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 Thank you to all the wonderful people who have sponsored this project (=prevented my burnout):
 
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
-| Current Sponsors |
-|---|
-
-| Past Sponsors |
+| All Sponsors |
 |---|
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
