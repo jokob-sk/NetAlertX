@@ -1,6 +1,7 @@
 import os
 import requests
 import base64
+from datetime import datetime
 
 def fetch_sponsors():
     global headers
@@ -50,15 +51,14 @@ def fetch_sponsors():
 
     if "errors" in data:
         print(f"GraphQL query failed: {data['errors']}")
-        return {"current_sponsors": [], "past_sponsors": []}
+        return {"sponsors": []}
 
     sponsorships = data["data"]["viewer"]["sponsorshipsAsMaintainer"]["nodes"]
-    current_sponsors = []
-    past_sponsors = []
+    sponsors = []
 
     for sponsorship in sponsorships:
         sponsor_entity = sponsorship["sponsorEntity"]
-        created_at = sponsorship["createdAt"]
+        created_at = datetime.strptime(sponsorship["createdAt"], "%Y-%m-%dT%H:%M:%SZ")
         privacy_level = sponsorship["privacyLevel"]
         monthly_price = sponsorship["tier"]["monthlyPriceInCents"]
 
@@ -71,31 +71,19 @@ def fetch_sponsors():
             "monthly_price": monthly_price,
         }
 
-        # Check if the sponsorship is current or past
-        if created_at == sponsorship["createdAt"]:
-            past_sponsors.append(sponsor)
-        else:
-            current_sponsors.append(sponsor)
+        sponsors.append(sponsor)
 
-    print("Current Sponsors:")
-    print(current_sponsors)
-    print("\nPast Sponsors:")
-    print(past_sponsors)
+    print("All Sponsors:")
+    print(sponsors)
 
-    return {"current_sponsors": current_sponsors, "past_sponsors": past_sponsors}
+    return {"sponsors": sponsors}
 
+def generate_sponsors_table(sponsors):
+    sponsors_table = "| All Sponsors |\n|---|\n"
+    for sponsor in sponsors:
+        sponsors_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
 
-
-def generate_sponsors_table(current_sponsors, past_sponsors):
-    current_table = "| Current Sponsors |\n|---|\n"
-    for sponsor in current_sponsors:
-        current_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
-
-    past_table = "| Past Sponsors |\n|---|\n"
-    for sponsor in past_sponsors:
-        past_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
-
-    return current_table + "\n" + past_table
+    return sponsors_table
 
 def update_readme(sponsors_table):
     global headers
@@ -153,13 +141,11 @@ def update_readme(sponsors_table):
 
     print("README.md updated successfully with the sponsors table.")
 
-
 def main():
     sponsors_data = fetch_sponsors()
-    current_sponsors = sponsors_data.get("current_sponsors", [])
-    past_sponsors = sponsors_data.get("past_sponsors", [])
+    sponsors = sponsors_data.get("sponsors", [])
 
-    sponsors_table = generate_sponsors_table(current_sponsors, past_sponsors)
+    sponsors_table = generate_sponsors_table(sponsors)
     update_readme(sponsors_table)
 
 if __name__ == "__main__":
