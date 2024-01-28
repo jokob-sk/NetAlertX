@@ -93,6 +93,8 @@ def execute_nslookup (ip, timeout):
         domain_name = ''
         dns_server = ''
 
+        mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
+
         # Parse output using regular expressions
         domain_pattern = re.compile(r'Name:\s+(.+)')        
         server_pattern = re.compile(r'Server:\s+(.+)')
