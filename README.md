@@ -82,7 +82,9 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 
 <details>
   <summary>Click for more ways to donate</summary>
-
+  
+  <hr>
+  
   - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
   - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
