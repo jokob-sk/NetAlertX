@@ -14,23 +14,34 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 
   | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
   |----------------------|----------------------| ----------------------| 
-  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |  
-  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  | 
 
+<details>
+  <summary>📷 Click for more screenshots</summary>
 
-## Why PiAlert❓ 
+  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |
+  |----------------------|----------------------|----------------------|
+  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  |
 
-Most of us don't know what's going on on our home network, but we want our family and data to be safe.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist.
+</details>
 
-PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
+<details>
+  <summary>❓ Why use PiAlert?</summary>
 
-PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
+  <hr>
 
-Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
+  Most of us don't know what's going on on our home network, but we want our family and data to be safe.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist.
 
-Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
+  PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 
-Looking forward to your contributions if you decide to share your work with the community ❤.
+  PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
+
+  Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
+
+  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
+
+  Looking forward to your contributions if you decide to share your work with the community ❤.
+
+</details>
 
 ## Scan Methods, Notifications, Integration, Extension system
 
@@ -60,23 +71,30 @@ Looking forward to your contributions if you decide to share your work with the 
 
 ## ❤ Support me for...
 
+- I don't get burned out and the app survives longer🔥🤯
 - Regular updates to keep your data and family safe 🔄 
 - Better and more functionality➕
-- I don't get burned out and the app survives longer🔥🤯
 - Quicker and better support with issues 🆘
 - Less grumpy me 😄
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 
 
-- Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
-- Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
+<details>
+  <summary>Click for more ways to donate</summary>
 
-> 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
+  - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
+  - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
+
+  📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
+
+</details>
+
+
 
 ### ⭐ Sponsors 
 
-Thank you to all the wonderful people who have sponsored (=burnout prevention) this project:
+Thank you to all the wonderful people who have sponsored this project (=prevented my burnout):
 
 <!-- DO NOT MODIFY BELOW -->
 
