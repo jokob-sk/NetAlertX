@@ -1,10 +1,8 @@
 name: Update Sponsors Table
 
 on:
-  workflow_run:
-    workflows: ["Update Sponsors"]
-    types:
-      - completed
+  schedule:
+    - cron: '40 11 * * *' # Set your preferred schedule (UTC)
 
 jobs:
   update-table:

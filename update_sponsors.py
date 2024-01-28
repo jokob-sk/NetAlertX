@@ -72,10 +72,10 @@ def fetch_sponsors():
         }
 
         # Check if the sponsorship is current or past
-        if privacy_level == "PUBLIC":
-            current_sponsors.append(sponsor)
-        else:
+        if created_at == sponsorship["createdAt"]:
             past_sponsors.append(sponsor)
+        else:
+            current_sponsors.append(sponsor)
 
     print("Current Sponsors:")
     print(current_sponsors)
@@ -83,6 +83,7 @@ def fetch_sponsors():
     print(past_sponsors)
 
     return {"current_sponsors": current_sponsors, "past_sponsors": past_sponsors}
+
 
 
 def generate_sponsors_table(current_sponsors, past_sponsors):
