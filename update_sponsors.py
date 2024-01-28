@@ -92,7 +92,7 @@ def update_readme(sponsors_table):
     repo_owner = "jokob-sk"
     repo_name = "Pi.Alert"    
     readme_path = "README.md"
-    
+
     with open(readme_path, "r") as readme_file:
         readme_content = readme_file.read()
 
@@ -125,8 +125,7 @@ def update_readme(sponsors_table):
     commit_message = "[🤖Automation] Update README with sponsors information"
     commit_data = {
         "message": commit_message,
-        "content": updated_content_base64,
-        "sha": readme_data["sha"],
+        "content": updated_content_base64,        
         "branch": "main",  # Update the branch name as needed
     }
 

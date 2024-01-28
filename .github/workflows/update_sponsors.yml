@@ -2,7 +2,7 @@ name: Update Sponsors
 
 on:
   schedule:
-    - cron: '0 10 * * *' # Set your preferred schedule (UTC)
+    - cron: '15 10 * * *' # Set your preferred schedule (UTC)
 
 jobs:
   update-readme:
