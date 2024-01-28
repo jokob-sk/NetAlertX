@@ -1,0 +1,31 @@
+name: Update Sponsors Table
+
+on:
+  workflow_run:
+    workflows: ["Update Sponsors"]
+    types:
+      - completed
+
+jobs:
+  update-table:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r update_sponsors_requirements.txt  # If you have any Python dependencies
+
+      - name: Update Sponsors Table
+        run: |
+          python update_sponsors.py
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

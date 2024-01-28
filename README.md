@@ -2,14 +2,21 @@
 
 Get visibility of what's going on on your WIFI/LAN network. Scan for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. 
 
-[![Docker](https://img.shields.io/github/actions/workflow/status/jokob-sk/Pi.Alert/docker_prod.yml?label=Build&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/actions/workflows/docker_prod.yml)
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
-[![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert)
+[![Docker Pushed](https://img.shields.io/badge/dynamic/json?color=0aa8d2&logoColor=fff&label=Pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert)](https://hub.docker.com/r/jokobsk/pi.alert) 
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) |
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) | 
   |----------------------|----------------------| ----------------------|  ----------------------| 
+
+
+  | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
+  |----------------------|----------------------| ----------------------| 
+  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |  
+  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  | 
+
 
 ## Why PiAlert❓ 
 
@@ -17,18 +24,13 @@ Most of us don't know what's going on on our home network, but we want our famil
 
 PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 
-_PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦_. You get an overview of network device Sessions, Connected devices, Events, Presence, Down alerts, and IPs. You can schedule Nmap scans to detect changes in device ports and visualize your Network topology (even with undetectable, dummy devices).
+PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
 
 Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
 
 Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
 
 Looking forward to your contributions if you decide to share your work with the community ❤.
-
-  | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
-  |----------------------|----------------------| ----------------------| 
-  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |  
-  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  | 
 
 ## Scan Methods, Notifications, Integration, Extension system
 
@@ -71,6 +73,16 @@ Looking forward to your contributions if you decide to share your work with the 
 - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
 > 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
+
+### ⭐ Sponsors 
+
+Thank you to all the wonderful people who have sponsored (=burnout prevention) this project:
+
+<!-- DO NOT MODIFY BELOW -->
+
+<!--SPONSORS-LIST-->
+
+<!-- DO NOT MODIFY ABOVE -->
 
 ## Everything else
 <!--- --------------------------------------------------------------------- --->
