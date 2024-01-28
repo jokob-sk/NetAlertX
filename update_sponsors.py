@@ -2,45 +2,87 @@ import os
 import requests
 
 def fetch_sponsors():
-    repo_owner = "jokob-sk"
-    repo_name = "Pi.Alert"
-    api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/sponsors"
-
+    graphql_url = "https://api.github.com/graphql"
     headers = {
         "Authorization": f"Bearer {os.environ.get('GH_TOKEN')}",
-        "Accept": "application/vnd.github.v3+json",
+        "Accept": "application/vnd.github.v4+json",
     }
 
+    # GraphQL query to fetch sponsors
+    graphql_query = """
+    {
+      viewer {
+        login
+        sponsorshipsAsMaintainer(first: 100, orderBy: {field: CREATED_AT, direction: ASC}, includePrivate: true) {
+          totalCount
+          pageInfo {
+            endCursor
+          }
+          nodes {
+            sponsorEntity {
+              ... on User {
+                name
+                login
+                url
+              }
+              ... on Organization {
+                name
+                url
+                login
+              }
+            }
+            createdAt
+            privacyLevel
+            tier {
+              monthlyPriceInCents
+            }
+          }
+        }
+      }
+    }
+    """
+
+    response = requests.post(graphql_url, json={"query": graphql_query}, headers=headers)
+    data = response.json()
+
+    if "errors" in data:
+        print(f"GraphQL query failed: {data['errors']}")
+        return {"current_sponsors": [], "past_sponsors": []}
+
+    sponsorships = data["data"]["viewer"]["sponsorshipsAsMaintainer"]["nodes"]
     current_sponsors = []
     past_sponsors = []
 
-    page = 1
-    while True:
-        params = {"page": page}
-        response = requests.get(api_url, headers=headers, params=params)
-        data = response.json()
+    for sponsorship in sponsorships:
+        sponsor_entity = sponsorship["sponsorEntity"]
+        created_at = sponsorship["createdAt"]
+        privacy_level = sponsorship["privacyLevel"]
+        monthly_price = sponsorship["tier"]["monthlyPriceInCents"]
 
-        if not data:
-            break
+        sponsor = {
+            "name": sponsor_entity.get("name"),
+            "login": sponsor_entity["login"],
+            "url": sponsor_entity["url"],
+            "created_at": created_at,
+            "privacy_level": privacy_level,
+            "monthly_price": monthly_price,
+        }
 
-        for sponsor in data:
-            if sponsor["sponsorship_created_at"] == sponsor["sponsorship_updated_at"]:
-                past_sponsors.append(sponsor)
-            else:
-                current_sponsors.append(sponsor)
-
-        page += 1
+        if created_at == sponsorship["createdAt"]:
+            past_sponsors.append(sponsor)
+        else:
+            current_sponsors.append(sponsor)
 
     return {"current_sponsors": current_sponsors, "past_sponsors": past_sponsors}
 
 def generate_sponsors_table(current_sponsors, past_sponsors):
     current_table = "| Current Sponsors |\n|---|\n"
     for sponsor in current_sponsors:
-        current_table += f"| [{sponsor['login']}](https://github.com/{sponsor['login']}) |\n"
+        current_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
 
     past_table = "| Past Sponsors |\n|---|\n"
     for sponsor in past_sponsors:
-        past_table += f"| {sponsor['login']} |\n"
+        past_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
 
     return current_table + "\n" + past_table
 
