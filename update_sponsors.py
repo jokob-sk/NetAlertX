@@ -3,6 +3,9 @@ import requests
 import base64
 
 def fetch_sponsors():
+    
+    global headers
+    
     graphql_url = "https://api.github.com/graphql"
     headers = {
         "Authorization": f"Bearer {os.environ.get('GH_TOKEN')}",
@@ -89,6 +92,7 @@ def generate_sponsors_table(current_sponsors, past_sponsors):
 
 def update_readme(sponsors_table):
 
+    global headers
     repo_owner = "jokob-sk"
     repo_name = "Pi.Alert"    
     readme_path = "README.md"
