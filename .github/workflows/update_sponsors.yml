@@ -2,7 +2,7 @@ name: Update Sponsors
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Set your preferred schedule (UTC)
+    - cron: '0 4 * * *' # Set your preferred schedule (UTC)
 
 jobs:
   update-readme:
@@ -15,4 +15,4 @@ jobs:
       - name: Update Sponsors
         run: |
           GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          gh run workflow_dispatch -R $GITHUB_REPOSITORY -f update_sponsors_table.yml -t $GH_TOKEN
+          gh run workflow_dispatch -R $GITHUB_REPOSITORY update_sponsors_table.yml -t $GH_TOKEN
