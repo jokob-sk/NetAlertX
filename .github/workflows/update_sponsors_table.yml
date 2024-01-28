@@ -2,7 +2,7 @@ name: Update Sponsors Table
 
 on:
   schedule:
-    - cron: '35 12 * * *' # Set your preferred schedule (UTC)
+    - cron: '47 20 * * *' # Set your preferred schedule (UTC)
 
 jobs:
   update-table:

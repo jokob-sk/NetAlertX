@@ -49,6 +49,9 @@ def fetch_sponsors():
     response = requests.post(graphql_url, json={"query": graphql_query}, headers=headers)
     data = response.json()
 
+
+    print(f"Debug GraphQL query result: {data}")
+
     if "errors" in data:
         print(f"GraphQL query failed: {data['errors']}")
         return {"sponsors": []}
