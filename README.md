@@ -84,7 +84,7 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
   <summary>Click for more ways to donate</summary>
   
   <hr>
-  
+
   - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
   - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
@@ -98,11 +98,9 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 
 Thank you to all the wonderful people who have sponsored this project (=prevented my burnout):
 
-<!-- DO NOT MODIFY BELOW -->
+<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 
-<!--SPONSORS-LIST-->
-
-<!-- DO NOT MODIFY ABOVE -->
+<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
 ## Everything else
 <!--- --------------------------------------------------------------------- --->

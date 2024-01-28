@@ -1,5 +1,6 @@
 import os
 import requests
+import base64
 
 def fetch_sponsors():
     graphql_url = "https://api.github.com/graphql"
@@ -87,15 +88,59 @@ def generate_sponsors_table(current_sponsors, past_sponsors):
     return current_table + "\n" + past_table
 
 def update_readme(sponsors_table):
+
+    repo_owner = "jokob-sk"
+    repo_name = "Pi.Alert"    
     readme_path = "README.md"
+    
     with open(readme_path, "r") as readme_file:
         readme_content = readme_file.read()
 
-    # Replace the placeholder <!--SPONSORS-LIST--> with the generated sponsors table
-    updated_readme = readme_content.replace("<!--SPONSORS-LIST-->", sponsors_table)
+    # Find the start and end markers
+    start_marker = "<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->"
+    end_marker = "<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->"
 
-    with open(readme_path, "w") as readme_file:
-        readme_file.write(updated_readme)
+    # Replace the content between markers with the generated sponsors table
+    start_index = readme_content.find(start_marker)
+    end_index = readme_content.find(end_marker, start_index + len(start_marker))
+    if start_index != -1 and end_index != -1:
+        updated_readme = (
+            readme_content[:start_index + len(start_marker)]
+            + "\n"
+            + sponsors_table
+            + "\n"
+            + readme_content[end_index:]
+        )
+    else:
+        print("Markers not found in README.md. Make sure they are correctly placed.")
+        return
+
+
+    # Update the README.md file in the GitHub repository
+    api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/README.md"
+
+    updated_content_base64 = base64.b64encode(readme_content.encode()).decode()
+
+    # Create a commit to update the README.md file
+    commit_message = "[🤖Automation] Update README with sponsors information"
+    commit_data = {
+        "message": commit_message,
+        "content": updated_content_base64,
+        "sha": readme_data["sha"],
+        "branch": "main",  # Update the branch name as needed
+    }
+
+    commit_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/README.md"
+    commit_response = requests.put(commit_url, headers=headers, json=commit_data)
+
+    if commit_response.status_code == 200:
+        print("README.md updated successfully in the GitHub repository.")
+    else:
+        print(f"Failed to update README.md. Status code: {commit_response.status_code}")
+        print(commit_response.json())
+
+    print("README.md updated successfully with the sponsors table.")
+
 
 def main():
     sponsors_data = fetch_sponsors()
