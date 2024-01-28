@@ -95,41 +95,42 @@ def update_readme(sponsors_table):
     global headers
     repo_owner = "jokob-sk"
     repo_name = "Pi.Alert"    
-    readme_path = "README.md"
 
-    with open(readme_path, "r") as readme_file:
-        readme_content = readme_file.read()
+    # Update the README.md file in the GitHub repository
+    api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/README.md"
+
+    # Fetch the current content of the README.md file
+    response = requests.get(api_url, headers=headers)
+    readme_data = response.json()
 
     # Find the start and end markers
     start_marker = "<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->"
     end_marker = "<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->"
 
     # Replace the content between markers with the generated sponsors table
-    start_index = readme_content.find(start_marker)
-    end_index = readme_content.find(end_marker, start_index + len(start_marker))
+    start_index = readme_data.find(start_marker)
+    end_index = readme_data.find(end_marker, start_index + len(start_marker))
     if start_index != -1 and end_index != -1:
         updated_readme = (
-            readme_content[:start_index + len(start_marker)]
+            readme_data[:start_index + len(start_marker)]
             + "\n"
             + sponsors_table
             + "\n"
-            + readme_content[end_index:]
+            + readme_data[end_index:]
         )
     else:
         print("Markers not found in README.md. Make sure they are correctly placed.")
         return
 
 
-    # Update the README.md file in the GitHub repository
-    api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/README.md"
-
-    updated_content_base64 = base64.b64encode(readme_content.encode()).decode()
+    updated_content_base64 = base64.b64encode(readme_data.encode()).decode()
 
     # Create a commit to update the README.md file
     commit_message = "[🤖Automation] Update README with sponsors information"
     commit_data = {
         "message": commit_message,
-        "content": updated_content_base64,        
+        "content": updated_content_base64,       
+        "sha": readme_data["sha"], 
         "branch": "main",  # Update the branch name as needed
     }
 
