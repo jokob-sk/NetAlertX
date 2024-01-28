@@ -836,145 +836,28 @@ function initializeSelectedColumns () {
 // --------------------------------------------------------
 //Initialize Select2 Elements and make them sortable
 
-$(function () {    
-    selectEl = $('.select2').select2();
-   
+$(function () {
+    var selectEl = $('.select2').select2();
+
     selectEl.next().children().children().children().sortable({
-      containment: 'parent', stop: function (event, ui) {
-        ui.item.parent().children('[title]').each(function () {
-          var title = $(this).attr('title');
-          var original = $( 'option:contains(' + title + ')', selectEl ).first();
-          original.detach();
-          selectEl.append(original)
-        });
-        selectEl.change();
-      }
+        containment: 'parent',
+        update: function () {
+            var sortedValues = $(this).children().map(function() {
+                return $(this).attr('title');
+            }).get();
+
+            var sortedOptions = selectEl.find('option').sort(function(a, b) {
+                return sortedValues.indexOf($(a).text()) - sortedValues.indexOf($(b).text());
+            });
+
+            // Replace all options in selectEl
+            selectEl.empty().append(sortedOptions);
+
+            // Trigger change event on Select2
+            selectEl.trigger('change');
+        }
     });
 });
-
-// $(function () {    
-//     var selectEl = $('.select2').select2();
-   
-//     selectEl.next().children().children().children().sortable({
-//         containment: 'parent',
-//         stop: function (event, ui) {
-//             ui.item.parent().children('[title]').each(function () {
-//                 var title = $(this).attr('title');
-//                 var original = $('option:contains(' + title + ')', selectEl).first();
-                
-//                 // Clear any previous data associated with the element
-//                 original.removeData();
-                
-//                 original.detach();
-//                 selectEl.append(original);
-//             });
-            
-//             // Trigger change event on Select2
-//             selectEl.trigger('change');
-//         }
-//     });
-// });
-
-
-// $(function () {    
-//     var selectEl = $('.select2').select2();
-   
-//     selectEl.next().children().children().children().sortable({
-//         containment: 'parent',
-//         stop: function (event, ui) {
-//             // Remove all options from selectEl
-//             selectEl.children().remove();
-            
-//             // Rebuild options based on the sorted order
-//             ui.item.parent().children('[title]').each(function () {
-//                 var title = $(this).attr('title');
-//                 var original = $('option:contains(' + title + ')', selectEl).first();
-                
-//                 original.removeData();
-//                 selectEl.append(original);
-//             });
-            
-//             // Trigger change event on Select2
-//             selectEl.trigger('change');
-//         }
-//     });
-// });
-
-// $(function () {
-//     var selectEl = $('.select2').select2();
-
-//     selectEl.next().children().children().children().sortable({
-//         containment: 'parent',
-//         stop: function (event, ui) {
-//             var sortedOptions = [];
-
-//             // Build an array of sorted option values
-//             ui.item.parent().children('[title]').each(function () {
-//                 var title = $(this).attr('title');
-//                 sortedOptions.push(selectEl.find('option:contains(' + title + ')').val());
-//             });
-
-//             // Remove all options from selectEl
-//             selectEl.empty();
-
-//             // Rebuild options based on the sorted order
-//             $.each(sortedOptions, function (index, value) {
-//                 var option = selectEl.find('option[value="' + value + '"]');
-//                 selectEl.append(option);
-//             });
-
-//             // Trigger change event on Select2
-//             selectEl.trigger('change');
-//         }
-//     });
-// });
-
-// $(function () {
-//     var selectEl = $('.select2').select2();
-
-//     selectEl.next().children().children().children().sortable({
-//         containment: 'parent',
-//         stop: function (event, ui) {
-//             var sortedOptions = ui.item.parent().children('[title]').map(function () {
-//                 var title = $(this).attr('title');
-//                 return selectEl.find('option:contains(' + title + ')').prop('outerHTML');
-//             }).get().join('');
-
-//             // Replace all options in selectEl
-//             selectEl.html(sortedOptions);
-
-//             // Trigger change event on Select2
-//             selectEl.trigger('change');
-//         }
-//     });
-// });
-
-// $(function () {
-//     var selectEl = $('.select2').select2();
-
-//     selectEl.next().children().children().children().sortable({
-//         containment: 'parent',
-//         stop: function (event, ui) {
-//             var sortedOptions = selectEl.find('option').map(function () {
-//                 var title = $(this).text();
-//                 var isSelected = $(this).is(':selected');
-//                 var newOption = $('<option>', {
-//                     value: $(this).val(),
-//                     text: title,
-//                     selected: isSelected
-//                 });
-//                 return newOption.prop('outerHTML');
-//             }).get().join('');
-
-//             // Replace all options in selectEl
-//             selectEl.html(sortedOptions);
-
-//             // Trigger change event on Select2
-//             selectEl.trigger('change');
-//         }
-//     });
-// });
-
 
 
 // --------------------------------------------------------

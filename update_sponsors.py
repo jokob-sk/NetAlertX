@@ -3,9 +3,8 @@ import requests
 import base64
 
 def fetch_sponsors():
-    
     global headers
-    
+
     graphql_url = "https://api.github.com/graphql"
     headers = {
         "Authorization": f"Bearer {os.environ.get('GH_TOKEN')}",
@@ -72,12 +71,19 @@ def fetch_sponsors():
             "monthly_price": monthly_price,
         }
 
-        if created_at == sponsorship["createdAt"]:
-            past_sponsors.append(sponsor)
-        else:
+        # Check if the sponsorship is current or past
+        if privacy_level == "PUBLIC":
             current_sponsors.append(sponsor)
+        else:
+            past_sponsors.append(sponsor)
+
+    print("Current Sponsors:")
+    print(current_sponsors)
+    print("\nPast Sponsors:")
+    print(past_sponsors)
 
     return {"current_sponsors": current_sponsors, "past_sponsors": past_sponsors}
+
 
 def generate_sponsors_table(current_sponsors, past_sponsors):
     current_table = "| Current Sponsors |\n|---|\n"
