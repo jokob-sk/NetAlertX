@@ -512,7 +512,8 @@ def cleanDeviceName(str, match_IP):
     # alternative str.split('.')[0]
     str = str.replace("._airplay", "")
     str = str.replace("._tcp", "")
-    str = str.replace(".local", "")
+    str = str.replace(".localdomain", "")
+    str = str.replace(".local", "")    
     str = str.replace("._esphomelib", "")
     str = str.replace("._googlecast", "")
     str = str.replace(".lan", "")
