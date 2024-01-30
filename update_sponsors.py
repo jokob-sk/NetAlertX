@@ -15,34 +15,33 @@ def fetch_sponsors():
     # GraphQL query to fetch sponsors
     graphql_query = """
     {
-      viewer {
-        login
-        sponsorshipsAsMaintainer(first: 100, orderBy: {field: CREATED_AT, direction: ASC}, includePrivate: true) {
-          totalCount
-          pageInfo {
-            endCursor
-          }
-          nodes {
-            sponsorEntity {
-              ... on User {
-                name
-                login
-                url
-              }
-              ... on Organization {
-                name
-                url
-                login
-              }
+        user(login: "jokob-sk") {
+            sponsorshipsAsMaintainer(first: 100, orderBy: {field: CREATED_AT, direction: ASC}, includePrivate: true) {
+            totalCount
+            pageInfo {
+                endCursor
             }
-            createdAt
-            privacyLevel
-            tier {
-              monthlyPriceInCents
+            nodes {
+                sponsorEntity {
+                ... on User {
+                    name
+                    login
+                    url
+                }
+                ... on Organization {
+                    name
+                    url
+                    login
+                }
+                }
+                createdAt
+                privacyLevel
+                tier {
+                monthlyPriceInCents
+                }
             }
-          }
+            }
         }
-      }
     }
     """
 
@@ -56,7 +55,7 @@ def fetch_sponsors():
         print(f"GraphQL query failed: {data['errors']}")
         return {"sponsors": []}
 
-    sponsorships = data["data"]["viewer"]["sponsorshipsAsMaintainer"]["nodes"]
+    sponsorships = data["data"]["user"]["sponsorshipsAsMaintainer"]["nodes"]
     sponsors = []
 
     for sponsorship in sponsorships:
