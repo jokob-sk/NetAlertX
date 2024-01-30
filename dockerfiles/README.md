@@ -92,6 +92,8 @@ There are 2 approaches how to get PiHole devices imported. Via the PiHole import
 > Use the official installation guides at first and use community content as suplementary material. Open an issue if you'd like to add your link to the list 🙏 
 
 - 📄 [How to Install Pi.Alert on Your Synology NAS - Marius hosting (English)](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
+- 📄 [Using the PiAlert Network Security Scanner on a Raspberry Pi - PiMyLifeUp (English)](https://pimylifeup.com/raspberry-pi-pialert/)
+- ▶ [How to Setup Pi.Alert on Your Synology NAS - Digital Aloha (English)](https://www.youtube.com/watch?v=M4YhpuRFaUg) 
 - 📄 [시놀/헤놀에서 네트워크 스캐너 Pi.Alert Docker로 설치 및 사용하기 (Korean)](https://blog.dalso.org/article/%EC%8B%9C%EB%86%80-%ED%97%A4%EB%86%80%EC%97%90%EC%84%9C-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%8A%A4%EC%BA%90%EB%84%88-pi-alert-docker%EB%A1%9C-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%82%AC%EC%9A%A9) (July 2023)
 - 📄 [网络入侵探测器Pi.Alert (Chinese)](https://codeantenna.com/a/VgUvIAjZ7J) (May 2023)
 - ▶ [Pi.Alert auf Synology & Docker by - Jürgen Barth (German)](https://www.youtube.com/watch?v=-ouvA2UNu-A) (March 2023)

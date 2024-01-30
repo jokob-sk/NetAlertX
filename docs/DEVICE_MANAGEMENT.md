@@ -46,8 +46,7 @@ To edit device information:
   - **Alert All Events**: Send a notification in each event (connection,
       disconnection, IP Changed, ...)
   - **Alert Down**: Send a notification when the device is down
-    - *(Userful with "always connected" devices: Router, AP, Camera, Alexa,
-      ...)*
+    - *(Userful with "always connected" devices: Camera, Alexa,...)*
   - **Skip repeated notifications during**: Do not send more than one
       notification to this device for X hours
     - *(Useful to avoid notification saturation on devices that frequently
