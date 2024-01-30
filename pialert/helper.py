@@ -383,7 +383,7 @@ def get_device_name_nslookup(db, pMAC, pIP):
     db.commitDB()
 
     if len(nslookupEntry) != 0:
-        name = nslookupEntry[0][0]
+        name = cleanDeviceName(nslookupEntry[0][0])
 
     return name
 
