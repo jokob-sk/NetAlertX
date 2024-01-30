@@ -362,6 +362,33 @@ def check_IP_format (pIP):
 
 
 #-------------------------------------------------------------------------------
+def get_device_name_nslookup(db, pMAC, pIP):
+    
+    nameNotFound = "(name not found)"
+
+    sql = db.sql
+
+    name = nameNotFound
+    
+    #  get names from the NSLOOKUP plugin entries
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'NSLOOKUP' AND 
+            (Object_PrimaryID = '{pMAC}' OR Object_SecondaryID = '{pIP}')
+         """
+    )         
+    nslookupEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nslookupEntry) != 0:
+        name = nslookupEntry[0][0]
+
+    return name
+
+
+#-------------------------------------------------------------------------------
 def resolve_device_name_dig (pMAC, pIP):
     
     nameNotFound = "(name not found)"

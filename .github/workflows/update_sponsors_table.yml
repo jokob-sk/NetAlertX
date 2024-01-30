@@ -2,7 +2,7 @@ name: 🤖Automation - Update Sponsors Table
 
 on:
   schedule:
-    - cron: '47 20 * * *' # Set your preferred schedule (UTC)
+    - cron: '30 11 * * *' # Set your preferred schedule (UTC)
 
 jobs:
   update-table:

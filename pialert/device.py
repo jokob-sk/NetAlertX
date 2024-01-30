@@ -3,7 +3,7 @@ import subprocess
 
 import conf
 import re
-from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus, check_IP_format
+from helper import timeNowTZ, get_setting, get_setting_value,resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nslookup, check_IP_format
 from logger import mylog, print_log
 from const import vendorsPath
 
@@ -286,6 +286,7 @@ def update_devices_names (db):
     notFound = 0
 
     foundDig = 0
+    foundNsLookup = 0
     foundPholus = 0
 
     # BUGFIX #97 - Updating name of Devices w/o IP    
@@ -318,6 +319,13 @@ def update_devices_names (db):
         if newName != nameNotFound:
             foundDig += 1
 
+        # Resolve device name with NSLOOKUP plugin data
+        if newName == nameNotFound:
+            newName = get_device_name_nslookup(db, device['dev_MAC'], device['dev_LastIP'])
+
+            if newName != nameNotFound:
+               foundNsLookup += 1
+
         # Resolve with Pholus 
         if newName == nameNotFound:
             # Try MAC matching
@@ -341,7 +349,7 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', ['[Update Device Name] Names Found (DiG/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundPholus ,")"] )                 
+    mylog('verbose', ['[Update Device Name] Names Found (DiG/NSlookup/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundNsLookup,"/",foundPholus ,")"] )                 
     mylog('verbose', ['[Update Device Name] Names Not Found         : ', len(recordsNotFound)] )    
      
     # update not found devices with (name not found) 
