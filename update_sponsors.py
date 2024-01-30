@@ -83,9 +83,10 @@ def fetch_sponsors():
 def generate_sponsors_table(sponsors):
     sponsors_table = "| All Sponsors |\n|---|\n"
     for sponsor in sponsors:
-        sponsors_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) - ${sponsor['monthly_price'] / 100:.2f} |\n"
+        sponsors_table += f"| [{sponsor['name'] or sponsor['login']}]({sponsor['url']}) |\n"
 
     return sponsors_table
+
 
 def update_readme(sponsors_table):
     global headers
