@@ -51,6 +51,8 @@ def main():
     # Retrieve devices
     unknown_devices = device_handler.getUnknown()
 
+    mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
+
     for device in unknown_devices:
         domain_name, dns_server = execute_nslookup(device['dev_LastIP'], timeout)
 
@@ -95,9 +97,10 @@ def execute_nslookup (ip, timeout):
 
         mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
 
-        # Parse output using regular expressions
-        domain_pattern = re.compile(r'Name:\s+(.+)')        
-        server_pattern = re.compile(r'Server:\s+(.+)')
+        # Parse output using case-insensitive regular expressions
+        domain_pattern = re.compile(r'name\s*=\s*([^\s]+)', re.IGNORECASE)
+        server_pattern = re.compile(r'Server:\s+(.+)', re.IGNORECASE)
+
 
         domain_match = domain_pattern.search(output)        
         server_match = server_pattern.search(output)

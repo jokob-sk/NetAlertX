@@ -25,6 +25,14 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 ### 📚 Table of contents
 
+#### 📥 Initial Setup
+
+- [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
+- [SMTP server config](/docs/SMTP.md)
+- [Custom Icon configuration and support](/docs/ICONS.md)
+- [Better name resolution with Reverse DNS](/docs/REVERSE_DNS.md)
+- [Network treemap configuration](/docs/NETWORK_TREE.md)
+
 #### 🐛 Debugging help & tips
 
 - [Debugging tips](/docs/DEBUG_TIPS.md)
@@ -33,9 +41,6 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 🔝 Popular/Suggested
 
-- [Network treemap configuration](/docs/NETWORK_TREE.md)
-- [SMTP server config](/docs/SMTP.md)
-- [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [Home Assistant](/docs/HOME_ASSISTANT.md)
 - [Bulk edit devices](/docs/DEVICES_BULK_EDITING.md)
 
@@ -43,7 +48,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
 - [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
-- [Custom Icon configuration and support](/docs/ICONS.md)
+
 
 #### 🔎 Examples
 

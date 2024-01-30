@@ -94,7 +94,9 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 
 
 
-### ⭐ Sponsors 
+### ⭐ Sponsors (Work in progress)
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
 Thank you to all the wonderful people who have sponsored this project (=prevented my burnout):
 

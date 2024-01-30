@@ -343,28 +343,29 @@ function filterDataByStatus(data, status) {
 // -----------------------------------------------------------------------------
 function getDeviceStatus(item)
 {
-    if(item.dev_PresentLastScan === 1)
-    {
-      return 'On-line';
-    }
-    else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0)
-    {
-      return 'Down';
-    }
-    else if(item.dev_NewDevice === 1)
-    {
-      return 'New';
-    }
-    else if(item.dev_Archived === 1)
-    {
-      return 'Archived';
-    }
-    else if(item.dev_PresentLastScan === 0)
-    {
-      return 'Off-line';
-    }
+  
+  if(item.dev_NewDevice === 1)
+  {
+    return 'New';
+  }
+  else if(item.dev_PresentLastScan === 1)
+  {
+    return 'On-line';
+  }
+  else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0)
+  {
+    return 'Down';
+  }
+  else if(item.dev_Archived === 1)
+  {
+    return 'Archived';
+  }
+  else if(item.dev_PresentLastScan === 0)
+  {
+    return 'Off-line';
+  }
 
-    return "Unknown status"
+  return "Unknown status"
 }
 
 // -----------------------------------------------------------------------------
