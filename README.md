@@ -103,6 +103,9 @@ Thank you to all the wonderful people who have sponsored this project (=prevente
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 | All Sponsors |
 |---|
+| [dtech77pl](https://github.com/dtech77pl) |
+| [David Kidd](https://github.com/demolishedman50) |
+| [Cristi Arcaleanu](https://github.com/cristiarcaleanu) |
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
