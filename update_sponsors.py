@@ -12,34 +12,34 @@ def fetch_sponsors():
         "Accept": "application/vnd.github.v4+json",
     }
 
-    # GraphQL query to fetch sponsors
+    # GraphQL query to fetch public sponsors
     graphql_query = """
     {
         user(login: "jokob-sk") {
             sponsorshipsAsMaintainer(first: 100, orderBy: {field: CREATED_AT, direction: ASC}, includePrivate: true) {
-            totalCount
-            pageInfo {
-                endCursor
-            }
-            nodes {
-                sponsorEntity {
-                ... on User {
-                    name
-                    login
-                    url
+                totalCount
+                pageInfo {
+                    endCursor
                 }
-                ... on Organization {
-                    name
-                    url
-                    login
+                nodes {
+                    sponsorEntity {
+                        ... on User {
+                            name
+                            login
+                            url
+                        }
+                        ... on Organization {
+                            name
+                            url
+                            login
+                        }
+                    }
+                    createdAt
+                    privacyLevel
+                    tier {
+                        monthlyPriceInCents
+                    }
                 }
-                }
-                createdAt
-                privacyLevel
-                tier {
-                monthlyPriceInCents
-                }
-            }
             }
         }
     }
@@ -47,7 +47,6 @@ def fetch_sponsors():
 
     response = requests.post(graphql_url, json={"query": graphql_query}, headers=headers)
     data = response.json()
-
 
     print(f"Debug GraphQL query result: {data}")
 
@@ -59,26 +58,33 @@ def fetch_sponsors():
     sponsors = []
 
     for sponsorship in sponsorships:
-        sponsor_entity = sponsorship["sponsorEntity"]
-        created_at = datetime.strptime(sponsorship["createdAt"], "%Y-%m-%dT%H:%M:%SZ")
         privacy_level = sponsorship["privacyLevel"]
-        monthly_price = sponsorship["tier"]["monthlyPriceInCents"]
 
-        sponsor = {
-            "name": sponsor_entity.get("name"),
-            "login": sponsor_entity["login"],
-            "url": sponsor_entity["url"],
-            "created_at": created_at,
-            "privacy_level": privacy_level,
-            "monthly_price": monthly_price,
-        }
+        # Only include sponsors with privacyLevel set to "PUBLIC"
+        if privacy_level == "PUBLIC":
+            sponsor_entity = sponsorship["sponsorEntity"]
+            created_at = datetime.strptime(sponsorship["createdAt"], "%Y-%m-%dT%H:%M:%SZ")
 
-        sponsors.append(sponsor)
+            # Check if tier is not None before accessing its properties
+            tier = sponsorship.get("tier", {})
+            monthly_price = tier.get("monthlyPriceInCents") if tier else None
 
-    print("All Sponsors:")
+            sponsor = {
+                "name": sponsor_entity.get("name"),
+                "login": sponsor_entity["login"],
+                "url": sponsor_entity["url"],
+                "created_at": created_at,
+                "privacy_level": privacy_level,
+                "monthly_price": monthly_price,
+            }
+
+            sponsors.append(sponsor)
+
+    print("Public Sponsors:")
     print(sponsors)
 
     return {"sponsors": sponsors}
+
 
 def generate_sponsors_table(sponsors):
     sponsors_table = "| All Sponsors |\n|---|\n"
