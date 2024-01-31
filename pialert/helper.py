@@ -370,20 +370,39 @@ def get_device_name_nslookup(db, pMAC, pIP):
 
     name = nameNotFound
     
-    #  get names from the NSLOOKUP plugin entries
+    #  get names from the NSLOOKUP plugin entries vased on MAC
     sql.execute(
         f"""
          SELECT Watched_Value2 FROM Plugins_Objects 
          WHERE 
             Plugin = 'NSLOOKUP' AND 
-            (Object_PrimaryID = '{pMAC}' OR Object_SecondaryID = '{pIP}')
+            Object_PrimaryID = '{pMAC}'
          """
     )         
     nslookupEntry = sql.fetchall() 
     db.commitDB()
 
     if len(nslookupEntry) != 0:
-        name = cleanDeviceName(nslookupEntry[0][0])
+        name = cleanDeviceName(nslookupEntry[0][0], False)
+
+        return name
+
+    #  get names from the NSLOOKUP plugin entries based on IP
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'NSLOOKUP' AND             
+            Object_SecondaryID = '{pIP}'
+         """
+    )         
+    nslookupEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nslookupEntry) != 0:
+        name = cleanDeviceName(nslookupEntry[0][0], True)
+
+        return name
 
     return name
 

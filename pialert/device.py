@@ -289,7 +289,7 @@ def update_devices_names (db):
     foundNsLookup = 0
     foundPholus = 0
 
-    # BUGFIX #97 - Updating name of Devices w/o IP    
+    # Gen unknown devices
     sql.execute ("SELECT * FROM Devices WHERE dev_Name IN ('(unknown)','', '(name not found)') AND dev_LastIP <> '-'")
     unknownDevices = sql.fetchall() 
     db.commitDB()
@@ -299,7 +299,7 @@ def update_devices_names (db):
         return
 
     # Devices without name
-    mylog('verbose', '[Update Device Name] Trying to resolve devices without name')
+    mylog('verbose', f'[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}')
 
     # get names from Pholus scan 
     sql.execute ('SELECT * FROM Pholus_Scan where "Record_Type"="Answer"')    
@@ -308,6 +308,7 @@ def update_devices_names (db):
 
     # Number of entries from previous Pholus scans
     mylog('verbose', ['[Update Device Name] Pholus entries from prev scans: ', len(pholusResults)])
+
 
     for device in unknownDevices:
         newName = nameNotFound
@@ -328,6 +329,7 @@ def update_devices_names (db):
 
         # Resolve with Pholus 
         if newName == nameNotFound:
+
             # Try MAC matching
             newName =  resolve_device_name_pholus (device['dev_MAC'], device['dev_LastIP'], pholusResults, nameNotFound, False)
             # Try IP matching 
@@ -338,8 +340,11 @@ def update_devices_names (db):
             if newName != nameNotFound:
                 foundPholus += 1
         
-        # isf still not found update name so we can distinguish the devices where we tried already
+        # if still not found update name so we can distinguish the devices where we tried already
         if newName == nameNotFound :
+
+            notFound += 1
+
             # if dev_Name is the same as what we will change it to, take no action
             # this mitigates a race condition which would overwrite a users edits that occured since the select earlier
             if device['dev_Name'] != nameNotFound:
@@ -349,8 +354,8 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', ['[Update Device Name] Names Found (DiG/NSlookup/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundNsLookup,"/",foundPholus ,")"] )                 
-    mylog('verbose', ['[Update Device Name] Names Not Found         : ', len(recordsNotFound)] )    
+    mylog('verbose', ['[Update Device Name] Names Found (DiG/NSLOOKUP/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundNsLookup,"/",foundPholus ,")"] )                 
+    mylog('verbose', ['[Update Device Name] Names Not Found         : ', notFound] )    
      
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )

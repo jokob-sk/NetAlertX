@@ -174,8 +174,10 @@ def main ():
             updateState("Process: Wait")
             mylog('verbose', ['[MAIN] Process: Wait'])            
         else:
-            # do something            
-            mylog('verbose', ['[MAIN] waiting to start next loop'])
+            # do something  
+            # mylog('verbose', ['[MAIN] Waiting to start next loop'])
+            dummyVariable = 1          
+            
 
         #loop     
         time.sleep(5) # wait for N seconds      

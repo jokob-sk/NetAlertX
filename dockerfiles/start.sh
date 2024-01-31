@@ -140,5 +140,7 @@ fi
 #  Activate the virtual python environment
 source myenv/bin/activate
 
+echo "[INSTALL] 🟢 Starting app - navigate to your <server IP>:20211 (or custom port)"
+
 # Start the PiAlert python script
 python $INSTALL_DIR/pialert/pialert/
