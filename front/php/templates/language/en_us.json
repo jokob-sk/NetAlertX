@@ -314,7 +314,7 @@
             "Maintenance_Tool_del_unknowndev" : "Delete (unknown) Devices",
             "Maintenance_Tool_del_unknowndev_text" : "Before using this function, please make a backup. The deletion cannot be undone. All devices named (unknown) will be deleted from the database.",
             "Maintenance_Tool_del_unknowndev_noti" : "Delete (unknown) Devices",
-            "Maintenance_Tool_del_unknowndev_noti_text" : "Are you sure you want to delete all (unknown) devices?",
+            "Maintenance_Tool_del_unknowndev_noti_text" : "Are you sure you want to delete all (unknown) and (name not found) devices?",
             "Maintenance_Tool_del_allevents" : "Delete Events (Reset Presence)",
             "Maintenance_Tool_del_allevents_text" : "Before using this function, please make a backup. The deletion cannot be undone. All events in the database will be deleted. At that moment the presence of all devices will be reset. This can lead to invalid sessions. This means that devices are displayed as \"present\" although they are offline. A scan while the device in question is online solves the problem.",
             "Maintenance_Tool_del_allevents_noti" : "Delete Events",

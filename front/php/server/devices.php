@@ -225,7 +225,7 @@ function deleteUnknownDevices() {
   global $db;  
 
   // sql
-  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)"';
+  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)" OR dev_Name="(name not found)"';
   // execute sql
   $result = $db->query($sql);
 
