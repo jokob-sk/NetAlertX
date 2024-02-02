@@ -88,7 +88,7 @@ def send(html, text):
     headers = {
         "Title": "Pi.Alert Notification",
         "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
-        "Priority": "urgent",
+        "Priority": get_setting_value('NTFY_PRIORITY'),
         "Tags": "warning"
     }
     
