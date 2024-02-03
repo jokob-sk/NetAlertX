@@ -4,7 +4,7 @@ A plugin to resolve `(unknown)` device names. It uses the [Pholus](https://githu
 
 ### Usage
 
-- Go to settings and find Pholus-Scan (Name discovery) in the list of settings.
+- Go to settings and find Pholus (Name discovery) in the list of settings.
 - Enable the plugin by changing the `RUN` parameter from disabled to one you prefer (`schedule`,  `always_after_scan`, `on_new_device`).
 - Specify the `PHOLUS_RUN_TIMEOUT` (Will be divided by the number of subnets specified in the Arp-Scan (Network scan) plugin setting `SCAN_SUBNETS`)
 - SAVE

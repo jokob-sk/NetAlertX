@@ -23,11 +23,11 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Pholus-Scan (Name discovery)"
+      "string": "Pholus (Name discovery)"
     },
     {
       "language_code": "es_es",
-      "string": "Pholus-Scan (Descubrimiento de nombre)"
+      "string": "Pholus (Descubrimiento de nombre)"
     }
   ],
   "icon": [
@@ -43,7 +43,7 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "This plugin is to execute a Pholus-scan (name discovery) on the local network"
+      "string": "This plugin is to execute a Pholus (name discovery) on the local network"
     },
     {
       "language_code": "es_es",
