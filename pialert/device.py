@@ -135,6 +135,7 @@ def create_new_devices (db):
                     WHERE NOT EXISTS (SELECT 1 FROM Devices
                                       WHERE dev_MAC = cur_MAC) 
                             {list_to_where('OR', 'cur_MAC', 'NOT LIKE', get_setting_value('NEWDEV_ignored_MACs'))}
+                            {list_to_where('OR', 'cur_IP', 'NOT LIKE', get_setting_value('NEWDEV_ignored_IPs'))}
                 """ 
 
     
@@ -143,7 +144,7 @@ def create_new_devices (db):
     sql.execute(query)
 
     mylog('debug',f'[New Devices] Insert Connection into session table')
-    
+
     sql.execute (f"""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
                         ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
                     SELECT cur_MAC, cur_IP,'Connected','{startTime}', NULL , NULL ,1, cur_Vendor
@@ -151,6 +152,7 @@ def create_new_devices (db):
                     WHERE NOT EXISTS (SELECT 1 FROM Sessions
                                       WHERE ses_MAC = cur_MAC) 
                             {list_to_where('OR', 'cur_MAC', 'NOT LIKE', get_setting_value('NEWDEV_ignored_MACs'))}
+                            {list_to_where('OR', 'cur_IP', 'NOT LIKE', get_setting_value('NEWDEV_ignored_IPs'))}
                     """)
                     
     # Create new devices from CurrentScan
@@ -203,6 +205,7 @@ def create_new_devices (db):
                     FROM CurrentScan
                         WHERE 1=1
                         {list_to_where('OR', 'cur_MAC', 'NOT LIKE', get_setting_value('NEWDEV_ignored_MACs'))}
+                        {list_to_where('OR', 'cur_IP', 'NOT LIKE', get_setting_value('NEWDEV_ignored_IPs'))}
                 """
 
 

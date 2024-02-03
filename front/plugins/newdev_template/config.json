@@ -38,7 +38,27 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
+              "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
+            }
+          ]
+        },
+        {
+          "function": "ignored_IPs",
+          "type": "list",
+          "default_value": [
+          ],
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Ignored IPs"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out a subnet."
             }
           ]
         },

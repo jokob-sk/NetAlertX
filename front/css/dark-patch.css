@@ -723,3 +723,6 @@ input[type="password"]::-webkit-caps-lock-indicator {
   top: 0.01em;
   font-size: 3.25em;
 }
+.pa_semitransparent-panel{
+  background-color: #000 !important;
+}
