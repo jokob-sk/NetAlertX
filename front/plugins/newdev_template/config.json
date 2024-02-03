@@ -22,7 +22,27 @@
     }
   ],
   "settings":[
-    {
+        {
+          "function": "ignored_MACs",
+          "type": "list",
+          "default_value": [
+          ],
+          "options": [],
+          "localized": ["name", "description"],
+          "name": [
+            {
+              "language_code": "en_us",
+              "string": "Ignored MACs"
+            }
+          ],
+          "description": [
+            {
+              "language_code": "en_us",
+              "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
+            }
+          ]
+        },
+        {
           "function": "dev_MAC",
           "type": "readonly",
           "maxLength": 50,

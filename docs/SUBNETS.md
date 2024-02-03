@@ -31,7 +31,7 @@ Specify the network filter (which **significantly** speeds up the scan process).
 
 The adapter will probably be `eth0` or `eth1`. (Check `System info` > `Network Hardware` or run `iwconfig` in the container to find your interface name(s)) 
 
-> Run `iwconfig` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
+> Run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
 
 ### VLANs
 

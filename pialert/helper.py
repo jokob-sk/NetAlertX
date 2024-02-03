@@ -278,6 +278,9 @@ def get_setting(key):
 
 
 #-------------------------------------------------------------------------------
+# Settings
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
     
@@ -312,8 +315,15 @@ def get_setting_value(key):
         elif set_type in ['integer.select', 'integer']:
             value = int(set_value)
         elif set_type in ['text.multiselect', 'list', 'subnets']:
+            #  Handle string 
+
+            mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])
+
+            if isinstance(set_value, str):
+                value = json.loads(set_value.replace("'", "\""))
             # Assuming set_value is a list in this case
-            value = set_value
+            elif isinstance(set_value, list):
+                value = set_value
         elif set_type == '.template':
             # Assuming set_value is a JSON object in this case
             value = json.loads(set_value)
@@ -324,6 +334,36 @@ def get_setting_value(key):
 
     return value
 
+
+#-------------------------------------------------------------------------------
+# Generate a WHERE condition for SQLite based on a list of values.
+def list_to_where(logical_operator, column_name, condition_operator, values_list):
+    """
+    Generate a WHERE condition for SQLite based on a list of values.
+
+    Parameters:
+    - logical_operator: The logical operator ('AND' or 'OR') to combine conditions.
+    - column_name: The name of the column to filter on.
+    - condition_operator: The condition operator ('LIKE', 'NOT LIKE', '=', '!=', etc.).
+    - values_list: A list of values to be included in the condition.
+
+    Returns:
+    - A string representing the WHERE condition.
+    """
+
+    if not values_list:
+        return ""  # Return an empty string if the list is empty to avoid breaking the SQL condition.
+
+    # Replace {s-quote} with single quote in values_list
+    values_list = [value.replace("{s-quote}", "'") for value in values_list]
+
+    # Build the WHERE condition
+    condition = f"{column_name} {condition_operator} '{values_list[0]}'"
+
+    for value in values_list[1:]:
+        condition += f" {logical_operator} {column_name} {condition_operator} '{value}'"
+
+    return f' AND ({condition}) ' 
 
 
 
