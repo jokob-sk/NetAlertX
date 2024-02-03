@@ -475,7 +475,7 @@
         "Gen_Upd": "Aktualisierung erfolgreich",
         "Gen_Upd_Fail": "Aktualisierung fehlgeschlagen",
         "Gen_ReadDocs": "Mehr in der Dokumentation",
-        "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is runnig.",
+        "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is runnig",
         "Gen_LockedDB": "ERROR - DB eventuell gesperrt - Nutze die Konsole in den Entwickler Werkzeugen (F12) zur Überprüfung oder probiere es später erneut.",
         "Login_Default_PWD": "Standardpasswort \"123456\" noch immer aktiv.",
         "Navigation_Plugins": "Plugins",
