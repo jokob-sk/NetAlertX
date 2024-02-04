@@ -1,6 +1,6 @@
 ## How to setup your Network page
 
-Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node).
+Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node) set to a network device type (e.g.: **Type**:`Router`).
 
 > 💡 Tip: You can add dummy devices via the [Undiscoverables plugin](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/undiscoverables/README.md)
 

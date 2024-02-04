@@ -1,0 +1,57 @@
+{
+  "code_name": "workflows",
+  "unique_prefix": "WORKFLOWS",
+  "plugin_type": "system",
+  "enabled": true,
+  "data_source": "script",  
+  "show_ui": false,
+  "localized": ["display_name", "description", "icon"],
+
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Workflows"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-shuffle\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to adjust behavior of workflows."
+    }  
+  ],
+  "params" : [
+  ],  
+
+  "settings": [    
+    {
+      "function": "AppEvents_hist",
+      "type": "integer",
+      "default_value": 10000,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "App Events History"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "How many historical entries of Application Events should be kept. This influences how many entries are also available in the Workflows section in the UI."
+        }
+      ]
+    }
+  ],
+
+  "database_column_definitions": 
+  [          
+           
+  ]
+}

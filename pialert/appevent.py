@@ -16,6 +16,15 @@ class AppEvent_obj:
     def __init__(self, db):
         self.db = db
 
+        # drop table 
+        self.db.sql.execute("""DROP TABLE IF EXISTS "AppEvents" """)
+
+        # Drop all triggers
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_create_device;')
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_read_device;')
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_update_device;')
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_delete_device;')
+
         # Create AppEvent table if missing
         self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "AppEvents" (
             "Index"                 INTEGER,
@@ -29,17 +38,132 @@ class AppEvent_obj:
             "ObjectPrimaryID"       TEXT,
             "ObjectSecondaryID"     TEXT,
             "ObjectForeignKey"      TEXT,
-            "ObjectIndex"           TEXT,
-            "ObjectRowID"           TEXT,
+            "ObjectIndex"           TEXT,            
+            "ObjectIsNew"           BOOLEAN, 
+            "ObjectIsArchived"      BOOLEAN, 
             "ObjectStatusColumn"    TEXT, -- Status (Notifications, Plugins), eve_EventType (Events)
-            "ObjectStatus"          TEXT, -- new_devices, down_devices, events, new, watched-changed, watched-not-changed, missing-in-last-scan, Device down, New Device, IP Changed, Connected, Disconnected, VOIDED - Disconnected, VOIDED - Connected, <missing event>
-            "AppEventStatus"        TEXT, -- TBD "new", "used", "cleanup-next"
-            "Extra"                 TEXT,
+            "ObjectStatus"          TEXT, -- new_devices, down_devices, events, new, watched-changed, watched-not-changed, missing-in-last-scan, Device down, New Device, IP Changed, Connected, Disconnected, VOIDED - Disconnected, VOIDED - Connected, <missing event>            
+            "AppEventType"          TEXT, -- "create", "update", "delete" (+TBD)
+            "Helper1"               TEXT,
+            "Helper2"               TEXT,
+            "Helper3"               TEXT,
+            "Extra"                 TEXT,            
             PRIMARY KEY("Index" AUTOINCREMENT)
         );
         """)
 
+        # Generate a GUID
+        sql_generateGuid = '''
+                        lower(
+                            hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
+                            substr(hex( randomblob(2)), 2) || '-' || 
+                            substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
+                            substr(hex(randomblob(2)), 2) || '-' || 
+                            hex(randomblob(6))
+                        )
+                    '''
+
+        sql_mappedColumns = '''
+                    "GUID",
+                    "DateTimeCreated",
+                    "ObjectType",
+                    "ObjectMAC",
+                    "ObjectIP",
+                    "ObjectStatus",
+                    "ObjectStatusColumn",
+                    "ObjectIsNew",
+                    "ObjectIsArchived",
+                    "ObjectForeignKey",
+                    "AppEventType"
+        '''
+
+        # Trigger for create event
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS "trg_create_device"
+            AFTER INSERT ON "Devices"
+            BEGIN
+                INSERT INTO "AppEvents" (
+                    {sql_mappedColumns}
+                )
+                VALUES (
+                    -- below generates a GUID
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Devices',
+                    NEW.dev_MAC,
+                    NEW.dev_LastIP,
+                    CASE WHEN NEW.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'dev_PresentLastScan',
+                    NEW.dev_NewDevice,
+                    NEW.dev_Archived,
+                    NEW.dev_MAC,
+                    'create'
+                );
+            END;
+        ''')
+
+        # 🔴 This would generate too many events, disabled for now
+        # # Trigger for read event
+        # self.db.sql.execute('''
+        #     TODO
+        # ''')
+
+        # Trigger for update event
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS "trg_update_device"
+            AFTER UPDATE ON "Devices"
+            BEGIN
+                INSERT INTO "AppEvents" (
+                    {sql_mappedColumns}
+                )
+                VALUES (
+                    -- below generates a GUID
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Devices',
+                    NEW.dev_MAC,
+                    NEW.dev_LastIP,
+                    CASE WHEN NEW.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'dev_PresentLastScan',
+                    NEW.dev_NewDevice,
+                    NEW.dev_Archived,
+                    NEW.dev_MAC,
+                    'update'
+                );
+            END;
+        ''')
+
+        # Trigger for delete event
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS "trg_delete_device"
+            AFTER DELETE ON "Devices"
+            BEGIN
+                INSERT INTO "AppEvents" (
+                    {sql_mappedColumns}
+                )
+                VALUES (
+                    -- below generates a GUID
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Devices',
+                    OLD.dev_MAC,
+                    OLD.dev_LastIP,
+                    CASE WHEN OLD.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'dev_PresentLastScan',
+                    OLD.dev_NewDevice,
+                    OLD.dev_Archived,
+                    OLD.dev_MAC,
+                    'delete'
+                );
+            END;
+        ''')
+
         self.save()
+
+    # -------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
+    # below code is unused
+    # -------------------------------------------------------------------------------
 
     # Create a new DB entry if new notifications are available, otherwise skip
     def create(self, Extra="", **kwargs):
@@ -71,11 +195,6 @@ class AppEvent_obj:
         self.upsert()
 
         return True
-
-    # Update the status of the entry
-    def updateStatus(self, newStatus):
-        self.ObjectStatus = newStatus
-        self.upsert()
 
     def upsert(self):
         self.db.sql.execute("""

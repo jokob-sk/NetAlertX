@@ -23,6 +23,7 @@ vendorsPath = '/usr/share/arp-scan/ieee-oui.txt'
 # SQL queries
 #===============================================================================
 sql_devices_all = """select rowid, * from Devices"""
+sql_appevents = """select * from AppEvents"""
 sql_devices_stats =  """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
                         (select count(*) from Devices a where dev_NewDevice = 1 ) as new, 
                         (select count(*) from Devices a where dev_Name = '(unknown)' or dev_Name = '(name not found)' ) as unknown 

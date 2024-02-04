@@ -188,7 +188,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "How many historical entries of Notifications should be kept. This influences how mane entries are also available in the Report section in the UI"
+          "string": "How many historical entries of Notifications should be kept. This influences how many entries are also available in the Report section in the UI"
         }
       ]
     }

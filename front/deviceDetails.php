@@ -1475,7 +1475,7 @@ function updateApi()
 {
 
   // value has to be in format event|param. e.g. run|ARPSCAN
-  action = `update_api|devices`
+  action = `update_api|devices,appevents`
 
   $.ajax({
     method: "POST",

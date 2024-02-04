@@ -66,17 +66,20 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     conn    = sqlite3.connect(dbPath)
     cursor  = conn.cursor()
 
+    # -----------------------------------------------------
     # Cleanup Online History
     mylog('verbose', [f'[{pluginName}] Online_History: Delete all but keep latest 150 entries'])
     cursor.execute ("""DELETE from Online_History where "Index" not in (
                             SELECT "Index" from Online_History 
                             order by Scan_Date desc limit 150)""")
-    mylog('verbose', [f'[{pluginName}] Optimize Database'])
+    
+
+    # -----------------------------------------------------
     # Cleanup Events
     mylog('verbose', [f'[{pluginName}] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)'])
     cursor.execute (f"""DELETE FROM Events 
                             WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')""")
-                            
+    # -----------------------------------------------------   
     # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
     mylog('verbose', [f'[{pluginName}] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)'])
 
@@ -94,7 +97,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     cursor.execute(delete_query)
 
-    
+    # -----------------------------------------------------
     # Trim Notifications entries to less than DBCLNP_NOTIFI_HIST setting
 
     histCount = get_setting_value('DBCLNP_NOTIFI_HIST')
@@ -115,19 +118,58 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     cursor.execute(delete_query)
 
-    # Cleanup Pholus_Scan
-    if PHOLUS_DAYS_DATA != 0:
-        mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
-        # todo: improvement possibility: keep at least N per mac
-        cursor.execute (f"""DELETE FROM Pholus_Scan 
-                                WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
+
+    # -----------------------------------------------------
+    # Trim Workflow entries to less than WORKFLOWS_AppEvents_hist setting
+    histCount = get_setting_value('WORKFLOWS_AppEvents_hist')
+
+    mylog('verbose', [f'[{pluginName}] Trim AppEvents to less than {histCount}'])
+
+    # Build the SQL query to delete entries 
+    delete_query = f"""DELETE FROM AppEvents 
+                            WHERE "Index" NOT IN (
+                               SELECT "Index"
+                                        FROM (
+                                            SELECT "Index", 
+                                                ROW_NUMBER() OVER(PARTITION BY "AppEvents" ORDER BY DateTimeCreated DESC) AS row_num
+                                            FROM AppEvents
+                                        ) AS ranked_objects
+                                        WHERE row_num <= {histCount}
+                            );"""
+
+    cursor.execute(delete_query)
+
+
+    # -----------------------------------------------------
     # Cleanup New Devices
     if HRS_TO_KEEP_NEWDEV != 0:
         mylog('verbose', [f'[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
         cursor.execute (f"""DELETE FROM Devices 
                                 WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
 
+    # -----------------------------------------------------
+    # Cleanup Pholus_Scan
+    if PHOLUS_DAYS_DATA != 0:
+        mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
+        # todo: improvement possibility: keep at least N per mac
+        cursor.execute (f"""DELETE FROM Pholus_Scan 
+                                WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
 
+    
+    
+    # -----------------------------------------------------
+    # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
+    mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all duplicates'])
+    cursor.execute ("""DELETE  FROM Pholus_Scan
+                    WHERE rowid > (
+                    SELECT MIN(rowid) FROM Pholus_Scan p2
+                    WHERE Pholus_Scan.MAC = p2.MAC
+                    AND Pholus_Scan.Value = p2.Value
+                    AND Pholus_Scan.Record_Type = p2.Record_Type
+                    );""")
+
+
+    # -----------------------------------------------------
     # De-dupe (de-duplicate) from the Plugins_Objects table 
     # TODO This shouldn't be necessary - probably a concurrency bug somewhere in the code :(        
     mylog('verbose', [f'[{pluginName}] Plugins_Objects: Delete all duplicates'])
@@ -142,15 +184,6 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
         )
     """)
 
-    # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
-    mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all duplicates'])
-    cursor.execute ("""DELETE  FROM Pholus_Scan
-                    WHERE rowid > (
-                    SELECT MIN(rowid) FROM Pholus_Scan p2
-                    WHERE Pholus_Scan.MAC = p2.MAC
-                    AND Pholus_Scan.Value = p2.Value
-                    AND Pholus_Scan.Record_Type = p2.Record_Type
-                    );""")
 
     conn.commit()
 

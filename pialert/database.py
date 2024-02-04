@@ -7,6 +7,7 @@ from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
 from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ #, updateState
+from appevent import AppEvent_obj
 
 
 
@@ -83,8 +84,8 @@ class DB():
 
         # indicates, if Online_History table is available
         onlineHistoryAvailable = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Online_History';
+            SELECT name FROM sqlite_master WHERE type='table'
+                AND name='Online_History';
         """).fetchall() != []
 
         # Check if it is incompatible (Check if table has all required columns)
@@ -92,8 +93,8 @@ class DB():
 
         if onlineHistoryAvailable :
           isIncompatible = self.sql.execute ("""
-          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
-          """).fetchone()[0] == 0
+                SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
+            """).fetchone()[0] == 0
 
         # Drop table if available, but incompatible
         if onlineHistoryAvailable and isIncompatible:
@@ -119,35 +120,35 @@ class DB():
         # -------------------------------------------------------------------------
         # dev_Network_Node_MAC_ADDR column
         dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
-          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
           """).fetchone()[0] == 0
 
         if dev_Network_Node_MAC_ADDR_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
           self.sql.execute("""
-          ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
+            ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
           """)
 
         # dev_Network_Node_port column
         dev_Network_Node_port_missing = self.sql.execute ("""
-          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
           """).fetchone()[0] == 0
 
         if dev_Network_Node_port_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
           self.sql.execute("""
-          ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
+            ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
           """)
 
         # dev_Icon column
         dev_Icon_missing = self.sql.execute ("""
-          SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
           """).fetchone()[0] == 0
 
         if dev_Icon_missing :
           mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
           self.sql.execute("""
-          ALTER TABLE "Devices" ADD "dev_Icon" TEXT
+            ALTER TABLE "Devices" ADD "dev_Icon" TEXT
           """)
 
 
@@ -263,61 +264,61 @@ class DB():
 
         # Plugin state
         sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
-                            "Index"	          INTEGER,
-                            Plugin TEXT NOT NULL,
-                            Object_PrimaryID TEXT NOT NULL,
-                            Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,
-                            DateTimeChanged TEXT NOT NULL,
-                            Watched_Value1 TEXT NOT NULL,
-                            Watched_Value2 TEXT NOT NULL,
-                            Watched_Value3 TEXT NOT NULL,
-                            Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,
-                            Extra TEXT NOT NULL,
-                            UserData TEXT NOT NULL,
-                            ForeignKey TEXT NOT NULL,
-                            PRIMARY KEY("Index" AUTOINCREMENT)
+                                    "Index"	          INTEGER,
+                                    Plugin TEXT NOT NULL,
+                                    Object_PrimaryID TEXT NOT NULL,
+                                    Object_SecondaryID TEXT NOT NULL,
+                                    DateTimeCreated TEXT NOT NULL,
+                                    DateTimeChanged TEXT NOT NULL,
+                                    Watched_Value1 TEXT NOT NULL,
+                                    Watched_Value2 TEXT NOT NULL,
+                                    Watched_Value3 TEXT NOT NULL,
+                                    Watched_Value4 TEXT NOT NULL,
+                                    Status TEXT NOT NULL,
+                                    Extra TEXT NOT NULL,
+                                    UserData TEXT NOT NULL,
+                                    ForeignKey TEXT NOT NULL,
+                                    PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_Objects)
 
         # Plugin execution results
         sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
-                            "Index"	          INTEGER,
-                            Plugin TEXT NOT NULL,
-                            Object_PrimaryID TEXT NOT NULL,
-                            Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,
-                            DateTimeChanged TEXT NOT NULL,
-                            Watched_Value1 TEXT NOT NULL,
-                            Watched_Value2 TEXT NOT NULL,
-                            Watched_Value3 TEXT NOT NULL,
-                            Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,
-                            Extra TEXT NOT NULL,
-                            UserData TEXT NOT NULL,
-                            ForeignKey TEXT NOT NULL,
-                            PRIMARY KEY("Index" AUTOINCREMENT)
+                                    "Index"	          INTEGER,
+                                    Plugin TEXT NOT NULL,
+                                    Object_PrimaryID TEXT NOT NULL,
+                                    Object_SecondaryID TEXT NOT NULL,
+                                    DateTimeCreated TEXT NOT NULL,
+                                    DateTimeChanged TEXT NOT NULL,
+                                    Watched_Value1 TEXT NOT NULL,
+                                    Watched_Value2 TEXT NOT NULL,
+                                    Watched_Value3 TEXT NOT NULL,
+                                    Watched_Value4 TEXT NOT NULL,
+                                    Status TEXT NOT NULL,
+                                    Extra TEXT NOT NULL,
+                                    UserData TEXT NOT NULL,
+                                    ForeignKey TEXT NOT NULL,
+                                    PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_Events)
 
         # Plugin execution history
         sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
-                            "Index"	          INTEGER,
-                            Plugin TEXT NOT NULL,
-                            Object_PrimaryID TEXT NOT NULL,
-                            Object_SecondaryID TEXT NOT NULL,
-                            DateTimeCreated TEXT NOT NULL,
-                            DateTimeChanged TEXT NOT NULL,
-                            Watched_Value1 TEXT NOT NULL,
-                            Watched_Value2 TEXT NOT NULL,
-                            Watched_Value3 TEXT NOT NULL,
-                            Watched_Value4 TEXT NOT NULL,
-                            Status TEXT NOT NULL,
-                            Extra TEXT NOT NULL,
-                            UserData TEXT NOT NULL,
-                            ForeignKey TEXT NOT NULL,
-                            PRIMARY KEY("Index" AUTOINCREMENT)
+                                    "Index"	          INTEGER,
+                                    Plugin TEXT NOT NULL,
+                                    Object_PrimaryID TEXT NOT NULL,
+                                    Object_SecondaryID TEXT NOT NULL,
+                                    DateTimeCreated TEXT NOT NULL,
+                                    DateTimeChanged TEXT NOT NULL,
+                                    Watched_Value1 TEXT NOT NULL,
+                                    Watched_Value2 TEXT NOT NULL,
+                                    Watched_Value3 TEXT NOT NULL,
+                                    Watched_Value4 TEXT NOT NULL,
+                                    Status TEXT NOT NULL,
+                                    Extra TEXT NOT NULL,
+                                    UserData TEXT NOT NULL,
+                                    ForeignKey TEXT NOT NULL,
+                                    PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_History)
 
@@ -328,12 +329,12 @@ class DB():
         # Dynamically generated language strings
         self.sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
         self.sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
-                            "Index"	          INTEGER,
-                            Language_Code TEXT NOT NULL,
-                            String_Key TEXT NOT NULL,
-                            String_Value TEXT NOT NULL,
-                            Extra TEXT NOT NULL,
-                            PRIMARY KEY("Index" AUTOINCREMENT)
+                                "Index"	          INTEGER,
+                                Language_Code TEXT NOT NULL,
+                                String_Key TEXT NOT NULL,
+                                String_Value TEXT NOT NULL,
+                                Extra TEXT NOT NULL,
+                                PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """)
 
         self.commitDB()        
@@ -354,6 +355,9 @@ class DB():
                                 cur_DateTime STRING(250)
                             );
                         """)
+
+        # Init the AppEvent database table
+        AppEvent_obj(self)
 
         # -------------------------------------------------------------------------
         #  DELETING OBSOLETE TABLES - to remove with updated db file after 1/1/2024

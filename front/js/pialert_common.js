@@ -419,6 +419,14 @@ function saveData(functionName, id, value) {
 
 
 // -----------------------------------------------------------------------------
+// create a link to the device
+function createDeviceLink(mac)
+{
+    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${mac}" target="_blank">${getNameByMacAddress(mac)}</a><span>`
+}
+
+
+// -----------------------------------------------------------------------------
 // remove an item from an array
 function removeItemFromArray(arr, value) {
   var index = arr.indexOf(value);

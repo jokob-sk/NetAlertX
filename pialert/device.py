@@ -194,6 +194,8 @@ def create_new_devices (db):
                           '{get_setting_value('NEWDEV_dev_Icon')}'
                     """
     
+    # Bulk-inserting devices from the CurrentScan table as new devices in the table Devices ... 
+    # ... with new device defaults and ignoring specidfied IPs and MACs)
     sqlQuery = f"""INSERT OR IGNORE INTO Devices (dev_MAC, dev_name, dev_Vendor,
                         dev_LastIP, dev_FirstConnection, dev_LastConnection,
                         {newDevColumns})

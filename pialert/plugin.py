@@ -374,7 +374,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
 
         # update API endpoints
-        update_api(db, False, ["plugins_events","plugins_objects", "plugins_history"])  
+        update_api(db, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
     
     return pluginsState
 
