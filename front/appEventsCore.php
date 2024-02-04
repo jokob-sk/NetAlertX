@@ -10,11 +10,19 @@
 </section>
 
 <script>
+
+// show loading dialog
+showSpinner()
+
 $(document).ready(function() {
+
     // Load JSON data from the provided URL
     $.getJSON('/api/table_appevents.json', function(data) {
         // Process the JSON data and generate UI dynamically        
         processData(data)
+
+        // hide loading dialog
+        hideSpinner()
     });
 });
 

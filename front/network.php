@@ -628,9 +628,6 @@
   function initTree(myHierarchy)
   {
 
-    console.log(myHierarchy)
-    
-
     if(myHierarchy.type == "")
     {
       showModalOk(getString('Network_Configuration_Error'), getString('Network_Root_Not_Configured'))      

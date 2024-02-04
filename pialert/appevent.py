@@ -25,6 +25,10 @@ class AppEvent_obj:
         self.db.sql.execute('DROP TRIGGER IF EXISTS trg_update_device;')
         self.db.sql.execute('DROP TRIGGER IF EXISTS trg_delete_device;')
 
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_delete_plugin_object;')
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_create_plugin_object;')
+        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_update_plugin_object;')
+
         # Create AppEvent table if missing
         self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "AppEvents" (
             "Index"                 INTEGER,
@@ -63,7 +67,10 @@ class AppEvent_obj:
                         )
                     '''
 
-        sql_mappedColumns = '''
+        # -------------
+        # Device events
+
+        sql_devices_mappedColumns = '''
                     "GUID",
                     "DateTimeCreated",
                     "ObjectType",
@@ -83,10 +90,9 @@ class AppEvent_obj:
             AFTER INSERT ON "Devices"
             BEGIN
                 INSERT INTO "AppEvents" (
-                    {sql_mappedColumns}
+                    {sql_devices_mappedColumns}
                 )
-                VALUES (
-                    -- below generates a GUID
+                VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
@@ -114,10 +120,9 @@ class AppEvent_obj:
             AFTER UPDATE ON "Devices"
             BEGIN
                 INSERT INTO "AppEvents" (
-                    {sql_mappedColumns}
+                    {sql_devices_mappedColumns}
                 )
-                VALUES (
-                    -- below generates a GUID
+                VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
@@ -139,10 +144,9 @@ class AppEvent_obj:
             AFTER DELETE ON "Devices"
             BEGIN
                 INSERT INTO "AppEvents" (
-                    {sql_mappedColumns}
+                    {sql_devices_mappedColumns}
                 )
-                VALUES (
-                    -- below generates a GUID
+                VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
@@ -153,6 +157,92 @@ class AppEvent_obj:
                     OLD.dev_NewDevice,
                     OLD.dev_Archived,
                     OLD.dev_MAC,
+                    'delete'
+                );
+            END;
+        ''')
+
+
+        # -------------
+        # Plugins_Objects events
+
+        sql_plugins_objects_mappedColumns = '''
+                    "GUID",
+                    "DateTimeCreated",
+                    "ObjectType",                    
+                    "ObjectPlugin",
+                    "ObjectPrimaryID",
+                    "ObjectSecondaryID",
+                    "ObjectForeignKey",
+                    "ObjectStatusColumn",
+                    "ObjectStatus",
+                    "AppEventType"
+        '''
+
+        # Create trigger for update event on Plugins_Objects
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS trg_update_plugin_object
+            AFTER UPDATE ON Plugins_Objects
+            BEGIN
+                INSERT INTO AppEvents (
+                   {sql_plugins_objects_mappedColumns}
+                )
+                VALUES (
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Plugins_Objects',                    
+                    NEW.Plugin,
+                    NEW.Object_PrimaryID,
+                    NEW.Object_SecondaryID,
+                    NEW.ForeignKey,
+                    'Status',
+                    NEW.Status,
+                    'update'
+                );
+            END;
+        ''')
+
+        # Create trigger for CREATE event on Plugins_Objects
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS trg_create_plugin_object
+            AFTER INSERT ON Plugins_Objects
+            BEGIN
+                INSERT INTO AppEvents (
+                {sql_plugins_objects_mappedColumns}
+                )
+                VALUES (
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Plugins_Objects',
+                    NEW.Plugin,
+                    NEW.Object_PrimaryID,
+                    NEW.Object_SecondaryID,
+                    NEW.ForeignKey,
+                    'Status',
+                    NEW.Status,
+                    'create'
+                );
+            END;
+        ''')
+
+        # Create trigger for DELETE event on Plugins_Objects
+        self.db.sql.execute(f'''
+            CREATE TRIGGER IF NOT EXISTS trg_delete_plugin_object
+            AFTER DELETE ON Plugins_Objects
+            BEGIN
+                INSERT INTO AppEvents (
+                {sql_plugins_objects_mappedColumns}
+                )
+                VALUES (
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    'Plugins_Objects',
+                    OLD.Plugin,
+                    OLD.Object_PrimaryID,
+                    OLD.Object_SecondaryID,
+                    OLD.ForeignKey,
+                    'Status',
+                    OLD.Status,
                     'delete'
                 );
             END;
