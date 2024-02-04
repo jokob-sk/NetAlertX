@@ -206,7 +206,10 @@ function getString (key) {
 // -----------------------------------------------------------------------------
 // Modal dialog handling
 // -----------------------------------------------------------------------------
-function showModalOk (title, message, callbackFunction = null) {
+function showModalOK (title, message, callbackFunction) {
+  showModalOk (title, message, callbackFunction)
+}
+function showModalOk (title, message, callbackFunction) {
   // set captions
   $('#modal-ok-title').html   (title);
   $('#modal-ok-message').html (message); 
@@ -222,6 +225,8 @@ function showModalOk (title, message, callbackFunction = null) {
   // Show modal
   $('#modal-ok').modal('show');
 }
+
+// -----------------------------------------------------------------------------
 function showModalDefault (title, message, btnCancel, btnOK, callbackFunction) {
   // set captions
   $('#modal-default-title').html   (title);
@@ -253,13 +258,17 @@ function showModalDefaultStrParam (title, message, btnCancel, btnOK, callbackFun
 }
 
 // -----------------------------------------------------------------------------
-function showModalWarning (title, message, btnCancel, btnOK, callbackFunction) {
+function showModalWarning (title, message, btnCancel=getString('Gen_Cancel'), btnOK=getString('Gen_Okay'), callbackFunction=null) {
   // set captions
   $('#modal-warning-title').html   (title);
   $('#modal-warning-message').html (message);
   $('#modal-warning-cancel').html  (btnCancel);
   $('#modal-warning-OK').html      (btnOK);
-  modalCallbackFunction =          callbackFunction;
+
+  if ( callbackFunction != null)
+  {
+    modalCallbackFunction =          callbackFunction;
+  }
 
   // Show modal
   $('#modal-warning').modal('show');

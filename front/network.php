@@ -456,32 +456,39 @@
 <script>
   $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
 
-      rawData = JSON.parse (data)      
+    rawData = JSON.parse (data)      
 
-      devicesListnew = rawData["data"].map(item =>  { return {
-                                                              "name":item[0], 
-                                                              "type":item[2], 
-                                                              "icon":item[3], 
-                                                              "mac":item[11], 
-                                                              "parentMac":item[14], 
-                                                              "rowid":item[13], 
-                                                              "status":item[10],
-                                                              "childrenQty":item[15],
-                                                              "port":item[18]                                                              
-                                                              }})
-
-      setCache('devicesListNew', JSON.stringify(devicesListnew))
-
-      // init global variable
-      deviceListGlobal = devicesListnew;
-
+    if(rawData["data"] == "")
+    {
+      showModalOK (getString('Gen_Warning'), getString('Network_NoDevices'))      
       
-      // create tree
-      initTree(getHierarchy());
+      return;
+    }
 
-      // attach on-click events
-      attachTreeEvents();
-    });
+    devicesListnew = rawData["data"].map(item =>  { return {
+                                                            "name":item[0], 
+                                                            "type":item[2], 
+                                                            "icon":item[3], 
+                                                            "mac":item[11], 
+                                                            "parentMac":item[14], 
+                                                            "rowid":item[13], 
+                                                            "status":item[10],
+                                                            "childrenQty":item[15],
+                                                            "port":item[18]                                                              
+                                                            }})
+
+    setCache('devicesListNew', JSON.stringify(devicesListnew))
+
+    // init global variable
+    deviceListGlobal = devicesListnew;
+
+    
+    // create tree
+    initTree(getHierarchy());
+
+    // attach on-click events
+    attachTreeEvents();
+  });
 </script>
 
 
@@ -612,13 +619,25 @@
 
   // --------------------------------------------------------------------------- 
   var myTree;
-  var treeAreaHeight = 800;
+  var visibleTreeArea = $(window).height()-135;
+  var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
   var emSize;
   var nodeHeight;
   var sizeCoefficient = 1
 
   function initTree(myHierarchy)
   {
+
+    console.log(myHierarchy)
+    
+
+    if(myHierarchy.type == "")
+    {
+      showModalOk(getString('Network_Configuration_Error'), getString('Network_Root_Not_Configured'))      
+      
+      return;
+    }
+
     // calculate the font size of the leaf nodes to fit everything into the tree area
     leafNodesCount == 0 ? 1 : leafNodesCount;
     emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
