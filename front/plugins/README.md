@@ -559,10 +559,11 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 | ------- | ----------- |
 | `RUN` | (required) Specifies when the service is executed. |
 |  | Supported Options: |
-|  | - "disabled" - not run |
+|  | - "disabled" - do not run |
 |  | - "once" - run on app start or on settings saved |
 |  | - "schedule" - if included, then a `RUN_SCHD` setting needs to be specified to determine the schedule |
 |  | - "always_after_scan" - run always after a scan is finished |
+|  | - "before_name_updates" - run before device names are updated (for name discovery plugins) |
 |  | - "on_new_device" - run when a new device is detected |
 |  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. |
 | `RUN_SCHD` | (required if you include "schedule" in the above `RUN` function) Cron-like scheduling is used if the `RUN` setting is set to `schedule`. |
