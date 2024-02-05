@@ -429,9 +429,14 @@ function saveData(functionName, id, value) {
 
 // -----------------------------------------------------------------------------
 // create a link to the device
-function createDeviceLink(mac)
+function createDeviceLink(input)
 {
-    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${mac}" target="_blank">${getNameByMacAddress(mac)}</a><span>`
+  if(checkMacOrInternet(input))
+  {
+    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getNameByMacAddress(input)}</a><span>`
+  }
+
+  return input;
 }
 
 
@@ -546,6 +551,22 @@ function navigateToDeviceWithIp (ip) {
 function getNameByMacAddress(macAddress) {
   return getDeviceDataByMacAddress(macAddress, "dev_Name")
 }
+
+// -----------------------------------------------------------------------------
+// Check if MAC or Internet
+function checkMacOrInternet(inputStr) {
+  // Regular expression pattern for matching a MAC address
+  const macPattern = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+
+  if (inputStr.toLowerCase() === 'internet') {
+      return true;
+  } else if (macPattern.test(inputStr)) {
+      return true;
+  } else {
+      return false;
+  }
+}
+
 
 // -----------------------------------------------------------------------------
 // A function used to make the IP address orderable

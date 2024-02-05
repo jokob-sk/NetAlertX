@@ -57,10 +57,11 @@ function processData(data) {
             { data: 'DateTimeCreated', title: getString('AppEvents_DateTimeCreated') },
             { data: 'AppEventType', title: getString('AppEvents_Type') }, 
             { data: 'ObjectType', title: getString('AppEvents_ObjectType') },
-            { data: 'ObjectMAC', title: getString('AppEvents_ObjectMAC') },
-            { data: 'ObjectIP', title: getString('AppEvents_ObjectIP') },            
+            { data: 'ObjectPrimaryID', title: getString('AppEvents_ObjectPrimaryID') },
+            { data: 'ObjectSecondaryID', title: getString('AppEvents_ObjectSecondaryID') },
             { data: 'ObjectStatus', title: getString('AppEvents_ObjectStatus') },            
             { data: 'Extra', title: getString('AppEvents_Extra') },    
+            { data: 'ObjectPlugin', title: getString('AppEvents_Plugin') },    
             // Add other columns as needed
         ],
         // Add column-specific configurations if needed
@@ -69,7 +70,7 @@ function processData(data) {
             { width: '80px', targets: [6] },
             // ... Add other columnDefs as needed
             // Full MAC      
-            {targets: [3],
+            {targets: [3, 4],
             'createdCell': function (td, cellData, rowData, row, col) {
                 if (!emptyArr.includes(cellData)){
                 $(td).html (createDeviceLink(cellData));
