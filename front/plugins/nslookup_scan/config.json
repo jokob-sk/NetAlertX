@@ -37,8 +37,8 @@
       "function": "RUN",   
       "events": ["run"],         
       "type": "text.select",            
-      "default_value":"on_new_device",
-      "options": ["disabled", "on_new_device", "once", "schedule", "always_after_scan"],
+      "default_value":"before_name_updates",
+      "options": ["disabled", "before_name_updates", "on_new_device", "once", "schedule", "always_after_scan"],
       "localized": ["name", "description"],
       "name" :[{
           "language_code":"en_us",

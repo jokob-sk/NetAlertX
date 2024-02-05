@@ -32,6 +32,7 @@ from database import DB
 from reporting import get_notifications
 from notification import Notification_obj
 from plugin import run_plugin_scripts, check_and_run_user_event 
+from device import update_devices_names
 
 
 #===============================================================================
@@ -135,8 +136,15 @@ def main ():
                 pluginsState.processScan = False
                 process_scan(db)
                           
-            
+            # --------
             # Reporting   
+            # run plugins before notification processing (e.g. Plugins to discover device names)
+            pluginsState = run_plugin_scripts(db, 'before_name_updates', pluginsState)
+
+            # Resolve devices names
+            mylog('debug','[Main] Resolve devices names')
+            update_devices_names(db)             
+            
             # Check if new devices found
             sql.execute (sql_new_devices)
             newDevices = sql.fetchall()

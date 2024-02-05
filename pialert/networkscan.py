@@ -3,7 +3,7 @@
 import conf
 
 from database import insertOnlineHistory
-from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, update_devices_names
+from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan
 from helper import timeNowTZ
 from logger import mylog
 from reporting import skip_repeated_notifications
@@ -39,10 +39,6 @@ def process_scan (db):
     # Update devices info
     mylog('verbose','[Process Scan] Updating Devices Info')
     update_devices_data_from_scan (db)
-
-    # Resolve devices names
-    mylog('verbose','[Process Scan] Resolve devices names')
-    update_devices_names(db)
 
     # Void false connection - disconnections
     mylog('verbose','[Process Scan] Voiding false (ghost) disconnections')    
