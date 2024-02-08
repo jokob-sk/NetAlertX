@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# 🛑 Important: This is only used for the bare-metal install 🛑 
+# Update /dockerfiles/start.sh in most cases is preferred 
+
 echo "---------------------------------------------------------"
 echo "[INSTALL]                                  Run install.sh"
 echo "---------------------------------------------------------"

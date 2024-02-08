@@ -92,6 +92,9 @@ else
   fi
 fi
 
+# Create an empty execution_queue.log file
+echo '' > $INSTALL_DIR/pialert/front/log/execution_queue.log
+
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
 
@@ -140,7 +143,7 @@ fi
 #  Activate the virtual python environment
 source myenv/bin/activate
 
-echo "[INSTALL] 🟢 Starting app - navigate to your <server IP>:20211 (or custom port)"
+echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:$LISTEN_ADDR "
 
 # Start the PiAlert python script
 python $INSTALL_DIR/pialert/pialert/
