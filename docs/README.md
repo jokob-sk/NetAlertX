@@ -36,6 +36,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 #### 🐛 Debugging help & tips
 
 - [Debugging tips](/docs/DEBUG_TIPS.md)
+- [Debugging UI not showing](/docs/WEB_UI_PORT_DEBUG.md)
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
 - [Troubleshooting Plugins](/docs/DEBUG_PLUGINS.md)
 

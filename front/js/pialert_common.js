@@ -665,6 +665,23 @@ function getGuid() {
 }
 
 // -----------------------------------------------------------------------------
+// UI 
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Genrate work-in-progress icons
+function workInProgress() {
+  console.log()
+  if($(".work-in-progress").html().trim() == "")
+  {
+    $(".work-in-progress").append(`
+              <a href="https://github.com/jokob-sk/Pi.Alert/issues" target="_blank">
+                <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
+              </a>
+            `)
+  }
+}
+
+// -----------------------------------------------------------------------------
 //  Loading Spinner overlay
 // -----------------------------------------------------------------------------
 function showSpinner(stringKey='Loading')
@@ -703,6 +720,7 @@ function hideSpinner()
 cacheSettings()
 cacheStrings()
 initDeviceListAll_JSON()
+workInProgress()
 
 
 console.log("init pialert_common.js")

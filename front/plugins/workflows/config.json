@@ -32,7 +32,7 @@
     {
       "function": "AppEvents_hist",
       "type": "integer",
-      "default_value": 10000,
+      "default_value": 5000,
       "options": [],
       "localized": ["name", "description"],
       "name": [

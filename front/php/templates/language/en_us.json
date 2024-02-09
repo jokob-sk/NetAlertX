@@ -42,6 +42,7 @@
             "Gen_ReadDocs" : "Read more in the docs.",
             "Gen_DataUpdatedUITakesTime" : "OK - It may take a while for the UI to update if a scan is running.",
             "Gen_LockedDB" : "ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.",
+            "Gen_Work_In_Progress" : "Work in progress, good time to feedback on https://github.com/jokob-sk/Pi.Alert/issues",
             "Login_Box" : "Enter your password",
             "Login_Remember" : "Remember",
             "Login_Remember_small" : "(valid for 7 days)",

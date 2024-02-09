@@ -797,12 +797,8 @@ input[readonly] {
     min-width: 18px;
 }
 
-.drp-edit
-{
-    cursor: pointer;
-}
 
-.new-version
+.info-icon-nav
 {   
     top: -6px;
     position: absolute;
@@ -813,7 +809,7 @@ input[readonly] {
 
 .pointer
 {
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .drag

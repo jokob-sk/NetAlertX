@@ -48,7 +48,7 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 | Features    | Details    | 
 |-------------|-------------|
 |      🔍     |   The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**.  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) docs for more info on individual scans. |
-|📧           | Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use [Pushsafer](https://www.pushsafer.com/), or [NTFY](https://ntfy.sh/). |
+|📧           | Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/). |
 |🧩           | Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows.  |
 |➕           | Build your own scanners with the [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) |
 

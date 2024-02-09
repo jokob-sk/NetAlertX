@@ -92,8 +92,13 @@ else
   fi
 fi
 
-# Create an empty execution_queue.log file
-echo '' > $INSTALL_DIR/pialert/front/log/execution_queue.log
+# Create an empty log files
+
+# Create the execution_queue.log file if it doesn't exist
+touch "$INSTALL_DIR/pialert/front/log/execution_queue.log"
+# Create the pialert_front.log file if it doesn't exist
+touch "$INSTALL_DIR/pialert/front/log/pialert_front.log"
+
 
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"

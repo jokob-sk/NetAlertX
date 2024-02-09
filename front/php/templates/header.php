@@ -209,8 +209,7 @@ if ($ENABLED_DARKMODE === True) {
     <section class="sidebar">
 
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel">
-        <a href="." class="logo">
+      <div class="user-panel">        <a href="." class="logo">
           <img src="img/pialertLogoGray80.png" class="img-responsive" alt="Pi.Alert Logo"/>
         </a>
       </div>
@@ -246,13 +245,14 @@ if ($ENABLED_DARKMODE === True) {
         </li>
 
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
-          <div class="new-version myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
+          <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
           <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?= lang('Navigation_Maintenance');?></span></a>
         </li>
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
           <a href="settings.php"><i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span></a>
         </li>
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('flows.php') ) ){ echo 'active'; } ?>">
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
+          <div class="info-icon-nav work-in-progress">  </div>
           <a href="workflows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
         </li>
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
