@@ -593,7 +593,7 @@
     "Systeminfo_USB_Devices": "USB Devices",
     "TIMEZONE_description": "Time zone to display stats correctly. Find your time zone <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">here</a>.",
     "TIMEZONE_name": "Time zone",
-    "UI_LANG_description": "Select the preferred UI language.",
+    "UI_LANG_description": "Select the preferred UI language. Help translating or suggest languages in the online portal of <a href=\"https://hosted.weblate.org/projects/pialert/core/\" target=\"_blank\">Weblate</a>.",
     "UI_LANG_name": "UI Language",
     "UI_PRESENCE_description": "Select what statuses should be shown in the <b>Device presence</b>  chart in the <a href=\"/devices.php\" target=\"_blank\">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)",
     "UI_PRESENCE_name": "Show in presence chart",
