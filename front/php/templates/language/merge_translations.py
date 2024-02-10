@@ -31,5 +31,5 @@ def merge_translations(main_file, other_files):
 
 if __name__ == "__main__":
     main_file = "en_us.json"
-    other_files = ["de_de.json", "es_es.json", "fr_fr.json"]
+    other_files = ["de_de.json", "es_es.json", "fr_fr.json", "nb_no.json"]
     merge_translations(main_file, other_files)
