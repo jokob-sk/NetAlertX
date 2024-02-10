@@ -31,32 +31,27 @@ function getLanguageDataFromJson()
 {
     global $allLanguages;
 
-    // Default language
-    $defaultLanguage = 'en_us';
-
     // Array to hold the language data from the JSON files
     $languageData = [];
-    
+
     foreach ($allLanguages as $language) {
         // Load and parse the JSON data from .json files
         $jsonFilePath = dirname(__FILE__) . '/' . $language . '.json';
-        
+
         if (file_exists($jsonFilePath)) {
             $data = json_decode(file_get_contents($jsonFilePath), true);
-            
-            // Use the default language if the key is not found
-            $languageData[$language] = $data[$language] ?? $data[$defaultLanguage] ?? [];
+
+            // Adjusting for the changed JSON format
+            $languageData[$language] = $data;
         } else {
             // Handle the case where the JSON file doesn't exist
             // For example, you might want to log an error message
-            echo 'File not found: '.$jsonFilePath;
-
+            echo 'File not found: ' . $jsonFilePath;
         }
     }
 
     return $languageData;
 }
-
 
 // Merge the JSON data with the SQL data, giving priority to SQL data for overlapping keys
 function mergeLanguageData($jsonLanguageData, $sqlLanguageData)
@@ -76,30 +71,31 @@ function mergeLanguageData($jsonLanguageData, $sqlLanguageData)
 
 function lang($key)
 {
-  global $pia_lang_selected, $lang, $defaultLang, $strings, $db;
-  // Get the data from JSON files
-  $languageData = getLanguageDataFromJson();
+    global $pia_lang_selected, $strings;
 
-  // Get the data from SQL query  
-  $sqlLanguageData = $strings;
+    // Get the data from JSON files
+    $languageData = getLanguageDataFromJson();
 
-  // Merge JSON data with SQL data
-  $mergedLanguageData = mergeLanguageData($languageData, $sqlLanguageData);
+    // Get the data from SQL query
+    $sqlLanguageData = $strings;
 
-  // Check if the key exists in the selected language
-  if (isset($mergedLanguageData[$pia_lang_selected][$key]) and $mergedLanguageData[$pia_lang_selected][$key] != '') {
-    $result = $mergedLanguageData[$pia_lang_selected][$key];
-  } else {
-    // If key not found in selected language, use "en_us" as fallback
-    if (isset($mergedLanguageData['en_us'][$key])) {
-      $result = $mergedLanguageData['en_us'][$key];
+    // Merge JSON data with SQL data
+    $mergedLanguageData = mergeLanguageData($languageData, $sqlLanguageData);
+
+    // Check if the key exists in the selected language
+    if (isset($mergedLanguageData[$pia_lang_selected][$key]) && $mergedLanguageData[$pia_lang_selected][$key] != '') {
+        $result = $mergedLanguageData[$pia_lang_selected][$key];
     } else {
-      // If key not found in "en_us" either, use a default string
-      $result = "String Not found for key " . $key;
+        // If key not found in selected language, use "en_us" as fallback
+        if (isset($mergedLanguageData['en_us'][$key])) {
+            $result = $mergedLanguageData['en_us'][$key];
+        } else {
+            // If key not found in "en_us" either, use a default string
+            $result = "String Not found for key " . $key;
+        }
     }
-  }
 
-  return $result;
+    return $result;
 }
 
 

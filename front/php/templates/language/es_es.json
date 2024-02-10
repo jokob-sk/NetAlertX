@@ -1,5 +1,5 @@
 {
-    "es_es": {
+    
         "API_CUSTOM_SQL_description": "Puede especificar una consulta SQL personalizada que generar\u00e1 un archivo JSON y luego lo expondr\u00e1 a trav\u00e9s del <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">archivo <code>table_custom_endpoint.json</code ></a>.",
         "API_CUSTOM_SQL_name": "Endpoint personalizado",
         "API_display_name": "API",
@@ -711,5 +711,5 @@
         "settings_system_label": "",
         "test_event_icon": "fa-vial-circle-check",
         "test_event_tooltip": "Guarda tus cambios antes de probar nuevos ajustes."
-    }
+    
 }

@@ -1,5 +1,5 @@
 {
-    "de_de": {
+    
         "API_CUSTOM_SQL_description": "Benutzerdefinierte SQL-Abfrage, welche eine JSON-Datei generiert und diese mit dem <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">Dateiendpunkt <code>table_custom_endpoint.json</code></a> zur Verf\u00fcgung stellt.",
         "API_CUSTOM_SQL_name": "Benutzerdefinierte SQL-Abfrage",
         "API_display_name": "API",
@@ -712,5 +712,5 @@
         "settings_system_label": "",
         "test_event_icon": "fa-vial-circle-check",
         "test_event_tooltip": "Save your changes at first before you test your settings."
-    }
+    
 }

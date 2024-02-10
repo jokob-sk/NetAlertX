@@ -1,5 +1,5 @@
 {
-    "fr_fr": {
+   
         "API_CUSTOM_SQL_description": "",
         "API_CUSTOM_SQL_name": "",
         "API_display_name": "",
@@ -631,5 +631,5 @@
         "settings_system_label": "",
         "test_event_icon": "",
         "test_event_tooltip": ""
-    }
+    
 }

@@ -143,24 +143,19 @@ function cacheStrings()
 {
 
   // handle core strings and translations
-  var allLanguages        = ["en_us","es_es","de_de"]; // needs to be same as in lang.php
+  var allLanguages = ["en_us", "es_es", "de_de"]; // needs to be same as in lang.php
 
   allLanguages.forEach(function (language_code) {
-
-    $.get(`php/templates/language/${language_code}.json`, function(res) {    
-
-      Object.entries(res).forEach(([language, translations]) => {
-          
-          Object.entries(translations).forEach(([key, value]) => {              
-              // store as key - value pairs in session
-              setCache(`pia_lang_${key}_${language}`, value) 
-          });
+    $.get(`php/templates/language/${language_code}.json`, function (res) {
+      // Iterate over each language
+      Object.entries(res).forEach(([key, value]) => {
+        // Store translations for each key-value pair
+        setCache(`pia_lang_${key}_${language_code}`, value)
       });
-     
-    })
-    
+    });
   });
 
+  
   // handle strings and translations from plugins
   $.get('api/table_plugins_language_strings.json', function(res) {    
         
