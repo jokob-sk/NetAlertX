@@ -112,13 +112,15 @@ Thank you to all the wonderful people who are sponsoring this project (=preventi
 ## Everything else
 <!--- --------------------------------------------------------------------- --->
 
-### Translations (work in progress)
+### Translations
 
 Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/).
 
 <a href="https://hosted.weblate.org/engage/pialert/">
-  <img src="https://hosted.weblate.org/widget/pialert/pialert-core/multi-auto.svg" alt="Translation status" />
+  <img src="https://hosted.weblate.org/widget/pialert/core/multi-auto.svg" alt="Translation status" />
 </a>
+
+Help out and suggest languages in the [online portal of Weblate](https://hosted.weblate.org/projects/pialert/core/).
 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
