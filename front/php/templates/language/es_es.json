@@ -505,6 +505,7 @@
         "Network_Node": "Nodo de red",
         "Network_Node_Name": "Nombre de nodo",
         "Network_Parent": "Dispositivo primario de la red",
+        "Network_Root": "",
         "Network_Root_Not_Configured": "",
         "Network_Root_Unconfigurable": "",
         "Network_Table_Hostname": "Nombre de host",

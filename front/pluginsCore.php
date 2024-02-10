@@ -465,48 +465,32 @@ function generateTabs()
 // --------------------------------------------------------
 // Handle active / selected tabs
 // handle first tab (objectsTarget_) display 
-function initTabs()
-{
-    // events on tab change
+function initTabs() {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var target = $(e.target).attr("href") // activated tab
-       
-        // save the last prefix
-        if(target.includes('_') == false )
-        {
-            pref = target.split('#')[1]
-        } else
-        {
-            pref = target.split('_')[1]
-        } 
+        var target = $(e.target).attr("href").split('_').pop();
 
-        everythingHidden = false;
+        var pref = target.includes('_') ? target.split('_')[1] : target.split('#')[1];
+        
+        var everythingHidden = true;
 
-        if($('#objectsTarget_'+ pref) != undefined && $('#historyTarget_'+ pref) != undefined && $('#eventsTarget_'+ pref) != undefined)
-        {
+        if ($('#objectsTarget_' + pref) && $('#historyTarget_' + pref) && $('#eventsTarget_' + pref)) {
             var isObjectsInactive = !$('#objectsTarget_' + pref).hasClass('active');
             var isHistoryInactive = !$('#historyTarget_' + pref).hasClass('active');
             var isEventsInactive = !$('#eventsTarget_' + pref).hasClass('active');
 
-            var everythingHidden = isObjectsInactive && isHistoryInactive && isEventsInactive;
-
+            everythingHidden = isObjectsInactive && isHistoryInactive && isEventsInactive;
         }
 
-        // show the objectsTarget if no specific pane selected or if selected is hidden        
         if (target === '#' + pref && everythingHidden) {
             var objectsTarget = $('#objectsTarget_' + pref);
 
-            if (objectsTarget.length > 0) {
-                var classTmp = objectsTarget.attr('class');
-
-                if (!classTmp.includes('active')) {
-                    classTmp += ' active';            
-                    objectsTarget.attr('class', classTmp);
-                }
-            } 
+            if (objectsTarget.length && !objectsTarget.hasClass('active')) {
+                objectsTarget.addClass('active');
+            }
         }
     });
 }
+
 
 // --------------------------------------------------------
 // Filter method that determines if an entry should be shown

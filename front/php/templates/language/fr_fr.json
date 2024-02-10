@@ -470,6 +470,7 @@
         "Network_Node": "",
         "Network_Node_Name": "",
         "Network_Parent": "",
+        "Network_Root": "",
         "Network_Root_Not_Configured": "",
         "Network_Root_Unconfigurable": "",
         "Network_Table_Hostname": "",

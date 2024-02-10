@@ -7,7 +7,7 @@
 
 ## 🔌 Plugins & 📚 Docs 
 
-| Required | CurrentScan | Unique Prefix | Data source        |   Type         | Link + Docs                                                        | 
+| Required | CurrentScan | Unique Prefix | Data source        |   Type         | Link + Docs                                                          | 
 |----------|-------------|---------------|--------------------|----------------|---------------------------------------------------------------------|
 |          |             | APPRISE       | Script             | 💬 publisher   | 📚[_publisher_apprise](/front/plugins/_publisher_apprise/)          |
 |          |    Yes      | ARPSCAN       | Script             | 🔍dev scanner  | 📚[arp_scan](/front/plugins/arp_scan/)                              |
@@ -22,6 +22,7 @@
 |          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 |  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)                |
 |          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                            |
+|          |             | NSLOOKUP      | Script             | ♻ other        | 📚[nslookup_scan](/front/plugins/nslookup_scan/)                    |
 |  Yes     |             | NTFPRCS       | Template           | ⚙ system       | 📚[notification_processing](/front/plugins/notification_processing/)|
 |          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
 |          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                        |
@@ -35,7 +36,7 @@
 |          |             | VNDRPDT       | Script             | ⚙ system       | 📚[vendor_update](/front/plugins/vendor_update/)                    |
 |          |             | WEBHOOK       | Script             | 💬 publisher   | 📚[_publisher_webhook](/front/plugins/_publisher_webhook/)          |
 |          |             | WEBMON        | Script             | ♻ other        | 📚[website_monitor](/front/plugins/website_monitor/)                |
-|  N/A     |             | N/A           | SQL query          |                 | N/A, but the External SQLite DB plugins work similarly             |
+|  N/A     |             | N/A           | SQL query          |                 | N/A, but the External SQLite DB plugins work similarly              |
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
@@ -110,7 +111,10 @@ More on specifics below.
 
 ### Column order and values
 
-  | Order | Represented Column | Required | Description | 
+> [!IMPORTANT] 
+> Spend some time reading and trying to understand the below table. This is the interface between the Plugins and the core application.  
+
+  | Order | Represented Column | Value Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
   | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
   | 1 | `Object_SecondaryID` | no | Optional secondary ID to create a relationship beween other entities, such as a MAC address |
@@ -127,11 +131,13 @@ More on specifics below.
 
 # config.json structure
 
+The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to PiAlert objects. 
+
 ## Supported data sources
 
 Currently, these data sources are supported (valid `data_source` value). 
 
-| Name | `data_source` value | Needs to return a "table" | Overview (more details on this page below) | 
+| Name | `data_source` value | Needs to return a "table"* | Overview (more details on this page below) | 
 |----------------------|----------------------|----------------------|----------------------| 
 | Script | `script` | no | Executes any linux command in the `CMD` setting. |
 | Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
@@ -139,6 +145,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 | Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general|system|scanner|other|publisher>`). | 
 
+> * "Needs to return a "table"" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `pialert.log` might be logged.
 
 > 🔎Example
 >```json
@@ -155,7 +162,7 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
 
 ### "data_source":  "script"
 
- If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). This file needs to be stored in the same folder as the plugin. 
+ If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). The `last_result.log` file needs to be saved in the same folder as the plugin. 
 
 > [!IMPORTANT]
 > A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
@@ -196,7 +203,7 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ### "data_source":  "pialert-db-query"
 
-If the `data_source` is set to `pialert-db-query` the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
+If the `data_source` is set to `pialert-db-query`, the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
 
 This SQL query is executed on the `pialert.db` SQLite database file. 
 
@@ -243,11 +250,13 @@ This SQL query is executed on the `pialert.db` SQLite database file.
 
 ### "data_source":  "template"
 
-Used to initialize internal settings. Check the `newdev_template` plugin for details.
+In most cases, it is used to initialize settings. Check the `newdev_template` plugin for details.
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
+You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. 
+
+For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
 >  🔎Example
 >
@@ -271,7 +280,7 @@ You can execute a SQL query on an external database connected to the current PiA
 >  ...
 >```
 
-The actual SQL query you want to execute is then stored as a `CMD` setting, similar to the `pialert-db-query` plugin type The format has to adhere to the format outlined in the "Column order and values" section above. 
+The actual SQL query you want to execute is then stored as a `CMD` setting, similar to a Plugin of the `pialert-db-query` plugin type. The format has to adhere to the format outlined in the "Column order and values" section above. 
 
 >  🔎Example
 >
@@ -297,7 +306,7 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 
 ## 🕳 Filters
 
-Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device or simply a Mac address that's available in the `mac` query string. 
+Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device, or simply a Mac address that's available in the `mac` query string (`<url>?mac=aa:22:aa:22:aa:22:aa`).
 
   | Property | Required | Description | 
   |----------------------|----------------------|----------------------| 
@@ -307,7 +316,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
   | `compare_js_template` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
   | `compare_use_quotes` | yes | If `true` then the end result of the `compare_js_template` i swrapped in `"` quotes. Use to compare strings. |
   
-  Filters are only applied if a filter is specified and the `txtMacFilter` is not `undefined` or empty (`--`).
+  Filters are only applied if a filter is specified, and the `txtMacFilter` is not `undefined`, or empty (`--`).
 
 > 🔎Example:
 > 
@@ -323,7 +332,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >     ],
 > ```
 >
->1. On the `pluginsCore.php` page is an input field with the `txtMacFilter` id:
+>1. On the `pluginsCore.php` page is an input field with the id `txtMacFilter`:
 >
 >```html
 ><input class="form-control" id="txtMacFilter" type="text" value="--">
@@ -340,7 +349,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >6. This results in for example this code: 
 >
 >```javascript
->    // left part of teh expression coming from compare_column and right from the input field
+>    // left part of the expression coming from compare_column and right from the input field
 >    // notice the added quotes ()") around the left and right part of teh expression
 >    "eval('ac:82:ac:82:ac:82".toString()')" == "eval('ac:82:ac:82:ac:82".toString()')"
 >```
@@ -349,7 +358,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 
 ### 🗺 Mapping the plugin results into a database table
 
-Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
+Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution, and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
 > [!NOTE] 
 > If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
@@ -357,7 +366,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 
 >🔍 Example:
 >
->For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above and takes individual values and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
+>For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above, takes individual values, and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
 >
 >1. Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 >
@@ -372,7 +381,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >    ...
 >}
 >```
->2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database `CurrentScan` table. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
+>2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database table `CurrentScan`. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
 >
 >```json
 >{
@@ -391,10 +400,10 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >        }
 >```
 >
->3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line, by line and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table via the `"mapped_to_column"` property in the column definitions.
+>3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table columns via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. Taht also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
 
 
 >🔍 Example:
@@ -420,6 +429,17 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >```
 
 #### params
+
+> [!IMPORTANT] 
+> An esier way to access settings in scripts is the `get_setting_value` method.
+> ```python
+> from helper import get_setting_value
+>
+>   ...
+>   NTFY_TOPIC = get_setting_value('NTFY_TOPIC')
+>   ...
+>
+> ``` 
 
 The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
 

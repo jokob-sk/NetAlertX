@@ -87,7 +87,7 @@ function lang($key)
   $mergedLanguageData = mergeLanguageData($languageData, $sqlLanguageData);
 
   // Check if the key exists in the selected language
-  if (isset($mergedLanguageData[$pia_lang_selected][$key])) {
+  if (isset($mergedLanguageData[$pia_lang_selected][$key]) and $mergedLanguageData[$pia_lang_selected][$key] != '') {
     $result = $mergedLanguageData[$pia_lang_selected][$key];
   } else {
     // If key not found in selected language, use "en_us" as fallback

@@ -507,6 +507,7 @@
         "Network_Node": "Netzwerkknoten",
         "Network_Node_Name": "Knotenname",
         "Network_Parent": "\u00dcbergeordnetes Netzwerkger\u00e4t",
+        "Network_Root": "",
         "Network_Root_Not_Configured": "",
         "Network_Root_Unconfigurable": "Nicht konfigurierbare Wurzel",
         "Network_Table_Hostname": "Ger\u00e4tename",

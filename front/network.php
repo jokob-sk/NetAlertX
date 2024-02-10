@@ -124,7 +124,10 @@
                                   </td>
                                   <td>  
                                     <a href="./network.php?mac='.$idParentMac.'">
-                                      <b class="anonymize">'.$idParentMac.'  <i class="fa fa-square-up-right"></i></b>
+                                      <b class="anonymize">
+                                        <span class="mac-to-name" my-data-mac="'.$node_parent_mac.'">'.$node_parent_mac.' </span>
+                                        <i class="fa fa-square-up-right"></i>
+                                      </b>
                                     </a>                                 
                                   </td>
                               </tr>
@@ -769,6 +772,25 @@
   }
 
   // ---------------------------------------------------------------------------
+  function initDeviceNamesFromMACs()
+  {
+    $('.mac-to-name').each(function() {
+        var dataMacValue = $(this).attr('my-data-mac');
+
+        if(dataMacValue =="" )
+        {
+          $(this).html(getString("Network_Root"))
+        }
+        else{
+          $(this).html(getNameByMacAddress(dataMacValue));
+        }
+
+        
+    });
+    
+  }
+
+  // ---------------------------------------------------------------------------
   function initButtons()
   { 
 
@@ -791,12 +813,12 @@
 
     // init the Assign buttons
     $('#unassignedDevices  button[data-myleafmac]').each(function(){
-      $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","'+currentNodeMac+'")')
+      $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","${currentNodeMac}")`)
     }); 
 
     // init Unassign buttons
     $('#assignedDevices button[data-myleafmac]').each(function(){
-      $(this).attr('onclick', 'updateLeaf("'+$(this).attr('data-myleafmac')+'","")')
+      $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","")`)
     }); 
   }
 
@@ -805,9 +827,10 @@
   {
     console.log(leafMac) // child
     console.log(nodeMac) // parent
+    console.log(nodeMac != "") // parent
 
     // prevent the assignment of the Internet root node avoiding recursion when generating the network tree topology
-    if(leafMac.toLowerCase().includes('internet'))
+    if(leafMac.toLowerCase().includes('internet') && nodeMac != "")
     {
       showMessage(getString('Network_Cant_Assign'))
     }
@@ -817,6 +840,9 @@
     }
   }
 
+
+  // init device names where macs are used
+  initDeviceNamesFromMACs();
 
   // init selected (first) tab
   initTab();  
