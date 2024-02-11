@@ -48,7 +48,7 @@
     "BackDevices_Backup_okay": "La copia de seguridad ejecutada con éxito con el nuevo archivo",
     "BackDevices_DBTools_DelDevError_a": "Error de eliminación del dispositivo",
     "BackDevices_DBTools_DelDevError_b": "Error de eliminación de dispositivos",
-    "BackDevices_DBTools_DelDev_a": "Dispositivo eliminado con éxito",
+    "BackDevices_DBTools_DelDev_a": "Dispositivo eliminado",
     "BackDevices_DBTools_DelDev_b": "Dispositivos eliminados con éxito",
     "BackDevices_DBTools_DelEvents": "Eventos eliminados con éxito",
     "BackDevices_DBTools_DelEventsError": "Error de eliminación de eventos",
