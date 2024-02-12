@@ -46,14 +46,15 @@ docker run -d --rm --network=host \
 ### Docker paths
 
 | Required | Path | Description |
-| :------------- | :------------- |:-------------| 
+| :------------- | :------------- | :-------------| 
 | ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
 | ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
 | | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 | | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole  | 
-| | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry. (the path in the container must contain `pihole`)| 
+| | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole`)| 
 | | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](/front/plugins/README.md).  | 
+| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md).  | 
+| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/REVERSE_DNS.md).  | 
 
 
 ### Modify the config (`pialert.conf`) only if UI is not available
