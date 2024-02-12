@@ -1,6 +1,7 @@
 ## Setting up better name discovery with Reverse DNS
 
-If you are running a DNS server, such as AdGuard, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable PiAlert to execute dig and nslookup comamnds to automatically resolve device names based on their IP addresses.
+If you are running a DNS server, such as **AdGuard**, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable PiAlert to execute dig and nslookup commands to automatically resolve device names based on their IP addresses.
+
 
 > Example 1: Reverse DNS `disabled`
 > 
@@ -28,7 +29,7 @@ If you are running a DNS server, such as AdGuard, set up **Private reverse DNS s
 
 ### Using a custom resolv.conf file
 
-You can configure a custom **/etc/resolv.conf** file in **docker-compose.yml** and set the nameserver to your LAN DNS server (e.g.: Pi-Hole). 
+You can configure a custom **/etc/resolv.conf** file in **docker-compose.yml** and set the nameserver to your LAN DNS server (e.g.: Pi-Hole). See the relevant [resolv.conf man](https://www.man7.org/linux/man-pages/man5/resolv.conf.5.html) entry for details. 
 
 #### docker-compose.yml:
 
@@ -43,7 +44,7 @@ services:
       - ./config/pialert.conf:/home/pi/pialert/config/pialert.conf
       - ./pialert_db:/home/pi/pialert/db
       - ./log:/home/pi/pialert/front/log
-      - ./config/resolv.conf:/etc/resolv.conf
+      - ./config/resolv.conf:/etc/resolv.conf                          # Mapping the /resolv.conf file for better name resolution
     environment:
       - TZ=Europe/Berlin
       - PORT=20211
@@ -55,6 +56,8 @@ services:
 ```
 
 #### ./config/resolv.conf:
+
+The most important below is the `nameserver` entry (you can add multiple):
 
 ```
 nameserver 192.168.178.11

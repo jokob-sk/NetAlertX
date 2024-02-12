@@ -541,11 +541,11 @@ function getDevicesTotals() {
   } else
   {
     global $db;
-f
+
     // combined query
     $result = $db->query(
           'SELECT 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('all').') as devices, 
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('my').') as devices, 
           (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
           (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
           (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
@@ -1133,7 +1133,7 @@ function copyFromDevice() {
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {
   switch ($deviceStatus) {
-    case 'all':        return 'WHERE dev_Archived=0';                                                        break;
+    case 'my':         return 'WHERE dev_Archived=0';                                                        break;
     case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                              break;
     case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                     break;
     case 'new':        return 'WHERE dev_Archived=0 AND dev_NewDevice=1';                                    break;

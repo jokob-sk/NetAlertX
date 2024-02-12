@@ -597,7 +597,7 @@
     "UI_LANG_name": "UI Language",
     "UI_PRESENCE_description": "Select what statuses should be shown in the <b>Device presence</b>  chart in the <a href=\"/devices.php\" target=\"_blank\">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)",
     "UI_PRESENCE_name": "Show in presence chart",
-    "UI_MY_DEVICES_description": "Devices of which statuses should be shown in the default My Devices view. (<code>CTRL + Click</code> to select/deselect)",
+    "UI_MY_DEVICES_description": "Devices of which statuses should be shown in the default <b>My Devices</b> view. (<code>CTRL + Click</code> to select/deselect)",
     "UI_MY_DEVICES_name": "Show in My Devices view",
     "devices_old": "Refreshing...",
     "general_event_description": "The event you have triggered might take a while until background processes finish. The execution ended once the below execution queue empties (Check the <a  href='/maintenance.php#tab_Logging'>error log</a> if you encounter issues). <br/> <br/>  Execution queue:",
