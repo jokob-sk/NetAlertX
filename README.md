@@ -104,7 +104,6 @@ Thank you to all the wonderful people who are sponsoring this project (=preventi
 | All Sponsors |
 |---|
 | [dtech77pl](https://github.com/dtech77pl) |
-| [David Kidd](https://github.com/demolishedman50) |
 | [Tony Hanratty](https://github.com/thanratty) |
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
