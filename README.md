@@ -112,7 +112,7 @@ Thank you to all the wonderful people who are sponsoring this project (=preventi
 ## Everything else
 <!--- --------------------------------------------------------------------- --->
 
-### Translations
+### 🌍 Translations 
 
 Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/).
 
