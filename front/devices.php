@@ -42,9 +42,9 @@
 <!-- top small box 1 ------------------------------------------------------- -->
       <div class="row">
         <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('all');">
+          <a href="#" onclick="javascript: initializeDatatable('my');">
           <div class="small-box bg-aqua">
-            <div class="inner"><h3 id="devicesAll"> -- </h3>
+            <div class="inner"><h3 id="devicesMy"> -- </h3>
                 <p class="infobox_label"><?= lang('Device_Shortcut_AllDevices');?></p>
             </div>
             <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
@@ -291,10 +291,9 @@ function main () {
           }
 
           // Initialize components with parameters
-          initializeDatatable();
+          initializeDatatable('my');
 
-          // query data
-          getDevicesTotals();      
+
           
           // check if dat outdated and show spinner if so
           handleLoadingDialog()
@@ -319,13 +318,77 @@ function mapIndx(oldIndex)
   }
 }
 
+//------------------------------------------------------------------------------
+//  Query total numbers of Devices by status
+//------------------------------------------------------------------------------
+function getDevicesTotals(devicesData) {
+
+  let resultJSON = "";
+
+  if (getCache("getDevicesTotals") !== "") {
+    resultJSON = getCache("getDevicesTotals");
+  } else {
+    // combined query
+    const devices = filterDataByStatus(devicesData, 'my');
+    const connectedDevices = filterDataByStatus(devicesData, 'connected');
+    const favoritesDevices = filterDataByStatus(devicesData, 'favorites');
+    const newDevices = filterDataByStatus(devicesData, 'new');
+    const downDevices = filterDataByStatus(devicesData, 'down');
+    const archivedDevices = filterDataByStatus(devicesData, 'archived');
+
+
+    $('#devicesMy').html        (devices.length);
+    $('#devicesConnected').html  (connectedDevices.length);
+    $('#devicesFavorites').html  (favoritesDevices.length);
+    $('#devicesNew').html        (newDevices.length);
+    $('#devicesDown').html       (downDevices.length);
+    $('#devicesArchived').html   (archivedDevices.length);
+
+    // save to cache
+    setCache("getDevicesTotals", resultJSON);
+  }  
+
+  console.log(resultJSON);
+}
+
 // -----------------------------------------------------------------------------
 // Define a function to filter data based on deviceStatus
 function filterDataByStatus(data, status) {
   return data.filter(function(item) {
     switch (status) {
-      case 'all':
-        return true; // Include all items for 'all' status
+      case 'my':
+        to_display = getSetting('UI_MY_DEVICES')
+
+        console.log(to_display)
+
+        result = false;
+
+        if (to_display.includes('online') && item.dev_PresentLastScan === 1)
+        {
+          result = true;
+        } 
+        
+        if (to_display.includes('offline') && item.dev_PresentLastScan === 0)
+        {
+          result = true;
+        }
+
+        if (to_display.includes('archived') && item.dev_Archived === 1)
+        {
+          result = true;
+        }
+
+        if (to_display.includes('new') && item.dev_NewDevice === 1)
+        {
+          result = true;
+        }
+
+        if (to_display.includes('down') && item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0)
+        {
+          result = true;
+        }
+
+        return result; // Include all items for 'my' status
       case 'connected':
         return item.dev_PresentLastScan === 1;
       case 'favorites':
@@ -378,7 +441,7 @@ function initializeDatatable (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'all':        tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
+    case 'my':        tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
     case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
     case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
     case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
@@ -402,7 +465,10 @@ function initializeDatatable (status) {
     }    
   }
 
-  $.get('api/table_devices.json?nocache=' + Date.now(), function(result) {           
+  $.get('api/table_devices.json?nocache=' + Date.now(), function(result) {      
+    
+    // query data
+    getDevicesTotals(result.data);      
     
     // Filter the data based on deviceStatus
     var filteredData = filterDataByStatus(result.data, deviceStatus);
@@ -550,7 +616,7 @@ function initializeDatatable (status) {
         // Random MAC      
         {targets: [mapIndx(9)],
           'createdCell': function (td, cellData, rowData, row, col) {
-            console.log(cellData)
+            // console.log(cellData)
             if (cellData == 1){
               $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
             } else {
@@ -638,26 +704,6 @@ function getDevicesFromTable(table)
   return JSON.stringify (result)
 }
 
-// -----------------------------------------------------------------------------
-function getDevicesTotals () {
-  // stop timer
-  stopTimerRefreshData();
-
-  // get totals and put in boxes
-  $.get('php/server/devices.php?action=getDevicesTotals', function(data) {
-    var totalsDevices = JSON.parse(data);
-
-    $('#devicesAll').html        (totalsDevices[0].toLocaleString());
-    $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
-    $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
-    $('#devicesNew').html        (totalsDevices[3].toLocaleString());
-    $('#devicesDown').html       (totalsDevices[4].toLocaleString());
-    $('#devicesArchived').html   (totalsDevices[5].toLocaleString());
-
-    // Timer for refresh data
-    newTimerRefreshData (getDevicesTotals);
-  } );
-}
 
 // -----------------------------------------------------------------------------
 function getNumberOfChildren(mac, devices)

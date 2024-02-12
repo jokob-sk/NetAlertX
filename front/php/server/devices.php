@@ -541,7 +541,7 @@ function getDevicesTotals() {
   } else
   {
     global $db;
-
+f
     // combined query
     $result = $db->query(
           'SELECT 
