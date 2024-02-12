@@ -25,3 +25,39 @@ If you are running a DNS server, such as AdGuard, set up **Private reverse DNS s
 4. Make sure you have **Use private reverse DNS resolvers** ticked.
 5. Click **Apply** to save your settings.
 
+
+### Using a custom resolv.conf file
+
+You can  configure a custom /etc/resolv.conf file in the docker-compose.yml and set the DNS server of your LAN DNS server (e.g.: Pi-Hole) as the nameserver. 
+
+#### docker-compose.yml:
+
+```yaml
+version: "3"
+services:
+  pialert:
+    container_name: pialert
+    image: "jokobsk/pi.alert:latest"
+    restart: unless-stopped
+    volumes:
+      - ./config/pialert.conf:/home/pi/pialert/config/pialert.conf
+      - ./pialert_db:/home/pi/pialert/db
+      - ./log:/home/pi/pialert/front/log
+      - ./config/resolv.conf:/etc/resolv.conf
+    environment:
+      - TZ=Europe/Berlin
+      - PORT=20211
+      - HOST_USER_ID=1000
+      - HOST_USER_GID=1000
+    ports:
+      - "20211:20211"
+    network_mode: host
+```
+
+#### ./config/resolv.conf:
+
+```
+nameserver 192.168.178.11
+options edns0 trust-ad
+search example.com
+```
