@@ -537,7 +537,7 @@
     "Presence_CalHead_year": "año",
     "Presence_CallHead_Devices": "Dispositivos",
     "Presence_Loading": "Cargando...",
-    "Presence_Shortcut_AllDevices": "Todos",
+    "Presence_Shortcut_AllDevices": "Mis dispositivos",
     "Presence_Shortcut_Archived": "Archivado(s)",
     "Presence_Shortcut_Connected": "Conectado(s)",
     "Presence_Shortcut_Devices": "Dispositivos",
@@ -709,5 +709,7 @@
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Sistema",
     "test_event_icon": "fa-vial-circle-check",
-    "test_event_tooltip": "Guarda tus cambios antes de probar nuevos ajustes."
+    "test_event_tooltip": "Guarda tus cambios antes de probar nuevos ajustes.",
+    "UI_MY_DEVICES_description": "Dispositivos cuyos estados deben mostrarse en la vista por defecto <b>Mis dispositivos</b>. (<code>CTRL + Click</code> para seleccionar/deseleccionar)",
+    "UI_MY_DEVICES_name": "Mostrar en Mis dispositivos"
 }
