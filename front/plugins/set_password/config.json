@@ -43,7 +43,7 @@
   "settings":[
     {
       "function": "RUN",    
-      "events": ["run"],        
+      "events": [],        
       "type": "text.select",            
       "default_value":"disabled",
       "options": ["disabled", "before_config_save"],
@@ -58,7 +58,7 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>. You can set to <code>disabled</code> once the password is changed."
+          "string" : "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>."
       },
 	  {
           "language_code":"es_es",
