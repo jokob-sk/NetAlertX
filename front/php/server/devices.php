@@ -1159,6 +1159,7 @@ function copyFromDevice() {
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {
   switch ($deviceStatus) {
+    case 'all':        return 'WHERE dev_Archived=0';                                                        break;
     case 'my':         return 'WHERE dev_Archived=0';                                                        break;
     case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                              break;
     case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                     break;

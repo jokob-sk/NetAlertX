@@ -16,6 +16,8 @@ WIFI's**, in this way, Pi.Alert will be able to identify the device, and it
 will not identify it as a new device every so often (every time IOS or Android
 decides to change the MAC).
 
+**Random MACs** are recognized by the characters "2", "6", "A", or "E" as the 2nd character in the Mac address. You can disable specific prefixes to be detected as random MAC addresses by specifying the `UI_NOT_RANDOM_MAC` setting.
+
 ## IOS
 ![ios][ios]
 
