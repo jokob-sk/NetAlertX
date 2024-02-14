@@ -412,10 +412,10 @@
                       </div>
 
                       <!-- New Device -->
-                      <div class="form-group">
+                      <div class="form-group" title="<?= lang('DevDetail_EveandAl_NewDevice_Tooltip');?>">
                         <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_NewDevice');?>:</label>
                         <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox orange hidden" id="chkNewDevice" type="checkbox">
+                          <input class="checkbox orange hidden" id="chkNewDevice"  type="checkbox">
                         </div>
                       </div>
 

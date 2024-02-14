@@ -76,6 +76,7 @@
     "DevDetail_EveandAl_AlertDown": "Melde Down",
     "DevDetail_EveandAl_Archived": "Archivierung",
     "DevDetail_EveandAl_NewDevice": "Neues Ger\u00e4t",
+    "DevDetail_EveandAl_NewDevice_Tooltip": "",
     "DevDetail_EveandAl_RandomMAC": "Zuf\u00e4llige MAC",
     "DevDetail_EveandAl_ScanCycle": "Scan Abstand",
     "DevDetail_EveandAl_ScanCycle_a": "Ger\u00e4t scannen",
