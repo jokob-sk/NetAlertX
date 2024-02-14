@@ -602,6 +602,65 @@ function formatIPlong(ipAddress) {
 }
 
 // -----------------------------------------------------------------------------
+// Check if MAC is a random one
+function isRandomMAC(mac)
+{
+  isRandom = false;
+
+  isRandom = ["2", "6", "A", "E", "a", "e"].includes(mac[1]); 
+
+  // if detected as random, make sure it doesn't start with a prefix which teh suer doesn't want to mark as random
+  if(isRandom)
+  {
+    $.each(createArray(getSetting("UI_NOT_RANDOM_MAC")), function(index, prefix) {
+
+      if(mac.startsWith(prefix))
+      {
+        isRandom = false;     
+      }    
+      
+    });
+    
+  }
+
+  return isRandom;
+}
+
+  // ---------------------------------------------------------  
+  // Generate an array object from a string representation of an array
+  function createArray(input) {
+    // Empty array
+    if (input === '[]') {
+      return [];
+    }
+
+    // Regex patterns
+    const patternBrackets = /(^\s*\[)|(\]\s*$)/g;
+    const patternQuotes = /(^\s*')|('\s*$)/g;
+    const replacement = '';
+
+    // Remove brackets
+    const noBrackets = input.replace(patternBrackets, replacement);
+
+    const options = [];
+
+    // Create array
+    const optionsTmp = noBrackets.split(',');
+
+    // Handle only one item in array
+    if (optionsTmp.length === 0) {
+      return [noBrackets.replace(patternQuotes, replacement)];
+    }
+
+    // Remove quotes
+    optionsTmp.forEach(item => {
+      options.push(item.replace(patternQuotes, replacement).trim());
+    });
+
+    return options;
+  }
+
+// -----------------------------------------------------------------------------
 // A function to get a device property using the mac address as key and DB column nakme as parameter
 //  for the value to be returned
 function getDeviceDataByMacAddress(macAddress, dbColumn) {

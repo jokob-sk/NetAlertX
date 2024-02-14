@@ -35,6 +35,7 @@ TIMEZONE        = 'Europe/Berlin'
 UI_LANG         = 'English' 
 UI_PRESENCE       = ['online', 'offline', 'archived']  
 UI_MY_DEVICES     = ['online', 'offline', 'archived', 'new', 'down']  
+UI_NOT_RANDOM_MAC = []
 PIALERT_WEB_PROTECTION  = False 
 PIALERT_WEB_PASSWORD    = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' 
 DAYS_TO_KEEP_EVENTS     = 90 

@@ -92,7 +92,7 @@ function getDeviceData() {
   $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
   $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
 
-  $deviceData['dev_RandomMAC'] = ( in_array($mac[1], array("2","6","A","E","a","e")) ? 1 : 0);
+  $deviceData['dev_RandomMAC'] = isRandomMAC($mac);
 
   // Count Totals
   $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
@@ -657,7 +657,7 @@ function getDevicesList() {
                             formatDate ($row['dev_FirstConnection']),
                             formatDate ($row['dev_LastConnection']),
                             $row['dev_LastIP'],
-                            ( in_array($row['dev_MAC'][1], array("2","6","A","E","a","e")) ? 1 : 0),
+                            ( isRandomMAC($row['dev_MAC']) ),
                             $row['dev_Status'],
                             $row['dev_MAC'], // MAC (hidden)
                             formatIPlong ($row['dev_LastIP']), // IP orderable
@@ -689,6 +689,32 @@ function getDevicesList() {
   echo (json_encode ($tableData));
 }
 
+
+//------------------------------------------------------------------------------
+//  Determine if Random MAC
+//------------------------------------------------------------------------------
+
+function isRandomMAC($mac) {
+  $isRandom = false;
+
+  // if detected as random, make sure it doesn't start with a prefix which teh suer doesn't want to mark as random
+  $setting = getSettingValue("UI_NOT_RANDOM_MAC");
+  $prefixes = createArray($setting);
+
+  $isRandom = in_array($mac[1], array("2", "6", "A", "E", "a", "e"));
+
+  // If detected as random, make sure it doesn't start with a prefix which the user doesn't want to mark as random
+  if ($isRandom) {
+      foreach ($prefixes as $prefix) {
+          if (strpos($mac, $prefix) === 0) {
+              $isRandom = false;
+              break;
+          }
+      }
+  }
+
+  return $isRandom;
+}
 
 //------------------------------------------------------------------------------
 //  Query the List of devices for calendar

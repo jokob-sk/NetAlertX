@@ -571,40 +571,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   }
 
-  // ---------------------------------------------------------  
-  // Generate an array object from a string representation of an array
-  function createArray(input) {
-    // Empty array
-    if (input === '[]') {
-      return [];
-    }
-
-    // Regex patterns
-    const patternBrackets = /(^\s*\[)|(\]\s*$)/g;
-    const patternQuotes = /(^\s*')|('\s*$)/g;
-    const replacement = '';
-
-    // Remove brackets
-    const noBrackets = input.replace(patternBrackets, replacement);
-
-    const options = [];
-
-    // Create array
-    const optionsTmp = noBrackets.split(',');
-
-    // Handle only one item in array
-    if (optionsTmp.length === 0) {
-      return [noBrackets.replace(patternQuotes, replacement)];
-    }
-
-    // Remove quotes
-    optionsTmp.forEach(item => {
-      options.push(item.replace(patternQuotes, replacement).trim());
-    });
-
-    return options;
-  }
-
   // number of settings has to be equal to
 
   // display the name of the first person

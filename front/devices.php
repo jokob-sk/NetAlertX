@@ -472,7 +472,7 @@ function initializeDatatable (status) {
                 item.dev_FirstConnection || "",
                 item.dev_LastConnection || "",
                 item.dev_LastIP || "",
-                (["2", "6", "A", "E", "a", "e"].includes(item.dev_MAC[1]) ? 1 : 0) || "", // Check if randomized MAC
+                (isRandomMAC(item.dev_MAC)) || "", // Check if randomized MAC
                 getDeviceStatus(item) || "",
                 item.dev_MAC || "", // hidden
                 formatIPlong(item.dev_LastIP) || "", // IP orderable
