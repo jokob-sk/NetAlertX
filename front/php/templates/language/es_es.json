@@ -74,7 +74,7 @@
     "DevDetail_EveandAl_AlertDown": "Alerta de caída",
     "DevDetail_EveandAl_Archived": "Archivada",
     "DevDetail_EveandAl_NewDevice": "Nuevo dispositivo",
-    "DevDetail_EveandAl_NewDevice_Tooltip": "",
+    "DevDetail_EveandAl_NewDevice_Tooltip": "Mostrará el estado Nuevo para el dispositivo y lo incluirá en las listas cuando el filtro Nuevos dispositivos esté activo. No afecta a las notificaciones.",
     "DevDetail_EveandAl_RandomMAC": "MAC al azar",
     "DevDetail_EveandAl_ScanCycle": "Ciclo de escaneo",
     "DevDetail_EveandAl_ScanCycle_a": "Escanear Dispositivo",
