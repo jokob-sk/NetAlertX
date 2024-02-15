@@ -264,6 +264,7 @@
         },
         {
             "column": "Watched_Value2",
+            "mapped_to_column": "cur_Vendor",  
             "css_classes": "col-sm-2",
             "default_value": "",
             "localized": [
