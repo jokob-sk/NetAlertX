@@ -42,12 +42,16 @@ docker run -d --rm --network=host \
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
 |`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
+|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes.   |    `N/A` |
 
 ### Docker paths
 
+> [!NOTE]
+> See also [Backup strategies](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/BACKUPS.md).   
+
 | Required | Path | Description |
 | :------------- | :------------- | :-------------| 
-| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` file (see below for details)  | 
+| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md)) files (see below for details)  | 
 | ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
 | | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 | | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole DB mapping.  | 
