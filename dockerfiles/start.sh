@@ -114,6 +114,17 @@ chmod -R a+rwx $INSTALL_DIR
 
 echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
 
+# DANGER ZONE: ALWAYS_FRESH_INSTALL 
+if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
+  echo "[INSTALL] ❗ ALERT db and config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
+  # Delete content of "$INSTALL_DIR/pialert/config/"
+  rm -rf "$INSTALL_DIR/pialert/config/"*
+  
+  # Delete content of "$FILEDB"
+  rm -rf "$FILEDB"/*
+fi
+
+
 # Copy starter pialert.db and pialert.conf if they don't exist
 cp -n "$INSTALL_DIR/pialert/back/pialert.conf" "$INSTALL_DIR/pialert/config/pialert.conf" 
 cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$FILEDB"
