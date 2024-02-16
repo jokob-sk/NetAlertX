@@ -697,7 +697,7 @@ function getNumberOfChildren(mac, devices)
 
   $.each(devices, function(index, dev) {
 
-    if(dev.dev_Network_Node_MAC_ADDR.trim() == mac.trim())
+    if(dev.dev_Network_Node_MAC_ADDR != null && dev.dev_Network_Node_MAC_ADDR.trim() == mac.trim())
     {
       childrenCount++;        
     }    
