@@ -359,19 +359,19 @@ function filterDataByStatus(data, status) {
       case 'my':
         to_display = getSetting('UI_MY_DEVICES');
         
-        let result = false;
+        let result = true;
 
-        if (to_display.includes('online') && item.dev_PresentLastScan === 1) {
-            result = true;
-        } else if (to_display.includes('offline') && item.dev_PresentLastScan === 0) {
-            result = true;
-        } else if (to_display.includes('archived') && item.dev_Archived === 1) {
-            result = true;
-        } else if (to_display.includes('new') && item.dev_NewDevice === 1) {
-            result = true;
-        } else if (to_display.includes('down') && item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown !== 0) {
-            result = true;
-        }
+        if (!to_display.includes('down') && item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown !== 0) {
+            result = false;
+        } else if (!to_display.includes('new') && item.dev_NewDevice === 1) {
+            result = false;
+        } else if (!to_display.includes('archived') && item.dev_Archived === 1) {
+            result = false;
+        } else if (!to_display.includes('offline') && item.dev_PresentLastScan === 0) {
+            result = false;
+        } else if (!to_display.includes('online') && item.dev_PresentLastScan === 1) {
+            result = false;
+        }  
 
         return result; // Include all items for 'my' status
       case 'connected':

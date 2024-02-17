@@ -32,6 +32,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Custom Icon configuration and support](/docs/ICONS.md)
 - [Better name resolution with Reverse DNS](/docs/REVERSE_DNS.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
+- [Backups](/docs/BACKUPS.md)
 
 #### 🐛 Debugging help & tips
 

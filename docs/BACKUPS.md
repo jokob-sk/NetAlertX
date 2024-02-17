@@ -44,7 +44,7 @@ Historical data is stored in the `pialert.db` database (See [Database overview](
 
 ## 🧭 Backup strategies
 
-The safest approach to backups is to backup all of the above with, by taking regular file system backups (I use [Kopia](https://github.com/kopia/kopia)). 
+The safest approach to backups is to backup all of the above, by taking regular file system backups (I use [Kopia](https://github.com/kopia/kopia)). 
 
 Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` file, followed by the `pialert.conf` file. 
 
@@ -64,7 +64,7 @@ To restore the application map the above files as described in the [Setup docume
 
 ### Scenario 2: Corrupted database
 
-End-result: Partial restore (historical data & Configuration from the Maintenance section will be missing)
+End-result: Partial restore (historical data & configurations from the Maintenance section will be missing)
 
 #### Source artifacts:
 
