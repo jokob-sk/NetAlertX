@@ -58,7 +58,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out a subnet."
+              "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out an IP range."
             }
           ]
         },
@@ -447,7 +447,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox."
+              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications."
             }
           ]
         },
