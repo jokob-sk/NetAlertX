@@ -9,7 +9,9 @@ import sys
 from datetime import datetime
 import time
 import re
-from paho.mqtt import client as mqtt_client
+import paho.mqtt.client as mqtt
+# from paho.mqtt import client as mqtt_client
+# from paho.mqtt import CallbackAPIVersion as mqtt_CallbackAPIVersion
 import hashlib
 
 
@@ -43,7 +45,7 @@ module_name = pluginName
 
 mqtt_sensors                = []
 mqtt_connected_to_broker    = False
-client                      = None  # mqtt client
+mqtt_client                 = None  # mqtt client
 
 def main():
     
@@ -130,7 +132,7 @@ class sensor_config:
 
 #-------------------------------------------------------------------------------
 
-def publish_mqtt(client, topic, message):
+def publish_mqtt(mqtt_client, topic, message):
     status = 1
 
 
@@ -139,7 +141,7 @@ def publish_mqtt(client, topic, message):
     mylog('verbose', [f"[{pluginName}] Sending MQTT message: {message}"])
 
     while status != 0:
-        result = client.publish(
+        result = mqtt_client.publish(
                 topic=topic,
                 payload=message,
                 qos=get_setting_value('MQTT_QOS'),
@@ -154,22 +156,22 @@ def publish_mqtt(client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
-def create_generic_device(client):  
+def create_generic_device(mqtt_client):  
     
     deviceName = 'PiAlert'
     deviceId = 'pialert'    
     
-    create_sensor(client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
-    create_sensor(client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
-    create_sensor(client, deviceId, deviceName, 'sensor', 'all', 'wifi')
-    create_sensor(client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
-    create_sensor(client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
-    create_sensor(client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'all', 'wifi')
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'archived', 'wifi-lock')
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'new', 'wifi-plus')
+    create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'unknown', 'wifi-alert')
         
 
 #-------------------------------------------------------------------------------
 
-def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):    
+def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):    
 
     global mqtt_sensors    
 
@@ -178,13 +180,13 @@ def create_sensor(client, deviceId, deviceName, sensorType, sensorName, icon, ma
     # save if new
     if new_sensor_config.isNew:   
         mylog('minimal', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])          
-        publish_sensor(client, new_sensor_config)        
+        publish_sensor(mqtt_client, new_sensor_config)        
 
 
 
 
 #-------------------------------------------------------------------------------
-def publish_sensor(client, sensorConfig):      
+def publish_sensor(mqtt_client, sensorConfig):      
 
     global mqtt_sensors   
 
@@ -205,7 +207,7 @@ def publish_sensor(client, sensorConfig):
     topic='homeassistant/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/'+sensorConfig.sensorName+'/config'
 
     # add the sensor to the global list to keep track of succesfully added sensors
-    if publish_mqtt(client, topic, message):        
+    if publish_mqtt(mqtt_client, topic, message):        
                                      # hack - delay adding to the queue in case the process is 
         time.sleep(get_setting_value('MQTT_DELAY_SEC'))   # restarted and previous publish processes aborted 
                                      # (it takes ~2s to update a sensor config on the broker)
@@ -213,7 +215,7 @@ def publish_sensor(client, sensorConfig):
 
 #-------------------------------------------------------------------------------
 def mqtt_create_client():    
-    def on_disconnect(client, userdata, rc):
+    def on_disconnect(mqtt_client, userdata, reason_code):
         
         global mqtt_connected_to_broker
 
@@ -222,44 +224,44 @@ def mqtt_create_client():
         # not sure is below line is correct / necessary        
         # client = mqtt_create_client() 
 
-    def on_connect(client, userdata, flags, rc):
+    def on_connect(mqtt_client, userdata, flags, reason_code):
         
         global mqtt_connected_to_broker
 
-        if rc == 0: 
+        if reason_code == 0: 
             mylog('verbose', [f"[{pluginName}]         Connected to broker"])            
             mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            mylog('none', [f"[{pluginName}]         Connection failed"])
+            mylog('none', [f"[{pluginName}]         Connection failed, reason_code: {reason_code}"])
             mqtt_connected_to_broker = False
 
 
-    global client
+    global mqtt_client
 
-    client = mqtt_client.Client('PiAlert')   # Set Connecting Client ID    
-    client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
-    client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
-    client.connect(get_setting_value('MQTT_BROKER'), get_setting_value('MQTT_PORT'))
-    client.loop_start() 
+    mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)       
+    mqtt_client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_disconnect = on_disconnect
+    mqtt_client.connect(get_setting_value('MQTT_BROKER'), get_setting_value('MQTT_PORT'))
+    mqtt_client.loop_start() 
 
-    return client
+    return mqtt_client
 
 #-------------------------------------------------------------------------------
 def mqtt_start(db):    
 
-    global client, mqtt_connected_to_broker
+    global mqtt_client, mqtt_connected_to_broker
 
     if mqtt_connected_to_broker == False:
         mqtt_connected_to_broker = True           
-        client = mqtt_create_client()     
+        mqtt_client = mqtt_create_client()     
     
     # General stats    
 
     # Create a generic device for overal stats
     if get_setting_value('MQTT_SEND_STATS') == True: 
         # Create a new device representing overall PiAlert stats   
-        create_generic_device(client)
+        create_generic_device(mqtt_client)
 
         # Get the data
         row = get_device_stats(db)   
@@ -273,7 +275,7 @@ def mqtt_start(db):
             payload += '"'+column+'": ' + str(row[column]) +','       
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(client, "system-sensors/sensor/pialert/state",              
+        publish_mqtt(mqtt_client, "system-sensors/sensor/pialert/state",              
                 '{ \
                     '+ payload[:-1] +'\
                 }'
@@ -299,15 +301,15 @@ def mqtt_start(db):
             deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
             deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
-            create_sensor(client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
-            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
-            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
-            create_sensor(client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
         
             # update device sensors in home assistant              
 
-            publish_mqtt(client, 'system-sensors/sensor/'+deviceId+'/state', 
+            publish_mqtt(mqtt_client, 'system-sensors/sensor/'+deviceId+'/state', 
                 '{ \
                     "last_ip": "' + device["dev_LastIP"] +'", \
                     "is_new": "' + str(device["dev_NewDevice"]) +'", \
@@ -316,7 +318,7 @@ def mqtt_start(db):
                 }'
             ) 
 
-            publish_mqtt(client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
+            publish_mqtt(mqtt_client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
                 '{ \
                     "is_present": "' + to_binary_sensor(str(device["dev_PresentLastScan"])) +'"\
                 }'
