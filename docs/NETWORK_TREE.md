@@ -17,7 +17,7 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 
 > [!NOTE] 
 >
-> [Bulk-edit devices](/docs/DEVICES_BULK_EDITING.md) by using the `CSV Export` functionality in the `Maintenance` section. You can use this to fix `Internet` node assignment issues. 
+> [Bulk-edit devices](/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section. You can use this to fix `Internet` node assignment issues. 
 
 ## 🔍Detailed example:
 

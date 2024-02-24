@@ -107,7 +107,7 @@ If you submit a PR please:
 1. Check that your changes are backward compatible with existing installations and with a blank setup. 
 2. Existing features should always be preserved. 
 3. Keep the PR small, on-topic and don't change code that is not necessary for the PR to work
-4. New features code should ideally be re-usable for different purposes, not be for a very narrow use-case.
+4. New features code should ideally be re-usable for different purposes, not for a very narrow use case.
 5. New functionality should ideally be implemented via the Plugins system, if possible.
 
 Suggested test cases:

@@ -22,7 +22,7 @@ PiAlert comes with MQTT support, allowing you to show all detected devices as de
    - User
    - Password
 
-4. Ope the `PiAlert` > `Settings` > `MQTT` settings group
+4. Open the _PiAlert_ > _Settings_ > _MQTT_ settings group
    - Enable MQTT
    - Fill in the details from above
    - Fill in remaining settings as per description

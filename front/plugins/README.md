@@ -28,6 +28,7 @@
 |          |             | PHOLUS        | Script             | ♻ other        | 📚[pholus_scan](/front/plugins/pholus_scan/)                        |
 |          |    Yes      | PIHOLE        | External SQLite DB | 🔍dev scanner  | 📚[pihole_scan](/front/plugins/pihole_scan/)                        |
 |          |             | PUSHSAFER     | Script             | 💬 publisher   | 📚[_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
+|          |             | PUSHOVER      | Script             | 💬 publisher   | 📚[_pushover_pushsafer](/front/plugins/_publisher_pushover/)        |
 |          |             | SETPWD        | Script             | ⚙ system       | 📚[set_password](/front/plugins/set_password/)                      |
 |          |             | SMTP          | Script             | 💬 publisher   | 📚[_publisher_email](/front/plugins/_publisher_email/)              |
 |          |    Yes      | SNMPDSC       | Script             | 🔍dev scanner  | 📚[snmp_discovery](/front/plugins/snmp_discovery/)                  |

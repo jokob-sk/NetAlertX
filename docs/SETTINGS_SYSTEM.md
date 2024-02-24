@@ -2,7 +2,7 @@
 
 This is an explanation how settings are handled intended for anyone thinking about writing their own plugin or contributing to the project. 
 
-If you are a user of the app, settings should be described in the `Settings` section of the app. Open an issue if you'd like to clarify any of the settings. 
+If you are a user of the app, settings have a detailed description in the _Settings_ section of the app. Open an issue if you'd like to clarify any of the settings. 
 
 ### 🛢 Data storage
 

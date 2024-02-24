@@ -11,7 +11,7 @@ To edit device information:
 
 > [!NOTE] 
 >
-> [Bulk-edit devices](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md) by using the `CSV Export` functionality in the `Maintenance` section.
+> [Bulk-edit devices](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section.
 
 
 ![Device Details][screen1]

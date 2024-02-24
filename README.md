@@ -75,7 +75,6 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 - Regular updates to keep your data and family safe 🔄 
 - Better and more functionality➕
 - Quicker and better support with issues 🆘
-- Less grumpy me 😄
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 
