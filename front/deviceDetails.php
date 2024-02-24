@@ -1471,23 +1471,7 @@ function setDeviceData (direction='', refreshCallback='') {
   });
 }
 
-// --------------------------------------------------------
-// Calls a backend function to add a front-end event to an execution queue
-function updateApi()
-{
 
-  // value has to be in format event|param. e.g. run|ARPSCAN
-  action = `update_api|devices,appevents`
-
-  $.ajax({
-    method: "POST",
-    url: "php/server/util.php",
-    data: { function: "addToExecutionQueue", action: action  },
-    success: function(data, textStatus) {
-        console.log(data)
-    }
-  })
-}
 
 
 // -----------------------------------------------------------------------------

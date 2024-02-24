@@ -1030,6 +1030,31 @@ input[readonly] {
     z-index: 100;
 }
 
+/* Multi-edit adjustements */
+.box-header
+{
+    min-height: 55px;
+}
+
+.red-hover-border:hover
+{
+    border-color: red !important;
+    border-width: 1px;
+    border-style: solid;
+
+}
+
+.red-hover-background:hover
+{
+    background-color: red !important;
+}
+
+#multi-edit-form .form-group
+{
+    height: 45px;
+
+}
+
 /* -----------------------------------------------------------------------------
    Donations
 ----------------------------------------------------------------------------- */

@@ -80,44 +80,60 @@ function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $db
 
   global $db;  
 
-  // handle one or multiple columns
-  if(strpos($columns, ',') !== false) 
-  {
-    $columnsArr = explode(",", $columns);
-  }else
-  {
-    $columnsArr = array($columns);
+  // Handle one or multiple columns
+  if(strpos($columns, ',') !== false) {
+      $columnsArr = explode(",", $columns);
+  } else {
+      $columnsArr = array($columns);
   }
 
-  // handle one or multiple values
-  if(strpos($values, ',') !== false)
-  {
-    $valuesArr = explode(",", $values);
-  } else
-  {
-    $valuesArr = array($values);
+  // Handle one or multiple values
+  if(strpos($values, ',') !== false) {
+      $valuesArr = explode(",", $values);
+  } else {
+      $valuesArr = array($values);
   }
 
+  // Handle one or multiple IDs
+  if(strpos($id, ',') !== false) {
+      $idsArr = explode(",", $id);
+      $idsPlaceholder = rtrim(str_repeat('?,', count($idsArr)), ',');
+  } else {
+      $idsArr = array($id);
+      $idsPlaceholder = '?';
+  }
+
+  // Build column-value pairs string
   $columnValues = '';
-
-  $index = 0;
-  foreach($columnsArr as $column)
-  {
-    $columnValues =  $columnValues .' "' .$column.'" = "'.$valuesArr[$index] . '",' ;
-    $index = $index + 1;
+  foreach($columnsArr as $column) {
+      $columnValues .= '"' . $column . '" = ?,';
   }
+  // Remove trailing comma
+  $columnValues = rtrim($columnValues, ',');
+
+  // Construct the SQL query
+  $sql = 'UPDATE ' . $dbtable . ' SET ' . $columnValues . ' WHERE ' . $columnName . ' IN (' . $idsPlaceholder . ')';
   
-  $columnValues = substr($columnValues, 0, -1);  
- 
-  // Update value
-  $sql = 'UPDATE '.$dbtable.' SET '. $columnValues .'
-          WHERE "'. $columnName .'"="'. $id.'"';
-  $result = $db->query($sql);
+  // Prepare the statement
+  $stmt = $db->prepare($sql);
 
-  if (! $result == TRUE) {
-    echo "Error updating parameter\n\n$sql \n\n". $db->lastErrorMsg();
-    return;
+  // Check for errors
+  if(!$stmt) {
+      echo "Error preparing statement: " . $db->lastErrorMsg();
+      return;
   }
+
+  // Bind the parameters
+  $paramTypes = str_repeat('s', count($columnsArr));
+  foreach($valuesArr as $i => $value) {
+      $stmt->bindValue($i + 1, $value);
+  }
+  foreach($idsArr as $i => $idValue) {
+      $stmt->bindValue(count($valuesArr) + $i + 1, $idValue);
+  }
+
+  // Execute the statement
+  $result = $stmt->execute();
 
   $changes = $db->changes();
   if ($changes == 0) {
@@ -129,7 +145,7 @@ function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $db
   $uniqueHash = hash('ripemd160', $dbtable . $columns);
   setCache($uniqueHash, $values, $expireMinutes);
 
-  echo 'OK';  
+  echo 'OK' ;  
 }
 
 
@@ -140,16 +156,19 @@ function create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $
 {
   global $db;
 
-  // Insert new value
-  $sql = 'INSERT INTO '.$dbtable.' ('.$columns.')
-          VALUES ("'. quotes($parameter) .'",
-                  "'. $values     .'")';
-  $result = $db->query($sql);
+  echo "NOT IMPLEMENTED!\n\n";
+  return;
 
-  if (! $result == TRUE) {
-    echo "Error creating entry\n\n$sql \n\n". $db->lastErrorMsg();
-    return;
-  }
+  // // Insert new value
+  // $sql = 'INSERT INTO '.$dbtable.' ('.$columns.')
+  //         VALUES ("'. quotes($parameter) .'",
+  //                 "'. $values     .'")';
+  // $result = $db->query($sql);
+
+  // if (! $result == TRUE) {
+  //   echo "Error creating entry\n\n$sql \n\n". $db->lastErrorMsg();
+  //   return;
+  // }
 }
 
 //------------------------------------------------------------------------------

@@ -472,7 +472,37 @@ function getQueryString(key){
   });
 
   tmp = params[key] 
+
+  if(emptyArr.includes(tmp))
+  {
+    var queryParams = {};
+    fullUrl = window.location.toString();
+
+    // console.log(fullUrl);
+
+    if (fullUrl.includes('?')) {
+      var queryString = fullUrl.split('?')[1];
   
+      // Split the query string into individual parameters
+      var paramsArray = queryString.split('&');
+  
+      // Loop through the parameters array
+      paramsArray.forEach(function(param) {
+          // Split each parameter into key and value
+          var keyValue = param.split('=');
+          var keyTmp = decodeURIComponent(keyValue[0]);
+          var value = decodeURIComponent(keyValue[1] || '');
+  
+          // Store key-value pair in the queryParams object
+          queryParams[keyTmp] = value;
+      });
+    }
+
+    // console.log(queryParams);
+
+    tmp = queryParams[key]
+  }
+
   result = emptyArr.includes(tmp) ? "" : tmp;
 
   return result
@@ -722,9 +752,9 @@ function getGuid() {
 // UI 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-// Genrate work-in-progress icons
+// Generate work-in-progress icons
 function workInProgress() {
-  console.log()
+
   if($(".work-in-progress").html().trim() == "")
   {
     $(".work-in-progress").append(`
@@ -766,6 +796,25 @@ function showSpinner(stringKey='Loading')
 function hideSpinner()
 {
   $("#loadingSpinner").hide()
+}
+
+
+// --------------------------------------------------------
+// Calls a backend function to add a front-end event to an execution queue
+function updateApi()
+{
+
+  // value has to be in format event|param. e.g. run|ARPSCAN
+  action = `update_api|devices,appevents`
+
+  $.ajax({
+    method: "POST",
+    url: "php/server/util.php",
+    data: { function: "addToExecutionQueue", action: action  },
+    success: function(data, textStatus) {
+        console.log(data)
+    }
+  })
 }
 
 // -----------------------------------------------------------------------------

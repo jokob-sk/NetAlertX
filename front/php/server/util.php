@@ -185,7 +185,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
     echo '<script>alert(escape("'.$message.'"));</script>';
   }
 
-  // F12 Browser console
+  // F12 Browser dev console
   if($logConsole)
   {
     echo '<script>console.log(escape("'.str_replace('"',"'",$message).'"));</script>';
@@ -194,16 +194,26 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
   //File
   if($logFile)
   {
-    if(file_exists($logFolderPath.$log_file) != 1) // file doesn't exist, create one
-    {
-      $log = fopen($logFolderPath.$log_file, "w") or die("Unable to open file!");
-    }else // file exists, append
-    {
-      $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file!");
+
+    if (is_writable($logFolderPath.$log_file)) {
+        
+
+        if(file_exists($logFolderPath.$log_file) != 1) // file doesn't exist, create one
+        {
+          $log = fopen($logFolderPath.$log_file, "w") or die("Unable to open file!");
+        }else // file exists, append
+        {
+          $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file - Permissions issue!");
+        }
+    
+        fwrite($log, "[".$timestamp. "] " . str_replace('<br>',"\n   ",str_replace('<br/>',"\n   ",$message)).PHP_EOL."" );
+        fclose($log);
+
+    } else {
+        echo 'The file is not writable: '.$logFolderPath.$log_file;
     }
 
-    fwrite($log, "[".$timestamp. "] " . str_replace('<br>',"\n   ",str_replace('<br/>',"\n   ",$message)).PHP_EOL."" );
-    fclose($log);
+
   }
 
   //echo

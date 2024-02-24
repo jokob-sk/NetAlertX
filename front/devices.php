@@ -120,7 +120,7 @@
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
-                <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?> </h3>
+                <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?> </h3> 
               </div>
               <div class="box-body">
                 <div class="chart">
@@ -148,7 +148,10 @@
 
             <!-- box-header -->
             <div class="box-header">
-              <h3 id="tableDevicesTitle" class="box-title text-gray">Devices</h3>
+            <div class=" col-md-10 ">
+              <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
+            </div>                          
+            <div id="multiEditPlc" class="col-md-2"></div>
             </div>
 
             <!-- table -->
@@ -188,6 +191,9 @@
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
   <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css">
+  <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
+
 
 
 <!-- page script ----------------------------------------------------------- -->
@@ -520,7 +526,8 @@ function initializeDatatable (status) {
 
       // Parameters
       'pageLength'   : tableRows,
-      'order'        : tableOrder,      
+      'order'        : tableOrder,   
+      'select'       : true, // Enable selection   
 
       'columnDefs'   : [
         {visible:   false,         targets: tableColumnHide },      
@@ -656,6 +663,28 @@ function initializeDatatable (status) {
       setCache ('devicesList', getDevicesFromTable(table) ); 
     } );
 
+    // add multi-edit button
+    $('#multiEditPlc').append(
+        `<button type="submit" id="multiEdit" class="btn btn-primary" style="display:none" onclick="multiEditDevices();">
+          <i class="fa fa-pencil pointer" ></i>  ${getString("Device_MultiEdit")}
+        </button>`)
+
+    // Event listener for row selection in DataTable
+    $('#tableDevices').on('click', 'tr', function (e) {
+      setTimeout(function(){
+          // Check if any row is selected
+          var anyRowSelected = $('#tableDevices tr.selected').length > 0;
+
+          console.log(anyRowSelected);
+
+          // Toggle visibility of element with ID 'multiEdit'
+          $('#multiEdit').toggle(anyRowSelected);
+      }, 200);
+
+
+      
+    });
+
 
   });  
 };
@@ -728,6 +757,52 @@ function handleLoadingDialog()
   })
 
 }
+
+// -----------------------------------------------------------------------------
+function multiEditDevices()
+{
+  rows  = $('#tableDevices')[0].rows
+
+  // Initialize an empty array to store selected rows
+  var selectedRows = [];
+
+  console.log($('#tableDevices')[0].rows);
+  
+  // Loop through each row in the HTML collection
+  for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      // Check if the row has the 'selected' class
+      if (row.classList.contains('selected')) {
+          // If selected, push the row's data to the selectedRows array
+          selectedRows.push(row);
+      }
+  }
+
+  // Now, selectedRows contains all selected rows
+  console.log(selectedRows);
+
+  var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
+
+  var selectedDevices = [];
+
+  for (var i = 0; i < selectedRows.length; i++) {
+    selectedDevices.push(devicesDataTableData[selectedRows[i]._DT_RowIndex]);    
+  }
+
+  // Now, selectedDevices contains all selected devices
+  console.log(selectedDevices);
+
+  macs = ""
+
+  for (var i = 0; i < selectedDevices.length; i++) {
+    macs += selectedDevices[i][4] + ",";  // [4] == MAC    
+  }
+  // setCache('activeMaintenanceTab', 'tab_multiEdit_id')
+  window.location.href = window.location.origin + '/maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
+
+
+}
+
 
 </script>
 

@@ -54,6 +54,7 @@ services:
       - ${DEV_LOCATION}/front/report.php:/home/pi/pialert/front/report.php      
       - ${DEV_LOCATION}/front/workflows.php:/home/pi/pialert/front/workflows.php      
       - ${DEV_LOCATION}/front/appEventsCore.php:/home/pi/pialert/front/appEventsCore.php      
+      - ${DEV_LOCATION}/front/multiEditCore.php:/home/pi/pialert/front/multiEditCore.php      
       - ${DEV_LOCATION}/front/donations.php:/home/pi/pialert/front/donations.php      
       - ${DEV_LOCATION}/front/plugins:/home/pi/pialert/front/plugins      
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes

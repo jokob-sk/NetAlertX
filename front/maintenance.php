@@ -243,6 +243,12 @@ $db->close();
             <?= lang('Maintenance_Tools_Tab_Logging');?>
           </a>
         </li>
+        <li>
+          <a id="tab_multiEdit_id" href="#tab_multiEdit" data-toggle="tab">
+            <i class="fa fa-pencil pointer" ></i>  
+            <?= lang('Device_MultiEdit');?>
+          </a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_Settings">
@@ -501,8 +507,21 @@ $db->close();
                                 
                     </div>
               </div>
+            <!-- ---------------------------Bulk edit -------------------------------------------- -->
+              <div class="tab-pane" id="tab_multiEdit">
+                    <div class="db_info_table">
+                        <div class="log-area box box-solid box-primary">
+                            <?php
+                              require 'multiEditCore.php';
+                            ?>
+
+                        </div>
+                    </div>
+          </div>
+
           </div>
           <!-- ------------------------------------------------------------------------------ -->
+
       </div>
 
       <div class="box-body" style="text-align: center;">
@@ -827,7 +846,7 @@ function initializeSelectedColumns () {
       
       $("#columnsSelect").append(option).trigger('change');
 
-      $(option).attr('eee','eee')
+      // $(option).attr('eee','eee')
     }
     
   });
@@ -871,7 +890,15 @@ function initializeTabs () {
   selectedTab = "tab_Settings"
 
   // the #target from the url
-  target = window.location.hash.substr(1)  
+  target = window.location.hash.substr(1) 
+
+  // get only the part between #...?
+  if(target.includes('?'))
+  {
+    target = target.split('?')[0]
+  }
+
+  console.log(target)
 
   // update cookie if target specified
   if(target != "")
