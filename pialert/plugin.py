@@ -215,7 +215,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             mylog('none', [e.output])
             mylog('none', ['[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs'])            
         except subprocess.TimeoutExpired as timeErr:
-            mylog('none', ['[Plugins] TIMEOUT - the process forcefully terminated as timeout reached']) 
+            mylog('none', [f'[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin["unique_prefix"]} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval.']) 
 
 
         #  check the last run output
