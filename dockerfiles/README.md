@@ -42,7 +42,7 @@ docker run -d --rm --network=host \
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
 |`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
-|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes.   |    `N/A` |
+|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `pi.alert`/`_dev` image.   |    `N/A` |
 
 ### Docker paths
 
