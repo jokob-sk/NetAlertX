@@ -129,7 +129,7 @@
                     beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
-                    console.log(data);
+                    // console.log(data);
                         $("#scanoutput").html(data);    
                     }
                 })

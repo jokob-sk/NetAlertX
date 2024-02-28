@@ -357,7 +357,7 @@ function handle_locked_DB(data)
 {
   if(data.includes('database is locked'))
   {
-    console.log(data)    
+    // console.log(data)    
     showSpinner()
 
     setTimeout(function() {
@@ -722,7 +722,7 @@ function initDeviceListAll_JSON()
 
   $.get('api/table_devices.json', function(data) {    
     
-    console.log(data)
+    // console.log(data)
 
     devicesListAll_JSON = data["data"]
 
@@ -816,6 +816,9 @@ function updateApi()
     }
   })
 }
+
+
+
 
 // -----------------------------------------------------------------------------
 // initialize

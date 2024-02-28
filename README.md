@@ -35,7 +35,7 @@ Get visibility of what's going on on your WIFI/LAN network. Scan for devices, po
 
   PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
 
-  Setup a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
+  Set up a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
 
   Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
 

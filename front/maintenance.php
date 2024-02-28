@@ -510,7 +510,7 @@ $db->close();
             <!-- ---------------------------Bulk edit -------------------------------------------- -->
               <div class="tab-pane" id="tab_multiEdit">
                     <div class="db_info_table">
-                        <div class="log-area box box-solid box-primary">
+                        <div class="box box-solid">
                             <?php
                               require 'multiEditCore.php';
                             ?>
@@ -846,37 +846,12 @@ function initializeSelectedColumns () {
       
       $("#columnsSelect").append(option).trigger('change');
 
-      // $(option).attr('eee','eee')
     }
     
   });
 } 
 
-// --------------------------------------------------------
-//Initialize Select2 Elements and make them sortable
 
-$(function () {
-    var selectEl = $('.select2').select2();
-
-    selectEl.next().children().children().children().sortable({
-        containment: 'parent',
-        update: function () {
-            var sortedValues = $(this).children().map(function() {
-                return $(this).attr('title');
-            }).get();
-
-            var sortedOptions = selectEl.find('option').sort(function(a, b) {
-                return sortedValues.indexOf($(a).text()) - sortedValues.indexOf($(b).text());
-            });
-
-            // Replace all options in selectEl
-            selectEl.empty().append(sortedOptions);
-
-            // Trigger change event on Select2
-            selectEl.trigger('change');
-        }
-    });
-});
 
 
 // --------------------------------------------------------

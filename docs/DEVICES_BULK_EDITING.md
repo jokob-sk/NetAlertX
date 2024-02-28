@@ -1,7 +1,7 @@
 # 🖊 Multi-editing via the UI
 
 > [!NOTE] 
-> Make sure you have your backups save before doing any mass edits. Check [Backup strategies](/docs/BACKUPS.md). 
+> Make sure you have your backups saved and restorable before doing any mass edits. Check [Backup strategies](/docs/BACKUPS.md). 
 
 You can select devices in the _Devices_ view by selecting devices to edit and then clicking the _Multi-edit_ button or via the _Maintenance_ > _Multi-Edit_ section.
 
@@ -13,7 +13,7 @@ You can select devices in the _Devices_ view by selecting devices to edit and th
 > [!NOTE] 
 > As always, backup everything, just in case.
 
-1. In _Maintenance_ > _Backup / Restore_` click the _CSV Export_ button.  
+1. In _Maintenance_ > _Backup / Restore_ click the _CSV Export_ button.  
 2. A `devices.csv` is generated in the `/config` folder
 3. Edit the `devices.csv` file however you like. 
 

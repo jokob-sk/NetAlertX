@@ -759,6 +759,8 @@ function handleLoadingDialog()
 }
 
 // -----------------------------------------------------------------------------
+// Function collects selected devices in the DataTable and redirects the user to 
+// the Miantenance section with a 'macs' query string identifying selected devices 
 function multiEditDevices()
 {
   rows  = $('#tableDevices')[0].rows
@@ -795,12 +797,11 @@ function multiEditDevices()
   macs = ""
 
   for (var i = 0; i < selectedDevices.length; i++) {
-    macs += selectedDevices[i][4] + ",";  // [4] == MAC    
+    macs += selectedDevices[i][mapIndx(11)] + ",";  // [11] == MAC    
   }
-  // setCache('activeMaintenanceTab', 'tab_multiEdit_id')
+
+  // redirect to the Maintenance section
   window.location.href = window.location.origin + '/maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
-
-
 }
 
 

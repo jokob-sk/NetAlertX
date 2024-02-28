@@ -1,16 +1,22 @@
-<?= lang('Gen_Selected_Devices');?>
+<div class=" bg-grey-dark color-palette   col-sm-12 box-default ">
+  <div class="col-md-12">
 
-<div class="deviceSelector"></div>
+    <h3 class="card-title"><?= lang('Gen_Selected_Devices');?></h3>
 
-<div class="callout callout-warning">
-  <h4><?= lang('Gen_Warning');?></h4>
 
-  <p><?= lang('Device_MultiEdit_Backup');?></p>
+    <div class="deviceSelector"></div>
+
+    <div class="callout callout-warning">
+      <h4><?= lang('Gen_Warning');?></h4>
+
+      <p><?= lang('Device_MultiEdit_Backup');?></p>
+    </div>
+  </div>
 </div>
 
 
 
-<div class="row">
+<div class=" bg-grey-dark color-palette  panel col-sm-12 box-default ">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
@@ -24,6 +30,25 @@
     </div>
   </div>
 </div>
+
+<div class=" bg-grey-dark color-palette  panel col-sm-12 box-default ">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><?= lang('Device_MultiEdit_MassActions');?></h3>
+      </div>
+      <div class="card-body">
+
+          <div class="col-md-2" style="">
+              <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteSelectedDevices()"><?= lang('Maintenance_Tool_del_selecteddev');?></button>
+          </div>
+          <div class="col-md-10"><?= lang('Maintenance_Tool_del_selecteddev_text');?></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 
@@ -75,7 +100,7 @@
                                             <div class="col-sm-9">
                                               <div class="input-group red-hover-border">
                                                 <input class="${inputClass}" id="${columns[j].Code_Name}"  data-my-column="${columns[j].Code_Name}" data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" type="${inputType}">
-                                                <span class="input-group-addon pointer red-hover-background" onclick="genericSaveData('${columns[j].Code_Name}', selectorMacs());" title="${getString('Device_MultiEdit_Tooltip')}">
+                                                <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].Code_Name}');" title="${getString('Device_MultiEdit_Tooltip')}">
                                                   <i class="fa fa-save"></i>
                                                 </span>
                                               </div>
@@ -106,8 +131,8 @@
 
 
   // -----------------------------------------------------------------------------
-  // Update the corresponding DB column and entry
-  function genericSaveData(id, index) {
+  // Update specified field over the specified DB column and selected entry(ies)
+  function massUpdateField(id) {
 
     // Get the input element
     var inputElement = $(`#${id}`);
@@ -128,14 +153,27 @@
 
 
     console.log(targetColumns);
-    console.log(index);
     console.log(columnValue);
 
-    $.get(`php/server/dbHelper.php?action=update&dbtable=Devices&columnName=dev_MAC&id=${index}&columns=${targetColumns}&values=${columnValue}`, function(data) {
-        console.log(data);
+    // update selected
+    executeAction('update', 'dev_MAC', selectorMacs(), targetColumns, columnValue )
+
+    
+}
+
+// -----------------------------------------------------------------------------
+// action: Represents the action to be performed, a CRUD operation like "update", "delete", etc.
+// whereColumnName: Specifies the name of the column used in the WHERE or SELECT statement for filtering.
+// key: Represents the unique identifier of the row or record to be acted upon.
+// targetColumns: Indicates the columns to be updated or affected by the action.
+// newTargetColumnValue: Specifies the new value to be assigned to the specified column(s).
+function executeAction(action, whereColumnName, key, targetColumns, newTargetColumnValue )
+{
+  $.get(`php/server/dbHelper.php?action=${action}&dbtable=Devices&columnName=${whereColumnName}&id=${key}&columns=${targetColumns}&values=${newTargetColumnValue}`, function(data) {
+        // console.log(data);
 
         if (sanitize(data) == 'OK') {
-            showMessage('<?= lang('Gen_DataUpdatedUITakesTime');?>');
+            showMessage(getString('Gen_DataUpdatedUITakesTime'));
             // Remove navigation prompt "Are you sure you want to leave..."
             window.onbeforeunload = null;
 
@@ -143,16 +181,38 @@
             updateApi()
 
         } else {
-            showMessage('<?= lang('Gen_LockedDB');?>');
+            showMessage(getString('Gen_LockedDB'));
         }
     });
 }
 
 
-  getData();
+// -----------------------------------------------------------------------------
+// Ask to delete selected devices 
+function askDeleteSelectedDevices () {
+  // Ask 
+  showModalWarning(
+    getString('Maintenance_Tool_del_alldev_noti'), 
+    getString('Gen_AreYouSure'),
+    getString('Gen_Cancel'), 
+    getString('Gen_Delete'), 
+    'deleteSelectedDevices');
+}
+
+// -----------------------------------------------------------------------------
+// Delete selected devices 
+function deleteSelectedDevices()
+{ 
+  
+  executeAction('delete', 'dev_MAC', selectorMacs() )
+
+}
 
 
-  </script>
+getData();
+
+
+</script>
 
 
 <!-- ----------------------------------------------------------------------- -->

@@ -276,7 +276,7 @@
             "description": [
                 {
                 "language_code": "en_us",
-                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a>."
+                "string" : "Enable sending notifications via a self-hosted <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a> instance. Please specify the URL on which you are running your instance in the <code>APPRISE_HOST</code> setting."
 				},
                 {
                 "language_code": "es_es",

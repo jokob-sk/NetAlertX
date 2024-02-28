@@ -843,7 +843,7 @@ function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
     // get data from server
     $.get('php/server/devices.php?action='+queryAction, function(data) {
 
-      console.log(data)
+      // console.log(data)
       var listData = JSON.parse(data);
       var order = 1;
       

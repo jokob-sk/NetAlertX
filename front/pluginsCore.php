@@ -204,7 +204,7 @@ function genericSaveData (id) {
     $.get(`php/server/dbHelper.php?action=update&dbtable=Plugins_Objects&columnName=Index&id=${index}&columns=UserData&values=${columnValue}`, function(data) {
     
         // var result = JSON.parse(data);
-        console.log(data) 
+        // console.log(data) 
 
         if(sanitize(data) == 'OK')
         {          

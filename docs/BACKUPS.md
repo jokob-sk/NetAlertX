@@ -1,7 +1,7 @@
 # 💾 Backing things up
 
 > [!NOTE]
-> To backup 99% of your ocnfigurations backup at least the `/config` folder. Please read the whole page (or at least "Scenario 2: Corrupted database") for details.
+> To backup 99% of your configuration backup at least the `/config` folder. Please read the whole page (or at least "Scenario 2: Corrupted database") for details.
 
 There are 3 artifacts that can be used to backup the application:
 

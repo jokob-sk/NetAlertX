@@ -178,35 +178,49 @@ function delete($columnName, $id, $dbtable)
 {
   global $db;
 
-  // handle one or multiple ids
+  // Handle one or multiple ids
   if(strpos($id, ',') !== false) 
   {
     $idsArr = explode(",", $id);
-  }else
+  } else
   {
     $idsArr = array($id);
   }
 
+  // Initialize an empty string to store the comma-separated list of IDs
   $idsStr = "";
   
-  foreach ($idsArr as $item) 
+  // Iterate over each ID
+  foreach ($idsArr as $index => $item) 
   {
-    $idsStr = $idsStr . '"' .$item.'"';
+    // Append the current ID to the string
+    $idsStr .= '"' . $item . '"';
+    
+    // Add a comma if the current ID is not the last one
+    if ($index < count($idsArr) - 1) {
+      $idsStr .= ', ';
+    }
   }
 
-  // Insert new value
+  // Construct the SQL query to delete entries based on the given IDs
   $sql = 'DELETE FROM '.$dbtable.' WHERE "'.$columnName.'" IN ('. $idsStr .')';
+
+  // Execute the SQL query
   $result = $db->query($sql);
 
+  // Check if the query executed successfully
   if (! $result == TRUE) {
+    // Output an error message if the query failed
     echo "Error deleting entry\n\n$sql \n\n". $db->lastErrorMsg();
     return;
   } else
   {
-    echo lang('Gen_DataUpdatedUITakesTime');
+    // Output 'OK' if the deletion was successful
+    echo 'OK' ; 
     return;
   }
 }
+
 
 
 ?>
