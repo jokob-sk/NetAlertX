@@ -1,9 +1,11 @@
-<div class=" bg-grey-dark color-palette   col-sm-12 box-default ">
-  <div class="col-md-12">
+<div class="col-md-12">
+    <div class="box box-default">
 
-    <h3 class="card-title"><?= lang('Gen_Selected_Devices');?></h3>
+      <div class="box-header">
 
+        <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
+        </div>
     <div class="deviceSelector"></div>
 
     <div class="callout callout-warning">
@@ -12,17 +14,17 @@
       <p><?= lang('Device_MultiEdit_Backup');?></p>
     </div>
   </div>
-</div>
 
 
 
-<div class=" bg-grey-dark color-palette  panel col-sm-12 box-default ">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title"><?= lang('Device_MultiEdit_Fields');?></h3>
+
+<div class="col-md-12">
+    <div class="box box-default">
+
+      <div class="box-header">
+        <h3 class="box-title"><?= lang('Device_MultiEdit_Fields');?></h3>
       </div>
-      <div class="card-body">
+      <div class="box-body">
         <form id="multi-edit-form">
           <!-- Form fields will be appended here -->
         </form>
@@ -31,22 +33,23 @@
   </div>
 </div>
 
-<div class=" bg-grey-dark color-palette  panel col-sm-12 box-default ">
+
   <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title"><?= lang('Device_MultiEdit_MassActions');?></h3>
+    <div class="box box-default">
+      <div class="box-header ">
+        <h3 class="box-title"><?= lang('Device_MultiEdit_MassActions');?></h3>
       </div>
-      <div class="card-body">
+      <div class="box-body">
 
           <div class="col-md-2" style="">
-              <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteSelectedDevices()"><?= lang('Maintenance_Tool_del_selecteddev');?></button>
+              <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red" id="btnDeleteMAC" onclick="askDeleteSelectedDevices()"><?= lang('Maintenance_Tool_del_selecteddev');?></button>
           </div>
           <div class="col-md-10"><?= lang('Maintenance_Tool_del_selecteddev_text');?></div>
 
       </div>
     </div>
   </div>
+
 </div>
 
 
