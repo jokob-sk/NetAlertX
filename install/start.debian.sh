@@ -33,7 +33,7 @@ fi
 # Run setup scripts
 echo "[INSTALL] Run setup scripts"
 
-"$INSTALL_DIR/pialert/dockerfiles/user-mapping.sh"
+"$INSTALL_DIR/pialert/install/user-mapping.debian.sh"
 "$INSTALL_DIR/pialert/install/install_dependencies.debian.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
 
 echo "[INSTALL] Setup NGINX"
