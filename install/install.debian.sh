@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 🛑 Important: This is only used for the bare-metal install 🛑 
-# Update /dockerfiles/start.sh in most cases is preferred 
+# Update /dockerfiles/start.debian.sh in most cases is preferred 
 
 echo "---------------------------------------------------------"
 echo "[INSTALL]                                  Run install.sh"
@@ -35,4 +35,4 @@ if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then
 fi
 
 # Start PiAlert
-"$INSTALL_DIR/pialert/dockerfiles/start.sh"
+"$INSTALL_DIR/pialert/dockerfiles/start.debian.sh"

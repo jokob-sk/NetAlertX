@@ -106,6 +106,19 @@ Thank you to all the wonderful people who are sponsoring this project (=preventi
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
+### 🙏Contributors
+
+This project would be nothing without the amazing work of the community, with special thanks to: 
+
+> [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up) [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few...
+
+Here is everyone taht helped and contributed to this project:
+
+<a href="https://github.com/usememos/memos/graphs/contributors">
+  <img src="https://contri-graphy.yourselfhosted.com/graph?repo=jokob-sk/pi.alert&format=svg" />
+</a>
+
+
 ## Everything else
 <!--- --------------------------------------------------------------------- --->
 
@@ -122,13 +135,7 @@ Help out and suggest languages in the [online portal of Weblate](https://hosted.
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
   
-### Special thanks 
 
-This code is a collaborative body of work, with special thanks to: 
-
-> [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up) [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few...
->
-> Please see the [Git contributors](https://github.com/jokob-sk/Pi.Alert/graphs/contributors) for a full list of people and their contributions to the project
 
 <!--- --------------------------------------------------------------------- --->
 [main]:    ./docs/img/devices_split.png       "Main screen"

@@ -1,50 +1,53 @@
-FROM debian:bookworm-slim
+FROM alpine:3.19 as builder
 
-# default UID and GID
-ENV USER=pi USER_ID=1000 USER_GID=1000  PORT=20211 
-#TZ=Europe/London
+ARG INSTALL_DIR=/home/pi
+ENV PYTHONUNBUFFERED 1
 
-# Todo, figure out why using a workdir instead of full paths don't work
-# Todo, do we still need all these packages? I can already see sudo which isn't needed
+RUN apk add --no-cache bash python3 \
+    && python -m venv /opt/venv
 
-RUN apt-get update 
-RUN apt-get install sudo -y 
+# Enable venv
+ENV PATH="/opt/venv/bin:$PATH"
 
+COPY . ${INSTALL_DIR}/pialert/
 
-# create pi user and group
-# add root and www-data to pi group so they can r/w files and db
-RUN groupadd --gid "${USER_GID}" "${USER}" && \
-    useradd \
-        --uid ${USER_ID} \
-        --gid ${USER_GID} \
-        --create-home \
-        --shell /bin/bash \
-        ${USER} && \
-    usermod -a -G ${USER_GID} root && \
-    usermod -a -G ${USER_GID} www-data
+RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet \
+    && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
+    && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
+    && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py' -o -name 'pialert-cli' -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
-COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . /home/pi/pialert/
+# second stage
+FROM alpine:3.19 as runner
 
+ARG INSTALL_DIR=/home/pi
+
+COPY --from=builder /opt/venv /opt/venv
+
+# Enable venv
+ENV PATH="/opt/venv/bin:$PATH" 
+
+# default port and listen address
+ENV PORT=20211 LISTEN_ADDR=0.0.0.0 
+
+# needed for s6-overlay
+ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 
 # ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.sh file as well ❗ 
 
-RUN apt-get install -y \
-    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
-    python3 iproute2 nmap python3-pip zip systemctl usbutils traceroute
+RUN apk update --no-cache \
+    && apk add --no-cache bash zip gettext-envsubst sudo mtr usbutils s6-overlay \
+    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap traceroute net-tools net-snmp-tools bind-tools awake ca-certificates \
+    && apk add --no-cache sqlite php82 php82-fpm php82-cgi php82-curl php82-sqlite3 php82-session \
+    && apk add --no-cache python3 nginx \
+    && ln -s /usr/bin/awake /usr/bin/wakeonlan \
+    && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}/pialert" \
+    && rm -f /etc/nginx/http.d/default.conf
 
-# Alternate dependencies
-RUN apt-get install nginx nginx-core mtr php-fpm php8.2-fpm php-cli php8.2 php8.2-sqlite3 -y
-RUN phpenmod -v 8.2 sqlite3 
+COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/pialert/ ${INSTALL_DIR}/pialert/
 
-# Setup virtual python environment and use pip3 to install packages
-RUN apt-get install -y python3-venv
-RUN python3 -m venv myenv
-RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet"
+RUN /home/pi/pialert/dockerfiles/pre-setup.sh
 
-# Create a buildtimestamp.txt to later check if a new version was released
-RUN date +%s > /home/pi/pialert/front/buildtimestamp.txt
+HEALTHCHECK --interval=30s --timeout=5s --start-period=0s --retries=2 \
+  CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json
 
-CMD ["/home/pi/pialert/dockerfiles/start.sh"]
-
-
+ENTRYPOINT ["/init"]

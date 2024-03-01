@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "---------------------------------------------------------"
-echo "[INSTALL]                     Run install_dependencies.sh"
+echo "[INSTALL]              Run install_dependencies.debian.sh"
 echo "---------------------------------------------------------"
 
 # ❗ IMPORTANT - if you modify this file modify the root Dockerfile as well ❗

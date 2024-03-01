@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "---------------------------------------------------------"
-echo "[INSTALL]                                    Run start.sh"
+echo "[INSTALL]                             Run start.debian.sh"
 echo "---------------------------------------------------------"
 
 
@@ -34,7 +34,7 @@ fi
 echo "[INSTALL] Run setup scripts"
 
 "$INSTALL_DIR/pialert/dockerfiles/user-mapping.sh"
-"$INSTALL_DIR/pialert/install/install_dependencies.sh" # if modifying this file transfer the chanegs into the root Dockerfile as well!
+"$INSTALL_DIR/pialert/install/install_dependencies.debian.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
 
 echo "[INSTALL] Setup NGINX"
 
@@ -61,7 +61,7 @@ fi
 # create symbolic link to the pialert install directory
 ln -s $INSTALL_DIR/pialert/front $WEB_UI_DIR
 # create symbolic link to NGINX configuaration coming with PiAlert
-sudo ln -s "$INSTALL_DIR/pialert/install/pialert.conf" /etc/nginx/conf.d/pialert.conf
+sudo ln -s "$INSTALL_DIR/pialert/install/pialert.debian.conf" /etc/nginx/conf.d/pialert.conf
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then

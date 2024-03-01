@@ -1,6 +1,8 @@
 function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_graph_online_history_ondev, pia_js_graph_online_history_dodev, pia_js_graph_online_history_ardev) {
         var xValues = pia_js_graph_online_history_time;
 
+        // alert("dev presence")
+
         // Data object for online status
         onlineData = {
           label: 'Online',
