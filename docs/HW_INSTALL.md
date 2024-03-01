@@ -27,7 +27,7 @@ Some facts about what and where something will be changed/installed by the HW in
 
 ## Limitations
 
-- No system service is provided. PiAlert must be started using `/home/pi/pialert/dockerfiles/start.debian.sh`.
+- No system service is provided. PiAlert must be started using `/home/pi/pialert/install/start.debian.sh`.
 - No checks for other running software is done.
 - Only tested to work on Debian Bookworm (Debian 12).
 - **EXPERIMENTAL** and not recommended way to install PiAlert.

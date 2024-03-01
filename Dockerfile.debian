@@ -26,7 +26,7 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . /home/pi/pialert/
 
 
-# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.sh file as well ❗ 
+# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗ 
 
 RUN apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
@@ -45,6 +45,6 @@ RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /us
 # Create a buildtimestamp.txt to later check if a new version was released
 RUN date +%s > /home/pi/pialert/front/buildtimestamp.txt
 
-CMD ["/home/pi/pialert/dockerfiles/start.debian.sh"]
+CMD ["/home/pi/pialert/install/start.debian.sh"]
 
 

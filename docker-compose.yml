@@ -32,7 +32,7 @@ services:
       - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
       - ${DEV_LOCATION}/front/lib/AdminLTE:/home/pi/pialert/front/lib/AdminLTE
       - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
-      - ${DEV_LOCATION}/dockerfiles/start.debian.sh:/home/pi/pialert/dockerfiles/start.debian.sh
+      - ${DEV_LOCATION}/install/start.debian.sh:/home/pi/pialert/install/start.debian.sh
       - ${DEV_LOCATION}/dockerfiles/user-mapping.sh:/home/pi/pialert/dockerfiles/user-mapping.sh
       - ${DEV_LOCATION}/install/install.debian.sh:/home/pi/pialert/install/install.debian.sh      
       - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/home/pi/pialert/install/install_dependencies.debian.sh      
