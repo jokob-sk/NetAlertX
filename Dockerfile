@@ -35,7 +35,7 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 # ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.sh file as well ❗ 
 
 RUN apk update --no-cache \
-    && apk add --no-cache bash zip gettext-envsubst sudo mtr usbutils s6-overlay \
+    && apk add --no-cache bash zip gettext-envsubst sudo mtr s6-overlay \
     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap traceroute net-tools net-snmp-tools bind-tools awake ca-certificates \
     && apk add --no-cache sqlite php82 php82-fpm php82-cgi php82-curl php82-sqlite3 php82-session \
     && apk add --no-cache python3 nginx \
@@ -45,7 +45,7 @@ RUN apk update --no-cache \
 
 COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/pialert/ ${INSTALL_DIR}/pialert/
 
-RUN /home/pi/pialert/dockerfiles/pre-setup.sh
+RUN ${INSTALL_DIR}/pialert/dockerfiles/pre-setup.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \
   CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json

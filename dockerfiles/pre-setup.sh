@@ -24,3 +24,5 @@ touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx} /etc/
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,pialert} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx,pialert}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm
 touch /etc/s6-overlay/s6-rc.d/pialert/dependencies.d/nginx
+
+rm -f $0
