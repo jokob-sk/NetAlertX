@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export INSTALL_DIR=/home/pi
+
 # php-fpm setup
 install -d -o nginx -g www-data /run/php/
 sed -i "/^;pid/c\pid = /run/php/php8.2-fpm.pid" /etc/php82/php-fpm.conf
@@ -16,10 +18,11 @@ echo "oneshot" > /etc/s6-overlay/s6-rc.d/SetupOneshot/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/php-fpm/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/pialert/type
-echo -e "/home/pi/pialert/dockerfiles/setup.sh" > /etc/s6-overlay/s6-rc.d/SetupOneshot/up
+echo -e "${INSTALL_DIR}/pialert/dockerfiles/setup.sh" > /etc/s6-overlay/s6-rc.d/SetupOneshot/up
 echo -e "#!/bin/execlineb -P\n/usr/sbin/php-fpm82 -F" > /etc/s6-overlay/s6-rc.d/php-fpm/run
 echo -e '#!/bin/execlineb -P\nnginx -g "daemon off;"' > /etc/s6-overlay/s6-rc.d/nginx/run
-echo -e '#!/bin/execlineb -P\n\nwith-contenv\nimportas -i PORT PORT\nif { echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}" }\npython /home/pi/pialert/pialert' > /etc/s6-overlay/s6-rc.d/pialert/run
+echo -e '#!/bin/execlineb -P\n\nwith-contenv\nimportas -i PORT PORT\nif { echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}" }' > /etc/s6-overlay/s6-rc.d/pialert/run
+echo -e "python ${INSTALL_DIR}/pialert/pialert" >> /etc/s6-overlay/s6-rc.d/pialert/run
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,pialert} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx,pialert}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm
