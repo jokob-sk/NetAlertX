@@ -112,12 +112,11 @@ This project would be nothing without the amazing work of the community, with sp
 
 > [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up) [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few...
 
-Here is everyone taht helped and contributed to this project:
+Here is every one that helped and contributed to this project:
 
 <a href="https://github.com/usememos/memos/graphs/contributors">
   <img src="https://contri-graphy.yourselfhosted.com/graph?repo=jokob-sk/pi.alert&format=svg" />
 </a>
-
 
 ## Everything else
 <!--- --------------------------------------------------------------------- --->

@@ -16,7 +16,7 @@ services:
       # - ${APP_DATA_LOCATION}/pialert_dev/db:/home/pi/pialert/db      
       - ${APP_DATA_LOCATION}/pialert/db:/home/pi/pialert/db           
       # (optional) useful for debugging if you have issues setting up the container
-      - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
+      # - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
       # ---------------------------------------------------------------------------
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${APP_DATA_LOCATION}/pialert/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases

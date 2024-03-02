@@ -37,7 +37,7 @@ require dirname(__FILE__).'/security.php';
   
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/solid.css">
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/brands.css">
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/v5-font-face.css">

@@ -99,8 +99,8 @@ if ($ENABLED_DARKMODE === True) {
    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
 } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
-
-  <link rel="stylesheet" href="/front/css/offline-font.css">
+   <!-- /var/www/html/pialert/css/offline-font.css  -->
+  <link rel="stylesheet" href="/css/offline-font.css">
 </head>
 <body class="hold-transition login-page">
 <div class="login-box login-custom">
