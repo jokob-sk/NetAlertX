@@ -35,8 +35,8 @@ function checkIfNewVersionAvailable()
 {
   $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
     
-    console.log(appState["isNewVersionChecked"])
-    console.log(appState["isNewVersion"])
+    // console.log(appState["isNewVersionChecked"])
+    // console.log(appState["isNewVersion"])
     
     // cache value
     setCookie("isNewVersion", appState["isNewVersion"], 30);

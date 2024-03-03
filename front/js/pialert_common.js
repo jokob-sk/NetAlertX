@@ -112,7 +112,7 @@ function deleteAllCookies() {
 function cacheSettings()
 {
   
-  $.get('api/table_settings.json', function(res) { 
+  $.get('api/table_settings.json?nocache=' + Date.now(), function(res) { 
     
     settingsJSON = res;
         
@@ -124,7 +124,11 @@ function cacheSettings()
   })
 }
 
+// Get a setting value by key
 function getSetting (key) {
+
+  // handle initial load to make sure everything is set-up and cached
+  handleFirstLoad()
  
   result = getCache(`pia_set_${key}`, true);
 
@@ -146,7 +150,7 @@ function cacheStrings()
   var allLanguages = ["en_us", "es_es", "de_de"]; // needs to be same as in lang.php
 
   allLanguages.forEach(function (language_code) {
-    $.get(`php/templates/language/${language_code}.json`, function (res) {
+    $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
       // Iterate over each language
       Object.entries(res).forEach(([key, value]) => {
         // Store translations for each key-value pair
@@ -157,7 +161,7 @@ function cacheStrings()
 
   
   // handle strings and translations from plugins
-  $.get('api/table_plugins_language_strings.json', function(res) {    
+  $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`, function(res) {    
         
     data = res["data"];       
 
@@ -170,6 +174,9 @@ function cacheStrings()
 
 // Get translated language string
 function getString (key) {
+
+  // handle initial laod to make sure everything is set-up and cached
+  handleFirstLoad()
  
   UI_LANG = getSetting("UI_LANG");
 
@@ -368,9 +375,7 @@ function handle_locked_DB(data)
 
 // -----------------------------------------------------------------------------
 function numberArrayFromString(data)
-{
-
-  
+{  
   data = JSON.parse(sanitize(data));
   return data.replace(/\[|\]/g, '').split(',').map(Number);
 }
@@ -771,8 +776,7 @@ function workInProgress() {
 function showSpinner(stringKey='Loading')
 {
   if($("#loadingSpinner").length)
-  {
-    
+  {    
     $("#loadingSpinner").show();
   }
   else{    
@@ -818,17 +822,76 @@ function updateApi()
 }
 
 
-
-
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------
-cacheSettings()
-cacheStrings()
-initDeviceListAll_JSON()
-workInProgress()
+// Define a unique key for storing the flag in sessionStorage
+var sessionStorageKey = "myScriptExecuted_pialert_common";
+
+function resetInitializedFlag()
+{
+  // Set the flag in sessionStorage to indicate that the code and cahce needs to be reloaded
+  sessionStorage.setItem(sessionStorageKey, "false");
+}
+
+// check if cache needs to be refreshed because of setting changes 
+$.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+
+  console.log(appState["settingsImported"]*1000)
+  
+  importedMiliseconds = parseInt((appState["settingsImported"]*1000));
+
+  lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
+
+  if(importedMiliseconds > lastReloaded)
+  {
+    resetInitializedFlag()
+    location.reload();
+  }
+
+});
+
+// Display spinner and reload page if not yet initialized
+function handleFirstLoad()
+{
+  if(!pialert_common_init)
+  {
+    setTimeout(function() {
+      
+      location.reload(); 
+    }, 100);
+  }
+}
+
+// Check if the code has been executed before by checking sessionStorage
+var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
+
+// Define a function that will execute the code only once
+function executeOnce() {
+  if (!pialert_common_init) {
+
+    showSpinner()
+
+    // Your initialization code here
+    cacheSettings();
+    cacheStrings();
+    initDeviceListAll_JSON();
+    workInProgress();
+
+    // Set the flag in sessionStorage to indicate that the code has been executed and save time when last time the page for initialized
+    sessionStorage.setItem(sessionStorageKey, "true");    
+    const millisecondsNow = Date.now();
+    sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
+
+    console.log("init pialert_common.js");
+  }
+}
+
+// Call the function to execute the code
+executeOnce();
 
 
-console.log("init pialert_common.js")
+
+
 
 

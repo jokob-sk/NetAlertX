@@ -634,41 +634,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     $('#SCAN_SUBNETS').empty();
   }
 
-  // ---------------------------------------------------------
-  function collectSettings()
-  {
-    var settingsArray = [];
-
-    // collect values for each of the different input form controls
-    const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
-
-    settingsJSON["data"].forEach(set => {
-      if (noConversion.includes(set['Type'])) {
-
-        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
-
-      } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
-        
-        const temp = $(`#${set["Code_Name"]}`).is(':checked') ? 1 : 0;
-        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temp]);
-      
-      } else if (set['Type'] === 'list' || set['Type'] === 'subnets') {
-        const temps = [];
-        $(`#${set["Code_Name"]} option`).each(function (i, selected) {
-          const vl = $(selected).val();
-          if (vl !== '') {
-            temps.push(vl);
-          }
-        });        
-        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
-      } else if (set['Type'] === 'json') {        
-        const temps = $('#'+set["Code_Name"]).val();        
-        settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
-      }
-    });
-
-    return settingsArray;
-  }  
 
   // ---------------------------------------------------------
   function saveSettings() {
@@ -677,27 +642,67 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
     } else
     {
+      var settingsArray = [];
 
-      // trigger a save settings event in the backend
-      $.ajax({
-      method: "POST",
-      url: "php/server/util.php",
-      data: { 
-        function: 'savesettings', 
-        settings: JSON.stringify(collectSettings()) },
-        success: function(data, textStatus) {                    
-          
-          showModalOk ('Result', data );
-         
-          // Remove navigation prompt "Are you sure you want to leave..."
-          window.onbeforeunload = null;         
+      // collect values for each of the different input form controls
+      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
 
-          // Reloads the current page
-          setTimeout("window.location.reload()", 3000);
+      // get settings to determine setting type to store values appropriately
+      $.get('api/table_settings.json', function(res) { 
+      
+        settingsJSON = res;
+            
+        data = settingsJSON["data"];       
+
+        data.forEach(set => {
+          if (noConversion.includes(set['Type'])) {
+
+            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
+
+          } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
+            
+            const temp = $(`#${set["Code_Name"]}`).is(':checked') ? 1 : 0;
+            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temp]);
           
-         
-        }
-      });
+          } else if (set['Type'] === 'list' || set['Type'] === 'subnets') {
+            const temps = [];
+            $(`#${set["Code_Name"]} option`).each(function (i, selected) {
+              const vl = $(selected).val();
+              if (vl !== '') {
+                temps.push(vl);
+              }
+            });        
+            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
+          } else if (set['Type'] === 'json') {        
+            const temps = $('#'+set["Code_Name"]).val();        
+            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
+          }
+        });
+
+        // trigger a save settings event in the backend
+        $.ajax({
+        method: "POST",
+        url: "php/server/util.php",
+        data: { 
+          function: 'savesettings', 
+          settings: JSON.stringify(settingsArray) },
+          success: function(data, textStatus) {                    
+            
+            showModalOk ('Result', data );
+          
+            // Remove navigation prompt "Are you sure you want to leave..."
+            window.onbeforeunload = null;         
+
+            // Reloads the current page
+            setTimeout("window.location.reload()", 3000);
+            
+          
+          }
+        });
+
+      })
+
+
     }
   }
 
@@ -747,7 +752,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       } else
       {
-        hideSpinner()        
+        hideSpinner()      
       }
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 

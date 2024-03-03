@@ -114,7 +114,7 @@ This project would be nothing without the amazing work of the community, with sp
 
 Here is every one that helped and contributed to this project:
 
-<a href="https://github.com/usememos/memos/graphs/contributors">
+<a href="https://github.com/jokob-sk/pi.alert/graphs/contributors">
   <img src="https://contri-graphy.yourselfhosted.com/graph?repo=jokob-sk/pi.alert&format=svg" />
 </a>
 
