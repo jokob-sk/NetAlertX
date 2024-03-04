@@ -98,35 +98,35 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     <div class="content settingswrap " id="accordion_gen">
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="core_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>       
           </div>        
           <div class =" col-sm-12" id="core_content"></div>
       </div>    
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="system_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>       
           </div>        
           <div class =" col-sm-12" id="system_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="device_scanner_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
           </div>        
           <div class =" col-sm-12" id="device_scanner_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="other_content_header">        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>       
           </div>        
           <div class =" col-sm-12" id="other_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" >        
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="publisher_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        
@@ -756,6 +756,22 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       }
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 
+
+      // Scroll down if ID in URL
+      // Get the ID from the URL
+      var url = window.location.href;
+      var id = url.substring(url.indexOf("#") + 1);
+
+      // Check if the ID exists in the document
+      if ($("#" + id).length > 0) {
+        setTimeout(function() {
+          // Scroll to the element
+          $('html, body').animate({
+              scrollTop: $("#" + id).offset().top - 50
+          }, 1000);
+        },200);
+      }
+  
 
      })
 

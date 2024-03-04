@@ -96,17 +96,17 @@ $total_memorymb = number_format($total_memorymb, 0, '.', '.');
 $mem_used = round(memory_get_usage() / 1048576 * 100, 2);
 $memory_usage_percent = round(($mem_used / $total_memorymb), 2);
 //HDD stats
-$hdd_result = shell_exec("df | awk '{print $1}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $1}'");
 $hdd_devices = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $2}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $2}'");
 $hdd_devices_total = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $3}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $3}'");
 $hdd_devices_used = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $4}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $4}'");
 $hdd_devices_free = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $5}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $5}'");
 $hdd_devices_percent = explode("\n", trim($hdd_result));
-$hdd_result = shell_exec("df | awk '{print $6}'");
+$hdd_result = shell_exec(" df -P  | awk '{print $6}'");
 $hdd_devices_mount = explode("\n", trim($hdd_result));
 //Network stats
 // Check Server name

@@ -464,12 +464,27 @@
 				}],
             "description": [{
                 "language_code": "en_us",
-                "string" : "Quality of service setting for MQTT message sending. <code>0</code> - Low quality to <code>2</code> - High quality. The higher the quality the longer the delay."
+                "string" : "Quality of service setting for MQTT message sending. The higher the quality the longer the delay. <br/> <code>0</code> - Low quality to <code>2</code> - High quality."
 				},
 				{
                 "language_code": "es_es",
                 "string" : "Configuración de calidad de servicio para el envío de mensajes MQTT. <code>0</code>: baja calidad a <code>2</code>: alta calidad. Cuanto mayor sea la calidad, mayor será el retraso."
             }]
+        },
+        {
+            "function": "VERSION",
+            "type": "integer.select",
+            "default_value": 1,
+            "options": [ 1, 2 ],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Version"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Paho MQTT API version. Depends on the MQTT <a href=\"https://eclipse.dev/paho/files/paho.mqtt.python/html/index.html#callbacks\" target=\"_blank\">version supported by the MQTT broker</a>. Usually set to <code>1</code>."
+				}]
         },
         {
             "function": "DELAY_SEC",

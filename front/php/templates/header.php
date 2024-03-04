@@ -111,7 +111,7 @@ if ($ENABLED_DARKMODE === True) {
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 
@@ -122,9 +122,14 @@ if ($ENABLED_DARKMODE === True) {
     <!-- Logo -->
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini">P<b>a</b></span>
+      <span class="logo-mini">
+        <img src="img/pialertLogoWhite.png" class="pia-top-left-logo" alt="Pi.Alert Logo"/>        
+      </span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Pi<b>.Alert</b></span>
+      <span class="logo-lg">Pi<b>.Alert</b>
+
+      </span>
+      
     </a>
 
 <!-- ----------------------------------------------------------------------- -->
@@ -183,7 +188,7 @@ if ($ENABLED_DARKMODE === True) {
                 <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
                 <p style="float: right; width: 200px">
                 <?= lang('About_Title');?>
-                  <small><?= lang('About_Design');?> Raspberry Pi</small>
+                  <small><?= lang('About_Design');?> Docker</small>
                 </p>
               </li>
 
@@ -207,12 +212,6 @@ if ($ENABLED_DARKMODE === True) {
 
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel">        <a href="." class="logo">
-          <img src="img/pialertLogoGray80.png" class="img-responsive" alt="Pi.Alert Logo"/>
-        </a>
-      </div>
 
       <!-- search form (Optional) -->
         <!-- DELETED -->
@@ -248,9 +247,38 @@ if ($ENABLED_DARKMODE === True) {
           <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
           <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?= lang('Navigation_Maintenance');?></span></a>
         </li>
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active'; } ?>">
-          <a href="settings.php"><i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span></a>
+        <!-- <li class="treeview menu-open" style="height: auto;"> -->
+        <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
+            <li>
+              <a href="settings.php">  <?= lang("settings_enabled");?> </a>
+            </li>
+            <li>
+              <a href="settings.php#core_content_header">  <?= lang("settings_core_label");?> </a>
+            </li>
+            <li>
+              <a href="settings.php#system_content_header"> <?= lang("settings_system_label");?> </a>
+            </li>
+            <li>
+              <a href="settings.php#device_scanner_content_header">  <?= lang("settings_device_scanners_label");?> </a>
+            </li>
+            <li>
+              <a href="settings.php#other_content_header">  <?= lang("settings_other_scanners_label");?> </a>
+            </li>
+            <li>
+              <a href="settings.php#publisher_content_header"> <?= lang("settings_publishers_label");?> </a>
+            </li>
+            
+          </ul>
         </li>
+        
+        
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
           <div class="info-icon-nav work-in-progress">  </div>
           <a href="workflows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
@@ -274,6 +302,19 @@ if ($ENABLED_DARKMODE === True) {
 <script src="js/pialert_common.js"></script>
 <script defer>
 
+// Generate work-in-progress icons
+function workInProgress() {
+
+  if($(".work-in-progress").html().trim() == "")
+  {
+    $(".work-in-progress").append(`
+              <a href="https://github.com/jokob-sk/Pi.Alert/issues" target="_blank">
+                <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
+              </a>
+            `)
+  }
+}
+
 //--------------------------------------------------------------
 
   //--------------------------------------------------------------
@@ -295,5 +336,6 @@ if ($ENABLED_DARKMODE === True) {
 
   // Update server state in the header
   updateState()
+  workInProgress() 
   
 </script>

@@ -39,7 +39,6 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 md5_hash = hashlib.md5()
 
 pluginName = 'MQTT'
-module_name = pluginName
 
 # globals
 
@@ -53,7 +52,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -72,7 +71,7 @@ def main():
 #-------------------------------------------------------------------------------
 def check_config():
         if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
-            mylog('none', ['[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
+            mylog('verbose', ['[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
             return False
         else:
             return True
@@ -135,23 +134,38 @@ class sensor_config:
 def publish_mqtt(mqtt_client, topic, message):
     status = 1
 
-
+    message = json.dumps(message).replace("'",'"')
+    qos = get_setting_value('MQTT_QOS')
 
     mylog('verbose', [f"[{pluginName}] Sending MQTT topic: {topic}"])
     mylog('verbose', [f"[{pluginName}] Sending MQTT message: {message}"])
+    # mylog('verbose', [f"[{pluginName}] get_setting_value('MQTT_QOS'): {qos}"])
+
+    if mqtt_connected_to_broker == False:
+
+        mylog('verbose', [f"[{pluginName}] ⚠ ERROR: Not connected to broker, aborting."])
+
+        return False
 
     while status != 0:
+
+        # mylog('verbose', [f"[{pluginName}]  mqtt_client.publish "])
+        # mylog('verbose', [f"[{pluginName}]  mqtt_client.is_connected(): {mqtt_client.is_connected()} "])
+
         result = mqtt_client.publish(
                 topic=topic,
                 payload=message,
-                qos=get_setting_value('MQTT_QOS'),
+                qos=qos,
                 retain=True,
             )
 
         status = result[0]
 
+        # mylog('verbose', [f"[{pluginName}] status: {status}"])
+        # mylog('verbose', [f"[{pluginName}] result: {result}"])
+
         if status != 0:            
-            mylog('minimal', [f"[{pluginName}] Waiting to reconnect to MQTT broker"])
+            mylog('verbose', [f"[{pluginName}] Waiting to reconnect to MQTT broker"])
             time.sleep(0.1) 
     return True
 
@@ -179,7 +193,7 @@ def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, ico
            
     # save if new
     if new_sensor_config.isNew:   
-        mylog('minimal', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])          
+        mylog('verbose', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])          
         publish_sensor(mqtt_client, new_sensor_config)        
 
 
@@ -190,19 +204,19 @@ def publish_sensor(mqtt_client, sensorConfig):
 
     global mqtt_sensors   
 
-    message = '{ \
-                "name":"'+sensorConfig.sensorName+'", \
-                "state_topic":"system-sensors/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/state", \
-                "value_template":"{{value_json.'+sensorConfig.sensorName+'}}", \
-                "unique_id":"'+sensorConfig.deviceId+'_sensor_'+sensorConfig.sensorName+'", \
-                "device": \
-                    { \
-                        "identifiers": ["'+sensorConfig.deviceId+'_sensor"], \
-                        "manufacturer": "PiAlert", \
-                        "name":"'+sensorConfig.deviceName+'" \
-                    }, \
-                "icon":"mdi:'+sensorConfig.icon+'" \
-                }'
+    message = { 
+                "name" : sensorConfig.sensorName, 
+                "state_topic" : "system-sensors/"+sensorConfig.sensorType+'/'+sensorConfig.deviceId+"/state", 
+                "value_template" : "{{value_json."+sensorConfig.sensorName+"}}", 
+                "unique_id" : sensorConfig.deviceId+'_sensor_'+sensorConfig.sensorName, 
+                "device": 
+                    { 
+                        "identifiers" : [sensorConfig.deviceId+"_sensor"], 
+                        "manufacturer" : "PiAlert", 
+                        "name" : sensorConfig.deviceName
+                    }, 
+                "icon":"mdi:'+sensorConfig.icon+'" 
+            }
 
     topic='homeassistant/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/'+sensorConfig.sensorName+'/config'
 
@@ -232,13 +246,18 @@ def mqtt_create_client():
             mylog('verbose', [f"[{pluginName}]         Connected to broker"])            
             mqtt_connected_to_broker = True     # Signal connection 
         else: 
-            mylog('none', [f"[{pluginName}]         Connection failed, reason_code: {reason_code}"])
+            mylog('verbose', [f"[{pluginName}]         Connection failed, reason_code: {reason_code}"])
             mqtt_connected_to_broker = False
 
 
     global mqtt_client
 
-    mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)       
+    if get_setting_value('MQTT_VERSION') == 1:
+        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)  
+    else:
+        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)  
+
+         
     mqtt_client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
     mqtt_client.on_connect = on_connect
     mqtt_client.on_disconnect = on_disconnect
@@ -266,19 +285,16 @@ def mqtt_start(db):
         # Get the data
         row = get_device_stats(db)   
 
-        columns = ["online","down","all","archived","new","unknown"]
-
-        payload = ""
-
-        # Update the values 
-        for column in columns:       
-            payload += '"'+column+'": ' + str(row[column]) +','       
-
         # Publish (wrap into {} and remove last ',' from above)
         publish_mqtt(mqtt_client, "system-sensors/sensor/pialert/state",              
-                '{ \
-                    '+ payload[:-1] +'\
-                }'
+                { 
+                    "online": row[0],
+                    "down": row[1],
+                    "all": row[2],
+                    "archived": row[3],
+                    "new": row[4],
+                    "unknown": row[5]
+                }
             )
 
     # Generate device-specific MQTT messages if enabled
@@ -291,11 +307,11 @@ def mqtt_start(db):
 
         sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
 
-        mylog('minimal', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
+        mylog('verbose', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60,1) , 'min)' ])
 
+        # debug_index = 0
         
         for device in devices:      
-
         
             # Create devices in Home Assistant - send config messages
             deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
@@ -310,18 +326,18 @@ def mqtt_start(db):
             # update device sensors in home assistant              
 
             publish_mqtt(mqtt_client, 'system-sensors/sensor/'+deviceId+'/state', 
-                '{ \
-                    "last_ip": "' + device["dev_LastIP"] +'", \
-                    "is_new": "' + str(device["dev_NewDevice"]) +'", \
-                    "vendor": "' + sanitize_string(device["dev_Vendor"]) +'", \
-                    "mac_address": "' + str(device["dev_MAC"]) +'" \
-                }'
+                { 
+                    "last_ip": device["dev_LastIP"], 
+                    "is_new": str(device["dev_NewDevice"]), 
+                    "vendor": sanitize_string(device["dev_Vendor"]), 
+                    "mac_address": str(device["dev_MAC"])
+                }
             ) 
 
             publish_mqtt(mqtt_client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
-                '{ \
-                    "is_present": "' + to_binary_sensor(str(device["dev_PresentLastScan"])) +'"\
-                }'
+                { 
+                    "is_present": to_binary_sensor(str(device["dev_PresentLastScan"]))
+                }
             ) 
 
             # delete device / topic

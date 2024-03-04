@@ -757,18 +757,7 @@ function getGuid() {
 // UI 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-// Generate work-in-progress icons
-function workInProgress() {
 
-  if($(".work-in-progress").html().trim() == "")
-  {
-    $(".work-in-progress").append(`
-              <a href="https://github.com/jokob-sk/Pi.Alert/issues" target="_blank">
-                <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
-              </a>
-            `)
-  }
-}
 
 // -----------------------------------------------------------------------------
 //  Loading Spinner overlay
@@ -876,7 +865,6 @@ function executeOnce() {
     cacheSettings();
     cacheStrings();
     initDeviceListAll_JSON();
-    workInProgress();
 
     // Set the flag in sessionStorage to indicate that the code has been executed and save time when last time the page for initialized
     sessionStorage.setItem(sessionStorageKey, "true");    
