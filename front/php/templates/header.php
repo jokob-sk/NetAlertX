@@ -243,11 +243,35 @@ if ($ENABLED_DARKMODE === True) {
           <a href="plugins.php"><i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Plugins');?></span></a>
         </li>
 
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active'; } ?>">
+        <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
           <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
-          <a href="maintenance.php"><i class="fa fa-wrench "></i> <span><?= lang('Navigation_Maintenance');?></span></a>
+          <i class="fa fa-wrench"></i> <span><?= lang('Navigation_Maintenance');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
+            <li>
+              <a href="maintenance.php#tab_Settings" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Settings");?> </a>
+            </li>
+            <li>
+              <a href="maintenance.php#tab_DBTools" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Tools");?> </a>
+            </li>
+            <li>
+              <a href="maintenance.php#tab_BackupRestore" onclick="initializeTabs()"> <?= lang("Maintenance_Tools_Tab_BackupRestore");?> </a>
+            </li>
+            <li>
+              <a href="maintenance.php#tab_Logging" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Logging");?> </a>
+            </li>
+            <li>
+              <a href="maintenance.php#tab_multiEdit" onclick="initializeTabs()">  <?= lang("Device_MultiEdit");?> </a>
+            </li>
+            
+          </ul>
         </li>
-        <!-- <li class="treeview menu-open" style="height: auto;"> -->
+
+
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
@@ -277,20 +301,32 @@ if ($ENABLED_DARKMODE === True) {
             
           </ul>
         </li>
+
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-info"></i> <span><?= lang('Navigation_About');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
+            <li>
+              <a href="donations.php">  <?= lang("Navigation_Donations");?> </a>
+            </li>
+            <li>
+              <a href="help_faq.php">  <?= lang("Navigation_HelpFAQ");?> </a>
+            </li>
+            <li>
+              <a href="systeminfo.php"> <?= lang("Navigation_SystemInfo");?> </a>
+            </li>            
+            
+          </ul>
+        </li>
         
         
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
           <div class="info-icon-nav work-in-progress">  </div>
           <a href="workflows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
-        </li>
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
-          <a href="systeminfo.php"><i class="fa fa-microchip"></i> <span><?= lang('Navigation_SystemInfo');?></span></a>
-        </li>
-	      <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php') ) ){ echo 'active'; } ?>">
-          <a href="help_faq.php"><i class="fa fa-question"></i> <span><?= lang('Navigation_HelpFAQ');?></span></a>
-        </li>
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php') ) ){ echo 'active'; } ?>">
-          <a href="donations.php"><i class="fa fa-heart"></i> <span><?= lang('Navigation_Donations');?></span></a>
         </li>
       </ul>
 

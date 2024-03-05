@@ -431,6 +431,7 @@
     "Maintenance_version": "App updates",
     "NETWORK_DEVICE_TYPES_description": "Which device types are allowed to be used as network devices in the Network view. The device type has to match exactly the <code>Type</code> setting on a specific device in Device details. Do not remove existing types, only add new ones.",
     "NETWORK_DEVICE_TYPES_name": "Network device types",
+    "Navigation_About": "About",
     "Navigation_Devices": "Devices",
     "Navigation_Donations": "Donations",
     "Navigation_Events": "Events",

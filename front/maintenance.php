@@ -859,51 +859,56 @@ function initializeSelectedColumns () {
 // --------------------------------------------------------
 function initializeTabs () {  
 
-  key = "activeMaintenanceTab"
+  setTimeout(function() {
 
-  // default selection
-  selectedTab = "tab_Settings"
+    key = "activeMaintenanceTab"
 
-  // the #target from the url
-  target = window.location.hash.substr(1) 
+    // default selection
+    selectedTab = "tab_Settings"
 
-  // get only the part between #...?
-  if(target.includes('?'))
-  {
-    target = target.split('?')[0]
-  }
+    // the #target from the url
+    target = window.location.hash.substr(1) 
 
-  console.log(target)
-
-  // update cookie if target specified
-  if(target != "")
-  {    
-    setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
-  }
-
-  // get the tab id from the cookie (already overriden by the target)
-  if(!emptyArr.includes(getCache(key)))
-  {
-    selectedTab = getCache(key);
-  }
-
-  // Activate panel
-  $('.nav-tabs a[id='+ selectedTab +']').tab('show');
-
-  // When changed save new current tab
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    setCache(key, $(e.target).attr('id'))
-  });
-
-  // events on tab change
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    var target = $(e.target).attr("href") // activated tab
-    
-    if(target == "#tab_Logging")
+    // get only the part between #...?
+    if(target.includes('?'))
     {
-      scrollDown();
+      target = target.split('?')[0]
     }
-  });
+
+    console.log(target)
+
+    // update cookie if target specified
+    if(target != "")
+    {    
+      setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
+    }
+
+    // get the tab id from the cookie (already overriden by the target)
+    if(!emptyArr.includes(getCache(key)))
+    {
+      selectedTab = getCache(key);
+    }
+
+    // Activate panel
+    $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+
+    // When changed save new current tab
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      setCache(key, $(e.target).attr('id'))
+    });
+
+    // events on tab change
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var target = $(e.target).attr("href") // activated tab
+      
+      if(target == "#tab_Logging")
+      {
+        scrollDown();
+      }
+    });
+     
+    }, 50);
+  
 }
 
 // --------------------------------------------------------
