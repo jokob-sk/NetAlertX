@@ -517,6 +517,9 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     }
 
+
+    setupSmoothScrolling()
+
   }
 
 
@@ -757,21 +760,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 
 
-      // Scroll down if ID in URL
-      // Get the ID from the URL
-      var url = window.location.href;
-      var id = url.substring(url.indexOf("#") + 1);
-
-      // Check if the ID exists in the document
-      if ($("#" + id).length > 0) {
-        setTimeout(function() {
-          // Scroll to the element
-          $('html, body').animate({
-              scrollTop: $("#" + id).offset().top - 50
-          }, 1000);
-        },200);
-      }
-  
 
      })
 
@@ -783,6 +771,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 </script>
 
 <script defer>
+
+  
 
   // ----------------------------------------------------------------------------- 
   // handling events on the backend initiated by the front end START

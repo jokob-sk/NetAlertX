@@ -257,7 +257,7 @@ if ($ENABLED_DARKMODE === True) {
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
-              <a href="settings.php">  <?= lang("settings_enabled");?> </a>
+              <a href="settings.php#pageTitle">  <?= lang("settings_enabled");?> </a>
             </li>
             <li>
               <a href="settings.php#core_content_header">  <?= lang("settings_core_label");?> </a>
@@ -316,6 +316,7 @@ function workInProgress() {
 }
 
 //--------------------------------------------------------------
+
 
   //--------------------------------------------------------------
 

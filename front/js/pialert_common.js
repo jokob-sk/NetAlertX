@@ -810,6 +810,39 @@ function updateApi()
   })
 }
 
+// ----------------------------------------------------------------------------- 
+  // handling smooth scrolling
+  // ----------------------------------------------------------------------------- 
+  function setupSmoothScrolling() {
+    // Function to scroll to the element
+    function scrollToElement(id) {
+        $('html, body').animate({
+            scrollTop: $("#" + id).offset().top - 50
+        }, 500);
+    }
+
+    // Scroll to the element when clicking on anchor links
+    $('a[href*="#"]').on('click', function(event) {
+        var href = $(this).attr('href');
+        if (href && href.includes('#')) {
+            var id = href.substring(href.indexOf("#") + 1); // Get the ID from the href attribute
+            if ($("#" + id).length > 0) {
+                event.preventDefault(); // Prevent default anchor behavior
+                scrollToElement(id); // Scroll to the element
+            }
+        }
+    });
+
+    // Check if there's an ID in the URL and scroll to it
+    var url = window.location.href;
+    if (url.includes("#")) {
+        var idFromURL = url.substring(url.indexOf("#") + 1);
+        if ($("#" + idFromURL).length > 0) {
+            scrollToElement(idFromURL);
+        }
+    }
+}
+
 
 // -----------------------------------------------------------------------------
 // initialize
