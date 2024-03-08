@@ -147,7 +147,7 @@ function cacheStrings()
 {
 
   // handle core strings and translations
-  var allLanguages = ["en_us", "es_es", "de_de"]; // needs to be same as in lang.php
+  var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
 
   allLanguages.forEach(function (language_code) {
     $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
@@ -192,6 +192,15 @@ function getString (key) {
       break;
     case 'German': 
       lang_code = 'de_de';
+      break;
+    case 'French': 
+      lang_code = 'fr_fr';
+      break;
+    case 'Norwegian': 
+      lang_code = 'nb_no';
+      break;
+    case 'Russian': 
+      lang_code = 'ru_ru';
       break;
   }
   result = getCache(`pia_lang_${key}_${lang_code}`, true);

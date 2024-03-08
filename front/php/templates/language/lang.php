@@ -5,7 +5,7 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us","es_es","de_de"];
+$allLanguages = ["en_us","es_es","de_de", "nb_no", "ru_ru", "fr_fr"];
 
 global $db;
 
@@ -13,6 +13,9 @@ $result = $db->querySingle("SELECT Value FROM Settings WHERE Code_Name = 'UI_LAN
 switch($result){
   case 'Spanish': $pia_lang_selected = 'es_es'; break;
   case 'German': $pia_lang_selected = 'de_de'; break;
+  case 'Norwegian': $pia_lang_selected = 'nb_no'; break;
+  case 'Russian': $pia_lang_selected = 'ru_ru'; break;
+  case 'French': $pia_lang_selected = 'fr_fr'; break;
   default: $pia_lang_selected = 'en_us'; break;
 }
 
