@@ -216,35 +216,76 @@ if ($ENABLED_DARKMODE === True) {
       <!-- search form (Optional) -->
         <!-- DELETED -->
 
-      <!-- Sidebar Menu -->
+      <!-- Navigation Mneu -->
       <ul class="sidebar-menu" data-widget="tree">
 
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active'; } ?>">
-          <a href="devices.php"><i class="fa fa-laptop"></i> <span><?= lang('Navigation_Devices');?></span></a>
+        <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active menu-open'; } ?>">
+          <a href="#"  onclick="openUrl(['./devices.php', './deviceDetails.php'])">
+
+          <i class="fa fa-laptop"></i> <span><?= lang('Navigation_Devices');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
+            <li>
+              <a href="devices.php#my" onclick="initializeDatatable('my')" >  <?= lang("Device_Shortcut_AllDevices");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#connected" onclick="initializeDatatable('connected')" >  <?= lang("Device_Shortcut_Connected");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#favorites" onclick="initializeDatatable('favorites')" > <?= lang("Device_Shortcut_Favorites");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#new" onclick="initializeDatatable('new')"  >  <?= lang("Device_Shortcut_NewDevices");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#down" onclick="initializeDatatable('down')" >  <?= lang("Device_Shortcut_DownAlerts");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#archived" onclick="initializeDatatable('archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
+            </li>
+            
+          </ul>
         </li>
 
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php') ) ){ echo 'active'; } ?>">
-          <a href="presence.php"><i class="fa fa-calendar"></i> <span><?= lang('Navigation_Presence');?></span></a>
+        <!-- Monitoring menu item -->
+
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php' ) ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-chart-bar"></i> <span><?= lang('Navigation_Monitoring');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
+            <li>
+              <a href="presence.php">  <?= lang("Navigation_Presence");?> </a>
+            </li>
+            <li>
+              <a href="events.php">  <?= lang("Navigation_Events");?> </a>
+            </li>
+            <li>
+              <a href="report.php"> <?= lang("Navigation_Report");?> </a>
+            </li>            
+            
+          </ul>
         </li>
 
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('events.php') ) ){ echo 'active'; } ?>">
-          <a href="events.php"><i class="fa fa-bolt"></i> <span><?= lang('Navigation_Events');?></span></a>
-        </li>
-
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('report.php') ) ){ echo 'active'; } ?>">
-          <a href="report.php"><i class="fa fa-flag"></i> <span><?= lang('Navigation_Report');?></span></a>
-        </li>	      
-	      
+	      <!-- Network menu item -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
           <a href="network.php"><i class="fa fa-fw fa-network-wired"></i> <span><?= lang('Navigation_Network');?></span></a>
         </li>
 
+        <!-- Plugins menu item -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php') ) ){ echo 'active'; } ?>">
           <a href="plugins.php"><i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Plugins');?></span></a>
         </li>
 
+        <!-- Maintenance menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
-          <a href="#">
+          <a href="#" onclick="openUrl(['./maintenance.php'])">
           <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
           <i class="fa fa-wrench"></i> <span><?= lang('Navigation_Maintenance');?></span>
             <span class="pull-right-container">
@@ -271,9 +312,9 @@ if ($ENABLED_DARKMODE === True) {
           </ul>
         </li>
 
-
+        <!-- Settings menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active menu-open'; } ?>">
-          <a href="#">
+          <a href="#" onclick="openUrl(['./settings.php'])">
           <i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -301,7 +342,7 @@ if ($ENABLED_DARKMODE === True) {
             
           </ul>
         </li>
-
+        <!-- About menu item -->
         <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-info"></i> <span><?= lang('Navigation_About');?></span>
@@ -323,7 +364,7 @@ if ($ENABLED_DARKMODE === True) {
           </ul>
         </li>
         
-        
+        <!-- Workflows menu item -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
           <div class="info-icon-nav work-in-progress">  </div>
           <a href="workflows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>

@@ -901,6 +901,7 @@ function initializeTabs () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       var target = $(e.target).attr("href") // activated tab
       
+      // scroll to the latest log entrie sat teh bottom of the file 
       if(target == "#tab_Logging")
       {
         scrollDown();
@@ -911,16 +912,6 @@ function initializeTabs () {
   
 }
 
-// --------------------------------------------------------
-
-// save language in a cookie
-$('#langselector').on('change', function (e) {
-    var optionSelected = $("option:selected", this);
-    var valueSelected = this.value;    
-    setCookie("language",valueSelected )
-    location.reload();
-  });
-// --------------------------------------------------------
 
 // load footer asynchronously not to block the page load/other sections
 window.onload = function asyncFooter()

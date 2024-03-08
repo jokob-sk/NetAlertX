@@ -471,6 +471,34 @@ function settingsChanged()
 }
 
 // -----------------------------------------------------------------------------
+// Get Anchor from URL
+function getUrlAnchor(defaultValue){
+
+  target = defaultValue
+
+  var url = window.location.href;
+  if (url.includes("#")) {
+
+    // default selection
+    selectedTab = defaultValue
+
+    // the #target from the url
+    target = window.location.hash.substr(1) 
+
+    // get only the part between #...?
+    if(target.includes('?'))
+    {
+      target = target.split('?')[0]
+    }
+  
+    return target
+  
+  }
+
+}
+
+// -----------------------------------------------------------------------------
+// get query string from URL
 function getQueryString(key){
   params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
@@ -550,8 +578,35 @@ function debugTimer () {
 
 
 // -----------------------------------------------------------------------------
+// Open url in new tab
 function openInNewTab (url) {
   window.open(url, "_blank");
+}
+
+// ----------------------------------------------------------------------------- 
+// Navigate to URL if the current URL is not in the provided list of URLs
+function openUrl(urls) {
+  var currentUrl = window.location.href;
+  var mainUrl = currentUrl.match(/^.*?(?=#|\?|$)/)[0]; // Extract main URL
+
+  var isMatch = false;
+
+  $.each(urls,function(index, obj){
+
+    // remove . for comaprison if in the string, e.g.: ./devices.php
+    arrayUrl = obj.replace('.','')
+
+    // check if we are on a url contained in the array
+    if(mainUrl.includes(arrayUrl))
+    {
+      isMatch = true;
+    }
+  });
+
+  // if we are not, redirect
+  if (isMatch == false) {
+    window.location.href = urls[0]; // Redirect to the first URL in the list if not found
+  }
 }
 
 
@@ -824,7 +879,7 @@ function setupSmoothScrolling() {
   // Scroll to the element when clicking on anchor links
   $('a[href*="#"]').on('click', function(event) {
       var href = $(this).attr('href');
-      if (href && href.includes('#') && !$(this).is('[data-toggle="collapse"]')) {
+      if (href !=='#' && href && href.includes('#') && !$(this).is('[data-toggle="collapse"]')) {
           var id = href.substring(href.indexOf("#") + 1); // Get the ID from the href attribute
           if ($("#" + id).length > 0) {
               event.preventDefault(); // Prevent default anchor behavior

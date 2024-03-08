@@ -297,7 +297,8 @@ function main () {
           }
 
           // Initialize components with parameters
-          initializeDatatable('my');
+
+          initializeDatatable(getUrlAnchor('my'));
 
 
           
@@ -426,6 +427,11 @@ function getDeviceStatus(item)
 
 // -----------------------------------------------------------------------------
 function initializeDatatable (status) {
+
+  if(!status)
+  {
+    status = 'my'
+  }
 
   // Save status selected
   deviceStatus = status;
@@ -803,7 +809,6 @@ function multiEditDevices()
   // redirect to the Maintenance section
   window.location.href = window.location.origin + '/maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
 }
-
 
 </script>
 
