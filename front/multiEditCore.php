@@ -112,7 +112,10 @@
 
                     initSettingDropdown(columns[j].Code_Name, targetLocation)
 
-                    input = `<select>
+                    input = `<select  class="form-control"
+                                      id="${columns[j].Code_Name}"
+                                      data-my-column="${columns[j].Code_Name}" 
+                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                   } else {
@@ -174,6 +177,9 @@
 
     // Get the input element
     var inputElement = $(`#${id}`);
+
+    console.log(inputElement);
+    console.log(id);
 
     // Initialize columnValue variable
     var columnValue;
