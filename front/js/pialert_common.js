@@ -796,7 +796,7 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
   const sessionDataKey = 'devicesListAll_JSON';  
   const sessionData = sessionStorage.getItem(sessionDataKey);
 
-  if (!sessionData) {
+  if (!sessionData || sessionData == "") {
       console.log(`Session variable "${sessionDataKey}" not found.`);
       return "Unknown";
   }
@@ -824,7 +824,16 @@ function initDeviceListAll_JSON()
 
     devicesListAll_JSON = data["data"]
 
-    setCache('devicesListAll_JSON', JSON.stringify(devicesListAll_JSON))
+    devicesListAll_JSON_str = JSON.stringify(devicesListAll_JSON)
+
+    if(devicesListAll_JSON_str == "")
+    {
+      setTimeout(() => {
+        initDeviceListAll_JSON()
+      }, 1000);
+    }
+
+    setCache('devicesListAll_JSON', devicesListAll_JSON_str)
   });
 
 }

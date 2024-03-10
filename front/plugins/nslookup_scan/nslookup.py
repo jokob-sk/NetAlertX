@@ -95,7 +95,7 @@ def execute_nslookup (ip, timeout):
         domain_name = ''
         dns_server = ''
 
-        mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
+        # mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
 
         # Parse output using case-insensitive regular expressions
         domain_pattern = re.compile(r'name\s*=\s*([^\s]+)', re.IGNORECASE)
@@ -118,12 +118,13 @@ def execute_nslookup (ip, timeout):
     except subprocess.CalledProcessError as e:
         # An error occured, handle it
         mylog('verbose', [f'[{pluginName}]', e.output])
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])            
+        # mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])            
     except subprocess.TimeoutExpired as timeErr:
         mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
-    if output == "": # check if the subprocess failed                    
-        mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs']) 
+    if output == "": # check if the subprocess failed      
+        tmp = 1   # can't have empty            
+        # mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs']) 
     else: 
         mylog('verbose', [f'[{pluginName}] Scan: SUCCESS'])
 
