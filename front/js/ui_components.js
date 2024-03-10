@@ -119,6 +119,8 @@ function initSettingDropdown(settingKey, targetLocation)
  
   setVal = getSetting(settingKey)  
 
+  console.log(setVal);
+
   // check if the result is a SQL query
   if(isSQLQuery(setVal))
   {
@@ -130,7 +132,7 @@ function initSettingDropdown(settingKey, targetLocation)
   } else // this should be already an array, e.g. from a setting or pre-defined
   {     
     options = createArray(setVal);
-    values = createArray(set['Value']);
+    values = createArray(setVal);
     
 
     options.forEach(option => {
