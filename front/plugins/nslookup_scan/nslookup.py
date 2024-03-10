@@ -116,9 +116,14 @@ def execute_nslookup (ip, timeout):
         return domain_name, dns_server
 
     except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        mylog('verbose', [f'[{pluginName}]', e.output])
+        # An error occurred, handle it
+        if "NXDOMAIN" in e.output.decode():
+            mylog('verbose', [f'[{pluginName}]', f"No PTR record found for IP: {ip}"])
+        else:
+            mylog('verbose', [f'[{pluginName}]', e.output])
+            # Handle other errors here
         # mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])            
+        
     except subprocess.TimeoutExpired as timeErr:
         mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
 

@@ -132,7 +132,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT dev_DeviceType as id, dev_DeviceType as name  FROM Devices  "
+              "value" : "SELECT '' as id, '' as name UNION SELECT dev_DeviceType as id, dev_DeviceType as name FROM (SELECT dev_DeviceType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;"
             },
             {
               "name"  : "uilang",

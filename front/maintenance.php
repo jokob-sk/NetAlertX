@@ -787,23 +787,23 @@ function scrollDown()
 {
   setTimeout(() => {
 
-    var anchor = getUrlAnchor() 
+    var elementToCheck = $("#tab_Logging_id");
 
-    console.log(anchor)
-
-    if (anchor == "tab_Logging")
+    // Check if the parent <li> is active
+    if (elementToCheck.parent().hasClass("active")) {
     {
-      var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
-    
-      for (let i = 0; i < areaIDs.length; i++) {
+        var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
+      
+        for (let i = 0; i < areaIDs.length; i++) {
 
-        var tempArea = $('#' + areaIDs[i]);
-        
-        if (tempArea.length > 0)
-        {
-          $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+          var tempArea = $('#' + areaIDs[i]);
+          
+          if (tempArea.length > 0)
+          {
+            $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+          }
+
         }
-
       }
     }
     
