@@ -648,6 +648,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
+| `options_params` Property | Used in conjunction with a `"default_value": "{value}"` template and `text.select`. Can specify SQL query or Setting to populate the dropdown. Check example below. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
 | `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
 | `regex` | Applies a regex to the value.  The `options` array contains objects with an `type` (must be set to `regex`) and `param` (must contain the regex itself) property. |
@@ -665,6 +666,21 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 > [!NOTE] 
 > Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
 
+
+```json
+"options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+            },
+            {
+              "name"  : "target_macs",
+              "type"  : "setting",
+              "value" : "KNWN_target_macs"
+            }
+          ],
+```
 
 
 ```json

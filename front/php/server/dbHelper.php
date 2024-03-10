@@ -56,6 +56,10 @@
     $columns = $_REQUEST['columns'];    
   }
 
+  if (isset ($_REQUEST['rawSql'])) {
+    $rawSql = $_REQUEST['rawSql'];    
+  }
+
   if (isset ($_REQUEST['dbtable'])) {
     $dbtable = $_REQUEST['dbtable'];    
   }
@@ -64,9 +68,9 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'create':    create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values ); break;
-      // case 'read'  :    read($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);    break;
-      case 'update':    update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
+      case 'create':    create($defaultValue, $expireMinutes, $dbtable, $columns, $values ); break;
+      case 'read'  :    read($rawSql);    break;
+      case 'update':    update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
       case 'delete':    delete($columnName, $id, $dbtable);  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
@@ -74,9 +78,46 @@
 
 
 //------------------------------------------------------------------------------
+//  read
+//------------------------------------------------------------------------------
+function read($rawSql) {
+  global $db;  
+
+  // Construct the SQL query to select values
+  $sql = $rawSql;
+
+  // Execute the SQL query
+  $result = $db->query($sql);
+
+  // Check if the query executed successfully
+  if (! $result == TRUE) {
+    // Output an error message if the query failed
+    echo "Error reading data\n\n " .$sql." \n\n". $db->lastErrorMsg();
+    return;
+  } else
+  {
+    // Output $result
+    // Fetching rows from the result object and storing them in an array
+    $rows = array();
+    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        $rows[] = $row;
+    }
+
+    // Converting the array to JSON
+    $json = json_encode($rows);
+
+    // Outputting the JSON
+    echo $json;
+
+    return;
+   }
+}
+
+
+//------------------------------------------------------------------------------
 //  update
 //------------------------------------------------------------------------------
-function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values) {
+function update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values) {
 
   global $db;  
 
@@ -138,7 +179,7 @@ function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $db
   $changes = $db->changes();
   if ($changes == 0) {
     // Insert new value
-    create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values);
+    create( $defaultValue, $expireMinutes, $dbtable, $columns, $values);
   }
 
   // update cache  
@@ -152,7 +193,7 @@ function update($columnName, $id, $skipCache, $defaultValue, $expireMinutes, $db
 //------------------------------------------------------------------------------
 //  create
 //------------------------------------------------------------------------------
-function create($skipCache, $defaultValue, $expireMinutes, $dbtable, $columns, $values)
+function create( $defaultValue, $expireMinutes, $dbtable, $columns, $values)
 {
   global $db;
 
@@ -211,7 +252,7 @@ function delete($columnName, $id, $dbtable)
   // Check if the query executed successfully
   if (! $result == TRUE) {
     // Output an error message if the query failed
-    echo "Error deleting entry\n\n$sql \n\n". $db->lastErrorMsg();
+    echo "Error deleting entry\n\n".$sql." \n\n". $db->lastErrorMsg();
     return;
   } else
   {

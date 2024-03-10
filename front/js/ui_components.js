@@ -107,6 +107,74 @@ $(function () {
 });
 
 
+
+
+// -----------------------------------------------------------------------------
+// Initiate dropdown
+function initSettingDropdown(settingKey, targetLocation)
+{
+
+  var optionsHtml = ""
+  var targetLocation_options = settingKey + "_initSettingDropdown"
+ 
+  setVal = getSetting(settingKey)  
+
+  // check if the result is a SQL query
+  if(isSQLQuery(setVal))
+  {
+    
+    optionsHtml += `<option id="${targetLocation_options}"></option>`;    
+    
+    readData(setVal, generateDropdownOptions, targetLocation_options);
+
+  } else // this should be already an array, e.g. from a setting or pre-defined
+  {     
+    options = createArray(setVal);
+    values = createArray(set['Value']);
+    
+
+    options.forEach(option => {
+      let selected = values.includes(option) ? 'selected' : '';
+      optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+    });     
+    
+    // Place the resulting HTML into the specified placeholder div
+    $("#" + targetLocation).replaceWith(optionsHtml);
+    
+  }
+
+}
+
+
+
+// -----------------------------------------------------------------------------
+// Data processors
+// -----------------------------------------------------------------------------
+
+
+// -----------------------------------------------------------------------------
+// Processor to generate options for a dropdown menu
+function generateDropdownOptions(data) {
+  var optionsHtml = "";
+  data.forEach(function(item) {
+      optionsHtml += `<option value="${item.id}">${item.name}</option>`;
+  });
+  return `${optionsHtml}`;
+}
+
+
+// -----------------------------------------------------------------------------
+// Processor to generate a list
+function generateList(data) {
+  var listHtml = "";
+  data.forEach(function(item) {
+      listHtml += `<li>${item.name}</li>`;
+  });
+  listHtml += "";
+  return listHtml;
+}
+
+
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------

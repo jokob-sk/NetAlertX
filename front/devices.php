@@ -189,12 +189,10 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Datatable -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net/css/select.dataTables.min.css">
   <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
   <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.3/css/select.dataTables.min.css">
-  <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
-
-
+  <script src="lib/AdminLTE/bower_components/datatables.net/js/dataTables.select.min.js"></script>
 
 <!-- page script ----------------------------------------------------------- -->
 <script>

@@ -204,6 +204,8 @@ def publish_sensor(mqtt_client, sensorConfig):
 
     global mqtt_sensors   
 
+    icon = "mdi:" + sensorConfig.icon 
+
     message = { 
                 "name" : sensorConfig.sensorName, 
                 "state_topic" : "system-sensors/"+sensorConfig.sensorType+'/'+sensorConfig.deviceId+"/state", 
@@ -215,7 +217,7 @@ def publish_sensor(mqtt_client, sensorConfig):
                         "manufacturer" : "PiAlert", 
                         "name" : sensorConfig.deviceName
                     }, 
-                "icon":"mdi:'+sensorConfig.icon+'" 
+                "icon": icon
             }
 
     topic='homeassistant/'+sensorConfig.sensorType+'/'+sensorConfig.deviceId+'/'+sensorConfig.sensorName+'/config'

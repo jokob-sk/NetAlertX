@@ -294,7 +294,7 @@ if ($ENABLED_DARKMODE === True) {
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
-              <a href="maintenance.php#tab_Settings" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Settings");?> </a>
+              <a href="maintenance.php#tab_Settings" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_UISettings");?> </a>
             </li>
             <li>
               <a href="maintenance.php#tab_DBTools" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Tools");?> </a>

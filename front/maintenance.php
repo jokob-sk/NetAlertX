@@ -784,17 +784,28 @@ function performLogManage() {
 // --------------------------------------------------------
 function scrollDown()
 {
-  var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
+  var anchor = getUrlAnchor()
   
-  for (let i = 0; i < areaIDs.length; i++) {
 
-    var tempArea = $('#' + areaIDs[i]);
+  if (anchor == "tab_Logging")
+  {
+
+    setTimeout(() => {
+      var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
     
-    if (tempArea.length > 0)
-    {
-      $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-    }
+    for (let i = 0; i < areaIDs.length; i++) {
 
+      var tempArea = $('#' + areaIDs[i]);
+      
+      if (tempArea.length > 0)
+      {
+        $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+      }
+
+    }
+      
+    }, 55);
+    
   }
 }
 
@@ -900,12 +911,6 @@ function initializeTabs () {
     // events on tab change
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       var target = $(e.target).attr("href") // activated tab
-      
-      // scroll to the latest log entrie sat teh bottom of the file 
-      if(target == "#tab_Logging")
-      {
-        scrollDown();
-      }
     });
      
     }, 50);
@@ -918,16 +923,19 @@ window.onload = function asyncFooter()
 {
   initializeSelectedColumns();
 
-  scrollDown();
 
   initializeTabs();
 
   $("#lastCommit").append('<a href="https://github.com/jokob-sk/Pi.Alert/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github"></a>');
 
   $("#lastDockerUpdate").append(
-    '<a href="https://hub.docker.com/r/jokobsk/pi.alert/tags" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/badge/dynamic/json?color=blue&label=Last%20pushed&query=last_updated&url=https%3A%2F%2Fhub.docker.com%2Fv2%2Frepositories%2Fjokobsk%2Fpi.alert%2F&logo=docker&?link=http://left&link=https://hub.docker.com/repository/docker/jokobsk/pi.alert"></a>');
+    '<a href="https://github.com/jokob-sk/Pi.Alert/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/Pi.Alert?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
 
 }
+
+// scroll to the latest log entrie sat teh bottom of the file 
+
+scrollDown();
 
 </script>
 

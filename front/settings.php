@@ -55,6 +55,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 <script src="js/pialert_common.js"></script>
 <script src="js/settings_utils.js"></script>
+<script src="js/db_methods.js"></script>
+<script src="js/ui_components.js"></script>
 
 
 <div id="settingsPage" class="content-wrapper">
@@ -394,11 +396,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             
             if(setType.includes(".select"))
             {
-              inputHtml = generateInputOptions(set, inputHtml, isMultiSelect = false)
+              inputHtml = generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = false)
 
             } else if(setType.includes(".multiselect"))
             {
-              inputHtml = generateInputOptions(set, inputHtml, isMultiSelect = true)
+              inputHtml = generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = true)
             } else{
 
               // if it's overridable set readonly accordingly
@@ -427,7 +429,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} ${disabled}/>`;          
           } else if (setType === 'integer.select') {
 
-            inputHtml = generateInputOptions(set, inputHtml)
+            inputHtml = generateInputOptions(pluginsData, set, inputHtml)
           
           } else if (setType === 'subnets') {
             inputHtml = `
@@ -523,26 +525,56 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   }
 
 
-
-
   // ---------------------------------------------------------
   // generate a list of options for a input select
-  function generateInputOptions(set, input, isMultiSelect = false)
+  function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
   {
 
+    prefix = set["Group"]
+
+    var optionsHtml = ""
+
     multi = isMultiSelect ? "multiple" : "";
-    input = `<select onChange="settingsChanged()"  my-data-type="${set['Type']}" class="form-control" name="${set['Code_Name']}" id="${set['Code_Name']}" ${multi}>`;
 
-            values = createArray(set['Value']);
-            options = createArray(set['Options']);
+    tmpOptions = set['Options']
+    
+    setVal = getSetting(set['Code_Name'] )
+    
+    // check if the result is a SQL query
+    if(isSQLQuery(setVal))
+    {
+      var targetLocation = set['Code_Name'] + "_initSettingDropdown";
+      
+      optionsHtml += `<option id="${targetLocation}"></option>`;        
 
-            options.forEach(option => {
-              let selected = values.includes(option) ? 'selected' : '';
-              input += `<option value="${option}" ${selected}>${option}</option>`;
-            });
+      console.log(set['Code_Name'] )
+      console.log(setVal )
 
-            input += '</select>';
+      initSettingDropdown(set['Code_Name'] , targetLocation)
 
+    } else // this should be already an array, e.g. from a setting or pre-defined
+    {     
+      options = createArray(tmpOptions);
+      values = createArray(set['Value']);
+      
+
+      options.forEach(option => {
+        let selected = values.includes(option) ? 'selected' : '';
+        optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+      });      
+      
+    }
+
+    input += `
+      <select onChange="settingsChanged()"  
+              my-data-type="${set['Type']}" 
+              class="form-control" 
+              name="${set['Code_Name']}" 
+              id="${set['Code_Name']}" ${multi}>
+          ${optionsHtml}
+    
+      </select>`;
+      
     return input;
   }
 
@@ -702,9 +734,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           
           }
         });
-
       })
-
 
     }
   }

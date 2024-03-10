@@ -1,3 +1,5 @@
+
+
 <div class="col-md-12">
     <div class="box box-default">
 
@@ -65,7 +67,7 @@
         
         settingsData = res["data"];
 
-        excludedColumns = ["NEWDEV_dev_MAC", "NEWDEV_dev_FirstConnection", "NEWDEV_dev_LastConnection", "dev_LastNotification", "NEWDEV_dev_LastIP", "NEWDEV_dev_StaticIP", "NEWDEV_dev_ScanCycle", "NEWDEV_dev_PresentLastScan" ]
+        excludedColumns = ["NEWDEV_dev_MAC", "NEWDEV_dev_FirstConnection", "NEWDEV_dev_LastConnection", "NEWDEV_dev_LastNotification", "NEWDEV_dev_LastIP", "NEWDEV_dev_StaticIP", "NEWDEV_dev_ScanCycle", "NEWDEV_dev_PresentLastScan" ]
         
         const relevantColumns = settingsData.filter(set =>
             set.Group === "NEWDEV" &&
@@ -88,36 +90,69 @@
                 // Append form groups to the column
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
 
-                    const inputType = columns[j].Type === 'integer.checkbox' ? 'checkbox' : 'text';
+                  let inputType;
+
+                  switch (columns[j].Type) {
+                    case 'integer.checkbox':
+                    case 'checkbox':
+                      inputType = 'checkbox';
+                      break;
+                    case 'text.select':
+                      inputType = 'text.select';
+                      break;
+                    default:
+                      inputType = 'text';
+                      break;
+                  }
                     
-                    // Add classes specifically for checkboxes
+                  // Add classes specifically for checkboxes
+                  if (inputType === 'text.select') {
+
+                    targetLocation = columns[j].Code_Name + "_initSettingDropdown"
+
+                    initSettingDropdown(columns[j].Code_Name, targetLocation)
+
+                    input = `<select>
+                              <option id="${targetLocation}"></option>
+                            </select>`
+                  } else {
+                    
                     if (inputType === 'checkbox') {
-                        inputClass = 'checkbox';
+                      inputClass = 'checkbox';
+                  
                     } else {
-                        inputClass = 'form-control';
+                      inputClass = 'form-control';
                     }
 
+                    input =  `<input  class="${inputClass}" 
+                                      id="${columns[j].Code_Name}"  
+                                      data-my-column="${columns[j].Code_Name}" 
+                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" 
+                                      type="${inputType}">`
+                  }
 
-                    const inputEntry  = `<div class="form-group col-sm-12" >
-                                            <label class="col-sm-3 control-label">${columns[j].Display_Name}</label>
-                                            <div class="col-sm-9">
-                                              <div class="input-group red-hover-border">
-                                                <input class="${inputClass}" id="${columns[j].Code_Name}"  data-my-column="${columns[j].Code_Name}" data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" type="${inputType}">
-                                                <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].Code_Name}');" title="${getString('Device_MultiEdit_Tooltip')}">
-                                                  <i class="fa fa-save"></i>
-                                                </span>
-                                              </div>
+          
+                  const inputEntry  = `<div class="form-group col-sm-12" >
+                                          <label class="col-sm-3 control-label">${columns[j].Display_Name}</label>
+                                          <div class="col-sm-9">
+                                            <div class="input-group red-hover-border">
+                                              ${input}
+                                              <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].Code_Name}');" title="${getString('Device_MultiEdit_Tooltip')}">
+                                                <i class="fa fa-save"></i>
+                                              </span>
                                             </div>
-                                          </div>`
+                                          </div>
+                                        </div>`
 
-                    
-                    column.append(inputEntry);
+                  
+                  column.append(inputEntry);
                 }
 
                 form.append(column);
             }
         };
 
+        console.log(relevantColumns)
 
         generateSimpleForm(relevantColumns);
 
@@ -220,3 +255,4 @@ getData();
 
 <!-- ----------------------------------------------------------------------- -->
 <script src="js/ui_components.js"></script>
+<script src="js/db_methods.js"></script>

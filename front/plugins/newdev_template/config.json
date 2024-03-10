@@ -124,10 +124,22 @@
         },
         {
           "function": "dev_DeviceType",
-          "type": "string",
+          "type": "text.select",
           "maxLength": 30,
-          "default_value": "",
+          "default_value": "{value}",
           "options": [],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT DISTINCT dev_DeviceType as id, dev_DeviceType as name  FROM Devices  "
+            },
+            {
+              "name"  : "uilang",
+              "type"  : "setting",
+              "value" : "UI_LANG"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {
@@ -492,9 +504,21 @@
         },
         {
           "function": "dev_Network_Node_MAC_ADDR",
-          "type": "string",
-          "default_value": "",
+          "type": "text.select",
+          "default_value": "{value}",
           "options": [],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+            },
+            {
+              "name"  : "target_macs",
+              "type"  : "setting",
+              "value" : "KNWN_target_macs"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {

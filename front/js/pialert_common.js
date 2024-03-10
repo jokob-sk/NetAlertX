@@ -112,15 +112,42 @@ function deleteAllCookies() {
 function cacheSettings()
 {
   
-  $.get('api/table_settings.json?nocache=' + Date.now(), function(res) { 
-    
-    settingsJSON = res;
-        
-    data = settingsJSON["data"];       
+  $.get('api/table_settings.json?nocache=' + Date.now(), function(resSet) { 
 
-    data.forEach((set) => {      
-      setCache(`pia_set_${set.Code_Name}`, set.Value) 
-    });        
+    $.get('api/plugins.json?nocache=' + Date.now(), function(resPlug) {  
+
+      pluginsData = resPlug["data"]; 
+      settingsData = resSet["data"];    
+
+      settingsData.forEach((set) => {  
+
+        resolvedValue  = set.Value;
+        setPlugObj     = {};
+        options_params = [];
+
+      
+        setPlugObj = getPluginSettingObject(pluginsData, set.Code_Name)
+
+    
+        if(setPlugObj != {} && setPlugObj["options_params"])
+        {
+          options_params = setPlugObj["options_params"]      
+        }
+    
+        // check if options contains parameters and resolve 
+        if(set.Value.includes("{value}"))
+        {      
+
+          resolvedValue = resolveParams(options_params, set.Value)
+
+          console.log(resolvedValue)
+        }    
+
+        setCache(`pia_set_${set.Code_Name}`, resolvedValue) 
+      });
+      
+
+  });    
   })
 }
 
@@ -145,6 +172,8 @@ function getSetting (key) {
 // -----------------------------------------------------------------------------
 function cacheStrings()
 {
+
+  console.log("aaaaaaaaaaaaaaaaaaaaaa")
 
   // handle core strings and translations
   var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
@@ -907,7 +936,77 @@ function setupSmoothScrolling() {
   }
 }
 
+// -------------------------------------------------------------------
+// Function to check if options_params contains a parameter with type "sql"
+function hasSqlType(params) {
+  for (let param of params) {
+      if (param.type === "sql") {
+          return true; // Found a parameter with type "sql"
+      }
+  }
+  return false; // No parameter with type "sql" found
+}
 
+// -------------------------------------------------------------------
+// Function to check if string is SQL query
+function isSQLQuery(query) {
+  // Regular expression to match common SQL keywords and syntax with word boundaries
+  var sqlRegex = /\b(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|FROM|JOIN|WHERE|SET|VALUES|GROUP BY|ORDER BY|LIMIT)\b/i;
+
+  return sqlRegex.test(query);
+}
+
+
+// -------------------------------------------------------------------
+// Get corresponding plugin setting object
+function getPluginSettingObject(pluginsData, setting_key, unique_prefix ) {
+
+  result = {}
+  unique_prefix == undefined ? unique_prefix = setting_key.split("_")[0] : unique_prefix = unique_prefix;
+  
+  $.each(pluginsData, function (i, plgnObj){
+    // go thru plugins
+    if(plgnObj.unique_prefix == unique_prefix)
+    {
+      // go thru plugin settings
+      $.each(plgnObj["settings"], function (j, setObj){
+        
+        if(`${unique_prefix}_${setObj.function}` == setting_key)
+        {          
+          result = setObj          
+        }
+
+      });
+    }
+  });
+
+  return result
+}
+
+// -------------------------------------------------------------------
+// Resolve all option parameters
+function resolveParams(params, template) {
+  params.forEach(param => {
+      // Check if the template includes the parameter name
+      if (template.includes("{" + param.name + "}")) {
+          // If the parameter type is 'setting', retrieve setting value
+          if (param.type == "setting") {
+              var value = getSetting(param.value);
+              // Replace placeholder with setting value
+              template = template.replace("{" + param.name + "}", value);
+          } else {
+              // If the parameter type is not 'setting', use the provided value
+              template = template.replace("{" + param.name + "}", param.value);
+          }
+      }
+  });
+
+  // Log the resolved template
+  console.log(template);
+
+  // Return the resolved template
+  return template;
+}
 
 // -----------------------------------------------------------------------------
 // initialize
@@ -955,7 +1054,10 @@ var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
 
 // Define a function that will execute the code only once
 function executeOnce() {
+
   if (!pialert_common_init) {
+
+    console.log("ffffffffffffffffffffffffffffffffffffff")
 
     showSpinner()
 
@@ -964,7 +1066,8 @@ function executeOnce() {
     cacheStrings();
     initDeviceListAll_JSON();
 
-    // Set the flag in sessionStorage to indicate that the code has been executed and save time when last time the page for initialized
+    // Set the flag in sessionStorage to indicate that the code has been executed 
+    // and save time when last time the page for initialized
     sessionStorage.setItem(sessionStorageKey, "true");    
     const millisecondsNow = Date.now();
     sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
