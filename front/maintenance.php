@@ -782,31 +782,34 @@ function performLogManage() {
 }
 
 // --------------------------------------------------------
+// scroll down the log areas
 function scrollDown()
 {
-  var anchor = getUrlAnchor()
-  
+  setTimeout(() => {
 
-  if (anchor == "tab_Logging")
-  {
+    var anchor = getUrlAnchor() 
 
-    setTimeout(() => {
+    console.log(anchor)
+
+    if (anchor == "tab_Logging")
+    {
       var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
     
-    for (let i = 0; i < areaIDs.length; i++) {
+      for (let i = 0; i < areaIDs.length; i++) {
 
-      var tempArea = $('#' + areaIDs[i]);
-      
-      if (tempArea.length > 0)
-      {
-        $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+        var tempArea = $('#' + areaIDs[i]);
+        
+        if (tempArea.length > 0)
+        {
+          $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
+        }
+
       }
-
     }
-      
-    }, 55);
     
-  }
+  }, 100);
+    
+  
 }
 
 // --------------------------------------------------------
@@ -922,8 +925,7 @@ function initializeTabs () {
 window.onload = function asyncFooter()
 {
   initializeSelectedColumns();
-
-
+  scrollDown();
   initializeTabs();
 
   $("#lastCommit").append('<a href="https://github.com/jokob-sk/Pi.Alert/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github"></a>');
@@ -935,7 +937,7 @@ window.onload = function asyncFooter()
 
 // scroll to the latest log entrie sat teh bottom of the file 
 
-scrollDown();
+
 
 </script>
 

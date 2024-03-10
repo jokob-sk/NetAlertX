@@ -173,8 +173,6 @@ function getSetting (key) {
 function cacheStrings()
 {
 
-  console.log("aaaaaaaaaaaaaaaaaaaaaa")
-
   // handle core strings and translations
   var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
 
@@ -1065,8 +1063,6 @@ var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
 function executeOnce() {
 
   if (!pialert_common_init) {
-
-    console.log("ffffffffffffffffffffffffffffffffffffff")
 
     showSpinner()
 
