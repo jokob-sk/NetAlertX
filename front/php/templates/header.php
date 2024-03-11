@@ -28,9 +28,10 @@ require dirname(__FILE__).'/security.php';
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- ----------------------------------------------------------------------- -->
   <!-- REQUIRED JS SCRIPTS -->
-
   <!-- jQuery 3 -->
   <script src="lib/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+
+  <script src="js/pialert_common.js"></script>
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -376,7 +377,7 @@ if ($ENABLED_DARKMODE === True) {
     <!-- /.sidebar -->
   </aside>
 
-<script src="js/pialert_common.js"></script>
+
 <script defer>
 
 // Generate work-in-progress icons

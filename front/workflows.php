@@ -4,7 +4,6 @@
   require 'php/templates/notification.php'; 
 ?>
 
-<script src="js/pialert_common.js"></script>
 
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">

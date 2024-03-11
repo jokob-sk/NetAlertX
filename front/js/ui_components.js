@@ -111,39 +111,39 @@ $(function () {
 
 // -----------------------------------------------------------------------------
 // Initiate dropdown
-function initSettingDropdown(settingKey, targetLocation)
+function initSettingDropdown(settingKey, valuesArray, targetLocation)
 {
 
   var optionsHtml = ""
   var targetLocation_options = settingKey + "_initSettingDropdown"
  
-  setVal = getSetting(settingKey)  
-
-  console.log(setVal);
+  optionsArray = createArray(getSettingOptions(settingKey))  
 
   // check if the result is a SQL query
-  if(isSQLQuery(setVal))
+  if(isSQLQuery(optionsArray[0]))
   {
     
     optionsHtml += `<option id="${targetLocation_options}"></option>`;    
     
-    readData(setVal, generateDropdownOptions, targetLocation_options);
+    readData(optionsArray[0], generateDropdownOptions, valuesArray, targetLocation_options);
 
   } else // this should be already an array, e.g. from a setting or pre-defined
   {     
-    options = createArray(setVal);
-    values = createArray(setVal);
-    
-
-    options.forEach(option => {
-      let selected = values.includes(option) ? 'selected' : '';
+    optionsArray.forEach(option => {
+      let selected = valuesArray.includes(option) ? 'selected' : '';
       optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-    });     
+    });    
     
-    // Place the resulting HTML into the specified placeholder div
-    $("#" + targetLocation).replaceWith(optionsHtml);
+    // Replace the specified placeholder div with the resulting HTML 
+    setTimeout(() => {
+
+      $("#" + targetLocation).replaceWith(optionsHtml);
+      
+      }, 50);   
     
   }
+
+
 
 }
 
@@ -156,10 +156,13 @@ function initSettingDropdown(settingKey, targetLocation)
 
 // -----------------------------------------------------------------------------
 // Processor to generate options for a dropdown menu
-function generateDropdownOptions(data) {
+function generateDropdownOptions(data, valuesArray) {
   var optionsHtml = "";
   data.forEach(function(item) {
-      optionsHtml += `<option value="${item.id}">${item.name}</option>`;
+
+    let selected = valuesArray.includes(item.id) ? 'selected' : '';
+
+    optionsHtml += `<option value="${item.id}" ${selected}>${item.name}</option>`;
   });
   return `${optionsHtml}`;
 }
@@ -167,10 +170,13 @@ function generateDropdownOptions(data) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate a list
-function generateList(data) {
+function generateList(data, valuesArray) {
   var listHtml = "";
   data.forEach(function(item) {
-      listHtml += `<li>${item.name}</li>`;
+
+    let selected = valuesArray.includes(item.id) ? 'selected' : '';
+
+    listHtml += `<li ${selected}>${item.name}</li>`;
   });
   listHtml += "";
   return listHtml;

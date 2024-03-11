@@ -1,7 +1,7 @@
 <?php
     require 'php/templates/header.php';
 ?>
-<script src="js/pialert_common.js"></script>
+
 <div id="donationsPage" class="content-wrapper">
     <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">

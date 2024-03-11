@@ -53,7 +53,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <!-- Page ------------------------------------------------------------------ -->
 <!-- Page ------------------------------------------------------------------ -->
 
-<script src="js/pialert_common.js"></script>
 <script src="js/settings_utils.js"></script>
 <script src="js/db_methods.js"></script>
 <script src="js/ui_components.js"></script>
@@ -530,41 +529,37 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
   {
 
-    prefix = set["Group"]
-
     var optionsHtml = ""
 
     multi = isMultiSelect ? "multiple" : "";
 
-    tmpOptions = set['Options']
+    optionsArray = getSettingOptions(set['Code_Name'] )
+    valuesArray = createArray(set['Value']);
     
-    setVal = getSetting(set['Code_Name'] )
-    
-    // check if the result is a SQL query
-    if(isSQLQuery(setVal))
-    {
+    // // check if the result is a SQL query - if so, dropdown will be populated async with AJAX
+    // if(isSQLQuery(optionsArray))
+    // {
       var targetLocation = set['Code_Name'] + "_initSettingDropdown";
       
-      optionsHtml += `<option id="${targetLocation}"></option>`;        
+      // placeholder option which will be replaced on callback
+      optionsHtml += `<option id="${targetLocation}" temporary="temporary"></option>`;        
 
-      console.log(set['Code_Name'] )
-      console.log(setVal )
+      // execute AJAX callabck + SQL query resolution
+      initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation)
 
-      initSettingDropdown(set['Code_Name'] , targetLocation)
+    // } 
+    // else // it's a string without a SQL resolution requirements
+    // {     
+    //   options = createArray(optionsArray);
 
-    } else // this should be already an array, e.g. from a setting or pre-defined
-    {     
-      options = createArray(tmpOptions);
-      values = createArray(set['Value']);
+    //   options.forEach(option => {
+    //     let selected = valuesArray.includes(option) ? 'selected' : '';
+    //     optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+    //   });      
       
+    // }
 
-      options.forEach(option => {
-        let selected = values.includes(option) ? 'selected' : '';
-        optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-      });      
-      
-    }
-
+    // main selection dropdown wrapper
     input += `
       <select onChange="settingsChanged()"  
               my-data-type="${set['Type']}" 

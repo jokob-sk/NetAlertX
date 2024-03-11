@@ -454,7 +454,7 @@
 
 <script src="lib/treeviz/index.js"></script>
 <script src="lib/treeviz/require.js"></script>
-<script src="js/pialert_common.js"></script>
+
 
 <script>
   $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     

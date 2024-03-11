@@ -648,7 +648,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
-| `options_params` Property | Used in conjunction with a `"default_value": "{value}"` template and `text.select`. Can specify SQL query or Setting to populate the dropdown. Check example below. |
+| `options_params` Property | Used in conjunction with a `"options": "[{value}]"` template and `text.select`. Can specify SQL query (needs to return 2 columns `SELECT dev_Name as name, dev_Mac as id`) or Setting (not tested) to populate the dropdown. Check example below or have a look at the `NEWDEV` plugin `config.json` file. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
 | `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
 | `regex` | Applies a regex to the value.  The `options` array contains objects with an `type` (must be set to `regex`) and `param` (must contain the regex itself) property. |
@@ -668,18 +668,23 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 
 ```json
-"options_params" : [
+        "function": "dev_DeviceType",
+        "type": "text.select",
+        "maxLength": 30,
+        "default_value": "",
+        "options": ["{value}"],
+        "options_params" : [
             {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+                "name"  : "value",
+                "type"  : "sql",
+                "value" : "SELECT '' as id, '' as name UNION SELECT dev_DeviceType as id, dev_DeviceType as name FROM (SELECT dev_DeviceType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;"
             },
             {
-              "name"  : "target_macs",
-              "type"  : "setting",
-              "value" : "KNWN_target_macs"
+                "name"  : "uilang",
+                "type"  : "setting",
+                "value" : "UI_LANG"
             }
-          ],
+        ]
 ```
 
 

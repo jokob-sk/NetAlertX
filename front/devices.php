@@ -810,4 +810,3 @@ function multiEditDevices()
 
 </script>
 
-<script src="js/pialert_common.js"></script>

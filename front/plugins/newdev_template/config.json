@@ -104,10 +104,17 @@
         },
         {
           "function": "dev_Owner",
-          "type": "string",
+          "type": "text.select",
           "maxLength": 30,
-          "default_value": "House",
-          "options": [],
+          "default_value": "",
+          "options": ["{value}"],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {
@@ -126,8 +133,8 @@
           "function": "dev_DeviceType",
           "type": "text.select",
           "maxLength": 30,
-          "default_value": "{value}",
-          "options": [],
+          "default_value": "",
+          "options": ["{value}"],
           "options_params" : [
             {
               "name"  : "value",
@@ -195,10 +202,17 @@
         },
         {
           "function": "dev_Group",
-          "type": "string",
+          "type": "text.select",
           "maxLength": 10,
           "default_value": "",
-          "options": [],
+          "options": ["{value}"],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices UNION SELECT 'Personal' ) AS all_devices ORDER BY id;"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {
@@ -468,7 +482,14 @@
           "type": "string",
           "maxLength": 250,
           "default_value": "",
-          "options": [],
+          "options": ["{value}"],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {
@@ -505,8 +526,8 @@
         {
           "function": "dev_Network_Node_MAC_ADDR",
           "type": "text.select",
-          "default_value": "{value}",
-          "options": [],
+          "default_value": "",
+          "options": ["{value}"],
           "options_params" : [
             {
               "name"  : "value",

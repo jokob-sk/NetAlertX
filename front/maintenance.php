@@ -807,7 +807,7 @@ function scrollDown()
       }
     }
     
-  }, 100);
+  }, 200);
     
   
 }
@@ -946,6 +946,3 @@ window.onload = function asyncFooter()
 <script src="lib/AdminLTE/bower_components/jquery-ui/jquery-ui.min.js"></script>
 
 
-
-<!-- ----------------------------------------------------------------------- -->
-<script src="js/pialert_common.js"></script>
