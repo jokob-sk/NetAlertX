@@ -223,7 +223,7 @@ if ($ENABLED_DARKMODE === True) {
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#"  onclick="openUrl(['./devices.php', './deviceDetails.php'])">
 
-          <i class="fa fa-laptop"></i> <span><?= lang('Navigation_Devices');?></span>
+          <i class="fa fa-fw fa-laptop"></i> <span><?= lang('Navigation_Devices');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -255,7 +255,7 @@ if ($ENABLED_DARKMODE === True) {
 
         <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
-          <i class="fa fa-chart-bar"></i> <span><?= lang('Navigation_Monitoring');?></span>
+          <i class="fa fa-fw fa-chart-bar"></i> <span><?= lang('Navigation_Monitoring');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -283,7 +283,7 @@ if ($ENABLED_DARKMODE === True) {
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#" onclick="openUrl(['./maintenance.php'])">
           <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
-          <i class="fa fa-wrench"></i> <span><?= lang('Navigation_Maintenance');?></span>
+          <i class="fa fa-fw fa-wrench"></i> <span><?= lang('Navigation_Maintenance');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -311,7 +311,7 @@ if ($ENABLED_DARKMODE === True) {
         <!-- Settings menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#" onclick="openUrl(['./settings.php'])">
-          <i class="fa fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
+          <i class="fa fa-fw fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -350,10 +350,10 @@ if ($ENABLED_DARKMODE === True) {
           <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
             <li>
               <div class="info-icon-nav work-in-progress">  </div>
-              <a href="workflows.php"> <?= lang('Navigation_Workflows');?></a>
+              <a href="workflows.php"><?= lang('Navigation_Workflows');?></a>
             </li>
             <li>
-              <a href="plugins.php">  <?= lang("Navigation_Plugins");?> </a>
+              <a href="plugins.php"><?= lang("Navigation_Plugins");?> </a>
             </li>            
           </ul>
         </li>
@@ -361,7 +361,7 @@ if ($ENABLED_DARKMODE === True) {
         <!-- About menu item -->
         <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
-          <i class="fa fa-info"></i> <span><?= lang('Navigation_About');?></span>
+          <i class="fa fa-fw fa-info"></i> <span><?= lang('Navigation_About');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
