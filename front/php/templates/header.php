@@ -151,14 +151,14 @@ if ($ENABLED_DARKMODE === True) {
 	 <li>
 	   <a id="next-button" href="javascript:history.go(1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-right'></i></a>
 	 </li>			
-	 <!-- Reload -->		 
+	 <!-- Clear cache & Reload -->		 
 	 <li>
-	   <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='location.reload()'><i class='fa fa-repeat'></i></a>
+	   <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='clearCache()'><i class='fa fa-repeat'></i></a>
 	 </li>	
 	 <!-- Full Screen -->		 
 	 <li>
 	   <a id="fullscreen-button" href='#' role="button" span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
-	 </li>	        
+	 </li>	                
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">

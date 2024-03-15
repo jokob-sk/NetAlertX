@@ -43,7 +43,7 @@ fi
 
 echo "[INSTALL] Setup NGINX"
 echo "Setting webserver to address ($LISTEN_ADDR) and port ($PORT)"
-envsubst '$INSTALL_DIR $LISTEN_ADDR $PORT' < "${INSTALL_DIR}/pialert/install/pialert.conf.template" > "${NGINX_CONFIG_FILE}"
+envsubst '$INSTALL_DIR $LISTEN_ADDR $PORT' < "${INSTALL_DIR}/pialert/install/pialert.template.conf" > "${NGINX_CONFIG_FILE}"
 
 # Run the hardware vendors update at least once
 echo "[INSTALL] Run the hardware vendors update"

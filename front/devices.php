@@ -148,10 +148,9 @@
 
             <!-- box-header -->
             <div class="box-header">
-            <div class=" col-md-10 ">
-              <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
-            </div>                          
-            <div id="multiEditPlc" class="col-md-2"></div>
+              <div class=" col-md-10 ">
+                <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
+              </div>    
             </div>
 
             <!-- table -->
@@ -176,6 +175,7 @@
 <!-- ----------------------------------------------------------------------- -->
     </section>
     <!-- /.content -->
+    <div id="multiEditPlc" class="col-md-2"></div>
   </div>
   <!-- /.content-wrapper -->
 

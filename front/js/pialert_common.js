@@ -28,15 +28,15 @@ function getCache(key, noCookie = false)
   // check cache
   cachedValue = localStorage.getItem(key)
 
-  console.log(cachedValue);
+  // console.log(cachedValue);
 
   if(cachedValue)
   {
-    // check if not expired
-    if(noCookie || getCookie(key + '_session_expiry') != "")
-    {
+    // // check if not expired
+    // if(noCookie || getCookie(key + '_session_expiry') != "")
+    // {
       return cachedValue;
-    }
+    // }
   }
 
   return "";  
@@ -47,11 +47,11 @@ function setCache(key, data, expirationMinutes='')
 {
   localStorage.setItem(key, data);  
 
-  // create cookie if expiration set to handle refresh of data
-  if (expirationMinutes != '') 
-  {
-    setCookie (key + '_session_expiry', 'OK', expirationMinutes='')
-  }
+  // // create cookie if expiration set to handle refresh of data
+  // if (expirationMinutes != '') 
+  // {
+  //   setCookie ('cache_session_expiry', 'OK', 1)
+  // }
 }
 
 
@@ -229,9 +229,15 @@ function cacheStrings()
 function getString (key) {
 
   // handle initial laod to make sure everything is set-up and cached
-  // handleFirstLoad()
+  handleFirstLoad()
  
   UI_LANG = getSetting("UI_LANG");
+
+  // // 
+  // if(UI_LANG == "")
+  // {
+
+  // }
 
   lang_code = 'en_us';
 
@@ -865,7 +871,7 @@ function initDeviceListAll_JSON()
 
   $.get('api/table_devices.json', function(data) {    
     
-    console.log(data)
+    // console.log(data)
 
     devicesListAll_JSON = data["data"]
 
@@ -878,9 +884,13 @@ function initDeviceListAll_JSON()
       }, 1000);
     }
 
+
+    // console.log("devicesListAll_JSON_str");
+    // console.log(devicesListAll_JSON_str);
+
     setCache('devicesListAll_JSON', devicesListAll_JSON_str)
 
-    console.log(getCache('devicesListAll_JSON'))
+    // console.log(getCache('devicesListAll_JSON'))
   }).then(() => handleSuccess('initDeviceListAll_JSON')).catch(() => handleFailure('initDeviceListAll_JSON')); // handle AJAX synchronization
 
 }
@@ -1071,8 +1081,19 @@ function resolveParams(params, template) {
 var sessionStorageKey = "myScriptExecuted_pialert_common";
 
 // -----------------------------------------------------------------------------
+// Clearing all the caches
+function clearCache()
+{
+  resetInitializedFlag()
+  window.location.reload()
+}
+
+
+// -----------------------------------------------------------------------------
 function resetInitializedFlag()
 {
+  // Clear local storage
+  localStorage.clear();
   // Set the flag in sessionStorage to indicate that the code and cahce needs to be reloaded
   sessionStorage.setItem(sessionStorageKey, "false");
 }
@@ -1121,6 +1142,8 @@ var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
 function executeOnce() {
 
   if (!pialert_common_init) {
+
+    resetInitializedFlag()
 
     showSpinner()
 
