@@ -279,11 +279,6 @@ if ($ENABLED_DARKMODE === True) {
           <a href="network.php"><i class="fa fa-fw fa-network-wired"></i> <span><?= lang('Navigation_Network');?></span></a>
         </li>
 
-        <!-- Plugins menu item -->
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php') ) ){ echo 'active'; } ?>">
-          <a href="plugins.php"><i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Plugins');?></span></a>
-        </li>
-
         <!-- Maintenance menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#" onclick="openUrl(['./maintenance.php'])">
@@ -343,6 +338,26 @@ if ($ENABLED_DARKMODE === True) {
             
           </ul>
         </li>
+
+        <!-- Integrations menu item -->
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Integrations');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+            <li>
+              <div class="info-icon-nav work-in-progress">  </div>
+              <a href="workflows.php"> <?= lang('Navigation_Workflows');?></a>
+            </li>
+            <li>
+              <a href="plugins.php">  <?= lang("Navigation_Plugins");?> </a>
+            </li>            
+          </ul>
+        </li>
+
         <!-- About menu item -->
         <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
@@ -364,12 +379,7 @@ if ($ENABLED_DARKMODE === True) {
             
           </ul>
         </li>
-        
-        <!-- Workflows menu item -->
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
-          <div class="info-icon-nav work-in-progress">  </div>
-          <a href="workflows.php"><i class="fa fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
-        </li>
+
       </ul>
 
       <!-- /.sidebar-menu -->
