@@ -15,9 +15,11 @@ function initDeviceSelectors() {
 
   console.log(devicesList)
   // Retrieve device list from session variable
-  var devicesListAll_JSON = sessionStorage.getItem('devicesListAll_JSON');
+  var devicesListAll_JSON = getCache('devicesListAll_JSON');
 
   var devicesList = JSON.parse(devicesListAll_JSON);
+
+  console.log(devicesList);
 
 
   // Check if both device list exists
@@ -71,7 +73,7 @@ function initDeviceSelectors() {
 
         }        
     
-    }, 100);
+    }, 10);
 
 }
 

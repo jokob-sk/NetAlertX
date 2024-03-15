@@ -12,6 +12,9 @@ You need to specify the network interface and the network mask. You can also con
    * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
    * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1 -vlan=107']` 
 
+
+
+
 ## Explanation
 
 ### Network mask
@@ -31,7 +34,10 @@ Specify the network filter (which **significantly** speeds up the scan process).
 
 The adapter will probably be `eth0` or `eth1`. (Check `System info` > `Network Hardware` or run `iwconfig` in the container to find your interface name(s)) 
 
-> Run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`). 
+![Network hardware](/docs/img/SUBNETS/system_info-network_hardware.png)
+
+> [!TIP]
+> Alterantive to `iwconfig` run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`).
 
 ### VLANs
 

@@ -117,7 +117,7 @@ def execute_nslookup (ip, timeout):
 
     except subprocess.CalledProcessError as e:
         # An error occurred, handle it
-        if "NXDOMAIN" in e.output.decode():
+        if "NXDOMAIN" in e.output:
             mylog('verbose', [f'[{pluginName}]', f"No PTR record found for IP: {ip}"])
         else:
             mylog('verbose', [f'[{pluginName}]', e.output])

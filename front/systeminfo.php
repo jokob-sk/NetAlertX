@@ -153,6 +153,55 @@ echo '<div class="box box-solid">
             </div>
       </div>';
 
+// Network Hardware ----------------------------------------------------------
+echo '<div class="box box-solid">
+        <div class="box-header">
+          <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
+        </div>
+        <div class="box-body">
+          <table id="networkTable" class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>' . lang('Systeminfo_Network_Hardware_Interface_Name') . '</th>
+                <th>' . lang('Systeminfo_Network_Hardware_Interface_Mask') . '</th>
+                <th>' . lang('Systeminfo_Network_Hardware_Interface_RX') . '</th>
+                <th>' . lang('Systeminfo_Network_Hardware_Interface_TX') . '</th>
+              </tr>
+            </thead>
+            <tbody>';
+
+for ($x = 0; $x < sizeof($net_interfaces); $x++) {
+    $interface_name = str_replace(':', '', $net_interfaces[$x]);
+    $interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep "inet "');
+    $interface_ip_arr = explode(' ', trim($interface_ip_temp));
+
+    if (!isset($interface_ip_arr[1])) {
+        $interface_ip_arr[1] = '--';
+    }
+
+    if ($net_interfaces_rx[$x] == 0) {
+        $temp_rx = 0;
+    } else {
+        $temp_rx = number_format(round(($net_interfaces_rx[$x] / 1024 / 1024), 2), 2, ',', '.');
+    }
+    if ($net_interfaces_tx[$x] == 0) {
+        $temp_tx = 0;
+    } else {
+        $temp_tx = number_format(round(($net_interfaces_tx[$x] / 1024 / 1024), 2), 2, ',', '.');
+    }
+    echo '<tr>';
+    echo '<td>' . $interface_name . '</td>';
+    echo '<td>' . $interface_ip_arr[1] . '</td>';
+    echo '<td>' . $temp_rx . ' MB</td>';
+    echo '<td>' . $temp_tx . ' MB</td>';
+    echo '</tr>';
+}
+
+echo '        </tbody>
+          </table>
+        </div>
+      </div>';
+
 // Client ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
@@ -455,32 +504,8 @@ echo '<div class="box box-solid">
 		</div>
       </div>';
 
-// Network Hardware ----------------------------------------------------------
-echo '<div class="box box-solid">
-            <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
-            </div>
-            <div class="box-body">';
 
-for ($x = 0; $x < sizeof($net_interfaces); $x++) {
-	$interface_name = str_replace(':', '', $net_interfaces[$x]);
-	$interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep "inet "');
-	$interface_ip_arr = explode(' ', trim($interface_ip_temp));
 
-	if (!isset($interface_ip_arr[1])) {$interface_ip_arr[1] = '--';}
-
-	if ($net_interfaces_rx[$x] == 0) {$temp_rx = 0;} else { $temp_rx = number_format(round(($net_interfaces_rx[$x] / 1024 / 1024), 2), 2, ',', '.');}
-	if ($net_interfaces_tx[$x] == 0) {$temp_tx = 0;} else { $temp_tx = number_format(round(($net_interfaces_tx[$x] / 1024 / 1024), 2), 2, ',', '.');}
-	echo '<div class="row">';
-	echo '<div class="col-sm-2 sysinfo_network_hardware_a">' . $interface_name . '</div>';
-	echo '<div class="col-sm-2 sysinfo_network_hardware_b">' . $interface_ip_arr[1] . '</div>';
-	echo '<div class="col-sm-3 sysinfo_network_hardware_b">RX: <div class="sysinfo_network_value">' . $temp_rx . ' MB</div></div>';
-	echo '<div class="col-sm-3 sysinfo_network_hardware_b">TX: <div class="sysinfo_network_value">' . $temp_tx . ' MB</div></div>';
-	echo '</div>';
-
-}
-echo '      </div>
-      </div>';
 
 // Services ----------------------------------------------------------
 echo '<div class="box box-solid">
@@ -553,3 +578,25 @@ echo '<br>';
   <!-- /.content-wrapper -->
 
 <!-- ----------------------------------------------------------------------- -->
+
+<link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net/css/select.dataTables.min.css">
+<script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+
+
+
+<!-- DataTable initialization -->
+<script>
+  setTimeout(() => {
+
+    $('#networkTable').DataTable({
+            "searching": true,
+            "order": [[0, "desc"]]
+        });
+    
+  }, 20);
+
+</script>
+

@@ -26,12 +26,16 @@ var settingsJSON = {}
 function getCache(key, noCookie = false)
 {
   // check cache
-  if(localStorage.getItem(key))
+  cachedValue = localStorage.getItem(key)
+
+  console.log(cachedValue);
+
+  if(cachedValue)
   {
     // check if not expired
     if(noCookie || getCookie(key + '_session_expiry') != "")
     {
-      return localStorage.getItem(key);
+      return cachedValue;
     }
   }
 
@@ -861,7 +865,7 @@ function initDeviceListAll_JSON()
 
   $.get('api/table_devices.json', function(data) {    
     
-    // console.log(data)
+    console.log(data)
 
     devicesListAll_JSON = data["data"]
 
@@ -875,6 +879,8 @@ function initDeviceListAll_JSON()
     }
 
     setCache('devicesListAll_JSON', devicesListAll_JSON_str)
+
+    console.log(getCache('devicesListAll_JSON'))
   }).then(() => handleSuccess('initDeviceListAll_JSON')).catch(() => handleFailure('initDeviceListAll_JSON')); // handle AJAX synchronization
 
 }

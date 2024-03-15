@@ -883,18 +883,25 @@ function initializeTabs () {
     // the #target from the url
     target = window.location.hash.substr(1) 
 
+    
+
     // get only the part between #...?
     if(target.includes('?'))
     {
       target = target.split('?')[0]
     }
 
-    console.log(target)
+    console.log(target);
 
     // update cookie if target specified
     if(target != "")
     {    
-      setCache(key, target+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
+
+      if (!selectedTab.endsWith("_id")) {
+        selectedTab = target + "_id";
+      } 
+
+      setCache(key, selectedTab) // _id is added so it doesn't conflict with AdminLTE tab behavior
     }
 
     // get the tab id from the cookie (already overriden by the target)
