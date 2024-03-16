@@ -71,18 +71,28 @@ def send(text):
 
     user_key = get_setting_value("PUSHOVER_USER_KEY")
     app_token = get_setting_value("PUSHOVER_APP_TOKEN")
+    device_name = (
+        None
+        if get_setting_value("PUSHOVER_DEVICE_NAME") == "DEVICE_NAME"
+        else get_setting_value("PUSHOVER_DEVICE_NAME")
+    )
 
     mylog("verbose", f'[{pluginName}] PUSHOVER_USER_KEY: "{hide_string(user_key)}"')
     mylog("verbose", f'[{pluginName}] PUSHOVER_APP_TOKEN: "{hide_string(app_token)}"')
 
+    data = {"token": app_token, "user": user_key, "message": text}
+    # Add device_name to the data dictionary only if it is not None
+    if device_name:
+        data["device"] = device_name
+
     try:
-        response = requests.post(
-            "https://api.pushover.net/1/messages.json",
-            data={"token": app_token, "user": user_key, "message": text},
-        )
+        response = requests.post("https://api.pushover.net/1/messages.json", data=data)
+
+        # Update response_status_code with the actual status code from the response
+        response_status_code = response.status_code
 
         # Check if the request was successful (status code 200)
-        if response.status_code == 200:
+        if response_status_code == 200:
             response_text = response.text  # This captures the response body/message
         else:
             response_text = json.dumps(response.text)
