@@ -404,6 +404,28 @@
                     "string": "Your Pushover APP Token."
                 }
             ]
+        },
+        {
+            "function": "DEVICE_NAME",
+            "type": "text",
+            "default_value": "DEVICE_NAME",
+            "options": [],
+            "localized": [
+                "name",
+                "description"
+            ],
+            "name": [
+                {
+                    "language_code": "en_us",
+                    "string": "Pushover Device name (not required)"
+                }
+            ],
+            "description": [
+                {
+                    "language_code": "en_us",
+                    "string": "When specifying a device name, notifications will be exclusively sent to the device."
+                }
+            ]
         }
     ]
 }
