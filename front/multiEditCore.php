@@ -1,5 +1,7 @@
 
 
+
+
 <div class="col-md-12">
     <div class="box box-default">
 
@@ -57,7 +59,7 @@
 
 
 
-<script>
+<script defer>
   
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
@@ -258,7 +260,9 @@ getData();
 
 </script>
 
-
 <!-- ----------------------------------------------------------------------- -->
 <script src="js/ui_components.js"></script>
 <script src="js/db_methods.js"></script>
+<!-- ----------------------------------------------------------------------- -->
+
+

@@ -479,7 +479,7 @@
         },
          {
           "function": "dev_Location",
-          "type": "string",
+          "type": "text.select",
           "maxLength": 250,
           "default_value": "",
           "options": ["{value}"],

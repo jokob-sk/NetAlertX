@@ -240,7 +240,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 ## 🏅 Recognitions
 
-Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> for help and tips&tricks for Dockerfile(s).
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> & for help and tips&tricks for Dockerfile(s) and <a href="https://github.com/vladaurosh">@vladaurosh</a> for Alpine re-base help.
 
 ## ❤ Support me
 

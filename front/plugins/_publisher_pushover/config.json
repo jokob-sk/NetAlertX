@@ -417,13 +417,13 @@
             "name": [
                 {
                     "language_code": "en_us",
-                    "string": "Pushover Device name (not required)"
+                    "string": "Pushover Device name"
                 }
             ],
             "description": [
                 {
                     "language_code": "en_us",
-                    "string": "When specifying a device name, notifications will be exclusively sent to the device."
+                    "string": "(Optional) When specifying a device name, notifications will be exclusively sent to the device."
                 }
             ]
         }
