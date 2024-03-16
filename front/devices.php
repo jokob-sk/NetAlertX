@@ -386,7 +386,7 @@ function filterDataByStatus(data, status) {
       case 'new':
         return item.dev_NewDevice === 1;
       case 'down':
-        return item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0;
+        return (item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0) || item.dev_PresentLastScan === 0;
       case 'archived':
         return item.dev_Archived === 1;
       default:

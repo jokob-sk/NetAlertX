@@ -845,14 +845,14 @@ function isRandomMAC(mac)
 function getDeviceDataByMacAddress(macAddress, dbColumn) {
 
   const sessionDataKey = 'devicesListAll_JSON';  
-  const sessionData = sessionStorage.getItem(sessionDataKey);
+  const devicesCache = getCache(sessionDataKey);
 
-  if (!sessionData || sessionData == "") {
-      console.log(`Session variable "${sessionDataKey}" not found.`);
+  if (!devicesCache || devicesCache == "") {
+      console.error(`Session variable "${sessionDataKey}" not found.`);
       return "Unknown";
   }
 
-  const devices = JSON.parse(sessionData);
+  const devices = JSON.parse(devicesCache);
 
   for (const device of devices) {
       if (device["dev_MAC"].toLowerCase() === macAddress.toLowerCase()) {
