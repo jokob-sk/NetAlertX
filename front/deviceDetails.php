@@ -1288,6 +1288,16 @@ function getDeviceData (readAllData=false) {
         
         devicesList = getDevicesList();        
 
+        // handle empty dev_Network_Node_MAC_ADDR
+        networkParentMac = deviceData['dev_Network_Node_MAC_ADDR']
+        if(networkParentMac)
+        {
+          networkParentMacName = getDeviceDataByMacAddress(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")
+        } else
+        {
+          networkParentMacName = '--'
+        }
+
         $('#txtMAC').val                             (deviceData['dev_MAC']);
         $('#txtName').val                            (deviceData['dev_Name']);
         $('#txtOwner').val                           (deviceData['dev_Owner']);
@@ -1300,7 +1310,7 @@ function getDeviceData (readAllData=false) {
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
         $('#txtComments').val                        (deviceData['dev_Comments']);        
-        $('#txtNetworkNodeMac').val                  ( getDeviceDataByMacAddress(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")) ;
+        $('#txtNetworkNodeMac').val                  ( networkParentMacName) ;
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
         // disabling network node configuration if root Internet node
