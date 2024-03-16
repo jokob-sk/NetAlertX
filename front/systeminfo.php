@@ -589,14 +589,21 @@ echo '<br>';
 
 <!-- DataTable initialization -->
 <script>
+
+  // show spinning icon
+  showSpinner()
+
   setTimeout(() => {
 
     $('#networkTable').DataTable({
             "searching": true,
             "order": [[0, "desc"]]
         });
+
+    // hide spinning icon
+    hideSpinner()
     
-  }, 20);
+  }, 500);
 
 </script>
 

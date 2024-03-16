@@ -724,6 +724,9 @@
       console.log(myHierarchy)
 
       myTree.refresh(myHierarchy);
+
+      // hide spinning icon
+      hideSpinner()
     }
 
   // ---------------------------------------------------------------------------
@@ -840,6 +843,8 @@
     }
   }
 
+  // show spinning icon
+  showSpinner()
 
   // init device names where macs are used
   initDeviceNamesFromMACs();

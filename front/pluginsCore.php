@@ -246,6 +246,9 @@ function getData(){
 
                     generateTabs()
 
+                    // hide spinning icon
+                    hideSpinner()
+
                 });
             });
         });
@@ -580,6 +583,8 @@ function purgeVisible() {
 // -----------------------------------------------------------------------------
 // Main sequence
 
+// show spinning icon
+showSpinner()
 getData()
 updater()
 
