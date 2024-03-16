@@ -402,14 +402,22 @@
         },
         {
           "function": "dev_SkipRepeated",
-          "type": "integer",
-          "default_value": 0,
-          "options": [],
+          "type": "text.select",
+          "maxLength": 250,
+          "default_value": "",
+          "options": ["{value}"],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT '0' as id, '0 (notify all)' as name UNION SELECT '168' as id, '1 week' as name UNION SELECT '24' as id, '1 day' as name UNION SELECT '8' as id, '8 h' as name UNION SELECT '1' as id, '1 h' as name"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {
               "language_code": "en_us",
-              "string": "Skip Repeated"
+              "string": "Skip Repeated (h)"
             }
           ],
           "description": [
@@ -487,7 +495,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
+              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
             }
           ],
           "localized": ["name", "description"],
