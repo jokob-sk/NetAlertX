@@ -155,7 +155,7 @@ function cacheSettings()
         setCache(`pia_set_${set.Code_Name}`, set.Value) 
         setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
       });
-     }).then(() => handleSuccess('cacheSettings')).catch(() => handleFailure('cacheSettings'));    // handle AJAX synchronization
+     }).then(() => handleSuccess('cacheSettings')).catch(() => handleFailure('cacheSettings', cacheSettings));    // handle AJAX synchronization
   })
 }
 
@@ -221,7 +221,7 @@ function cacheStrings()
     data.forEach((langString) => {      
       setCache(`pia_lang_${langString.String_Key}_${langString.Language_Code}`, langString.String_Value) 
     });        
-  }).then(() => handleSuccess('cacheStrings')).catch(() => handleFailure('cacheStrings')); // handle AJAX synchronization
+  }).then(() => handleSuccess('cacheStrings')).catch(() => handleFailure('cacheStrings', cacheStrings)); // handle AJAX synchronization
   
 }
 
@@ -891,7 +891,7 @@ function initDeviceListAll_JSON()
     setCache('devicesListAll_JSON', devicesListAll_JSON_str)
 
     // console.log(getCache('devicesListAll_JSON'))
-  }).then(() => handleSuccess('initDeviceListAll_JSON')).catch(() => handleFailure('initDeviceListAll_JSON')); // handle AJAX synchronization
+  }).then(() => handleSuccess('initDeviceListAll_JSON')).catch(() => handleFailure('initDeviceListAll_JSON', initDeviceListAll_JSON)); // handle AJAX synchronization
 
 }
 
@@ -1075,6 +1075,13 @@ function resolveParams(params, template) {
 }
 
 // -----------------------------------------------------------------------------
+// check if two arrays contain same values even if out of order
+function arraysContainSameValues(arr1, arr2) {
+  // Sort and stringify arrays, then compare
+  return JSON.stringify(arr1.slice().sort()) === JSON.stringify(arr2.slice().sort());
+}
+
+// -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------
 // Define a unique key for storing the flag in sessionStorage
@@ -1147,8 +1154,9 @@ function executeOnce() {
 
     showSpinner()
 
-    // Counter to keep track of completed AJAX calls
-    completedCalls = 0;
+    //  to keep track of completed AJAX calls    
+    completedCalls = []
+    completedCalls_final = ['cacheSettings', 'cacheStrings', 'initDeviceListAll_JSON'];
 
     // Your initialization code here
     cacheSettings();
@@ -1161,22 +1169,26 @@ function executeOnce() {
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
   console.log(`AJAX call ${callName} successful`);
-  completedCalls++;
+  // store completed call
+  completedCalls.push(callName)
   onAllCallsComplete();
 };
 
 // -----------------------------------------------------------------------------
 // Function to handle failure of an AJAX call
-const handleFailure = (callName) => {
+const handleFailure = (callName, callback) => {
   // Handle AJAX call failure here
   console.error(`AJAX call ${callName} failed`);
+
+  // try until successful
+  callback()
 };
 
 // -----------------------------------------------------------------------------
 // Function to execute when all AJAX calls have completed
 const onAllCallsComplete = () => {
   // Check if all three AJAX calls have completed
-  if (completedCalls === 3) {
+  if (arraysContainSameValues(completedCalls,completedCalls_final)) {
 
     // Set the flag in sessionStorage to indicate that the code has been executed 
     // and save time when last time the page was initialized
