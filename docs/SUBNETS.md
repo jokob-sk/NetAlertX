@@ -2,6 +2,9 @@
 
 You need to specify the network interface and the network mask. You can also configure multiple subnets and specify VLANS (see exceptions below).
 
+> [!TIP]
+> You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` settings when adding more subnets. If the timeout setting is exceeded, the scan is cancelled to prevent application hanging from rogue plugins. Check [debugging plugins](/docs/DEBUG_PLUGINS.md) for more tips.
+
 ## Examples
 
 > [!NOTE] 
@@ -11,8 +14,6 @@ You need to specify the network interface and the network mask. You can also con
 * Examples for one and two subnets  (❗ Note the `['...', '...']` format):
    * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
    * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0', '192.168.1.0/24 --interface=eth1 -vlan=107']` 
-
-
 
 
 ## Explanation

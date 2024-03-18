@@ -403,8 +403,7 @@
         {
           "function": "dev_SkipRepeated",
           "type": "text.select",
-          "maxLength": 250,
-          "default_value": "",
+          "default_value": 0,
           "options": ["{value}"],
           "options_params" : [
             {

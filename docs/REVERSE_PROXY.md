@@ -2,6 +2,10 @@
 
 > Submitted by amazing [cvc90](https://github.com/cvc90) 🙏
 
+
+> [!NOTE] 
+> There are 2 NGINX files for PiAlert, one for the bare-metal Debian install (`pialert.debian.conf`), and one for the docker container (`pialert.template.conf`). Both can be found in the [install](https://github.com/jokob-sk/Pi.Alert/tree/main/install) folder. Map, or use, the one appropriate for your setup. 
+
 ## NGINX HTTP Configuration (Direct Path)
 
 1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
