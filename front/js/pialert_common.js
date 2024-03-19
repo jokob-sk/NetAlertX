@@ -229,7 +229,7 @@ function cacheStrings()
 function getString (key) {
 
   // handle initial laod to make sure everything is set-up and cached
-  handleFirstLoad()
+  handleFirstLoad(getString)
  
   UI_LANG = getSetting("UI_LANG");
 
@@ -1084,6 +1084,8 @@ function arraysContainSameValues(arr1, arr2) {
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 // Define a unique key for storing the flag in sessionStorage
 var sessionStorageKey = "myScriptExecuted_pialert_common";
 
@@ -1130,16 +1132,17 @@ $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {
 
 // -----------------------------------------------------------------------------
 // Display spinner and reload page if not yet initialized
-function handleFirstLoad()
+function handleFirstLoad(callback)
 {
   if(!pialert_common_init)
   {
     setTimeout(function() {
       
-      location.reload(); 
+      callback(); 
     }, 1000);
   }
 }
+
 
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
@@ -1152,7 +1155,7 @@ function executeOnce() {
 
     resetInitializedFlag()
 
-    showSpinner()
+    
 
     //  to keep track of completed AJAX calls    
     completedCalls = []
@@ -1162,6 +1165,14 @@ function executeOnce() {
     cacheSettings();
     cacheStrings();
     initDeviceListAll_JSON();
+
+    showSpinner()
+
+    // reload ONCE after all caches initialized
+    setTimeout(() => {
+      location.reload()
+    }, 500);
+    
   }
 }
 
