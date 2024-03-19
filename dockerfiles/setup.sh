@@ -35,21 +35,21 @@ cp -na "${INSTALL_DIR}/pialert/back/pialert.conf" "${INSTALL_DIR}/pialert/config
 cp -na "${INSTALL_DIR}/pialert/back/pialert.db" "${FILEDB}"
 
 # if custom variables not set we do not need to do anything
-# if [ -n "${TZ}" ]; then
-#   FILECONF="${INSTALL_DIR}/pialert/config/pialert.conf"
-#   echo "[INSTALL] Setup timezone"
-#   sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
-# fi
-
-# if custom variables not set we do not need to do anything
-if [ -n "${TZ}" ]; then    
-  FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
-  if [ -f "$FILECONF" ]; then
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/config/pialert.conf 
-  else 
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/back/pialert.conf_bak 
-  fi
+if [ -n "${TZ}" ]; then
+  FILECONF="${INSTALL_DIR}/pialert/config/pialert.conf"
+  echo "[INSTALL] Setup timezone"
+  sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
 fi
+
+# # if custom variables not set we do not need to do anything
+# if [ -n "${TZ}" ]; then    
+#   FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
+#   if [ -f "$FILECONF" ]; then
+#     sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/config/pialert.conf 
+#   else 
+#     sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/back/pialert.conf_bak 
+#   fi
+# fi
 
 echo "[INSTALL] Setup NGINX"
 echo "Setting webserver to address ($LISTEN_ADDR) and port ($PORT)"
