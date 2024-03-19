@@ -69,12 +69,17 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 > - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
 > - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
 
-## ❤ Support me for...
+### ⭐ Sponsors
 
-- I don't get burned out and the app survives longer🔥🤯
-- Regular updates to keep your data and family safe 🔄 
-- Better and more functionality➕
-- Quicker and better support with issues 🆘
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
+
+Thank you to all the wonderful people who are sponsoring this project (=preventing my burnout🔥🤯):
+
+<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
+| All Sponsors |
+|---|
+
+<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 
@@ -90,20 +95,6 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
   📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
 
 </details>
-
-
-
-### ⭐ Sponsors
-
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
-
-Thank you to all the wonderful people who are sponsoring this project (=preventing my burnout🔥🤯):
-
-<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
-| All Sponsors |
-|---|
-
-<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
 ### 🙏Contributors
 

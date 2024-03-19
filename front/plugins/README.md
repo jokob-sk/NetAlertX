@@ -144,9 +144,9 @@ Currently, these data sources are supported (valid `data_source` value).
 | Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
-| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed (`<general|system|scanner|other|publisher>`). | 
+| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). | 
 
-> * "Needs to return a "table"" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `pialert.log` might be logged.
+> * "Needs to return a "table" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `pialert.log` might be logged.
 
 > 🔎Example
 >```json
