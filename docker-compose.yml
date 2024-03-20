@@ -62,7 +62,5 @@ services:
     environment:
       - TZ=${TZ}
       - PORT=${PORT}
-      - HOST_USER_ID=${HOST_USER_ID}
-      - HOST_USER_GID=${HOST_USER_GID}
       # ❗ DANGER ZONE BELOW - Setting ALWAYS_FRESH_INSTALL=true will delete the content of the /db & /config folders
       - ALWAYS_FRESH_INSTALL=${ALWAYS_FRESH_INSTALL}

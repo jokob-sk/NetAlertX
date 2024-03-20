@@ -48,8 +48,6 @@ services:
     environment:
       - TZ=Europe/Berlin
       - PORT=20211
-      - HOST_USER_ID=1000
-      - HOST_USER_GID=1000
     ports:
       - "20211:20211"
     network_mode: host

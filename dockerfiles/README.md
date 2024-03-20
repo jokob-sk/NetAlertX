@@ -40,8 +40,6 @@ docker run -d --rm --network=host \
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
-|`HOST_USER_GID`    |User ID (UID) to map the user in the container to a server user with sufficient read&write permissions on the mapped files   |  `1000` |
-|`HOST_USER_ID` |User Group ID (GID)  to map the user group in the container to a server user group with sufficient read&write permissions on the mapped files    |    `1000` |
 |`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `pi.alert`/`_dev` image.   |    `N/A` |
 
 ### Docker paths
@@ -137,8 +135,6 @@ services:
       - local/path/logs:/home/pi/pialert/front/log
     environment:
       - TZ=Europe/Berlin      
-      - HOST_USER_ID=1000
-      - HOST_USER_GID=1000
       - PORT=20211
 ```
 
@@ -188,8 +184,6 @@ services:
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
     environment:
       - TZ=${TZ}      
-      - HOST_USER_ID=${HOST_USER_ID}
-      - HOST_USER_GID=${HOST_USER_GID}
       - PORT=${PORT}
 ```
 
@@ -205,8 +199,6 @@ LOGS_LOCATION=/path/to/docker_logs
 #ENVIRONMENT VARIABLES
 
 TZ=Europe/Paris
-HOST_USER_ID=1000
-HOST_USER_GID=1000
 PORT=20211
 
 #DEVELOPMENT VARIABLES
