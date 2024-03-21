@@ -68,7 +68,7 @@ touch "${INSTALL_DIR}"/pialert/front/log/{execution_queue.log,pialert_front.log,
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 chown -R nginx:www-data "${INSTALL_DIR}"/pialert/{config,front/log,db}
-find "${INSTALL_DIR}"/pialert/{config,front/log,db} -type d -exec chmod 750 {} \;
+chmod 750 "${INSTALL_DIR}"/pialert/{config,front/log,db}
 find "${INSTALL_DIR}"/pialert/{config,front/log,db} -type f -exec chmod 640 {} \;
 
 # Check if buildtimestamp.txt doesn't exist
