@@ -37,8 +37,12 @@ cp -na "${INSTALL_DIR}/pialert/back/pialert.db" "${FILEDB}"
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then
   FILECONF="${INSTALL_DIR}/pialert/config/pialert.conf"
-  echo "[INSTALL] Setup timezone"
+  echo "[INSTALL] Setup timezone" 
   sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
+
+  # set TimeZone in container
+  cp /usr/share/zoneinfo/$TZ /etc/localtime 
+  echo $TZ > /etc/timezone
 fi
 
 echo "[INSTALL] Setup NGINX"

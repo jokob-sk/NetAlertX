@@ -60,7 +60,7 @@ docker run -d --rm --network=host \
 
 > Use separate `db` and `config` directories, don't nest them.
 
-### Modify the config (`pialert.conf`) only if UI is not available
+### (If UI is not available) Modify the config (`pialert.conf`) 
 
 - The preferred way is to manage the configuration via the Settings section in the UI.
 - You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
@@ -235,14 +235,7 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
 
 Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> & for help and tips&tricks for Dockerfile(s) and <a href="https://github.com/vladaurosh">@vladaurosh</a> for Alpine re-base help.
 
-## ❤ Support me
-
-Get:
-- Regular updates to keep your data and family safe 🔄 
-- Better and more functionality➕
-- I don't get burned out and the app survives longer🔥🤯
-- Quicker and better support with issues 🆘
-- Less grumpy me 😄
+## ❤ Support me to prevent my burnout 🔥🤯
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 
