@@ -112,7 +112,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
+              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
             }
           ],
           "localized": ["name", "description"],
@@ -139,7 +139,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT '' as id, '' as name UNION SELECT dev_DeviceType as id, dev_DeviceType as name FROM (SELECT dev_DeviceType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;"
+              "value" : "SELECT Distinct id, name FROM (SELECT '' as id, '❌None' as name UNION SELECT dev_DeviceType as id, dev_DeviceType as name FROM (SELECT dev_DeviceType FROM Devices where dev_DeviceType <> '' UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id);"
             },
             {
               "name"  : "uilang",
@@ -210,7 +210,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices UNION SELECT 'Personal' ) AS all_devices ORDER BY id;"
+              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices WHERE dev_Group <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
             }
           ],
           "localized": ["name", "description"],
@@ -494,7 +494,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
+              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
             }
           ],
           "localized": ["name", "description"],
@@ -539,7 +539,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT '' as name, '' as id UNION SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+              "value" : "SELECT '❌None' as name, '' as id UNION SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
             },
             {
               "name"  : "target_macs",

@@ -24,7 +24,6 @@
     switch ($action) {
       case 'getDeviceData':           getDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
-      case 'getNetworkNodes':         getNetworkNodes();                       break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
       case 'createBackupDB':          createBackupDB();                        break;
@@ -47,10 +46,8 @@
       case 'getDevicesList':          getDevicesList();                        break;
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
 
-      case 'getOwners':               getOwners();                             break;
       case 'getDeviceTypes':          getDeviceTypes();                        break;
-      case 'getGroups':               getGroups();                             break;
-      case 'getLocations':            getLocations();                          break;                  
+      
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
       case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
@@ -744,73 +741,8 @@ function getDevicesListCalendar() {
 
 
 //------------------------------------------------------------------------------
-//  Query the List of Owners
-//------------------------------------------------------------------------------
-function getOwners() {
-  global $db;
-
-  // SQL
-  $sql = 'SELECT DISTINCT 1 as dev_Order, dev_Owner
-          FROM Devices
-          WHERE dev_Owner <> "(unknown)" AND dev_Owner <> ""
-            AND dev_Favorite = 1
-        UNION
-          SELECT DISTINCT 2 as dev_Order, dev_Owner
-          FROM Devices
-          WHERE dev_Owner <> "(unknown)" AND dev_Owner <> ""
-            AND dev_Favorite = 0
-            AND dev_Owner NOT IN
-               (SELECT dev_Owner FROM Devices WHERE dev_Favorite = 1)
-        ORDER BY 1,2 ';
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-    $tableData[] = array ('order' => $row['dev_Order'],
-                          'name'  => $row['dev_Owner']);
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-
-
-//------------------------------------------------------------------------------
 //  Query Device Data
 //------------------------------------------------------------------------------
-function getNetworkNodes() {
-  global $db;
-
-  // Device Data  
-  $networkDeviceTypes = str_replace("]", "",(str_replace("[", "", getSettingValue("NETWORK_DEVICE_TYPES"))));
-  
-
-  $sql = 'SELECT * FROM Devices WHERE dev_DeviceType in ( '. $networkDeviceTypes .' )';
-
-  // echo $sql;
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-    // Push row data
-    $tableData[] = array('id'    => $row['dev_MAC'], 
-                         'name'  => $row['dev_Name'] );                        
-  }
-
-  // Add an empty option at the bottom
-  $tableData[] = array('id' => '', 'name' => '❌'.lang("Network_ManageUnassign")); // Add empty option
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
 
 //------------------------------------------------------------------------------
 function getIcons() {
@@ -946,86 +878,6 @@ function getDeviceTypes() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     $tableData[] = array ('order' => $row['dev_Order'],
                           'name'  => $row['dev_DeviceType']);
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-//------------------------------------------------------------------------------
-//  Query the List of groups
-//------------------------------------------------------------------------------
-function getGroups() {
-  global $db;
-
-  // SQL
-  $sql = 'SELECT DISTINCT 1 as dev_Order, dev_Group
-          FROM Devices
-          WHERE dev_Group NOT IN ("(unknown)", "Others") AND dev_Group <> ""
-          UNION SELECT 1 as dev_Order, "Always on"
-          UNION SELECT 1 as dev_Order, "Friends"
-          UNION SELECT 1 as dev_Order, "Personal"
-          UNION SELECT 2 as dev_Order, "Others"
-          ORDER BY 1,2 ';
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-    $tableData[] = array ('order' => $row['dev_Order'],
-                          'name'  => $row['dev_Group']);
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-
-
-//------------------------------------------------------------------------------
-//  Query the List of locations
-//------------------------------------------------------------------------------
-function getLocations() {
-  global $db;
-
-  // SQL
-  $sql = 'SELECT DISTINCT 9 as dev_Order, dev_Location
-          FROM Devices
-          WHERE dev_Location <> ""
-            AND dev_Location NOT IN (
-                "Bathroom", "Bedroom", "Dining room", "Hallway",
-                "Kitchen", "Laundry", "Living room", "Study", 
-                "Attic", "Basement", "Garage", 
-                "Back yard", "Garden", "Terrace",
-                "Other")
-
-          UNION SELECT 1 as dev_Order, "Bathroom"
-          UNION SELECT 1 as dev_Order, "Bedroom"
-          UNION SELECT 1 as dev_Order, "Dining room"
-          UNION SELECT 1 as dev_Order, "Hall"  
-          UNION SELECT 1 as dev_Order, "Kitchen"
-          UNION SELECT 1 as dev_Order, "Laundry"
-          UNION SELECT 1 as dev_Order, "Living room"
-          UNION SELECT 1 as dev_Order, "Study" 
-
-          UNION SELECT 2 as dev_Order, "Attic"
-          UNION SELECT 2 as dev_Order, "Basement" 
-          UNION SELECT 2 as dev_Order, "Garage" 
-
-          UNION SELECT 3 as dev_Order, "Back yard"
-          UNION SELECT 3 as dev_Order, "Garden" 
-          UNION SELECT 3 as dev_Order, "Terrace"
-
-          UNION SELECT 10 as dev_Order, "Other"
-          ORDER BY 1,2 ';
-
-
- 
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-    $tableData[] = array ('order' => $row['dev_Order'],
-                          'name'  => $row['dev_Location']);
   }
 
   // Return json

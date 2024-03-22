@@ -528,23 +528,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // generate a list of options for a input select
   function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
   {
-
-    var optionsHtml = ""
-
     multi = isMultiSelect ? "multiple" : "";
 
     optionsArray = getSettingOptions(set['Code_Name'] )
-    valuesArray = createArray(set['Value']);
-    
+    valuesArray = createArray(set['Value']);    
 
-    var targetLocation = set['Code_Name'] + "_initSettingDropdown";
-    
-    // placeholder option which will be replaced on callback
-    optionsHtml += `<option id="${targetLocation}" temporary="temporary"></option>`;        
+    // create unique ID  
+    var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
 
     // execute AJAX callabck + SQL query resolution
-    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)
-  
+    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)  
 
     // main selection dropdown wrapper
     input += `
@@ -553,7 +546,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               class="form-control" 
               name="${set['Code_Name']}" 
               id="${set['Code_Name']}" ${multi}>
-          ${optionsHtml}
+
+            <option id="${targetLocation}" temporary="temporary"></option>
     
       </select>`;
       

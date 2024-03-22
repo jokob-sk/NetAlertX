@@ -164,6 +164,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down "></span></button>                                
                               <ul id="dropdownOwner" class="dropdown-menu dropdown-menu-right">
+                                <li id="dropdownOwner_initSettingDropdown"></li>
                               </ul>
                             </div>
                           </div>
@@ -238,6 +239,7 @@
                                 <span class="fa fa-caret-down"></span>
                               </button>
                               <ul id="dropdownGroup" class="dropdown-menu dropdown-menu-right">
+                                <li id="dropdownGroup_initSettingDropdown"></li>
                               </ul>
                             </div>
                           </div>
@@ -255,7 +257,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownLocation" class="dropdown-menu dropdown-menu-right">
-
+                                <li id="dropdownLocation_initSettingDropdown"></li>
                               </ul>
                             </div>
                           </div>
@@ -333,6 +335,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
+                                <li id="dropdownNetworkNodeMac_initSettingDropdown"></li>
                               </ul>
                             </div>
 
@@ -824,18 +827,16 @@ function initializeiCheck () {
 // -----------------------------------------------------------------------------
 function initializeCombos () {
   // Initialize combos with queries
-  initializeCombo ( '#dropdownOwner',          'getOwners',       'txtOwner', true);
-  initializeCombo ( '#dropdownDeviceType',     'getDeviceTypes',  'txtDeviceType', true);
-  initializeCombo ( '#dropdownGroup',          'getGroups',       'txtGroup', true);
-  initializeCombo ( '#dropdownLocation',       'getLocations',    'txtLocation', true);
-  initializeCombo ( '#dropdownNetworkNodeMac', 'getNetworkNodes', 'txtNetworkNodeMac', false);
 
-  
-  // initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac", generateList)
-
+  initializeCombo ( '#dropdownDeviceType',     'getDeviceTypes',  'txtDeviceType', true);  
   initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
   initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
+
+  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_initSettingDropdown", generatedevDetailsList, 'txtOwner' )
+  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_initSettingDropdown", generatedevDetailsList, 'txtGroup' )
+  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_initSettingDropdown", generatedevDetailsList, 'txtLocation' )
+  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_initSettingDropdown", generatedevDetailsList, 'txtNetworkNodeMac' )
 
   // Initialize static combos
   initializeComboSkipRepeated ();

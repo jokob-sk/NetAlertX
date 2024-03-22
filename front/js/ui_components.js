@@ -113,21 +113,17 @@ $(function () {
 
 // -----------------------------------------------------------------------------
 // Initiate dropdown
-function initSettingDropdown(settingKey, valuesArray, targetLocation, callbackToGenerateEntries)
+function initSettingDropdown(settingKey, valuesArray, targetLocation, callbackToGenerateEntries, targetField)
 {
 
   var optionsHtml = ""
-  var targetLocation_options = settingKey + "_initSettingDropdown"
  
   optionsArray = createArray(getSettingOptions(settingKey))  
 
   // check if the result is a SQL query
   if(isSQLQuery(optionsArray[0]))
-  {
-    
-    optionsHtml += `<option id="${targetLocation_options}"></option>`;    
-    
-    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation_options);
+  {    
+    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField);
 
   } else // this should be already an array, e.g. from a setting or pre-defined
   {     
@@ -144,9 +140,6 @@ function initSettingDropdown(settingKey, valuesArray, targetLocation, callbackTo
       }, 50);   
     
   }
-
-
-
 }
 
 
@@ -180,7 +173,31 @@ function generateList(data, valuesArray) {
 
     listHtml += `<li ${selected}>${item.name}</li>`;
   });
-  listHtml += "";
+
+  return listHtml;
+}
+
+// -----------------------------------------------------------------------------
+// Processor to generate a list
+function generatedevDetailsList(data, valuesArray, targetField) {
+
+  var listHtml = "";
+
+  console.log(data);
+  data.forEach(function(item) {
+
+    let selected = valuesArray.includes(item.id) ? 'selected' : '';
+
+
+    console.log(item);
+
+    // listHtml += `<li ${selected}>${item.name}</li>`;
+    listHtml += `<li ${selected}>
+                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${item.name}</a> 
+                </li>`;
+    
+  });
+
   return listHtml;
 }
 
