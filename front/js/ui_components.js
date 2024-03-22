@@ -113,7 +113,11 @@ $(function () {
 
 // -----------------------------------------------------------------------------
 // Initiate dropdown
-function initSettingDropdown(settingKey, valuesArray, targetLocation, callbackToGenerateEntries, targetField)
+function initSettingDropdown(settingKey,       // Identifier for the setting
+                            valuesArray,       // Array of values to be pre-selected in the dropdown
+                            targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
+                            callbackToGenerateEntries,  // Callback function to generate entries based on options
+                            targetField)      // Target field or element where selected value should be applied or updated
 {
 
   var optionsHtml = ""
@@ -179,7 +183,7 @@ function generateList(data, valuesArray) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate a list
-function generatedevDetailsList(data, valuesArray, targetField) {
+function genDevDetailsList(data, valuesArray, targetField) {
 
   var listHtml = "";
 

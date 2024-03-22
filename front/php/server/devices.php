@@ -46,8 +46,6 @@
       case 'getDevicesList':          getDevicesList();                        break;
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
 
-      case 'getDeviceTypes':          getDeviceTypes();                        break;
-      
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
       case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
@@ -810,77 +808,6 @@ function getDevices() {
   }
   
     // Return json
-  echo (json_encode ($tableData));
-}
-
-
-//------------------------------------------------------------------------------
-//  Query the List of types
-//------------------------------------------------------------------------------
-function getDeviceTypes() {
-  global $db;
-
-  // SQL
-  $sql = 'SELECT DISTINCT 9 as dev_Order, dev_DeviceType
-          FROM Devices
-          WHERE dev_DeviceType NOT IN ("",
-                 "Smartphone", "Tablet",
-                 "Laptop", "Mini PC", "PC", "Printer", "Server", "Singleboard Computer (SBC)", "NAS",
-                 "Domotic", "IP Camera", "Game Console", "SmartTV", "TV Decoder", "Virtual Assistance",
-                 "Clock", "House Appliance", "Phone", "Radio",
-                 "AP", "Gateway", "Firewall", "Hypervisor", "Powerline", "Switch", "WLAN", "PLC", "Router","USB LAN Adapter", "USB WIFI Adapter" )
-
-          UNION SELECT 1 as dev_Order, "Smartphone"
-          UNION SELECT 1 as dev_Order, "Tablet"
-
-          UNION SELECT 2 as dev_Order, "Laptop"
-          UNION SELECT 2 as dev_Order, "Mini PC"
-          UNION SELECT 2 as dev_Order, "PC"
-          UNION SELECT 2 as dev_Order, "Printer"
-          UNION SELECT 2 as dev_Order, "Server"
-          UNION SELECT 2 as dev_Order, "Singleboard Computer (SBC)"
-          UNION SELECT 2 as dev_Order, "NAS"
-
-          UNION SELECT 3 as dev_Order, "Domotic"
-          UNION SELECT 3 as dev_Order, "IP Camera"
-          UNION SELECT 3 as dev_Order, "Game Console"
-          UNION SELECT 3 as dev_Order, "SmartTV"
-          UNION SELECT 3 as dev_Order, "TV Decoder"
-          UNION SELECT 3 as dev_Order, "Virtual Assistance"
-
-          UNION SELECT 4 as dev_Order, "Clock"
-          UNION SELECT 4 as dev_Order, "House Appliance"
-          UNION SELECT 4 as dev_Order, "Phone"
-          UNION SELECT 4 as dev_Order, "Radio"
-
-          -- network devices
-          UNION SELECT 5 as dev_Order, "AP"
-          UNION SELECT 5 as dev_Order, "Gateway"
-          UNION SELECT 5 as dev_Order, "Firewall"
-          UNION SELECT 5 as dev_Order, "Hypervisor"
-          UNION SELECT 5 as dev_Order, "Powerline"
-          UNION SELECT 5 as dev_Order, "Switch"
-          UNION SELECT 5 as dev_Order, "WLAN"
-          UNION SELECT 5 as dev_Order, "PLC"
-          UNION SELECT 5 as dev_Order, "Router"
-          UNION SELECT 5 as dev_Order, "USB LAN Adapter"
-          UNION SELECT 5 as dev_Order, "USB WIFI Adapter"
-
-          UNION SELECT 10 as dev_Order, "Other"
-
-          ORDER BY 1,2';
-
-          
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-    $tableData[] = array ('order' => $row['dev_Order'],
-                          'name'  => $row['dev_DeviceType']);
-  }
-
-  // Return json
   echo (json_encode ($tableData));
 }
 

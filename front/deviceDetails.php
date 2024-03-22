@@ -164,7 +164,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down "></span></button>                                
                               <ul id="dropdownOwner" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownOwner_initSettingDropdown"></li>
+                                <li id="dropdownOwner_tmp"></li>
                               </ul>
                             </div>
                           </div>
@@ -182,7 +182,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownDeviceType" class="dropdown-menu dropdown-menu-right">
-                                
+                                <li id="dropdownDeviceType_tmp"></li>
                               </ul>
                             </div>
                           </div>
@@ -239,7 +239,7 @@
                                 <span class="fa fa-caret-down"></span>
                               </button>
                               <ul id="dropdownGroup" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownGroup_initSettingDropdown"></li>
+                                <li id="dropdownGroup_tmp"></li>
                               </ul>
                             </div>
                           </div>
@@ -257,7 +257,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                 <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownLocation" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownLocation_initSettingDropdown"></li>
+                                <li id="dropdownLocation_tmp"></li>
                               </ul>
                             </div>
                           </div>
@@ -335,7 +335,7 @@
                               <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
                                     <span class="fa fa-caret-down"></span></button>
                               <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownNetworkNodeMac_initSettingDropdown"></li>
+                                <li id="dropdownNetworkNodeMac_tmp"></li>
                               </ul>
                             </div>
 
@@ -828,15 +828,24 @@ function initializeiCheck () {
 function initializeCombos () {
   // Initialize combos with queries
 
-  initializeCombo ( '#dropdownDeviceType',     'getDeviceTypes',  'txtDeviceType', true);  
+
   initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
   initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
 
-  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_initSettingDropdown", generatedevDetailsList, 'txtOwner' )
-  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_initSettingDropdown", generatedevDetailsList, 'txtGroup' )
-  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_initSettingDropdown", generatedevDetailsList, 'txtLocation' )
-  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_initSettingDropdown", generatedevDetailsList, 'txtNetworkNodeMac' )
+  // Initiate dropdown
+  // function initSettingDropdown(settingKey,       // Identifier for the setting
+  //                             valuesArray,       // Array of values to be pre-selected in the dropdown
+  //                             targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
+  //                             callbackToGenerateEntries,  // Callback function to generate entries based on options
+  //                             targetField)      // Target field or element where selected value should be applied or updated
+
+
+  initSettingDropdown("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genDevDetailsList, 'txtDeviceType' )
+  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genDevDetailsList, 'txtOwner' )
+  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genDevDetailsList, 'txtGroup' )
+  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genDevDetailsList, 'txtLocation' )
+  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genDevDetailsList, 'txtNetworkNodeMac' )
 
   // Initialize static combos
   initializeComboSkipRepeated ();

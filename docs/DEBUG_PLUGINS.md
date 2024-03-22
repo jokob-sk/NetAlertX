@@ -58,7 +58,7 @@ Input data from the plugin might cause mapping issues in specific edge cases. Lo
 17:31:06 [API] Updating table_plugins_history.json file in /front/api
 ```
 
-> The debug output between the 🔻red arrows🔺 is important for debugging (arrows added only to highlight the section on this page, they are not available in teh actual debug log)
+> The debug output between the 🔻red arrows🔺 is important for debugging (arrows added only to highlight the section on this page, they are not available in the actual debug log)
 
 In the above output notice the section logging how many events are produced by the plugin:
 
