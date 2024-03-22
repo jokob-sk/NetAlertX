@@ -621,6 +621,10 @@
   <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
+  <!-- ----------------------------------------------------------------------- -->
+  <script src="js/ui_components.js"></script>
+  <script src="js/db_methods.js"></script>
+  <!-- ----------------------------------------------------------------------- -->
 
 <!-- Dark-Mode Patch -->
 <?php
@@ -825,6 +829,10 @@ function initializeCombos () {
   initializeCombo ( '#dropdownGroup',          'getGroups',       'txtGroup', true);
   initializeCombo ( '#dropdownLocation',       'getLocations',    'txtLocation', true);
   initializeCombo ( '#dropdownNetworkNodeMac', 'getNetworkNodes', 'txtNetworkNodeMac', false);
+
+  
+  // initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac", generateList)
+
   initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
   initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  

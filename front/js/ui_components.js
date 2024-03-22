@@ -113,7 +113,7 @@ $(function () {
 
 // -----------------------------------------------------------------------------
 // Initiate dropdown
-function initSettingDropdown(settingKey, valuesArray, targetLocation)
+function initSettingDropdown(settingKey, valuesArray, targetLocation, callbackToGenerateEntries)
 {
 
   var optionsHtml = ""
@@ -127,7 +127,7 @@ function initSettingDropdown(settingKey, valuesArray, targetLocation)
     
     optionsHtml += `<option id="${targetLocation_options}"></option>`;    
     
-    readData(optionsArray[0], generateDropdownOptions, valuesArray, targetLocation_options);
+    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation_options);
 
   } else // this should be already an array, e.g. from a setting or pre-defined
   {     

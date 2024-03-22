@@ -112,7 +112,7 @@
 
                     targetLocation = columns[j].Code_Name + "_initSettingDropdown"
 
-                    initSettingDropdown(columns[j].Code_Name, [], targetLocation)
+                    initSettingDropdown(columns[j].Code_Name, [], targetLocation, generateDropdownOptions)
 
                     input = `<select  class="form-control"
                                       id="${columns[j].Code_Name}"

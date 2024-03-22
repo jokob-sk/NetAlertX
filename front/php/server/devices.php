@@ -799,6 +799,9 @@ function getNetworkNodes() {
     $tableData[] = array('id'    => $row['dev_MAC'], 
                          'name'  => $row['dev_Name'] );                        
   }
+
+  // Add an empty option at the bottom
+  $tableData[] = array('id' => '', 'name' => '❌'.lang("Network_ManageUnassign")); // Add empty option
   
   // Control no rows
   if (empty($tableData)) {

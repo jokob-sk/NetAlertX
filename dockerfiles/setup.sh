@@ -77,3 +77,11 @@ if [ ! -f "${INSTALL_DIR}/pialert/front/buildtimestamp.txt" ]; then
     date +%s > "${INSTALL_DIR}/pialert/front/buildtimestamp.txt"
     chown nginx:www-data "${INSTALL_DIR}/pialert/front/buildtimestamp.txt"
 fi
+
+echo -e "
+            [ENV] PATH                      is ${PATH} 
+            [ENV] PORT                      is ${PORT} 
+            [ENV] TZ                        is ${TZ} 
+            [ENV] LISTEN_ADDR               is ${LISTEN_ADDR} 
+            [ENV] ALWAYS_FRESH_INSTALL      is ${ALWAYS_FRESH_INSTALL} 
+        "

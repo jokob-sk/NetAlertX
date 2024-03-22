@@ -170,7 +170,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
           pluginsData = res["data"];  
 
-          initSettingsPage(settingsData, pluginsData);
+          initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
         })
     })
   }
@@ -536,28 +536,15 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     optionsArray = getSettingOptions(set['Code_Name'] )
     valuesArray = createArray(set['Value']);
     
-    // // check if the result is a SQL query - if so, dropdown will be populated async with AJAX
-    // if(isSQLQuery(optionsArray))
-    // {
-      var targetLocation = set['Code_Name'] + "_initSettingDropdown";
-      
-      // placeholder option which will be replaced on callback
-      optionsHtml += `<option id="${targetLocation}" temporary="temporary"></option>`;        
 
-      // execute AJAX callabck + SQL query resolution
-      initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation)
+    var targetLocation = set['Code_Name'] + "_initSettingDropdown";
+    
+    // placeholder option which will be replaced on callback
+    optionsHtml += `<option id="${targetLocation}" temporary="temporary"></option>`;        
 
-    // } 
-    // else // it's a string without a SQL resolution requirements
-    // {     
-    //   options = createArray(optionsArray);
-
-    //   options.forEach(option => {
-    //     let selected = valuesArray.includes(option) ? 'selected' : '';
-    //     optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-    //   });      
-      
-    // }
+    // execute AJAX callabck + SQL query resolution
+    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)
+  
 
     // main selection dropdown wrapper
     input += `
