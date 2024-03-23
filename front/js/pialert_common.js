@@ -879,9 +879,11 @@ function initDeviceListAll_JSON()
 
     if(devicesListAll_JSON_str == "")
     {
+      showSpinner()
+
       setTimeout(() => {
         initDeviceListAll_JSON()
-      }, 1000);
+      }, 5000);
     }
 
 
@@ -1155,7 +1157,7 @@ function executeOnce() {
 
     resetInitializedFlag()
 
-    
+    showSpinner()
 
     //  to keep track of completed AJAX calls    
     completedCalls = []
@@ -1166,10 +1168,9 @@ function executeOnce() {
     cacheStrings();
     initDeviceListAll_JSON();
 
-    showSpinner()
-
     // reload ONCE after all caches initialized
     setTimeout(() => {
+      // console.log('reload ONCE after all caches initialized');
       location.reload()
     }, 500);
     
@@ -1198,8 +1199,37 @@ const handleFailure = (callName, callback) => {
 // -----------------------------------------------------------------------------
 // Function to execute when all AJAX calls have completed
 const onAllCallsComplete = () => {
+
+  // Get completed calls from cache
+  let completedCalls_tmp = getCache('completedCalls');
+  let completedCalls_cached = [];
+
+  // Merge local completedCalls with completedCalls_cached array - ensure uniqueness
+  // if cache contains values, merge those two arrays
+  if (completedCalls_tmp != "") {
+    
+    // create array from comma-separated values
+    completedCalls_cached = completedCalls_tmp.split(',');
+
+    $.each(completedCalls_cached,function(index, completedCall){
+
+      // append the cached value to the current completedCalls array if value is missing
+      if(completedCalls.includes(completedCall) == false)
+      {
+        completedCalls.push(completedCall)
+      }
+
+    });
+  }
+
+  // Update cache with merged completedCalls
+  setCache('completedCalls', completedCalls);
+
+  // console.log(completedCalls_cached);
+  // console.log(completedCalls); 
+
   // Check if all three AJAX calls have completed
-  if (arraysContainSameValues(completedCalls,completedCalls_final)) {
+  if (arraysContainSameValues(completedCalls, completedCalls_final)) {
 
     // Set the flag in sessionStorage to indicate that the code has been executed 
     // and save time when last time the page was initialized
