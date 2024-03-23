@@ -353,7 +353,7 @@ function getDevicesTotals(devicesData) {
     setCache("getDevicesTotals", resultJSON);
   }  
 
-  console.log(resultJSON);
+  // console.log(resultJSON);
 }
 
 // -----------------------------------------------------------------------------

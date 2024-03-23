@@ -1095,6 +1095,7 @@ var sessionStorageKey = "myScriptExecuted_pialert_common";
 // Clearing all the caches
 function clearCache()
 {
+  showSpinner()
   resetInitializedFlag()
   window.location.reload()
 }

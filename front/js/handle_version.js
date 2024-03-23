@@ -4,7 +4,7 @@ function versionUpdateUI(){
 
   isNewVersion = getCookie("isNewVersion")
 
-  console.log(isNewVersion)
+  // console.log(isNewVersion)
 
   // if the release_timestamp is older by 10 min or more as the build timestamp then there is a new release available 
   if(isNewVersion != "false")
