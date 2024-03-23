@@ -203,7 +203,7 @@ def importConfigs (db):
         #  bulk-import language strings
         sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )
 
-        db.commitDB()
+        # db.commitDB()
 
 
 
@@ -217,7 +217,6 @@ def importConfigs (db):
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
          "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
     
-    #commitDB(sql_connection)
     db.commitDB()
 
     #  update only the settings datasource
@@ -249,7 +248,7 @@ def read_config_file(filename):
 
 
 #-------------------------------------------------------------------------------
-# DEPERECATED soonest after 3/3/2024
+# DEPERECATED soonest after 10/10/2024
 # 🤔Idea/TODO: Check and compare versions/timestamps amd only perform a replacement if config/version older than...
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',

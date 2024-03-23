@@ -9,7 +9,7 @@
 5. In PiAlert specify these settings:
 
 ```python
-    REPORT_MAIL=True
+    SMTP_RUN='on_notification'
     SMTP_SERVER='mail.gmx.com'
     SMTP_PORT=465
     SMTP_USER='gmx_email@gmx.com'
@@ -17,8 +17,8 @@
     SMTP_SKIP_TLS=True
     SMTP_FORCE_SSL=True
     SMTP_SKIP_LOGIN=False
-    REPORT_FROM='gmx_email@gmx.com' # this has to be the same email as in SMTP_USER
-    REPORT_TO='some_target_email@gmail.com'
+    SMTP_REPORT_FROM='gmx_email@gmx.com' # this has to be the same email as in SMTP_USER
+    SMTP_REPORT_TO='some_target_email@gmail.com'
 ```
 
 
@@ -30,12 +30,12 @@
 2. Specify the following settings:
 
 ```python
-    REPORT_MAIL=True
+    SMTP_RUN='on_notification'
     SMTP_SKIP_TLS=True
     SMTP_FORCE_SSL=True 
     SMTP_PORT=465
     SMTP_SERVER='smtp.gmail.com'
     SMTP_PASS='16-digit passcode from google'
-    REPORT_TO='some_target_email@gmail.com'
+    SMTP_REPORT_TO='some_target_email@gmail.com'
 ```
 
