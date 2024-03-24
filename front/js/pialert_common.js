@@ -15,11 +15,6 @@ var UI_LANG = "English";
 var settingsJSON = {}
 
 
-// urlParams = new Proxy(new URLSearchParams(window.location.search), {
-//   get: (searchParams, prop) => searchParams.get(prop.toString()),
-// });
-
-
 // -----------------------------------------------------------------------------
 // Simple session cache withe expiration managed via cookies
 // -----------------------------------------------------------------------------
@@ -116,47 +111,51 @@ function deleteAllCookies() {
 // -----------------------------------------------------------------------------
 function cacheSettings()
 {
-  
-  $.get('api/table_settings.json?nocache=' + Date.now(), function(resSet) { 
+  return new Promise((resolve, reject) => {
+    if(!getCache('completedCalls').includes('cacheSettings'))
+    {  
+      $.get('api/table_settings.json?nocache=' + Date.now(), function(resSet) { 
 
-    $.get('api/plugins.json?nocache=' + Date.now(), function(resPlug) {        
+        $.get('api/plugins.json?nocache=' + Date.now(), function(resPlug) {        
 
-      pluginsData = resPlug["data"]; 
-      settingsData = resSet["data"];  
+          pluginsData = resPlug["data"]; 
+          settingsData = resSet["data"];  
 
-      settingsData.forEach((set) => {  
+          settingsData.forEach((set) => {  
 
-        resolvedOptions = createArray(set.Options)
-        setPlugObj     = {};
-        options_params = [];
-      
-        // proceed only if first option item contains something to resolve
-        if( !set.Code_Name.includes("__metadata") && 
-            resolvedOptions.length != 0 && 
-            resolvedOptions[0].includes("{value}"))
-        {
-          // get setting definition from the plugin config if available
-          setPlugObj = getPluginSettingObject(pluginsData, set.Code_Name)
-
-          // check if options contains parameters and resolve 
-          if(setPlugObj != {} && setPlugObj["options_params"])
-          {
-            // get option_params for {value} resolution
-            options_params = setPlugObj["options_params"]      
-
-            if(options_params != [])
+            resolvedOptions = createArray(set.Options)
+            setPlugObj     = {};
+            options_params = [];
+          
+            // proceed only if first option item contains something to resolve
+            if( !set.Code_Name.includes("__metadata") && 
+                resolvedOptions.length != 0 && 
+                resolvedOptions[0].includes("{value}"))
             {
-              // handles only strings of length == 1
-              resolvedOptions = `["${resolveParams(options_params, resolvedOptions[0])}"]`
-            }
-          }    
-        }
+              // get setting definition from the plugin config if available
+              setPlugObj = getPluginSettingObject(pluginsData, set.Code_Name)
 
-        setCache(`pia_set_${set.Code_Name}`, set.Value) 
-        setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
-      });
-     }).then(() => handleSuccess('cacheSettings')).catch(() => handleFailure('cacheSettings', cacheSettings));    // handle AJAX synchronization
-  })
+              // check if options contains parameters and resolve 
+              if(setPlugObj != {} && setPlugObj["options_params"])
+              {
+                // get option_params for {value} resolution
+                options_params = setPlugObj["options_params"]      
+
+                if(options_params != [])
+                {
+                  // handles only strings of length == 1
+                  resolvedOptions = `["${resolveParams(options_params, resolvedOptions[0])}"]`
+                }
+              }    
+            }
+
+            setCache(`pia_set_${set.Code_Name}`, set.Value) 
+            setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
+          });
+        }).then(() => handleSuccess('cacheSettings', resolve())).catch(() => handleFailure('cacheSettings', reject("cacheSettings already completed")));    // handle AJAX synchronization
+      })
+    } 
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -197,32 +196,35 @@ function getSetting (key) {
 // Get language string
 // -----------------------------------------------------------------------------
 function cacheStrings()
-{
+{  
+  return new Promise((resolve, reject) => {
+    if(!getCache('completedCalls').includes('cacheStrings'))
+    {
+      // handle core strings and translations
+      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
 
-  // handle core strings and translations
-  var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
+      allLanguages.forEach(function (language_code) {
+        $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
+          // Iterate over each language
+          Object.entries(res).forEach(([key, value]) => {
+            // Store translations for each key-value pair
+            setCache(`pia_lang_${key}_${language_code}`, value)
+          });
 
-  allLanguages.forEach(function (language_code) {
-    $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
-      // Iterate over each language
-      Object.entries(res).forEach(([key, value]) => {
-        // Store translations for each key-value pair
-        setCache(`pia_lang_${key}_${language_code}`, value)
+          // handle strings and translations from plugins
+          $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`, function(res) {    
+                
+            data = res["data"];       
+
+            data.forEach((langString) => {      
+              setCache(`pia_lang_${langString.String_Key}_${langString.Language_Code}`, langString.String_Value) 
+            });        
+          }).then(() => handleSuccess('cacheStrings', resolve())).catch(() => handleFailure('cacheStrings', reject("cacheStrings already completed"))); // handle AJAX synchronization
+          
+        });
       });
-    });
+    }
   });
-
-  
-  // handle strings and translations from plugins
-  $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`, function(res) {    
-        
-    data = res["data"];       
-
-    data.forEach((langString) => {      
-      setCache(`pia_lang_${langString.String_Key}_${langString.Language_Code}`, langString.String_Value) 
-    });        
-  }).then(() => handleSuccess('cacheStrings')).catch(() => handleFailure('cacheStrings', cacheStrings)); // handle AJAX synchronization
-  
 }
 
 // Get translated language string
@@ -232,12 +234,6 @@ function getString (key) {
   handleFirstLoad(getString)
  
   UI_LANG = getSetting("UI_LANG");
-
-  // // 
-  // if(UI_LANG == "")
-  // {
-
-  // }
 
   lang_code = 'en_us';
 
@@ -865,36 +861,38 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
 }
 
 // -----------------------------------------------------------------------------
-
-function initDeviceListAll_JSON()
+// Cache teh devices as one JSON
+function cacheDevices()
 { 
 
-  $.get('api/table_devices.json', function(data) {    
-    
-    // console.log(data)
+  return new Promise((resolve, reject) => {
 
-    devicesListAll_JSON = data["data"]
-
-    devicesListAll_JSON_str = JSON.stringify(devicesListAll_JSON)
-
-    if(devicesListAll_JSON_str == "")
+    if(!getCache('completedCalls').includes('cacheDevices'))
     {
-      showSpinner()
+      $.get('api/table_devices.json', function(data) {    
+        
+        // console.log(data)
 
-      setTimeout(() => {
-        initDeviceListAll_JSON()
-      }, 5000);
-    }
+        devicesListAll_JSON = data["data"]
 
+        devicesListAll_JSON_str = JSON.stringify(devicesListAll_JSON)
 
-    // console.log("devicesListAll_JSON_str");
-    // console.log(devicesListAll_JSON_str);
+        if(devicesListAll_JSON_str == "")
+        {
+          showSpinner()
 
-    setCache('devicesListAll_JSON', devicesListAll_JSON_str)
+          setTimeout(() => {
+            cacheDevices()
+          }, 1000);
+        }
+        // console.log(devicesListAll_JSON_str);
 
-    // console.log(getCache('devicesListAll_JSON'))
-  }).then(() => handleSuccess('initDeviceListAll_JSON')).catch(() => handleFailure('initDeviceListAll_JSON', initDeviceListAll_JSON)); // handle AJAX synchronization
+        setCache('devicesListAll_JSON', devicesListAll_JSON_str)
 
+        // console.log(getCache('devicesListAll_JSON'))
+      }).then(() => handleSuccess('cacheDevices', resolve())).catch(() => handleFailure('cacheDevices', reject("cacheDevices already completed"))); // handle AJAX synchronization
+    } 
+  });
 }
 
 var devicesListAll_JSON      = [];   // this will contain a list off all devices 
@@ -905,6 +903,18 @@ function isEmpty(value)
   return emptyArr.includes(value)
 }
 
+// -----------------------------------------------------------------------------
+function mergeUniqueArrays(arr1, arr2) {
+  let mergedArray = [...arr1]; // Make a copy of arr1
+
+  arr2.forEach(element => {
+      if (!mergedArray.includes(element)) {
+          mergedArray.push(element);
+      }
+  });
+
+  return mergedArray;
+}
 
 // -----------------------------------------------------------------------------
 // Generate a GUID
@@ -1079,8 +1089,14 @@ function resolveParams(params, template) {
 // -----------------------------------------------------------------------------
 // check if two arrays contain same values even if out of order
 function arraysContainSameValues(arr1, arr2) {
-  // Sort and stringify arrays, then compare
-  return JSON.stringify(arr1.slice().sort()) === JSON.stringify(arr2.slice().sort());
+  // Check if both parameters are arrays
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return false;
+  } else
+  {  
+    // Sort and stringify arrays, then compare
+    return JSON.stringify(arr1.slice().sort()) === JSON.stringify(arr2.slice().sort());
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -1150,41 +1166,52 @@ function handleFirstLoad(callback)
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
 var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
+var completedCalls = []
+var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
 
 // Define a function that will execute the code only once
 function executeOnce() {
 
-  if (!pialert_common_init) {
-
-    resetInitializedFlag()
+  if (!arraysContainSameValues(getCache(completedCalls), completedCalls_final)) {
 
     showSpinner()
 
-    //  to keep track of completed AJAX calls    
-    completedCalls = []
-    completedCalls_final = ['cacheSettings', 'cacheStrings', 'initDeviceListAll_JSON'];
+    // Use cache to keep track of completed AJAX calls    
+    var tmp_completedCalls = getCache("completedCalls")
 
-    // Your initialization code here
-    cacheSettings();
-    cacheStrings();
-    initDeviceListAll_JSON();
+    // initialize from cache if values present
+    if(tmp_completedCalls != "")
+    {
+      completedCalls = tmp_completedCalls.split(',');
+    }
 
-    // reload ONCE after all caches initialized
-    setTimeout(() => {
-      // console.log('reload ONCE after all caches initialized');
-      location.reload()
-    }, 500);
+    // cache everything in the right order
+    cacheStrings()
+    .then(cacheSettings)
+    .then(cacheDevices)
+    .then(() => {
+      // All callbacks have completed
+      console.log("✅ All AJAX callbacks have completed");
+      // location.reload()
+      onAllCallsComplete();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
     
   }
 }
 
+
 // -----------------------------------------------------------------------------
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
-  console.log(`AJAX call ${callName} successful`);
+  console.log(`AJAX call successful: ${callName} `);
   // store completed call
-  completedCalls.push(callName)
-  onAllCallsComplete();
+  completedCalls.push(callName)  
+
+  setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]))
+
 };
 
 // -----------------------------------------------------------------------------
@@ -1194,56 +1221,33 @@ const handleFailure = (callName, callback) => {
   console.error(`AJAX call ${callName} failed`);
 
   // try until successful
-  callback()
+  // callback()
 };
 
 // -----------------------------------------------------------------------------
 // Function to execute when all AJAX calls have completed
 const onAllCallsComplete = () => {
 
-  // Get completed calls from cache
-  let completedCalls_tmp = getCache('completedCalls');
-  let completedCalls_cached = [];
-
   // Merge local completedCalls with completedCalls_cached array - ensure uniqueness
   // if cache contains values, merge those two arrays
-  if (completedCalls_tmp != "") {
-    
-    // create array from comma-separated values
-    completedCalls_cached = completedCalls_tmp.split(',');
-
-    $.each(completedCalls_cached,function(index, completedCall){
-
-      // append the cached value to the current completedCalls array if value is missing
-      if(completedCalls.includes(completedCall) == false)
-      {
-        completedCalls.push(completedCall)
-      }
-
-    });
-  }
+  completedCalls = mergeUniqueArrays(getCache('completedCalls').split(','), completedCalls)
 
   // Update cache with merged completedCalls
   setCache('completedCalls', completedCalls);
 
-  // console.log(completedCalls_cached);
-  // console.log(completedCalls); 
+  // Set the flag in sessionStorage to indicate that the code has been executed 
+  // and save time when last time the page was initialized
+  sessionStorage.setItem(sessionStorageKey, "true");    
+  const millisecondsNow = Date.now();
+  sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
 
-  // Check if all three AJAX calls have completed
-  if (arraysContainSameValues(completedCalls, completedCalls_final)) {
+  console.log('✔ Cache intialized');
 
-    // Set the flag in sessionStorage to indicate that the code has been executed 
-    // and save time when last time the page was initialized
-    sessionStorage.setItem(sessionStorageKey, "true");    
-    const millisecondsNow = Date.now();
-    sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
-
-    console.log("init pialert_common.js");
-  }
 };
 
 // Call the function to execute the code
 executeOnce();
+console.log("init pialert_common.js");
 
 
 

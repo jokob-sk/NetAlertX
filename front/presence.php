@@ -132,7 +132,15 @@
         var pia_js_online_history_ondev = [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>];
         var pia_js_online_history_dodev = [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>];
         var pia_js_online_history_ardev = [<?php pia_graph_devices_data($Pia_Graph_Device_Arch); ?>];
-        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev, pia_js_online_history_ardev);
+
+        setTimeout(() => {
+          pia_draw_graph_online_history(
+          pia_js_online_history_time, 
+          pia_js_online_history_ondev, 
+          pia_js_online_history_dodev, 
+          pia_js_online_history_ardev);
+        }, 500);
+
       </script>
   
       <!-- /.row -->

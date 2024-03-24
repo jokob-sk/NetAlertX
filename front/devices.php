@@ -138,7 +138,15 @@
         var pia_js_online_history_ondev = [<?php pia_graph_devices_data($Pia_Graph_Device_Online); ?>];
         var pia_js_online_history_dodev = [<?php pia_graph_devices_data($Pia_Graph_Device_Down); ?>];
         var pia_js_online_history_ardev = [<?php pia_graph_devices_data($Pia_Graph_Device_Arch); ?>];
-        pia_draw_graph_online_history(pia_js_online_history_time, pia_js_online_history_ondev, pia_js_online_history_dodev, pia_js_online_history_ardev);
+        
+        setTimeout(() => {
+          pia_draw_graph_online_history(
+          pia_js_online_history_time, 
+          pia_js_online_history_ondev, 
+          pia_js_online_history_dodev, 
+          pia_js_online_history_ardev);
+        }, 500);
+
       </script>
 
 <!-- datatable ------------------------------------------------------------- -->
@@ -230,6 +238,7 @@
                             ];
 
   // Read parameters & Initialize components
+  showSpinner();
   main();
 
 
@@ -300,7 +309,7 @@ function main () {
 
 
           
-          // check if dat outdated and show spinner if so
+          // check if data outdated and show spinner if so
           handleLoadingDialog()
 
 
@@ -689,6 +698,7 @@ function initializeDatatable (status) {
       
     });
 
+    hideSpinner();
 
   });  
 };
@@ -741,25 +751,30 @@ function getNumberOfChildren(mac, devices)
 }
 
 // -----------------------------------------------------------------------------
-function handleLoadingDialog()
+function handleLoadingDialog(needsReload = false)
 {
-  $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {   
-    
+
+  // console.log('needsReload:');
+  // console.log(needsReload); 
+
+  $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {     
 
     if(data.includes("update_api|devices"))
     {       
       showSpinner("devices_old")
 
-      setTimeout("handleLoadingDialog()", 1000);
+      setTimeout(handleLoadingDialog(true), 1000);
 
-    } else if ($("#loadingSpinner").is(":visible"))
+    } else if (needsReload)
+    {    
+      location.reload();     
+    }else
     {
-      hideSpinner();     
-      location.reload();    
+      // hideSpinner();     
     }      
 
   })
-
+  
 }
 
 // -----------------------------------------------------------------------------
