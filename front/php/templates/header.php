@@ -21,7 +21,6 @@ require dirname(__FILE__).'/security.php';
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="manifest" href="img/manifest.json">
   <title>Pi.Alert - <?php echo gethostname();?></title>
 
   <!-- Tell the browser to be responsive to screen width -->
