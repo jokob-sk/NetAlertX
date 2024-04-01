@@ -668,7 +668,6 @@ if ($ENABLED_DARKMODE === True) {
   mac                     = getMac()  // can also be rowID!! not only mac 
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI  
 
-  main();
 
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
@@ -685,6 +684,7 @@ if ($ENABLED_DARKMODE === True) {
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
 
+  main();
 
 
 // -----------------------------------------------------------------------------
@@ -708,65 +708,36 @@ function main () {
 
   tab = selectedTab;
 
-  // get parameter value
-  $.get('php/server/parameters.php?action=get&defaultValue=1 day&parameter='+ parPeriod, function(data) {
-    var result = JSON.parse(data);
-    if (result) {
-      period = result;
-      $('#period').val(period);
+  period = '1 day';
+  sessionsRows = 50;
+  eventsRows = 50;
+  $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
+
+  // Initialize components with parameters
+  initializeTabs();
+  initializeiCheck();
+  initializeCombos();
+  initializeDatatables();
+  initializeCalendar();    
+
+  // query data
+  getDeviceData(true);
+  getSessionsPresenceEvents();
+
+  // Force re-render calendar on tab change
+  // (bugfix for render error at left panel)
+  $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (nav) {
+    if ($(nav.target).attr('href') == '#panPresence') {
+      $('#calendar').fullCalendar('rerenderEvents');
     }
-
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parSessionsRows, function(data) {
-      var result = JSON.parse(data);
-      if (Number.isInteger (result) ) {
-          sessionsRows = result;
-      }
-
-      // get parameter value
-      $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parEventsRows, function(data) {
-        var result = JSON.parse(data);
-        if (Number.isInteger (result) ) {
-            eventsRows = result;
-        }
-  
-        // get parameter value
-        $.get('php/server/parameters.php?action=get&defaultValue=true&parameter='+ parEventsHide, function(data) {
-          var result = JSON.parse(data);
-          if (result) {
-              eventsHide = result;
-              $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');
-          }
-
-          // Initialize components with parameters
-          initializeTabs();
-          initializeiCheck();
-          initializeCombos();
-          initializeDatatables();
-          initializeCalendar();    
-
-          // query data
-          getDeviceData(true);
-          getSessionsPresenceEvents();
-
-          // Force re-render calendar on tab change
-          // (bugfix for render error at left panel)
-          $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (nav) {
-            if ($(nav.target).attr('href') == '#panPresence') {
-              $('#calendar').fullCalendar('rerenderEvents');
-            }
-          });
-
-          // Show device icon as it changes
-          $('#txtIcon').on('change input', function() {
-            $('#txtIconFA').removeClass().addClass(`fa fa-${$(this).val()} pointer`)
-          });
-
-        });
-      });
-
-    });
   });
+
+  // Show device icon as it changes
+  $('#txtIcon').on('change input', function() {
+    $('#txtIconFA').removeClass().addClass(`fa fa-${$(this).val()} pointer`)
+  });
+
+       
 }
 
 
@@ -922,9 +893,8 @@ function writeDropdownHtml(dropdownId, dropdownHtmlContent)
   HTMLelement.innerHTML = ''
   HTMLelement.innerHTML += dropdownHtmlContent;
 }
+
 // -----------------------------------------------------------------------------
-
-
 function initializeComboSkipRepeated () {
   // find dropdown menu element
   HTMLelement = $('#dropdownSkipRepeated')[0];

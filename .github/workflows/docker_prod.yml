@@ -49,7 +49,7 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             jokobsk/pi.alert
-            jokobsk/pialert_ngx
+            jokobsk/netalertx
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{version}},value=${{ inputs.version }}

@@ -212,7 +212,7 @@ class DB():
           """)        
 
         # -------------------------------------------------------------------------
-        # Nmap_Scan table setup DEPRECATED after 1/1/2024
+        # Nmap_Scan table setup DEPRECATED after 9/9/2024
         # -------------------------------------------------------------------------
 
         # indicates, if Nmap_Scan table is available
@@ -257,6 +257,26 @@ class DB():
             # Delete the Nmap_Scan table
             self.sql.execute("DROP TABLE Nmap_Scan;")
             nmapScanMissing = True
+
+        # -------------------------------------------------------------------------
+        # Nmap_Scan table setup DEPRECATED after 9/9/2024 cleanup above
+        # -------------------------------------------------------------------------
+
+        # -------------------------------------------------------------------------
+        # Icon format migration table setup DEPRECATED after 9/9/2024 cleanup below
+        # -------------------------------------------------------------------------
+
+        sql_Icons = """ UPDATE Devices SET dev_Icon = '<i class="fa fa-' || dev_Icon || '"></i>'
+                WHERE dev_Icon NOT LIKE '<i class="fa fa-%'
+                AND dev_Icon NOT LIKE '<svg%' 
+                AND dev_Icon NOT IN ('', 'null')
+                 """
+        self.sql.execute(sql_Icons)
+
+
+        # -------------------------------------------------------------------------
+        # Icon format migration table setup DEPRECATED after 9/9/2024 cleanup above
+        # -------------------------------------------------------------------------
 
         # -------------------------------------------------------------------------
         # Plugins tables setup
@@ -360,7 +380,7 @@ class DB():
         AppEvent_obj(self)
 
         # -------------------------------------------------------------------------
-        #  DELETING OBSOLETE TABLES - to remove with updated db file after 1/1/2024
+        #  DELETING OBSOLETE TABLES - to remove with updated db file after 9/9/2024
         # -------------------------------------------------------------------------        
 
         # Deletes obsolete ScanCycles
@@ -371,7 +391,7 @@ class DB():
         self.commitDB()
 
         # -------------------------------------------------------------------------
-        #  DELETING OBSOLETE TABLES - to remove with updated db file after 1/1/2024
+        #  DELETING OBSOLETE TABLES - to remove with updated db file after 9/9/2024
         # -------------------------------------------------------------------------
 
 

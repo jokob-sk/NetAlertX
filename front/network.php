@@ -26,7 +26,7 @@
   <div id="networkTree" class="drag"></div>
 
   <!-- Main content ---------------------------------------------------------- -->
-  <section class="content">
+  <section class="content networkTable">
     <?php
       // Create top-level node (network devices) tabs 
       function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $activetab) {        
@@ -47,11 +47,6 @@
           $node_badge = circle_offline;
         }
 
-        if($icon != '')
-        {
-          $icon = '<i class="fa fa-'.$icon.'"></i> ';
-        }
-        
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="'.$activetab.'">
                               <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
@@ -660,7 +655,7 @@
         // Build HTML for individual nodes in the network diagram        
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
                   `<div class="netIcon">
-                        <i class="fa fa-${nodeData.data.icon}"></i>
+                        ${nodeData.data.icon}
                   </div>` : "";
         devicePort = `<div  class="netPort" 
                             style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">

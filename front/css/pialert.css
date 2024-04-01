@@ -792,7 +792,11 @@ input[readonly] {
     cursor: not-allowed;
   }
 
-/* Devices */
+
+/* ----------------------------------------------------------------- */
+/*                    Devices page                                   */
+/* ----------------------------------------------------------------- */
+
 #txtIconFA {
     min-width: 18px;
 }
@@ -846,7 +850,14 @@ input[readonly] {
     margin-bottom: 6px;
 }
 
+#tableDevicesBox td svg, #tableDevicesBox td i{
+    height: 1.5em !important;
+}
+
+
+/* ----------------------------------------------------------------- */
 /* NETWORK page */
+/* ----------------------------------------------------------------- */
 
 /* AdminLTE overrides */
 #networkTree .box
@@ -890,11 +901,18 @@ input[readonly] {
 }
 #networkTree .netIcon
 {
-    width: 25px;;
+    width: 25px;
     float:left;
     display:inline;
     text-align: center;
 }
+
+#networkTree .netIcon svg
+{
+    height: 1.2em;
+    width: auto;
+}
+
 #networkTree .netCollapse
 {
     display: block;
@@ -920,6 +938,16 @@ input[readonly] {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
+
+.networkTable .nav-tabs li i{
+    padding:3px;
+}
+
+
+/* ----------------------------------------------------------------- */
+/* PLUGINS page */
+/* ----------------------------------------------------------------- */
+
 
 .plugin-filters
 {    

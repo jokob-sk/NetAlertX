@@ -606,6 +606,8 @@
     "Systeminfo_USB_Devices": "",
     "TIMEZONE_description": "",
     "TIMEZONE_name": "",
+    "UI_DEV_SECTIONS_description": "",
+    "UI_DEV_SECTIONS_name": "",
     "UI_LANG_description": "S\u00e9lectionnez votre langue pr\u00e9f\u00e9r\u00e9 de l\u2019interface. Aidez \u00e0 traduire ou sugg\u00e9rez des langues dans le portail en ligne de <a href=\"https://hosted.weblate.org/projects/pialert/core/\" target=\"_blank\">Weblate</a>.",
     "UI_LANG_name": "",
     "UI_MY_DEVICES_description": "",

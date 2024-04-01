@@ -576,7 +576,7 @@ function initializeDatatable (status) {
         {targets: [mapIndx(3)],
           'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
-              $(td).html ('<i class="fa fa-'+cellData+' " style="font-size:16px"></i>');
+              $(td).html (cellData);
             } else {
               $(td).html ('');
             }

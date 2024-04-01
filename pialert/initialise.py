@@ -107,6 +107,7 @@ def importConfigs (db):
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://pi.alert/' , c_d, 'PiAlert URL', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish' ]", 'General')
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
+    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', ['Tile cards', 'Device presence']   , c_d, 'Show sections', 'text.multiselect', "['Tile cards', 'Device presence']", 'General')    
     conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', 'text.multiselect', "['online', 'offline', 'archived', 'new', 'down']", 'General')    
     conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', 'list', "", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')

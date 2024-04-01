@@ -606,6 +606,8 @@
     "Systeminfo_USB_Devices": "USB Devices",
     "TIMEZONE_description": "Time zone to display stats correctly. Find your time zone <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">here</a>.",
     "TIMEZONE_name": "Time zone",
+    "UI_DEV_SECTIONS_description": "Select which UI elements to show in the Devices pages.",
+    "UI_DEV_SECTIONS_name": "Show Devices Sections",
     "UI_LANG_description": "Select the preferred UI language. Help translating or suggest languages in the online portal of <a href=\"https://hosted.weblate.org/projects/pialert/core/\" target=\"_blank\">Weblate</a>.",
     "UI_LANG_name": "UI Language",
     "UI_MY_DEVICES_description": "Devices of which statuses should be shown in the default <b>My Devices</b> view. (<code>CTRL + Click</code> to select/deselect)",
