@@ -1008,7 +1008,7 @@ function setupSmoothScrolling() {
   var url = window.location.href;
   if (url.includes("#")) {
       var idFromURL = url.substring(url.indexOf("#") + 1);
-      if ($("#" + idFromURL).length > 0) {
+      if (idFromURL != "" && $("#" + idFromURL).length > 0) {
           scrollToElement(idFromURL);
       }
   }

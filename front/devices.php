@@ -25,6 +25,8 @@
   checkPermissions([$dbPath, $confPath]);
 ?>
 
+<script src="js/ui_components.js"></script>
+
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
@@ -39,8 +41,9 @@
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 
-<!-- top small box 1 ------------------------------------------------------- -->
-      <div class="row">
+      <!-- Tile toggle cards ------------------------------------------------------- -->
+      <div class="row" id="TileCards">
+        <!-- top small box 1 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('my');">
           <div class="small-box bg-aqua">
@@ -52,7 +55,7 @@
           </a>
         </div>
         
-<!-- top small box 2 ------------------------------------------------------- -->
+        <!-- top small box 2 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('connected');">
           <div class="small-box bg-green">
@@ -64,7 +67,7 @@
           </a>
         </div>
 
-<!-- top small box 3 ------------------------------------------------------- -->
+        <!-- top small box 3 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('favorites');">
           <div class="small-box bg-yellow">
@@ -76,7 +79,7 @@
           </a>
         </div>
 
-<!-- top small box 4 ------------------------------------------------------- -->
+        <!-- top small box 4 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('new');">
           <div class="small-box bg-yellow">
@@ -88,7 +91,7 @@
           </a>
         </div>
 
-<!-- top small box 5 ------------------------------------------------------- -->
+        <!-- top small box 5 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('down');">
           <div class="small-box bg-red">
@@ -100,7 +103,7 @@
           </a>
         </div>
 
-<!-- top small box 6 ------------------------------------------------------- -->
+        <!-- top small box 6 ------------------------------------------------------- -->
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: initializeDatatable('archived');">
           <div class="small-box bg-gray top_small_box_gray_text">
@@ -114,9 +117,9 @@
 
       </div>
 
-<!-- Activity Chart ------------------------------------------------------- -->
+<!-- Device presence / Activity Chart ------------------------------------------------------- -->
 
-      <div class="row">
+      <div class="row" id="DevicePresence">
           <div class="col-md-12">
           <div class="box" id="clients">
               <div class="box-header with-border">
@@ -246,6 +249,9 @@
 function main () {
 
   handleLoadingDialog()
+
+  // Hide UI elements as per settings
+  hideUIelements("UI_DEV_SECTIONS")
 
   // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
   cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  
