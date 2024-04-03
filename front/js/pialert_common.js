@@ -1261,7 +1261,7 @@ executeOnce();
 setTimeout(() => {
   const refreshTime = getSetting("UI_REFRESH");
   if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
-    newTimerRefreshData(clearCache, refreshTime);
+    newTimerRefreshData(clearCache, parseInt(refreshTime)*1000);
   }
 }, 10000);
 
