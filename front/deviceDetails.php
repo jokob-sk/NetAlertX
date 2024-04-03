@@ -197,7 +197,7 @@
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
-                            <span class="input-group-addon"><i class="fa" id="txtIconFA" onclick="editDrp('txtIcon');"></i></span>
+                            <span class="input-group-addon" id="txtIconFA"></span>
                             <input class="form-control" id="txtIcon" type="text" value="--">
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
                             <div class="input-group-btn">
@@ -205,6 +205,7 @@
                                 <span class="fa fa-caret-down"></span>
                               </button>
                               <ul id="dropdownIcon" class="dropdown-menu dropdown-menu-right">
+                                <li id="dropdownIcon_tmp"></li>
                               </ul>
                             </div>
                           </div>
@@ -734,7 +735,7 @@ function main () {
 
   // Show device icon as it changes
   $('#txtIcon').on('change input', function() {
-    $('#txtIconFA').removeClass().addClass(`fa fa-${$(this).val()} pointer`)
+    $('#txtIconFA').html(atob($(this).val()))
   });
 
        
@@ -799,8 +800,6 @@ function initializeiCheck () {
 function initializeCombos () {
   // Initialize combos with queries
 
-
-  initializeCombo ( '#dropdownIcon',           'getIcons',        'txtIcon', false);  
   initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
 
@@ -809,9 +808,11 @@ function initializeCombos () {
   //                             valuesArray,       // Array of values to be pre-selected in the dropdown
   //                             targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
   //                             callbackToGenerateEntries,  // Callback function to generate entries based on options
-  //                             targetField)      // Target field or element where selected value should be applied or updated
+  //                             targetField,       // Target field or element where selected value should be applied or updated
+  //                             nameTransformer)   // callback to transform name
 
 
+  initSettingDropdown("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genDevDetailsList, 'txtIcon', atob )
   initSettingDropdown("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genDevDetailsList, 'txtDeviceType' )
   initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genDevDetailsList, 'txtOwner' )
   initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genDevDetailsList, 'txtGroup' )

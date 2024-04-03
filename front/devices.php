@@ -582,7 +582,7 @@ function initializeDatatable (status) {
         {targets: [mapIndx(3)],
           'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
-              $(td).html (cellData);
+              $(td).html (atob(cellData));
             } else {
               $(td).html ('');
             }

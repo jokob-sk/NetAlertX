@@ -685,6 +685,8 @@
     "UI_NOT_RANDOM_MAC_name": "No marcar como aleatoria",
     "UI_PRESENCE_description": "Elige que estados del dispositivo deben mostrarse en la gr\u00e1fica de <b>Presencia del dispositivo a lo largo del tiempo</b>  de la p\u00e1gina de <a href=\"/devices.php\" target=\"_blank\">Dispositivos</a>. (<code>CTRL + Clic</code> para seleccionar / deseleccionar)",
     "UI_PRESENCE_name": "Mostrar en el gr\u00e1fico de presencia",
+    "UI_REFRESH_description": "",
+    "UI_REFRESH_name": "",
     "WEBHOOK_PAYLOAD_description": "El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json\">aqu\u00ed</a>. (por ejemplo: para discord use <code>text</code>)",
     "WEBHOOK_PAYLOAD_name": "Tipo de carga",
     "WEBHOOK_REQUEST_METHOD_description": "El m\u00e9todo de solicitud HTTP que se utilizar\u00e1 para la llamada de webhook.",

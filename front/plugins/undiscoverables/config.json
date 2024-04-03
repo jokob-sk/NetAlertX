@@ -71,6 +71,7 @@
       "options": [
         "disabled",
         "once",
+        "schedule",
         "always_after_scan"
       ],
       "localized": [
@@ -94,11 +95,11 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When enabled, ONCE is the preferred option. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
+          "string": "When enabled, <code>once</code> is the preferred option, or set to <code>schedule</code> and align the <code>UNDIS_RUN_SCHD</code> setting with the other scanners if you want the devices to show up as ONLINE. It runs at startup and after every save of the config here.<br> Changes will only show in the devices <b> after the next scan!</b>"
         },
         {
           "language_code": "es_es",
-          "string": "Cuando está habilitado, ONCE es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
+          "string": "Cuando está habilitado, <code>once</code> es la opción preferida. Se ejecuta al inicio y después de cada guardado de la configuración aquí.<br> ¡Los cambios solo se mostrarán en los dispositivos <b> después del próximo escaneo!</b>"
         },
         {
           "language_code": "de_de",
@@ -302,6 +303,29 @@
           "string": "Geräte, welche der Geräteliste hinzugefügt werden."
         }
       ]
+    },
+    {
+        "function": "RUN_SCHD",
+        "type": "text",
+        "default_value":"*/5 * * * *",
+        "options": [],
+        "localized": ["name", "description"],
+        "name" : [{
+            "language_code":"en_us",
+            "string" : "Schedule"
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Schedule"
+        }],
+        "description": [{
+            "language_code":"en_us",
+            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices. "
+        },
+        {
+            "language_code":"es_es",
+            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        }]
     }
   ],
   "database_column_definitions": [

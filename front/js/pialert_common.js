@@ -628,10 +628,19 @@ function stopTimerRefreshData () {
 
 
 // -----------------------------------------------------------------------------
-function newTimerRefreshData (refeshFunction) {
+function newTimerRefreshData (refeshFunction, timeToRefresh) {
+  
+  if(timeToRefresh && (timeToRefresh != 0 || timeToRefresh != ""))
+  {
+    time = parseInt(timeToRefresh)
+  } else
+  {
+    time = 60000
+  }
+
   timerRefreshData = setTimeout (function() {
     refeshFunction();
-  }, 60000);
+  }, time);
 }
 
 
@@ -1247,6 +1256,16 @@ const onAllCallsComplete = () => {
 
 // Call the function to execute the code
 executeOnce();
+
+// Set timer for page refresh if configured
+setTimeout(() => {
+  const refreshTime = getSetting("UI_REFRESH");
+  if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
+    newTimerRefreshData(clearCache, refreshTime);
+  }
+}, 10000);
+
+
 console.log("init pialert_common.js");
 
 

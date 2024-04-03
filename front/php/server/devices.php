@@ -645,7 +645,7 @@ function getDevicesList() {
                             $row['dev_Name'],
                             $row['dev_Owner'],
                             handleNull($row['dev_DeviceType']),
-                            handleNull($row['dev_Icon'], "laptop"),
+                            handleNull($row['dev_Icon'], "<i class='fa fa-laptop'></i>"),
                             $row['dev_Favorite'],
                             $row['dev_Group'],
                             // ----
@@ -754,10 +754,10 @@ function getIcons() {
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $icon = handleNull($row['dev_Icon'], "laptop"); 
+    $icon = handleNull($row['dev_Icon'], "<i class='fa fa-laptop'></i>"); 
     // Push row data
     $tableData[] = array('id'    => $icon, 
-                         'name'  => '<i class="fa fa-'.$icon.'"></i> - '.$icon );                          
+                         'name'  => $icon );                          
   }
   
   // Control no rows

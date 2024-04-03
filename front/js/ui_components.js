@@ -117,7 +117,8 @@ function initSettingDropdown(settingKey,       // Identifier for the setting
                             valuesArray,       // Array of values to be pre-selected in the dropdown
                             targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
                             callbackToGenerateEntries,  // Callback function to generate entries based on options
-                            targetField)      // Target field or element where selected value should be applied or updated
+                            targetField,      // Target field or element where selected value should be applied or updated
+                            nameTransformer)      // callback to transform the name (e.g. base64)
 {
 
   var optionsHtml = ""
@@ -127,7 +128,7 @@ function initSettingDropdown(settingKey,       // Identifier for the setting
   // check if the result is a SQL query
   if(isSQLQuery(optionsArray[0]))
   {    
-    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField);
+    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField, nameTransformer);
 
   } else // this should be already an array, e.g. from a setting or pre-defined
   {     
@@ -212,8 +213,8 @@ function generateList(data, valuesArray) {
 }
 
 // -----------------------------------------------------------------------------
-// Processor to generate a list
-function genDevDetailsList(data, valuesArray, targetField) {
+// Processor to generate a list in teh deviceDetails page
+function genDevDetailsList(data, valuesArray, targetField, nameTransformer) {
 
   var listHtml = "";
 
@@ -222,18 +223,25 @@ function genDevDetailsList(data, valuesArray, targetField) {
 
     let selected = valuesArray.includes(item.id) ? 'selected' : '';
 
-
     console.log(item);
 
-    // listHtml += `<li ${selected}>${item.name}</li>`;
+    labelName = item.name
+
+    if(nameTransformer && labelName != '❌None')
+    {
+      labelName = nameTransformer(labelName)
+    }
+
     listHtml += `<li ${selected}>
-                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${item.name}</a> 
+                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${labelName}</a> 
                 </li>`;
     
   });
 
   return listHtml;
 }
+
+
 
 
 // -----------------------------------------------------------------------------

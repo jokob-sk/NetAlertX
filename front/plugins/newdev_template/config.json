@@ -582,9 +582,16 @@
         },
          {
           "function": "dev_Icon",
-          "type": "string",
+          "type": "text.select",
           "default_value": "",
-          "options": [],
+          "options": ["{value}"],
+          "options_params" : [
+            {
+              "name"  : "value",
+              "type"  : "sql",
+              "value" : "SELECT DISTINCT '❌None' AS name, '' AS id UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '';"
+            }
+          ],
           "localized": ["name", "description"],
           "name": [
             {

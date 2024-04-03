@@ -110,6 +110,7 @@ def importConfigs (db):
     conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', 'text.multiselect', "['Tile Cards', 'Device Presence']", 'General')    
     conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', 'text.multiselect', "['online', 'offline', 'archived', 'new', 'down']", 'General')    
     conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', 'list', "", 'General')    
+    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', 'integer', "", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')

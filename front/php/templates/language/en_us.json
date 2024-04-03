@@ -616,6 +616,8 @@
     "UI_NOT_RANDOM_MAC_name": "Don't mark as Random",
     "UI_PRESENCE_description": "Select what statuses should be shown in the <b>Device presence</b>  chart in the <a href=\"/devices.php\" target=\"_blank\">Devices</a> page. (<code>CTRL + Click</code> to select/deselect)",
     "UI_PRESENCE_name": "Show in presence chart",
+    "UI_REFRESH_description": "Enter number of seconds after which the UI reloads. Set to <code>0</code> to disable.",
+    "UI_REFRESH_name": "Auto-refresh UI",
     "devices_old": "Refreshing...",
     "general_event_description": "The event you have triggered might take a while until background processes finish. The execution ended once the below execution queue empties (Check the <a  href='/maintenance.php#tab_Logging'>error log</a> if you encounter issues). <br/> <br/>  Execution queue:",
     "general_event_title": "Executing an ad-hoc event",

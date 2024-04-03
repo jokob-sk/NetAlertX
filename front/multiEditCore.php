@@ -107,7 +107,7 @@
                       break;
                   }
                     
-                  // Add classes specifically for checkboxes
+                  
                   if (inputType === 'text.select') {
 
                     targetLocation = columns[j].Code_Name + "_initSettingDropdown"
@@ -120,8 +120,9 @@
                                       data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
-                  } else {
+                  } else { 
                     
+                    // Add classes specifically for checkboxes
                     if (inputType === 'checkbox') {
                       inputClass = 'checkbox';
                   

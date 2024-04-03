@@ -685,6 +685,8 @@
     "UI_NOT_RANDOM_MAC_name": "",
     "UI_PRESENCE_description": "Ausw\u00e4hlen, welche Status im <b>Ger\u00e4tepr\u00e4senz im Laufe der Zeit</b>-Diagramm in der <a href=\"/devices.php\" target=\"_blank\">Ger\u00e4te</a>-Seite angzeigt werden sollen. (<code>STRG + klicken</code> zum aus-/abw\u00e4hlen).",
     "UI_PRESENCE_name": "Anzeige im Pr\u00e4senzdiagramm",
+    "UI_REFRESH_description": "",
+    "UI_REFRESH_name": "",
     "WEBHOOK_PAYLOAD_description": "The Webhook payload data format for the <code>body</code> > <code>attachments</code> > <code>text</code> attribute in the payload json. See an example of the payload <a target=\"_blank\" href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json\">here</a>. (e.g.: for discord use <code>text</code>)",
     "WEBHOOK_PAYLOAD_name": "Payload type",
     "WEBHOOK_REQUEST_METHOD_description": "The HTTP request method to be used for the webhook call.",

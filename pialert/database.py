@@ -1,6 +1,7 @@
 """ all things database to support Pi.Alert """
 
 import sqlite3
+import base64
 
 # pialert modules
 from const import fullDbPath, sql_devices_stats, sql_devices_all
@@ -269,10 +270,32 @@ class DB():
         sql_Icons = """ UPDATE Devices SET dev_Icon = '<i class="fa fa-' || dev_Icon || '"></i>'
                 WHERE dev_Icon NOT LIKE '<i class="fa fa-%'
                 AND dev_Icon NOT LIKE '<svg%' 
+                AND dev_Icon NOT LIKE 'PGkg%' 
                 AND dev_Icon NOT IN ('', 'null')
                  """
         self.sql.execute(sql_Icons)
+        self.commitDB()      
 
+        # Base64 conversion
+
+        self.sql.execute("SELECT dev_MAC, dev_Icon FROM Devices WHERE dev_Icon like '<%' ")
+        icons = self.sql.fetchall()
+
+
+        # Loop through the icons, encode them, and update the database
+        for icon_tuple in icons:
+            icon = icon_tuple[1]
+            
+            # Encode the icon as base64
+            encoded_icon = base64.b64encode(icon.encode('utf-8')).decode('ascii')
+            # Update the database with the encoded icon
+            sql_update = f"""
+                UPDATE Devices
+                SET dev_Icon = '{encoded_icon}'
+                WHERE dev_MAC = '{icon_tuple[0]}'
+            """
+
+            self.sql.execute(sql_update)
 
         # -------------------------------------------------------------------------
         # Icon format migration table setup DEPRECATED after 9/9/2024 cleanup above
