@@ -271,6 +271,7 @@ class DB():
                 WHERE dev_Icon NOT LIKE '<i class="fa fa-%'
                 AND dev_Icon NOT LIKE '<svg%' 
                 AND dev_Icon NOT LIKE 'PGkg%' 
+                AND dev_Icon NOT LIKE 'PHN%' 
                 AND dev_Icon NOT IN ('', 'null')
                  """
         self.sql.execute(sql_Icons)

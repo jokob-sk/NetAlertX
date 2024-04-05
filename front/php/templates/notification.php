@@ -94,6 +94,29 @@
   </div>
 </div>
 
+<!-- Modal input -->
+<div class="modal  fade" id="modal-input" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="modal-input-title" class="modal-title"> Modal Title </h4>
+      </div>
+
+      <div id="modal-input-message" class="modal-body"> Modal message </div>
+
+      <textarea id="modal-input-textarea" class="logs" cols="30" rows="3" wrap='off' ></textarea>
+
+      <div class="modal-footer">
+        <button id="modal-input-cancel" type="button" class="btn btn-outline pull-left" style="min-width: 80px;" data-dismiss="modal">       Cancel </button>
+        <button id="modal-input-OK"     type="button" class="btn btn-outline"           style="min-width: 80px;" onclick="modalDefaultInput()"> OK     </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- Alert float -->
 <div id="notification" class="alert alert-dimissible pa_alert_notification">

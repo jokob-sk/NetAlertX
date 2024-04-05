@@ -190,7 +190,7 @@
                       </div>
 
                       <!-- Icon -->
-                      <div class="form-group" title="<?= lang('DevDetail_Icon_Descr');?>">
+                      <div class="form-group" >
                         <label class="col-sm-3 control-label">
                           <?= lang('DevDetail_Icon');?> 
                           <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
@@ -198,13 +198,14 @@
                         <div class="col-sm-9">
                           <div class="input-group">
                             <span class="input-group-addon" id="txtIconFA"></span>
-                            <input class="form-control" id="txtIcon" type="text" value="--">
+                            <input class="form-control" id="txtIcon" type="text" value="--" readonly>
+                            <span class="input-group-addon" title='<?= lang('DevDetail_button_AddIcon_Tooltip');?>'><i class="fa fa-square-plus pointer" onclick="askAddIcon();"></i></span>
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
                             <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
                                 <span class="fa fa-caret-down"></span>
                               </button>
-                              <ul id="dropdownIcon" class="dropdown-menu dropdown-menu-right">
+                              <ul id="dropdownIcon" class="dropdown-menu dropdown-menu-right" >
                                 <li id="dropdownIcon_tmp"></li>
                               </ul>
                             </div>
@@ -733,15 +734,29 @@ function main () {
     }
   });
 
-  // Show device icon as it changes
+    // Show device icon as it changes
   $('#txtIcon').on('change input', function() {
-    $('#txtIconFA').html(atob($(this).val()))
+    updateIconPreview()
   });
-
+  
        
 }
 
 
+// -----------------------------------------------------------------------------
+function updateIconPreview () {
+  // update icon
+  iconInput = $('#txtIcon') 
+
+  value = iconInput.val()
+
+  iconInput.on('change input', function() {
+    $('#txtIconFA').html(atob(value))
+  });    
+
+  $('#txtIconFA').html(atob(value))
+  
+}
 
 // -----------------------------------------------------------------------------
 function initializeTabs () {
@@ -1127,6 +1142,10 @@ function initializeCalendar () {
         if (isLoading) {
           showSpinner()
         } else {
+          setTimeout(() => {
+            updateIconPreview()  
+          }, 100);
+          
           hideSpinner()
         }
     }
@@ -1292,7 +1311,7 @@ function getDeviceData (readAllData=false) {
         $('#txtOwner').val                           (deviceData['dev_Owner']);
         $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
         $('#txtVendor').val                          (deviceData['dev_Vendor']);
-        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'laptop'));
+        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI')); // base64 laptop icon
         $('#txtIcon').trigger('change')
   
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
@@ -1431,7 +1450,7 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&owner='          + $('#txtOwner').val()
     + '&type='           + $('#txtDeviceType').val()
     + '&vendor='         + $('#txtVendor').val()
-    + '&icon='           + $('#txtIcon').val()
+    + '&icon='           + encodeURIComponent($('#txtIcon').val())
     + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
     + '&group='          + $('#txtGroup').val()
     + '&location='       + $('#txtLocation').val()
@@ -1611,6 +1630,42 @@ function overwriteIconType () {
   // Deactivate controls
   $('#panDetails :input').attr('disabled', true);
 }
+
+// -----------------------------------------------------------------------------
+// Add a new Icon
+function askAddIcon () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  // Add new icon as base64 string 
+  showModalInput ('<?= lang('DevDetail_button_AddIcon');?>', '<?= lang('DevDetail_button_AddIcon_Help');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'addAsBase64');
+}
+
+// -----------------------------------------------------------------------------
+function addAsBase64 () {
+  // Check MAC
+  if (mac == '') {
+    return;
+  }
+
+  var iconHtml = $('#modal-input-textarea').val();
+
+  console.log(iconHtml);
+
+  iconHtmlBase64 = btoa(iconHtml.replace(/"/g, "'"));
+
+  console.log(iconHtmlBase64);
+
+  $('#txtIcon').val(iconHtmlBase64); 
+
+  updateIconPreview()
+
+}
+
+
 
 // -----------------------------------------------------------------------------
 function askDeleteDevice () {

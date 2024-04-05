@@ -645,7 +645,7 @@ function getDevicesList() {
                             $row['dev_Name'],
                             $row['dev_Owner'],
                             handleNull($row['dev_DeviceType']),
-                            handleNull($row['dev_Icon'], "<i class='fa fa-laptop'></i>"),
+                            handleNull($row['dev_Icon'], "PGkgY2xhc3M9J2ZhIGZhLWxhcHRvcCc+PC9pPg=="), // laptop icon
                             $row['dev_Favorite'],
                             $row['dev_Group'],
                             // ----

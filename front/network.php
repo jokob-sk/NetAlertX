@@ -50,8 +50,9 @@
         $decoded_icon = base64_decode($icon);
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="'.$activetab.'">
+                              
                               <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                .$decoded_icon.$node_name.' ' .$str_port.$node_badge.
+                                .'<div class="icon">'.$decoded_icon.' </div>'.$node_name.' ' .$str_port.$node_badge.
                               '</a>
                           </li>';
 

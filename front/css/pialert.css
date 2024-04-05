@@ -798,7 +798,7 @@ input[readonly] {
 /* ----------------------------------------------------------------- */
 
 #txtIconFA {
-    min-width: 18px;
+    min-width: 40px;
 }
 
 
@@ -939,9 +939,24 @@ input[readonly] {
     text-overflow: ellipsis;
 }
 
-.networkTable .nav-tabs li i{
-    padding:3px;
+.networkTable .nav-tabs li i, .networkTable .nav-tabs li svg {
+    padding: 3px;
+    height: 2em !important;
+    /* width: 2em !important; */
+    position: absolute;
+    /* z-index: 10; */
+    top: 0.3em;
+    /* margin-left: 0.2em; */
 }
+
+.networkTable .icon {
+    /* padding-left:2em; */
+    width:2em;
+    height:2em;
+    float: left;
+    /* background-color:red; */
+}
+
 
 
 /* ----------------------------------------------------------------- */

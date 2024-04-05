@@ -201,7 +201,7 @@ function cacheStrings()
     if(!getCache('completedCalls').includes('cacheStrings'))
     {
       // handle core strings and translations
-      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "ru_ru", "nb_no"]; // needs to be same as in lang.php
+      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no"]; // needs to be same as in lang.php
 
       allLanguages.forEach(function (language_code) {
         $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
@@ -253,6 +253,9 @@ function getString (key) {
       break;
     case 'Norwegian': 
       lang_code = 'nb_no';
+      break;
+    case 'Italian': 
+      lang_code = 'it_it';
       break;
     case 'Russian': 
       lang_code = 'ru_ru';
@@ -341,9 +344,37 @@ function showModalWarning (title, message, btnCancel=getString('Gen_Cancel'), bt
 }
 
 // -----------------------------------------------------------------------------
+function showModalInput (title, message, btnCancel=getString('Gen_Cancel'), btnOK=getString('Gen_Okay'), callbackFunction=null) {
+  // set captions
+  $('#modal-input-title').html   (title);
+  $('#modal-input-message').html (message);
+  $('#modal-input-cancel').html  (btnCancel);
+  $('#modal-input-OK').html      (btnOK);
+
+  if ( callbackFunction != null)
+  {
+    modalCallbackFunction =          callbackFunction;
+  }
+
+  // Show modal
+  $('#modal-input').modal('show');
+}
+
+// -----------------------------------------------------------------------------
 function modalDefaultOK () {
   // Hide modal
   $('#modal-default').modal('hide');
+
+  // timer to execute function
+  window.setTimeout( function() {
+    window[modalCallbackFunction]();
+  }, 100);
+}
+
+// -----------------------------------------------------------------------------
+function modalDefaultInput () {
+  // Hide modal
+  $('#modal-input').modal('hide');
 
   // timer to execute function
   window.setTimeout( function() {
@@ -402,6 +433,15 @@ function jsonSyntaxHighlight(json) {
       }
       return '<span class="' + cls + '">' + match + '</span>';
   });
+}
+
+function isValidBase64(str) {
+  // Base64 characters set
+  var base64CharacterSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  // Remove all valid characters from the string
+  var invalidCharacters = str.replace(new RegExp('[' + base64CharacterSet + ']', 'g'), '');
+  // If there are any characters left, the string is invalid
+  return invalidCharacters === '';
 }
 
 
