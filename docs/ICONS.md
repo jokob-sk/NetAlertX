@@ -1,25 +1,44 @@
 ## Icons overview
 
-Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](/docs/NETWORK_TREE.md). Currently only free [Font Awesome](https://fontawesome.com/search?o=r&m=free) icons (up-to v 6.4.0) are supported.
+Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](/docs/NETWORK_TREE.md). 
 
 ![Raspberry Pi with a brand icon](/docs/img/ICONS/devices-icons.png)
 
-## ⚙ How to use custom device Icons
+### Icons Support
+
+Two types of icons are suported:
+
+- Free [Font Awesome](https://fontawesome.com/search?o=r&m=free) icons (up-to v 6.4.0)
+- SVG icons 
 
 You can assign icons individually on each device in the Details tab.
 
-![preview](/docs/img/ICONS/device_icons_preview.gif)
+## Adding new icons
 
-![Raspberry Pi device details](/docs/img/ICONS/device-icon.png)
+1. You can get an SVG or a Font awesome HTML code
 
-- You can click into the `Icon` field or click the Pencil (2) icon in the above screenshot to enter any text. Only [free Font Awesome](https://fontawesome.com/search?o=r&m=free) icons in the following format will work:
+Copying the SVG (for example from [iconify.design](https://icon-sets.iconify.design/)): 
 
-  1. For any value that is only prefixed with `fa-`, you can enter the value directly, such as `server`, `tv`, `ethernet`. 
-  2. If you want to add another classname, e.g. `fa-brands`, you can enter `brands fa-[fontawesome-icon-name]`, so for `apple` that is using the syntax`fa-brands fa-apple`, you would enter `brands fa-apple`.
+![iconify svg](/docs/img/ICONS/iconify_design_copy_svg.png)
 
-- If you want to mass-apply an icon to all devices of the same device type (Field marked (4) in the above screenshot), you can click the copy button (Marked (1) in the above screenshot). A confirmation prompt is displayed. If you proceed, icons of all devices set to the same device type as the current device, will be overwritten with the current device's icon.
+Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=free).
 
-- The dropdown (3) contains all icons already used in the app for device icons. You need to navigate away or refresh the page once you add a new icon. 
+![Font awesome](/docs/img/ICONS/font_awesome_copy_html.png)
+
+2. Navigate to the device you want to use the icon on and click the "+" icon:
+
+![preview](/docs/img/ICONS/device_add_icon.png)
+
+3. Paste in teh copied HTML or SVG code.
+
+4. Click "OK"
+
+5. "Save" the device
+
+> [!NOTE] 
+> If you want to mass-apply an icon to all devices of the same device type (Field: Type), you can click the mass-copy button (next to the "+" button). A confirmation prompt is displayed. If you proceed, icons of all devices set to the same device type as the current device, will be overwritten with the current device's icon.
+
+- The blue dropdown contains all icons already used in the app for device icons. You need to navigate away or refresh the page once you add a new icon. 
 
 ## 🌟 Pro Font Awesome icons
 

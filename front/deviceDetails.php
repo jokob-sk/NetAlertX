@@ -1620,7 +1620,7 @@ function overwriteIconType () {
     return;
   }
 
-  var icon = $('#txtIcon').val();
+  var icon = encodeURIComponent($('#txtIcon').val());
 
   // Mass update icons
   $.get('php/server/devices.php?action=overwriteIconType&mac='+ mac + '&icon=' + icon, function(msg) {
