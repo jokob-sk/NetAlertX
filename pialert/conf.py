@@ -1,4 +1,4 @@
-""" config related functions for Pi.Alert """
+""" config related functions for NetAlertX """
 
 # TODO: Create and manage this as part of an app_state class object
 #===============================================================================

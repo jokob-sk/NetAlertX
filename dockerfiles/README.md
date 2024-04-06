@@ -1,23 +1,23 @@
-[![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
+[![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/NetAlertX?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/NetAlertX)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
-![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/Pi.Alert?color=0aa8d2&logoColor=fff&logo=GitHub)
+![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
 # PiAlert 💻🔍 Network security scanner & notification framework
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) |
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
-<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/devices_split.png" width="300px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/devices_split.png" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/devices_split.png" width="300px" />
 </a>
-<a href="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/network.png" width="300px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/network.png" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/network.png" width="300px" />
 </a>
 
 > [!NOTE]
-> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) method available. 
+> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) method available. 
 
 ## 📕 Basic Usage 
 
@@ -45,25 +45,25 @@ docker run -d --rm --network=host \
 ### Docker paths
 
 > [!NOTE]
-> See also [Backup strategies](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/BACKUPS.md).   
+> See also [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md).   
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------| 
-| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md)) files (see below for details).  | 
+| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files (see below for details).  | 
 | ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
 | | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 | | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole DB mapping.  | 
 | | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole`)| 
-| | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md).  | 
-| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/REVERSE_DNS.md).  | 
+| | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
+| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).  | 
+| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
 
 > Use separate `db` and `config` directories, don't nest them.
 
 ### (If UI is not available) Modify the config (`pialert.conf`) 
 
 - The preferred way is to manage the configuration via the Settings section in the UI.
-- You can modify [pialert.conf](https://github.com/jokob-sk/Pi.Alert/tree/main/config) directly, if needed.
+- You can modify [pialert.conf](https://github.com/jokob-sk/NetAlertX/tree/main/config) directly, if needed.
 - If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
 
 #### Important settings
@@ -72,7 +72,7 @@ These are the most important settings to get at least some output in your Device
 
 ##### For arp-scan: ARPSCAN_RUN, SCAN_SUBNETS
 
-- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SUBNETS.md) 
+- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) 
 
 ##### For pihole: PIHOLE_RUN, DHCPLSS_RUN
 
@@ -108,12 +108,12 @@ Use the official installation guides at first and use community content as suple
  
 ### **Common issues** 
 
-💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed). 
+💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed). 
 
-⚠ Check also common issues and [debugging tips](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md). 
+⚠ Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md). 
 
 > [!NOTE]
-> You can bulk-update devices via the [CSV import method](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md).
+> You can bulk-update devices via the [CSV import method](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
 
 ## 📄 docker-compose.yml Examples
 

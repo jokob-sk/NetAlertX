@@ -1,6 +1,6 @@
 <?php
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  maintenance.php - Front module. Server side. Maintenance                       #
@@ -161,7 +161,7 @@ $db->close();
                 <div class="db_info_table">
                     <div class="db_info_table_row">                      
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?>
-                          <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
+                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
 
                         </div>
                         <div class="db_info_table_cell">
@@ -935,10 +935,10 @@ window.onload = function asyncFooter()
   scrollDown();
   initializeTabs();
 
-  $("#lastCommit").append('<a href="https://github.com/jokob-sk/Pi.Alert/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github"></a>');
+  $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/pi.alert/main?logo=github"></a>');
 
   $("#lastDockerUpdate").append(
-    '<a href="https://github.com/jokob-sk/Pi.Alert/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/Pi.Alert?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
+    '<a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
 
 }
 

@@ -1,6 +1,6 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  devices.php - Front module. Devices list page                                  #

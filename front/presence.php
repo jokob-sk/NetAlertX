@@ -1,6 +1,6 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  presence.php - Front module. Device Presence calendar page                     #

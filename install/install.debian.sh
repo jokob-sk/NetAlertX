@@ -27,7 +27,7 @@ apt-get install -y git
 rm -R $INSTALL_DIR/pialert
 
 # Clone the application repository
-git clone https://github.com/jokob-sk/Pi.Alert "$INSTALL_DIR/pialert"
+git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/pialert"
 
 # Check for buildtimestamp.txt existence, otherwise create it
 if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then

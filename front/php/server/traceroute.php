@@ -1,7 +1,7 @@
 <?php
 
 ###################################################################################
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 #  traceroute.php # Front module. Server side. System Information                 #

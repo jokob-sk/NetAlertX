@@ -13,11 +13,11 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 🐳 Docker (Fully supported)
 
-- The main installation method is as a [docker container - follow these instructions here](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md). 
+- The main installation method is as a [docker container - follow these instructions here](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md). 
 
 #### 💻 Bare-metal / On-server (Experimental/community supported 🧪)
 
-- [(Experimental 🧪) On-hardware instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) 
+- [(Experimental 🧪) On-hardware instructions](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) 
 
 - Alternative bare-metal install forks: 
   - [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
@@ -129,8 +129,8 @@ Some additional context:
 
 Before submitting a new issue please spend a couple of minutes on research:
 
-* Check [🛑 Common issues](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md#common-issues) 
-* Check [💡 Closed issues](https://github.com/jokob-sk/Pi.Alert/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
-* When submitting an issue ❗[enable debug](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md)❗
+* Check [🛑 Common issues](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md#common-issues) 
+* Check [💡 Closed issues](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
+* When submitting an issue ❗[enable debug](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md)❗
 
 ⚠ Please follow the pre-defined issue template to resolve your issue faster.

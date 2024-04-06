@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/delete-package-versions@v4
         with: 
-          package-name: pi.alert
+          package-name: netalertx
           package-type: container
           min-versions-to-keep: 0
           delete-only-untagged-versions: true

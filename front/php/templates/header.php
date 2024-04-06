@@ -1,5 +1,5 @@
 <!-- ---------------------------------------------------------------------------
-#  Pi.Alert
+#  NetAlertX
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  header.php - Front module. Common header to all the web pages 
@@ -21,7 +21,7 @@ require dirname(__FILE__).'/security.php';
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Pi.Alert - <?php echo gethostname();?></title>
+  <title>NetAlertX - <?php echo gethostname();?></title>
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -53,7 +53,7 @@ require dirname(__FILE__).'/security.php';
         apply the skin class to the body tag so the changes take effect. -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?php echo $pia_skin_selected;?>.min.css">
 
-  <!-- Pi.Alert CSS -->
+  <!-- NetAlertX CSS -->
   <link rel="stylesheet" href="css/pialert.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -123,10 +123,10 @@ if ($ENABLED_DARKMODE === True) {
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/pialertLogoWhite.png" class="pia-top-left-logo" alt="Pi.Alert Logo"/>        
+        <img src="img/pialertLogoWhite.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Pi<b>.Alert</b>
+      <span class="logo-lg">Net <b>Alert</b><sup>x</sup>
 
       </span>
       
@@ -178,14 +178,14 @@ if ($ENABLED_DARKMODE === True) {
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <!-- The user image in the navbar-->
-              <img src="img/pialertLogoWhite.png" class="user-image" style="border-radius: initial" alt="Pi.Alert Logo">
+              <img src="img/pialertLogoWhite.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
-              <span class="hidden-xs">Pi.Alert</span>
+              <span class="hidden-xs">Net <b>Alert</b><sup>x</sup></span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
               <li class="user-header" style=" height: 100px;">
-                <img src="img/pialertLogoWhite.png" class="img-circle" alt="Pi.Alert Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
+                <img src="img/pialertLogoWhite.png" class="img-circle" alt="NetAlertX Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
                 <p style="float: right; width: 200px">
                 <?= lang('About_Title');?>
                   <small><?= lang('About_Design');?> Docker</small>
@@ -395,7 +395,7 @@ function workInProgress() {
   if($(".work-in-progress").html().trim() == "")
   {
     $(".work-in-progress").append(`
-              <a href="https://github.com/jokob-sk/Pi.Alert/issues" target="_blank">
+              <a href="https://github.com/jokob-sk/NetAlertX/issues" target="_blank">
                 <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
               </a>
             `)

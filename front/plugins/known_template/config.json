@@ -650,7 +650,7 @@
           "description": [
             {
               "language_code": "en_us",
-              "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
+              "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
             }
           ]
         }

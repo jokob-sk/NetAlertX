@@ -10,11 +10,11 @@
     "params": {},
     "query": {},
     "body": {
-      "username": "Pi.Alert",
+      "username": "NetAlertX",
       "text": "There are new notifications",
       "attachments": [
         {
-          "title": "Pi.Alert Notifications",
+          "title": "NetAlertX Notifications",
           "title_link": "",
           "text": {
             "new_devices_meta": {

@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 import speedtest
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 from plugin_helper import Plugin_Objects
@@ -21,7 +21,7 @@ def main():
     
     mylog('verbose', ['[INTRSPD] In script'])    
 
-    parser = argparse.ArgumentParser(description='Speedtest Plugin for Pi.Alert')
+    parser = argparse.ArgumentParser(description='Speedtest Plugin for NetAlertX')
     values = parser.parse_args()
 
     plugin_objects = Plugin_Objects(RESULT_FILE)

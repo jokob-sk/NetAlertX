@@ -1,4 +1,4 @@
-# Pi.Alert - Device Management
+# NetAlertX - Device Management
 <!--- --------------------------------------------------------------------- --->
 To edit device information:
   - Select "Devices" in the menu on the left of the screen
@@ -11,7 +11,7 @@ To edit device information:
 
 > [!NOTE] 
 >
-> [Bulk-edit devices](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section.
+> [Bulk-edit devices](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section.
 
 
 ![Device Details][screen1]
@@ -23,7 +23,7 @@ To edit device information:
   - **Owner**: Device owner (The list is self-populated with existing owners)
   - **Type**: Select a device type from the dropdown list (Smartphone, Table,
       Laptop, TV, router, ....) or type a new device type
-  - **Vendor**: Automatically updated by Pi.Alert when empty or unknown
+  - **Vendor**: Automatically updated by NetAlertX when empty or unknown
   - **Favorite**: Mark the device as favorite and then it will appears at the
       begining of the device list
   - **Group**: Select a grouper ('Always on', 'Personal', Friends') or type
@@ -66,7 +66,7 @@ know, but it **is totally useless when connecting to our own WIFI's** or known
 networks.
 
 **I recommend disabling this operation when connecting our devices to our own
-WIFI's**, in this way, Pi.Alert will be able to identify the device, and it
+WIFI's**, in this way, NetAlertX will be able to identify the device, and it
 will not identify it as a new device every so often (every time IOS or Android
 decides to change the MAC).
 
@@ -89,11 +89,11 @@ decides to change the MAC).
 
   Always use the Issue tracker for the correct fork, for example: 
   
-  [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert/issues). Please also follow the guidelines on:
+  [jokob-sk/NetAlertX](https://github.com/jokob-sk/NetAlertX/issues). Please also follow the guidelines on:
 
-  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-pull-requests-prs) 
-  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-feature-requests) 
-  - 🐛 [Issue guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-submitting-an-issue-or-bug)
+  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs) 
+  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-feature-requests) 
+  - 🐛 [Issue guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-submitting-an-issue-or-bug)
 
     
   ***Suggestions and comments are welcome***

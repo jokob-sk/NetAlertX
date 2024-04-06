@@ -17,7 +17,7 @@ To decide on a backup strategy, check where the data is stored:
 
 ### Core Configuration
 
-The core application configuration is in the `pialert.conf` file (See [Settings System](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/SETTINGS_SYSTEM.md) for details), such as:
+The core application configuration is in the `pialert.conf` file (See [Settings System](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SETTINGS_SYSTEM.md) for details), such as:
 
 - Notification settings
 - Scanner settings
@@ -26,7 +26,7 @@ The core application configuration is in the `pialert.conf` file (See [Settings 
 
 ### Core Device Data
 
-The core device data is backed up to the `devices_<timestamp>.csv` file via the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup). This file contains data, such as:
+The core device data is backed up to the `devices_<timestamp>.csv` file via the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup). This file contains data, such as:
 
 - Device names
 - Device Icons
@@ -35,7 +35,7 @@ The core device data is backed up to the `devices_<timestamp>.csv` file via the 
 
 ### Historical data
 
-Historical data is stored in the `pialert.db` database (See [Database overview](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DATABASE.md) for details). This data includes:
+Historical data is stored in the `pialert.db` database (See [Database overview](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DATABASE.md) for details). This data includes:
 
 - Plugin objects
 - Plugin historical entries
@@ -59,7 +59,7 @@ End-result: Full restore
 
 #### Recovery:
 
-To restore the application map the above files as described in the [Setup documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md#docker-paths). 
+To restore the application map the above files as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths). 
 
 
 ### Scenario 2: Corrupted database
@@ -75,8 +75,8 @@ End-result: Partial restore (historical data & configurations from the Maintenan
 
 Even with a corrupted database you can recover what I would argue is 99% of the configuration (except of a couple of settings under Maintenance). 
 
-- map the `/config/pialert.conf` file as described in the [Setup documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md#docker-paths).
+- map the `/config/pialert.conf` file as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
 - rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/config` folder
-- Restore the `devices.csv` backup via the [Maintenance section](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md)
+- Restore the `devices.csv` backup via the [Maintenance section](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)
 
 

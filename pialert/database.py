@@ -1,4 +1,4 @@
-""" all things database to support Pi.Alert """
+""" all things database to support NetAlertX """
 
 import sqlite3
 import base64

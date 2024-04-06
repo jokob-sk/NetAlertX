@@ -15,7 +15,7 @@ import paho.mqtt.client as mqtt
 import hashlib
 
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 #  PiAlert modules

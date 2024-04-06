@@ -8,7 +8,7 @@ import pathlib
 import sys
 from datetime import datetime
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 import conf
@@ -98,7 +98,7 @@ def send(html, text):
 
     _json_payload = {
         "urls": get_setting_value('APPRISE_URL'),
-        "title": "Pi.Alert Notifications",
+        "title": "NetAlertX Notifications",
         "format": get_setting_value('APPRISE_PAYLOAD'),
         "body": payloadData
     }

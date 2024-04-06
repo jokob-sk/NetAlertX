@@ -1,6 +1,6 @@
 <?php
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  systeminfo.php - Front module. Server side. System Information                 #

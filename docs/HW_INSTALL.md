@@ -35,13 +35,13 @@ Some facts about what and where something will be changed/installed by the HW in
 ## 📥 Installation via CURL
 
 ```bash
-curl -o install.debian.sh https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/install/install.debian.sh && sudo chmod +x install.debian.sh && sudo ./install.debian.sh
+curl -o install.debian.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/install.debian.sh && sudo chmod +x install.debian.sh && sudo ./install.debian.sh
 ```
 
 ## 📥 Installation via WGET
 
 ```bash
-wget https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/install/install.debian.sh -O install.debian.sh && sudo chmod +x install.debian.sh && sudo ./install.debian.sh
+wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/install.debian.sh -O install.debian.sh && sudo chmod +x install.debian.sh && sudo ./install.debian.sh
 ```
 
 These commands will download the `install.debian.sh` script from the GitHub repository, make it executable with `chmod`, and then run it using `./install.debian.sh`.

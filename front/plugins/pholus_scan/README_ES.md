@@ -1,6 +1,6 @@
 ## Descripción general
 
-Un plugin para resolver nombres de dispositivos "(desconocidos)". Utiliza la herramienta de rastreo [Pholus](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/pholus_scan/pholus).
+Un plugin para resolver nombres de dispositivos "(desconocidos)". Utiliza la herramienta de rastreo [Pholus](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/pholus_scan/pholus).
 
 ### Uso
 

@@ -5,7 +5,7 @@ import sys
 import json
 import requests
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402

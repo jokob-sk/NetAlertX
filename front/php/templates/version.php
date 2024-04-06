@@ -1,6 +1,6 @@
 <?php
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  version.php - Templates module Template to display the current version         #

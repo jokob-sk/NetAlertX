@@ -4,7 +4,7 @@
 
 
 > [!NOTE] 
-> There are 2 NGINX files for PiAlert, one for the bare-metal Debian install (`pialert.debian.conf`), and one for the docker container (`pialert.template.conf`). Both can be found in the [install](https://github.com/jokob-sk/Pi.Alert/tree/main/install) folder. Map, or use, the one appropriate for your setup. 
+> There are 2 NGINX files for PiAlert, one for the bare-metal Debian install (`pialert.debian.conf`), and one for the docker container (`pialert.template.conf`). Both can be found in the [install](https://github.com/jokob-sk/NetAlertX/tree/main/install) folder. Map, or use, the one appropriate for your setup. 
 
 ## NGINX HTTP Configuration (Direct Path)
 
@@ -302,7 +302,7 @@ In the SWAG container create `/config/nginx/proxy-confs/pialert.subfolder.conf` 
 # make sure that your pialert container is named pialert
 # pialert does not require a base url setting
 
-# Since Pi.Alert uses a Host network, you may need to use the IP address of the system running Pi.Alert for $upstream_app.
+# Since NetAlertX uses a Host network, you may need to use the IP address of the system running NetAlertX for $upstream_app.
 
 location /pialert {
     return 301 $scheme://$host/pialert/;
@@ -352,9 +352,9 @@ location ^~ /pialert/ {
 
 ## Traefik
 
-> Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/Pi.Alert/discussions/449#discussioncomment-7281442))
+> Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/449#discussioncomment-7281442))
 
-Asuming the user already has a working Traefik setup, this is what's needed to make Pi.Alert work at a URL like www.domain.com/pialert/. 
+Asuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/pialert/. 
 
 Note: Everything in these configs assumes '**www.domain.com**' as your domainname and '**section31**' as an arbitrary name for your certificate setup. You will have to substitute these with your own.
 
@@ -362,7 +362,7 @@ Also, I use the prefix '**pialert**'. If you want to use another prefix, change 
 
 Content of my yaml-file (this is the generic Traefik config, which defines which ports to listen on, redirect http to https and sets up the certificate process).
 It also contains Authelia, which I use for authentication.
-This part contains nothing specific to Pi.Alert.
+This part contains nothing specific to NetAlertX.
 
 ```yaml
 version: '3.8'
@@ -406,7 +406,7 @@ services:
     restart: u
     nless-stopped
 ```
-Snippet of the dynamic.toml file (referenced in the yml-file above) that defines the config for Pi.Alert:
+Snippet of the dynamic.toml file (referenced in the yml-file above) that defines the config for NetAlertX:
 The following are self-defined keywords, everything else is traefik keywords:
 - pialert-router
 - pialert-service
@@ -441,7 +441,7 @@ The following are self-defined keywords, everything else is traefik keywords:
     forceSlash = false
 
 ```
-To make Pi.Alert work with this setup I modified the default file at `/etc/nginx/sites-available/default` in the docker container by copying it to my local filesystem, adding the changes as specified by [cvc90](https://github.com/cvc90) and mounting the new file into the docker container, overwriting the original one. By mapping the file instead of changing the file in-place, the changes persist if an updated dockerimage is pulled. This is also a downside when the default file is updated, so I only use this as a temporary solution, until the dockerimage is updated with this change.
+To make NetAlertX work with this setup I modified the default file at `/etc/nginx/sites-available/default` in the docker container by copying it to my local filesystem, adding the changes as specified by [cvc90](https://github.com/cvc90) and mounting the new file into the docker container, overwriting the original one. By mapping the file instead of changing the file in-place, the changes persist if an updated dockerimage is pulled. This is also a downside when the default file is updated, so I only use this as a temporary solution, until the dockerimage is updated with this change.
 
 Default-file:
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 #-------------------------------------------------------------------------------
-#  Pi.Alert  v2.70  /  2021-02-01
+#  NetAlertX  v2.70  /  2021-02-01
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  pialert.py - Back module. Network scanner
@@ -76,7 +76,7 @@ def main ():
     db.upgradeDB()
 
     #===============================================================================
-    # This is the main loop of Pi.Alert 
+    # This is the main loop of NetAlertX 
     #===============================================================================
 
     mylog('debug', '[MAIN] Starting loop')
@@ -201,5 +201,5 @@ def main ():
 # BEGIN
 #===============================================================================
 if __name__ == '__main__':
-    mylog('debug', ['[__main__] Welcome to Pi.Alert'])
+    mylog('debug', ['[__main__] Welcome to NetAlertX'])
     sys.exit(main())       

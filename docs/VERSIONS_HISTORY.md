@@ -14,7 +14,7 @@
   |  v2.50  | First public release                                            |
 
 
-# 🆕 2022+ [Newest Release notes](https://github.com/jokob-sk/Pi.Alert/issues/138)
+# 🆕 2022+ [Newest Release notes](https://github.com/jokob-sk/NetAlertX/issues/138)
 
 ## Pi.Alert v3.02
 <!--- --------------------------------------------------------------------- --->
@@ -79,9 +79,9 @@
 ### Contact
   Always use the Issue tracker for the correct fork, for example: 
   
-  [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert/issues). Please also follow the guidelines on:
+  [jokob-sk/NetAlertX](https://github.com/jokob-sk/NetAlertX/issues). Please also follow the guidelines on:
 
-  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-pull-requests-prs) 
-  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-feature-requests) 
-  - 🐛 [Issue guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-submitting-an-issue-or-bug)
+  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs) 
+  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-feature-requests) 
+  - 🐛 [Issue guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-submitting-an-issue-or-bug)
 

@@ -11,7 +11,7 @@ import requests
 from datetime import datetime
 from base64 import b64encode
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 import conf
@@ -84,7 +84,7 @@ def send(text):
     try:
         url = 'https://www.pushsafer.com/api'
         post_fields = {
-            "t" : 'Pi.Alert Message',
+            "t" : 'NetAlertX Message',
             "m" : text,
             "s" : 11,
             "v" : 3,
@@ -92,7 +92,7 @@ def send(text):
             "c" : '#ef7f7f',
             "d" : 'a',
             "u" : get_setting_value('REPORT_DASHBOARD_URL'),
-            "ut" : 'Open Pi.Alert',
+            "ut" : 'Open NetAlertX',
             "k" : token,
             }
         response = requests.post(url, data=post_fields)

@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
-*  Pi.Alert
+*  NetAlertX
 *  Open Source Network Guard / WIFI & LAN intrusion detector 
 *
 *  pialert_common.js - Front module. Common Javascript functions

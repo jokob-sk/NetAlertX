@@ -1,6 +1,6 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 # footer.php - Front module. Common footer to all the web pages                   #
@@ -20,14 +20,14 @@
     <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>    
        2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) | <b><?= lang('Maintenance_built_on');?>: </b> 
        <?php include 'php/templates/build.php'; ?> | <b> Version: </b> <?php include 'php/templates/version.php'; ?> | 
-       <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/docs" target="_blank"><span>Docs <i class="fa fa-circle-question"></i></a>
+       <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank"><span>Docs <i class="fa fa-circle-question"></i></a>
      <span>
     
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
 
-    <!-- Pi.Alert footer with url -->
-    <a href="https://github.com/jokob-sk/Pi.Alert" target="_blank">Pi.Alert</a>
+    <!-- NetAlertX footer with url -->
+    <a href="https://github.com/jokob-sk/NetAlertX" target="_blank">NetAlertX</a>
     
     </div>
   </footer>
@@ -54,7 +54,7 @@
 <!-- FastClick -->
   <!-- <script src="lib/AdminLTE/bower_components/fastclick/lib/fastclick.js"></script>  -->
 
-<!-- Pi.Alert -------------------------------------------------------------- -->
+<!-- NetAlertX -------------------------------------------------------------- -->
 
   <script src="js/handle_version.js"></script>
 

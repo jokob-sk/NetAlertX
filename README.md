@@ -1,14 +1,14 @@
 # 💻🔍 Network security scanner & notification framework
 
-Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
+Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
-[![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/Pi.Alert?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/Pi.Alert)
+[![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/NetAlertX?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/NetAlertX)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
-[![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/Pi.Alert?color=0aa8d2&logoColor=fff&logo=GitHub)](https://github.com/jokob-sk/Pi.Alert/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)](https://github.com/jokob-sk/NetAlertX/releases)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/Pi.Alert/releases) | 📚 [All Docs](https://github.com/jokob-sk/Pi.Alert/tree/main/docs) | 
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | 
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
 
@@ -35,9 +35,9 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 
   PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
 
-  Set up a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md) features. 
+  Set up a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) features. 
 
-  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
+  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
 
   Looking forward to your contributions if you decide to share your work with the community ❤.
 
@@ -47,10 +47,10 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 
 | Features    | Details    | 
 |-------------|-------------|
-|      🔍     |   The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**.  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) docs for more info on individual scans. |
+|      🔍     |   The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**.  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) docs for more info on individual scans. |
 |📧           | Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/). |
-|🧩           | Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows.  |
-|➕           | Build your own scanners with the [Plugin system](https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins#readme) |
+|🧩           | Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows.  |
+|➕           | Build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) |
 
 
 ## Installation & Documentation
@@ -58,9 +58,9 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 
 | Docs        | Link    | 
 |-------------|-------------|
-| 📥🐳  | [Docker instructions](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md) 
-| 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/HW_INSTALL.md) |
-| 📚     | [All Documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/README.md) (App Usage and Configuration) |
+| 📥🐳  | [Docker instructions](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
+| 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) |
+| 📚     | [All Documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) (App Usage and Configuration) |
  
 > Other Alternatives
 >

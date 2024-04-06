@@ -44,12 +44,12 @@ The adapter will probably be `eth0` or `eth1`. (Check `System info` > `Network H
 
 **Example value: `-vlan=107`**
 
-- Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [comment in this issue](https://github.com/jokob-sk/Pi.Alert/issues/170#issuecomment-1419902988)
+- Append e.g.: ` -vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple vlans. More details in this [comment in this issue](https://github.com/jokob-sk/NetAlertX/issues/170#issuecomment-1419902988)
 
 
 #### VLANs on a Hyper-V setup
 
-> Community sourced content by [mscreations](https://github.com/mscreations) from this [discussion](https://github.com/jokob-sk/Pi.Alert/discussions/404).
+> Community sourced content by [mscreations](https://github.com/mscreations) from this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/404).
 
 > [!NOTE] 
 > The setup this was tested on: Bare Metal -> Hyper-V on Win Server 2019 -> Ubuntu 22.04 VM -> Docker -> PiAlert. 
@@ -102,6 +102,6 @@ network:
 
 Please note the accessibility of the macvlans when they are configured on the same computer. My understanding this is a general networking behavior, but feel free to clarify via a PR/issue.
 
-- Pi.Alert does not detect the macvlan container when it is running on the same computer.
-- Pi.Alert recognizes the macvlan container when it is running on a different computer.
+- NetAlertX does not detect the macvlan container when it is running on the same computer.
+- NetAlertX recognizes the macvlan container when it is running on a different computer.
 

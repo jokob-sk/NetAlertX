@@ -5,7 +5,7 @@ N8N can be used for more advanced conditional notification use cases. For exampl
 ![n8n workflow](/docs/img/WEBHOOK_N8N/n8n_workflow.png)
 
 ### Specify your email template 
-See [sample JSON](https://github.com/jokob-sk/Pi.Alert/blob/main/back/webhook_json_sample.json) if you want to see the JSON paths used in the email template below
+See [sample JSON](https://github.com/jokob-sk/NetAlertX/blob/main/back/webhook_json_sample.json) if you want to see the JSON paths used in the email template below
 ![Email template](/docs/img/WEBHOOK_N8N/n8n_send_email_settings.png)
 
 ```

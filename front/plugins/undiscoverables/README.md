@@ -23,5 +23,5 @@ Allowing Un-Discoverable devices like hubs, switches or APs to be added to the n
 ![network](https://github.com/Data-Monkey/Pi.Alert/assets/7224371/b5ccc3b3-f5fd-4f5b-b0f0-e4e637c6da33)
 
 ### Known Limitations
- - Un-Discoverable Devices always show as offline. That is expected as they can not be discovered by Pi.Alert.
+ - Un-Discoverable Devices always show as offline. That is expected as they can not be discovered by NetAlertX.
  - All IPs are set to 0.0.0.0 therefore the "Random MAC" icon might show up.

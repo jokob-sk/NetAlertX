@@ -97,7 +97,7 @@ def generate_sponsors_table(sponsors):
 def update_readme(sponsors_table):
     global headers
     repo_owner = "jokob-sk"
-    repo_name = "Pi.Alert"
+    repo_name = "NetAlertX"
 
     # Update the README.md file in the GitHub repository
     api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/README.md"

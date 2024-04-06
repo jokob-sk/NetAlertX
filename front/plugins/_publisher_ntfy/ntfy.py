@@ -11,7 +11,7 @@ import requests
 from datetime import datetime
 from base64 import b64encode
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 import conf
@@ -86,7 +86,7 @@ def send(html, text):
 
 
     headers = {
-        "Title": "Pi.Alert Notification",
+        "Title": "NetAlertX Notification",
         "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
         "Priority": get_setting_value('NTFY_PRIORITY'),
         "Tags": "warning"

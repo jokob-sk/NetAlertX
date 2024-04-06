@@ -411,7 +411,7 @@
     "Maintenance_arp_status_off": "est actuellement désactivé",
     "Maintenance_arp_status_on": "",
     "Maintenance_built_on": "Construit sur",
-    "Maintenance_current_version": "Vous êtes à jour. Découvrez sur quoi <a href=\"https://github.com/jokob-sk/Pi.Alert/issues/138\" target=\"_blank\">je travaille</a>.",
+    "Maintenance_current_version": "Vous êtes à jour. Découvrez sur quoi <a href=\"https://github.com/jokob-sk/NetAlertX/issues/138\" target=\"_blank\">je travaille</a>.",
     "Maintenance_database_backup": "Sauvegardes de base de données",
     "Maintenance_database_backup_found": "des sauvegardes ont été trouvées",
     "Maintenance_database_backup_total": "utilisation totale du disque",

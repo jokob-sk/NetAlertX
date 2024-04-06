@@ -1,18 +1,18 @@
 ### Community translations of this file
 
-<a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/csv_backup/README_ES.md">
+<a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/csv_backup/README_ES.md">
   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;">
   Spanish (Spain)
 </a>
 <br>
-<a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/csv_backup/README_DE.md">
+<a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/csv_backup/README_DE.md">
   <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 20px !important;width: 20px !important;">
   German (Germany)
 </a>
 
 ## Overview
 
-Plugin generating CSV backups of your Devices database table, including the network mappings. Can be used for importing your setup via the Maintenance > Backup / Restore > CSV Import feature (See also: [Devices Bulk Editing](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEVICES_BULK_EDITING.md)).
+Plugin generating CSV backups of your Devices database table, including the network mappings. Can be used for importing your setup via the Maintenance > Backup / Restore > CSV Import feature (See also: [Devices Bulk Editing](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)).
 
 ### Usage
 

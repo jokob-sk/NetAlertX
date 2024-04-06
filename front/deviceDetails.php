@@ -1,6 +1,6 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  deviceDetails.php - Front module. Device management page                       #
@@ -193,7 +193,7 @@
                       <div class="form-group" >
                         <label class="col-sm-3 control-label">
                           <?= lang('DevDetail_Icon');?> 
-                          <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
+                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
@@ -325,7 +325,7 @@
                       </div>
 
                       <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
+                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
                       <div class="form-group" title="<?= lang('DevDetail_Network_Node_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
@@ -442,7 +442,7 @@
                           <span id="iconRandomMACactive"   data-toggle="tooltip" data-placement="right" title="Random MAC is Active" class="hidden">
                             <i style="font-size: 24px;" class="text-yellow glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
 
-                          <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/docs/RANDOM_MAC.md" target="_blank" style="color: #777;"> 
+                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/RANDOM_MAC.md" target="_blank" style="color: #777;"> 
                             <i class="fa fa-info-circle"></i> </a>
                         </div>
                       </div>

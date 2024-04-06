@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------------------#
-#  Pi.Alert                                                                       #
+#  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  reporting.py - Pialert Back module. Template to email reporting in HTML format #

@@ -4,12 +4,12 @@
 
 If a Plugin supplies data to the main app it's doine either vie a SQL query or via a script that updates the `last_result.log` file in the plugin folder (`front/plugins/<plugin>`).
 
-For a more in-depth overview on how plugins work check the [Plugins development docs](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md).
+For a more in-depth overview on how plugins work check the [Plugins development docs](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).
 
 ### Prerequisites
 
 - Make sure you read and followed the specific plugin setup instructions.
-- Ensure you have [debug enabled (see More Logging)](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/DEBUG_TIPS.md#1-more-logging-) 
+- Ensure you have [debug enabled (see More Logging)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md#1-more-logging-) 
 
 ### Potential issues
 

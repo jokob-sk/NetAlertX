@@ -2,11 +2,11 @@
 
 ### 🏴 Community-Übersetzungen dieser Datei
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md">
+* <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/us.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> English (American)
   </a> 
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_ES.md">
+* <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README_ES.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 20px !important;width: 20px !important;"> Spanish (Spain)
   </a> 
 
@@ -554,7 +554,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 |  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. |
 | `RUN_SCHD` | (required if you include the above `RUN` function) Cron-like scheduling is used if the `RUN` setting is set to `schedule`. |
 | `CMD` | (required) Specifies the command that should be executed. |
-| `API_SQL` | (not implemented) Generates a `table_` + `code_name` + `.json` file as per [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md). |
+| `API_SQL` | (not implemented) Generates a `table_` + `code_name` + `.json` file as per [API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md). |
 | `RUN_TIMEOUT` | (optional) Specifies the maximum execution time of the script. If not specified, a default value of 10 seconds is used to prevent hanging. |
 | `WATCH` | (optional) Specifies which database columns are watched for changes for this particular plugin. If not specified, no notifications are sent. |
 | `REPORT_ON` | (optional) Specifies when to send a notification. Supported options are: |
@@ -715,8 +715,8 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
         }
 ```
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png                    "Screen 1"
-[screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png           "Screen 2"
-[screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png      "Screen 3"
-[screen4]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_ui.png            "Screen 4"
-[screen5]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_device_details.png     "Screen 5"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png                    "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png           "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
+[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"

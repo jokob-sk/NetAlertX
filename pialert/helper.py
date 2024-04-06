@@ -1,4 +1,4 @@
-""" Colection of generic functions to support Pi.Alert """
+""" Colection of generic functions to support NetAlertX """
 
 import io
 import sys
@@ -738,7 +738,7 @@ def checkNewVersion():
     data = ""
 
     try:
-        url = requests.get("https://api.github.com/repos/jokob-sk/Pi.Alert/releases")
+        url = requests.get("https://api.github.com/repos/jokob-sk/NetAlertX/releases")
         text = url.text
         data = json.loads(text)
     except requests.exceptions.ConnectionError as e:

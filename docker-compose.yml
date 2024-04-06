@@ -1,13 +1,13 @@
 version: "3"
 services:
-  pialert:
+  netalertx:
     privileged: true
     build:
       dockerfile: Dockerfile
       context: .
       cache_from:
-        - type=registry,ref=docker.io/jokob-sk/pi.alert:buildcache
-    container_name: pialert
+        - type=registry,ref=docker.io/jokob-sk/netalertx:buildcache
+    container_name: netalertx
     network_mode: host
     # restart: unless-stopped
     volumes:

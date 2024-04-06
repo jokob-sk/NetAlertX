@@ -33,7 +33,7 @@ If possible, check if your issue got fixed in the `_dev` image before opening a 
 
 > ⚠ Please backup your DB and config beforehand!
 
-Please also search [open issues](https://github.com/jokob-sk/Pi.Alert/issues).
+Please also search [open issues](https://github.com/jokob-sk/NetAlertX/issues).
 
 ## 4. Disable restart behavior 🛑
 
@@ -55,7 +55,7 @@ services:
 
 * If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
 * To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
-* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see [docker-compose Examples](https://github.com/jokob-sk/Pi.Alert/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
+* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
 
 ### Container restarts / crashes
 

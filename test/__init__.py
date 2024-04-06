@@ -1,1 +1,1 @@
-""" tests for Pi.Alert """
+""" tests for NetAlertX """

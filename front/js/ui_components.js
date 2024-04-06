@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
-*  Pi.Alert
+*  NetAlertX
 *  Open Source Network Guard / WIFI & LAN intrusion detector 
 *
 *  ui_components.js - Front module. Common UI components

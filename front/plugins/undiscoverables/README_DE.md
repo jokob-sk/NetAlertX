@@ -23,5 +23,5 @@ Erlaubt nicht erkennbare Geräte wie Hubs, Switches oder APs in der Netzwerkansi
 
 ### Bekannte Einschränkungen
 
-- Nicht erkennbare Geräte erscheinen immer als Offline. Pi.Alert kann diese Geräte nicht erkennen (wie erwartet).
+- Nicht erkennbare Geräte erscheinen immer als Offline. NetAlertX kann diese Geräte nicht erkennen (wie erwartet).
 - Alle IPs werden auf 0.0.0.0 gesetzt, daher kann es sein, dass das "Zufällige MAC"-Icon erscheint

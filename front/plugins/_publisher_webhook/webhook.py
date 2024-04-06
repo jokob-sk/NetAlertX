@@ -13,7 +13,7 @@ from base64 import b64encode
 import hashlib
 import hmac
 
-# Replace these paths with the actual paths to your Pi.Alert directories
+# Replace these paths with the actual paths to your NetAlertX directories
 sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
 
 # pialert modules
@@ -134,10 +134,10 @@ def send (text_data, html_data, json_data):
 
     # Define slack-compatible payload
     _json_payload = { "text": payloadData } if payloadType == 'text' else {
-    "username": "Pi.Alert",
+    "username": "NetAlertX",
     "text": "There are new notifications",
     "attachments": [{
-      "title": "Pi.Alert Notifications",
+      "title": "NetAlertX Notifications",
       "title_link": get_setting_value('REPORT_DASHBOARD_URL'),
       "text": payloadData
     }]

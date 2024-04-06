@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ------------------------------------------------------------------------------
-#  Pi.Alert
+#  NetAlertX
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
 #  update_vendors.sh - Back module. IEEE Vendors db update

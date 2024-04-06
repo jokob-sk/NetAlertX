@@ -2,11 +2,11 @@
 
 ### 🏴 Traducciones comunitarias de este archivo
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md">
+* <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/us.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> Ingles (Americano)
   </a> 
 
-* <a href="https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README_DE.md">
+* <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README_DE.md">
    <img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README.md" style="height: 20px !important;width: 20px !important;"> Alemán (Alemania)
   </a> 
 
@@ -496,7 +496,7 @@ Puede tener cualquier nombre personalizado `"function": "my_custom_name"`; sin e
       - "before_config_save" - Se ejecuta antes de que la configuración se marque como guardada. Útil si su complemento necesita modificar el archivo `pialert.conf`.
 - `RUN_SCHD` - (requerido si incluye la función `RUN` anterior) La programación tipo cron se utiliza si la configuración `RUN` está establecida en `schedule`
 - `CMD` - (requerido) Qué comando se debe ejecutar.
-- `API_SQL` - (opcional) Genera una `table_` + code_name  + `.json` archivo según [API docs](https://github.com/jokob-sk/Pi.Alert/blob/main/docs/API.md).
+- `API_SQL` - (opcional) Genera una `table_` + code_name  + `.json` archivo según [API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md).
 - `RUN_TIMEOUT` - (opcional) Tiempo máximo de ejecución del script. Si no se especifica, se utiliza un valor predeterminado de 10 segundos para evitar que se cuelgue.
 - `WATCH` - (opcional) Qué columnas de la base de datos se vigilan en busca de cambios para este complemento en particular. Si no se especifica no se envían notificaciones. 
 - `REPORT_ON` - (opcional) Envíe una notificación solo sobre estos estados. Las opciones admitidas son:
@@ -624,8 +624,8 @@ La interfaz de usuario ajustará cómo se muestran las columnas en función de l
 
 
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins.png                    "Screen 1"
-[screen2]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_settings.png           "Screen 2"
-[screen3]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png      "Screen 3"
-[screen4]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_ui.png            "Screen 4"
-[screen5]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_device_details.png     "Screen 5"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png                    "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png           "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
+[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"

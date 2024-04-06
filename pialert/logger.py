@@ -1,4 +1,4 @@
-""" Colection of functions to support all logging for Pi.Alert """
+""" Colection of functions to support all logging for NetAlertX """
 import sys
 import io
 import datetime

@@ -1,1 +1,1 @@
-""" __init__ for Pi.Alert """
+""" __init__ for NetAlertX """

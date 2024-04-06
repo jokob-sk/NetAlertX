@@ -1,6 +1,6 @@
 <?php
 //------------------------------------------------------------------------------
-//  Pi.Alert
+//  NetAlertX
 //  Open Source Network Guard / WIFI & LAN intrusion detector 
 //
 //  parameters.php - Front module. Server side. Manage Parameters

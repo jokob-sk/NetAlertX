@@ -32,7 +32,7 @@ The App generates two `pialert.conf` entries for every setting (Since version 23
 > [!NOTE] 
 > This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
 
-Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `pialert.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://github.com/jokob-sk/Pi.Alert/blob/main/front/plugins/README.md#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
+Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `pialert.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
 
 ![Screen 1][screen1]
 
@@ -74,4 +74,4 @@ Here's a high-level description of the code:
 
 _____________________
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/Pi.Alert/main/docs/img/plugins_json_settings.png      "Screen 1"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 1"

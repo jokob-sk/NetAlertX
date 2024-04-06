@@ -12,7 +12,7 @@ know, but it **is totally useless when connecting to our own WIFI's** or known
 networks.
 
 **I recommend disabling this operation when connecting our devices to our own
-WIFI's**, in this way, Pi.Alert will be able to identify the device, and it
+WIFI's**, in this way, NetAlertX will be able to identify the device, and it
 will not identify it as a new device every so often (every time IOS or Android
 decides to change the MAC).
 
@@ -37,11 +37,11 @@ decides to change the MAC).
 ### Contact
   Always use the Issue tracker for the correct fork, for example: 
   
-  [jokob-sk/Pi.Alert](https://github.com/jokob-sk/Pi.Alert/issues). Please also follow the guidelines on:
+  [jokob-sk/NetAlertX](https://github.com/jokob-sk/NetAlertX/issues). Please also follow the guidelines on:
 
-  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-pull-requests-prs) 
-  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-feature-requests) 
-  - 🐛 [Issue guidelines](https://github.com/jokob-sk/Pi.Alert/tree/main/docs#-submitting-an-issue-or-bug)
+  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs) 
+  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-feature-requests) 
+  - 🐛 [Issue guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-submitting-an-issue-or-bug)
 
   
   ***Suggestions and comments are welcome***

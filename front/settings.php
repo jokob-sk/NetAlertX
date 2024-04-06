@@ -273,7 +273,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         <div class="row table_row">
           <div class="table_cell bold">
             <i class="fa-regular fa-book fa-sm"></i>
-            <a href="https://github.com/jokob-sk/Pi.Alert/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
+            <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
               ${getString('Gen_ReadDocs')}
             </a>
           </div>
