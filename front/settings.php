@@ -257,13 +257,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       if(getSetting(group+"_RUN") != "")
       {
-        let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save"  ].includes(getSetting(group+"_RUN"));      
+        let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save", "before_name_updates"  ].includes(getSetting(group+"_RUN"));      
 
-        isEnabled ? onOff = 'solid' : onOff = 'regular';
+        isEnabled ? onOff = 'circle-check' : onOff = 'circle';
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
-                        <i class="fa-${onOff} fa-circle"></i>
+                        <i class="fa-regular fa-${onOff}"></i>
                       </div>
                       `
       }      
