@@ -531,7 +531,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     multi = isMultiSelect ? "multiple" : "";
 
     optionsArray = getSettingOptions(set['Code_Name'] )
-    valuesArray = createArray(set['Value']);    
+    valuesArray = createArray(set['Value']);  
 
     // create unique ID  
     var targetLocation = set['Code_Name'] + "_initSettingDropdown";  

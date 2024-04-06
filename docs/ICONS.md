@@ -29,7 +29,7 @@ Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=f
 
 ![preview](/docs/img/ICONS/device_add_icon.png)
 
-3. Paste in teh copied HTML or SVG code.
+3. Paste in the copied HTML or SVG code.
 
 4. Click "OK"
 
