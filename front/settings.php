@@ -259,11 +259,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       {
         let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save"  ].includes(getSetting(group+"_RUN"));      
 
-        isEnabled ? onOff = 'on' : onOff = 'off';
+        isEnabled ? onOff = 'solid' : onOff = 'regular';
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
-                        <i class="fa-solid fa-toggle-${onOff}"></i>
+                        <i class="fa-${onOff} fa-circle"></i>
                       </div>
                       `
       }      
