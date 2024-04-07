@@ -331,7 +331,7 @@ function deleteActHistory() {
 //------------------------------------------------------------------------------
 function PiaBackupDBtoArchive() {
   // prepare fast Backup
-  $dbfilename = 'pialert.db'
+  $dbfilename = 'pialert.db';
   $file = '../../../db/'.$dbfilename;
   $newfile = '../../../db/'.$dbfilename.'.latestbackup';
   
