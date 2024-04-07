@@ -50,6 +50,7 @@ jobs:
           images: |
             jokobsk/pi.alert_dev
             jokobsk/netalertx-dev
+            jokobsk/netalertx
           # generate Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest
