@@ -31,7 +31,7 @@ echo -e '#!/bin/execlineb -P
             [INSTALL] 🚀 Starting app (:${PORT})
             
         " }' > /etc/s6-overlay/s6-rc.d/pialert/run
-echo -e "python ${INSTALL_DIR}/pialert/pialert" >> /etc/s6-overlay/s6-rc.d/pialert/run
+echo -e "python ${INSTALL_DIR}/pialert/netalertx" >> /etc/s6-overlay/s6-rc.d/pialert/run
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,pialert} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx,pialert}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm

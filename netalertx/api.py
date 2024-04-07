@@ -1,7 +1,7 @@
 import json
 
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 import conf  
 from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all)
 from logger import mylog

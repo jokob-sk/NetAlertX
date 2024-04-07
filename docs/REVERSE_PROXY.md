@@ -4,18 +4,18 @@
 
 
 > [!NOTE] 
-> There are 2 NGINX files for PiAlert, one for the bare-metal Debian install (`pialert.debian.conf`), and one for the docker container (`pialert.template.conf`). Both can be found in the [install](https://github.com/jokob-sk/NetAlertX/tree/main/install) folder. Map, or use, the one appropriate for your setup. 
+> There are 2 NGINX files for NetAlertX, one for the bare-metal Debian install (`netalertx.debian.conf`), and one for the docker container (`netalertx.template.conf`). Both can be found in the [install](https://github.com/jokob-sk/NetAlertX/tree/main/install) folder. Map, or use, the one appropriate for your setup. 
 
 ## NGINX HTTP Configuration (Direct Path)
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 80; 
-     server_name pi.alert; 
+     server_name netalertx; 
      proxy_preserve_host on; 
      proxy_pass http://localhost:20211/; 
      proxy_pass_reverse http://localhost:20211/; 
@@ -26,26 +26,26 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at http://netalertx/
 
 <br>
 
 ## NGINX HTTP Configuration (Sub Path)
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 80; 
-     server_name pi.alert; 
+     server_name netalertx; 
      proxy_preserve_host on; 
-     location ^~ /pi.alert/ {
+     location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
           proxy_pass_reverse http://localhost:20211/; 
-          proxy_redirect ~^/(.*)$ /pi.alert/$1;
-          rewrite ^/pi.alert/?(.*)$ /$1 break;			
+          proxy_redirect ~^/(.*)$ /netalertx/$1;
+          rewrite ^/netalertx/?(.*)$ /$1 break;			
      }
     }
 ``` 
@@ -54,34 +54,34 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at http://netalertx/netalertx/
 
 <br>
 
 ## NGINX HTTP Configuration (Sub Path) with module ngx_http_sub_module
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 80; 
-     server_name pi.alert; 
+     server_name netalertx; 
      proxy_preserve_host on; 
-     location ^~ /pi.alert/ {
+     location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
           proxy_pass_reverse http://localhost:20211/; 
-          proxy_redirect ~^/(.*)$ /pi.alert/$1;
-          rewrite ^/pi.alert/?(.*)$ /$1 break;
+          proxy_redirect ~^/(.*)$ /netalertx/$1;
+          rewrite ^/netalertx/?(.*)$ /$1 break;
 	  sub_filter_once off;
 	  sub_filter_types *;
-	  sub_filter 'href="/' 'href="/pi.alert/';
-	  sub_filter '(?>$host)/css' '/pi.alert/css';
-	  sub_filter '(?>$host)/js'  '/pi.alert/js';
-	  sub_filter '/img' '/pi.alert/img';
-	  sub_filter '/lib' '/pi.alert/lib';
-	  sub_filter '/php' '/pi.alert/php';				
+	  sub_filter 'href="/' 'href="/netalertx/';
+	  sub_filter '(?>$host)/css' '/netalertx/css';
+	  sub_filter '(?>$host)/js'  '/netalertx/js';
+	  sub_filter '/img' '/netalertx/img';
+	  sub_filter '/lib' '/netalertx/lib';
+	  sub_filter '/php' '/netalertx/php';				
      }
     }
 ``` 
@@ -90,23 +90,23 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at http://pi.alert/pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at http://netalertx/netalertx/
 
 <br>
 
 **NGINX HTTPS Configuration (Direct Path)**
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 443; 
-     server_name pi.alert; 
+     server_name netalertx; 
      SSLEngine On;
-     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
-     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
+     SSLCertificateFile /etc/ssl/certs/netalertx.pem;
+     SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
      proxy_preserve_host on; 
      proxy_pass http://localhost:20211/; 
      proxy_pass_reverse http://localhost:20211/; 
@@ -117,28 +117,28 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/
 
 <br>
 
 **NGINX HTTPS Configuration (Sub Path)**
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 443; 
-     server_name pi.alert; 
+     server_name netalertx; 
      SSLEngine On;
-     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
-     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
-     location ^~ /pi.alert/ {
+     SSLCertificateFile /etc/ssl/certs/netalertx.pem;
+     SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
+     location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
           proxy_pass_reverse http://localhost:20211/; 
-          proxy_redirect ~^/(.*)$ /pi.alert/$1;
-          rewrite ^/pi.alert/?(.*)$ /$1 break;		
+          proxy_redirect ~^/(.*)$ /netalertx/$1;
+          rewrite ^/netalertx/?(.*)$ /$1 break;		
      }
     }
 ``` 
@@ -147,36 +147,36 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 <br>
 
 ## NGINX HTTPS Configuration (Sub Path) with module ngx_http_sub_module
 
-1. On your NGINX server, create a new file called /etc/nginx/sites-available/pialert
+1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
 2. In this file, paste the following code:
 
 ```
    server { 
      listen 443; 
-     server_name pi.alert; 
+     server_name netalertx; 
      SSLEngine On;
-     SSLCertificateFile /etc/ssl/certs/pi.alert.pem;
-     SSLCertificateKeyFile /etc/ssl/private/pi.alert.key;
-     location ^~ /pi.alert/ {
+     SSLCertificateFile /etc/ssl/certs/netalertx.pem;
+     SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
+     location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
           proxy_pass_reverse http://localhost:20211/; 
-          proxy_redirect ~^/(.*)$ /pi.alert/$1;
-          rewrite ^/pi.alert/?(.*)$ /$1 break;
+          proxy_redirect ~^/(.*)$ /netalertx/$1;
+          rewrite ^/netalertx/?(.*)$ /$1 break;
 	  sub_filter_once off;
 	  sub_filter_types *;
-	  sub_filter 'href="/' 'href="/pi.alert/';
-	  sub_filter '(?>$host)/css' '/pi.alert/css';
-	  sub_filter '(?>$host)/js'  '/pi.alert/js';
-	  sub_filter '/img' '/pi.alert/img';
-	  sub_filter '/lib' '/pi.alert/lib';
-	  sub_filter '/php' '/pi.alert/php';		
+	  sub_filter 'href="/' 'href="/netalertx/';
+	  sub_filter '(?>$host)/css' '/netalertx/css';
+	  sub_filter '(?>$host)/js'  '/netalertx/js';
+	  sub_filter '/img' '/netalertx/img';
+	  sub_filter '/lib' '/netalertx/lib';
+	  sub_filter '/php' '/netalertx/php';		
      }
     }
 ``` 
@@ -185,19 +185,19 @@
 
    `nginx -s reload` or `systemctl restart nginx`
 
-4. Once NGINX restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+4. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 <br>
 
 ## Apache HTTP Configuration (Direct Path)
 
-1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+1. On your Apache server, create a new file called /etc/apache2/sites-available/netalertx.conf.
 
 2. In this file, paste the following code:
 
 ```
     <VirtualHost *:80>
-         ServerName pi.alert
+         ServerName netalertx
          ProxyPreserveHost On
          ProxyPass / http://localhost:20211/
          ProxyPassReverse / http://localhost:20211/
@@ -206,22 +206,22 @@
 
 3. Activate the new website by running the following command:
 
-   `a2ensite pialert` or `service apache2 reload`
+   `a2ensite netalertx` or `service apache2 reload`
 
-4. Once Apache restarts, you should be able to access the proxy website at http://pi.alert/
+4. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
 
 <br>
 
 ## Apache HTTP Configuration (Sub Path)
 
-1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+1. On your Apache server, create a new file called /etc/apache2/sites-available/netalertx.conf.
 
 2. In this file, paste the following code:
 
 ```
     <VirtualHost *:80>
-         ServerName pi.alert
-         location ^~ /pi.alert/ {
+         ServerName netalertx
+         location ^~ /netalertx/ {
                ProxyPreserveHost On
                ProxyPass / http://localhost:20211/
                ProxyPassReverse / http://localhost:20211/
@@ -231,24 +231,24 @@
 
 3. Activate the new website by running the following command:
 
-   `a2ensite pialert` or `service apache2 reload`
+   `a2ensite netalertx` or `service apache2 reload`
 
-4. Once Apache restarts, you should be able to access the proxy website at http://pi.alert/
+4. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
 
 <br>
 
 ## Apache HTTPS Configuration (Direct Path)
 
-1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+1. On your Apache server, create a new file called /etc/apache2/sites-available/netalertx.conf.
 
 2. In this file, paste the following code:
 
 ```
     <VirtualHost *:443>
-         ServerName pi.alert
+         ServerName netalertx
          SSLEngine On
-         SSLCertificateFile /etc/ssl/certs/pi.alert.pem
-         SSLCertificateKeyFile /etc/ssl/private/pi.alert.key
+         SSLCertificateFile /etc/ssl/certs/netalertx.pem
+         SSLCertificateKeyFile /etc/ssl/private/netalertx.key
          ProxyPreserveHost On
          ProxyPass / http://localhost:20211/
          ProxyPassReverse / http://localhost:20211/
@@ -257,25 +257,25 @@
 
 3. Activate the new website by running the following command:
 
-    `a2ensite pialert` or `service apache2 reload`
+    `a2ensite netalertx` or `service apache2 reload`
 
-4. Once Apache restarts, you should be able to access the proxy website at https://pi.alert/
+4. Once Apache restarts, you should be able to access the proxy website at https://netalertx/
 
 <br>
 
 ## Apache HTTPS Configuration (Sub Path)
 
-1. On your Apache server, create a new file called /etc/apache2/sites-available/pialert.conf.
+1. On your Apache server, create a new file called /etc/apache2/sites-available/netalertx.conf.
 
 2. In this file, paste the following code:
                             
 ```
 	<VirtualHost *:443> 
-        ServerName pi.alert
+        ServerName netalertx
         SSLEngine On 
-        SSLCertificateFile /etc/ssl/certs/pi.alert.pem
-        SSLCertificateKeyFile /etc/ssl/private/pi.alert.key
-        location ^~ /pi.alert/ {
+        SSLCertificateFile /etc/ssl/certs/netalertx.pem
+        SSLCertificateKeyFile /etc/ssl/private/netalertx.key
+        location ^~ /netalertx/ {
               ProxyPreserveHost On
               ProxyPass / http://localhost:20211/
               ProxyPassReverse / http://localhost:20211/
@@ -285,9 +285,9 @@
 
 3. Activate the new website by running the following command:
 
-   `a2ensite pialert` or `service apache2 reload`
+   `a2ensite netalertx` or `service apache2 reload`
 
-4. Once Apache restarts, you should be able to access the proxy website at https://pi.alert/pi.alert/
+4. Once Apache restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 ## Reverse proxy example by using LinuxServer's SWAG container.
 
@@ -295,20 +295,20 @@
 
 ## [linuxserver/swag](https://github.com/linuxserver/docker-swag)
 
-In the SWAG container create `/config/nginx/proxy-confs/pialert.subfolder.conf` with the following contents:
+In the SWAG container create `/config/nginx/proxy-confs/netalertx.subfolder.conf` with the following contents:
 
 ``` nginx
 ## Version 2023/02/05
-# make sure that your pialert container is named pialert
-# pialert does not require a base url setting
+# make sure that your netalertx container is named netalertx
+# netalertx does not require a base url setting
 
 # Since NetAlertX uses a Host network, you may need to use the IP address of the system running NetAlertX for $upstream_app.
 
-location /pialert {
-    return 301 $scheme://$host/pialert/;
+location /netalertx {
+    return 301 $scheme://$host/netalertx/;
 }
 
-location ^~ /pialert/ {
+location ^~ /netalertx/ {
     # enable the next two lines for http auth
     #auth_basic "Restricted";
     #auth_basic_user_file /config/nginx/.htpasswd;
@@ -325,27 +325,27 @@ location ^~ /pialert/ {
     include /config/nginx/proxy.conf;
     include /config/nginx/resolver.conf;
 
-    set $upstream_app pialert;
+    set $upstream_app netalertx;
     set $upstream_port 20211;
     set $upstream_proto http;
 
     proxy_pass $upstream_proto://$upstream_app:$upstream_port;
     proxy_set_header Accept-Encoding "";
 
-    proxy_redirect ~^/(.*)$ /pialert/$1;
-    rewrite ^/pialert/?(.*)$ /$1 break;
+    proxy_redirect ~^/(.*)$ /netalertx/$1;
+    rewrite ^/netalertx/?(.*)$ /$1 break;
 
     sub_filter_once off;
     sub_filter_types *;
 
-    sub_filter 'href="/' 'href="/pialert/';
+    sub_filter 'href="/' 'href="/netalertx/';
 
-    sub_filter '(?>$host)/css' '/pialert/css';
-    sub_filter '(?>$host)/js'  '/pialert/js';
+    sub_filter '(?>$host)/css' '/netalertx/css';
+    sub_filter '(?>$host)/js'  '/netalertx/js';
 
-    sub_filter '/img' '/pialert/img';
-    sub_filter '/lib' '/pialert/lib';
-    sub_filter '/php' '/pialert/php';
+    sub_filter '/img' '/netalertx/img';
+    sub_filter '/lib' '/netalertx/lib';
+    sub_filter '/php' '/netalertx/php';
 }
 ```
 
@@ -354,11 +354,11 @@ location ^~ /pialert/ {
 
 > Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/449#discussioncomment-7281442))
 
-Asuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/pialert/. 
+Asuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/netalertx/. 
 
 Note: Everything in these configs assumes '**www.domain.com**' as your domainname and '**section31**' as an arbitrary name for your certificate setup. You will have to substitute these with your own.
 
-Also, I use the prefix '**pialert**'. If you want to use another prefix, change it in these files: dynamic.toml and default.
+Also, I use the prefix '**netalertx**'. If you want to use another prefix, change it in these files: dynamic.toml and default.
 
 Content of my yaml-file (this is the generic Traefik config, which defines which ports to listen on, redirect http to https and sets up the certificate process).
 It also contains Authelia, which I use for authentication.
@@ -408,27 +408,27 @@ services:
 ```
 Snippet of the dynamic.toml file (referenced in the yml-file above) that defines the config for NetAlertX:
 The following are self-defined keywords, everything else is traefik keywords:
-- pialert-router
-- pialert-service
+- netalertx-router
+- netalertx-service
 - auth
-- pialert-stripprefix
+- netalertx-stripprefix
 
 
 ```toml
 [http.routers]
-  [http.routers.pialert-router]
+  [http.routers.netalertx-router]
     entryPoints = ["websecure"]
-    rule = "Host(`www.domain.com`) && PathPrefix(`/pialert`)"
-    service = "pialert-service"
-    middlewares = "auth,pialert-stripprefix"
-    [http.routers.pialert-router.tls]
+    rule = "Host(`www.domain.com`) && PathPrefix(`/netalertx`)"
+    service = "netalertx-service"
+    middlewares = "auth,netalertx-stripprefix"
+    [http.routers.netalertx-router.tls]
        certResolver = "section31"
-       [[http.routers.pialert-router.tls.domains]]
+       [[http.routers.netalertx-router.tls.domains]]
          main = "www.domain.com"
 
 [http.services]
-  [http.services.pialert-service]
-    [[http.services.pialert-service.loadBalancer.servers]]
+  [http.services.netalertx-service]
+    [[http.services.netalertx-service.loadBalancer.servers]]
       url = "http://internal-ip-address:20211/"
 
 [http.middlewares]
@@ -436,8 +436,8 @@ The following are self-defined keywords, everything else is traefik keywords:
     address = "http://authelia:9091/api/verify?rd=https://www.domain.com/authelia/"
     trustForwardHeader = true
     authResponseHeaders = ["Remote-User", "Remote-Groups", "Remote-Name", "Remote-Email"]
-  [http.middlewares.pialert-stripprefix.stripprefix]
-    prefixes = "/pialert"
+  [http.middlewares.netalertx-stripprefix.stripprefix]
+    prefixes = "/netalertx"
     forceSlash = false
 
 ```
@@ -450,9 +450,9 @@ server {
     listen 80 default_server;
     root /var/www/html;
     index index.php;
-    #rewrite /pialert/(.*) / permanent;
-    add_header X-Forwarded-Prefix "/pialert" always;
-    proxy_set_header X-Forwarded-Prefix "/pialert";
+    #rewrite /netalertx/(.*) / permanent;
+    add_header X-Forwarded-Prefix "/netalertx" always;
+    proxy_set_header X-Forwarded-Prefix "/netalertx";
 
   location ~* \.php$ {
     fastcgi_pass unix:/run/php/php8.2-fpm.sock;
@@ -466,18 +466,18 @@ server {
 }
 ```
 
-Mapping the updated file (on the local filesystem at `/appl/docker/pialert/default`) into the docker container:
+Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/default`) into the docker container:
 
 
 ```bash
 docker run -d --rm --network=host \
-  --name=pi.alert \
+  --name=netalertx \
   -v /appl/docker/pialert/config:/home/pi/pialert/config \
   -v /appl/docker/pialert/db:/home/pi/pialert/db \
   -v /appl/docker/pialert/default:/etc/nginx/sites-available/default \
   -e TZ=Europe/Amsterdam \
   -e PORT=20211 \
-  jokobsk/pi.alert:latest
+  jokobsk/netalertx:latest
 
 ```
 

@@ -10,14 +10,14 @@ import subprocess
 from time import strftime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 from database import DB
 from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath
+from const import logPath, applicationPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
@@ -25,9 +25,7 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 
 def main():
-    # sample
-    # /home/pi/pialert/front/plugins/arp_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ=='
-    # the script expects a parameter in the format of userSubnets=subnet1,subnet2,...
+   
     parser = argparse.ArgumentParser(description='Import devices from settings')
     parser.add_argument('userSubnets', nargs='+', help="list of subnets with options")
     values = parser.parse_args()    

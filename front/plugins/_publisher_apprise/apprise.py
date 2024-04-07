@@ -8,15 +8,17 @@ import pathlib
 import sys
 from datetime import datetime
 
-# Replace these paths with the actual paths to your NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+# Register NetAlertX directories
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
 import conf
+from const import confFileName
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
 from notification import Notification_obj
 from database import DB
+
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -30,7 +32,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
     # Create a database connection

@@ -2,7 +2,7 @@
 *  NetAlertX
 *  Open Source Network Guard / WIFI & LAN intrusion detector 
 *
-*  pialert_common.js - Front module. Common Javascript functions
+*  common.js - Front module. Common Javascript functions
 *-------------------------------------------------------------------------------
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 ----------------------------------------------------------------------------- */
@@ -1306,7 +1306,7 @@ setTimeout(() => {
 }, 10000);
 
 
-console.log("init pialert_common.js");
+console.log("init common.js");
 
 
 

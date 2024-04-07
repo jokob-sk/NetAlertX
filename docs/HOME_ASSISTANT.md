@@ -1,6 +1,6 @@
 # Overview
 
-PiAlert comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
+NetAlertX comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
 
 ## ⚠ Note 
 
@@ -16,13 +16,13 @@ PiAlert comes with MQTT support, allowing you to show all detected devices as de
 
 2. Configure a user name and password on your broker.
 
-3. Note down the following details that you will need to configure PiAlert:
+3. Note down the following details that you will need to configure NetAlertX:
    - MQTT host url (usually your Home Assistant IP)
    - MQTT broker port
    - User
    - Password
 
-4. Open the _PiAlert_ > _Settings_ > _MQTT_ settings group
+4. Open the _NetAlertX_ > _Settings_ > _MQTT_ settings group
    - Enable MQTT
    - Fill in the details from above
    - Fill in remaining settings as per description

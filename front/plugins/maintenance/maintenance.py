@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# test script by running:
-# /home/pi/pialert/front/plugins/maintenance/maintenance.py 
 
 import os
 import pathlib
@@ -13,13 +11,13 @@ from io import StringIO
 from datetime import datetime
 from collections import deque
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath
+from const import logPath, applicationPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())

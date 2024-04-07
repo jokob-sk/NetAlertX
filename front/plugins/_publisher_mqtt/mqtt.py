@@ -15,12 +15,12 @@ import paho.mqtt.client as mqtt
 import hashlib
 
 
-# Replace these paths with the actual paths to your NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+# Register NetAlertX directories
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
-#  PiAlert modules
+# NetAlertX modules
 import conf
-from const import apiPath
+from const import apiPath, confFileName
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
@@ -52,7 +52,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -71,7 +71,7 @@ def main():
 #-------------------------------------------------------------------------------
 def check_config():
         if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '' or get_setting_value('MQTT_USER') == '' or get_setting_value('MQTT_PASSWORD') == '':
-            mylog('verbose', ['[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your pialert.conf MQTT_* variables.'])
+            mylog('verbose', [f'[Check Config] ⚠ ERROR: MQTT service not set up correctly. Check your {confFileName} MQTT_* variables.'])
             return False
         else:
             return True
@@ -281,7 +281,7 @@ def mqtt_start(db):
 
     # Create a generic device for overal stats
     if get_setting_value('MQTT_SEND_STATS') == True: 
-        # Create a new device representing overall PiAlert stats   
+        # Create a new device representing overall stats   
         create_generic_device(mqtt_client)
 
         # Get the data

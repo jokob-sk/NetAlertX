@@ -9,7 +9,7 @@ import sys
 import chardet  
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty, is_mac
 from logger import mylog

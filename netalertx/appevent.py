@@ -2,10 +2,9 @@ import datetime
 import json
 import uuid
 
-# PiAlert modules
+# Register NetAlertX modules NetAlertX directories
 import conf
-import const
-from const import pialertPath, logPath, apiPath
+from const import applicationPath, logPath, apiPath, confFileName
 from logger import logResult, mylog, print_log
 from helper import  timeNowTZ
 

@@ -1,6 +1,6 @@
 ## Setting up better name discovery with Reverse DNS
 
-If you are running a DNS server, such as **AdGuard**, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable PiAlert to execute dig and nslookup commands to automatically resolve device names based on their IP addresses.
+If you are running a DNS server, such as **AdGuard**, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable NetAlertX to execute dig and nslookup commands to automatically resolve device names based on their IP addresses.
 
 
 > Example 1: Reverse DNS `disabled`
@@ -36,9 +36,9 @@ You can configure a custom **/etc/resolv.conf** file in **docker-compose.yml** a
 ```yaml
 version: "3"
 services:
-  pialert:
-    container_name: pialert
-    image: "jokobsk/pi.alert:latest"
+  netalertx:
+    container_name: netalertx
+    image: "jokobsk/netalertx:latest"
     restart: unless-stopped
     volumes:
       - ./config/pialert.conf:/home/pi/pialert/config/pialert.conf

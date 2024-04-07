@@ -7,9 +7,12 @@ echo "---------------------------------------------------------"
 export INSTALL_DIR=/home/pi  # Specify the installation directory here
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
-NGINX_CONFIG_FILE=/etc/nginx/http.d/pialert.conf
+CONFFILENAME="pialert.conf" 
+NGINX_CONFIG_FILE="/etc/nginx/http.d/${CONFFILENAME}"
+DBFILENAME="pialert.db"
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
-FILEDB="${INSTALL_DIR}/pialert/db/pialert.db"
+FILEDB="${INSTALL_DIR}/pialert/db/${DBFILENAME}"
+
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
 # Check if script is run as root
@@ -18,7 +21,7 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
+echo "[INSTALL] Copy starter ${DBFILENAME} and ${CONFFILENAME} if they don't exist"
 
 # DANGER ZONE: ALWAYS_FRESH_INSTALL 
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
@@ -30,13 +33,13 @@ if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   rm -rf "$INSTALL_DIR/pialert/db/"*
 fi
 
-# Copy starter pialert.db and pialert.conf if they don't exist
-cp -na "${INSTALL_DIR}/pialert/back/pialert.conf" "${INSTALL_DIR}/pialert/config/pialert.conf"
-cp -na "${INSTALL_DIR}/pialert/back/pialert.db" "${FILEDB}"
+# Copy starter .db and .conf if they don't exist
+cp -na "${INSTALL_DIR}/pialert/back/${CONFFILENAME}" "${INSTALL_DIR}/pialert/config/${CONFFILENAME}"
+cp -na "${INSTALL_DIR}/pialert/back/${DBFILENAME}" "${FILEDB}"
 
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then
-  FILECONF="${INSTALL_DIR}/pialert/config/pialert.conf"
+  FILECONF="${INSTALL_DIR}/pialert/config/${CONFFILENAME}"
   echo "[INSTALL] Setup timezone" 
   sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
 
@@ -47,7 +50,7 @@ fi
 
 echo "[INSTALL] Setup NGINX"
 echo "Setting webserver to address ($LISTEN_ADDR) and port ($PORT)"
-envsubst '$INSTALL_DIR $LISTEN_ADDR $PORT' < "${INSTALL_DIR}/pialert/install/pialert.template.conf" > "${NGINX_CONFIG_FILE}"
+envsubst '$INSTALL_DIR $LISTEN_ADDR $PORT' < "${INSTALL_DIR}/pialert/install/netalertx.template.conf" > "${NGINX_CONFIG_FILE}"
 
 # Run the hardware vendors update at least once
 echo "[INSTALL] Run the hardware vendors update"

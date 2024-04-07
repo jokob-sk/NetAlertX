@@ -6,9 +6,10 @@ import base64
 from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from logger import mylog
+from const import confFileName
 
 #-------------------------------------------------------------------------------
 def read_config_file():
@@ -17,11 +18,11 @@ def read_config_file():
     config_dir[key]
     """
 
-    filename = '/home/pi/pialert/config/pialert.conf'
+    filename = '/home/pi/pialert/config/' + confFileName
 
 
     print('[plugin_helper] reading config file')
-    # load the variables from  pialert.conf
+    # load the variables from .conf
     with open(filename, "r") as file:
         code = compile(file.read(), filename, "exec")
 

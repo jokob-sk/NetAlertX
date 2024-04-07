@@ -19,7 +19,7 @@ docker run --rm --network=host \
   -v local/path/pialert/db:/home/pi/pialert/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
-  jokobsk/pi.alert:latest
+  jokobsk/netalertx:latest
 
 ```
 
@@ -29,7 +29,7 @@ docker run --rm --network=host \
 
 If possible, check if your issue got fixed in the `_dev` image before opening a new issue. The container is:
 
-`jokobsk/pi.alert_dev:latest`
+`jokobsk/netalertx-dev:latest`
 
 > ⚠ Please backup your DB and config beforehand!
 
@@ -54,7 +54,7 @@ services:
 ### Permissions
 
 * If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
-* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec pialert chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
+* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
 * If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
 
 ### Container restarts / crashes

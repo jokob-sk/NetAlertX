@@ -20,7 +20,7 @@ You can select devices in the _Devices_ view by selecting devices to edit and th
 ![Maintenance > CSV Export](/docs/img/DEVICES_BULK_EDITING/MAINTENANCE_CSV_EXPORT.png)
 
 > [!NOTE] 
-> The file containing a list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this by acessing this URL: `<your pialert url>/php/server/devices.php?action=ExportCSV` or via the `CSV Backup` plugin. (💡 You can schedule this)
+> The file containing a list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this by acessing this URL: `<your netalertx url>/php/server/devices.php?action=ExportCSV` or via the `CSV Backup` plugin. (💡 You can schedule this)
 
 ![Settings > CSV Backup](/docs/img/DEVICES_BULK_EDITING/CSV_BACKUP_SETTINGS.png)
 

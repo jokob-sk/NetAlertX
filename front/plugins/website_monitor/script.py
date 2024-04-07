@@ -10,7 +10,7 @@ import sys
 import os
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
 from plugin_helper import Plugin_Objects
 from datetime import datetime

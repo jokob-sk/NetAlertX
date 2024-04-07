@@ -1,7 +1,8 @@
 #!/bin/bash
 SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
-PIA_CONF_FILE=${SCRIPTPATH}'/../config/pialert.conf'
+CONFFILENAME="pialert.conf" 
+PIA_CONF_FILE=${SCRIPTPATH}'/../config/${CONFFILENAME}'
 
 case $1 in
 

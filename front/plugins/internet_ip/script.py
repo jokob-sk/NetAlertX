@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# test script by running:
-# /home/pi/pialert/front/plugins/internet_ip/script.py TBD
 
 import os
 import pathlib
@@ -16,12 +14,12 @@ from io import StringIO
 from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, check_IP_format, get_setting_value
-from const import logPath, pialertPath, fullDbPath
+from const import logPath, applicationPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())

@@ -105,7 +105,7 @@ if ($ENABLED_DARKMODE === True) {
 <body class="hold-transition login-page">
 <div class="login-box login-custom">
   <div class="login-logo">
-    <a href="/index2.php">Net<b>Alert</b><sup>X</sup></a>
+    <a href="/index2.php">Net <b>Alert</b><sup>x</sup></a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">

@@ -3,12 +3,12 @@
 Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/NetAlertX?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/NetAlertX)
-[![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
-[![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
+[![Docker Size](https://img.shields.io/docker/image-size/jokobsk/netalertx?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/netalertx)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/netalertx)
 [![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)](https://github.com/jokob-sk/NetAlertX/releases)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | 
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | 
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
 
@@ -25,19 +25,19 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 </details>
 
 <details>
-  <summary>❓ Why use PiAlert?</summary>
+  <summary>❓ Why use Net <b>Alert</b><sup>x</sup>?</summary>
 
   <hr>
 
   Most of us don't know what's going on on our home network, but we want our family and data to be safe.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist.
 
-  PiAlert gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
+  Net <b>Alert</b><sup>x</sup> gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 
-  PiAlert combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
+  Net <b>Alert</b><sup>x</sup> combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
 
   Set up a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) features. 
 
-  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) and handle the results and notifications in PiAlert. 
+  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) and handle the results and notifications in Net <b>Alert</b><sup>x</sup>. 
 
   Looking forward to your contributions if you decide to share your work with the community ❤.
 
@@ -94,7 +94,7 @@ Thank you to all the wonderful people who are sponsoring this project (=preventi
   - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
   - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
-  📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
+  📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX) if you want to get in touch or if I should add other sponsorship platforms.
 
 </details>
 
@@ -106,8 +106,8 @@ This project would be nothing without the amazing work of the community, with sp
 
 Here is everyone that helped and contributed to this project:
 
-<a href="https://github.com/jokob-sk/pi.alert/graphs/contributors">
-  <img src="https://contri-graphy.yourselfhosted.com/graph?repo=jokob-sk/pi.alert&format=svg" />
+<a href="https://github.com/jokob-sk/netalertx/graphs/contributors">
+  <img src="https://contri-graphy.yourselfhosted.com/graph?repo=jokob-sk/netalertx&format=svg" />
 </a>
 
 ## Everything else

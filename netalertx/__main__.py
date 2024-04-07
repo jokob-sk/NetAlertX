@@ -4,7 +4,7 @@
 #  NetAlertX  v2.70  /  2021-02-01
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
-#  pialert.py - Back module. Network scanner
+#  Back module. Network scanner
 #-------------------------------------------------------------------------------
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 #-------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ import time
 import datetime
 import multiprocessing
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 import conf
 from const import *
 from logger import  mylog

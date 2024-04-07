@@ -82,5 +82,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # # ⚠ disable cache if build is failing to download debian packages
-          # cache-from: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache
-          # cache-to: type=registry,ref=ghcr.io/jokob-sk/pi.alert:buildcache,mode=max
+          # cache-from: type=registry,ref=ghcr.io/jokob-sk/netalertx:buildcache
+          # cache-to: type=registry,ref=ghcr.io/jokob-sk/netalertx:buildcache,mode=max

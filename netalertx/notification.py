@@ -5,10 +5,9 @@ import socket
 import subprocess
 from json2table import convert
 
-# PiAlert modules
+# Register NetAlertX modules NetAlertX directories
 import conf
-import const
-from const import pialertPath, logPath, apiPath
+from const import applicationPath, logPath, apiPath, confFileName
 from logger import logResult, mylog, print_log
 from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
 
@@ -81,7 +80,7 @@ class Notification_obj:
 
             # Open text Template
             mylog('verbose', ['[Notification] Open text Template'])
-            template_file = open(pialertPath + '/back/report_template.txt', 'r')
+            template_file = open(applicationPath + '/back/report_template.txt', 'r')
             mail_text = template_file.read()
             template_file.close()
 
@@ -95,7 +94,7 @@ class Notification_obj:
                 template_file_path = '/back/report_template.html'
 
             mylog('verbose', ['[Notification] Using template', template_file_path])
-            template_file = open(pialertPath + template_file_path, 'r')   
+            template_file = open(applicationPath + template_file_path, 'r')   
             mail_html = template_file.read()
             template_file.close()
 
@@ -110,12 +109,12 @@ class Notification_obj:
             mail_html = mail_html.replace ('<SERVER_NAME>', socket.gethostname() )
 
             # Report "VERSION" in Header & footer
-            VERSIONFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/version.php']).decode('utf-8')
+            VERSIONFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/version.php']).decode('utf-8')
             mail_text = mail_text.replace ('<VERSION_PIALERT>', VERSIONFILE)
             mail_html = mail_html.replace ('<VERSION_PIALERT>', VERSIONFILE)	
 
             # Report "BUILD" in Header & footer
-            BUILDFILE = subprocess.check_output(['php', pialertPath + '/front/php/templates/build.php']).decode('utf-8')
+            BUILDFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/build.php']).decode('utf-8')
             mail_text = mail_text.replace ('<BUILD_PIALERT>', BUILDFILE)
             mail_html = mail_html.replace ('<BUILD_PIALERT>', BUILDFILE)
 

@@ -11,12 +11,12 @@ import os
 import sys
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog
 from helper import timeNowTZ
-from const import logPath, pialertPath
+from const import logPath, applicationPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')

@@ -20,7 +20,7 @@ from pyunifi.controller import Controller
 
 # Add your paths here
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert')
+sys.path.append('/home/pi/pialert/netalertx')
 
 from plugin_helper import Plugin_Object, Plugin_Objects
 from logger import mylog

@@ -6,7 +6,7 @@
 2. Under Security Options enable 2FA (Two-factor authentication)
 3. Under Security Options generate an Application-specific password
 4. Home -> Email Settings -> POP3 & IMAP -> Enable access to this account via POP3 and IMAP
-5. In PiAlert specify these settings:
+5. In NetAlertX specify these settings:
 
 ```python
     SMTP_RUN='on_notification'

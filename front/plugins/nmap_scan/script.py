@@ -10,12 +10,12 @@ import subprocess
 from time import strftime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
-from const import logPath, pialertPath
+from const import logPath, applicationPath
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
@@ -23,8 +23,6 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 #-------------------------------------------------------------------------------
 def main():
-    # sample
-    # /home/pi/pialert/front/plugins/nmap_scan/script.py ips=192.168.1.66,192.168.1.9'    
     parser = argparse.ArgumentParser(description='Scan ports of devices specified by IP addresses')
     parser.add_argument('ips', nargs='+', help="list of IPs to scan")
     parser.add_argument('macs', nargs='+', help="list of MACs related to the supplied IPs in the same order")

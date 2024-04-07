@@ -3,7 +3,7 @@
 import sqlite3
 import base64
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog

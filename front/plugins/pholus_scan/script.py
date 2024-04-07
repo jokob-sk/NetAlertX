@@ -11,12 +11,12 @@ from time import strftime
 
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
 from helper import timeNowTZ
-from const import logPath, pialertPath
+from const import logPath, applicationPath
 
 CUR_PATH        = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE        = os.path.join(CUR_PATH, 'script.log')
@@ -26,9 +26,6 @@ fullPholusPath  = os.path.join(CUR_PATH, 'pholus/pholus3.py')
 pluginName = 'PHOLUS'
 
 def main():
-    # sample
-    # /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ==' timeoutSec=10
-    # sudo docker exec pialert /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets=b'MTkyLjE2OC4xLjAvMjQgLS1pbnRlcmZhY2U9ZXRoMQ==' timeoutSec=10
     
     # the script expects a parameter in the format of userSubnets=subnet1,subnet2,...
     parser = argparse.ArgumentParser(description='Import devices from settings')

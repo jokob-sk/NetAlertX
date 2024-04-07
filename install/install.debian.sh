@@ -34,5 +34,5 @@ if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then
   date +%s > $INSTALL_DIR/pialert/front/buildtimestamp.txt
 fi
 
-# Start PiAlert
+# Start NetAlertX
 "$INSTALL_DIR/pialert/install/start.debian.sh"

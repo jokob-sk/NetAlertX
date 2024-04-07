@@ -2,7 +2,7 @@
 #  NetAlertX                                                                       #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
-#  reporting.py - Pialert Back module. Template to email reporting in HTML format #
+#  reporting.py - NetAlertX Back module. Template to email reporting in HTML format #
 #---------------------------------------------------------------------------------#
 #    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
 #    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
@@ -13,10 +13,9 @@
 import datetime
 import json
 
-# pialert modules
+# Register NetAlertX modules NetAlertX directories
 import conf
-import const
-from const import pialertPath, logPath, apiPath
+from const import applicationPath, logPath, apiPath, confFileName
 from helper import timeNowTZ, get_file_content, write_file, get_timezone_offset, get_setting_value
 from logger import logResult, mylog, print_log
 

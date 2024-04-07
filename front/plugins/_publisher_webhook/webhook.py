@@ -13,12 +13,12 @@ from base64 import b64encode
 import hashlib
 import hmac
 
-# Replace these paths with the actual paths to your NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+# Register NetAlertX directories
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
-# pialert modules
+
 import conf
-from const import logPath
+from const import logPath, confFileName
 from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value, hide_string, write_file
@@ -36,7 +36,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
     # Create a database connection

@@ -3,17 +3,19 @@
 #===============================================================================
 # PATHS
 #===============================================================================
-pialertPath = '/home/pi/pialert'
+applicationPath = '/home/pi/pialert'
+dbFileName      = 'pialert.db'
+confFileName    = 'pialert.conf'
+confPath        = "/config/" + confFileName
 
-confPath    = "/config/pialert.conf"
-dbPath      = '/db/pialert.db'
+dbPath          = '/db/' + dbFileName
 
 
-pluginsPath  = pialertPath + '/front/plugins'
-logPath      = pialertPath + '/front/log'
-apiPath      = pialertPath + '/front/api/'
-fullConfPath = pialertPath + confPath
-fullDbPath   = pialertPath + dbPath
+pluginsPath  = applicationPath + '/front/plugins'
+logPath      = applicationPath + '/front/log'
+apiPath      = applicationPath + '/front/api/'
+fullConfPath = applicationPath + confPath
+fullDbPath   = applicationPath + dbPath
 vendorsPath = '/usr/share/arp-scan/ieee-oui.txt'
 
 

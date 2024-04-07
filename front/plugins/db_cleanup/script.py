@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# test script by running:
-# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90 pholuskeepdays=30
 
 import os
 import pathlib
@@ -13,12 +11,12 @@ from io import StringIO
 from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath, fullDbPath
+from const import logPath, applicationPath, fullDbPath
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -62,7 +60,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     mylog('verbose', [f'[{pluginName}] Upkeep Database:' ])
 
-    # Connect to the PiAlert SQLite database
+    # Connect to the App database
     conn    = sqlite3.connect(dbPath)
     cursor  = conn.cursor()
 

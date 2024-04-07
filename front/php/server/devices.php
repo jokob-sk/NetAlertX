@@ -331,8 +331,9 @@ function deleteActHistory() {
 //------------------------------------------------------------------------------
 function PiaBackupDBtoArchive() {
   // prepare fast Backup
-  $file = '../../../db/pialert.db';
-  $newfile = '../../../db/pialert.db.latestbackup';
+  $dbfilename = 'pialert.db'
+  $file = '../../../db/'.$dbfilename;
+  $newfile = '../../../db/'.$dbfilename.'.latestbackup';
   
   // copy files as a fast Backup
   if (!copy($file, $newfile)) {
@@ -341,14 +342,14 @@ function PiaBackupDBtoArchive() {
     // Create archive with actual date
     $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
     $Pia_Archive_Path = '../../../db/';
-    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/pialert.db', $output);
+    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/'.$dbfilename, $output);
     // chheck if archive exists
     if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
       echo lang('BackDevices_Backup_okay').': ('.$Pia_Archive_Name.')';
       unlink($newfile);
       echo("<meta http-equiv='refresh' content='1'>");
     } else {
-      echo lang('BackDevices_Backup_Failed').' (pialert.db.latestbackup)';
+      echo lang('BackDevices_Backup_Failed').' ('.$dbfilename.'.latestbackup)';
     }
   }
 
@@ -359,17 +360,17 @@ function PiaBackupDBtoArchive() {
 //------------------------------------------------------------------------------
 function PiaRestoreDBfromArchive() {
   // prepare fast Backup
-  $file = '../../../db/pialert.db';
-  $oldfile = '../../../db/pialert.db.prerestore';  
+  $file = '../../../db/'.$dbfilename;
+  $oldfile = '../../../db/'.$dbfilename.'.prerestore';  
 
   // copy files as a fast Backup
   if (!copy($file, $oldfile)) {
       echo lang('BackDevices_Restore_CopError');
   } else {
-    // extract latest archive and overwrite the actual pialert.db
+    // extract latest archive and overwrite the actual .db
     $Pia_Archive_Path = '../../../db/';
     exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
-    // check if the pialert.db exists
+    // check if the .db exists
     if (file_exists($file)) {
        echo lang('BackDevices_Restore_okay');
        unlink($oldfile);
@@ -388,7 +389,7 @@ function PiaPurgeDBBackups() {
 
   $Pia_Archive_Path = '../../../db';
   $Pia_Backupfiles = array();
-  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', 'pialert.db', 'pialertdb-reset.zip'));
+  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', $dbfilename, 'pialertdb-reset.zip'));
 
   foreach ($files as &$item) 
     {

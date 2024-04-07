@@ -292,7 +292,7 @@ function saveSettings()
   }
   
        
-  // generate a clean pialert.conf file
+  // generate a clean .conf file
   $groups = [];
 
   $txt = "";

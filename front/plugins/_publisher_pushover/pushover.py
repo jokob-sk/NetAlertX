@@ -5,14 +5,16 @@ import sys
 import json
 import requests
 
-# Replace these paths with the actual paths to your NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+# Register NetAlertX directories
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402
 from logger import mylog  # noqa: E402
 from helper import timeNowTZ, get_setting_value, hide_string  # noqa: E402
 from notification import Notification_obj  # noqa: E402
 from database import DB  # noqa: E402
+import conf
+from const import confFileName
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, "last_result.log")
@@ -28,7 +30,7 @@ def main():
         mylog(
             "none",
             f"[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. "
-            f"Check your pialert.conf {pluginName}_* variables.",
+            f"Check your {confFileName} {pluginName}_* variables.",
         )
         return
 

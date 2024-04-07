@@ -15,12 +15,12 @@ from io import StringIO
 from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from const import logPath, pialertPath, fullDbPath
+from const import logPath, applicationPath, fullDbPath
 from database import DB
 from device import Device_obj
 

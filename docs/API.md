@@ -1,6 +1,6 @@
 ## API endpoints
 
-PiAlert comes with a simple API. These API endpoints are static files, that are periodically updated based on your settings. 
+NetAlertX comes with a simple API. These API endpoints are static files, that are periodically updated based on your settings. 
 
 
 ### When are the endpoints updated
@@ -9,7 +9,7 @@ The endpoints are updated when objects in the API endpoints are changed.
 
 ### Location of the endpoints
 
-In the container, these files are located under the `/home/pi/pialert/front/api/` folder and thus on the `<pialert_url>/api/<File name>` url.
+In the container, these files are located under the `/home/pi/pialert/front/api/` folder and thus on the `<netalertx_url>/api/<File name>` url.
 
 ### Available endpoints
 

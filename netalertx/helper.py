@@ -140,7 +140,7 @@ def checkPermissionsOK():
     dbW_access = (os.access(fullDbPath, os.W_OK))
 
     mylog('none', ['\n'])
-    mylog('none', ['The container restarted (started). If this is unexpected check https://bit.ly/PiAlertDebug for troubleshooting tips.'])
+    mylog('none', ['The container restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips.'])
     mylog('none', ['\n'])
     mylog('none', ['Permissions check (All should be True)'])
     mylog('none', ['------------------------------------------------'])
@@ -197,13 +197,13 @@ def initialiseFile(pathToCheck, defaultFile):
 
 #-------------------------------------------------------------------------------
 def filePermissions():
-    # check and initialize pialert.conf
+    # check and initialize .conf
     (confR_access, dbR_access) = checkPermissionsOK() # Initial check
 
     if confR_access == False:
         initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf" )
 
-    # check and initialize pialert.db
+    # check and initialize .db
     if dbR_access == False:
         initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db")
 
@@ -731,7 +731,7 @@ def checkNewVersion():
 
     newVersion = False
 
-    f = open(pialertPath + '/front/buildtimestamp.txt', 'r')
+    f = open(applicationPath + '/front/buildtimestamp.txt', 'r')
     buildTimestamp = int(f.read().strip())
     f.close()
 

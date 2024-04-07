@@ -15,10 +15,11 @@ import smtplib
 import socket
 import ssl
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/pialert"])
+sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
 
-# PiAlert modules
+# NetAlertX modules
 import conf
+from const import confFileName
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file, print_log
 from helper import timeNowTZ, get_setting_value, hide_email
@@ -37,7 +38,7 @@ def main():
     
     # Check if basic config settings supplied
     if check_config() == False:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your pialert.conf {pluginName}_* variables.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -81,7 +82,7 @@ def check_config ():
     report_from = get_setting_value("SMTP_REPORT_FROM")
     
     if server == '' or report_from == '' or report_to == '':
-        mylog('none', ['[Email Check Config] ⚠ ERROR: Email service not set up correctly. Check your pialert.conf SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
+        mylog('none', [f'[Email Check Config] ⚠ ERROR: Email service not set up correctly. Check your {confFileName} SMTP_*, SMTP_REPORT_FROM and SMTP_REPORT_TO variables.'])
         return False
     else:
         return True

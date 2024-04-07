@@ -55,13 +55,13 @@
 |----------------------|----------------------| ----------------------| 
 | ![Screen 4][screen4] |  ![Screen 5][screen5] | 
 
-PiAlert comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
+NetAlertX comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
 
 * dynamic creation of a simple UI to interact with the discovered objects,
 * filtering of displayed values in the Devices UI
 * surface settings of plugins in the UI, 
 * different column types for reported values to e.g. link back to a device
-* import objects into existing PiAlert database tables 
+* import objects into existing NetAlertX database tables 
 
 > (Currently, update/overwriting of existing objects is not supported.)
 
@@ -69,7 +69,7 @@ Example use cases for plugins could be:
 
 * Monitor a web service and alert me if it's down
 * Import devices from dhcp.leases files instead/complementary to using PiHole or arp-scans
-* Creating ad-hoc UI tables from existing data in the PiAlert database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.
+* Creating ad-hoc UI tables from existing data in the NetAlertX database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.
 * Using other device discovery methods on the network and importing the data as new devices
 * Creating a script to create FAKE devices based on user input via custom settings
 * ...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
@@ -104,7 +104,7 @@ These issues will be hopefully fixed with time, so please don't report them. Ins
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
   | `script.py` |  no | The Python script itself. You may call any valid linux command.  |
-  | `last_result.log` | no | The file used to interface between PiAlert and the plugin. Required for a script plugin if you want to feed data into the app. |
+  | `last_result.log` | no | The file used to interface between NetAlertX and the plugin. Required for a script plugin if you want to feed data into the app. |
   | `script.log` | no | Logging output (recommended) |
   | `README.md` | yes | Any setup considerations or overview  |
 
@@ -124,7 +124,7 @@ More on specifics below.
   | 4 | `Watched_Value2` | no | As above |
   | 5 | `Watched_Value3` | no | As above  |
   | 6 | `Watched_Value4` | no | As above  |
-  | 7 | `Extra` | no | Any other data you want to pass and display in PiAlert and the notifications |
+  | 7 | `Extra` | no | Any other data you want to pass and display in NetAlertX and the notifications |
   | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
 
 > [!NOTE] 
@@ -132,7 +132,7 @@ More on specifics below.
 
 # config.json structure
 
-The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to PiAlert objects. 
+The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to NetAlertX objects. 
 
 ## Supported data sources
 
@@ -141,7 +141,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | Name | `data_source` value | Needs to return a "table"* | Overview (more details on this page below) | 
 |----------------------|----------------------|----------------------|----------------------| 
 | Script | `script` | no | Executes any linux command in the `CMD` setting. |
-| Pialert DB query | `pialert-db-query` | yes | Executes a SQL query on the PiAlert database in the `CMD` setting. |
+| NetAlertX DB query | `pialert-db-query` | yes | Executes a SQL query on the NetAlertX database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 | Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). | 
@@ -255,7 +255,7 @@ In most cases, it is used to initialize settings. Check the `newdev_template` pl
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current PiALert database via a temporary `EXTERNAL_<unique prefix>.` prefix. 
+You can execute a SQL query on an external database connected to the current NetAlertX database via a temporary `EXTERNAL_<unique prefix>.` prefix. 
 
 For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
@@ -359,7 +359,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 
 ### 🗺 Mapping the plugin results into a database table
 
-Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, PiAlert can take the results of the plugin execution, and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
+Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, NetAlertX can take the results of the plugin execution, and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
 > [!NOTE] 
 > If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
@@ -367,7 +367,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 
 >🔍 Example:
 >
->For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above, takes individual values, and inserts them into the `CurrentScan` database table in the PiAlert database. All this is achieved by:
+>For example, this approach is used to implement the `DHCPLSS` plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above, takes individual values, and inserts them into the `CurrentScan` database table in the NetAlertX database. All this is achieved by:
 >
 >1. Specifying the database table into which the results are inserted by defining `"mapped_to_table": "CurrentScan"` in the root of the `config.json` file as shown below:
 >
@@ -382,7 +382,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >    ...
 >}
 >```
->2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the PiAlert database table `CurrentScan`. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
+>2. Defining the target column with the `mapped_to_column` property for individual columns in the `database_column_definitions` array of the `config.json` file. For example in the `DHCPLSS` plugin, I needed to map the value of the `Object_PrimaryID` column returned by the plugin, to the `cur_MAC` column in the NetAlertX database table `CurrentScan`. Notice the  `"mapped_to_column": "cur_MAC"` key-value pair in the sample below.
 >
 >```json
 >{
@@ -401,7 +401,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >        }
 >```
 >
->3.  That's it. PiAlert takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table columns via the `"mapped_to_column"` property in the column definitions.
+>3.  That's it. The app takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table columns via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
 > You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 

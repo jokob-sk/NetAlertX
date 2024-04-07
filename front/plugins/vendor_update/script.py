@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# test script by running:
-# /home/pi/pialert/front/plugins/db_cleanup/script.py pluginskeephistory=250 hourstokeepnewdevice=48 daystokeepevents=90
 
 import os
 import pathlib
@@ -14,12 +12,12 @@ from io import StringIO
 from datetime import datetime
 
 sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/pialert') 
+sys.path.append('/home/pi/pialert/netalertx') 
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ
-from const import logPath, pialertPath, fullDbPath
+from const import logPath, applicationPath, fullDbPath
 from device import query_MAC_vendor
 
 
@@ -52,7 +50,7 @@ def update_vendor_database():
 
     # Update vendors DB (iab oui)
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
-    update_args = ['sh', pialertPath + '/back/update_vendors.sh']
+    update_args = ['sh', applicationPath + '/back/update_vendors.sh']
 
     # Execute command     
     try:
@@ -67,7 +65,7 @@ def update_vendor_database():
 # resolve missing vendors
 def update_vendors (dbPath, plugin_objects): 
    
-    # Connect to the PiAlert SQLite database
+    # Connect to the App SQLite database
     conn = sqlite3.connect(dbPath)
     sql  = conn.cursor()
 

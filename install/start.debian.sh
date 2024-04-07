@@ -49,19 +49,19 @@ fi
 
 # Clear existing directories and files
 if [ -d $WEB_UI_DIR ]; then
-  echo "Removing existing PiAlert web-UI"
+  echo "Removing existing NetAlertX web-UI"
   sudo rm -R $WEB_UI_DIR
 fi
 
 if [ -f $NGINX_CONFIG_FILE ]; then
-  echo "Removing existing PiAlert NGINX config"
+  echo "Removing existing NetAlertX NGINX config"
   sudo rm $NGINX_CONFIG_FILE
 fi
 
 # create symbolic link to the pialert install directory
 ln -s $INSTALL_DIR/pialert/front $WEB_UI_DIR
-# create symbolic link to NGINX configuaration coming with PiAlert
-sudo ln -s "$INSTALL_DIR/pialert/install/pialert.debian.conf" /etc/nginx/conf.d/pialert.conf
+# create symbolic link to NGINX configuaration coming with NetAlertX
+sudo ln -s "$INSTALL_DIR/pialert/install/netalertx.debian.conf" /etc/nginx/conf.d/pialert.conf
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
@@ -161,5 +161,5 @@ source myenv/bin/activate
 
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:$PORT"
 
-# Start the PiAlert python script
-python $INSTALL_DIR/pialert/pialert/
+# Start the NetAlertX python script
+python $INSTALL_DIR/pialert/netalertx/

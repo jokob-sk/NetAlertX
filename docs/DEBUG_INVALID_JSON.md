@@ -8,9 +8,9 @@ Check the the HTTP response of the failing backend call by following these steps
 ![F12DeveloperConsole][F12DeveloperConsole]
 
 - Copy the URL causing the error and enter it in the address bar of your browser directly and hit enter. The copied URLs could look something like this (notice the query strings at the end):
-  - `http://<pialert URL>:20211/api/table_devices.json?nocache=1704141103121`
-  - `http://<pialert URL>:20211/php/server/devices.php?action=getDevicesTotals`
-  - `http://<pialert URL>:20211/php/server/devices.php?action=getDevicesList&status=all`  
+  - `http://<NetAlertX URL>:20211/api/table_devices.json?nocache=1704141103121`
+  - `http://<NetAlertX URL>:20211/php/server/devices.php?action=getDevicesTotals`
+  - `http://<NetAlertX URL>:20211/php/server/devices.php?action=getDevicesList&status=all`  
 
 - Post the error response in the existing issue thread on GitHub or create a new issue and include the redacted response of the failing query.
 

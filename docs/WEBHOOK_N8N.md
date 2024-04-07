@@ -16,5 +16,5 @@ New devices count: {{ $json["body"]["attachments"][0]["text"]["new_devices"].len
 ### Get your webhook in n8n
 ![n8n webhook URL](/docs/img/WEBHOOK_N8N/n8n_webhook_settings.png)
 
-### Configure PiAlert to point to the above URL
-![PiAlert config](/docs/img/WEBHOOK_N8N/Webhook_settings.png)
+### Configure NetAlertX to point to the above URL
+![NetAlertX config](/docs/img/WEBHOOK_N8N/Webhook_settings.png)

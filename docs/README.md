@@ -63,7 +63,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 👩‍💻For Developers👨‍💻
 
-- [APP code structure](/pialert/README.md)
+- [APP code structure](/netalertx/README.md)
 - [Database structure](/docs/DATABASE.md)
 - [API endpoints details](/docs/API.md)
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
@@ -83,7 +83,7 @@ Priorities from highest to lowest:
 * 🔵 Refactoring enabling faster implementation of future functionality 
 * 🔽 (low) UI functionality & improvements (PRs welcome 😉)
 
-Design philosophy: Focus on core functionality and leverage existing apps and tools to make PiAlert integrate into other workflows. 
+Design philosophy: Focus on core functionality and leverage existing apps and tools to make NetAlertX integrate into other workflows. 
 
 Examples: 
 

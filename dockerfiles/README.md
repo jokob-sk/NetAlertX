@@ -1,12 +1,12 @@
 [![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/NetAlertX?color=40ba12&label=Committed&logo=GitHub&logoColor=fff)](https://github.com/jokob-sk/NetAlertX)
-[![Docker Size](https://img.shields.io/docker/image-size/jokobsk/pi.alert?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
-[![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/pi.alert?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/pi.alert)
+[![Docker Size](https://img.shields.io/docker/image-size/jokobsk/netalertx?label=Size&logo=Docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/netalertx)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff)](https://hub.docker.com/r/jokobsk/netalertx)
 ![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-# PiAlert 💻🔍 Network security scanner & notification framework
+# NetAlertX 💻🔍 Network security scanner & notification framework
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/pi.alert) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
+  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/devices_split.png" target="_blank">
@@ -29,7 +29,7 @@ docker run -d --rm --network=host \
   -v local/path/pialert/db:/home/pi/pialert/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
-  jokobsk/pi.alert:latest
+  jokobsk/netalertx:latest
 ```
 - The initial scan can take up to 15min (with 50 devices and MQTT). Subsequent ones 3 and 5 minutes so wait that long for all of the scans to run.
 
@@ -40,7 +40,7 @@ docker run -d --rm --network=host \
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
-|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `pi.alert`/`_dev` image.   |    `N/A` |
+|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`-dev` image.   |    `N/A` |
 
 ### Docker paths
 
@@ -122,11 +122,11 @@ Use the official installation guides at first and use community content as suple
 ```yaml
 version: "3"
 services:
-  pialert:
-    container_name: pialert
+  netalertx:
+    container_name: netalertx
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/pi.alert_dev:latest" 
-    image: "jokobsk/pi.alert:latest"      
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -146,13 +146,13 @@ To run the container execute: `sudo docker-compose up -d`
 Example by [SeimuS](https://github.com/SeimusS).
 
 ```yaml
-  pialert:
-    container_name: PiAlert
-    hostname: PiAlert
+  netalertx:
+    container_name: NetAlertX
+    hostname: NetAlertX
     privileged: true
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/pi.alert_dev:latest" 
-    image: jokobsk/pi.alert:latest
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: jokobsk/netalertx:latest
     environment:
       - TZ=Europe/Bratislava
     restart: always
@@ -171,16 +171,16 @@ To run the container execute: `sudo docker-compose up -d`
 ```yaml
 version: "3"
 services:
-  pialert:
-    container_name: pialert
+  netalertx:
+    container_name: netalertx
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/pi.alert_dev:latest" 
-    image: "jokobsk/pi.alert:latest"      
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - ${APP_DATA_LOCATION}/pialert/config:/home/pi/pialert/config
-      - ${APP_DATA_LOCATION}/pialert/db/pialert.db:/home/pi/pialert/db/pialert.db      
+      - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/netalertx/db/pialert.db:/home/pi/pialert/db/pialert.db      
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/home/pi/pialert/front/log
     environment:
@@ -214,10 +214,10 @@ To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
 Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
 
 ```yaml
-  pialert:
+  netalertx:
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/pi.alert_dev:latest" 
-    image: jokobsk/pi.alert
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: jokobsk/netalertx
     ports:
       - "80:20211/tcp"
     environment:
@@ -243,4 +243,4 @@ Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> & for help a
 - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
 - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
-> 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=PiAlert) if you want to get in touch or if I should add other sponsorship platforms.
+> 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX) if you want to get in touch or if I should add other sponsorship platforms.
