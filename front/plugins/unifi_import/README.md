@@ -4,7 +4,7 @@ A plugin allowing for importing devices from a UniFi controller.
 
 ### Usage
 
-Specify the following settings in the Settings section of PiAlert:
+Specify the following settings in the Settings section of NetAlertX:
 
 - `UNFIMP_username` - Username used to login into the UNIFI controller.
 - `UNFIMP_password` - Password used to login into the UNIFI controller.

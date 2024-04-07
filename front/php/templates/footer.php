@@ -18,7 +18,7 @@
 
     <!-- &copy; 2022 jokob-sk -->
     <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>    
-       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=PiAlert">jokob-sk</a>) | <b><?= lang('Maintenance_built_on');?>: </b> 
+       2020 Puche (2022+ <a href="mailto:jokob@duck.com?subject=NetAlertX">jokob-sk</a>) | <b><?= lang('Maintenance_built_on');?>: </b> 
        <?php include 'php/templates/build.php'; ?> | <b> Version: </b> <?php include 'php/templates/version.php'; ?> | 
        <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank"><span>Docs <i class="fa fa-circle-question"></i></a>
      <span>

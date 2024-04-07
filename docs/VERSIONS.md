@@ -1,6 +1,6 @@
 ## Am I running the latest released version?
 
-Since version 23.01.14 PiAlert uses a simple timestamp-based version check to verify if a new version is available. You can check the [current and past releases here](https://github.com/jokob-sk/NetAlertX/releases), or have a look at what I'm [currently working on](https://github.com/jokob-sk/NetAlertX/issues/138). 
+Since version 23.01.14 NetAlertX uses a simple timestamp-based version check to verify if a new version is available. You can check the [current and past releases here](https://github.com/jokob-sk/NetAlertX/releases), or have a look at what I'm [currently working on](https://github.com/jokob-sk/NetAlertX/issues/138). 
 
 If you are not on the latest version, the app will notify you, that a new released version is avialable the following way:
 

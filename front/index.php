@@ -5,7 +5,7 @@
 require dirname(__FILE__).'/php/server/init.php';
 require 'php/templates/security.php';
 
-
+$CookieSaveLoginName = 'NetAlertX_SaveLogin';
 
 if ($Pia_WebProtection != 'true')
 {
@@ -17,7 +17,7 @@ if ($Pia_WebProtection != 'true')
 // Logout
 if (isset ($_GET["action"]) && $_GET["action"] == 'logout')
 {
-  setcookie("PiAlert_SaveLogin", '', time()+1); // reset cookie
+  setcookie($CookieSaveLoginName, '', time()+1); // reset cookie
   $_SESSION["login"] = 0;
   header('Location: index.php');
   exit;
@@ -28,15 +28,15 @@ if (isset ($_POST["loginpassword"]) && $Pia_Password == hash('sha256',$_POST["lo
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
-    if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+    if (isset($_POST['PWRemember'])) {setcookie($CookieSaveLoginName, hash('sha256',$_POST["loginpassword"]), time()+604800);}
 }
 
 // active Session or valid cookie (cookie not extends)
-if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE["PiAlert_SaveLogin"]) && $Pia_Password == $_COOKIE["PiAlert_SaveLogin"]))
+if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE[$CookieSaveLoginName]) && $Pia_Password == $_COOKIE[$CookieSaveLoginName]))
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
-    if (isset($_POST['PWRemember'])) {setcookie("PiAlert_SaveLogin", hash('sha256',$_POST["loginpassword"]), time()+604800);}
+    if (isset($_POST['PWRemember'])) {setcookie($CookieSaveLoginName, hash('sha256',$_POST["loginpassword"]), time()+604800);}
 }
 
 $login_headline = lang('Login_Toggle_Info_headline');

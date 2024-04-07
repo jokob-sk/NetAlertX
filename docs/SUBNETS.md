@@ -52,7 +52,7 @@ The adapter will probably be `eth0` or `eth1`. (Check `System info` > `Network H
 > Community sourced content by [mscreations](https://github.com/mscreations) from this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/404).
 
 > [!NOTE] 
-> The setup this was tested on: Bare Metal -> Hyper-V on Win Server 2019 -> Ubuntu 22.04 VM -> Docker -> PiAlert. 
+> The setup this was tested on: Bare Metal -> Hyper-V on Win Server 2019 -> Ubuntu 22.04 VM -> Docker -> NetAlertX. 
 
 **Approach 1 (may cause issues):**
 
@@ -91,8 +91,8 @@ network:
           via: 192.168.1.1 
 ```
 
-3) Run `sudo netplan apply` and the interfaces are then available to scan in PiAlert. 
-4) In this case, use `192.168.2.0/24 --interface=eth0.2` in PiAlert
+3) Run `sudo netplan apply` and the interfaces are then available to scan in NetAlertX. 
+4) In this case, use `192.168.2.0/24 --interface=eth0.2` in NetAlertX
 
 #### VLAN 🔍Example:
 

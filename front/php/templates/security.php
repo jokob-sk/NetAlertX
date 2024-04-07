@@ -3,6 +3,8 @@
 $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 $isLogonPage = FALSE;
 
+$CookieSaveLoginName = "NetAlertX_SaveLogin";
+
 
 if (strpos($url,'index.php') !== false) {
     $isLogonPage = TRUE;
@@ -14,7 +16,7 @@ if(array_search('action', $_REQUEST) != FALSE)
 {
   if ($_REQUEST['action'] == 'logout') {
     session_destroy();
-    setcookie("PiAlert_SaveLogin", "", time() - 3600);
+    setcookie($CookieSaveLoginName, "", time() - 3600);
     header('Location: index.php');
   }    
 }
@@ -24,6 +26,7 @@ if(array_search('action', $_REQUEST) != FALSE)
 // ##################################################
 $config_file = "../config/pialert.conf";
 $config_file_lines = file($config_file);
+$CookieSaveLoginName = "NetAlertX_SaveLogin";
 
 // ###################################
 // ## PIALERT_WEB_PROTECTION FALSE
@@ -49,7 +52,7 @@ if($Pia_WebProtection == 'true')
         $_SESSION["login"] = 0;
     }     
 
-    if ( ($_SESSION["login"] == 1) || $isLogonPage ||  (( isset($_COOKIE["PiAlert_SaveLogin"]) && $Pia_Password == $_COOKIE["PiAlert_SaveLogin"])))
+    if ( ($_SESSION["login"] == 1) || $isLogonPage ||  (( isset($_COOKIE[$CookieSaveLoginName]) && $Pia_Password == $_COOKIE[$CookieSaveLoginName ])))
     {
         //Logged in or stay on this page if we are on the index.php already   
         

@@ -1,6 +1,6 @@
 # 🖼 Frontend development 
 
-This page contains tips for frontend development when extending PiAlert. Guiding principles are:
+This page contains tips for frontend development when extending NetAlertX. Guiding principles are:
 
 1. Maintainability
 2. Extendability

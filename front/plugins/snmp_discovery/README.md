@@ -4,7 +4,7 @@ A plugin for importing devices from an SNMP enabled router or switch.  Using SNM
 
 ### Usage
 
-Specify the following settings in the Settings section of PiAlert:
+Specify the following settings in the Settings section of NetAlertX:
 
 - `SNMPDSC_routers` - A list of `snmpwalk` commands to execute against IP addresses of roputers/switches with SNMP turned on. For example: 
 
