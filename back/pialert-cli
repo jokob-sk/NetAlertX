@@ -29,11 +29,6 @@ case $1 in
     echo "                          - If the PIALERT_WEB_PROTECTION parameter does not exist yet, it will be"
     echo "                            created and set to 'True' (login enabled)"
     echo ""
-    echo " disable_scan             - Stops all active scans"
-    echo "                          - Prevents new scans from starting"
-    echo ""
-    echo " enable_scan              - Stops all active scans"
-    echo "                          - Prevents new scans from starting"
     echo ""
     echo ""
     ;;
@@ -120,19 +115,6 @@ case $1 in
     fi
     echo ""
     echo "The new password is set"
-    ;;
-
-  disable_scan)
-    ## stop active scans
-    sudo killall arp-scan
-    touch ${SCRIPTPATH}/../db/setting_stoparpscan
-    echo "The arp-scan is disabled"
-    ;;
-
-  enable_scan)
-    ## stop active scans
-    rm ${SCRIPTPATH}/../db/setting_stoparpscan
-    echo "The arp-scan is enabled"
     ;;
 
   *)

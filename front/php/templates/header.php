@@ -66,7 +66,7 @@ require dirname(__FILE__).'/security.php';
   <!-- Google Font -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"> -->
   <link rel="stylesheet" href="css/offline-font.css">
-  <link rel="icon" type="image/x-icon" href="img/NetAlertX_white.png">
+  <link rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">  
@@ -127,7 +127,7 @@ if ($ENABLED_DARKMODE === True) {
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/NetAlertX_white.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
+        <img src="img/NetAlertX_logo.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Net <b>Alert</b><sup>x</sup>
@@ -186,14 +186,14 @@ if ($ENABLED_DARKMODE === True) {
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <!-- The user image in the navbar-->
-              <img src="img/NetAlertX_white.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
+              <img src="img/NetAlertX_logo.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
               <span class="hidden-xs">Net <b>Alert</b><sup>x</sup></span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
               <li class="user-header" style=" height: 100px;">
-                <img src="img/NetAlertX_white.png" class="img-circle NetAlertX-logo" alt="NetAlertX Logo">
+                <img src="img/NetAlertX_logo.png" class="img-circle NetAlertX-logo" alt="NetAlertX Logo">
                 <p style="float: right; width: 200px">
                 <?= lang('About_Title');?>
                   <small><?= lang('About_Design');?> Docker</small>
