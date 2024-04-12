@@ -93,7 +93,7 @@ fi
 
 # Create an empty log files
 # Create the execution_queue.log and app_front.log files if they don't exist
-touch "${INSTALL_DIR}"/front/log/{execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log}
+touch "${INSTALL_DIR}"/front/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log}
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 chown -R nginx:www-data "${INSTALL_DIR}"/{config,front/log,db}
