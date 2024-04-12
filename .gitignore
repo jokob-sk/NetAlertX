@@ -2,8 +2,10 @@
 .DS_Store
 config/*
 config/pialert.conf
+config/app.conf
 db/*
 db/pialert.db
+db/app.db
 front/log/*
 front/api/*
 **/plugins/**/*.log

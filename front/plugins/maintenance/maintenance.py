@@ -11,9 +11,10 @@ from io import StringIO
 from datetime import datetime
 from collections import deque
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-# Register NetAlertX modules NetAlertX directories
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
@@ -37,7 +38,7 @@ def main():
 
         mylog('verbose', [f'[{pluginName}] Cleaning file'])   
 
-        logFile = logPath + "/pialert.log"
+        logFile = logPath + "/app.log"
 
         # Using a deque to efficiently keep the last N lines
         lines_to_keep = deque(maxlen=MAINT_LOG_LENGTH)

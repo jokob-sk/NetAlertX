@@ -68,7 +68,7 @@
   {
       "function": "CMD",
       "type": "readonly",
-      "default_value":"/home/pi/pialert/back/pialert-cli set_password {password}",
+      "default_value":"/app/back/pialert-cli set_password {password}",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{
@@ -108,11 +108,11 @@
     "description": [
       {
         "language_code": "en_us",
-        "string": "The default password is <code>123456</code>. To change it, you can either use this plugin (follow the instructions in the <code>SETPWD_RUN</code> setting) or run <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> in the container."
+        "string": "The default password is <code>123456</code>. To change it, you can either use this plugin (follow the instructions in the <code>SETPWD_RUN</code> setting) or run <code>/app/back/pialert-cli set_password {password}</code> in the container."
       },
       {
         "language_code": "es_es",
-        "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> en el contenedor"
+        "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/app/back/pialert-cli set_password {password}</code> en el contenedor"
       }	  
     ]
   }

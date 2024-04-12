@@ -1,6 +1,7 @@
 FROM alpine:3.19 as builder
 
-ARG INSTALL_DIR=/home/pi
+ARG INSTALL_DIR=/app
+
 ENV PYTHONUNBUFFERED 1
 
 RUN apk add --no-cache bash python3 \
@@ -9,7 +10,7 @@ RUN apk add --no-cache bash python3 \
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY . ${INSTALL_DIR}/pialert/
+COPY . ${INSTALL_DIR}/
 
 RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
@@ -19,7 +20,7 @@ RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-lea
 # second stage
 FROM alpine:3.19 as runner
 
-ARG INSTALL_DIR=/home/pi
+ARG INSTALL_DIR=/app
 
 COPY --from=builder /opt/venv /opt/venv
 
@@ -40,12 +41,12 @@ RUN apk update --no-cache \
     && apk add --no-cache sqlite php82 php82-fpm php82-cgi php82-curl php82-sqlite3 php82-session \
     && apk add --no-cache python3 nginx \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
-    && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}/pialert" \
+    && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
     && rm -f /etc/nginx/http.d/default.conf
 
-COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/pialert/ ${INSTALL_DIR}/pialert/
+COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 
-RUN ${INSTALL_DIR}/pialert/dockerfiles/pre-setup.sh
+RUN ${INSTALL_DIR}/dockerfiles/pre-setup.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \
   CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json

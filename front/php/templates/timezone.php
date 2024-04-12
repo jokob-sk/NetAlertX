@@ -5,9 +5,9 @@
 // ###################################
 
 $configFolderPath = dirname(__FILE__)."/../../../config/";
-$config_file = "pialert.conf";
+$config_file = "app.conf";
 $logFolderPath = dirname(__FILE__)."/../../log/";
-$log_file = "pialert_front.log";
+$log_file = "app_front.log";
 
 
 $fullConfPath = $configFolderPath.$config_file;

@@ -9,7 +9,7 @@ The endpoints are updated when objects in the API endpoints are changed.
 
 ### Location of the endpoints
 
-In the container, these files are located under the `/home/pi/pialert/front/api/` folder and thus on the `<netalertx_url>/api/<File name>` url.
+In the container, these files are located under the `/app/front/api/` folder and thus on the `<netalertx_url>/api/<File name>` url.
 
 ### Available endpoints
 

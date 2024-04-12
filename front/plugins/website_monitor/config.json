@@ -335,7 +335,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "default_value":"python3 /app/front/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

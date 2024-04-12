@@ -5,7 +5,7 @@ import socket
 import subprocess
 from json2table import convert
 
-# Register NetAlertX modules NetAlertX directories
+# Register NetAlertX modules 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
 from logger import logResult, mylog, print_log
@@ -110,13 +110,13 @@ class Notification_obj:
 
             # Report "VERSION" in Header & footer
             VERSIONFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/version.php']).decode('utf-8')
-            mail_text = mail_text.replace ('<VERSION_PIALERT>', VERSIONFILE)
-            mail_html = mail_html.replace ('<VERSION_PIALERT>', VERSIONFILE)	
+            mail_text = mail_text.replace ('<BUILD_VERSION>', VERSIONFILE)
+            mail_html = mail_html.replace ('<BUILD_VERSION>', VERSIONFILE)	
 
             # Report "BUILD" in Header & footer
             BUILDFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/build.php']).decode('utf-8')
-            mail_text = mail_text.replace ('<BUILD_PIALERT>', BUILDFILE)
-            mail_html = mail_html.replace ('<BUILD_PIALERT>', BUILDFILE)
+            mail_text = mail_text.replace ('<BUILD_DATE>', BUILDFILE)
+            mail_html = mail_html.replace ('<BUILD_DATE>', BUILDFILE)
 
             # Start generating the TEXT & HTML notification messages
             html, text = construct_notifications(self.JSON, "new_devices")

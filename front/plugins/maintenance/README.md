@@ -2,7 +2,7 @@
 
 A plugin responsible for general maintenance tasks. These currently include:
 
-- pialert.log cleanup
+- app.log cleanup
 
 ### Usage
 

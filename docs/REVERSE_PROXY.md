@@ -472,9 +472,9 @@ Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/def
 ```bash
 docker run -d --rm --network=host \
   --name=netalertx \
-  -v /appl/docker/pialert/config:/home/pi/pialert/config \
-  -v /appl/docker/pialert/db:/home/pi/pialert/db \
-  -v /appl/docker/pialert/default:/etc/nginx/sites-available/default \
+  -v /appl/docker/netalertx/config:/app/config \
+  -v /appl/docker/netalertx/db:/app/db \
+  -v /appl/docker/netalertx/default:/etc/nginx/sites-available/default \
   -e TZ=Europe/Amsterdam \
   -e PORT=20211 \
   jokobsk/netalertx:latest

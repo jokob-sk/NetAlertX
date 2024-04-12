@@ -11,8 +11,9 @@ import sqlite3
 from io import StringIO
 from datetime import datetime
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog, append_line_to_file

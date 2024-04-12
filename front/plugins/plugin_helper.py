@@ -5,8 +5,10 @@ import re
 import base64
 from datetime import datetime
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+INSTALL_PATH = "/app"
+
+sys.path.append(f"{INSTALL_PATH}/front/plugins")
+sys.path.append(f'{INSTALL_PATH}/server') 
 
 from logger import mylog
 from const import confFileName
@@ -18,7 +20,7 @@ def read_config_file():
     config_dir[key]
     """
 
-    filename = '/home/pi/pialert/config/' + confFileName
+    filename = f'{INSTALL_PATH}/config/' + confFileName
 
 
     print('[plugin_helper] reading config file')
@@ -31,8 +33,8 @@ def read_config_file():
     return confDict 
 
 
-pialertConfigFile = read_config_file()
-timeZoneSetting = pialertConfigFile['TIMEZONE']
+configFile = read_config_file()
+timeZoneSetting = configFile['TIMEZONE']
 timeZone = pytz.timezone(timeZoneSetting)
 
 # -------------------------------------------------------------------

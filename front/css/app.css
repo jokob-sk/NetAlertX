@@ -2,7 +2,7 @@
 #  NetAlertX
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
 #
-#  pialert.css - Front module. CSS styles
+#  app.css - Front module. CSS styles
 #-------------------------------------------------------------------------------
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 ----------------------------------------------------------------------------- */
@@ -151,8 +151,24 @@
 /* -----------------------------------------------------------------------------
    Customized Main Menu
 ----------------------------------------------------------------------------- */
+
+.NetAlertX-logo
+{
+    border-color:transparent !important;  
+    height: 50px !important; 
+    width: 50px !important; 
+    margin-top:15px !important;
+    border-radius: 1px !important;
+}
+
 .main-header .logo {
     width: 150px;
+}
+
+
+.navbar-nav > .user-menu .user-image
+{
+  margin-top: 3px;
 }
 
 .main-header>.navbar {
@@ -487,6 +503,73 @@
 
     display: none;
 }
+/* ticker setup */
+.ticker-li
+{
+    width: 40%;
+}
+
+#ticker_announcement_plc
+{
+
+    /* height: 50px; */
+    overflow: hidden;
+    width: 65%;
+    position: absolute;
+    left: 40px;
+    top: 15px;
+}
+
+@media (max-width: 1500px) and (min-width: 1101px) {
+    #ticker_announcement_plc {
+        width: 45%; /* Width for screen sizes between 1100px and 730px */
+    }
+}
+
+@media (max-width: 1100px) and (min-width: 801px) {
+    #ticker_announcement_plc {
+        width: 30%; /* Width for screen sizes between 1100px and 730px */
+    }
+}
+
+@media (max-width: 800px) {
+    #ticker_announcement_plc {
+        width: 25%; /* Width for screen sizes less than 730px */
+    }
+}
+
+#ticker-message a
+{
+    color:#3200bb;
+    text-decoration: underline;
+}
+
+#ticker-message 
+{
+    color:#FFFFFF;
+}
+
+#ticker_announcement_plc:hover .ticker_announcement {
+    animation-play-state: paused;
+  }
+
+@keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-150%);
+    }
+  }
+
+.ticker_announcement {
+    text-align: center;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+    cursor: default;
+}
+
+/* maintenance buttons */
 
 .dbtools-button {
     display: inline-block;

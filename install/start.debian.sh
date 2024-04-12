@@ -5,22 +5,26 @@ echo "[INSTALL]                             Run start.debian.sh"
 echo "---------------------------------------------------------"
 
 
-INSTALL_DIR=/home/pi  # Specify the installation directory here
+INSTALL_DIR=/app  # Specify the installation directory here
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
-WEB_UI_DIR=/var/www/html/pialert
-NGINX_CONFIG_FILE=/etc/nginx/conf.d/pialert.conf
+CONF_FILE=app.conf
+DB_FILE=app.db
+NGINX_CONF_FILE=netalertx.debian.conf
+WEB_UI_DIR=/var/www/html/netalertx
+NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
-FILEDB=$INSTALL_DIR/pialert/db/pialert.db
+INSTALL_PATH=$INSTALL_DIR/
+FILEDB=$INSTALL_PATH/db/$DB_FILE
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then    
-  FILECONF=$INSTALL_DIR/pialert/config/pialert.conf 
+  FILECONF=$INSTALL_PATH/config/$CONF_FILE 
   if [ -f "$FILECONF" ]; then
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/config/pialert.conf 
+    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_PATH/config/$CONF_FILE 
   else 
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_DIR/pialert/back/pialert.conf_bak 
+    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_PATH/back/$CONF_FILE.bak 
   fi
 fi
 
@@ -33,8 +37,8 @@ fi
 # Run setup scripts
 echo "[INSTALL] Run setup scripts"
 
-"$INSTALL_DIR/pialert/install/user-mapping.debian.sh"
-"$INSTALL_DIR/pialert/install/install_dependencies.debian.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
+"${INSTALL_PATH}/install/user-mapping.debian.sh"
+"${INSTALL_PATH}/install/install_dependencies.debian.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
 
 echo "[INSTALL] Setup NGINX"
 
@@ -44,7 +48,7 @@ if [ -L /etc/nginx/sites-enabled/default ] ; then
   sudo rm /etc/nginx/sites-enabled/default
 elif [ -f /etc/nginx/sites-enabled/default ]; then
   echo "Disabling default NGINX site, moving config to /etc/nginx/sites-available"
-  sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_pialert
+  sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_netalertx
 fi
 
 # Clear existing directories and files
@@ -58,21 +62,21 @@ if [ -f $NGINX_CONFIG_FILE ]; then
   sudo rm $NGINX_CONFIG_FILE
 fi
 
-# create symbolic link to the pialert install directory
-ln -s $INSTALL_DIR/pialert/front $WEB_UI_DIR
+# create symbolic link to the  install directory
+ln -s $INSTALL_PATH/front $WEB_UI_DIR
 # create symbolic link to NGINX configuaration coming with NetAlertX
-sudo ln -s "$INSTALL_DIR/pialert/install/netalertx.debian.conf" /etc/nginx/conf.d/pialert.conf
+sudo ln -s "${INSTALL_PATH}/install/netalertx.debian.conf" /etc/nginx/conf.d/$NGINX_CONF_FILE
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
   echo "Setting webserver to user-supplied port ($PORT)"
-  sudo sed -i 's/listen 20211/listen '"$PORT"'/g' /etc/nginx/conf.d/pialert.conf
+  sudo sed -i 's/listen 20211/listen '"$PORT"'/g' /etc/nginx/conf.d/$NGINX_CONF_FILE
 fi
 
 # Change web interface address if set
 if [ -n "${LISTEN_ADDR}" ]; then
-  echo "Setting webserver to user-supplied address ($LISTEN_ADDR)"
-  sed -ie 's/listen /listen '"${LISTEN_ADDR}":'/g' /etc/nginx/conf.d/pialert.conf
+  echo "Setting webserver to user-supplied address (${LISTEN_ADDR})"
+  sed -ie 's/listen /listen '"${LISTEN_ADDR}":'/g' /etc/nginx/conf.d/$NGINX_CONF_FILE
 fi
 
 # Run the hardware vendors update at least once
@@ -85,8 +89,8 @@ else
   echo "The file ieee-oui.txt does not exist. Running update_vendors..."
 
   # Run the update_vendors.sh script
-  if [ -f "$INSTALL_DIR/pialert/back/update_vendors.sh" ]; then
-    "$INSTALL_DIR/pialert/back/update_vendors.sh"
+  if [ -f "${INSTALL_PATH}/back/update_vendors.sh" ]; then
+    "${INSTALL_PATH}/back/update_vendors.sh"
   else
     echo "update_vendors.sh script not found in $INSTALL_DIR."    
   fi
@@ -95,39 +99,39 @@ fi
 # Create an empty log files
 
 # Create the execution_queue.log file if it doesn't exist
-touch "$INSTALL_DIR/pialert/front/log/execution_queue.log"
-# Create the pialert_front.log file if it doesn't exist
-touch "$INSTALL_DIR/pialert/front/log/pialert_front.log"
+touch "${INSTALL_PATH}/front/log/execution_queue.log"
+# Create the app_front.log file if it doesn't exist
+touch "${INSTALL_PATH}/front/log/app_front.log"
 
 
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
 
-echo "[INSTALL] Fixing WEB_UI_DIR: $WEB_UI_DIR"
+echo "[INSTALL] Fixing WEB_UI_DIR: ${WEB_UI_DIR}"
 
 chmod -R a+rwx $WEB_UI_DIR
 
-echo "[INSTALL] Fixing INSTALL_DIR: $INSTALL_DIR"
+echo "[INSTALL] Fixing INSTALL_DIR: ${INSTALL_DIR}"
 
-chmod -R a+rw $INSTALL_DIR/pialert/front/log
+chmod -R a+rw $INSTALL_PATH/front/log
 chmod -R a+rwx $INSTALL_DIR
 
-echo "[INSTALL] Copy starter pialert.db and pialert.conf if they don't exist"
+echo "[INSTALL] Copy starter $DB_FILE and $CONF_FILE if they don't exist"
 
 # DANGER ZONE: ALWAYS_FRESH_INSTALL 
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
-  echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
-  # Delete content of "$INSTALL_DIR/pialert/config/"
-  rm -rf "$INSTALL_DIR/pialert/config/"*
+  echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
+  # Delete content of "/config/"
+  rm -rf "${INSTALL_PATH}/config/"*
   
-  # Delete content of "$INSTALL_DIR/pialert/db/"
-  rm -rf "$INSTALL_DIR/pialert/db/"*
+  # Delete content of "/db/"
+  rm -rf "${INSTALL_PATH}/db/"*
 fi
 
 
-# Copy starter pialert.db and pialert.conf if they don't exist
-cp -n "$INSTALL_DIR/pialert/back/pialert.conf" "$INSTALL_DIR/pialert/config/pialert.conf" 
-cp -n "$INSTALL_DIR/pialert/back/pialert.db"  "$FILEDB"
+# Copy starter $DB_FILE and $CONF_FILE if they don't exist
+cp -n "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE" 
+cp -n "${INSTALL_PATH}/back/$DB_FILE"  "$FILEDB"
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 
@@ -136,13 +140,13 @@ if [ -f "$FILEDB" ]; then
 fi
 
 chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
-chmod -R a+rw $INSTALL_DIR/pialert/config
-sudo chgrp -R www-data  $INSTALL_DIR/pialert
+chmod -R a+rw $INSTALL_PATH/config
+sudo chgrp -R www-data  $INSTALL_PATH
 
 # Check if buildtimestamp.txt doesn't exist
-if [ ! -f "$INSTALL_DIR/pialert/front/buildtimestamp.txt" ]; then
+if [ ! -f "${INSTALL_PATH}/front/buildtimestamp.txt" ]; then
     # Create buildtimestamp.txt
-    date +%s > "$INSTALL_DIR/pialert/front/buildtimestamp.txt"
+    date +%s > "${INSTALL_PATH}/front/buildtimestamp.txt"
 fi
 
 # start PHP
@@ -159,7 +163,7 @@ fi
 #  Activate the virtual python environment
 source myenv/bin/activate
 
-echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:$PORT"
+echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
 
 # Start the NetAlertX python script
-python $INSTALL_DIR/pialert/netalertx/
+python $INSTALL_PATH/server/

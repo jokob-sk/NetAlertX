@@ -264,7 +264,8 @@ replacements = {
     r'REPORT_MQTT=True': 'MQTT_RUN=\'on_notification\'',
     r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
     r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS',
-    r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG'
+    r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG',
+    r'\/home/pi/pialert\b': '/app'
 }
 
 def renameSettings(config_file):

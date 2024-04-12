@@ -51,7 +51,7 @@ def file_print (*args):
         result += str(arg)        
     print(result)
  
-    append_to_file_with_timeout(logPath + "/pialert.log", result + '\n', 5)
+    append_to_file_with_timeout(logPath + "/app.log", result + '\n', 5)
 
 #-------------------------------------------------------------------------------
 # Function to append to the file

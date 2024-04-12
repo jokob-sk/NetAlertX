@@ -63,7 +63,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 👩‍💻For Developers👨‍💻
 
-- [APP code structure](/netalertx/README.md)
+- [Server APP code structure](/server/README.md)
 - [Database structure](/docs/DATABASE.md)
 - [API endpoints details](/docs/API.md)
 - [Plugin system details and how to develop your own](/front/plugins/README.md)
@@ -122,7 +122,7 @@ Suggested test cases:
 
 Some additional context:
 
-* Permanent settings/config is stored in the `pialert.conf` file
+* Permanent settings/config is stored in the `app.conf` file
 * Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and its values are re-initialized from cookies/session data from the browser. 
 
 ## 🐛 Submitting an issue or bug

@@ -15,8 +15,8 @@ Start the container via the **terminal** with a command similar to this one:
 
 ```bash
 docker run --rm --network=host \
-  -v local/path/pialert/config:/home/pi/pialert/config \
-  -v local/path/pialert/db:/home/pi/pialert/db \
+  -v local/path/netalertx/config:/app/config \
+  -v local/path/netalertx/db:/app/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   jokobsk/netalertx:latest
@@ -53,9 +53,9 @@ services:
 
 ### Permissions
 
-* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/home/pi/pialert/front/log`. 
-* To solve permission issues you can try setting the owner and group of the `pialert.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /home/pi/pialert/db/pialert.db`. 
-* If still facing issues, try to map the pialert.db file (⚠ not folder) to `:/home/pi/pialert/db/pialert.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
+* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/app/front/log`. 
+* To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /app/db/app.db`. 
+* If still facing issues, try to map the app.db file (⚠ not folder) to `:/app/db/app.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
 
 ### Container restarts / crashes
 

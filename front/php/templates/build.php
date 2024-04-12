@@ -11,7 +11,7 @@
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 #---------------------------------------------------------------------------------#
 
-    $file = "/home/pi/pialert/front/buildtimestamp.txt";
+    $file = "/app/front/buildtimestamp.txt";
     if (file_exists($file)) {
         echo date("Y-m-d", ((int)file_get_contents($file)));
     }

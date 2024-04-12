@@ -124,3 +124,9 @@
   <div id="alert-message"> Alert message </div>
 </div>
 
+
+<!-- Sticky Announcement -->
+<div id="tickerAnnouncement" class="ticker_announcement myhidden">
+  <div id="ticker-message"> Announcement message </div>
+</div>
+

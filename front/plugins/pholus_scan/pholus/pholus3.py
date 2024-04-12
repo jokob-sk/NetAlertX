@@ -18,7 +18,7 @@ from scapy.utils import PcapWriter
 sys.setrecursionlimit(30000)
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)#supress Scapy warnings`
 
-logPath     = '/home/pi/pialert/front/log'
+logPath     = '/app/front/log'
 # DEBUG
 isDebug = False
 
@@ -43,13 +43,13 @@ def write_file (pPath, pText):
         file.close() 
 
 # Empty the last run log file
-write_file(logPath + "/pialert_pholus_lastrun.log", "")
+write_file(logPath + "/pholus_lastrun.log", "")
 
 def file_print(*args):
 
     result = ''
     
-    file = open(logPath + "/pialert_pholus_lastrun.log", "a")    
+    file = open(logPath + "/pholus_lastrun.log", "a")    
     for arg in args:                
         result += str(arg)
     print(result)
@@ -57,7 +57,7 @@ def file_print(*args):
     file.close()
 
 # Empty the last run log file
-write_file(logPath + "/pialert_pholus_subp_pr.log", "")
+write_file(logPath + "/pholus_subp_pr.log", "")
 
 # For separate logging of the multiprocess subprocess
 def file_print_pr(*args):
@@ -66,7 +66,7 @@ def file_print_pr(*args):
 
     result = ''
     
-    file = open(logPath + "/pialert_pholus_subp_pr.log", "a")    
+    file = open(logPath + "/pholus_subp_pr.log", "a")    
     for arg in args:                
         result += str(arg)
     print(result)

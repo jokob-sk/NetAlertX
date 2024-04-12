@@ -11,12 +11,14 @@ services:
     network_mode: host
     # restart: unless-stopped
     volumes:
-      # - ${APP_DATA_LOCATION}/netalertx_dev/config:/home/pi/pialert/config
+      # - ${APP_DATA_LOCATION}/netalertx_dev/config:/app/config
+      # - ${APP_DATA_LOCATION}/netalertx/config:/app/config
       - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
-      # - ${APP_DATA_LOCATION}/netalertx_dev/db:/home/pi/pialert/db      
-      - ${APP_DATA_LOCATION}/netalertx/db:/home/pi/pialert/db           
+      # - ${APP_DATA_LOCATION}/netalertx_dev/db:/app/db      
+      # - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
+      - ${APP_DATA_LOCATION}/netalertx/db:/home/pi/pialert/db 
       # (optional) useful for debugging if you have issues setting up the container
-      # - ${LOGS_LOCATION}:/home/pi/pialert/front/log      
+      # - ${LOGS_LOCATION}:/app/front/log      
       # ---------------------------------------------------------------------------
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
@@ -24,39 +26,40 @@ services:
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases      
       - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
-      - ${DEV_LOCATION}/netalertx:/home/pi/pialert/netalertx            
-      - ${DEV_LOCATION}/dockerfiles:/home/pi/pialert/dockerfiles
+      - ${DEV_LOCATION}/server:/app/server            
+      - ${DEV_LOCATION}/dockerfiles:/app/dockerfiles
       - ${APP_DATA_LOCATION}/netalertx/php.ini:/etc/php/8.2/fpm/php.ini      
-      - ${DEV_LOCATION}/install:/home/pi/pialert/install
-      - ${DEV_LOCATION}/front/css:/home/pi/pialert/front/css
-      - ${DEV_LOCATION}/back/update_vendors.sh:/home/pi/pialert/back/update_vendors.sh
-      - ${DEV_LOCATION}/front/lib/AdminLTE:/home/pi/pialert/front/lib/AdminLTE
-      - ${DEV_LOCATION}/front/js:/home/pi/pialert/front/js
-      - ${DEV_LOCATION}/install/start.debian.sh:/home/pi/pialert/install/start.debian.sh
-      - ${DEV_LOCATION}/install/user-mapping.debian.sh:/home/pi/pialert/install/user-mapping.debian.sh
-      - ${DEV_LOCATION}/install/install.debian.sh:/home/pi/pialert/install/install.debian.sh      
-      - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/home/pi/pialert/install/install_dependencies.debian.sh      
-      - ${DEV_LOCATION}/front/api:/home/pi/pialert/front/api
-      - ${DEV_LOCATION}/front/php:/home/pi/pialert/front/php      
-      - ${DEV_LOCATION}/front/deviceDetails.php:/home/pi/pialert/front/deviceDetails.php
-      - ${DEV_LOCATION}/front/deviceDetailsTools.php:/home/pi/pialert/front/deviceDetailsTools.php
-      - ${DEV_LOCATION}/front/devices.php:/home/pi/pialert/front/devices.php
-      - ${DEV_LOCATION}/front/events.php:/home/pi/pialert/front/events.php
-      - ${DEV_LOCATION}/front/plugins.php:/home/pi/pialert/front/plugins.php
-      - ${DEV_LOCATION}/front/pluginsCore.php:/home/pi/pialert/front/pluginsCore.php
-      - ${DEV_LOCATION}/front/help_faq.php:/home/pi/pialert/front/help_faq.php
-      - ${DEV_LOCATION}/front/index.php:/home/pi/pialert/front/index.php
-      - ${DEV_LOCATION}/front/maintenance.php:/home/pi/pialert/front/maintenance.php
-      - ${DEV_LOCATION}/front/network.php:/home/pi/pialert/front/network.php
-      - ${DEV_LOCATION}/front/presence.php:/home/pi/pialert/front/presence.php
-      - ${DEV_LOCATION}/front/settings.php:/home/pi/pialert/front/settings.php      
-      - ${DEV_LOCATION}/front/systeminfo.php:/home/pi/pialert/front/systeminfo.php      
-      - ${DEV_LOCATION}/front/report.php:/home/pi/pialert/front/report.php      
-      - ${DEV_LOCATION}/front/workflows.php:/home/pi/pialert/front/workflows.php      
-      - ${DEV_LOCATION}/front/appEventsCore.php:/home/pi/pialert/front/appEventsCore.php      
-      - ${DEV_LOCATION}/front/multiEditCore.php:/home/pi/pialert/front/multiEditCore.php      
-      - ${DEV_LOCATION}/front/donations.php:/home/pi/pialert/front/donations.php      
-      - ${DEV_LOCATION}/front/plugins:/home/pi/pialert/front/plugins      
+      - ${DEV_LOCATION}/install:/app/install
+      - ${DEV_LOCATION}/front/css:/app/front/css
+      - ${DEV_LOCATION}/front/img:/app/front/img
+      - ${DEV_LOCATION}/back/update_vendors.sh:/app/back/update_vendors.sh
+      - ${DEV_LOCATION}/front/lib/AdminLTE:/app/front/lib/AdminLTE
+      - ${DEV_LOCATION}/front/js:/app/front/js
+      - ${DEV_LOCATION}/install/start.debian.sh:/app/install/start.debian.sh
+      - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh
+      - ${DEV_LOCATION}/install/install.debian.sh:/app/install/install.debian.sh      
+      - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/app/install/install_dependencies.debian.sh      
+      - ${DEV_LOCATION}/front/api:/app/front/api
+      - ${DEV_LOCATION}/front/php:/app/front/php      
+      - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
+      - ${DEV_LOCATION}/front/deviceDetailsTools.php:/app/front/deviceDetailsTools.php
+      - ${DEV_LOCATION}/front/devices.php:/app/front/devices.php
+      - ${DEV_LOCATION}/front/events.php:/app/front/events.php
+      - ${DEV_LOCATION}/front/plugins.php:/app/front/plugins.php
+      - ${DEV_LOCATION}/front/pluginsCore.php:/app/front/pluginsCore.php
+      - ${DEV_LOCATION}/front/help_faq.php:/app/front/help_faq.php
+      - ${DEV_LOCATION}/front/index.php:/app/front/index.php
+      - ${DEV_LOCATION}/front/maintenance.php:/app/front/maintenance.php
+      - ${DEV_LOCATION}/front/network.php:/app/front/network.php
+      - ${DEV_LOCATION}/front/presence.php:/app/front/presence.php
+      - ${DEV_LOCATION}/front/settings.php:/app/front/settings.php      
+      - ${DEV_LOCATION}/front/systeminfo.php:/app/front/systeminfo.php      
+      - ${DEV_LOCATION}/front/report.php:/app/front/report.php      
+      - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
+      - ${DEV_LOCATION}/front/appEventsCore.php:/app/front/appEventsCore.php      
+      - ${DEV_LOCATION}/front/multiEditCore.php:/app/front/multiEditCore.php      
+      - ${DEV_LOCATION}/front/donations.php:/app/front/donations.php      
+      - ${DEV_LOCATION}/front/plugins:/app/front/plugins      
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
       # ---------------------------------------------------------------------------
     environment:

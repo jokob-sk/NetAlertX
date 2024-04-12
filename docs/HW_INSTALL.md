@@ -14,20 +14,20 @@ be dangerous, as you cannot see the code that's about to be executed on your sys
 Alternatively you can download the installation script `install/install.debian.sh` from the repository and check the code yourself (beware other scripts are
 downloaded too - only from this repo).
 
-NetAlertX will be installed in `home/pi/pialert/` and run on port number `20211`.
+NetAlertX will be installed in `/app` and run on port number `20211`.
 
 Some facts about what and where something will be changed/installed by the HW install setup (may not contain everything!):
 
-- `/home/pi/pialert` directory will be deleted and newly created
-- `/home/pi/pialert` will contain the whole repository (downloaded by `install/install.debian.sh`)
+- `/app` directory will be deleted and newly created
+- `/app` will contain the whole repository (downloaded by `install/install.debian.sh`)
 - The default NGINX site `/etc/nginx/sites-enabled/default` will be disabled (sym-link deleted or backed up to `sites-available`)
-- `/var/www/html/pialert` directory will be deleted and newly created
-- `/etc/nginx/conf.d/pialert.conf` will be sym-linked to `/home/pi/pialert/install/netalertx.debian.conf`
+- `/var/www/html/netalertx` directory will be deleted and newly created
+- `/etc/nginx/conf.d/netalertx.conf` will be sym-linked to `/app/install/netalertx.debian.conf`
 - Some files (IEEE device vendors info, ...) will be created in the directory where the installation script is executed
 
 ## Limitations
 
-- No system service is provided. NetAlertX must be started using `/home/pi/pialert/install/start.debian.sh`.
+- No system service is provided. NetAlertX must be started using `/app/install/start.debian.sh`.
 - No checks for other running software is done.
 - Only tested to work on Debian Bookworm (Debian 12).
 - **EXPERIMENTAL** and not recommended way to install NetAlertX.

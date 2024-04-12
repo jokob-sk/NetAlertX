@@ -89,7 +89,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/csv_backup/script.py overwrite={overwrite} location={location}",
+      "default_value": "python3 /app/front/plugins/csv_backup/script.py overwrite={overwrite} location={location}",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -221,7 +221,7 @@
     {
       "function": "location",
       "type": "text",
-      "default_value":"/home/pi/pialert/config",
+      "default_value":"/app/config",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{
@@ -238,15 +238,15 @@
       }],
       "description": [{
           "language_code":"en_us",
-          "string" : "Where the <code>devices.csv</code> file should be saved. For example <code>/home/pi/pialert/config</code>."
+          "string" : "Where the <code>devices.csv</code> file should be saved. For example <code>/app/config</code>."
       },
       {
           "language_code":"es_es",
-          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/home/pi/pialert/config</code>."
+          "string" : "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/app/config</code>."
       },
       {
           "language_code":"de_de",
-          "string" : "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/home/pi/pialert/config</code>."
+          "string" : "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/app/config</code>."
       }]
   }
   ],

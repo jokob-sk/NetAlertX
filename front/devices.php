@@ -19,8 +19,8 @@
   
 
   // check permissions
-  $dbPath = "../db/pialert.db";
-  $confPath = "../config/pialert.conf";
+  $dbPath = "../db/app.db";
+  $confPath = "../config/app.conf";
 
   checkPermissions([$dbPath, $confPath]);
 ?>

@@ -9,8 +9,9 @@ import base64
 import subprocess
 from time import strftime
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
@@ -133,7 +134,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
 
             # regular logging
             for line in newLines:
-                append_line_to_file (logPath + '/pialert_nmap.log', line +'\n')     
+                append_line_to_file (logPath + '/app_nmap.log', line +'\n')     
 
 
             index = 0

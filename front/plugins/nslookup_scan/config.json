@@ -60,7 +60,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/nslookup_scan/nslookup.py",
+      "default_value": "python3 /app/front/plugins/nslookup_scan/nslookup.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [

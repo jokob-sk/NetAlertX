@@ -25,8 +25,8 @@
 
 ```yaml
 docker run -d --rm --network=host \
-  -v local/path/pialert/config:/home/pi/pialert/config \
-  -v local/path/pialert/db:/home/pi/pialert/db \
+  -v local/path/config:/app/config \
+  -v local/path/db:/app/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   jokobsk/netalertx:latest
@@ -49,22 +49,22 @@ docker run -d --rm --network=host \
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------| 
-| ✅ | `:/home/pi/pialert/config` | Folder which will contain the `pialert.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files (see below for details).  | 
-| ✅ | `:/home/pi/pialert/db` | Folder which will contain the `pialert.db` file  | 
-| | `:/home/pi/pialert/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+| ✅ | `:/app/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files (see below for details).  | 
+| ✅ | `:/app/db` | Folder which will contain the `app.db` file  | 
+| | `:/app/front/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 | | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file. Required if you want to use PiHole DB mapping.  | 
 | | `:/etc/pihole/dhcp.leases` |  PiHole's `dhcp.leases` file. Required if you want to use PiHole `dhcp.leases` file. This has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole`)| 
-| | `:/home/pi/pialert/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-| | `:/home/pi/pialert/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).  | 
+| | `:/app/front/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
+| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).  | 
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
 
 > Use separate `db` and `config` directories, don't nest them.
 
-### (If UI is not available) Modify the config (`pialert.conf`) 
+### (If UI is not available) Modify the config (`app.conf`) 
 
 - The preferred way is to manage the configuration via the Settings section in the UI.
-- You can modify [pialert.conf](https://github.com/jokob-sk/NetAlertX/tree/main/config) directly, if needed.
-- If unavailable, the app generates a default `pialert.conf` and `pialert.db` file on the first run.
+- You can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/config) directly, if needed.
+- If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
 
 #### Important settings
 
@@ -130,10 +130,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/pialert/config:/home/pi/pialert/config
-      - local/path/pialert/db:/home/pi/pialert/db      
+      - local/path/config:/app/config
+      - local/path/db:/app/db      
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/home/pi/pialert/front/log
+      - local/path/logs:/app/front/log
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -157,8 +157,8 @@ Example by [SeimuS](https://github.com/SeimusS).
       - TZ=Europe/Bratislava
     restart: always
     volumes:
-      - ./pialert/pialert_db:/home/pi/pialert/db
-      - ./pialert/pialert_config:/home/pi/pialert/config
+      - ./netalertx/db:/app/db
+      - ./netalertx/config:/app/config
     network_mode: host
 ```
 
@@ -179,10 +179,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
-      - ${APP_DATA_LOCATION}/netalertx/db/pialert.db:/home/pi/pialert/db/pialert.db      
+      - ${APP_DATA_LOCATION}/netalertx/config:/app/config
+      - ${APP_DATA_LOCATION}/netalertx/db/:/app/db/      
       # (optional) useful for debugging if you have issues setting up the container
-      - ${LOGS_LOCATION}:/home/pi/pialert/front/log
+      - ${LOGS_LOCATION}:/app/front/log
     environment:
       - TZ=${TZ}      
       - PORT=${PORT}
@@ -211,7 +211,7 @@ To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
 
 ### Example 4
 
-Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
+Courtesy of [pbek](https://github.com/pbek). The volume `netalertx_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
 
 ```yaml
   netalertx:
@@ -227,15 +227,15 @@ Courtesy of [pbek](https://github.com/pbek). The volume `pialert_db` is used by 
         ipv4_address: 192.168.1.2
     restart: unless-stopped
     volumes:
-      - pialert_db:/home/pi/pialert/db
-      - ./pialert/pialert.conf:/home/pi/pialert/config/pialert.conf      
+      - netalertx_db:/app/db
+      - ./netalertx/:/app/config/      
 ```
 
 ## 🏅 Recognitions
 
-Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> & for help and tips&tricks for Dockerfile(s) and <a href="https://github.com/vladaurosh">@vladaurosh</a> for Alpine re-base help.
+Big thanks to <a href="https://github.com/Macleykun">@Macleykun</a> & for help and tips & tricks for Dockerfile(s) and <a href="https://github.com/vladaurosh">@vladaurosh</a> for Alpine re-base help.
 
-## ❤ Support me to prevent my burnout 🔥🤯
+## ❤ Support me 
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 

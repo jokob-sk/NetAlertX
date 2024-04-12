@@ -12,7 +12,8 @@ from datetime import datetime
 from base64 import b64encode
 
 # Register NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 import conf
 from const import confFileName

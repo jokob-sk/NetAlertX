@@ -247,7 +247,7 @@
         {
             "function": "CMD",
             "type": "readonly",
-            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_pushsafer/pushsafer.py",
+            "default_value":"python3 /app/front/plugins/_publisher_pushsafer/pushsafer.py",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

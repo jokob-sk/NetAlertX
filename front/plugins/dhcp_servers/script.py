@@ -6,8 +6,9 @@ from datetime import datetime
 
 import sys
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, Plugin_Object
 from logger import mylog

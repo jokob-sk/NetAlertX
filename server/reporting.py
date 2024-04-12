@@ -13,7 +13,6 @@
 import datetime
 import json
 
-# Register NetAlertX modules NetAlertX directories
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
 from helper import timeNowTZ, get_file_content, write_file, get_timezone_offset, get_setting_value

@@ -57,7 +57,7 @@ $pia_installed_skins = array('skin-black-light',
 
 // Size and last mod of DB ------------------------------------------------------
 
-$pia_db = str_replace('front', 'db', getcwd()).'/pialert.db';
+$pia_db = str_replace('front', 'db', getcwd()).'/app.db';
 $pia_db_size = number_format((filesize($pia_db) / 1000000),2,",",".") . ' MB';
 $pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
 
@@ -67,7 +67,7 @@ $pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
 $Pia_Archive_Path = str_replace('front', 'db', getcwd()).'/';
 $Pia_Archive_count = 0;
 $Pia_Archive_diskusage = 0;
-$files = glob($Pia_Archive_Path."pialertdb_*.zip");
+$files = glob($Pia_Archive_Path."appdb_*.zip");
 if ($files){
  $Pia_Archive_count = count($files);
 }
@@ -78,7 +78,7 @@ $Pia_Archive_diskusage = number_format(($Pia_Archive_diskusage / 1000000),2,",",
 
 // Find latest Backup for restore -----------------------------------------------
 
-$latestfiles = glob($Pia_Archive_Path."pialertdb_*.zip");
+$latestfiles = glob($Pia_Archive_Path."appdb_*.zip");
 natsort($latestfiles);
 $latestfiles = array_reverse($latestfiles,False);
 
@@ -403,14 +403,14 @@ $db->close();
                     <div class="db_info_table">
                         <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
-                              <textarea id="pialert_log" class="logs" cols="70" rows="10" wrap='off' readonly >
+                              <textarea id="app_log" class="logs" cols="70" rows="10" wrap='off' readonly >
                                 <?php                               
-                                if(filesize("./log/pialert.log") > 2000000)
+                                if(filesize("./log/app.log") > 2000000)
                                 {
-                                  echo file_get_contents( "./log/pialert.log", false, null, -2000000); 
+                                  echo file_get_contents( "./log/app.log", false, null, -2000000); 
                                 }
                                 else{
-                                  echo file_get_contents( "./log/pialert.log" );
+                                  echo file_get_contents( "./log/app.log" );
                                 }
                               
                               ?>
@@ -418,43 +418,43 @@ $db->close();
                             </div>
                             <div class="row logs-row" >
                               <div>
-                                <div class="log-file">pialert.log <div class="logs-size"><?php echo number_format((filesize("./log/pialert.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/pialert.log" target="_blank"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-file">app.log <div class="logs-size"><?php echo number_format((filesize("./log/app.log") / 1000000),2,",",".") . ' MB';?> 
+                                <span class="span-padding"><a href="./log/app.log" target="_blank"><i class="fa fa-download"></i> </a></span>
                               </div></div>             
                                 <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('pialert.log','cleanLog')"><?= lang('Gen_Purge');?></button>
+                                  <button class="btn btn-primary" onclick="logManage('app.log','cleanLog')"><?= lang('Gen_Purge');?></button>
                                 </div>
                               </div>
                             </div>
                         </div> 
                         <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
-                              <textarea id="pialert_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert_front.log" ); ?>
+                              <textarea id="app_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/app_front.log" ); ?>
                               </textarea>
                             </div>
                             <div class="row logs-row" >                            
                               <div>
-                                <div class="log-file">pialert_front.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert_front.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/pialert_front.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-file">app_front.log<div class="logs-size"><?php echo number_format((filesize("./log/app_front.log") / 1000000),2,",",".") . ' MB';?> 
+                                <span class="span-padding"><a href="./log/app_front.log"><i class="fa fa-download"></i> </a></span>
                               </div></div>
                                 <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('pialert_front.log','cleanLog')"><?= lang('Gen_Purge');?></button>
+                                  <button class="btn btn-primary" onclick="logManage('app_front.log','cleanLog')"><?= lang('Gen_Purge');?></button>
                                 </div>
                               </div>
                             </div>
                         </div> 
                         <div class="log-area box box-solid box-primary">
                             <div class="row logs-row">
-                              <textarea id="pialert_php_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/pialert.php_errors.log" ); ?>
+                              <textarea id="app_php_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/app.php_errors.log" ); ?>
                               </textarea>
                             </div>
                             <div class="row logs-row" >                            
                               <div>
-                                <div class="log-file">pialert.php_errors.log<div class="logs-size"><?php echo number_format((filesize("./log/pialert.php_errors.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/pialert.php_errors.log"><i class="fa fa-download"></i> </a></span>
+                                <div class="log-file">app.php_errors.log<div class="logs-size"><?php echo number_format((filesize("./log/app.php_errors.log") / 1000000),2,",",".") . ' MB';?> 
+                                <span class="span-padding"><a href="./log/app.php_errors.log"><i class="fa fa-download"></i> </a></span>
                               </div></div>
                                 <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('pialert.php_errors.log','cleanLog')"><?= lang('Gen_Purge');?></button>
+                                  <button class="btn btn-primary" onclick="logManage('app.php_errors.log','cleanLog')"><?= lang('Gen_Purge');?></button>
                                 </div>
                               </div>
                             </div>
@@ -792,7 +792,7 @@ function scrollDown()
     // Check if the parent <li> is active
     if (elementToCheck.parent().hasClass("active")) {
     {
-        var areaIDs = ['pialert_log', 'pialert_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'pialert_pholus_log',  'pialert_pholus_lastrun_log', 'pialert_php_log'];
+        var areaIDs = ['app_log', 'app_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'app_pholus_log',  'app_pholus_lastrun_log', 'app_php_log'];
       
         for (let i = 0; i < areaIDs.length; i++) {
 

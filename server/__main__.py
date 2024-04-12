@@ -20,7 +20,7 @@ import time
 import datetime
 import multiprocessing
 
-# Register NetAlertX modules NetAlertX directories
+# Register NetAlertX modules 
 import conf
 from const import *
 from logger import  mylog

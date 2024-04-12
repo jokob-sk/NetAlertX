@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
-# Example call
-# python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=http://google.com,http://bing.com
 import argparse
 import requests
 import pathlib
@@ -10,7 +8,9 @@ import sys
 import os
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
 from datetime import datetime

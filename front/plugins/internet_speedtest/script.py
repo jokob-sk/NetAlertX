@@ -8,7 +8,8 @@ from datetime import datetime
 import speedtest
 
 # Register NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file

@@ -409,6 +409,26 @@ function showMessage (textMessage="") {
   }
 }
 
+// -----------------------------------------------------------------------------
+function showTickerAnnouncement(textMessage = "") {
+  if (textMessage.toLowerCase().includes("error")) {
+    // show error
+    alert(textMessage);
+  } else {
+    // show permanent notification
+    $("#ticker-message").html(textMessage);
+    $("#tickerAnnouncement").removeClass("myhidden");
+    // Move the tickerAnnouncement element to ticker_announcement_plc
+    $("#tickerAnnouncement").appendTo("#ticker_announcement_plc");
+
+    // var $ticker = $('#tickerAnnouncement');
+    // var $tickerMessage = $('#ticker-message');
+    
+    // Clone the ticker message to create continuous scrolling effect
+    // $tickerMessage.clone().appendTo($ticker);
+  }
+}
+
 
 // -----------------------------------------------------------------------------
 // String utilities
@@ -1154,7 +1174,7 @@ function arraysContainSameValues(arr1, arr2) {
 // -----------------------------------------------------------------------------
 
 // Define a unique key for storing the flag in sessionStorage
-var sessionStorageKey = "myScriptExecuted_pialert_common";
+var sessionStorageKey = "myScriptExecuted_common_js";
 
 // -----------------------------------------------------------------------------
 // Clearing all the caches
@@ -1202,7 +1222,7 @@ $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {
 // Display spinner and reload page if not yet initialized
 function handleFirstLoad(callback)
 {
-  if(!pialert_common_init)
+  if(!app_common_init)
   {
     setTimeout(function() {
       
@@ -1214,7 +1234,7 @@ function handleFirstLoad(callback)
 
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
-var pialert_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
+var app_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
 

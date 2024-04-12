@@ -354,7 +354,7 @@
       {
         "function": "CMD",
         "type": "readonly",
-        "default_value": "python3 /home/pi/pialert/front/plugins/_publisher_email/email_smtp.py",
+        "default_value": "python3 /app/front/plugins/_publisher_email/email_smtp.py",
         "options": [],
         "localized": [
           "name",

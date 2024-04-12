@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Example call
-# python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers='snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2'
-
 from __future__ import unicode_literals
 import pathlib
 import subprocess
@@ -10,8 +7,9 @@ import argparse
 import os
 import sys
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
 from logger import mylog

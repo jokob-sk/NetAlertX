@@ -106,7 +106,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/pholus_scan/script.py userSubnets={subnets} timeoutSec={timeout}",
+      "default_value": "python3 /app/front/plugins/pholus_scan/script.py userSubnets={subnets} timeoutSec={timeout}",
       "options": [],
       "localized": [
         "name",
@@ -219,7 +219,7 @@
         },
         {
           "language_code": "es_es",
-          "string": "Cuántos días de entradas de escaneo de Pholus deben conservarse (globalmente, ¡no específico del dispositivo!). El archivo <a href=\"/maintenance.php#tab_Logging\">pialert_pholus.log</a> no se modifica. Introduzca <code>0</code> para desactivar."
+          "string": "Cuántos días de entradas de escaneo de Pholus deben conservarse (globalmente, ¡no específico del dispositivo!). Introduzca <code>0</code> para desactivar."
         }
       ]
     },

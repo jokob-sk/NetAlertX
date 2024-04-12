@@ -74,7 +74,7 @@ Example use cases for plugins could be:
 * Creating a script to create FAKE devices based on user input via custom settings
 * ...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
 
-If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `pialert.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
+If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `app.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
 
 Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
 
@@ -141,16 +141,16 @@ Currently, these data sources are supported (valid `data_source` value).
 | Name | `data_source` value | Needs to return a "table"* | Overview (more details on this page below) | 
 |----------------------|----------------------|----------------------|----------------------| 
 | Script | `script` | no | Executes any linux command in the `CMD` setting. |
-| NetAlertX DB query | `pialert-db-query` | yes | Executes a SQL query on the NetAlertX database in the `CMD` setting. |
+| NetAlertX DB query | `app-db-query` | yes | Executes a SQL query on the NetAlertX database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 | Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). | 
 
-> * "Needs to return a "table" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `pialert.log` might be logged.
+> * "Needs to return a "table" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `app.log` might be logged.
 
 > 🔎Example
 >```json
->"data_source":  "pialert-db-query"
+>"data_source":  "app-db-query"
 >```
 If you want to display plugin objects or import devices into the app, data sources have to return a "table" of the exact structure as outlined above.
 
@@ -202,11 +202,11 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ```
 
-### "data_source":  "pialert-db-query"
+### "data_source":  "app-db-query"
 
-If the `data_source` is set to `pialert-db-query`, the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
+If the `data_source` is set to `app-db-query`, the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
 
-This SQL query is executed on the `pialert.db` SQLite database file. 
+This SQL query is executed on the `app.db` SQLite database file. 
 
 >  🔎Example
 > 
@@ -281,7 +281,7 @@ For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`.
 >  ...
 >```
 
-The actual SQL query you want to execute is then stored as a `CMD` setting, similar to a Plugin of the `pialert-db-query` plugin type. The format has to adhere to the format outlined in the "Column order and values" section above. 
+The actual SQL query you want to execute is then stored as a `CMD` setting, similar to a Plugin of the `app-db-query` plugin type. The format has to adhere to the format outlined in the "Column order and values" section above. 
 
 >  🔎Example
 >
@@ -448,7 +448,7 @@ The `params` array in the `config.json` is used to enable the user to change the
 > Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
 > 
 > ```bash
-> root@server# python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
+> root@server# python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
 > ```
 
 * You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below). 
@@ -469,7 +469,7 @@ The `params` array in the `config.json` is used to enable the user to change the
  {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}",
+            "default_value":"python3 /app/front/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
@@ -483,7 +483,7 @@ The `params` array in the `config.json` is used to enable the user to change the
         }
 ```
 
-During script execution, the app will take the command `"python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it with the value from the `WEBMON_urls_to_check` setting. This is because:
+During script execution, the app will take the command `"python3 /app/front/plugins/website_monitor/script.py urls={urls}"`, take the `{urls}` wildcard and replace it with the value from the `WEBMON_urls_to_check` setting. This is because:
 
 1. The app checks the `params` entries
 2. It finds `"name"  : "urls"`
@@ -495,9 +495,9 @@ During script execution, the app will take the command `"python3 /home/pi/pialer
    - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user: 
    - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
 6. The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
-   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls={urls}`
+   - `python3 /app/front/plugins/website_monitor/script.py urls={urls}`
    - to
-   - `python3 /home/pi/pialert/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
+   - `python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
 
 Below are some general additional notes, when defining `params`: 
 
@@ -586,7 +586,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 |  | - "always_after_scan" - run always after a scan is finished |
 |  | - "before_name_updates" - run before device names are updated (for name discovery plugins) |
 |  | - "on_new_device" - run when a new device is detected |
-|  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `pialert.conf` file. |
+|  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `app.conf` file. |
 | `RUN_SCHD` | (required if you include "schedule" in the above `RUN` function) Cron-like scheduling is used if the `RUN` setting is set to `schedule`. |
 | `CMD` | (required) Specifies the command that should be executed. |
 | `API_SQL` | (not implemented) Generates a `table_` + `code_name` + `.json` file as per [API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md). |

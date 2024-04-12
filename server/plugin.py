@@ -7,7 +7,7 @@ import base64
 
 from collections import namedtuple
 
-# Register NetAlertX modules NetAlertX directories
+# Register NetAlertX modules
 import conf
 from const import pluginsPath, logPath, applicationPath
 from logger import mylog
@@ -265,8 +265,8 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         else:
             mylog('debug', [f'[Plugins] The file {file_path} does not exist'])             
     
-    # pialert-db-query
-    if plugin['data_source'] == 'pialert-db-query':
+    # app-db-query
+    if plugin['data_source'] == 'app-db-query':
         # replace single quotes wildcards
         q = set_CMD.replace("{s-quote}", '\'')
 
@@ -303,7 +303,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
     
-    # pialert-db-query
+    # app-db-query
     if plugin['data_source'] == 'sqlite-db-query':
         # replace single quotes wildcards
         # set_CMD should contain a SQL query    

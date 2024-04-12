@@ -449,7 +449,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/internet_speedtest/script.py",
+      "default_value": "python3 /app/front/plugins/internet_speedtest/script.py",
       "options": [],
       "localized": [
         "name",

@@ -332,7 +332,7 @@
         {
             "function": "CMD",
             "type": "text",
-            "default_value":"python3 /home/pi/pialert/front/plugins/snmp_discovery/script.py routers={s-quote}{routers}{s-quote}",
+            "default_value":"python3 /app/front/plugins/snmp_discovery/script.py routers={s-quote}{routers}{s-quote}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

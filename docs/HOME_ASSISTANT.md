@@ -36,9 +36,9 @@ NetAlertX comes with MQTT support, allowing you to show all detected devices as 
   | ![Screen 3][list] | ![Screen 4][overview] | 
   
 
-  [configuration]:   /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Configuration.png           "configuration"
-  [sensors]:         /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-as-Sensors.png       "sensors"
-  [history]:         /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Device-Presence-History.png "history"
-  [list]:            /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Devices-List.png            "list"  
-  [overview]:        /docs/img/HOME_ASISSTANT/PiAlert-HomeAssistant-Overview-Card.png           "overview"
+  [configuration]:   /docs/img/HOME_ASISSTANT/HomeAssistant-Configuration.png           "configuration"
+  [sensors]:         /docs/img/HOME_ASISSTANT/HomeAssistant-Device-as-Sensors.png       "sensors"
+  [history]:         /docs/img/HOME_ASISSTANT/HomeAssistant-Device-Presence-History.png "history"
+  [list]:            /docs/img/HOME_ASISSTANT/HomeAssistant-Devices-List.png            "list"  
+  [overview]:        /docs/img/HOME_ASISSTANT/HomeAssistant-Overview-Card.png           "overview"
 

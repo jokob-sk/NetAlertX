@@ -10,8 +10,9 @@ import subprocess
 from time import strftime
 
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
@@ -135,7 +136,7 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
     # the scan always lasts 2x as long, so the desired user time from settings needs to be halved
     adjustedTimeout = str(round(int(timeoutSec) / 2, 0)) 
 
-    #  python3 -m trace --trace /home/pi/pialert/pholus/pholus3.py eth1 -rdns_scanning  192.168.1.0/24 -stimeout 600
+    #  python3 -m trace --trace /app/pholus/pholus3.py eth1 -rdns_scanning  192.168.1.0/24 -stimeout 600
     pholus_args = ['python3', fullPholusPath, interface, "-rdns_scanning", mask, "-stimeout", adjustedTimeout]
 
     # Execute command
@@ -157,7 +158,7 @@ def execute_pholus_on_interface(interface, timeoutSec, mask):
         mylog('verbose', [f'[{pluginName}] Scan: Pholus SUCCESS'])
     
     #  check the last run output
-    f = open(logPath + '/pialert_pholus_lastrun.log', 'r+')
+    f = open(logPath + '/pholus_lastrun.log', 'r+')
     newLines = f.read().split('\n')
     f.close()        
 

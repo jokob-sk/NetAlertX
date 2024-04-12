@@ -331,7 +331,7 @@ function deleteActHistory() {
 //------------------------------------------------------------------------------
 function PiaBackupDBtoArchive() {
   // prepare fast Backup
-  $dbfilename = 'pialert.db';
+  $dbfilename = 'app.db';
   $file = '../../../db/'.$dbfilename;
   $newfile = '../../../db/'.$dbfilename.'.latestbackup';
   
@@ -340,7 +340,7 @@ function PiaBackupDBtoArchive() {
       echo lang('BackDevices_Backup_CopError');
   } else {
     // Create archive with actual date
-    $Pia_Archive_Name = 'pialertdb_'.date("Ymd_His").'.zip';
+    $Pia_Archive_Name = 'appdb_'.date("Ymd_His").'.zip';
     $Pia_Archive_Path = '../../../db/';
     exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/'.$dbfilename, $output);
     // chheck if archive exists
@@ -389,7 +389,7 @@ function PiaPurgeDBBackups() {
 
   $Pia_Archive_Path = '../../../db';
   $Pia_Backupfiles = array();
-  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', $dbfilename, 'pialertdb-reset.zip'));
+  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', $dbfilename, 'netalertxdb-reset.zip'));
 
   foreach ($files as &$item) 
     {

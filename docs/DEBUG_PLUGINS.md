@@ -19,7 +19,7 @@ For a more in-depth overview on how plugins work check the [Plugins development 
 
 #### Incorrect input data
 
-Input data from the plugin might cause mapping issues in specific edge cases. Look for a corresponding section in the `pialert.log` file, for example notice the first line of the execution run of the `PIHOLE` plugin below:
+Input data from the plugin might cause mapping issues in specific edge cases. Look for a corresponding section in the `app.log` file, for example notice the first line of the execution run of the `PIHOLE` plugin below:
 
 ```
 17:31:05 [Scheduler] - Scheduler run for PIHOLE: YES

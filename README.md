@@ -74,7 +74,9 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-Thank you to all the wonderful people who are sponsoring this project (=preventing my burnout🔥🤯):
+Thank you to all the wonderful people who are sponsoring this project. 
+
+> preventing my burnout😅 are:
 
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 | All Sponsors |

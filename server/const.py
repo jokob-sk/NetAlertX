@@ -3,9 +3,9 @@
 #===============================================================================
 # PATHS
 #===============================================================================
-applicationPath = '/home/pi/pialert'
-dbFileName      = 'pialert.db'
-confFileName    = 'pialert.conf'
+applicationPath = '/app'
+dbFileName      = 'app.db'
+confFileName    = 'app.conf'
 confPath        = "/config/" + confFileName
 
 dbPath          = '/db/' + dbFileName

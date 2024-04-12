@@ -58,5 +58,9 @@
 
   <script src="js/handle_version.js"></script>
 
+  <?php
+    require 'migrationCheck.php';
+  ?>
+
 </body>
 </html>

@@ -122,7 +122,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/ddns_update/script.py prev_ip={prev_ip}  DDNS_UPDATE_URL={DDNS_UPDATE_URL} DDNS_USER={DDNS_USER} DDNS_PASSWORD={DDNS_PASSWORD} DDNS_DOMAIN={DDNS_DOMAIN} ",
+      "default_value": "python3 /app/front/plugins/ddns_update/script.py prev_ip={prev_ip}  DDNS_UPDATE_URL={DDNS_UPDATE_URL} DDNS_USER={DDNS_USER} DDNS_PASSWORD={DDNS_PASSWORD} DDNS_DOMAIN={DDNS_DOMAIN} ",
       "options": [],
       "localized": [
         "name",

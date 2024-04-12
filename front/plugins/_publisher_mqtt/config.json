@@ -278,7 +278,7 @@
         {
             "function": "CMD",
             "type": "readonly",
-            "default_value":"python3 /home/pi/pialert/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
+            "default_value":"python3 /app/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
             "options": [],
             "localized": ["name", "description"],
             "name" : [{

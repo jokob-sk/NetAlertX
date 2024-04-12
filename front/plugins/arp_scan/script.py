@@ -9,10 +9,10 @@ import base64
 import subprocess
 from time import strftime
 
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx') 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-# Register NetAlertX modules NetAlertX directories
 from database import DB
 from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty
 from logger import mylog, append_line_to_file

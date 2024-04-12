@@ -1,5 +1,5 @@
 <!-- NetAlertX CSS -->
-<link rel="stylesheet" href="css/pialert.css">
+<link rel="stylesheet" href="css/app.css">
 
 <?php
 require dirname(__FILE__).'/php/server/init.php';
@@ -99,7 +99,6 @@ if ($ENABLED_DARKMODE === True) {
    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
 } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
 ?>
-   <!-- /var/www/html/pialert/css/offline-font.css  -->
   <link rel="stylesheet" href="/css/offline-font.css">
 </head>
 <body class="hold-transition login-page">
@@ -148,7 +147,7 @@ if ($ENABLED_DARKMODE === True) {
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">�</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
-          <p><?= lang('Login_Psw_run');?><br><span style="border: solid 1px yellow; padding: 2px;"> /home/pi/pialert/back/pialert-cli set_password <?= lang('Login_Psw_new');?></span><br><?= lang('Login_Psw_folder');?></p>
+          <p><?= lang('Login_Psw_run');?><br><span style="border: solid 1px yellow; padding: 2px;"> /app/back/pialert-cli set_password <?= lang('Login_Psw_new');?></span><br><?= lang('Login_Psw_folder');?></p>
       </div>
   </div>
 

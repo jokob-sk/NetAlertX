@@ -8,7 +8,7 @@ echo "[INSTALL]                           Run install.debian.sh"
 echo "---------------------------------------------------------"
 
 # Set environment variables
-INSTALL_DIR=/home/pi  # Specify the installation directory here
+INSTALL_DIR=/app  # Specify the installation directory here
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
@@ -24,15 +24,15 @@ apt-get install sudo -y
 apt-get install -y git
 
 # Clean the directory
-rm -R $INSTALL_DIR/pialert
+rm -R $INSTALL_DIR/
 
 # Clone the application repository
-git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/pialert"
+git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
 
 # Check for buildtimestamp.txt existence, otherwise create it
-if [ ! -f $INSTALL_DIR/pialert/front/buildtimestamp.txt ]; then
-  date +%s > $INSTALL_DIR/pialert/front/buildtimestamp.txt
+if [ ! -f $INSTALL_DIR/front/buildtimestamp.txt ]; then
+  date +%s > $INSTALL_DIR/front/buildtimestamp.txt
 fi
 
 # Start NetAlertX
-"$INSTALL_DIR/pialert/install/start.debian.sh"
+"$INSTALL_DIR/install/start.debian.sh"

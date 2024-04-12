@@ -2,7 +2,7 @@ import datetime
 import json
 import uuid
 
-# Register NetAlertX modules NetAlertX directories
+# Register NetAlertX modules 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
 from logger import logResult, mylog, print_log

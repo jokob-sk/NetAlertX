@@ -18,6 +18,9 @@ import conf
 from const import *
 from logger import mylog, logResult
 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+
 #-------------------------------------------------------------------------------
 # DateTime
 #-------------------------------------------------------------------------------
@@ -201,11 +204,11 @@ def filePermissions():
     (confR_access, dbR_access) = checkPermissionsOK() # Initial check
 
     if confR_access == False:
-        initialiseFile(fullConfPath, "/home/pi/pialert/back/pialert.conf" )
+        initialiseFile(fullConfPath, f"{INSTALL_PATH}/back/app.conf" )
 
     # check and initialize .db
     if dbR_access == False:
-        initialiseFile(fullDbPath, "/home/pi/pialert/back/pialert.db")
+        initialiseFile(fullDbPath, f"{INSTALL_PATH}/back/app.db")
 
     # last attempt
     fixPermissions()

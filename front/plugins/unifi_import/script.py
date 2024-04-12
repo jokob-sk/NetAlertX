@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
-# Example call
-# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 site=default protocol=https port=443 verifyssl=false version='UDMP-unifiOS'
-# python3 /home/pi/pialert/front/plugins/unifi_import/script.py username=pialert password=passw0rd host=192.168.1.1 sites=sdefault port=8443 verifyssl=false version=v5
-
 from __future__ import unicode_literals
 from time import strftime
 import argparse
@@ -18,9 +14,9 @@ from requests import Request, Session, packages
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from pyunifi.controller import Controller
 
-# Add your paths here
-sys.path.append("/home/pi/pialert/front/plugins")
-sys.path.append('/home/pi/pialert/netalertx')
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects
 from logger import mylog

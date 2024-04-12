@@ -9,8 +9,8 @@ require 'php/templates/header.php';
 ini_set ('max_execution_time','30');
 
 // check permissions
-$dbPath = "../db/pialert.db";
-$confPath = "../config/pialert.conf";
+$dbPath = "../db/app.db";
+$confPath = "../config/app.conf";
 
 checkPermissions([$dbPath, $confPath]);
 

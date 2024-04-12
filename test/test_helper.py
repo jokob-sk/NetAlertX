@@ -1,7 +1,7 @@
 import sys
 import pathlib
 
-sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()) + "/pialert/")
+sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()) + "/server/")
 
 
 import datetime

@@ -41,9 +41,9 @@ services:
     image: "jokobsk/netalertx:latest"
     restart: unless-stopped
     volumes:
-      - ./config/pialert.conf:/home/pi/pialert/config/pialert.conf
-      - ./pialert_db:/home/pi/pialert/db
-      - ./log:/home/pi/pialert/front/log
+      - ./config/app.conf:/app/config/app.conf
+      - ./db:/app/db
+      - ./log:/app/front/log
       - ./config/resolv.conf:/etc/resolv.conf                          # Mapping the /resolv.conf file for better name resolution
     environment:
       - TZ=Europe/Berlin

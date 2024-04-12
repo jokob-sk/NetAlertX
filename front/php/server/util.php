@@ -250,7 +250,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['pialert.log', 'pialert_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pialert_pholus_lastrun.log", 'pialert.php_errors.log'];
+  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pholus_lastrun.log", 'app.php_errors.log'];
   
   if(in_array($logFile, $allowedFiles))
   {
@@ -387,7 +387,7 @@ function saveSettings()
   // Replace the original file with the temporary file
   rename($tempConfPath, $fullConfPath);
 
-  displayMessage("<br/>Settings saved to the <code>pialert.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
+  displayMessage("<br/>Settings saved to the <code>app.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
     FALSE, TRUE, TRUE, TRUE);    
 
 }

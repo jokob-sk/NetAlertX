@@ -54,7 +54,7 @@ require dirname(__FILE__).'/security.php';
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?php echo $pia_skin_selected;?>.min.css">
 
   <!-- NetAlertX CSS -->
-  <link rel="stylesheet" href="css/pialert.css">
+  <link rel="stylesheet" href="css/app.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -66,7 +66,7 @@ require dirname(__FILE__).'/security.php';
   <!-- Google Font -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"> -->
   <link rel="stylesheet" href="css/offline-font.css">
-  <link rel="icon" type="image/x-icon" href="img/pialertLogoOrange.png">
+  <link rel="icon" type="image/x-icon" href="img/NetAlertX_white.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">  
@@ -111,19 +111,23 @@ if ($ENABLED_DARKMODE === True) {
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
+
 <body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 
+
   <!-- Main Header -->
   <header class="main-header">
+
+  
 
 <!-- ----------------------------------------------------------------------- -->
     <!-- Logo -->
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/pialertLogoWhite.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
+        <img src="img/NetAlertX_white.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Net <b>Alert</b><sup>x</sup>
@@ -139,25 +143,29 @@ if ($ENABLED_DARKMODE === True) {
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <i class="fa-solid fa-bars"></i>
       </a>      
+      
+      <!-- ticker message  Placeholder for ticker announcement messages -->
+      <div id="ticker_announcement_plc"></div>
+
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">          
-	 <!-- Back Button -->		 
-	 <li>
-	   <a id="back-button" href="javascript:history.go(-1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-left'></i></a>
-	 </li>
-	 <!-- Next Button -->		 
-	 <li>
-	   <a id="next-button" href="javascript:history.go(1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-right'></i></a>
-	 </li>			
-	 <!-- Clear cache & Reload -->		 
-	 <li>
-	   <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='clearCache()'><i class='fa fa-repeat'></i></a>
-	 </li>	
-	 <!-- Full Screen -->		 
-	 <li>
-	   <a id="fullscreen-button" href='#' role="button" span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
-	 </li>	                
+        <ul class="nav navbar-nav">    
+          <!-- Back Button -->		 
+          <li>
+            <a id="back-button" href="javascript:history.go(-1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-left'></i></a>
+          </li>
+          <!-- Next Button -->		 
+          <li>
+            <a id="next-button" href="javascript:history.go(1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-right'></i></a>
+          </li>			
+          <!-- Clear cache & Reload -->		 
+          <li>
+            <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='clearCache()'><i class='fa fa-repeat'></i></a>
+          </li>	
+          <!-- Full Screen -->		 
+          <li>
+            <a id="fullscreen-button" href='#' role="button" span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
+          </li>	                
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
@@ -178,14 +186,14 @@ if ($ENABLED_DARKMODE === True) {
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <!-- The user image in the navbar-->
-              <img src="img/pialertLogoWhite.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
+              <img src="img/NetAlertX_white.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
               <span class="hidden-xs">Net <b>Alert</b><sup>x</sup></span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->
               <li class="user-header" style=" height: 100px;">
-                <img src="img/pialertLogoWhite.png" class="img-circle" alt="NetAlertX Logo" style="border-color:transparent;  height: 50px; width: 50px; margin-top:15px;">
+                <img src="img/NetAlertX_white.png" class="img-circle NetAlertX-logo" alt="NetAlertX Logo">
                 <p style="float: right; width: 200px">
                 <?= lang('About_Title');?>
                   <small><?= lang('About_Design');?> Docker</small>
@@ -204,7 +212,11 @@ if ($ENABLED_DARKMODE === True) {
         </ul>
       </div>
     </nav>
+
+        
   </header>
+
+
 
 <!-- ----------------------------------------------------------------------- -->
   <!-- Left side column. contains the logo and sidebar -->

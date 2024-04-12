@@ -11,7 +11,7 @@
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 #---------------------------------------------------------------------------------#
 
-    $filename = "/home/pi/pialert/.VERSION";
+    $filename = "/app/.VERSION";
     if(file_exists($filename)) {
         echo file_get_contents($filename);
     }

@@ -87,7 +87,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/vendor_update/script.py",
+      "default_value": "python3 /app/front/plugins/vendor_update/script.py",
       "options": [],
       "localized": [
         "name",

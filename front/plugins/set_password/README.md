@@ -8,8 +8,8 @@ A simple script-based plugin for setting the password.
 
 ### Notes
 
-- The plugin is executed on the `RUN` type `before_config_save` so it's possible to update the `pialert.conf` file before the data is loaded into the app. 
-- The executed command is stored in the `CMD` setting: `/home/pi/pialert/back/pialert-cli set_password {password}`
+- The plugin is executed on the `RUN` type `before_config_save` so it's possible to update the `app.conf` file before the data is loaded into the app. 
+- The executed command is stored in the `CMD` setting: `/app/back/pialert-cli set_password {password}`
 - The `{password}` parameter is replaced via the parameter and setting below:
 
 ```json
@@ -39,7 +39,7 @@ A simple script-based plugin for setting the password.
     "description": [
       {
         "language_code": "en_us",
-        "string": "The default password is <code>123456</code>. To change the password run <code>/home/pi/pialert/back/pialert-cli set_password {password}</code> in the container"
+        "string": "The default password is <code>123456</code>. To change the password run <code>/app/back/pialert-cli set_password {password}</code> in the container"
       }
     ]
   }

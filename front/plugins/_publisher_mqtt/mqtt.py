@@ -16,7 +16,8 @@ import hashlib
 
 
 # Register NetAlertX directories
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
 import conf
@@ -172,8 +173,8 @@ def publish_mqtt(mqtt_client, topic, message):
 #-------------------------------------------------------------------------------
 def create_generic_device(mqtt_client):  
     
-    deviceName = 'PiAlert'
-    deviceId = 'pialert'    
+    deviceName = 'NetAlertX'
+    deviceId = 'netalertx'    
     
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
@@ -214,7 +215,7 @@ def publish_sensor(mqtt_client, sensorConfig):
                 "device": 
                     { 
                         "identifiers" : [sensorConfig.deviceId+"_sensor"], 
-                        "manufacturer" : "PiAlert", 
+                        "manufacturer" : "NetAlertX", 
                         "name" : sensorConfig.deviceName
                     }, 
                 "icon": icon
@@ -288,7 +289,7 @@ def mqtt_start(db):
         row = get_device_stats(db)   
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(mqtt_client, "system-sensors/sensor/pialert/state",              
+        publish_mqtt(mqtt_client, "system-sensors/sensor/netalertx/state",              
                 { 
                     "online": row[0],
                     "down": row[1],

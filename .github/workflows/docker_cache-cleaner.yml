@@ -4,8 +4,8 @@ on:
 
   workflow_dispatch: # manual option
 
-  schedule:
-    - cron: '15 22 * * 1' # every Monday 10.15pm UTC (~11.15am Tuesday NZT)
+  # schedule:
+  #   - cron: '15 22 * * 1' # every Monday 10.15pm UTC (~11.15am Tuesday NZT)
 
 jobs:
 

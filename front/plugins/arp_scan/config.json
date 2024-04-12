@@ -121,7 +121,7 @@
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /home/pi/pialert/front/plugins/arp_scan/script.py userSubnets={subnets}",
+      "default_value": "python3 /app/front/plugins/arp_scan/script.py userSubnets={subnets}",
       "options": [],
       "localized": [
         "name",

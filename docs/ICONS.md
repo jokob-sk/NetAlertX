@@ -45,7 +45,7 @@ Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=f
 If you own the premium package of Font Awesome icons you can mount it in your Docker container the following way:
 
 ```yaml
-/font-awesome:/home/pi/pialert/front/lib/AdminLTE/bower_components/font-awesome:ro
+/font-awesome:/app/front/lib/AdminLTE/bower_components/font-awesome:ro
 ```
 
 You can use the full range of Font Awesome icons afterwards. 

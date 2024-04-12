@@ -24,7 +24,7 @@ if(array_search('action', $_REQUEST) != FALSE)
 // ##################################################
 // ## Login Processing start
 // ##################################################
-$config_file = "../config/pialert.conf";
+$config_file = "../config/app.conf";
 $config_file_lines = file($config_file);
 $CookieSaveLoginName = "NetAlertX_SaveLogin";
 

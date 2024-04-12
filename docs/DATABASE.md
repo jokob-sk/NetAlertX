@@ -1,5 +1,5 @@
   
-  # A high-level description of the datbase structure
+  # A high-level description of the database structure
 
   ⚠ Disclaimer: As I'm not the original author, some of the information might be inaccurate. Feel free to submit a PR to correct anything within this page or documentation in general. 
 
@@ -20,7 +20,7 @@
   | Plugins_Language_Strings  | Language strings colelcted from the plugin `config.json` files used for string resolution in the frontend. | ![Screen12][screen12]  | 
   | Plugins_Objects  | Unique objects detected by individual plugins. | ![Screen13][screen13]  | 
   | Sessions  | Used to display sessions in the charts | ![Screen15][screen15]  | 
-  | Settings  | Database representation of the sum of all settings from `pialert.conf` and plugins coming from `config.json` files. | ![Screen16][screen16]  | 
+  | Settings  | Database representation of the sum of all settings from `app.conf` and plugins coming from `config.json` files. | ![Screen16][screen16]  | 
 
 
 

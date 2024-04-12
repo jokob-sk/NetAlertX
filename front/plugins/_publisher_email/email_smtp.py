@@ -15,7 +15,9 @@ import smtplib
 import socket
 import ssl
 
-sys.path.extend(["/home/pi/pialert/front/plugins", "/home/pi/pialert/netalertx"])
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
 import conf
@@ -93,7 +95,7 @@ def send(pHTML, pText):
     mylog('debug', [f'[{pluginName}] SMTP_REPORT_TO: {hide_email(str(get_setting_value("SMTP_REPORT_TO")))} SMTP_USER: {hide_email(str(get_setting_value("SMTP_USER")))}'])
 
 
-    subject, from_email, to_email, message_html, message_text = sanitize_email_content('NetAlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
+    subject, from_email, to_email, message_html, message_text = sanitize_email_content('Net AlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
 
     # Compose email
     msg             = MIMEMultipart('alternative')
