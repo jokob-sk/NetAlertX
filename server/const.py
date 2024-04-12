@@ -11,14 +11,15 @@ confPath        = "/config/" + confFileName
 dbPath          = '/db/' + dbFileName
 
 
-pluginsPath  = applicationPath + '/front/plugins'
-logPath      = applicationPath + '/front/log'
-apiPath      = applicationPath + '/front/api/'
-fullConfPath = applicationPath + confPath
-fullDbPath   = applicationPath + dbPath
-vendorsPath = '/usr/share/arp-scan/ieee-oui.txt'
+pluginsPath         = applicationPath + '/front/plugins'
+logPath             = applicationPath + '/front/log'
+apiPath             = applicationPath + '/front/api/'
+reportTemplatesPath = applicationPath + '/front/report_templates/'
+fullConfPath        = applicationPath + confPath
+fullDbPath          = applicationPath + dbPath
+vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'
 
-
+       
 
 
 #===============================================================================

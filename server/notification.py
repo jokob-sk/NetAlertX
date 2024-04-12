@@ -7,7 +7,7 @@ from json2table import convert
 
 # Register NetAlertX modules 
 import conf
-from const import applicationPath, logPath, apiPath, confFileName
+from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
 from logger import logResult, mylog, print_log
 from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
 
@@ -80,7 +80,7 @@ class Notification_obj:
 
             # Open text Template
             mylog('verbose', ['[Notification] Open text Template'])
-            template_file = open(applicationPath + '/back/report_template.txt', 'r')
+            template_file = open(reportTemplatesPath + 'report_template.txt', 'r')
             mail_text = template_file.read()
             template_file.close()
 
@@ -89,12 +89,12 @@ class Notification_obj:
 
             # select template type depoending if running latest version or an older one
             if conf.newVersionAvailable :
-                template_file_path = '/back/report_template_new_version.html'
+                template_file_path = reportTemplatesPath + 'report_template_new_version.html'
             else:
-                template_file_path = '/back/report_template.html'
+                template_file_path = reportTemplatesPath + 'report_template.html'
 
             mylog('verbose', ['[Notification] Using template', template_file_path])
-            template_file = open(applicationPath + template_file_path, 'r')   
+            template_file = open(template_file_path, 'r')   
             mail_html = template_file.read()
             template_file.close()
 

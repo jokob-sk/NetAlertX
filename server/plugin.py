@@ -9,7 +9,7 @@ from collections import namedtuple
 
 # Register NetAlertX modules
 import conf
-from const import pluginsPath, logPath, applicationPath
+from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
@@ -783,9 +783,9 @@ def handle_test(runType, db, pluginsState):
     mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
     
     # Prepare test samples
-    sample_txt = get_file_content(applicationPath + '/back/report_sample.txt')    
-    sample_html = get_file_content(applicationPath + '/back/report_sample.html')    
-    sample_json = json.loads(get_file_content(applicationPath + '/back/webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
+    sample_txt = get_file_content(reportTemplatesPath + 'report_sample.txt')    
+    sample_html = get_file_content(reportTemplatesPath + 'report_sample.html')    
+    sample_json = json.loads(get_file_content(reportTemplatesPath + 'webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
     
     # Create fake notification
     notification    = Notification_obj(db)
