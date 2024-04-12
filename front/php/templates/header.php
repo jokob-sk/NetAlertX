@@ -256,6 +256,9 @@ if ($ENABLED_DARKMODE === True) {
               <a href="devices.php#down" onclick="initializeDatatable('down')" >  <?= lang("Device_Shortcut_DownAlerts");?> </a>
             </li>
             <li>
+              <a href="devices.php#down_only" onclick="initializeDatatable('down_only')" > <?= lang("Device_Shortcut_DownOnly");?> </a>
+            </li>
+            <li>
               <a href="devices.php#archived" onclick="initializeDatatable('archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
             

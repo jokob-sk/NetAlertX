@@ -32,7 +32,7 @@ echo -e '#!/bin/execlineb -P
             [INSTALL] 🚀 Starting app (:${PORT})
             
         " }' > /etc/s6-overlay/s6-rc.d/$APP_NAME/run
-echo -e "python ${INSTALL_DIR}/server" >> /etc/s6-overlay/s6-rc.d/server/run
+echo -e "python ${INSTALL_DIR}/server" >> /etc/s6-overlay/s6-rc.d/$APP_NAME/run
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,$APP_NAME} /etc/s6-overlay/s6-rc.d/{php-fpm,nginx,$APP_NAME}/dependencies.d/SetupOneshot
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm

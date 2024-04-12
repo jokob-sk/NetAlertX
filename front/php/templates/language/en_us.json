@@ -189,6 +189,7 @@
     "Device_Shortcut_Connected": "Connected",
     "Device_Shortcut_Devices": "Devices",
     "Device_Shortcut_DownAlerts": "Down & Offline",
+    "Device_Shortcut_DownOnly": "Down",
     "Device_Shortcut_Favorites": "Favorites",
     "Device_Shortcut_NewDevices": "New Devices",
     "Device_Shortcut_OnlineChart": "Device presence",
