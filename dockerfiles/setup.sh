@@ -11,13 +11,12 @@ export INSTALL_DIR=/app  # Specify the installation directory here
 CONF_FILE="app.conf" 
 NGINX_CONF_FILE=netalertx.conf
 DB_FILE="app.db"
-
+FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
 NGINX_CONFIG_FILE="/etc/nginx/http.d/${NGINX_CONF_FILE}"
-
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
 
-
-FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
+INSTALL_DIR_OLD=/home/pi/pialert
+OLD_APP_NAME=pialert
 
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
@@ -32,17 +31,17 @@ echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
 # DANGER ZONE: ALWAYS_FRESH_INSTALL 
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
+  
   # Delete content of "$INSTALL_DIR/config/"
   rm -rf "$INSTALL_DIR/config/"*
+  rm -rf "$INSTALL_DIR_OLD/config/"*
   
   # Delete content of "$INSTALL_DIR/db/"
   rm -rf "$INSTALL_DIR/db/"*
+  rm -rf "$INSTALL_DIR_OLD/db/"*
 fi
 
 # 🔻 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2024
-# Check if pialert.db exists, then copy to app.db
-INSTALL_DIR_OLD=/home/pi/pialert
-OLD_APP_NAME=pialert
 
 # Check if pialert.db exists, then create a symbolic link to app.db
 if [ -f "${INSTALL_DIR_OLD}/db/${OLD_APP_NAME}.db" ]; then
