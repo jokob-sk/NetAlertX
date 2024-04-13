@@ -785,6 +785,15 @@ function checkMacOrInternet(inputStr) {
   }
 }
 
+// -----------------------------------------------------------------------------
+// Gte MAC from query string
+function getMac(){
+  params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+
+  return params.mac
+}  
 
 // -----------------------------------------------------------------------------
 // A function used to make the IP address orderable

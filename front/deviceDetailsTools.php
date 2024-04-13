@@ -1,6 +1,4 @@
-<script>
-    deviceIP = getDeviceDataByMacAddress("<?php echo $_REQUEST["mac"]?>", "dev_LastIP")
-</script>
+
 
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
     
@@ -79,16 +77,16 @@
         <?= lang("DevDetail_Nmap_Scans_desc") ?>
     </div>
 
-    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(deviceIP, 'fast')">
+    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMacAddress(getMac(), 'dev_LastIP'), 'fast')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(deviceIP, 'normal')">
+    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMacAddress(getMac(), 'dev_LastIP'), 'normal')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(deviceIP, 'detail')">
+    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMacAddress(getMac(), 'dev_LastIP'), 'detail')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(deviceIP, 'skipdiscovery')">
+    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMacAddress(getMac(), 'dev_LastIP'), 'skipdiscovery')">
         <?= lang("DevDetail_Loading") ?>
     </button>
 
@@ -157,7 +155,7 @@
             $( "#tracerouteoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/traceroute.php?action=get&ip=" + deviceIP + "",
+                    url: "./php/server/traceroute.php?action=get&ip=" + getDeviceDataByMacAddress(getMac(), 'dev_LastIP') + "",
                     beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
@@ -172,7 +170,7 @@
             $( "#nslookupoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/nslookup.php?action=get&ip=" + deviceIP + "",
+                    url: "./php/server/nslookup.php?action=get&ip=" + getDeviceDataByMacAddress(getMac(), 'dev_LastIP') + "",
                     beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
@@ -182,20 +180,22 @@
         }
 
         // ----------------------------------------------------------------
-        setTimeout(function(){
-                    document.getElementById('piamanualnmap_fast').innerHTML='<?= lang(
-                        "DevDetail_Nmap_buttonFast"
-                    ) ?> (' + deviceIP +')';
-                    document.getElementById('piamanualnmap_normal').innerHTML='<?= lang(
-                        "DevDetail_Nmap_buttonDefault"
-                    ) ?> (' + deviceIP +')';
-                    document.getElementById('piamanualnmap_detail').innerHTML='<?= lang(
-                        "DevDetail_Nmap_buttonDetail"
-                    ) ?> (' + deviceIP +')';
-                    document.getElementById('piamanualnmap_skipdiscovery').innerHTML='<?= lang(
-                        "DevDetail_Nmap_buttonSkipDiscovery"
-                    ) ?> (' + deviceIP +')';
-                    }, 2000);
+        function initNmapButtons() {
+                        setTimeout(function(){
+                                    document.getElementById('piamanualnmap_fast').innerHTML=getString(
+                                        "DevDetail_Nmap_buttonFast"
+                                    ) ;
+                                    document.getElementById('piamanualnmap_normal').innerHTML=getString(
+                                        "DevDetail_Nmap_buttonDefault"
+                                    ) ;
+                                    document.getElementById('piamanualnmap_detail').innerHTML=getString(
+                                        "DevDetail_Nmap_buttonDetail"
+                                    ) ;
+                                    document.getElementById('piamanualnmap_skipdiscovery').innerHTML=getString(
+                                        "DevDetail_Nmap_buttonSkipDiscovery"
+                                    ) ;
+                                    }, 500);
+                }
 
 
         // ----------------------------------------------------------------
@@ -211,4 +211,7 @@
                     }
                 })
                 }
+
+        // init first time
+        initNmapButtons();
 </script>

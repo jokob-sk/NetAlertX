@@ -641,14 +641,6 @@ if ($ENABLED_DARKMODE === True) {
 <!-- page script ----------------------------------------------------------- -->
 <script defer>
 
-  // ------------------------------------------------------------
-  function getMac(){
-    params = new Proxy(new URLSearchParams(window.location.search), {
-      get: (searchParams, prop) => searchParams.get(prop),
-    });
-
-    return params.mac
-  }  
 
   // ------------------------------------------------------------
   function getDevicesList()
