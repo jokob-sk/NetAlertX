@@ -654,6 +654,26 @@ if ($ENABLED_DARKMODE === True) {
         devicesList = [];
     }
 
+    // only loop thru the filtered down list
+    visibleDevices = getCache("ntx_visible_macs")
+
+    if(visibleDevices != "") {
+      visibleDevicesMACs = visibleDevices.split(',');
+
+      devicesList_tmp = [];
+
+      // Iterate through the data and filter only visible devices
+      $.each(devicesList, function(index, item) {
+        // Check if the current item's MAC exists in visibleDevicesMACs
+        if (visibleDevicesMACs.includes(item.dev_MAC)) {
+          devicesList_tmp.push(item);
+        }
+      });
+
+      // Update devicesList with the filtered items
+      devicesList = devicesList_tmp;
+    }
+
     return devicesList;
   }
 

@@ -795,7 +795,7 @@ function multiEditDevices()
   // Initialize an empty array to store selected rows
   var selectedRows = [];
 
-  console.log($('#tableDevices')[0].rows);
+  // console.log($('#tableDevices')[0].rows);
   
   // Loop through each row in the HTML collection
   for (var i = 0; i < rows.length; i++) {
@@ -819,7 +819,7 @@ function multiEditDevices()
   }
 
   // Now, selectedDevices contains all selected devices
-  console.log(selectedDevices);
+  // console.log(selectedDevices);
 
   macs = ""
 
@@ -830,6 +830,40 @@ function multiEditDevices()
   // redirect to the Maintenance section
   window.location.href = window.location.origin + '/maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
 }
+
+
+// -----------------------------------------------------------------------------
+// Function collects shown devices from the DataTable  
+function getMacsOfShownDevices() {
+
+  rows  = $('#tableDevices')[0].rows
+  macs = []
+
+  var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
+
+  var selectedDevices = [];
+
+  for (var i = 0; i < rows.length; i++) {
+    selectedDevices.push(devicesDataTableData[rows[i]._DT_RowIndex]);    
+  }
+
+  for (var i = 1; i < selectedDevices.length; i++) {
+    macs.push(selectedDevices[i][mapIndx(11)]);  // mapIndx(11) == MAC    
+  }
+
+  return macs;
+  
+}
+
+// -----------------------------------------------------------------------------
+// Update cahce with shown devices before navigating away    
+window.addEventListener('beforeunload', function(event) {
+    // Call your function here
+    macs = getMacsOfShownDevices();
+
+    setCache("ntx_visible_macs", macs)
+  
+});
 
 </script>
 
