@@ -7,7 +7,7 @@ import base64
 from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
-from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ #, updateState
+from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ, split_string #, updateState
 from appevent import AppEvent_obj
 
 
@@ -82,6 +82,12 @@ class DB():
         """
         Check the current tables in the DB and upgrade them if neccessary
         """
+
+        # Registering UDF (User Defined Functions)
+        # 
+        resultUDF =  self.sql_connection.create_function("split_string", 2, split_string)  # Register the UDF
+        mylog('none',f'[upgradeDB] resultUDF: {resultUDF}')
+
 
         # indicates, if Online_History table is available
         onlineHistoryAvailable = self.sql.execute("""

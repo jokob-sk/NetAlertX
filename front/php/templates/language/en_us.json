@@ -168,7 +168,7 @@
     "DevDetail_Vendor_hover": "Vendor should be auto-detected. You can overwrite or add your custom value.",
     "DevDetail_WOL_Title": "<i class=\"fa fa-power-off\"></i> Wake-on-LAN",
     "DevDetail_button_AddIcon": "Add new Icon",
-    "DevDetail_button_AddIcon_Help": "Paste in an SVG html tag or Font Awesome icon. Read the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">Icons docs</a> for details.",
+    "DevDetail_button_AddIcon_Help": "Paste in an SVG html tag or Font Awesome html tag icon. Read the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">Icons docs</a> for details.",
     "DevDetail_button_AddIcon_Tooltip": "Add a new Icon to this device that is not yet available in the dropdown.",
     "DevDetail_button_Delete": "Delete Device",
     "DevDetail_button_DeleteEvents": "Delete Events",

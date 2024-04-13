@@ -1652,7 +1652,7 @@ function askAddIcon () {
   }
 
   // Add new icon as base64 string 
-  showModalInput ('<?= lang('DevDetail_button_AddIcon');?>', '<?= lang('DevDetail_button_AddIcon_Help');?>',
+  showModalInput ('<i class="fa fa-square-plus pointer"></i> <?= lang('DevDetail_button_AddIcon');?>', '<?= lang('DevDetail_button_AddIcon_Help');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'addAsBase64');
 }
 

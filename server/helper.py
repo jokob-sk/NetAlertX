@@ -598,6 +598,13 @@ def cleanDeviceName(str, match_IP):
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Define the split_string function
+def split_string(input_str, delimiter):
+    # remove any wrapping brackets
+    input_str = input_str.replace('[','').replace(']','')
+    return input_str.split(delimiter)
+
+#-------------------------------------------------------------------------------
 
 def bytes_to_string(value):
     # if value is of type bytes, convert to string

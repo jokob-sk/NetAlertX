@@ -942,6 +942,11 @@ input[readonly] {
     height: 1.5em !important;
 }
 
+#modal-input-textarea
+{
+    width: 100%;
+}
+
 
 /* ----------------------------------------------------------------- */
 /* NETWORK page */

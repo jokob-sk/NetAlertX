@@ -95,7 +95,7 @@
 </div>
 
 <!-- Modal input -->
-<div class="modal  fade" id="modal-input" style="display: none;">
+<div class="modal modal-warning fade" id="modal-input" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 
