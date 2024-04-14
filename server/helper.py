@@ -597,12 +597,6 @@ def cleanDeviceName(str, match_IP):
 # String manipulation methods
 #-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
-# Define the split_string function
-def split_string(input_str, delimiter):
-    # remove any wrapping brackets
-    input_str = input_str.replace('[','').replace(']','')
-    return input_str.split(delimiter)
 
 #-------------------------------------------------------------------------------
 

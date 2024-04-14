@@ -105,8 +105,7 @@
                     default:
                       inputType = 'text';
                       break;
-                  }
-                    
+                  }                    
                   
                   if (inputType === 'text.select') {
 
@@ -114,12 +113,30 @@
 
                     initSettingDropdown(columns[j].Code_Name, [], targetLocation, generateDropdownOptions)
 
-                    input = `<select  class="form-control"
+                    //  Handle Icons as tehy need a preview                 
+                    if(columns[j].Code_Name == 'NEWDEV_dev_Icon')
+                    {
+                      input = `
+                            <span class="input-group-addon" id="txtIconFA"></span>
+                            <select  class="form-control"
+                                      onChange="updateIconPreview('#NEWDEV_dev_Icon')"
                                       id="${columns[j].Code_Name}"
                                       data-my-column="${columns[j].Code_Name}" 
                                       data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
+                      
+                    } else{                      
+
+                      input = `<select  class="form-control"
+                                      id="${columns[j].Code_Name}"
+                                      data-my-column="${columns[j].Code_Name}" 
+                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
+                              <option id="${targetLocation}"></option>
+                            </select>`
+                    }
+
+
                   } else { 
                     
                     // Add classes specifically for checkboxes

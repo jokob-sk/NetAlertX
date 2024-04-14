@@ -589,7 +589,7 @@
             {
               "name"  : "value",
               "type"  : "sql",
-              "value" : "SELECT DISTINCT '❌None' AS name, '' AS id UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '';"
+              "value" : "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(Value, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE Code_Name = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '') AS combined_results;"
             }
           ],
           "localized": ["name", "description"],

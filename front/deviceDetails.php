@@ -748,27 +748,12 @@ function main () {
 
     // Show device icon as it changes
   $('#txtIcon').on('change input', function() {
-    updateIconPreview()
+    updateIconPreview('#txtIcon')
   });
   
        
 }
 
-
-// -----------------------------------------------------------------------------
-function updateIconPreview () {
-  // update icon
-  iconInput = $('#txtIcon') 
-
-  value = iconInput.val()
-
-  iconInput.on('change input', function() {
-    $('#txtIconFA').html(atob(value))
-  });    
-
-  $('#txtIconFA').html(atob(value))
-  
-}
 
 // -----------------------------------------------------------------------------
 function initializeTabs () {
@@ -839,12 +824,12 @@ function initializeCombos () {
   //                             nameTransformer)   // callback to transform name
 
 
-  initSettingDropdown("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genDevDetailsList, 'txtIcon', atob )
-  initSettingDropdown("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genDevDetailsList, 'txtDeviceType' )
-  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genDevDetailsList, 'txtOwner' )
-  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genDevDetailsList, 'txtGroup' )
-  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genDevDetailsList, 'txtLocation' )
-  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genDevDetailsList, 'txtNetworkNodeMac' )
+  initSettingDropdown("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', atob )
+  initSettingDropdown("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
+  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
+  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
+  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
+  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -1155,7 +1140,7 @@ function initializeCalendar () {
           showSpinner()
         } else {
           setTimeout(() => {
-            updateIconPreview()  
+            updateIconPreview('#txtIcon')  
           }, 100);
           
           hideSpinner()
@@ -1673,7 +1658,7 @@ function addAsBase64 () {
 
   $('#txtIcon').val(iconHtmlBase64); 
 
-  updateIconPreview()
+  updateIconPreview('#txtIcon')
 
 }
 

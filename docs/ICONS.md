@@ -29,11 +29,11 @@ Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=f
 
 ![preview](/docs/img/ICONS/device_add_icon.png)
 
-3. Paste in the copied HTML or SVG code.
+3. Paste in the copied HTML or SVG code and click "OK":
 
-4. Click "OK"
+![Paste SVG](/docs/img/ICONS/paste-svg.png)
 
-5. "Save" the device
+6. "Save" the device
 
 > [!NOTE] 
 > If you want to mass-apply an icon to all devices of the same device type (Field: Type), you can click the mass-copy button (next to the "+" button). A confirmation prompt is displayed. If you proceed, icons of all devices set to the same device type as the current device, will be overwritten with the current device's icon.

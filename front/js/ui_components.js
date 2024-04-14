@@ -186,13 +186,25 @@ function hideUIelements(settingKey) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate options for a dropdown menu
-function generateDropdownOptions(data, valuesArray) {
+function generateDropdownOptions(data, valuesArray, targetField, nameTransformer) {
   var optionsHtml = "";
   data.forEach(function(item) {
 
+    labelName = item.name
+
+    // console.log(nameTransformer);
+    // console.log(labelName);
+
+    // if(nameTransformer && nameTransformer != '' && labelName != '❌None')
+    // {
+    //   console.log(labelName);
+    //   labelName = nameTransformer(labelName)
+    //   console.log(labelName);
+    // }
+
     let selected = valuesArray.includes(item.id) ? 'selected' : '';
 
-    optionsHtml += `<option value="${item.id}" ${selected}>${item.name}</option>`;
+    optionsHtml += `<option value="${item.id}" ${selected}>${labelName}</option>`;
   });
   return `${optionsHtml}`;
 }
@@ -200,21 +212,28 @@ function generateDropdownOptions(data, valuesArray) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate a list
-function generateList(data, valuesArray) {
+function generateList(data, valuesArray, targetField, nameTransformer) {
   var listHtml = "";
   data.forEach(function(item) {
 
+    labelName = item.name
+
+    if(nameTransformer && nameTransformer != '' && labelName != '❌None')
+    {
+      labelName = nameTransformer(labelName)
+    }
+
     let selected = valuesArray.includes(item.id) ? 'selected' : '';
 
-    listHtml += `<li ${selected}>${item.name}</li>`;
+    listHtml += `<li ${selected}>${labelName}</li>`;
   });
 
   return listHtml;
 }
 
 // -----------------------------------------------------------------------------
-// Processor to generate a list in teh deviceDetails page
-function genDevDetailsList(data, valuesArray, targetField, nameTransformer) {
+// Processor to generate a list in the deviceDetails page
+function genListWithInputSet(data, valuesArray, targetField, nameTransformer) {
 
   var listHtml = "";
 
@@ -227,7 +246,7 @@ function genDevDetailsList(data, valuesArray, targetField, nameTransformer) {
 
     labelName = item.name
 
-    if(nameTransformer && labelName != '❌None')
+    if(nameTransformer && nameTransformer != '' && labelName != '❌None')
     {
       labelName = nameTransformer(labelName)
     }
@@ -242,7 +261,21 @@ function genDevDetailsList(data, valuesArray, targetField, nameTransformer) {
 }
 
 
+// -----------------------------------------------------------------------------
+// Updates the icon preview  
+function updateIconPreview (inputId) {
+  // update icon
+  iconInput = $(inputId) 
 
+  value = iconInput.val()
+
+  iconInput.on('change input', function() {
+    $('#txtIconFA').html(atob(value))
+  });    
+
+  $('#txtIconFA').html(atob(value))
+  
+}
 
 // -----------------------------------------------------------------------------
 // initialize
