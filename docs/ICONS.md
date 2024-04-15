@@ -9,7 +9,7 @@ Icons are used to visually distinguish devices in the app in most of the device 
 Two types of icons are suported:
 
 - Free [Font Awesome](https://fontawesome.com/search?o=r&m=free) icons (up-to v 6.4.0)
-- SVG icons 
+- SVG icons (for example from [iconify.design](https://icon-sets.iconify.design/))
 
 You can assign icons individually on each device in the Details tab.
 

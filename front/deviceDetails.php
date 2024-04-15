@@ -1308,7 +1308,7 @@ function getDeviceData (readAllData=false) {
         $('#txtOwner').val                           (deviceData['dev_Owner']);
         $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
         $('#txtVendor').val                          (deviceData['dev_Vendor']);
-        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI')); // base64 laptop icon
+        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==')); // base64 laptop icon
         $('#txtIcon').trigger('change')
   
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
