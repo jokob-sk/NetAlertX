@@ -25,8 +25,15 @@ The migration should be pretty straightforward. The application installation fol
 > [!NOTE] 
 > The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) are still recommended to backup your setup.
 
-In summary, docker file mount locations in your `docker-compose.yml` or docker run command have changed. Examples follow.
+In summary: 
 
+1. Docker file mount locations in your `docker-compose.yml` or docker run command have changed. 
+2. Backup your current config and database (optional `devices.csv` to have a backup)
+3. Rename them to `app.db` `app.conf`
+4. Update the volume mappings in your `docker-compose.yaml`
+5. Place the renamed files the above locations. 
+
+Examples follow.
 
 ## Example 1: Mapping folders
 
