@@ -1,5 +1,8 @@
 # Migration form PiAlert to NetAlertX
 
+> [!WARNING] 
+> Follow this guide only after you you downloaded and started NetAlert X at least once after previously using the PiAlert image.
+
 > [!TIP] 
 > In short: The application will auto-migrate the database, config, and all device information. A ticker message on top will be displayed until you update your docker mount points. Even so, it's always good to have a [backup strategy](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) in place.
 
