@@ -1,5 +1,8 @@
 # Migration form PiAlert to NetAlertX
 
+> [!TIP] 
+> In short: The application will auto-migrate the database, config, and all device information. A ticker message on top will be displayed until you update your docker mount points. Even so, it's always good to have a [backup strategy](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) in place.
+
 The migration should be pretty straightforward. The application installation folder in the docker container has changed from `/home/pi/pialert` to `/app`. That means the new mount points are:
 
  | Old mount point | New mount point | 
@@ -17,7 +20,7 @@ The migration should be pretty straightforward. The application installation fol
 
 
 > [!NOTE] 
-> The application uses symlinks linking the old locations to the new ones, so data loss should not occur. [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) are still recommended to backup your setup.
+> The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) are still recommended to backup your setup.
 
 In summary, docker file mount locations in your `docker-compose.yml` or docker run command have changed. Examples follow.
 
@@ -51,18 +54,18 @@ services:
 ```yaml
 version: "3"
 services:
-  netalertx:                                  # ⚠🟡  This has changed (optional) 🟡⚠
-    container_name: netalertx                 # ⚠🟡  This has changed (optional) 🟡⚠
+  netalertx:                                  # ⚠  This has changed (🟡optional) 
+    container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
     # image: "jokobsk/netalertx-dev:latest" 
-    image: "jokobsk/netalertx:latest"         # ⚠🔺🟡  This has changed (optional/required in future) 🟡🔺⚠
+    image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         # ⚠🔺  This has changed (required) 🔺⚠
-      - local/path/db:/app/db                 # ⚠🔺  This has changed (required) 🔺⚠
+      - local/path/config:/app/config         # ⚠  This has changed (🔺required) 
+      - local/path/db:/app/db                 # ⚠  This has changed (🔺required) 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/front/log        # ⚠🟡  This has changed (optional) 🟡⚠
+      - local/path/logs:/app/front/log        # ⚠  This has changed (🟡optional) 
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -101,18 +104,18 @@ services:
 ```yaml
 version: "3"
 services:
-  netalertx:                                  # ⚠🟡  This has changed (optional) 🟡⚠
-    container_name: netalertx                 # ⚠🟡  This has changed (optional) 🟡⚠
+  netalertx:                                  # ⚠  This has changed (🟡optional) 
+    container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
     # image: "jokobsk/netalertx-dev:latest" 
-    image: "jokobsk/netalertx:latest"         # ⚠🔺🟡  This has changed (optional/required in future) 🟡🔺⚠
+    image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config/app.conf:/app/config/app.conf # ⚠🔺  This has changed (required) 🔺⚠
-      - local/path/db/app.db:/app/db/app.db             # ⚠🔺  This has changed (required) 🔺⚠
+      - local/path/config/app.conf:/app/config/app.conf # ⚠  This has changed (🔺required) 
+      - local/path/db/app.db:/app/db/app.db             # ⚠  This has changed (🔺required) 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/front/log                  # ⚠🟡  This has changed (optional) 🟡⚠
+      - local/path/logs:/app/front/log                  # ⚠  This has changed (🟡optional) 
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211

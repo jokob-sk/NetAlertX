@@ -16,19 +16,20 @@
   <footer class="main-footer">
     <!-- Default to the left -->
 
-    <!-- &copy; 2022 jokob-sk -->
-    <span style="display:inline-block; transform: rotate(180deg)">&copy;</span>    
-       Author: <a href="mailto:jokob@duck.com?subject=NetAlertX">jokob-sk</a> (Based on <a href="https://github.com/pucherot/Pi.Alert">2020 PiAlert</a>) | <b><?= lang('Maintenance_built_on');?>: </b> 
-       <?php include 'php/templates/build.php'; ?> | <b> Version: </b> <?php include 'php/templates/version.php'; ?> | 
-       <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank"><span>Docs <i class="fa fa-circle-question"></i></a>
-     <span>
+    <!-- NetAlertX footer with url -->
+    <a href="https://github.com/jokob-sk/NetAlertX" target="_blank">Net <b>Alert</b><sup>x</sup></a>
+     
     
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-
-    <!-- NetAlertX footer with url -->
-    <a href="https://github.com/jokob-sk/NetAlertX" target="_blank">NetAlertX</a>
-    
+      | <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank">Docs <i class="fa fa-circle-question"></i></a>
+      | <a href="https://github.com/jokob-sk/NetAlertX/issues"><i class="fa-solid fa-bug"></i></a> 
+      | <a href="https://github.com/jokob-sk/NetAlertX/"><i class="fa-brands fa-github"></i></a> 
+      | <a href="mailto:jokob@duck.com?subject=NetAlertX"><i class="fa-solid fa-envelope"></i></a> 
+      | <a href="https://github.com/pucherot/Pi.Alert">&copy;</a> 
+      | <?= lang('Maintenance_built_on');?>:  <?php include 'php/templates/build.php'; ?> 
+      |  Version:  <?php include 'php/templates/version.php'; ?> 
+      |     
     </div>
   </footer>
 
