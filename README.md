@@ -81,7 +81,6 @@ Thank you to all the wonderful people who are sponsoring this project.
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 | All Sponsors |
 |---|
-| [Tony Hanratty](https://github.com/thanratty) |
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
