@@ -78,7 +78,7 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Pi-Alert | Log in</title>
+  <title>Net Alert X | Log in</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
