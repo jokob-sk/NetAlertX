@@ -106,10 +106,12 @@ class sensor_config:
 
         if plugObj == {}:
             self.isNew = True
+            mylog('verbose', [f"[{pluginName}] New sensor entry name         : {deviceName}"])  
             mylog('verbose', [f"[{pluginName}] New sensor entry mac          : {mac}"])  
-            mylog('verbose', [f"[{pluginName}] New sensor entry input_string : {input_string}"])  
             mylog('verbose', [f"[{pluginName}] New sensor entry hash_value   : {hash_value}"])  
         else:
+            device_name = plugObj.get("Watched_Value1", "Unknown")
+            mylog('verbose', [f"[{pluginName}] Existing, skip Device Name    : {device_name}"])
             self.isNew = False
 
 
@@ -171,11 +173,8 @@ def publish_mqtt(mqtt_client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
-def create_generic_device(mqtt_client):  
-    
-    deviceName = 'NetAlertX'
-    deviceId = 'netalertx'    
-    
+def create_generic_device(mqtt_client, deviceId, deviceName):  
+        
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'down', 'wifi-cancel')        
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'all', 'wifi')
@@ -277,19 +276,23 @@ def mqtt_start(db):
     if mqtt_connected_to_broker == False:
         mqtt_connected_to_broker = True           
         mqtt_client = mqtt_create_client()     
+
+
+    deviceName = get_setting_value('MQTT_DEVICE_NAME')
+    deviceId = get_setting_value('MQTT_DEVICE_ID')    
     
     # General stats    
 
     # Create a generic device for overal stats
     if get_setting_value('MQTT_SEND_STATS') == True: 
         # Create a new device representing overall stats   
-        create_generic_device(mqtt_client)
+        create_generic_device(mqtt_client, deviceId, deviceName)
 
         # Get the data
         row = get_device_stats(db)   
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(mqtt_client, "system-sensors/sensor/netalertx/state",              
+        publish_mqtt(mqtt_client, f"system-sensors/sensor/{deviceId}/state",              
                 { 
                     "online": row[0],
                     "down": row[1],

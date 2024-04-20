@@ -426,6 +426,36 @@
             }]
         },
         {
+            "function": "DEVICE_ID",
+            "type": "text",
+            "default_value": "netalertx",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Device ID"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The root path of the sensor"
+				}]
+        },
+        {
+            "function": "DEVICE_NAME",
+            "type": "text",
+            "default_value": "NetAlertX",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Device name"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The name used for the devices."
+				}]
+        },
+        {
             "function": "PASSWORD",
             "type": "password",
             "default_value": "",
