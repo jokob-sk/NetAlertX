@@ -201,7 +201,7 @@ function cacheStrings()
     if(!getCache('completedCalls').includes('cacheStrings'))
     {
       // handle core strings and translations
-      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pt_br"]; // needs to be same as in lang.php
+      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl"]; // needs to be same as in lang.php
 
       allLanguages.forEach(function (language_code) {
         $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
@@ -253,6 +253,9 @@ function getString (key) {
       break;
     case 'Norwegian': 
       lang_code = 'nb_no';
+      break;
+    case 'Polish': 
+      lang_code = 'pl_pl';
       break;
     case 'Portuguese (Brazil)': 
       lang_code = 'pt_br';

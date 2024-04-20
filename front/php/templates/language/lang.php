@@ -5,7 +5,7 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us","es_es","de_de", "nb_no", "pt_br", "ru_ru", "fr_fr", "it_it"];
+$allLanguages = ["en_us","es_es","de_de", "nb_no", "pl_pl", "pt_br", "ru_ru", "fr_fr", "it_it"];
 
 global $db;
 
@@ -14,6 +14,7 @@ switch($result){
   case 'Spanish': $pia_lang_selected = 'es_es'; break;
   case 'German': $pia_lang_selected = 'de_de'; break;
   case 'Norwegian': $pia_lang_selected = 'nb_no'; break;
+  case 'Polish': $pia_lang_selected = 'pl_pl'; break;
   case 'Portuguese (Brazil)': $pia_lang_selected = 'pt_br'; break;
   case 'Italian': $pia_lang_selected = 'it_it'; break;
   case 'Russian': $pia_lang_selected = 'ru_ru'; break;
