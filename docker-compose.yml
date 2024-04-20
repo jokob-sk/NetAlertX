@@ -12,11 +12,11 @@ services:
     # restart: unless-stopped
     volumes:
       # - ${APP_DATA_LOCATION}/netalertx_dev/config:/app/config
-      # - ${APP_DATA_LOCATION}/netalertx/config:/app/config
-      - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
+      - ${APP_DATA_LOCATION}/netalertx/config:/app/config
+      # - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
       # - ${APP_DATA_LOCATION}/netalertx_dev/db:/app/db      
-      # - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
-      - ${APP_DATA_LOCATION}/netalertx/db:/home/pi/pialert/db 
+      - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
+      # - ${APP_DATA_LOCATION}/netalertx/db:/home/pi/pialert/db 
       # (optional) useful for debugging if you have issues setting up the container
       # - ${LOGS_LOCATION}:/app/front/log      
       # ---------------------------------------------------------------------------
@@ -33,7 +33,7 @@ services:
       - ${DEV_LOCATION}/front/css:/app/front/css
       - ${DEV_LOCATION}/front/img:/app/front/img
       - ${DEV_LOCATION}/back/update_vendors.sh:/app/back/update_vendors.sh
-      - ${DEV_LOCATION}/front/lib/AdminLTE:/app/front/lib/AdminLTE
+      - ${DEV_LOCATION}/front/lib:/app/front/lib
       - ${DEV_LOCATION}/front/js:/app/front/js
       - ${DEV_LOCATION}/install/start.debian.sh:/app/install/start.debian.sh
       - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh

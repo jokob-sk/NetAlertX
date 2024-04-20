@@ -29,18 +29,18 @@ $config_file_lines = file($config_file);
 $CookieSaveLoginName = "NetAlertX_SaveLogin";
 
 // ###################################
-// ## PIALERT_WEB_PROTECTION FALSE
+// ## SETPWD_enable_password FALSE
 // ###################################
 
-$config_file_lines_bypass = array_values(preg_grep('/^PIALERT_WEB_PROTECTION.*=/', $config_file_lines));
+$config_file_lines_bypass = array_values(preg_grep('/^SETPWD_enable_password.*=/', $config_file_lines));
 $protection_line = explode("=", $config_file_lines_bypass[0]);
 $Pia_WebProtection = strtolower(trim($protection_line[1]));
 
 // ###################################
-// ## PIALERT_WEB_PROTECTION TRUE
+// ## SETPWD_enable_password TRUE
 // ###################################
 
-$config_file_lines = array_values(preg_grep('/^PIALERT_WEB_PASSWORD.*=/', $config_file_lines));
+$config_file_lines = array_values(preg_grep('/^SETPWD_password.*=/', $config_file_lines));
 $password_line = explode("'", $config_file_lines[0]);
 $Pia_Password = $password_line[1];
 

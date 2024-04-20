@@ -302,7 +302,7 @@ def get_setting_value(key):
         set_type = setting["Type"]  # Setting type        
 
         # Handle different types of settings
-        if set_type in ['text', 'string', 'password', 'readonly', 'text.select']:
+        if set_type in ['text', 'string', 'password', 'password.SHA256', 'readonly', 'text.select']:
             value = str(set_value)
         elif set_type in ['boolean', 'integer.checkbox']:
             

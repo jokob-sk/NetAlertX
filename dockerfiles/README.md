@@ -9,11 +9,8 @@
   | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
-<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/devices_split.png" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/devices_split.png" width="300px" />
-</a>
-<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/network.png" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/network.png" width="300px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" width="1000px" />
 </a>
 
 > [!NOTE]

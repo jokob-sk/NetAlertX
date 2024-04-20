@@ -102,8 +102,6 @@ def importConfigs (db):
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
-    conf.PIALERT_WEB_PROTECTION = ccd('PIALERT_WEB_PROTECTION', False , c_d, 'Enable logon', 'boolean', '', 'General')
-    conf.PIALERT_WEB_PASSWORD = ccd('PIALERT_WEB_PASSWORD', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' , c_d, 'Logon password', 'readonly', '', 'General')    
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', 'text', '', 'General')
     conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish' ]", 'General')
     conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
@@ -256,6 +254,8 @@ def read_config_file(filename):
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
+    r'\bPIALERT_WEB_PROTECTION\b': 'SETPWD_enable_password',
+    r'\bPIALERT_WEB_PASSWORD\b': 'SETPWD_password',
     r'REPORT_MAIL=True': 'SMTP_RUN=\'on_notification\'',
     r'REPORT_APPRISE=True': 'APPRISE_RUN=\'on_notification\'',
     r'REPORT_NTFY=True': 'NTFY_RUN=\'on_notification\'',

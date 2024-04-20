@@ -33,7 +33,12 @@ In summary:
 4. Update the volume mappings in your `docker-compose.yaml`
 5. Place the renamed files the above locations. 
 
+
+> [!TIP] 
+> If you have troubles accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` conatining all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
+
 Examples follow.
+
 
 ## Example 1: Mapping folders
 

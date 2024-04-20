@@ -4,7 +4,7 @@
   "unique_prefix": "SETPWD",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "template",  
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
@@ -40,57 +40,29 @@
         "value" : "SETPWD_password"
     }
   ], 
-  "settings":[
-    {
-      "function": "RUN",    
-      "events": [],        
-      "type": "text.select",            
-      "default_value":"disabled",
-      "options": ["disabled", "before_config_save"],
-      "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "When to run"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Cuándo ejecuta"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Set to <code>before_config_save</code> and specify password to reset your pasword in <code>SETPWD_password</code>."
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Configure en <code>before_config_save</code> y especifique la contraseña para restablecer su contraseña en <code>SETPWD_password</code>. Puede establecer <code>deshabilitado</code> una vez que se cambia la contraseña."
-      }]
-  },
+  "settings":[   
   {
-      "function": "CMD",
-      "type": "readonly",
-      "default_value":"/app/back/pialert-cli set_password {password}",
-      "options": [],
-      "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "Command"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Comando"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Command to run"
-      },
-	  {
-          "language_code":"es_es",
-          "string" : "Comando a ejecutar"
-      }]
+    "function": "enable_password",
+    "type": "boolean",
+    "default_value": false,
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "Enable login"
+      }  
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "When enabled a login dialog is displayed. If facing issues, you can always disable the login by setting <code>SETPWD_enable_password=False</code> in your <code>app.conf</code> file."
+      }
+    ]
   },
   {
     "function": "password",
-    "type": "password",
+    "type": "password.SHA256",
     "maxLength": 50,
     "default_value": "123456",
     "options": [],
@@ -108,12 +80,8 @@
     "description": [
       {
         "language_code": "en_us",
-        "string": "The default password is <code>123456</code>. To change it, you can either use this plugin (follow the instructions in the <code>SETPWD_RUN</code> setting) or run <code>/app/back/pialert-cli set_password {password}</code> in the container."
-      },
-      {
-        "language_code": "es_es",
-        "string": "La contraseña predeterminada es <code>123456</code>. Para cambiar la contraseña, ejecute <code>/app/back/pialert-cli set_password {password}</code> en el contenedor"
-      }	  
+        "string": "The default password is <code>123456</code>."
+      } 
     ]
   }
     

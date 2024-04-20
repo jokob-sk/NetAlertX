@@ -165,6 +165,18 @@
     return true; // Return true if no schedules are found
   }
 
+  // -------------------------------------------------------------------
+  // Checks if value is already encoded
+  function isSHA256(value) {
+    // Check if the value is a string and has a length of 64 characters
+    if (typeof value === "string" && value.length === 64) {
+        // Check if the value contains only hexadecimal characters
+        return /^[0-9a-fA-F]+$/.test(value);
+    } else {
+        return false;
+    }
+}
+
 
 
 

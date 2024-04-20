@@ -328,7 +328,7 @@ function saveSettings()
         $settingValue = $setting[3];
 
         if ($group == $settingGroup) {
-            if ($settingType == 'text' || $settingType == 'password' || $settingType == 'readonly' || $settingType == 'text.select') {
+            if ($settingType == 'text' || $settingType == 'password' || $settingType == 'password.SHA256' || $settingType == 'readonly' || $settingType == 'text.select') {
                 $val = encode_single_quotes($settingValue);
                 $txt .= $settingKey . "='" . $val . "'\n";
             } elseif ($settingType == 'integer' || $settingType == 'integer.select') {

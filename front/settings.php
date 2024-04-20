@@ -56,6 +56,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <script src="js/settings_utils.js"></script>
 <script src="js/db_methods.js"></script>
 <script src="js/ui_components.js"></script>
+<script src="lib/crypto/crypto-js.min.js"></script>
 
 
 <div id="settingsPage" class="content-wrapper">
@@ -412,7 +413,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             }            
           } else if (setType === 'integer') {
             inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${codeName}" type="number" value="${val}"/>`;
-          } else if (setType === 'password') {
+          } else if (setType.startsWith('password')) {
             inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${codeName}" type="password" value="${val}"/>`;
           } else if (setType === 'readonly') {
             inputHtml = `<input class="form-control input"  my-data-type="${setType}"  id="${codeName}"  value="${val}" readonly/>`;
@@ -645,7 +646,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     $('#SCAN_SUBNETS').empty();
   }
 
-
+  
   // ---------------------------------------------------------
   function saveSettings() {
     if(<?php echo count($settings)?> != settingsNumber) 
@@ -686,6 +687,15 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
           } else if (set['Type'] === 'json') {        
             const temps = $('#'+set["Code_Name"]).val();        
+            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);          
+          } else if (set['Type'] === 'password.SHA256') { 
+            // save value as SHA256 if value isn't SHA256 already       
+            var temps = $('#'+set["Code_Name"]).val(); 
+            
+            if(temps != "" && !isSHA256(temps))
+            {
+              temps = CryptoJS.SHA256(temps).toString(CryptoJS.enc.Hex);
+            } 
             settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
           }
         });
@@ -705,11 +715,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             window.onbeforeunload = null;         
 
             // Reloads the current page
-            setTimeout("window.location.reload()", 3000);
-            
+            setTimeout("window.location.reload()", 3000);            
           
           }
         });
+        
       })
 
     }
