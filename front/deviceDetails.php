@@ -1443,15 +1443,15 @@ function setDeviceData (direction='', refreshCallback='') {
 
   // update data to server
   $.get('php/server/devices.php?action=setDeviceData&mac='+ mac
-    + '&name='           + $('#txtName').val()
-    + '&owner='          + $('#txtOwner').val()
+    + '&name='           + encodeURIComponent($('#txtName').val())
+    + '&owner='          + encodeURIComponent($('#txtOwner').val())
     + '&type='           + $('#txtDeviceType').val()
-    + '&vendor='         + $('#txtVendor').val()
+    + '&vendor='         + encodeURIComponent($('#txtVendor').val())
     + '&icon='           + encodeURIComponent($('#txtIcon').val())
     + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
-    + '&group='          + $('#txtGroup').val()
-    + '&location='       + $('#txtLocation').val()
-    + '&comments='       + $('#txtComments').val()
+    + '&group='          + encodeURIComponent($('#txtGroup').val())
+    + '&location='       + encodeURIComponent($('#txtLocation').val())
+    + '&comments='       + encodeURIComponent($('#txtComments').val())
     + '&networknode='    + $('#txtNetworkNodeMac').attr('data-mynodemac')
     + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)

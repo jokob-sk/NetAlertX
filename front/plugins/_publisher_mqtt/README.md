@@ -9,7 +9,7 @@
 
 ### Notes
 
-The first run will take a while, subsequent should be much faster because new sensors don't have to be created anymore. A bit of background:
+The first run will take a while, subsequent should be much faster because new sensors don't have to be created anymore. If the first sync times out, try to increase the timeout setting (default: 10s per device). A bit of background:
 
 1. The app keeps a hash of the sensors. The hash includes:
     - deviceId: Unique identifier for the device associated with the sensor.

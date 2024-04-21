@@ -332,7 +332,7 @@
         {
             "function": "RUN_TIMEOUT",
             "type": "integer",
-            "default_value": 10,
+            "default_value": 20,
             "options": [],
             "localized": ["name", "description"],
             "name" : [{
