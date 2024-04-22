@@ -455,7 +455,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             });
 
             inputHtml += '</select></div>' +
-            '<div><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button></div>';
+            `<div class="col-xs-6"><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button><button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button></div>`;
           } else if (setType === 'list' || setType === 'list.readonly') {
 
             settingKeyOfLists.push(codeName);
@@ -771,7 +771,20 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       } else
       {
-        hideSpinner()      
+        // chekc if the app is initialized and hide the spinner
+        if(isAppInitialized())
+        {          
+          hideSpinner()
+        } 
+        else
+        {
+          // reload the page if not initialized to give time the background tasks to finish 
+          setTimeout(() => {
+
+            window.location.reload()
+            
+          }, 1000);
+        }     
       }
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 
@@ -860,6 +873,7 @@ function updateModalState() {
   // ---------------------------------------------------------
   // Show last time settings have been imported  
 
+  showSpinner()
   handleLoadingDialog()
 
   

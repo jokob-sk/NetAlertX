@@ -1210,6 +1210,13 @@ function resetInitializedFlag()
   sessionStorage.setItem(sessionStorageKey, "false");
 }
 
+
+// -----------------------------------------------------------------------------
+function isAppInitialized()
+{
+   return sessionStorage.getItem(sessionStorageKey) === "true";
+}
+
 // -----------------------------------------------------------------------------
 // check if cache needs to be refreshed because of setting changes 
 $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
@@ -1326,6 +1333,8 @@ const onAllCallsComplete = () => {
   sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
 
   console.log('✔ Cache intialized');
+
+  location.reload(); 
 
 };
 
