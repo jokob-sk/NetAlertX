@@ -783,7 +783,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             window.location.reload()
             
-          }, 1000);
+          }, 3000);
         }     
       }
 

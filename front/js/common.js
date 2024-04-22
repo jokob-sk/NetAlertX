@@ -1211,11 +1211,6 @@ function resetInitializedFlag()
 }
 
 
-// -----------------------------------------------------------------------------
-function isAppInitialized()
-{
-   return sessionStorage.getItem(sessionStorageKey) === "true";
-}
 
 // -----------------------------------------------------------------------------
 // check if cache needs to be refreshed because of setting changes 
@@ -1244,7 +1239,7 @@ $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {
 // Display spinner and reload page if not yet initialized
 function handleFirstLoad(callback)
 {
-  if(!app_common_init)
+  if(!isAppInitialized())
   {
     setTimeout(function() {
       
@@ -1256,14 +1251,20 @@ function handleFirstLoad(callback)
 
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
-var app_common_init = sessionStorage.getItem(sessionStorageKey) === "true";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
+
+
+// -----------------------------------------------------------------------------
+function isAppInitialized()
+{
+   return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final)
+}
 
 // Define a function that will execute the code only once
 function executeOnce() {
 
-  if (!arraysContainSameValues(getCache(completedCalls), completedCalls_final)) {
+  if ( !isAppInitialized()) {
 
     showSpinner()
 
