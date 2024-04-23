@@ -875,6 +875,27 @@ input[readonly] {
     cursor: not-allowed;
   }
 
+  .removable-option:hover::before {
+    opacity: 1;
+}
+
+  .removable-option::before {
+    content: 'Double-click to ❌';
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: white;
+    background-color: rgb(255, 87, 87);
+    padding: 3px;
+    transition: opacity 0.5s;
+    opacity: 0;
+    border-radius: 3px;
+}
+
+.removable-option:hover {
+    transition: background-color 2s;
+    cursor: pointer;
+}
 
 /* ----------------------------------------------------------------- */
 /*                    Devices page                                   */

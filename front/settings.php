@@ -441,11 +441,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
               </div>
               <div class="col-xs-3">
-                <button class="btn btn-primary" onclick="addInterface()">Add</button>
+                <button class="btn btn-primary" onclick="addInterface();initRemoveBtnOptn('${codeName}')">Add</button>
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;
+              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initRemoveBtnOptn(${codeName})" multiple readonly>`;
 
 
             options = createArray(val);
@@ -454,8 +454,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               inputHtml += `<option value="${option}" disabled>${option}</option>`;
             });
 
-            inputHtml += '</select></div>' +
-            `<div class="col-xs-6"><button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button><button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button></div>`;
+            
+
+            inputHtml += `</select>
+                        </div>
+                        <div class="col-xs-6">
+                            <button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button>                            
+                        </div>`;
           } else if (setType === 'list' || setType === 'list.readonly') {
 
             settingKeyOfLists.push(codeName);
@@ -466,7 +471,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                   <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this)">Add</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initRemoveBtnOptn('${codeName}')">Add</button>
                 </div>
               </div>
               <div class="form-group">
@@ -475,6 +480,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             let options = createArray(val);
 
             options.forEach(option => {
+
               inputHtml += `<option value="${option}" disabled>${option}</option>`;
             });
 
@@ -513,6 +519,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
           // generate settings in the correct group section
           $(`#${group} .panel-body`).append(setHtml);
+
+          // init remove list item buttons
+          if(['subnets', 'list' ].includes(setType))
+          {
+            initRemoveBtnOptn(codeName)
+          }
           
         }
       });
@@ -615,6 +627,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   {
     settingsChanged();    
     $(`#${$(element).attr('my-input')}`).find("option:last").remove();
+    
   }
   // ---------------------------------------------------------
   function addInterface()

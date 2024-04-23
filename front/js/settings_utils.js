@@ -175,7 +175,24 @@
     } else {
         return false;
     }
+  }
+
+// -------------------------------------------------------------------
+ // Function to remove an item from the select element
+ function removeOptionItem(option) {
+    option.remove();
+  }
+
+// -------------------------------------------------------------------
+// Function to initialize remove functionality on select options 
+function initRemoveBtnOptn(selectorId) {
+  // Attach double-click event listeners to "Remove" 
+  $(`#${selectorId} option`).addClass('removable-option').on('dblclick', function() {
+      const $option = $(this);
+      removeOptionItem($option);
+  });
 }
+
 
 
 
