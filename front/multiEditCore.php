@@ -3,23 +3,31 @@
 
 
 <div class="col-md-12">
+    <div class="callout callout-warning">
+      <h4><?= lang('Gen_Warning');?></h4>
+
+      <p><?= lang('Device_MultiEdit_Backup');?></p>
+    </div>
     <div class="box box-default">
 
       <div class="box-header">
 
         <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
-        </div>
-    <div class="deviceSelector"></div>
+      </div>
+    <div class="deviceSelector col-md-9"></div> 
 
-    <div class="callout callout-warning">
-      <h4><?= lang('Gen_Warning');?></h4>
-
-      <p><?= lang('Device_MultiEdit_Backup');?></p>
+    <div class="col-md-3"> 
+      <button type="button" class="btn btn-default" onclick="markAllSelected()"> 
+        <i class="fa-solid fa-circle-check"></i>  <?= lang('Gen_Add_All');?>
+      </button>
+      <button type="button" class="btn btn-default"  onclick="markAllNotSelected()"> 
+        <i class="fa-solid fa-circle-xmark"></i>  <?= lang('Gen_Remove_All');?>
+      </button>
     </div>
+
+
   </div>
-
-
 
 
 <div class="col-md-12">
@@ -65,7 +73,9 @@
   // Get plugin and settings data from API endpoints
   function getData(){
 
-    $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
+    // some race condition, need to implement delay
+    setTimeout(() => {
+      $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
         
         settingsData = res["data"];
 
@@ -181,6 +191,9 @@
 
         
     })
+      
+    }, 50);
+    
   }
 
 
@@ -189,6 +202,39 @@
   function selectorMacs () {
     return $('.deviceSelector select').val().join(',');
   }
+
+  // -----------------------------------------------------------------------------
+  // Select All
+  function markAllSelected() {
+    // Get the <select> element with the class 'deviceSelector'
+    var selectElement = $('.deviceSelector select');
+    
+    // Iterate over each option within the select element
+    selectElement.find('option').each(function() {
+      // Mark each option as selected
+      $(this).prop('selected', true);
+    });
+
+    // Trigger the 'change' event to notify Bootstrap Select of the changes
+    selectElement.trigger('change');
+  }
+
+  // -----------------------------------------------------------------------------
+  // UN-Select All
+  function markAllNotSelected() {
+    // Get the <select> element with the class 'deviceSelector'
+    var selectElement = $('.deviceSelector select');
+    
+    // Iterate over each option within the select element
+    selectElement.find('option').each(function() {
+      // Unselect each option
+      $(this).prop('selected', false);
+    });
+    
+    // Trigger the 'change' event to notify Bootstrap Select of the changes
+    selectElement.trigger('change');
+  }
+
 
 
   // -----------------------------------------------------------------------------

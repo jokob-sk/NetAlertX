@@ -82,22 +82,22 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>setting</a>. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled."
+          "string": "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#NMAPDEV_RUN_SCHD\"><code>NMAPDEV_RUN_SCHD</code>setting</a>. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled."
         },
         {
           "language_code": "es_es",
-          "string": "Especifique cuándo se ejecutará su análisis de descubrimiento de red. La configuración típica sería <code>schedule</code> y luego se especifica una programación similar a cron en la configuración <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code></a> "
+          "string": "Especifique cuándo se ejecutará su análisis de descubrimiento de red. La configuración típica sería <code>schedule</code> y luego se especifica una programación similar a cron en la configuración <a href=\"#NMAPDEV_RUN_SCHD\"><code>NMAPDEV_RUN_SCHD</code></a> "
         },
         {
           "language_code": "de_de",
-          "string": "Auswählen wann der Netzwerkscan laufen soll. Typischerweise wird <code>schedule</code> ausgewählt und ein cron-Intervall in der <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>Einstellung</a> gesetzt."
+          "string": "Auswählen wann der Netzwerkscan laufen soll. Typischerweise wird <code>schedule</code> ausgewählt und ein cron-Intervall in der <a href=\"#NMAPDEV_RUN_SCHD\"><code>NMAPDEV_RUN_SCHD</code>Einstellung</a> gesetzt."
         }
       ]
     },
     {
       "function": "CMD",
       "type": "readonly",
-      "default_value": "python3 /app/front/plugins/nmap_dev_scan/nmap_dev.py userSubnets={subnets}",
+      "default_value": "python3 /app/front/plugins/nmap_dev_scan/nmap_dev.py ",
       "options": [],
       "localized": [
         "name",
@@ -196,15 +196,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#NMAPDEV_RUN\"><code>NMAPDEV_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/3 * * * *</code> will run the scan every 3 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
         },
         {
           "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/3 * * * *</code> ejecutará el escaneo cada 3 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#NMAPDEV_RUN\"><code>NMAPDEV_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/3 * * * *</code> ejecutará el escaneo cada 3 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
         },
         {
           "language_code": "de_de",
-          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>*/3 * * * *</code> würde den Scan alle 3 Minuten starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#NMAPDEV_RUN\"><code>NMAPDEV_RUN</code> Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>*/3 * * * *</code> würde den Scan alle 3 Minuten starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
         }
       ]
     },
@@ -212,8 +212,6 @@
       "function": "WATCH",
       "type": "text.multiselect",
       "default_value": [
-        "Watched_Value1",
-        "Watched_Value2"
       ],
       "options": [
         "Watched_Value1",
@@ -242,15 +240,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is IP</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Name</li><li><code>Watched_Value2</code> is Vendor</li><li><code>Watched_Value3</code> is Interface </li><li><code>Watched_Value4</code> is N/A </li></ul>"
         },
         {
           "language_code": "es_es",
-          "string": "Envía una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Valor_observado1</code> es IP</li><li><code>Valor_observado2</code> es Proveedor</li><li><code>Valor_observado3</code> es Interfaz </li><li><code>Valor_observado4</code> es N/A </li></ul>"
+          "string": "Envía una notificación si los valores seleccionados cambian. Utilice <code>CTRL + clic</code> para seleccionar/deseleccionar. <ul> <li><code>Valor_observado1</code> es Name</li><li><code>Valor_observado2</code> es Proveedor</li><li><code>Valor_observado3</code> es Interfaz </li><li><code>Valor_observado4</code> es N/A </li></ul>"
         },
         {
           "language_code": "de_de",
-          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die IP</li><li><code>Watched_Value2</code> ist der Hersteller</li><li><code>Watched_Value3</code> ist das Interface </li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist der Namen</li><li><code>Watched_Value2</code> ist der Hersteller</li><li><code>Watched_Value3</code> ist das Interface </li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
         }
       ]
     },
