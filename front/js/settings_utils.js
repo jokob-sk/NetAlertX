@@ -185,13 +185,50 @@
 
 // -------------------------------------------------------------------
 // Function to initialize remove functionality on select options 
-function initRemoveBtnOptn(selectorId) {
+
+let isDoubleClick = false;
+
+function initListInteractionOptions(selectorId) {
+
+  $(`#${selectorId} option`).addClass('interactable-option')
+
   // Attach double-click event listeners to "Remove" 
-  $(`#${selectorId} option`).addClass('removable-option').on('dblclick', function() {
-      const $option = $(this);
-      removeOptionItem($option);
+  $(`#${selectorId} option`).on('dblclick', function() {
+    isDoubleClick = true;
+    const $option = $(this);
+    removeOptionItem($option);
+  });
+
+  $(`#${selectorId} option`).on('click', function() {
+    const $option = $(this);
+
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      console.log(isDoubleClick);
+      if (!isDoubleClick) {
+        // Single-click action
+        showModalFieldInput (
+          `<i class="fa fa-square-plus pointer"></i> ${getString('DevDetail_button_AddIcon')}`, 
+          getString('DevDetail_button_AddIcon_Help'),
+          getString('Gen_Cancel'), 
+          getString('Gen_Okay'), 
+          $option.html(),
+          function() {
+            alert('aaa');
+          });
+
+        isDoubleClick = false;
+      }
+      
+    }, 300); // Adjust this delay as needed
   });
 }
+
+
+
+
+
+
 
 
 

@@ -441,11 +441,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
               </div>
               <div class="col-xs-3">
-                <button class="btn btn-primary" onclick="addInterface();initRemoveBtnOptn('${codeName}')">Add</button>
+                <button class="btn btn-primary" onclick="addInterface();initListInteractionOptions('${codeName}')">Add</button>
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initRemoveBtnOptn(${codeName})" multiple readonly>`;
+              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initListInteractionOptions(${codeName})" multiple readonly>`;
 
 
             options = createArray(val);
@@ -471,7 +471,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                   <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initRemoveBtnOptn('${codeName}')">Add</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">Add</button>
                 </div>
               </div>
               <div class="form-group">
@@ -523,7 +523,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           // init remove list item buttons
           if(['subnets', 'list' ].includes(setType))
           {
-            initRemoveBtnOptn(codeName)
+            initListInteractionOptions(codeName)
           }
           
         }

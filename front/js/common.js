@@ -367,6 +367,28 @@ function showModalInput (title, message, btnCancel=getString('Gen_Cancel'), btnO
 }
 
 // -----------------------------------------------------------------------------
+function showModalFieldInput (title, message, btnCancel=getString('Gen_Cancel'), btnOK=getString('Gen_Okay'), curValue="", callbackFunction=null) {
+  // set captions
+  prefix = 'modal-field-input'
+
+  $(`#${prefix}-title`).html   (title);
+  $(`#${prefix}-message`).html (message);
+  $(`#${prefix}-cancel`).html  (btnCancel);
+  $(`#${prefix}-OK`).html      (btnOK);
+
+  if ( callbackFunction != null)
+  {
+    modalCallbackFunction =          callbackFunction;
+  }
+
+  $(`#modal-field-input-field`).val(curValue)
+  
+
+  // Show modal
+  $(`#${prefix}`).modal('show');
+}
+
+// -----------------------------------------------------------------------------
 function modalDefaultOK () {
   // Hide modal
   $('#modal-default').modal('hide');

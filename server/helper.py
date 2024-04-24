@@ -660,6 +660,27 @@ def generate_mac_links (html, deviceUrl):
     return html
 
 #-------------------------------------------------------------------------------
+def extract_between_strings(text, start, end):
+    start_index = text.find(start)
+    end_index = text.find(end, start_index + len(start))
+    if start_index != -1 and end_index != -1:
+        return text[start_index + len(start):end_index]
+    else:
+        return ""
+
+#-------------------------------------------------------------------------------
+def extract_mac_addresses(text):
+    mac_pattern = r"([0-9A-Fa-f]{2}(?:[:-][0-9A-Fa-f]{2}){5})"
+    mac_addresses = re.findall(mac_pattern, text)
+    return mac_addresses
+
+#-------------------------------------------------------------------------------
+def extract_ip_addresses(text):
+    ip_pattern = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
+    ip_addresses = re.findall(ip_pattern, text)
+    return ip_addresses
+
+#-------------------------------------------------------------------------------
 # JSON methods
 #-------------------------------------------------------------------------------
 

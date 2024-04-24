@@ -20,7 +20,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, get_setting_value
+from helper import timeNowTZ, get_setting_value, extract_between_strings, extract_ip_addresses, extract_mac_addresses
 from const import logPath, applicationPath, fullDbPath
 from database import DB
 from device import Device_obj
@@ -52,20 +52,20 @@ def main():
 
     unique_devices = execute_scan(subnets, timeout)
 
-    mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unique_devices)}'])   
+    mylog('verbose', [f'[{pluginName}] Devices found: {len(unique_devices)}'])   
 
     for device in unique_devices:
 
         plugin_objects.add_object(
         # "MAC", "IP", "Name", "Vendor", "Interface"
-        primaryId   = device[0],
-        secondaryId = device[1],
-        watched1    = device[2],
-        watched2    = device[3],
-        watched3    = device[4],
+        primaryId   = device['mac'],
+        secondaryId = device['ip'],
+        watched1    = device['name'],
+        watched2    = device['vendor'],
+        watched3    = device['interface'],
         watched4    = '',
         extra       = '',
-        foreignKey  = device[0])
+        foreignKey  = device['mac'])
 
     plugin_objects.write_result_file()
     
@@ -83,36 +83,32 @@ def execute_scan (subnets_list, timeout):
     devices_list = []
 
     # scan each interface
+
+    for interface in subnets_list:
+        nmap_output = execute_scan_on_interface(interface, timeout)
+        mylog('verbose', [f'[{pluginName}] nmap_output: ', nmap_output])
+
+        if nmap_output is not None:
+            nmap_output_ent = nmap_output.split('Nmap scan report for')
+            # loop thru entries for individual devices
+            for ent in nmap_output_ent:
+
+                lines = ent.split('\n')
+
+                if len(lines) >= 3: 
+                    # lines[0]  can be DESKTOP-DIHOG0E.localdomain (192.168.1.121)      or       192.168.1.255
+                    # lines[1]  can be Host is up (0.21s latency).
+                    # lines[2]  can be MAC Address: 6C:4A:4A:7B:4A:43 (Motorola Mobility, a Lenovo Company)
+
+                    ip_address    = extract_ip_addresses(lines[0])[0]
+                    host_name     = extract_between_strings(lines[0], ' ', ' ')
+                    vendor        = extract_between_strings(lines[2], '(', ')')
+                    mac_addresses = extract_mac_addresses(lines[2])
+
+                    if len(mac_addresses) == 1:              
+
+                        devices_list.append({'name': host_name, 'ip': ip_address, 'mac': mac_addresses[0], 'vendor': vendor, 'interface': interface})
     
-    for interface in subnets_list :   
-
-        scan_output = execute_scan_on_interface (interface, timeout) 
-
-        mylog('verbose', [f'[{pluginName}] scan_output: ', scan_output])   
-
-
-        # Regular expression patterns
-        entry_pattern = r'Nmap scan report for (.*?) \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)'
-        mac_pattern = r'MAC Address: ([0-9A-Fa-f:]+)'
-        vendor_pattern = r'\((.*?)\)'
-
-        # Compile regular expression patterns
-        entry_regex = re.compile(entry_pattern)
-        mac_regex = re.compile(mac_pattern)
-        vendor_regex = re.compile(vendor_pattern)
-
-        # Find all matches
-        entries = entry_regex.findall(scan_output)
-        mac_addresses = mac_regex.findall(scan_output)
-        vendors = vendor_regex.findall(scan_output)
-
-        for i in range(len(entries)):
-            name, ip_address = entries[i]
-
-
-            devices_list.append([mac_addresses[i], ip_address, name, vendors[i], interface])
-
-
     return devices_list
 
 
