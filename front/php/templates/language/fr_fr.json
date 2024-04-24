@@ -283,6 +283,8 @@
     "Gen_Switch": "Basculer",
     "Gen_Upd": "",
     "Gen_Upd_Fail": "",
+    "Gen_Update": "",
+    "Gen_Update_Value": "",
     "Gen_Warning": "Avertissement",
     "Gen_Work_In_Progress": "",
     "General_display_name": "G\u00e9n\u00e9ral",
@@ -658,6 +660,7 @@
     "settings_saved": "",
     "settings_system_icon": "",
     "settings_system_label": "Syst\u00e8me",
+    "settings_update_item_warning": "",
     "test_event_icon": "",
     "test_event_tooltip": ""
 }

@@ -880,12 +880,12 @@ input[readonly] {
 }
 
   .interactable-option::before {
-    content: 'Click 📝 | 2x❌';
+    content: '1x 📝 | 2x 🚮';
     position: absolute;
     right: 0;
     top: 0;
     color: white;
-    background-color: rgb(255, 188, 87);
+    background-color: rgb(0, 0, 0);
     padding: 3px;
     transition: opacity 0.5s;
     opacity: 0;
@@ -963,11 +963,23 @@ input[readonly] {
     height: 1.5em !important;
 }
 
+
+
+
+/* ----------------------------------------------------------------- */
+/* MODAL popups */
+/* ----------------------------------------------------------------- */
+
 #modal-input-textarea
 {
     width: 100%;
 }
 
+.modal-field-input
+{
+    margin: 4%;
+    width: 92%;
+}
 
 /* ----------------------------------------------------------------- */
 /* NETWORK page */

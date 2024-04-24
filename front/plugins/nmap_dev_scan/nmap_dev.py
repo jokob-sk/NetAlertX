@@ -58,7 +58,7 @@ def main():
 
         plugin_objects.add_object(
         # "MAC", "IP", "Name", "Vendor", "Interface"
-        primaryId   = device['mac'],
+        primaryId   = device['mac'].lower(),
         secondaryId = device['ip'],
         watched1    = device['name'],
         watched2    = device['vendor'],
