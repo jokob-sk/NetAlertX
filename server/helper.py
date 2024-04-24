@@ -573,8 +573,33 @@ def resolve_device_name_pholus (pMAC, pIP, allRes, nameNotFound, match_IP = Fals
 import dns.resolver
 
 def cleanDeviceName(str, match_IP):
+    if get_setting_value('NEWDEV_dev_CleanDeviceName'):
+        return NEW_cleanDeviceName(str, match_IP)
 
-    print("START cleanDeviceName(" + str + ")")
+    # alternative str.split('.')[0]
+    str = str.replace("._airplay", "")
+    str = str.replace("._tcp", "")
+    str = str.replace(".localdomain", "")
+    str = str.replace(".local", "")
+    str = str.replace("._esphomelib", "")
+    str = str.replace("._googlecast", "")
+    str = str.replace(".lan", "")
+    str = str.replace(".home", "")
+    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
+    str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
+    # remove trailing dots
+    if str.endswith('.'):
+        str = str[:-1]
+
+
+    if match_IP:
+        str = str + " (IP match)"
+
+    return str
+
+def NEW_cleanDeviceName(str, match_IP):
+
+    mylog('debug', ["START cleanDeviceName(" + str + ")"])
 
     # replace all labels starting with underscore
     str = re.sub(r'^_[^\.]*\.', '', str)   # leading label
@@ -604,7 +629,7 @@ def cleanDeviceName(str, match_IP):
     if match_IP:
         str = str + " (IP match)"
 
-    print("END cleanDeviceName = " + str)
+    mylog('debug', ["END cleanDeviceName = " + str])
 
     # done
     return str
