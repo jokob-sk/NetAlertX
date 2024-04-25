@@ -260,6 +260,12 @@ function initListInteractionOptions(selectorId) {
 // -------------------------------------------------------------------
 // Function to filter rows based on input text
 function filterRows(inputText) {
+
+  if(!inputText)
+  {
+    inputText = ''
+  }
+
   $('.table_row').each(function() {
     // Check if the row id ends with '__metadata'
     var idAttribute = $(this).attr('id');
@@ -283,6 +289,9 @@ setTimeout(() => {
   // Event listener for input change
   $('#settingsSearch').on('input', function() {
     var searchText = $(this).val();
+    // hide the setting overview dashboard
+    $('#settingsOverview').collapse('hide');
+
     filterRows(searchText);
   });
 

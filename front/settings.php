@@ -92,14 +92,19 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     </section>
     <section class="content-header">
 
-    <div id="settingsOverview" class ="bg-white color-palette box panel panel-default col-sm-12 box-default box-info" > 
+    <div  class ="bg-white color-palette box panel panel-default col-sm-12 box-default box-info panel panel-default panel-title" > 
       <!-- Settings imported time -->
 
-      <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>       
-          </div>        
-          <div class =" col-sm-12" id=""></div>
-
+      
+      <a data-toggle="collapse" href="#settingsOverview">
+        <div class ="settings-group col-sm-12 panel-heading panel-title">
+            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>  
+        </div>     
+      </a>  
+        <div id="settingsOverview" class="panel-collapse collapse in"> 
+          <div class="panel-body"></div>
+        <div class =" col-sm-12" id=""></div>
+      </div>
     </section>
 
 
@@ -147,26 +152,27 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     <!-- /.content -->
 
 
-      <section class=" settings-sticky-bottom-section col-sm-12">
-        <div class="col-sm-5 settingsSearchWrap form-group has-success bg-white color-palette ">
-          <div class ="col-sm-12">
+      <section class=" settings-sticky-bottom-section  col-sm-10">
+        <div class="col-sm-8 settingsSearchWrap form-group has-success bg-white color-palette ">
+          <div class ="col-sm-8">
             <i class="fa-solid fa-filter"></i> <?= lang("Gen_Filter");?>  
           </div>
-          <div class ="col-sm-12">
-            <div class ="col-sm-11">
-              <input type="text" id="settingsSearch" class="form-control input-sm col-sm-7" placeholder="Filter Settings...">
-            </div>
-            <div class ="col-sm-1 clear-filter">
-              <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('')"></i>
-            </div>
+            <div class ="col-sm-12">
+
+              <input type="text" id="settingsSearch" class="form-control input-sm col-sm-12" placeholder="Filter Settings...">
+              <div class="clear-filter ">
+                <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('');filterRows();$('#settingsSearch').focus()"></i>
+              </div>
+
+            
           </div>
           
         </div>
 
-        <div class="col-sm-5">
-            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
-          </div>
-          <div id="result"></div>
+        <div class="col-sm-4 saveSettingsWrapper">
+            <button type="button" class="   btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
+        </div>
+        <div id="result"></div>
     </section>
 </div>
 
@@ -260,7 +266,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       index++;
     });
 
-    $('#settingsOverview').append(overviewSections_html);
+    $('#settingsOverview .panel-body').append(overviewSections_html);
 
     // Display warning 
     if(schedulesAreSynchronized(enabledDeviceScanners, pluginsData) == false)
