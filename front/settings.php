@@ -64,24 +64,29 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
-      <h1 id="pageTitle">
-          <i class="fa fa-cog"></i>
-          <?= lang('Navigation_Settings');?> 
-          <a style="cursor:pointer">
-            <span>
-              <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
-            </span> 
-          </a>
-      </h1>
 
-      <div class="col-sm-2 " title="<?= lang("settings_imported");?> ">
-        <div class="settingsImported">
-          <?= lang("settings_imported_label");?>           
-        </div>
+
+      <div class="col-sm-5">
+        <h1 id="pageTitle col-sm-3">
+            <i class="fa fa-cog"></i>
+            <?= lang('Navigation_Settings');?> 
+            <a style="cursor:pointer">
+              <span>
+                <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
+              </span> 
+            </a>
+        </h1>
       </div>
-      <div class="col-sm-10">
-        <span id="lastImportedTime"></span>
-      </div>           
+      
+
+      <div class="col-sm-7 settingsImportedTimestamp" title="<?= lang("settings_imported");?> ">
+        <div class="settingsImported ">
+          <?= lang("settings_imported_label");?>:          
+
+          <span id="lastImportedTime"></span>
+        </div>    
+      </div>
+       
 
           
     </section>
@@ -95,6 +100,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           </div>        
           <div class =" col-sm-12" id=""></div>
 
+    </section>
+
+    <section class="content-settings-search">
+      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info">
+        <div class="col-sm-12"> <?= lang("Gen_Filter");?>  
+          <input id="settingsSearch" type="text"></input>
+        </div>
+      </div>
     </section>
 
 

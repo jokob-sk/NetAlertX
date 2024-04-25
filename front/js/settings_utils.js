@@ -124,8 +124,7 @@
     if(allOpen == false || openOrClose == 'open')
     {
       // open all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
+      openAllSettings()
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
       
     }
@@ -135,6 +134,11 @@
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
     }
     
+  }
+
+  function openAllSettings() {
+    $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+    $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
   }
 
 
@@ -253,8 +257,44 @@ function initListInteractionOptions(selectorId) {
 }
 
 
+// -------------------------------------------------------------------
+// Function to filter rows based on input text
+function filterRows(inputText) {
+  $('.table_row').each(function() {
+    // Check if the row id ends with '__metadata'
+    var idAttribute = $(this).attr('id');
+    if (idAttribute && idAttribute.endsWith('__metadata')) {
+      $(this).hide(); // Hide the row if it ends with '__metadata'
+      return; // Skip to the next iteration
+    }
 
+    var description = $(this).find('.setting_description').text().toLowerCase();
+    var codeName = $(this).find('.setting_name code').text().toLowerCase();
+    if (description.includes(inputText.toLowerCase()) || codeName.includes(inputText.toLowerCase())) {
+      $(this).show(); // Show the row if it matches the input text
+    } else {
+      $(this).hide(); // Hide the row if it doesn't match the input text
+    }
+  });
+}
 
+setTimeout(() => {
+
+  // Event listener for input change
+  $('#settingsSearch').on('input', function() {
+    var searchText = $(this).val();
+    filterRows(searchText);
+  });
+
+  // Event listener for input focus
+  // var firstFocus = true;
+  $('#settingsSearch').on('focus', function() {
+    openAllSettings()
+  });
+
+  
+  
+}, 1000);
 
 
 
