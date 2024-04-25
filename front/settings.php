@@ -441,7 +441,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
               </div>
               <div class="col-xs-3">
-                <button class="btn btn-primary" onclick="addInterface();initListInteractionOptions('${codeName}')">Add</button>
+                <button class="btn btn-primary" onclick="addInterface();initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
               </div>
             </div>
             <div class="form-group">
@@ -459,8 +459,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             inputHtml += `</select>
                         </div>
                         <div class="col-xs-6">
-                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button>     
-                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">Remove all</button>                              
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
+                            ${getString("Gen_Remove_Last")}
+                          </button>     
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
+                            ${getString("Gen_Remove_All")}
+                          </button>                              
                         </div>`;
           } else if (setType === 'list' || setType === 'list.readonly') {
 
@@ -472,7 +476,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                   <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">Add</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
                 </div>
               </div>
               <div class="form-group">
@@ -487,8 +491,12 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             inputHtml += '</select></div>' +
             `<div>
-              <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button>              
-              <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">Remove all</button>                          
+                <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
+                  ${getString("Gen_Remove_Last")}
+                </button>     
+                <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
+                  ${getString("Gen_Remove_All")}
+                </button>                          
             </div>`;
           } else if (setType === 'json') {
             inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
