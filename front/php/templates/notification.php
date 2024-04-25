@@ -134,7 +134,7 @@
 
       <div class="modal-footer">
         <button id="modal-field-input-cancel" type="button" class="btn btn-outline pull-left" style="min-width: 80px;" data-dismiss="modal">       Cancel </button>
-        <button id="modal-field-input-OK"     type="button" class="btn btn-outline"           style="min-width: 80px;" onclick="modalDefaultInput()"> OK     </button>
+        <button id="modal-field-input-OK"     type="button" class="btn btn-outline"           style="min-width: 80px;" onclick="modalDefaultFieldInput()"> OK     </button>
       </div>
 
     </div>

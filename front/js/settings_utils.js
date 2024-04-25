@@ -178,51 +178,69 @@
   }
 
 // -------------------------------------------------------------------
- // Function to remove an item from the select element
- function removeOptionItem(option) {
-    option.remove();
-  }
+// Manipulating Editable List options
+// -------------------------------------------------------------------
+
+
+// -------------------------------------------------------------------
+// Function to remove an item from the select element
+function removeOptionItem(option) {
+  option.remove();
+}
+
+// -------------------------------------------------------------------
+// Update value of an item from the select elemen
+ function updateOptionItem(option, value) {
+  option.html(value);
+}
 
 // -------------------------------------------------------------------
 // Function to initialize remove functionality on select options 
 
-let isDoubleClick = false;
+// Counter to track number of clicks
+let clickCounter = 0;
 
+// Function to initialize list interaction options
 function initListInteractionOptions(selectorId) {
+  // Select all options within the specified selector
+  const $options = $(`#${selectorId} option`);
 
-  $(`#${selectorId} option`).addClass('interactable-option')
+  // Add class to make options interactable
+  $options.addClass('interactable-option');
 
-  // Attach double-click event listeners to "Remove" 
-  $(`#${selectorId} option`).on('dblclick', function() {
-    isDoubleClick = true;
-    const $option = $(this);
-    removeOptionItem($option);
-  });
-
-  $(`#${selectorId} option`).on('click', function() {
+  // Attach click event listener to options
+  $options.on('click', function() {
     const $option = $(this);
 
-    // Reset the flag after a short delay
+    // Increment click counter
+    clickCounter++;
+
+    // Delay to capture multiple clicks
     setTimeout(() => {
-      console.log(isDoubleClick);
-      if (!isDoubleClick) {
+      // Perform action based on click count
+      if (clickCounter === 1) {
         // Single-click action
-        showModalFieldInput (
-          `<i class="fa fa-square-plus pointer"></i> ${getString('DevDetail_button_AddIcon')}`, 
-          getString('DevDetail_button_AddIcon_Help'),
-          getString('Gen_Cancel'), 
-          getString('Gen_Okay'), 
+        showModalFieldInput(
+          `<i class="fa-regular fa-pen-to-square"></i> ${getString('Gen_Update_Value')}`,
+          getString('settings_update_item_warning'),
+          getString('Gen_Cancel'),
+          getString('Gen_Update'),
           $option.html(),
           function() {
-            alert('aaa');
-          });
-
-        isDoubleClick = false;
+            updateOptionItem($option, $(`#modal-field-input-field`).val())
+          }
+        );
+      } else if (clickCounter === 2) {
+        // Double-click action
+        removeOptionItem($option);
       }
-      
-    }, 300); // Adjust this delay as needed
+
+      // Reset click counter
+      clickCounter = 0;
+    }, 300); // Adjust delay as needed
   });
 }
+
 
 
 

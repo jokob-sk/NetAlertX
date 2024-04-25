@@ -9,7 +9,7 @@
 
 // -----------------------------------------------------------------------------
 var timerRefreshData = ''
-var modalCallbackFunction = '';
+
 var emptyArr            = ['undefined', "", undefined, null, 'null'];
 var UI_LANG = "English";
 var settingsJSON = {}
@@ -281,6 +281,8 @@ function getString (key) {
 // -----------------------------------------------------------------------------
 // Modal dialog handling
 // -----------------------------------------------------------------------------
+var modalCallbackFunction = '';
+
 function showModalOK (title, message, callbackFunction) {
   showModalOk (title, message, callbackFunction)
 }
@@ -376,12 +378,14 @@ function showModalFieldInput (title, message, btnCancel=getString('Gen_Cancel'),
   $(`#${prefix}-cancel`).html  (btnCancel);
   $(`#${prefix}-OK`).html      (btnOK);
 
+  console.log(callbackFunction);
+
   if ( callbackFunction != null)
   {
     modalCallbackFunction =          callbackFunction;
   }
 
-  $(`#modal-field-input-field`).val(curValue)
+  $(`#${prefix}-field`).val(curValue)
   
 
   // Show modal
@@ -407,6 +411,17 @@ function modalDefaultInput () {
   // timer to execute function
   window.setTimeout( function() {
     window[modalCallbackFunction]();
+  }, 100);
+}
+
+// -----------------------------------------------------------------------------
+function modalDefaultFieldInput () {
+  // Hide modal
+  $('#modal-field-input').modal('hide');
+
+  // timer to execute function
+  window.setTimeout( function() {
+    modalCallbackFunction();
   }, 100);
 }
 
