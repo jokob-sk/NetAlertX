@@ -102,13 +102,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     </section>
 
-    <section class="content-settings-search">
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info">
-        <div class="col-sm-12"> <?= lang("Gen_Filter");?>  
-          <input id="settingsSearch" type="text"></input>
-        </div>
-      </div>
-    </section>
+
 
 
     <div class="content settingswrap " id="accordion_gen">
@@ -151,13 +145,32 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
    </div>
    
     <!-- /.content -->
-    <div class="row" >
-          <div class="row">
-            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
+
+
+      <section class=" settings-sticky-bottom-section col-sm-12">
+        <div class="col-sm-5 settingsSearchWrap form-group has-success bg-white color-palette ">
+          <div class ="col-sm-12">
+            <i class="fa-solid fa-filter"></i> <?= lang("Gen_Filter");?>  
+          </div>
+          <div class ="col-sm-12">
+            <div class ="col-sm-11">
+              <input type="text" id="settingsSearch" class="form-control input-sm col-sm-7" placeholder="Filter Settings...">
+            </div>
+            <div class ="col-sm-1 clear-filter">
+              <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('')"></i>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="col-sm-5">
+            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
           </div>
           <div id="result"></div>
-      </div>
+    </section>
 </div>
+
+
 
 
   <!-- /.content-wrapper -->
@@ -471,7 +484,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             inputHtml += `</select>
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-xs-12">
                           <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
                             ${getString("Gen_Remove_Last")}
                           </button>     

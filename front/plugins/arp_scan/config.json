@@ -106,7 +106,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>setting</a>. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled."
+          "string": "Specify when your Network-discovery scan will run. Typical setting would be <code>schedule</code> and then you specify a cron-like schedule in the <a href=\"#ARPSCAN_RUN_SCHD\"><code>ARPSCAN_RUN_SCHD</code>setting</a>. ⚠ Use the same schedule if you have multiple <i class=\"fa-solid fa-magnifying-glass-plus\"></i> Device scanners enabled. <br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
         },
         {
           "language_code": "es_es",

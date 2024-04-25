@@ -902,6 +902,35 @@ input[readonly] {
     padding: 25px;
 }
 
+.settingsSearchWrap
+{
+    padding:10px;
+}
+
+.settings-sticky-bottom-section {
+    position: fixed;
+    z-index: 999;
+    background-color: #2d2d2d;
+    opacity: 0.8;
+    bottom: 30px;
+    border-radius: 5px;
+  }
+
+  .settings-sticky-bottom-section:hover {
+
+    opacity: 1;
+  }
+
+.clear-filter
+{
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.clear-filter:hover
+{
+    opacity: 1;
+}
 /* ----------------------------------------------------------------- */
 /*                    Devices page                                   */
 /* ----------------------------------------------------------------- */
