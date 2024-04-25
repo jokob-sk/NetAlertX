@@ -185,13 +185,24 @@
 // -------------------------------------------------------------------
 // Function to remove an item from the select element
 function removeOptionItem(option) {
+  settingsChanged();  
   option.remove();
 }
 
 // -------------------------------------------------------------------
-// Update value of an item from the select elemen
+// Update value of an item from the select element
  function updateOptionItem(option, value) {
+  settingsChanged();  
   option.html(value);
+}
+
+// -------------------------------------------------------------------
+// Remove all options
+function removeAllOptions(element)
+{
+  settingsChanged();    
+  $(`#${$(element).attr('my-input')}`).empty();
+  
 }
 
 // -------------------------------------------------------------------

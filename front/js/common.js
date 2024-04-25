@@ -378,8 +378,6 @@ function showModalFieldInput (title, message, btnCancel=getString('Gen_Cancel'),
   $(`#${prefix}-cancel`).html  (btnCancel);
   $(`#${prefix}-OK`).html      (btnOK);
 
-  console.log(callbackFunction);
-
   if ( callbackFunction != null)
   {
     modalCallbackFunction =          callbackFunction;

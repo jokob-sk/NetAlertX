@@ -459,7 +459,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             inputHtml += `</select>
                         </div>
                         <div class="col-xs-6">
-                            <button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button>                            
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button>     
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">Remove all</button>                              
                         </div>`;
           } else if (setType === 'list' || setType === 'list.readonly') {
 
@@ -485,7 +486,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             });
 
             inputHtml += '</select></div>' +
-            `<div><button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button></div>`;
+            `<div>
+              <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button>              
+              <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">Remove all</button>                          
+            </div>`;
           } else if (setType === 'json') {
             inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
           }
@@ -651,14 +655,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       settingsChanged();
     }
   }
-
-  // ---------------------------------------------------------
-  function removeInterfaces()
-  {
-    settingsChanged();
-    $('#SCAN_SUBNETS').empty();
-  }
-
   
   // ---------------------------------------------------------
   function saveSettings() {

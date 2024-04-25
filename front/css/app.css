@@ -888,7 +888,7 @@ input[readonly] {
     background-color: rgb(0, 0, 0);
     padding: 3px;
     transition: opacity 0.5s;
-    opacity: 0;
+    opacity: 0.1;
     border-radius: 3px;
 }
 
