@@ -92,7 +92,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     </section>
     <section class="content-header">
 
-    <div  class ="bg-white color-palette box panel panel-default col-sm-12 box-default box-info panel panel-default panel-title" > 
+    <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" > 
       <!-- Settings imported time -->
 
       
@@ -150,6 +150,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
    </div>
    
     <!-- /.content -->
+
+    <section class=" padding-bottom  col-sm-12">
+      <!-- needed so the filter & save button don't hide the settings -->
+    </section>
 
 
       <section class=" settings-sticky-bottom-section  col-sm-10">

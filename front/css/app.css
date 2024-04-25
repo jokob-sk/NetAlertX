@@ -718,6 +718,11 @@ height: 50px;
 }
 }
 
+.settingswrap
+{
+    margin-bottom: 100px;
+}
+
 .settingswrap .metadata
 {
     display: none;
@@ -727,6 +732,11 @@ height: 50px;
 {
     float: right;
 }
+
+.padding-bottom
+{
+    padding-bottom: 100px;
+} 
 
 .settings-group
 {   
@@ -922,7 +932,7 @@ input[readonly] {
   }
 
   .settings-sticky-bottom-section:hover {
-    border-color: #000;
+    border-color: #258744;
   }
 
 .clear-filter
