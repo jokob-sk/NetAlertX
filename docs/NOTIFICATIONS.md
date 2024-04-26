@@ -7,6 +7,10 @@ There are 3 ways how to influence notifications:
 3. Globally
 4. Ignoring devices
 
+> [!NOTE]
+> It's recommended to use the same schedule interval for all plugins responsible for scanning devices, otherwise false positives might be reported if different devices are discovered by different plugins. Check the Settings > Enabled plugins section for a warning:
+> ![Schedules out-of-sync](/docs/img/NOTIFICATIONS/Schedules_out-of-sync.png)
+
 
 ## Device settings 💻
 
