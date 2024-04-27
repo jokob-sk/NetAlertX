@@ -38,15 +38,17 @@ timeZoneSetting = configFile['TIMEZONE']
 timeZone = pytz.timezone(timeZoneSetting)
 
 # -------------------------------------------------------------------
+# Sanitizes plugin output
 def handleEmpty(input):
-    if input == '' or None:
+    if not input:
         return 'null'
     else:
         # Validate and sanitize message content
         # Remove potentially problematic characters if string
-        if isinstance(input, str):  
+        if isinstance(input, str):
             input = re.sub(r'[^\x00-\x7F]+', ' ', input)
-        return  input
+            input = input.replace('\n', '')  # Removing new lines
+        return input
 
 # -------------------------------------------------------------------
 # Check if a valid MAC address

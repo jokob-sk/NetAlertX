@@ -100,14 +100,23 @@ def execute_scan (subnets_list, timeout):
                     # lines[1]  can be Host is up (0.21s latency).
                     # lines[2]  can be MAC Address: 6C:4A:4A:7B:4A:43 (Motorola Mobility, a Lenovo Company)
 
-                    ip_address    = extract_ip_addresses(lines[0])[0]
+                    ip_addresses  = extract_ip_addresses(lines[0])
                     host_name     = extract_between_strings(lines[0], ' ', ' ')
                     vendor        = extract_between_strings(lines[2], '(', ')')
                     mac_addresses = extract_mac_addresses(lines[2])
 
-                    if len(mac_addresses) == 1:              
+                    # only include results with a MAC address and IPs as it's used as a unique ID 
+                    if len(mac_addresses) == 1 and len(ip_addresses) == 1:              
 
-                        devices_list.append({'name': host_name, 'ip': ip_address, 'mac': mac_addresses[0], 'vendor': vendor, 'interface': interface})
+                        devices_list.append({'name'     : host_name, 
+                                             'ip'       : ip_addresses[0], 
+                                             'mac'      : mac_addresses[0], 
+                                             'vendor'   : vendor, 
+                                             'interface': interface})
+                    else:
+                        mylog('verbose', [f"[{pluginName}] Skipped (Couldn't parse MAC or IP): ", lines])
+                else:
+                    mylog('verbose', [f"[{pluginName}] Skipped (Not enough info in output): ", lines])
     
     return devices_list
 

@@ -43,7 +43,7 @@ In the Notification Processing section, you can specify blanket rules. These all
 3. A filter to allow you to set device-specific exceptions to New devices being added to the app.
 4. A filter to allow you to set device-specific exceptions to generated Events.
 
-## Ignoring devices 🛑
+## Ignoring devices 🔕
 
 ![Ignoring new devices](/docs/img/NOTIFICATIONS/NEWDEV_ignores.png)
 

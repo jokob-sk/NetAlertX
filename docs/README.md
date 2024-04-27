@@ -30,6 +30,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [SMTP server config](/docs/SMTP.md)
 - [Custom Icon configuration and support](/docs/ICONS.md)
+- [Notifications](/docs/NOTIFICATIONS.md)
 - [Better name resolution with Reverse DNS](/docs/REVERSE_DNS.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
 - [Backups](/docs/BACKUPS.md)
