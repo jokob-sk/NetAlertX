@@ -83,9 +83,10 @@ def execute_scan (subnets_list, timeout):
     devices_list = []
 
     # scan each interface
-
     for interface in subnets_list:
+
         nmap_output = execute_scan_on_interface(interface, timeout)
+
         mylog('verbose', [f'[{pluginName}] nmap_output: ', nmap_output])
 
         if nmap_output is not None:
@@ -124,7 +125,7 @@ def execute_scan (subnets_list, timeout):
 
 def execute_scan_on_interface (interface, timeout):
     # Prepare command arguments
-    scan_args = get_setting_value('NMAPDEV_ARGS').split() + [interface.split()[0]] 
+    scan_args = get_setting_value('NMAPDEV_ARGS').split() + interface.replace('--interface=','-e ').split()
 
     mylog('verbose', [f'[{pluginName}] scan_args: ', scan_args])   
 

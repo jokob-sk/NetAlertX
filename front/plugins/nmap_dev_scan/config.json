@@ -300,7 +300,7 @@
     {
       "function": "ARGS",
       "type": "text",
-      "default_value": "sudo nmap -sn ",
+      "default_value": "sudo nmap -sn -PR -n ",
       "options": [],
       "localized": [
         "name",
@@ -315,7 +315,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Arguments to run nmap-scan with. Recommended and tested only with the setting: <br/> <code>sudo nmap -sn </code>."
+          "string": "Arguments to run nmap-scan with. Recommended and tested only with the setting: <br/> <code>sudo nmap -sn </code>. <br/><br/> Note: The plugin attaches the interface and network mask, for example <code> -e eth1 192.168.1.0/24</code> and performs a separate scan for each interface specified in the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
         }
       ]
     }

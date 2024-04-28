@@ -8,7 +8,7 @@ There are 3 ways how to influence notifications:
 4. Ignoring devices
 
 > [!NOTE]
-> It's recommended to use the same schedule interval for all plugins responsible for scanning devices, otherwise false positives might be reported if different devices are discovered by different plugins. Check the Settings > Enabled plugins section for a warning:
+> It's recommended to use the same schedule interval for all plugins responsible for scanning devices, otherwise false positives might be reported if different devices are discovered by different plugins. Check the **Settings** > **Enabled settings** section for a warning:
 > ![Schedules out-of-sync](/docs/img/NOTIFICATIONS/Schedules_out-of-sync.png)
 
 
@@ -36,7 +36,7 @@ On almost all plugins there are 2 core settings, `<plugin>_WATCH` and `<plugin>_
 
 ![Global notification settings](/docs/img/NOTIFICATIONS/Global-notification-settings.png)
 
-In the Notification Processing section, you can specify blanket rules. These allso to specify exceptions to the Plugin and Device settings and will override those.
+In the Notification Processing section, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
 
 1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigegr notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `events` set. Setting `plugin` might be too noisy for most setups.
 2. Alert down after (`NTFPRCS_alert_down_time`) is useful if you want to wait for some time before the system sends out a down notification for a device. This is related to the on-device **Alert down** setting.
