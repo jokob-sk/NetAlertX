@@ -289,7 +289,7 @@
     "Gen_Run": "Ejecutar",
     "Gen_Save": "Guardar",
     "Gen_Saved": "Guardado",
-    "Gen_Search": "",
+    "Gen_Search": "Buscar",
     "Gen_Selected_Devices": "Dispositivos seleccionados:",
     "Gen_Switch": "Cambiar",
     "Gen_Upd": "Actualizado correctamente",
@@ -743,5 +743,8 @@
     "settings_system_label": "Sistema",
     "settings_update_item_warning": "Actualice el valor a continuación. Tenga cuidado de seguir el formato anterior. <b>O la validación no se realiza.</b>",
     "test_event_icon": "fa-vial-circle-check",
-    "test_event_tooltip": "Guarda tus cambios antes de probar nuevos ajustes."
+    "test_event_tooltip": "Guarda tus cambios antes de probar nuevos ajustes.",
+    "Gen_Filter": "Filtro",
+    "Gen_Add": "Añadir",
+    "Gen_Remove_Last": "Quitar el último"
 }
