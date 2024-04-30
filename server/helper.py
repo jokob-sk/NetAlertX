@@ -573,8 +573,45 @@ def resolve_device_name_pholus (pMAC, pIP, allRes, nameNotFound, match_IP = Fals
 import dns.resolver
 
 def cleanDeviceName(str, match_IP):
-    if get_setting_value('NEWDEV_dev_CleanDeviceName'):
-        return NEW_cleanDeviceName(str, match_IP)
+    if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
+        mylog('debug', ["Using new cleanDeviceName(" + str + ")"])
+
+        # replace all labels starting with underscore
+        str = re.sub(r'^_[^\.]*\.', '', str)   # leading label
+        str = re.sub(r'\._[^\.]*\.', '.', str) # nested label
+
+        # get a stub resolver for access to resolv.conf configuration
+        resolv = dns.resolver.Resolver()
+
+        # replace the local domain name
+        str = re.sub(r'\.' + resolv.domain.to_text() + r'$', '', str)
+
+        # replace dns search list
+        for name in resolv.search:
+            str = re.sub(r'\.' + name.to_text() + r'$', '', str)
+
+        # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
+        str = re.sub(r'-[a-fA-F0-9]{32}', '', str)
+
+        # Remove everything after '#' including the '#'
+        str = re.sub(r'#.*', '', str)
+
+        # remove trailing dot
+        if str.endswith('.'):
+            str = str[:-1]
+
+        # add matching info
+        if match_IP:
+            str = str + " (IP match)"
+
+        # done
+        mylog('debug', ["cleanDeviceName = " + str])
+        return str
+
+    ################################
+    #
+    # OLD cleanDeviceName
+    mylog('debug', ["Using old cleanDeviceName(" + str + ")"])
 
     # alternative str.split('.')[0]
     str = str.replace("._airplay", "")
@@ -591,49 +628,11 @@ def cleanDeviceName(str, match_IP):
     if str.endswith('.'):
         str = str[:-1]
 
-
     if match_IP:
         str = str + " (IP match)"
 
+    mylog('debug', ["cleanDeviceName = " + str])
     return str
-
-def NEW_cleanDeviceName(str, match_IP):
-
-    mylog('debug', ["START cleanDeviceName(" + str + ")"])
-
-    # replace all labels starting with underscore
-    str = re.sub(r'^_[^\.]*\.', '', str)   # leading label
-    str = re.sub(r'\._[^\.]*\.', '.', str) # nested label
-
-    # get a stub resolver for access to resolv.conf configuration
-    resolv = dns.resolver.Resolver()
-
-    # replace the local domain name
-    str = re.sub(r'\.' + resolv.domain.to_text() + r'$', '', str)
-
-    # replace dns search list
-    for name in resolv.search:
-      str = re.sub(r'\.' + name.to_text() + r'$', '', str)
-
-    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)
-
-    # Remove everything after '#' including the '#'
-    str = re.sub(r'#.*', '', str)
-
-    # remove trailing dot
-    if str.endswith('.'):
-        str = str[:-1]
-
-    # add matching info
-    if match_IP:
-        str = str + " (IP match)"
-
-    mylog('debug', ["END cleanDeviceName = " + str])
-
-    # done
-    return str
-
 
 #-------------------------------------------------------------------------------
 # String manipulation methods

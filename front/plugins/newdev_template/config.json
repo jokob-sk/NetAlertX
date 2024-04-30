@@ -607,7 +607,7 @@
           ]
         },
 	{
-          "function": "dev_CleanDeviceName",
+          "function": "LESS_NAME_CLEANUP",
           "type": "integer.checkbox",
           "default_value": 0,
           "options": [],
@@ -615,7 +615,7 @@
           "name": [
             {
               "language_code": "en_us",
-              "string": "Use new algorithm to cleanup device names"
+              "string": "Less Name Cleanup"
             }
           ],
           "description": [
@@ -647,7 +647,7 @@
       "dev_Network_Node_MAC_ADDR",
       "dev_Network_Node_port",
       "dev_Icon",
-      "dev_CleanDeviceName"
+      "LESS_NAME_CLEANUP"
     ],
     "additionalProperties": false
   }
