@@ -753,25 +753,43 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           }
         });
 
-        // trigger a save settings event in the backend
-        $.ajax({
-        method: "POST",
-        url: "php/server/util.php",
-        data: { 
-          function: 'savesettings', 
-          settings: JSON.stringify(settingsArray) },
-          success: function(data, textStatus) {                    
-            
-            showModalOk ('Result', data );
-          
-            // Remove navigation prompt "Are you sure you want to leave..."
-            window.onbeforeunload = null;         
+        // console.log(settingsArray);
 
-            // Reloads the current page
-            setTimeout("window.location.reload()", 3000);            
-          
-          }
+        // sanity check to make sure settings were loaded & collected correctly
+        sanityCheck_notOK = true
+        $.each(settingsArray, function(index, value) {
+            // Do something with each element of the array
+            if(value[1] == "UI_LANG")
+            {
+              sanityCheck_notOK = isEmpty(value[3])
+            }
+            
         });
+
+        if(sanityCheck_notOK == false)
+        {
+          // trigger a save settings event in the backend
+          $.ajax({
+          method: "POST",
+          url: "php/server/util.php",
+          data: { 
+            function: 'savesettings', 
+            settings: JSON.stringify(settingsArray) },
+            success: function(data, textStatus) {                    
+              
+              showModalOk ('Result', data );
+            
+              // Remove navigation prompt "Are you sure you want to leave..."
+              window.onbeforeunload = null;         
+
+              // Reloads the current page
+              setTimeout("window.location.reload()", 3000);            
+            
+            }
+          });
+        } else{
+          showModalOk('WARNING', "<?= lang("settings_missing_block")?>");
+        }
         
       })
 

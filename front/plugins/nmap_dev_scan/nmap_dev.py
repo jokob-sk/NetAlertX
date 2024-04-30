@@ -11,6 +11,7 @@ import hashlib
 import csv
 import sqlite3
 import re
+import nmap  
 from io import StringIO
 from datetime import datetime
 
@@ -77,48 +78,29 @@ def main():
 #===============================================================================
 # Execute scan
 #===============================================================================
-def execute_scan (subnets_list, timeout):
-    # output of possible multiple interfaces
-    scan_output = ""
+def execute_scan(subnets_list, timeout):
     devices_list = []
 
-    # scan each interface
     for interface in subnets_list:
-
         nmap_output = execute_scan_on_interface(interface, timeout)
 
-        mylog('verbose', [f'[{pluginName}] nmap_output: ', nmap_output])
+        mylog('verbose', [f"[{pluginName}] nmap_output: ", nmap_output])
 
-        if nmap_output is not None:
-            nmap_output_ent = nmap_output.split('Nmap scan report for')
-            # loop thru entries for individual devices
-            for ent in nmap_output_ent:
+        if nmap_output:  # Proceed only if nmap output is not empty
+            # Parse the XML output using python-nmap
+            devices = parse_nmap_xml(nmap_output, interface)
 
-                lines = ent.split('\n')
-
-                if len(lines) >= 3: 
-                    # lines[0]  can be DESKTOP-DIHOG0E.localdomain (192.168.1.121)      or       192.168.1.255
-                    # lines[1]  can be Host is up (0.21s latency).
-                    # lines[2]  can be MAC Address: 6C:4A:4A:7B:4A:43 (Motorola Mobility, a Lenovo Company)
-
-                    ip_addresses  = extract_ip_addresses(lines[0])
-                    host_name     = extract_between_strings(lines[0], ' ', ' ')
-                    vendor        = extract_between_strings(lines[2], '(', ')')
-                    mac_addresses = extract_mac_addresses(lines[2])
-
-                    # only include results with a MAC address and IPs as it's used as a unique ID 
-                    if len(mac_addresses) == 1 and len(ip_addresses) == 1:              
-
-                        devices_list.append({'name'     : host_name, 
-                                             'ip'       : ip_addresses[0], 
-                                             'mac'      : mac_addresses[0], 
-                                             'vendor'   : vendor, 
-                                             'interface': interface})
-                    else:
-                        mylog('verbose', [f"[{pluginName}] Skipped (Couldn't parse MAC or IP): ", lines])
+            for device in devices:
+                # Append to devices_list only if both IP and MAC addresses are present
+                if device.get('ip') and device.get('mac'):
+                    devices_list.append(device)
                 else:
-                    mylog('verbose', [f"[{pluginName}] Skipped (Not enough info in output): ", lines])
-    
+                    # Log an error if either IP or MAC address is missing
+                    mylog('verbose', [f"[{pluginName}] Skipped (Not enough info in output): ", device])
+        else:
+            # Log an error if nmap output is empty
+            mylog('verbose', [f"[{pluginName}] No output received for interface: ", interface])
+
     return devices_list
 
 
@@ -128,17 +110,67 @@ def execute_scan_on_interface (interface, timeout):
     scan_args = get_setting_value('NMAPDEV_ARGS').split() + interface.replace('--interface=','-e ').split()
 
     mylog('verbose', [f'[{pluginName}] scan_args: ', scan_args])   
-
-    # Execute command
+    
     try:
-        # try running a subprocess safely
         result = subprocess.check_output(scan_args, universal_newlines=True)
     except subprocess.CalledProcessError as e:
-        # An error occurred, handle it
-        error_type = type(e).__name__  # Capture the error type
+        error_type = type(e).__name__
         result = ""
+        mylog('verbose', [f'[{pluginName}] ERROR: ', error_type])   
 
     return result
+
+
+def parse_nmap_xml(xml_output, interface):
+    devices_list = []
+
+    try:
+        nm = nmap.PortScanner()
+        nm.analyse_nmap_xml_scan(xml_output)
+
+        mylog('verbose', [f'[{pluginName}] Number of hosts: ', len(nm.all_hosts())])  
+
+        for host in nm.all_hosts():
+            hostname = nm[host].hostname() or '(unknown)' 
+
+            ip = nm[host]['addresses']['ipv4'] if 'ipv4' in nm[host]['addresses'] else ''
+            mac = nm[host]['addresses']['mac'] if 'mac' in nm[host]['addresses'] else ''
+
+
+            mylog('verbose', [f'[{pluginName}] nm[host]: ', nm[host]]) 
+
+            vendor = ''
+            
+            if nm[host]['vendor']:
+                mylog('verbose', [f'[{pluginName}] entry: ', nm[host]['vendor']]) 
+ 
+                for key, value in nm[host]['vendor'].items():
+                    vendor = value
+            
+                    break
+
+ 
+            # Log debug information
+            mylog('verbose', [f"[{pluginName}] Hostname: {hostname}, IP: {ip}, MAC: {mac}, Vendor: {vendor}"])
+
+            # Only include devices with both IP and MAC addresses
+            if ip != '' and mac != '':
+                devices_list.append({
+                    'name': hostname,
+                    'ip': ip,
+                    'mac': mac,
+                    'vendor': vendor,
+                    'interface': interface
+                })
+            else:
+                # MAC or IP missing
+                mylog('verbose', [f"[{pluginName}] Skipping: {hostname}, IP or MAC missing"])
+
+
+    except Exception as e:
+        mylog('verbose', [f"[{pluginName}] Error parsing nmap XML: ", str(e)])
+
+    return devices_list
           
     
     
