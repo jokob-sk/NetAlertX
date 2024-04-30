@@ -31,7 +31,7 @@ In summary:
 2. Backup your current config and database (optional `devices.csv` to have a backup)
 3. Rename them to `app.db` `app.conf`
 4. Update the volume mappings in your `docker-compose.yaml`
-5. Place the renamed files the above locations. 
+5. Place the renamed files into the above locations. 
 
 
 > [!TIP] 

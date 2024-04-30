@@ -64,38 +64,50 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
-      <h1 id="pageTitle">
-          <i class="fa fa-cog"></i>
-          <?= lang('Navigation_Settings');?> 
-          <a style="cursor:pointer">
-            <span>
-              <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
-            </span> 
-          </a>
-      </h1>
 
-      <div class="col-sm-2 " title="<?= lang("settings_imported");?> ">
-        <div class="settingsImported">
-          <?= lang("settings_imported_label");?>           
-        </div>
+
+      <div class="col-sm-5">
+        <h1 id="pageTitle col-sm-3">
+            <i class="fa fa-cog"></i>
+            <?= lang('Navigation_Settings');?> 
+            <a style="cursor:pointer">
+              <span>
+                <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
+              </span> 
+            </a>
+        </h1>
       </div>
-      <div class="col-sm-10">
-        <span id="lastImportedTime"></span>
-      </div>           
+      
+
+      <div class="col-sm-7 settingsImportedTimestamp" title="<?= lang("settings_imported");?> ">
+        <div class="settingsImported ">
+          <?= lang("settings_imported_label");?>:          
+
+          <span id="lastImportedTime"></span>
+        </div>    
+      </div>
+       
 
           
     </section>
     <section class="content-header">
 
-    <div id="settingsOverview" class ="bg-white color-palette box panel panel-default col-sm-12 box-default box-info" > 
+    <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" > 
       <!-- Settings imported time -->
 
-      <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>       
-          </div>        
-          <div class =" col-sm-12" id=""></div>
-
+      
+      <a data-toggle="collapse" href="#settingsOverview">
+        <div class ="settings-group col-sm-12 panel-heading panel-title">
+            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>  
+        </div>     
+      </a>  
+        <div id="settingsOverview" class="panel-collapse collapse in"> 
+          <div class="panel-body"></div>
+        <div class =" col-sm-12" id=""></div>
+      </div>
     </section>
+
+
 
 
     <div class="content settingswrap " id="accordion_gen">
@@ -138,13 +150,37 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
    </div>
    
     <!-- /.content -->
-    <div class="row" >
-          <div class="row">
-            <button type="button" class="center top-margin  btn btn-primary btn-default pa-btn bg-green dbtools-button" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
+
+    <section class=" padding-bottom  col-sm-12">
+      <!-- needed so the filter & save button don't hide the settings -->
+    </section>
+
+
+      <section class=" settings-sticky-bottom-section  col-sm-10">
+        <div class="col-sm-8 settingsSearchWrap form-group has-success bg-white color-palette ">
+          <div class ="col-sm-8">
+            <i class="fa-solid fa-filter"></i> <?= lang("Gen_Filter");?>  
           </div>
-          <div id="result"></div>
-      </div>
+            <div class ="col-sm-12">
+
+              <input type="text" id="settingsSearch" class="form-control input-sm col-sm-12" placeholder="Filter Settings...">
+              <div class="clear-filter ">
+                <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('');filterRows();$('#settingsSearch').focus()"></i>
+              </div>
+
+            
+          </div>
+          
+        </div>
+
+        <div class="col-sm-4 saveSettingsWrapper">
+            <button type="button" class="   btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
+        </div>
+        <div id="result"></div>
+    </section>
 </div>
+
+
 
 
   <!-- /.content-wrapper -->
@@ -234,7 +270,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       index++;
     });
 
-    $('#settingsOverview').append(overviewSections_html);
+    $('#settingsOverview .panel-body').append(overviewSections_html);
 
     // Display warning 
     if(schedulesAreSynchronized(enabledDeviceScanners, pluginsData) == false)
@@ -441,11 +477,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
               </div>
               <div class="col-xs-3">
-                <button class="btn btn-primary" onclick="addInterface();initRemoveBtnOptn('${codeName}')">Add</button>
+                <button class="btn btn-primary" onclick="addInterface();initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initRemoveBtnOptn(${codeName})" multiple readonly>`;
+              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initListInteractionOptions(${codeName})" multiple readonly>`;
 
 
             options = createArray(val);
@@ -458,8 +494,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             inputHtml += `</select>
                         </div>
-                        <div class="col-xs-6">
-                            <button class="btn btn-primary" onclick="removeInterfaces()">Remove all</button>                            
+                        <div class="col-xs-12">
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
+                            ${getString("Gen_Remove_Last")}
+                          </button>     
+                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
+                            ${getString("Gen_Remove_All")}
+                          </button>                              
                         </div>`;
           } else if (setType === 'list' || setType === 'list.readonly') {
 
@@ -471,7 +512,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                   <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
                 </div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initRemoveBtnOptn('${codeName}')">Add</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
                 </div>
               </div>
               <div class="form-group">
@@ -485,7 +526,14 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             });
 
             inputHtml += '</select></div>' +
-            `<div><button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">Remove last</button></div>`;
+            `<div>
+                <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
+                  ${getString("Gen_Remove_Last")}
+                </button>     
+                <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
+                  ${getString("Gen_Remove_All")}
+                </button>                          
+            </div>`;
           } else if (setType === 'json') {
             inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
           }
@@ -523,7 +571,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           // init remove list item buttons
           if(['subnets', 'list' ].includes(setType))
           {
-            initRemoveBtnOptn(codeName)
+            initListInteractionOptions(codeName)
           }
           
         }
@@ -651,14 +699,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       settingsChanged();
     }
   }
-
-  // ---------------------------------------------------------
-  function removeInterfaces()
-  {
-    settingsChanged();
-    $('#SCAN_SUBNETS').empty();
-  }
-
   
   // ---------------------------------------------------------
   function saveSettings() {

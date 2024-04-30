@@ -22,7 +22,7 @@
     
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-      | <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank">Docs <i class="fa fa-circle-question"></i></a>
+      | <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs#documentation-overview" target="_blank">Docs <i class="fa fa-circle-question"></i></a>
       | <a href="https://github.com/jokob-sk/NetAlertX/issues"><i class="fa-solid fa-bug"></i></a> 
       | <a href="https://github.com/jokob-sk/NetAlertX/"><i class="fa-brands fa-github"></i></a> 
       | <a href="mailto:jokob@duck.com?subject=NetAlertX"><i class="fa-solid fa-envelope"></i></a> 

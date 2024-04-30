@@ -124,8 +124,7 @@
     if(allOpen == false || openOrClose == 'open')
     {
       // open all
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
-      $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
+      openAllSettings()
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(openIcon, closeIcon))
       
     }
@@ -135,6 +134,11 @@
       $('#toggleSettings').attr('class', $('#toggleSettings').attr('class').replace(closeIcon, openIcon))
     }
     
+  }
+
+  function openAllSettings() {
+    $('div[data-myid="collapsible"]').each(function(){$(this).attr('class', 'panel-collapse collapse in')})
+    $('div[data-myid="collapsible"]').each(function(){$(this).attr('style', 'height:inherit')})
   }
 
 
@@ -178,20 +182,131 @@
   }
 
 // -------------------------------------------------------------------
- // Function to remove an item from the select element
- function removeOptionItem(option) {
-    option.remove();
-  }
+// Manipulating Editable List options
+// -------------------------------------------------------------------
+
+
+// -------------------------------------------------------------------
+// Function to remove an item from the select element
+function removeOptionItem(option) {
+  settingsChanged();  
+  option.remove();
+}
+
+// -------------------------------------------------------------------
+// Update value of an item from the select element
+ function updateOptionItem(option, value) {
+  settingsChanged();  
+  option.html(value);
+}
+
+// -------------------------------------------------------------------
+// Remove all options
+function removeAllOptions(element)
+{
+  settingsChanged();    
+  $(`#${$(element).attr('my-input')}`).empty();
+  
+}
 
 // -------------------------------------------------------------------
 // Function to initialize remove functionality on select options 
-function initRemoveBtnOptn(selectorId) {
-  // Attach double-click event listeners to "Remove" 
-  $(`#${selectorId} option`).addClass('removable-option').on('dblclick', function() {
-      const $option = $(this);
-      removeOptionItem($option);
+
+// Counter to track number of clicks
+let clickCounter = 0;
+
+// Function to initialize list interaction options
+function initListInteractionOptions(selectorId) {
+  // Select all options within the specified selector
+  const $options = $(`#${selectorId} option`);
+
+  // Add class to make options interactable
+  $options.addClass('interactable-option');
+
+  // Attach click event listener to options
+  $options.on('click', function() {
+    const $option = $(this);
+
+    // Increment click counter
+    clickCounter++;
+
+    // Delay to capture multiple clicks
+    setTimeout(() => {
+      // Perform action based on click count
+      if (clickCounter === 1) {
+        // Single-click action
+        showModalFieldInput(
+          `<i class="fa-regular fa-pen-to-square"></i> ${getString('Gen_Update_Value')}`,
+          getString('settings_update_item_warning'),
+          getString('Gen_Cancel'),
+          getString('Gen_Update'),
+          $option.html(),
+          function() {
+            updateOptionItem($option, $(`#modal-field-input-field`).val())
+          }
+        );
+      } else if (clickCounter === 2) {
+        // Double-click action
+        removeOptionItem($option);
+      }
+
+      // Reset click counter
+      clickCounter = 0;
+    }, 300); // Adjust delay as needed
   });
 }
+
+
+// -------------------------------------------------------------------
+// Function to filter rows based on input text
+function filterRows(inputText) {
+
+  if(!inputText)
+  {
+    inputText = ''
+  }
+
+  $('.table_row').each(function() {
+    // Check if the row id ends with '__metadata'
+    var idAttribute = $(this).attr('id');
+    if (idAttribute && idAttribute.endsWith('__metadata')) {
+      $(this).hide(); // Hide the row if it ends with '__metadata'
+      return; // Skip to the next iteration
+    }
+
+    var description = $(this).find('.setting_description').text().toLowerCase();
+    var codeName = $(this).find('.setting_name code').text().toLowerCase();
+    if (description.includes(inputText.toLowerCase()) || codeName.includes(inputText.toLowerCase())) {
+      $(this).show(); // Show the row if it matches the input text
+    } else {
+      $(this).hide(); // Hide the row if it doesn't match the input text
+    }
+  });
+}
+
+setTimeout(() => {
+
+  // Event listener for input change
+  $('#settingsSearch').on('input', function() {
+    var searchText = $(this).val();
+    // hide the setting overview dashboard
+    $('#settingsOverview').collapse('hide');
+
+    filterRows(searchText);
+  });
+
+  // Event listener for input focus
+  // var firstFocus = true;
+  $('#settingsSearch').on('focus', function() {
+    openAllSettings()
+  });
+
+  
+  
+}, 1000);
+
+
+
 
 
 

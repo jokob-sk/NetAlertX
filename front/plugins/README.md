@@ -1,5 +1,3 @@
-> Community translations of this file (might be out-of-date): <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README_ES.md">Spanish(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/es.svg" alt="README_ES.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a>, <a href="https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README_DE.md">German(<img src="https://github.com/lipis/flag-icons/blob/main/flags/4x3/de.svg" alt="README_DE.md" style="height: 16px !important;width: 20px !important;padding-inline:3px !important;">)</a> 
-
 # 📚 Docs for individual plugins 
 
 >[!NOTE]

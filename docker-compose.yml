@@ -13,10 +13,8 @@ services:
     volumes:
       # - ${APP_DATA_LOCATION}/netalertx_dev/config:/app/config
       - ${APP_DATA_LOCATION}/netalertx/config:/app/config
-      # - ${APP_DATA_LOCATION}/netalertx/config:/home/pi/pialert/config
       # - ${APP_DATA_LOCATION}/netalertx_dev/db:/app/db      
       - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
-      # - ${APP_DATA_LOCATION}/netalertx/db:/home/pi/pialert/db 
       # (optional) useful for debugging if you have issues setting up the container
       # - ${LOGS_LOCATION}:/app/front/log      
       # ---------------------------------------------------------------------------

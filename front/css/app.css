@@ -718,6 +718,11 @@ height: 50px;
 }
 }
 
+.settingswrap
+{
+    margin-bottom: 100px;
+}
+
 .settingswrap .metadata
 {
     display: none;
@@ -727,6 +732,11 @@ height: 50px;
 {
     float: right;
 }
+
+.padding-bottom
+{
+    padding-bottom: 100px;
+} 
 
 .settings-group
 {   
@@ -875,26 +885,78 @@ input[readonly] {
     cursor: not-allowed;
   }
 
-  .removable-option:hover::before {
+  .interactable-option:hover::before {
     opacity: 1;
 }
 
-  .removable-option::before {
-    content: 'Double-click to ❌';
+  .interactable-option::before {
+    content: '1x 📝 | 2x 🚮';
     position: absolute;
     right: 0;
     top: 0;
     color: white;
-    background-color: rgb(255, 87, 87);
+    background-color: rgb(0, 0, 0);
     padding: 3px;
     transition: opacity 0.5s;
-    opacity: 0;
+    opacity: 0.1;
     border-radius: 3px;
 }
 
-.removable-option:hover {
+.interactable-option:hover {
     transition: background-color 2s;
     cursor: pointer;
+}
+
+.settingsImportedTimestamp
+{
+    padding: 25px;
+}
+
+.settingsSearchWrap
+{
+    padding:10px;
+}
+
+.settings-sticky-bottom-section {
+    position: fixed;
+    z-index: 999;
+    background-color: #5B5B66;
+    /* opacity: 0.8; */
+    bottom: 30px;
+    border-radius: 5px;
+    margin:1px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: inherit;
+    width: 87%;
+  }
+
+  .settings-sticky-bottom-section:hover {
+    border-color: #258744;
+  }
+
+.clear-filter
+{
+    opacity: 0.5;
+    cursor: pointer;
+    width: 14px;
+    position: absolute;
+    right: -6px;
+    top: 6px;
+
+}
+
+.clear-filter:hover
+{
+    opacity: 1;
+}
+
+.saveSettingsWrapper button
+{
+    width:70%;
+    margin-top:20px;
+    margin-left:15%;
+    margin-bottom:20px;
 }
 
 /* ----------------------------------------------------------------- */
@@ -963,11 +1025,23 @@ input[readonly] {
     height: 1.5em !important;
 }
 
+
+
+
+/* ----------------------------------------------------------------- */
+/* MODAL popups */
+/* ----------------------------------------------------------------- */
+
 #modal-input-textarea
 {
     width: 100%;
 }
 
+.modal-field-input
+{
+    margin: 4%;
+    width: 92%;
+}
 
 /* ----------------------------------------------------------------- */
 /* NETWORK page */
