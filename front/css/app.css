@@ -891,12 +891,12 @@ input[readonly] {
 
   .interactable-option::before {
     content: '1x 📝 | 2x 🚮';
-    position: absolute;
-    right: 0;
+    position: sticky;
+    right: 0px;
     top: 0;
     color: white;
+    float: right;
     background-color: rgb(0, 0, 0);
-    padding: 3px;
     transition: opacity 0.5s;
     opacity: 0.1;
     border-radius: 3px;

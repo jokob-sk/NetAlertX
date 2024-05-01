@@ -230,7 +230,7 @@ function cacheStrings()
 // Get translated language string
 function getString (key) {
 
-  // handle initial laod to make sure everything is set-up and cached
+  // handle initial load to make sure everything is set-up and cached
   handleFirstLoad(getString)
  
   UI_LANG = getSetting("UI_LANG");
@@ -864,6 +864,15 @@ function getGuid() {
 // -----------------------------------------------------------------------------
 function showSpinner(stringKey='Loading')
 {
+
+  if(stringKey == "")
+  {
+    text = ''
+  } else
+  {
+    text = getString(stringKey)
+  }
+
   if($("#loadingSpinner").length)
   {    
     $("#loadingSpinner").show();
@@ -875,7 +884,7 @@ function showSpinner(stringKey='Loading')
       <div class="pa_semitransparent-panel"></div>
       <div class="panel panel-default pa_spinner">
         <table>
-          <td width="130px" align="middle">${getString(stringKey)}</td>
+          <td width="130px" align="middle">${text}</td>
           <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
         </table>
       </div>
@@ -1109,9 +1118,9 @@ function isAppInitialized()
 // Define a function that will execute the code only once
 function executeOnce() {
 
-  if ( !isAppInitialized()) {
+  showSpinner('')
 
-    showSpinner()
+  if ( !isAppInitialized()) {
 
     // Use cache to keep track of completed AJAX calls    
     var tmp_completedCalls = getCache("completedCalls")

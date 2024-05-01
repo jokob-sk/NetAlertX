@@ -30,8 +30,8 @@ require dirname(__FILE__).'/security.php';
   <!-- jQuery 3 -->
   <script src="lib/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
 
-  <script src="js/common.js"></script>
-  <script src="js/modal.js"></script>
+  <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">

@@ -573,8 +573,11 @@ def resolve_device_name_pholus (pMAC, pIP, allRes, nameNotFound, match_IP = Fals
 import dns.resolver
 
 def cleanDeviceName(str, match_IP):
+
+    mylog('debug', ["[Name cleanup] NEWDEV_LESS_NAME_CLEANUP Setting:" + get_setting_value('NEWDEV_LESS_NAME_CLEANUP')])
+
     if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
-        mylog('debug', ["Using new cleanDeviceName(" + str + ")"])
+        mylog('debug', ["[Name cleanup] Using new cleanDeviceName(" + str + ")"])
 
         # replace all labels starting with underscore
         str = re.sub(r'^_[^\.]*\.', '', str)   # leading label
@@ -605,13 +608,13 @@ def cleanDeviceName(str, match_IP):
             str = str + " (IP match)"
 
         # done
-        mylog('debug', ["cleanDeviceName = " + str])
+        mylog('debug', ["[Name cleanup] cleanDeviceName = " + str])
         return str
 
     ################################
     #
     # OLD cleanDeviceName
-    mylog('debug', ["Using old cleanDeviceName(" + str + ")"])
+    mylog('debug', ["[Name cleanup] Using old cleanDeviceName(" + str + ")"])
 
     # alternative str.split('.')[0]
     str = str.replace("._airplay", "")

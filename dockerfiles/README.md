@@ -18,7 +18,8 @@
 
 ## 📕 Basic Usage 
 
-- You will have to run the container on the `host` network, e.g: 
+> [!WARNING]
+> You will have to run the container on the `host` network.
 
 ```yaml
 docker run -d --rm --network=host \
@@ -63,26 +64,16 @@ docker run -d --rm --network=host \
 - You can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/config) directly, if needed.
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
 
-#### Important settings
+### ⚙ Important settings
 
-These are the most important settings to get at least some output in your Devices screen. Usually, only one approach is used, but you should be able to combine these approaches.
+These are the most important settings to get at least some output in your Devices screen. Usually, only one approach is used, but you can combine these approaches.
 
-##### For arp-scan: ARPSCAN_RUN, SCAN_SUBNETS
+| Scan method | Setting | Description |
+| :------------- | :------------- | :-------------| 
+| arp-scan, nmap-scan | `SCAN_SUBNETS` | See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) |
+| PiHole | `PIHOLE_RUN` | There are 2 approaches how to get PiHole devices imported. Via the PiHole import (`PIHOLE`) plugin or DHCP leases (`DHCPLSS`) plugin. The `PIHOLE` plugin requires you to map the PiHole database, as mentioned above. |
+| dhcp.leases | `DHCPLSS_RUN` | You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. This path has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (If using a PiHole dhcp.leases file the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file). |
 
-- ❗ To use the arp-scan method, you need to set the `SCAN_SUBNETS` variable. See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) 
-
-##### For pihole: PIHOLE_RUN, DHCPLSS_RUN
-
-There are 2 approaches how to get PiHole devices imported. Via the PiHole import (PIHOLE) plugin or DHCP leases (DHCPLSS) plugin.
-
-**PiHole (Device sync)**
-
-* `PIHOLE_RUN`: You need to map `:/etc/pihole/pihole-FTL.db` in the `docker-compose.yml` file if you enable this setting.
-
-**DHCP Leases (Device import)**
-
-* `DHCPLSS_RUN`: You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. 
-* The above setting has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file).
 
 > [!NOTE]
 > It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.

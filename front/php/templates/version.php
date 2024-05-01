@@ -16,6 +16,6 @@
         echo file_get_contents($filename);
     }
     else{
-        echo "File not found";
+        echo date('Y-m-d H:i:s') . " - N/A";
     }               
 ?>

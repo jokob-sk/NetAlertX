@@ -53,9 +53,9 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 <!-- Page ------------------------------------------------------------------ -->
 <!-- Page ------------------------------------------------------------------ -->
 
-<script src="js/settings_utils.js"></script>
-<script src="js/db_methods.js"></script>
-<script src="js/ui_components.js"></script>
+<script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+<script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 <script src="lib/crypto/crypto-js.min.js"></script>
 
 
@@ -63,7 +63,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
-    <?php require 'php/templates/notification.php'; ?>
+    
 
 
       <div class="col-sm-5">
@@ -487,7 +487,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             options = createArray(val);
 
             options.forEach(option => {
-              inputHtml += `<option value="${option}" disabled>${option}</option>`;
+              inputHtml += `<option value="${option}" >${option}</option>`;
             });
 
             
@@ -522,7 +522,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
             options.forEach(option => {
 
-              inputHtml += `<option value="${option}" disabled>${option}</option>`;
+              inputHtml += `<option value="${option}" >${option}</option>`;
             });
 
             inputHtml += '</select></div>' +
@@ -568,7 +568,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           // generate settings in the correct group section
           $(`#${group} .panel-body`).append(setHtml);
 
-          // init remove list item buttons
+          // init remove and edit listitem click gestures
           if(['subnets', 'list' ].includes(setType))
           {
             initListInteractionOptions(codeName)

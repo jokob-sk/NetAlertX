@@ -227,6 +227,8 @@ function initListInteractionOptions(selectorId) {
   $options.on('click', function() {
     const $option = $(this);
 
+    console.log('aaa');
+
     // Increment click counter
     clickCounter++;
 

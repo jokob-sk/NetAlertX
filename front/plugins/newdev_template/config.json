@@ -606,7 +606,7 @@
             }
           ]
         },
-	{
+	      {
           "function": "LESS_NAME_CLEANUP",
           "type": "integer.checkbox",
           "default_value": 0,

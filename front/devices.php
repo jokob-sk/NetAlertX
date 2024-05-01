@@ -25,7 +25,7 @@
   checkPermissions([$dbPath, $confPath]);
 ?>
 
-<script src="js/ui_components.js"></script>
+<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
@@ -127,7 +127,7 @@
               </div>
               <div class="box-body">
                 <div class="chart">
-                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
+                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
                   <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
                 </div>
               </div>
