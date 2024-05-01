@@ -948,8 +948,6 @@ window.onload = function asyncFooter()
 
 </script>
 
-<link rel="stylesheet" href="lib/AdminLTE/bower_components/select2/dist/css/select2.min.css">
-<script src="lib/AdminLTE/bower_components/select2/dist/js/select2.full.min.js"></script>
-<script src="lib/AdminLTE/bower_components/jquery-ui/jquery-ui.min.js"></script>
+
 
 

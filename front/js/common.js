@@ -1043,169 +1043,130 @@ function arraysContainSameValues(arr1, arr2) {
 // -----------------------------------------------------------------------------
 
 // Define a unique key for storing the flag in sessionStorage
-var sessionStorageKey = "myScriptExecuted_common_js";
-
-// -----------------------------------------------------------------------------
-// Clearing all the caches
-function clearCache()
-{
-  showSpinner()
-  resetInitializedFlag()
-  window.location.reload()
-}
-
-
-// -----------------------------------------------------------------------------
-function resetInitializedFlag()
-{
-  // Clear local storage
-  localStorage.clear();
-  // Set the flag in sessionStorage to indicate that the code and cahce needs to be reloaded
-  sessionStorage.setItem(sessionStorageKey, "false");
-}
-
-
-
-// -----------------------------------------------------------------------------
-// check if cache needs to be refreshed because of setting changes 
-$.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
-
-  console.log(appState["settingsImported"]*1000)
-  
-  importedMiliseconds = parseInt((appState["settingsImported"]*1000));
-
-  lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
-
-  if(importedMiliseconds > lastReloaded)
-  {
-    console.log("Cache needs to be refreshed because of setting changes");
-    setTimeout(() => {
-      resetInitializedFlag()
-      location.reload();
-      
-    }, 500);
-
-  }
-
-});
-
-// -----------------------------------------------------------------------------
-// Display spinner and reload page if not yet initialized
-function handleFirstLoad(callback)
-{
-  if(!isAppInitialized())
-  {
-    setTimeout(function() {
-      
-      callback(); 
-    }, 1000);
-  }
-}
-
-
-// -----------------------------------------------------------------------------
-// Check if the code has been executed before by checking sessionStorage
+const sessionStorageKey = "myScriptExecuted_common_js";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
 
-
 // -----------------------------------------------------------------------------
-function isAppInitialized()
-{
-   return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final)
+// Clearing all the caches
+function clearCache() {
+  showSpinner();
+  resetInitializedFlag();
+  window.location.reload();
 }
 
-// Define a function that will execute the code only once
-function executeOnce() {
+// -----------------------------------------------------------------------------
+function resetInitializedFlag() {
+  // Clear both sessionStorage and localStorage
+  sessionStorage.clear();
+  localStorage.clear();
+}
 
-  showSpinner('')
+// -----------------------------------------------------------------------------
+// Function to check if cache needs to be refreshed because of setting changes
+function checkSettingChanges() {
+  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+    const importedMilliseconds = parseInt(appState["settingsImported"] * 1000);
+    const lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
 
-  if ( !isAppInitialized()) {
-
-    // Use cache to keep track of completed AJAX calls    
-    var tmp_completedCalls = getCache("completedCalls")
-
-    // initialize from cache if values present
-    if(tmp_completedCalls != "")
-    {
-      completedCalls = tmp_completedCalls.split(',');
+    if (importedMilliseconds > lastReloaded) {
+      console.log("Cache needs to be refreshed because of setting changes");
+      setTimeout(() => {
+        resetInitializedFlag();
+        location.reload();
+      }, 500);
     }
+  });
+}
 
-    // cache everything in the right order
-    cacheStrings()
-    .then(cacheSettings)
-    .then(cacheDevices)
-    .then(() => {
-      // All callbacks have completed
-      console.log("✅ All AJAX callbacks have completed");
-      // location.reload()
-      onAllCallsComplete();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-    
+// -----------------------------------------------------------------------------
+// Display spinner and reload page if not yet initialized
+async function handleFirstLoad(callback) {
+  if (!isAppInitialized()) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    callback();
   }
 }
 
+// -----------------------------------------------------------------------------
+// Check if the code has been executed before by checking sessionStorage
+function isAppInitialized() {
+   return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
+}
+
+// Define a function that will execute the code only once
+async function executeOnce() {
+  showSpinner();
+
+  if (!isAppInitialized()) {
+    try {
+      await cacheStrings();
+      await cacheSettings();
+      await cacheDevices();
+      console.log("✅ All AJAX callbacks have completed");
+      onAllCallsComplete();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+}
 
 // -----------------------------------------------------------------------------
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
-  console.log(`AJAX call successful: ${callName} `);
-  // store completed call
-  completedCalls.push(callName)  
-
-  setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]))
-
+  console.log(`AJAX call successful: ${callName}`);
+  completedCalls.push(callName);
+  setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]));
 };
 
 // -----------------------------------------------------------------------------
 // Function to handle failure of an AJAX call
 const handleFailure = (callName, callback) => {
-  // Handle AJAX call failure here
   console.error(`AJAX call ${callName} failed`);
-
-  // try until successful
-  // callback()
+  // Implement retry logic here if needed
 };
 
 // -----------------------------------------------------------------------------
 // Function to execute when all AJAX calls have completed
 const onAllCallsComplete = () => {
-
-  // Merge local completedCalls with completedCalls_cached array - ensure uniqueness
-  // if cache contains values, merge those two arrays
-  completedCalls = mergeUniqueArrays(getCache('completedCalls').split(','), completedCalls)
-
-  // Update cache with merged completedCalls
+  completedCalls = mergeUniqueArrays(getCache('completedCalls').split(','), completedCalls);
   setCache('completedCalls', completedCalls);
 
-  // Set the flag in sessionStorage to indicate that the code has been executed 
-  // and save time when last time the page was initialized
-  sessionStorage.setItem(sessionStorageKey, "true");    
-  const millisecondsNow = Date.now();
-  sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
+  // Check if all necessary strings are initialized
+  if (areAllStringsInitialized()) {
+    sessionStorage.setItem(sessionStorageKey, "true");
+    const millisecondsNow = Date.now();
+    sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
 
-  console.log('✔ Cache intialized');
+    console.log('✔ Cache initialized');
+  } else {
+    // If not all strings are initialized, retry initialization
+    console.log('❌ Not all strings are initialized. Retrying...');
+    executeOnce();
+    return;
+  }
 
-  location.reload(); 
+  // Call any other initialization functions here if needed
 
+  // No need for location.reload() here
+};
+
+// Function to check if all necessary strings are initialized
+const areAllStringsInitialized = () => {
+  // Implement logic to check if all necessary strings are initialized
+  // Return true if all strings are initialized, false otherwise
+  return getString('UI_LANG') != ""
 };
 
 // Call the function to execute the code
 executeOnce();
 
-// Set timer for page refresh if configured
-setTimeout(() => {
-  const refreshTime = getSetting("UI_REFRESH");
-  if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
-    newTimerRefreshData(clearCache, parseInt(refreshTime)*1000);
-  }
-}, 10000);
 
+// Set timer for page refresh if configured
+setTimeout(checkSettingChanges, 10000);
 
 console.log("init common.js");
+
 
 
 

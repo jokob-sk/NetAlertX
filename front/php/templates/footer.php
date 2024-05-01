@@ -41,23 +41,24 @@
 <!-- ./wrapper -->
         
 <!-- Bootstrap 3.3.7 -->
-  <script src="lib/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- jQuery UI -->
+<script src="lib/AdminLTE/bower_components/jquery-ui/jquery-ui.min.js"></script>
 
 <!-- AdminLTE App -->
-  <script src="lib/AdminLTE/dist/js/adminlte.min.js"></script>
+<script src="lib/AdminLTE/dist/js/adminlte.min.js"></script>
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. -->
+<!-- Select2 CSS -->
+<link rel="stylesheet" href="lib/AdminLTE/bower_components/select2/dist/css/select2.min.css">
 
-<!-- SlimScroll -->
-  <!-- <script src="lib/AdminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script> -->
-<!-- FastClick -->
-  <!-- <script src="lib/AdminLTE/bower_components/fastclick/lib/fastclick.js"></script>  -->
+<!-- NetAlertX -->
+<script src="js/handle_version.js"></script>
+<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
-<!-- NetAlertX -------------------------------------------------------------- -->
+<!-- Select2 JavaScript -->
+<script src="lib/AdminLTE/bower_components/select2/dist/js/select2.full.min.js" defer></script>
 
-  <script src="js/handle_version.js"></script>
 
   <?php
     require 'migrationCheck.php';

@@ -13,13 +13,13 @@
 // -----------------------------------------------------------------------------
 function initDeviceSelectors() {
 
-  console.log(devicesList)
+  // console.log(devicesList)
   // Retrieve device list from session variable
   var devicesListAll_JSON = getCache('devicesListAll_JSON');
 
   var devicesList = JSON.parse(devicesListAll_JSON);
 
-  console.log(devicesList);
+  // console.log(devicesList);
 
 
   // Check if both device list exists
@@ -78,35 +78,8 @@ function initDeviceSelectors() {
 }
 
 
-// --------------------------------------------------------
-//Initialize Select2 Elements and make them sortable
 
-$(function () {
-  // Iterate over each Select2 dropdown
-  $('.select2').each(function() {
-      var selectEl = $(this).select2();
 
-      // Apply sortable functionality to the dropdown's dropdown-container
-      selectEl.next().children().children().children().sortable({
-          containment: 'parent',
-          update: function () {
-              var sortedValues = $(this).children().map(function() {
-                  return $(this).attr('title');
-              }).get();
-
-              var sortedOptions = selectEl.find('option').sort(function(a, b) {
-                  return sortedValues.indexOf($(a).text()) - sortedValues.indexOf($(b).text());
-              });
-
-              // Replace all options in selectEl
-              selectEl.empty().append(sortedOptions);
-
-              // Trigger change event on Select2
-              selectEl.trigger('change');
-          }
-      });
-  });
-});
 
 
 
@@ -281,6 +254,43 @@ function updateIconPreview (inputId) {
 // initialize
 // -----------------------------------------------------------------------------
 
-initDeviceSelectors();
+
+setTimeout(() => {
+
+  initDeviceSelectors();
+
+
+  // --------------------------------------------------------
+  //Initialize Select2 Elements and make them sortable
+
+  $(function () {
+    // Iterate over each Select2 dropdown
+    $('.select2').each(function() {
+        var selectEl = $(this).select2();
+  
+        // Apply sortable functionality to the dropdown's dropdown-container
+        selectEl.next().children().children().children().sortable({
+            containment: 'parent',
+            update: function () {
+                var sortedValues = $(this).children().map(function() {
+                    return $(this).attr('title');
+                }).get();
+  
+                var sortedOptions = selectEl.find('option').sort(function(a, b) {
+                    return sortedValues.indexOf($(a).text()) - sortedValues.indexOf($(b).text());
+                });
+  
+                // Replace all options in selectEl
+                selectEl.empty().append(sortedOptions);
+  
+                // Trigger change event on Select2
+                selectEl.trigger('change');
+            }
+        });
+    });
+  });
+  
+}, 500);
+
 
 console.log("init ui_components.js")

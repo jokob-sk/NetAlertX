@@ -25,7 +25,6 @@
   checkPermissions([$dbPath, $confPath]);
 ?>
 
-<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
@@ -251,7 +250,11 @@ function main () {
   handleLoadingDialog()
 
   // Hide UI elements as per settings
-  hideUIelements("UI_DEV_SECTIONS")
+  // setTimeout(() => {
+    hideUIelements("UI_DEV_SECTIONS")
+    
+  // }, 10);
+  
 
   // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
   cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  

@@ -15,7 +15,7 @@
         <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
       </div>
-    <div class="deviceSelector col-md-9"></div> 
+    <div class="deviceSelector col-md-9" style="z-index:5"></div> 
 
     <div class="col-md-3"> 
       <button type="button" class="btn btn-default" onclick="markAllSelected()"> 
@@ -325,7 +325,7 @@ getData();
 </script>
 
 <!-- ----------------------------------------------------------------------- -->
-<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+
 <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 <!-- ----------------------------------------------------------------------- -->
 

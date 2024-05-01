@@ -55,7 +55,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
-<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 <script src="lib/crypto/crypto-js.min.js"></script>
 
 
