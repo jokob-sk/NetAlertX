@@ -574,8 +574,6 @@ import dns.resolver
 
 def cleanDeviceName(str, match_IP):
 
-    mylog('debug', ["[Name cleanup] NEWDEV_LESS_NAME_CLEANUP Setting:" + get_setting_value('NEWDEV_LESS_NAME_CLEANUP')])
-
     if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
         mylog('debug', ["[Name cleanup] Using new cleanDeviceName(" + str + ")"])
 
