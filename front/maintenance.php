@@ -327,37 +327,37 @@ $db->close();
         <div class="tab-pane" id="tab_DBTools">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?= lang('Maintenance_Tool_del_empty_macs');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_empty_macs_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?= lang('Maintenance_Tool_del_alldev');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_alldev_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?= lang('Maintenance_Tool_del_unknowndev');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_unknowndev_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?= lang('Maintenance_Tool_del_allevents');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?= lang('Maintenance_Tool_del_allevents30');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents30_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?= lang('Maintenance_Tool_del_ActHistory');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
@@ -367,31 +367,31 @@ $db->close();
         <div class="tab-pane" id="tab_BackupRestore">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?= lang('Maintenance_Tool_backup');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_backup_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" onclick="askPiaRestoreDBfromArchive()"><?= lang('Maintenance_Tool_restore');?><br><?php echo $latestbackup_date;?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_restore_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?= lang('Maintenance_Tool_purgebackup');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_purgebackup_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="askExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
                     </div>
                     <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?= lang('Maintenance_Tool_ImportCSV');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportCSV_text');?></div>
@@ -922,8 +922,10 @@ function initializeTabs () {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       var target = $(e.target).attr("href") // activated tab
     });
+
+    hideSpinner();
      
-    }, 50);
+  }, 50);
   
 }
 

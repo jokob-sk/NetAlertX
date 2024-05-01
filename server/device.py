@@ -406,7 +406,7 @@ def query_MAC_vendor (pMAC):
     pMACstr = str(pMAC)
     
     # Check MAC parameter
-    mac = pMACstr.replace (':','')
+    mac = pMACstr.replace (':','').lower()
     if len(pMACstr) != 17 or len(mac) != 12 :
         return -2 # return -2 if ignored MAC
 
@@ -417,14 +417,15 @@ def query_MAC_vendor (pMAC):
     try:
         with open(vendorsPath, 'r') as f:
             for line in f:
-                if line.startswith(mac_start_string6):                    
+                line_lower = line.lower()  # Convert line to lowercase for case-insensitive matching
+                if line_lower.startswith(mac_start_string6):                 
                     parts = line.split(' ', 1)
                     if len(parts) > 1:
                         vendor = parts[1].strip()
                         mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"])
                         return vendor
                     else:
-                        mylog('debug', [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line}"'])
+                        mylog('debug', [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'])
                         return -1
 
 
