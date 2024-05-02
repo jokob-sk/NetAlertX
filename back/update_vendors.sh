@@ -12,56 +12,31 @@
 # ----------------------------------------------------------------------
 #  Main directories to update:
 #    /usr/share/arp-scan
-#    /usr/share/ieee-data
-#    /var/lib/ieee-data
 # ----------------------------------------------------------------------
+
 echo "---------------------------------------------------------"
 echo "[INSTALL]                           Run update_vendors.sh"
 echo "---------------------------------------------------------"
 
-# ----------------------------------------------------------------------
-echo Updating... /usr/share/ieee-data/
-cd /usr/share/ieee-data/ || { echo "could not enter /usr/share/ieee-data directory"; exit 1; }
-
-sudo mkdir -p 2_backup
-sudo cp -- *.txt 2_backup
-sudo cp -- *.csv 2_backup
-echo ""
-echo Download Start
-echo ""
-sudo curl "$1" -LO https://standards-oui.ieee.org/oui28/mam.csv \              
-              -LO https://standards-oui.ieee.org/oui28/mam.csv \
-              -LO https://standards-oui.ieee.org/oui28/mam.txt \
-              -LO https://standards-oui.ieee.org/oui36/oui36.csv \
-              -LO https://standards-oui.ieee.org/oui36/oui36.txt \
-              -LO https://standards-oui.ieee.org/oui/oui.csv \
-              -LO https://standards-oui.ieee.org/oui/oui.txt
-echo ""
-echo Download Finished
+DL_DIR=/usr/share/arp-scan
 
 # ----------------------------------------------------------------------
-echo ""
-echo Updating... /usr/share/arp-scan/
-cd /usr/share/arp-scan || { echo "could not enter /usr/share/arp-scan directory"; exit 1; }
+echo Updating... $DL_DIR
+cd $DL_DIR || { echo "could not enter $DL_DIR directory"; exit 1; }
 
-sudo mkdir -p 2_backup
-sudo cp -- *.txt 2_backup
+# Define the URL of the IEEE OUI file
+IEEE_OUI_URL="http://standards-oui.ieee.org/oui/oui.txt"
 
-# Update from /usb/lib/ieee-data
-sudo get-iab -v
-sudo get-oui -v
+# Download the file using wget
+wget "$IEEE_OUI_URL" -O ieee-oui_dl.txt
 
-# make files readable
-sudo chmod +r /usr/share/arp-scan/ieee-oui.txt
+# Filter lines containing "(base 16)" and remove the "(base 16)" string
+grep "(base 16)" ieee-oui_dl.txt | sed 's/ *(base 16)//' > ieee-oui_new.txt
 
-# Update from ieee website
-# sudo get-iab -v -u http://standards-oui.ieee.org/iab/iab.txt
-# sudo get-oui -v -u http://standards-oui.ieee.org/oui/oui.txt
+# Combine ieee-oui_new.txt and ieee-oui.txt, and extract unique MAC start values along with vendor names
 
-# Update from ieee website develop
-# sudo get-iab -v -u http://standards.ieee.org/develop/regauth/iab/iab.txt
-# sudo get-oui -v -u http://standards.ieee.org/develop/regauth/oui/oui.txt
+cat ieee-oui.txt ieee-oui_new.txt >> ieee-oui_all.txt
+sort ieee-oui_all.txt > ieee-oui_all_sort.txt
+awk '{$1=$1; print}' ieee-oui_all_sort.txt | sort -u > ieee-oui_all_filtered.txt
 
-# Update from Sanitized oui (linuxnet.ca)
-# sudo get-oui -v -u https://linuxnet.ca/ieee/oui.txt
 

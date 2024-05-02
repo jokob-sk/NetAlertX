@@ -17,7 +17,7 @@ apiPath             = applicationPath + '/front/api/'
 reportTemplatesPath = applicationPath + '/front/report_templates/'
 fullConfPath        = applicationPath + confPath
 fullDbPath          = applicationPath + dbPath
-vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'
+vendorsPath         = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
 
        
 
