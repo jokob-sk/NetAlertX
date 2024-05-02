@@ -56,6 +56,7 @@ def get_entries(path, plugin_objects):
         # Use the detected encoding
         encoding = result['encoding']
 
+        # Order: MAC, IP, IsActive, NAME, Hardware 
         # Handle pihole-specific dhcp.leases files
         if 'pihole' in path:
             with open(path, 'r', encoding=encoding, errors='replace') as f:
@@ -68,6 +69,24 @@ def get_entries(path, plugin_objects):
                             watched1    = handleEmpty('True'),
                             watched2    = handleEmpty(row[3]),
                             watched3    = handleEmpty(row[4]),
+                            watched4    = handleEmpty('True'),
+                            extra       = handleEmpty(path),
+                            foreignKey  = handleEmpty(row[1])
+                        )
+        elif 'dnsmasq' in path:
+            # [Lease expiry time] [mac address] [ip address] [hostname] [client id, if known]
+            # e.g.
+            # 1715932537 01:5c:5c:5c:5c:5c:5c 192.168.1.115 ryans-laptop 01:5c:5c:5c:5c:5c:5c
+            with open(path, 'r', encoding=encoding, errors='replace') as f:
+                for line in f:
+                    row = line.rstrip().split()
+                    if len(row) > 3:
+                        plugin_objects.add_object(
+                            primaryId   = handleEmpty(row[1]),
+                            secondaryId = handleEmpty(row[2]),
+                            watched1    = handleEmpty('True'),
+                            watched2    = handleEmpty(row[3]),
+                            watched3    = '',
                             watched4    = handleEmpty('True'),
                             extra       = handleEmpty(path),
                             foreignKey  = handleEmpty(row[1])

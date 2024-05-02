@@ -11,11 +11,16 @@
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 #---------------------------------------------------------------------------------#
 
-    $filename = "/app/.VERSION";
-    if(file_exists($filename)) {
-        echo file_get_contents($filename);
+$filename = "/app/.VERSION";
+if(file_exists($filename)) {
+    $fileContents = file_get_contents($filename);
+    if(trim($fileContents) === 'Dev') {
+        echo date('H:i:s') . " - " . $fileContents;
+    } else {
+        echo $fileContents;
     }
-    else{
-        echo date('Y-m-d H:i:s') . " - N/A";
-    }               
+}
+else {
+    echo date('H:i:s') . " - N/A";
+}           
 ?>
