@@ -2,10 +2,11 @@
 import subprocess
 
 import conf
+import os
 import re
 from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nslookup, check_IP_format
 from logger import mylog, print_log
-from const import vendorsPath
+from const import vendorsPath, vendorsPathNewest
 
 #-------------------------------------------------------------------------------
 # Device object handling (WIP)
@@ -404,6 +405,11 @@ def check_mac_or_internet(input_str):
 def query_MAC_vendor (pMAC):
 
     pMACstr = str(pMAC)
+
+    filePath = vendorsPath
+    
+    if os.path.isfile(vendorsPathNewest):
+        filePath = vendorsPathNewest
     
     # Check MAC parameter
     mac = pMACstr.replace (':','').lower()
