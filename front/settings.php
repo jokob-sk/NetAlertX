@@ -782,7 +782,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               window.onbeforeunload = null;         
 
               // Reloads the current page
-              setTimeout("window.location.reload()", 3000);            
+              setTimeout("clearCache()", 5000);            
             
             }
           });

@@ -1051,15 +1051,9 @@ var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
 // Clearing all the caches
 function clearCache() {
   showSpinner();
-  resetInitializedFlag();
-  window.location.reload();
-}
-
-// -----------------------------------------------------------------------------
-function resetInitializedFlag() {
-  // Clear both sessionStorage and localStorage
   sessionStorage.clear();
   localStorage.clear();
+  window.location.reload();
 }
 
 // -----------------------------------------------------------------------------
@@ -1072,8 +1066,7 @@ function checkSettingChanges() {
     if (importedMilliseconds > lastReloaded) {
       console.log("Cache needs to be refreshed because of setting changes");
       setTimeout(() => {
-        resetInitializedFlag();
-        location.reload();
+        clearCache();
       }, 500);
     }
   });
@@ -1161,9 +1154,20 @@ const areAllStringsInitialized = () => {
 // Call the function to execute the code
 executeOnce();
 
+// Set timer for regular checks 
+setTimeout(() => {
+  
+  // page refresh if configured
+  const refreshTime = getSetting("UI_REFRESH");
+  if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
+    newTimerRefreshData(clearCache, parseInt(refreshTime)*1000);
+  }
 
-// Set timer for page refresh if configured
-setTimeout(checkSettingChanges, 10000);
+  // Check if page needs to refresh due to setting changes
+  checkSettingChanges()
+
+}, 10000);
+
 
 console.log("init common.js");
 
