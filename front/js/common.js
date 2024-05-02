@@ -201,7 +201,7 @@ function cacheStrings()
     if(!getCache('completedCalls').includes('cacheStrings'))
     {
       // handle core strings and translations
-      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl"]; // needs to be same as in lang.php
+      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn"]; // needs to be same as in lang.php
 
       allLanguages.forEach(function (language_code) {
         $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
@@ -265,6 +265,9 @@ function getString (key) {
       break;
     case 'Russian': 
       lang_code = 'ru_ru';
+      break;
+    case 'Chinese (zh_cn)': 
+      lang_code = 'zh_cn';
       break;
   }
   result = getCache(`pia_lang_${key}_${lang_code}`, true);
@@ -1156,7 +1159,7 @@ executeOnce();
 
 // Set timer for regular checks 
 setTimeout(() => {
-  
+
   // page refresh if configured
   const refreshTime = getSetting("UI_REFRESH");
   if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
