@@ -72,7 +72,7 @@ These are the most important settings to get at least some output in your Device
 | :------------- | :------------- | :-------------| 
 | arp-scan, nmap-scan | `SCAN_SUBNETS` | See the documentation on how [to setup SUBNETS, VLANs & limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) |
 | PiHole | `PIHOLE_RUN` | There are 2 approaches how to get PiHole devices imported. Via the PiHole import (`PIHOLE`) plugin or DHCP leases (`DHCPLSS`) plugin. The `PIHOLE` plugin requires you to map the PiHole database, as mentioned above. |
-| dhcp.leases | `DHCPLSS_RUN` | You need to map `:/etc/pihole/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. This path has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (If using a PiHole dhcp.leases file the path in the container must contain `pihole` as PiHole uses a different format of the `dhcp.leases` file). |
+| dhcp.leases | `DHCPLSS_RUN` | You need to map `:/etc/myfiles/dhcp.leases` in the `docker-compose.yml` file if you enable this setting. This path has to be matched with a corresponding `DHCPLSS_paths_to_check` setting entry (check the [DHCPLSS plugin readme](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_leases#overview) for details). |
 
 
 > [!NOTE]

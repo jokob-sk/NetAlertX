@@ -278,8 +278,9 @@ def mqtt_start(db):
         mqtt_client = mqtt_create_client()     
 
 
-    deviceName = get_setting_value('MQTT_DEVICE_NAME')
-    deviceId = get_setting_value('MQTT_DEVICE_ID')    
+    deviceName      = get_setting_value('MQTT_DEVICE_NAME')
+    deviceId        = get_setting_value('MQTT_DEVICE_ID')    
+    presenceSenType = get_setting_value('PRESENCE_SENSOR_TYPE')    
     
     # General stats    
 
@@ -324,7 +325,7 @@ def mqtt_start(db):
             deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
-            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, presenceSenType, 'is_present', 'wifi', device["dev_MAC"])
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
@@ -340,7 +341,7 @@ def mqtt_start(db):
                 }
             ) 
 
-            publish_mqtt(mqtt_client, 'system-sensors/binary_sensor/'+deviceId+'/state', 
+            publish_mqtt(mqtt_client, f'system-sensors/{presenceSenType}/{deviceId}/state', 
                 { 
                     "is_present": to_binary_sensor(str(device["dev_PresentLastScan"]))
                 }

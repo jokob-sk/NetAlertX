@@ -426,36 +426,6 @@
             }]
         },
         {
-            "function": "DEVICE_ID",
-            "type": "text",
-            "default_value": "netalertx",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Device ID"
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "The root path of the sensor"
-				}]
-        },
-        {
-            "function": "DEVICE_NAME",
-            "type": "text",
-            "default_value": "NetAlertX",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Device name"
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "The name used for the devices."
-				}]
-        },
-        {
             "function": "PASSWORD",
             "type": "password",
             "default_value": "",
@@ -555,7 +525,37 @@
                 "string" : "Check to send overal device stats, such as number of Online and Offline devices."
             }
             ]
-        },         
+        },      
+        {
+            "function": "DEVICE_ID",
+            "type": "text",
+            "default_value": "netalertx",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Device ID"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The root path of the stats overview sensor. Inserted into the <code>system-sensors/sensor/{DEVICE_ID}/state</code> topic."
+				}]
+        },
+        {
+            "function": "DEVICE_NAME",
+            "type": "text",
+            "default_value": "NetAlertX",
+            "options": [],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Device name"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "The name used for the stats overview device."
+				}]
+        },   
         {
             "function": "SEND_DEVICES",
             "type": "boolean",
@@ -571,6 +571,24 @@
                 "language_code":"en_us",
                 "string" : "Check to send individual devices to the broker with details, such as <code>is_new</code>, <code>is_present</code>, or <code>mac_address</code> of the devices."
             }
+            ]
+        },
+        {
+            "function": "PRESENCE_SENSOR_TYPE",         
+            "events": [],   
+            "type": "text.select",            
+            "default_value":"binary_sensor",
+            "options": ["binary_sensor", "device_tracker" ],
+            "localized": ["name", "description"],
+            "name" :[{
+                "language_code": "en_us",
+                "string" : "Presence Sensor Type"
+				}],
+            "description": [
+                {
+                "language_code": "en_us",
+                "string" : "The type of the sensor that should be generated for the <code>is_present</code> sensor. Inserted into the <code>homeassistant/{PRESENCE_SENSOR_TYPE}/mac_44_ef_44_ef_44_ef/is_present/</code> topic. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/_publisher_mqtt/README.md#usage\">Plugin readme</a> for details."
+				}
             ]
         }         
     ]
