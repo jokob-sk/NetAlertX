@@ -449,67 +449,6 @@
             }]
         },
         {
-            "function": "QOS",
-            "type": "integer.select",
-            "default_value": 0,
-            "options": [0, 1, 2],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "MQTT Quality of Service"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Calidad de servicio MQTT"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Quality of service setting for MQTT message sending. The higher the quality the longer the delay. <br/> <code>0</code> - Low quality to <code>2</code> - High quality."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Configuración de calidad de servicio para el envío de mensajes MQTT. <code>0</code>: baja calidad a <code>2</code>: alta calidad. Cuanto mayor sea la calidad, mayor será el retraso."
-            }]
-        },
-        {
-            "function": "VERSION",
-            "type": "integer.select",
-            "default_value": 1,
-            "options": [ 1, 2 ],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Version"
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Paho MQTT API version. Depends on the MQTT <a href=\"https://eclipse.dev/paho/files/paho.mqtt.python/html/index.html#callbacks\" target=\"_blank\">version supported by the MQTT broker</a>. Usually set to <code>1</code>."
-				}]
-        },
-        {
-            "function": "DELAY_SEC",
-            "type": "integer",
-            "default_value": 2,
-            "options": [2, 3, 4, 5],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "MQTT delay per device"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Retraso de MQTT por dispositivo"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn not affect subsequent scans or notifications."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Un pequeño truco: retrase la adición a la cola en caso de que el proceso se reinicie y los procesos de publicación anteriores se anulen (se necesitan ~<code>2</code>s para actualizar la configuración de un sensor en el intermediario). Probado con <code>2</code>-<code>3</code> segundos de retraso. Este retraso solo se aplica cuando se crean dispositivos (durante el primer bucle de notificación). No afecta los escaneos o notificaciones posteriores."
-            }]
-        },
-        {
             "function": "SEND_STATS",
             "type": "boolean",
             "default_value":true,
@@ -590,6 +529,67 @@
                 "string" : "The type of the sensor that should be generated for the <code>is_present</code> sensor. Inserted into the <code>homeassistant/{PRESENCE_SENSOR_TYPE}/mac_44_ef_44_ef_44_ef/is_present/</code> topic. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/_publisher_mqtt/README.md#usage\">Plugin readme</a> for details."
 				}
             ]
+        },
+        {
+            "function": "QOS",
+            "type": "integer.select",
+            "default_value": 0,
+            "options": [0, 1, 2],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "MQTT Quality of Service"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Calidad de servicio MQTT"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Quality of service setting for MQTT message sending. The higher the quality the longer the delay. <br/> <code>0</code> - Low quality to <code>2</code> - High quality."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Configuración de calidad de servicio para el envío de mensajes MQTT. <code>0</code>: baja calidad a <code>2</code>: alta calidad. Cuanto mayor sea la calidad, mayor será el retraso."
+            }]
+        },
+        {
+            "function": "VERSION",
+            "type": "integer.select",
+            "default_value": 1,
+            "options": [ 1, 2 ],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "Version"
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "Paho MQTT API version. Depends on the MQTT <a href=\"https://eclipse.dev/paho/files/paho.mqtt.python/html/index.html#callbacks\" target=\"_blank\">version supported by the MQTT broker</a>. Usually set to <code>1</code>."
+				}]
+        },
+        {
+            "function": "DELAY_SEC",
+            "type": "integer",
+            "default_value": 2,
+            "options": [2, 3, 4, 5],
+            "localized": ["name", "description"],
+            "name" : [{
+                "language_code": "en_us",
+                "string" : "MQTT delay per device"
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Retraso de MQTT por dispositivo"				
+				}],
+            "description": [{
+                "language_code": "en_us",
+                "string" : "A little hack - delay adding to the queue in case the process is restarted and previous publish processes aborted (it takes ~<code>2</code>s to update a sensor config on the broker). Tested with <code>2</code>-<code>3</code> seconds of delay. This delay is only applied when devices are created (during the first notification loop). It doesn not affect subsequent scans or notifications."
+				},
+				{
+                "language_code": "es_es",
+                "string" : "Un pequeño truco: retrase la adición a la cola en caso de que el proceso se reinicie y los procesos de publicación anteriores se anulen (se necesitan ~<code>2</code>s para actualizar la configuración de un sensor en el intermediario). Probado con <code>2</code>-<code>3</code> segundos de retraso. Este retraso solo se aplica cuando se crean dispositivos (durante el primer bucle de notificación). No afecta los escaneos o notificaciones posteriores."
+            }]
         }         
     ]
 }
