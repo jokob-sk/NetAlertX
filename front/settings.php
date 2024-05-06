@@ -62,8 +62,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
-    
-
 
       <div class="col-sm-5">
         <h1 id="pageTitle col-sm-3">
@@ -76,7 +74,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             </a>
         </h1>
       </div>
-      
 
       <div class="col-sm-7 settingsImportedTimestamp" title="<?= lang("settings_imported");?> ">
         <div class="settingsImported ">
@@ -85,9 +82,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           <span id="lastImportedTime"></span>
         </div>    
       </div>
-       
 
-          
     </section>
     <section class="content-header">
 
@@ -105,9 +100,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         <div class =" col-sm-12" id=""></div>
       </div>
     </section>
-
-
-
 
     <div class="content settingswrap " id="accordion_gen">
 
@@ -244,8 +236,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     overviewSectionsHtml  = [
                               pluginCards(enabledDeviceScanners,['RUN', 'RUN_SCHD']),
                               pluginCards(enabledOthers, ['RUN', 'RUN_SCHD']), 
-                              pluginCards(enabledPublishers, []), 
-                              
+                              pluginCards(enabledPublishers, []),
                             ]
 
     index = 0
@@ -281,8 +272,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
           </small>
         `)
     } 
-    
-
 
     let isIn = ' in '; // to open the active panel in AdminLTE
 
@@ -295,7 +284,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       {
         let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save", "before_name_updates"  ].includes(getSetting(group+"_RUN"));      
 
-        isEnabled ? onOff = 'circle-check' : onOff = 'circle';
+        isEnabled ? onOff = 'dot-circle' : onOff = 'circle';
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
@@ -373,7 +362,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                     <div class="row table_row ${metadataClass}" id="row_${codeName}">
                       <div class="table_cell setting_name bold">
                         <label>${getString(codeName + '_name', set['Display_Name'])}</label>
-                        <div class="small">
+                        <div class="small text-overflow-hidden">
                           <code>${codeName}</code>${infoIcon}
                         </div>
                       </div>

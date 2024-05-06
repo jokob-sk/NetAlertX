@@ -71,26 +71,27 @@
       includeSettings.forEach((set) => {
 
         includeSettings_html += `
-            <a href="#${prefix + '_' + set}" onclick="toggleAllSettings()">
-              <div class="overview-setting-value  pointer" title="${prefix + '_' + set}">
-                <code>${getSetting(prefix + '_' + set)}</code>
-              </div> 
-            </a>
+            <div class="col-sm-6 overview-setting-value-wrap">
+              <a href="#${prefix + '_' + set}" onclick="toggleAllSettings()">
+                <div class="overview-setting-value  pointer" title="${prefix + '_' + set}">
+                  <code>${getSetting(prefix + '_' + set)}</code>
+                </div> 
+              </a>
+            </div>
           `
-
       });
 
       html += `            
-              <div class="col-sm-4 ">
-                <div class="small-box bg-green " >
-                <div class="inner ">
-                  <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
-                    <h5 class="card-title">
-                      <b>${getString(prefix+"_display_name")}</b>
-                    </h5>
-                  </a>
-                  ${includeSettings_html}
-                </div>
+              <div class="col-sm-4 padding-5px">
+                <div class="small-box bg-green col-sm-12 " >
+                  <div class="inner col-sm-12">
+                    <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
+                      <h5 class="card-title">
+                        <b>${getString(prefix+"_display_name")}</b>
+                      </h5>
+                    </a>
+                    ${includeSettings_html}
+                  </div>
                   <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
                     <div class="icon"> ${getString(prefix+"_icon")} </div> 
                   </a>  

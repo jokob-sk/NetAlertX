@@ -421,7 +421,7 @@ def query_MAC_vendor (pMAC):
     mac_start_string9 = mac[0:9]    
 
     try:
-        with open(vendorsPath, 'r') as f:
+        with open(filePath, 'r') as f:
             for line in f:
                 line_lower = line.lower()  # Convert line to lowercase for case-insensitive matching
                 if line_lower.startswith(mac_start_string6):                 

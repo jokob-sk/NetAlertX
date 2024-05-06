@@ -830,13 +830,45 @@ height: 50px;
 
 #settingsPage .overview-setting-value{    
     display:unset;    
+
 }
+
+.overview-setting-value-wrap
+{
+    padding-left: 1px;
+    text-overflow: clip ;
+    overflow: hidden;
+}
+
+#settingsPage .small-box
+{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#settingsPage .small-box  .inner
+{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 #settingsPage .panel-title{
     /* display: inline-block; */
     /* width: 120px; */
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
+}
+
+.padding-5px
+{
+    padding: 5px;
+}
+
+.text-overflow-hidden
+{    
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 
