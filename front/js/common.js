@@ -563,6 +563,22 @@ function debugTimer () {
   $('#pageTitle').html (new Date().getSeconds());
 }
 
+// -----------------------------------------------------------------------------
+function secondsSincePageLoad() {
+  // Get the current time
+  var currentTime = Date.now();
+
+  // Get the time when the page was loaded
+  var pageLoadTime = performance.timeOrigin;
+
+  // Calculate the difference in milliseconds
+  var timeDifference = currentTime - pageLoadTime;
+
+  // Convert milliseconds to seconds
+  var secondsAgo = Math.floor(timeDifference / 1000);
+
+  return secondsAgo;
+}
 
 // -----------------------------------------------------------------------------
 // Open url in new tab

@@ -813,27 +813,34 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
 
-      console.log(appState["settingsImported"]*1000)
+      // console.log(appState["settingsImported"]*1000)
       importedMiliseconds = parseInt((appState["settingsImported"]*1000));
 
       humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
 
-      console.log(humanReadable.replaceAll('"', ''))
+      // console.log(humanReadable.replaceAll('"', ''))
 
       // check if displayed settings are outdated
-      // if(fileModificationTime > importedMiliseconds)
+      
       if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
       { 
+  
         showSpinner("settings_old")
 
         setTimeout("handleLoadingDialog()", 1000);
 
       } else
       {
-        // chekc if the app is initialized and hide the spinner
+        // check if the app is initialized and hide the spinner
         if(isAppInitialized())
         {          
           hideSpinner()
+          
+          // reload page if outdated information might be displayed
+          if(secondsSincePageLoad() > 3)
+          {
+            clearCache()
+          }
         } 
         else
         {
