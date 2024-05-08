@@ -170,7 +170,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>."
+          "string": "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>. Tested with: <br/> <ul> <li><code>@ns1.google.com -t txt o-o.myaddr.l.google.com</code></li><li> <code>-4 myip.opendns.com @resolver1.opendns.com</code></li></ul>"
         },
         {
           "language_code": "es_es",

@@ -256,7 +256,7 @@
         columnValue = inputElement.is(':checked') ? 1 : 0;
     } else {
         // For other input types (like textboxes), simply retrieve their values
-        columnValue = inputElement.val();
+        columnValue = encodeURIComponent(inputElement.val());
     }
 
     var targetColumns = inputElement.attr('data-my-targetColumns');
