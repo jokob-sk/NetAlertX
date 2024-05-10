@@ -1,19 +1,19 @@
-# Subnets configuration for arp-scan
+# Subnets configuration
 
 You need to specify the network interface and the network mask. You can also configure multiple subnets and specify VLANS (see exceptions below).
 
 > [!TIP]
-> You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` settings when adding more subnets. If the timeout setting is exceeded, the scan is cancelled to prevent application hanging from rogue plugins. Check [debugging plugins](/docs/DEBUG_PLUGINS.md) for more tips.
+> You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` (and similar setting on related plugins) when adding more subnets. If the timeout setting is exceeded, the scan is cancelled to prevent application hanging from rogue plugins. Check [debugging plugins](/docs/DEBUG_PLUGINS.md) for more tips.
 
 ## Examples
 
 > [!NOTE] 
 > Please use the UI to configure settings as that ensures that the config file is in the correct format. Edit `app.conf` directly only when really necessary.
-> ![settings](/front/plugins/arp_scan/arp-scan-settings.png)
+> ![settings](/docs/img/SUBNETS/subnets-setting-location.png)
 
 * Examples for one and two subnets  (❗ Note the `['...','...']` format):
-   * One subnet: `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0']`
-   * Two subnets:  `SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 -vlan=107']` 
+   * One subnet:   `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0']`
+   * Two subnets:  `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 -vlan=107']` 
 
 
 ## Explanation
@@ -27,7 +27,7 @@ The arp-scan time itself depends on the number of IP addresses to check.
 > The number of IPs to check depends on the [network mask](https://www.calculator.net/ip-subnet-calculator.html) you set on the `SCAN_SUBNETS` setting. 
 > For example, a `/24` mask results in 256 IPs to check, whereas a `/16` mask checks around 65,536. Every IP takes a couple of seconds. This means that with an incorrect configuration, the arp-scan will take hours to complete instead of seconds.
 
-Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges 192.168.1.0 to 192.168.1.255.
+Specify the network filter (which **significantly** speeds up the scan process). For example, the filter `192.168.1.0/24` covers IP ranges `192.168.1.0` to `192.168.1.255`.
 
 ### Network interface (adapter)
 

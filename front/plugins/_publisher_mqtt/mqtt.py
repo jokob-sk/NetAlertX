@@ -280,7 +280,7 @@ def mqtt_start(db):
 
     deviceName      = get_setting_value('MQTT_DEVICE_NAME')
     deviceId        = get_setting_value('MQTT_DEVICE_ID')    
-    presenceSenType = get_setting_value('PRESENCE_SENSOR_TYPE')    
+    presenceSenType = get_setting_value('MQTT_PRESENCE_SENSOR_TYPE')    
     
     # General stats    
 

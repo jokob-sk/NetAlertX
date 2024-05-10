@@ -20,6 +20,7 @@
 |          |             | MQTT          | Script             | 💬 publisher   | 📚[_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 |  Yes     |             | NEWDEV        | Template           | ⚙ system       | 📚[newdev_template](/front/plugins/newdev_template/)                |
 |          |             | NMAP          | Script             | ♻ other        | 📚[nmap_scan](/front/plugins/nmap_scan/)                            |
+|          |    Yes      | NMAPDEV       | Script             | 🔍dev scanner  | 📚[nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
 |          |             | NSLOOKUP      | Script             | ♻ other        | 📚[nslookup_scan](/front/plugins/nslookup_scan/)                    |
 |  Yes     |             | NTFPRCS       | Template           | ⚙ system       | 📚[notification_processing](/front/plugins/notification_processing/)|
 |          |             | NTFY          | Script             | 💬 publisher   | 📚[_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
