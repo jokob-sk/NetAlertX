@@ -526,7 +526,7 @@
             "description": [
                 {
                 "language_code": "en_us",
-                "string" : "The type of the sensor that should be generated for the <code>is_present</code> sensor. Inserted into the <code>homeassistant/{PRESENCE_SENSOR_TYPE}/mac_44_ef_44_ef_44_ef/is_present/</code> topic. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/_publisher_mqtt/README.md#usage\">Plugin readme</a> for details."
+                "string" : "The type of the sensor that should be generated for the <code>is_present</code> sensor. Inserted into the <code>homeassistant/{MQTT_PRESENCE_SENSOR_TYPE}/mac_44_ef_44_ef_44_ef/is_present/</code> topic. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/_publisher_mqtt/README.md#usage\">Plugin readme</a> for details."
 				}
             ]
         },

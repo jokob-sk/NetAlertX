@@ -98,6 +98,7 @@ def importConfigs (db):
     
     # General    
     # ----------------------------------------
+    # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
@@ -115,6 +116,7 @@ def importConfigs (db):
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
+    # conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Network device types', 'list', '', 'General')
 
       
     
@@ -158,7 +160,7 @@ def importConfigs (db):
         pref = plugin["unique_prefix"]  
         print_plugin_info(plugin, ['display_name','description'])
 
-        # if plugin["enabled"] == 'true': 
+        # if pref in conf.LOADED_PLUGINS or :
 
         stringSqlParams = []
         
