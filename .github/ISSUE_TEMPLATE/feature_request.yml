@@ -21,8 +21,8 @@ body:
     label: Can I help implement this? 👩‍💻👨‍💻 
     description: The maintainer will provide guidance and help. The implementer will read the PR guidelines https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs
     options:
-    - label: Yes
-    - label: No
+    - label: "Yes"
+    - label: "No"
       required: true
 - type: textarea
   attributes:
