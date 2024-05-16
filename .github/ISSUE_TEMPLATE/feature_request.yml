@@ -23,7 +23,6 @@ body:
     options:
     - label: "Yes"
     - label: "No"
-      required: true
 - type: textarea
   attributes:
     label: Is your feature request related to a problem? Please describe
