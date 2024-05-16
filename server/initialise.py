@@ -55,7 +55,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=[], de
     return result
 #-------------------------------------------------------------------------------
 
-def importConfigs (db): 
+def importConfigs (db, all_plugins): 
 
     sql = db.sql
 
@@ -75,9 +75,9 @@ def importConfigs (db):
     mylog('debug', ['[Import Config] fileModifiedTime         :', fileModifiedTime])
     
 
-    if (fileModifiedTime == conf.lastImportedConfFile) :
+    if (fileModifiedTime == conf.lastImportedConfFile) and all_plugins is not None:
         mylog('debug', ['[Import Config] skipping config file import'])
-        return
+        return all_plugins
 
     # Header
     updateState("Import config", showSpinner = True)  
@@ -146,16 +146,18 @@ def importConfigs (db):
 
     # Plugins START
     # -----------------
-    conf.plugins = get_plugins_configs()
+    all_plugins = get_plugins_configs()
 
-    mylog('none', ['[Config] Plugins: Number of available plugins (including not loaded): ', len(conf.plugins)])
+    mylog('none', ['[Config] Plugins: Number of all plugins (including not loaded): ', len(all_plugins)])
+
+    plugin_indexes_to_remove = []
 
     #  handle plugins
     index = 0
-    for plugin in conf.plugins:
+    for plugin in all_plugins:
 
         # Header on the frontend and the app_state.json
-        updateState(f"Import plugin {index} of {len(conf.plugins)}") 
+        updateState(f"Import plugin {index} of {len(all_plugins)}") 
 
         index +=1
 
@@ -168,8 +170,8 @@ def importConfigs (db):
         plugin_run = get_plugin_setting(plugin, "RUN")
 
         #  get user-defined run value if available
-        if key in c_d:
-            plugin_run =  c_d[key]
+        if pref + "_RUN" in c_d:
+            plugin_run =  c_d[pref + "_RUN" ]
 
 
         # only include loaded plugins, and the ones that are enabled
@@ -222,9 +224,24 @@ def importConfigs (db):
             sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )
 
         else:
-            mylog('none', [f'[Config] Skipping plugin {pref} because not in the LOADED_PLUGINS setting'])
+            # log which plugins to remove 
+            index_to_remove = 0
+            for plugin in all_plugins:
+                if plugin["unique_prefix"] == pref:
+                    break
+                index_to_remove +=1
 
+            plugin_indexes_to_remove.append(index_to_remove)
 
+            
+
+    # remove plugin at index_to_remove from list
+    # Sort the list of indexes in descending order to avoid index shifting issues
+    plugin_indexes_to_remove.sort(reverse=True)
+    for indx in plugin_indexes_to_remove:
+        pref = all_plugins[indx]["unique_prefix"]  
+        mylog('none', [f'[Config] ⛔ Unloading plugin {pref} because not in the LOADED_PLUGINS setting or disabled by default'])
+        all_plugins.pop(indx)
 
 
     conf.plugins_once_run = False
@@ -240,10 +257,10 @@ def importConfigs (db):
     db.commitDB()
 
     #  update only the settings datasource
-    update_api(db, False, ["settings"])  
+    update_api(db, all_plugins, False, ["settings"])  
     
     # run plugins that are modifying the config   
-    run_plugin_scripts(db, 'before_config_save' )
+    run_plugin_scripts(db, all_plugins, 'before_config_save' )
 
     # Used to determine the next import
     conf.lastImportedConfFile = os.path.getmtime(config_file)   
@@ -251,6 +268,8 @@ def importConfigs (db):
     updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False)   
 
     mylog('minimal', '[Config] Imported new config')
+
+    return all_plugins
 
 
 

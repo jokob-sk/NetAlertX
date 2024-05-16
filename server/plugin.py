@@ -101,14 +101,14 @@ class plugins_state:
         self.processScan        = processScan
 
 #-------------------------------------------------------------------------------
-def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
+def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state()):
 
     # Header
     updateState("Run: Plugins")
 
     mylog('debug', ['[Plugins] Check if any plugins need to be executed on run type: ', runType])
 
-    for plugin in conf.plugins:
+    for plugin in all_plugins:
 
         shouldRun = False        
         prefix = plugin["unique_prefix"]
@@ -131,7 +131,7 @@ def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
-            pluginsState = execute_plugin(db, plugin, pluginsState) 
+            pluginsState = execute_plugin(db, all_plugins, plugin, pluginsState) 
             #  update last run time
             if runType == "schedule":
                 for schd in conf.mySchedules:
@@ -146,7 +146,7 @@ def run_plugin_scripts(db, runType, pluginsState = plugins_state()):
 
 #-------------------------------------------------------------------------------
 # Executes the plugin command specified in the setting with the function specified as CMD 
-def execute_plugin(db, plugin, pluginsState = plugins_state() ):
+def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
     sql = db.sql  
 
 
@@ -374,7 +374,7 @@ def execute_plugin(db, plugin, pluginsState = plugins_state() ):
         pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
 
         # update API endpoints
-        update_api(db, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
+        update_api(db, all_plugins, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
     
     return pluginsState
 
@@ -729,7 +729,7 @@ class plugin_object_class:
 #===============================================================================
 # Handling of  user initialized front-end events
 #===============================================================================
-def check_and_run_user_event(db, pluginsState):
+def check_and_run_user_event(db, all_plugins, pluginsState):
     # Check if the log file exists
     logFile = os.path.join(logPath, "execution_queue.log")
     
@@ -749,12 +749,12 @@ def check_and_run_user_event(db, pluginsState):
         event, param = columns
 
         if event == 'test':
-            pluginsState = handle_test(param, db, pluginsState)
+            pluginsState = handle_test(param, db, all_plugins, pluginsState)
         if event == 'run':
-            pluginsState = handle_run(param, db, pluginsState)
+            pluginsState = handle_run(param, db, all_plugins, pluginsState)
         if event == 'update_api':
             # update API endpoints
-            update_api(db, False, param.split(','))  
+            update_api(db, all_plugins, False, param.split(','))  
 
     # Clear the log file
     open(logFile, "w").close()
@@ -763,14 +763,14 @@ def check_and_run_user_event(db, pluginsState):
 
 
 #-------------------------------------------------------------------------------
-def handle_run(runType, db, pluginsState):
+def handle_run(runType, db, all_plugins, pluginsState):
     
     mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
     
     # run the plugin to run
-    for plugin in conf.plugins:
+    for plugin in all_plugins:
         if plugin["unique_prefix"] == runType:                
-            pluginsState = execute_plugin(db, plugin, pluginsState) 
+            pluginsState = execute_plugin(db, all_plugins, plugin, pluginsState) 
 
     mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
     return pluginsState
@@ -778,7 +778,7 @@ def handle_run(runType, db, pluginsState):
 
 
 #-------------------------------------------------------------------------------
-def handle_test(runType, db, pluginsState):
+def handle_test(runType, db, all_plugins, pluginsState):
 
     mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
     
@@ -792,7 +792,7 @@ def handle_test(runType, db, pluginsState):
     notificationObj = notification.create(sample_json, "")
 
     # Run test
-    pluginsState = handle_run(runType, db, pluginsState)
+    pluginsState = handle_run(runType, db, all_plugins, pluginsState)
 
     # Remove sample notification
     notificationObj.remove(notificationObj.GUID)    

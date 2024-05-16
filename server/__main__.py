@@ -84,10 +84,12 @@ def main ():
     # Header + init app state
     updateState("Initializing")    
 
+    all_plugins = None
+
     while True:
 
         # re-load user configuration and plugins   
-        importConfigs(db)
+        all_plugins = importConfigs(db, all_plugins)
 
         # update time started
         conf.loop_start_time = timeNowTZ()       
@@ -96,14 +98,14 @@ def main ():
 
         # Handle plugins executed ONCE
         if conf.plugins_once_run == False:
-            pluginsState = run_plugin_scripts(db, 'once')  
+            pluginsState = run_plugin_scripts(db, all_plugins, 'once')  
             conf.plugins_once_run = True
 
         # check if there is a front end initiated event which needs to be executed
-        pluginsState = check_and_run_user_event(db, pluginsState)
+        pluginsState = check_and_run_user_event(db, all_plugins, pluginsState)
 
         # Update API endpoints              
-        update_api(db)
+        update_api(db, all_plugins)
         
         # proceed if 1 minute passed
         if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time :
@@ -119,13 +121,13 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            pluginsState = run_plugin_scripts(db,'schedule', pluginsState) 
+            pluginsState = run_plugin_scripts(db, all_plugins, 'schedule', pluginsState) 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
            
             # Runs plugin scripts which are set to run every timne after a scans finished            
-            pluginsState = run_plugin_scripts(db,'always_after_scan', pluginsState)
+            pluginsState = run_plugin_scripts(db, all_plugins, 'always_after_scan', pluginsState)
 
             
             # process all the scanned data into new devices
@@ -139,7 +141,7 @@ def main ():
             # --------
             # Reporting   
             # run plugins before notification processing (e.g. Plugins to discover device names)
-            pluginsState = run_plugin_scripts(db, 'before_name_updates', pluginsState)
+            pluginsState = run_plugin_scripts(db, all_plugins, 'before_name_updates', pluginsState)
 
             # Resolve devices names
             mylog('debug','[Main] Resolve devices names')
@@ -153,7 +155,7 @@ def main ():
             #  new devices were found
             if len(newDevices) > 0:
                 #  run all plugins registered to be run when new devices are found                    
-                pluginsState = run_plugin_scripts(db, 'on_new_device', pluginsState)                
+                pluginsState = run_plugin_scripts(db, all_plugins, 'on_new_device', pluginsState)                
 
             # Notification handling
             # ----------------------------------------
@@ -167,7 +169,7 @@ def main ():
 
             # run all enabled publisher gateways 
             if notificationObj.HasNotifications:
-                pluginsState = run_plugin_scripts(db, 'on_notification', pluginsState) 
+                pluginsState = run_plugin_scripts(db, all_plugins, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
                 notification.clearPendingEmailFlag()
 

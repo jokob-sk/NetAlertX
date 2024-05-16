@@ -12,14 +12,14 @@ apiEndpoints = []
 #===============================================================================
 # API
 #===============================================================================
-def update_api(db, isNotification = False, updateOnlyDataSources = []):
+def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = []):
     mylog('debug', ['[API] Update API starting'])
     # return
 
     folder = apiPath 
 
     # Save plugins    
-    write_file(folder + 'plugins.json'  , json.dumps({"data" : conf.plugins}))  
+    write_file(folder + 'plugins.json'  , json.dumps({"data" : all_plugins}))  
 
     #  prepare database tables we want to expose 
     dataSourcesSQLs = [

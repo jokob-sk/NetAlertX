@@ -9,7 +9,6 @@ mySettingsSQLsafe = []
 cycle = 1
 userSubnets = []
 mySchedules = [] # bad solution for global - TO-DO
-plugins = []  # bad solution for global - TO-DO
 tz = ''
 
 # modified time of the most recently imported config file
