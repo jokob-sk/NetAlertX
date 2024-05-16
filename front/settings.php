@@ -282,6 +282,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
       if(getSetting(group+"_RUN") != "")
       {
+        // 🔺 update also in initialise.py if you update below list/array
         let isEnabled =  ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save", "before_name_updates"  ].includes(getSetting(group+"_RUN"));      
 
         isEnabled ? onOff = 'dot-circle' : onOff = 'circle';

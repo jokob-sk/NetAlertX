@@ -343,6 +343,8 @@
     "HelpFAQ_Cat_Presence_401_head": "Ein Ger\u00e4t wird als Anwesend angezeigt, obwohl es \"Offline\" ist.",
     "HelpFAQ_Cat_Presence_401_text": "Wenn dies geschieht hast du die M\u00f6glickeit, bei dem betreffenden Ger\u00e4t (Detailsansicht) die Events zu l\u00f6schen. Eine andere M\u00f6glichkeit w\u00e4re, das Ger\u00e4t einzuschalten und zu warten, bis NetAlertX mit dem n\u00e4chsten Scan das Ger\u00e4t als \"Online\" erkennt und anschlie\u00dfend das Ger\u00e4t einfach wieder ausschalten. Nun sollte NetAlertX mit dem n\u00e4chsten Scan den Zustand des Ger\u00e4tes ordentlich in der Datenbank vermerken.",
     "HelpFAQ_Title": "Hilfe / FAQ",
+    "LOADED_PLUGINS_description": "",
+    "LOADED_PLUGINS_name": "",
     "LOG_LEVEL_description": "Diese Einstellung aktiviert die erweiterte Protokollierung. N\u00fctzlich f\u00fcrs Debuggen von in die Datenbank geschriebenen Events.",
     "LOG_LEVEL_name": "Erweiterte Protokollierung",
     "Loading": "Laden...",

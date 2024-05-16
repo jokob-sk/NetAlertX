@@ -17,7 +17,7 @@ from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import print_plugin_info, run_plugin_scripts
-from plugin_utils import get_plugins_configs
+from plugin_utils import get_plugins_configs, get_plugin_setting
 
 #===============================================================================
 # Initialise user defined values
@@ -116,7 +116,7 @@ def importConfigs (db):
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
-    # conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Network device types', 'list', '', 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'list', '', 'General')
 
       
     
@@ -148,65 +148,82 @@ def importConfigs (db):
     # -----------------
     conf.plugins = get_plugins_configs()
 
-    mylog('none', ['[Config] Plugins: Number of dynamically loaded plugins: ', len(conf.plugins)])
+    mylog('none', ['[Config] Plugins: Number of available plugins (including not loaded): ', len(conf.plugins)])
 
     #  handle plugins
     index = 0
     for plugin in conf.plugins:
-        # Header
+
+        # Header on the frontend and the app_state.json
         updateState(f"Import plugin {index} of {len(conf.plugins)}") 
+
         index +=1
 
         pref = plugin["unique_prefix"]  
         print_plugin_info(plugin, ['display_name','description'])
 
-        # if pref in conf.LOADED_PLUGINS or :
 
-        stringSqlParams = []
-        
-        # collect plugin level language strings
-        stringSqlParams = collect_lang_strings(plugin, pref, stringSqlParams)
-        
-        for set in plugin["settings"]:
-            setFunction = set["function"]
-            # Setting code name / key  
-            key = pref + "_" + setFunction 
+        # The below few lines are used to determine if tghe plugin should be loaded, or skipped 
+        # get default plugin run value
+        plugin_run = get_plugin_setting(plugin, "RUN")
 
-            # set.get() - returns None if not found, set["options"] raises error
-            #  ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
-            v = ccd(key, 
-                    set["default_value"], 
-                    c_d, 
-                    set["name"][0]["string"], 
-                    set["type"] , 
-                    str(set["options"]), 
-                    group = pref, 
-                    events = set.get("events"), 
-                    desc = set["description"][0]["string"], 
-                    regex = "", 
-                    setJsonMetadata = set)                   
+        #  get user-defined run value if available
+        if key in c_d:
+            plugin_run =  c_d[key]
 
-            # Save the user defined value into the object
-            set["value"] = v
 
-            # Setup schedules
-            if setFunction == 'RUN_SCHD':
-                newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(conf.tz))
-                conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+        # only include loaded plugins, and the ones that are enabled
+        # 🔺 update also in settings.php if you update below list/array
+        enabled_run_values = ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save", "before_name_updates"  ]
+        if pref in conf.LOADED_PLUGINS or plugin_run in enabled_run_values or plugin_run is None:
 
-            # Collect settings related language strings
-            # Creates an entry with key, for example ARPSCAN_CMD_name
-            stringSqlParams = collect_lang_strings(set,  pref + "_" + set["function"], stringSqlParams)
+            stringSqlParams = []
+            
+            # collect plugin level language strings
+            stringSqlParams = collect_lang_strings(plugin, pref, stringSqlParams)
+            
+            for set in plugin["settings"]:
+                setFunction = set["function"]
+                # Setting code name / key  
+                key = pref + "_" + setFunction 
 
-        # Collect column related language strings
-        for clmn in plugin.get('database_column_definitions', []):
-            # Creates an entry with key, for example ARPSCAN_Object_PrimaryID_name
-            stringSqlParams = collect_lang_strings(clmn,  pref + "_" + clmn.get("column", ""), stringSqlParams)
+                # set.get() - returns None if not found, set["options"] raises error
+                #  ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
+                v = ccd(key, 
+                        set["default_value"], 
+                        c_d, 
+                        set["name"][0]["string"], 
+                        set["type"] , 
+                        str(set["options"]), 
+                        group = pref, 
+                        events = set.get("events"), 
+                        desc = set["description"][0]["string"], 
+                        regex = "", 
+                        setJsonMetadata = set)                   
 
-        #  bulk-import language strings
-        sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )
+                # Save the user defined value into the object
+                set["value"] = v
 
-        # db.commitDB()
+                # Setup schedules
+                if setFunction == 'RUN_SCHD':
+                    newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(conf.tz))
+                    conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+
+                # Collect settings related language strings
+                # Creates an entry with key, for example ARPSCAN_CMD_name
+                stringSqlParams = collect_lang_strings(set,  pref + "_" + set["function"], stringSqlParams)
+
+            # Collect column related language strings
+            for clmn in plugin.get('database_column_definitions', []):
+                # Creates an entry with key, for example ARPSCAN_Object_PrimaryID_name
+                stringSqlParams = collect_lang_strings(clmn,  pref + "_" + clmn.get("column", ""), stringSqlParams)
+
+            #  bulk-import language strings
+            sql.executemany ("""INSERT INTO Plugins_Language_Strings ("Language_Code", "String_Key", "String_Value", "Extra") VALUES (?, ?, ?, ?)""", stringSqlParams )
+
+        else:
+            mylog('none', [f'[Config] Skipping plugin {pref} because not in the LOADED_PLUGINS setting'])
+
 
 
 
