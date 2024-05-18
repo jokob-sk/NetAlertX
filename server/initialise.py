@@ -100,6 +100,7 @@ def importConfigs (db, all_plugins):
     # ----------------------------------------
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'list', '', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
@@ -116,9 +117,7 @@ def importConfigs (db, all_plugins):
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'list', '', 'General')
-
-      
+          
     
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
@@ -169,9 +168,20 @@ def importConfigs (db, all_plugins):
         # get default plugin run value
         plugin_run = get_plugin_setting(plugin, "RUN")
 
+        if plugin_run is None:
+            mylog('none', ['[Config] DEBUG1 plugin_run: None'])
+        else:
+            mylog('none', ['[Config] DEBUG2 plugin_run: ', plugin_run])
+
         #  get user-defined run value if available
         if pref + "_RUN" in c_d:
             plugin_run =  c_d[pref + "_RUN" ]
+
+        if plugin_run is None:
+            mylog('none', ['[Config] DEBUG3 plugin_run: None'])
+        else:
+            mylog('none', ['[Config] DEBUG4 plugin_run: ', plugin_run])
+        
 
 
         # only include loaded plugins, and the ones that are enabled
