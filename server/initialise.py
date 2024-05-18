@@ -172,8 +172,8 @@ def importConfigs (db, all_plugins):
         setting_obj = get_plugin_setting_obj(plugin, "RUN")
 
         if setting_obj is not None:
-            set_type = setting.get('type')
-            set_value = setting.get('default_value')
+            set_type = setting_obj.get('type')
+            set_value = setting_obj.get('default_value')
 
             plugin_run = setting_value_to_python_type(set_type, set_value)
 
