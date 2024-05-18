@@ -12,12 +12,12 @@ import re
 
 import conf 
 from const import fullConfPath
-from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState
+from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import print_plugin_info, run_plugin_scripts
-from plugin_utils import get_plugins_configs, get_plugin_setting
+from plugin_utils import get_plugins_configs, get_plugin_setting_obj
 
 #===============================================================================
 # Initialise user defined values
@@ -164,30 +164,32 @@ def importConfigs (db, all_plugins):
         print_plugin_info(plugin, ['display_name','description'])
 
 
-        # The below few lines are used to determine if tghe plugin should be loaded, or skipped 
+        # The below lines are used to determine if the plugin should be loaded, or skipped based on user settings (conf.LOADED_PLUGINS)
+        # ...or based on if is already enabled, or if the default configuration loads the plugin (RUN function != disabled )   
+
         # get default plugin run value
-        plugin_run = get_plugin_setting(plugin, "RUN")
+        plugin_run = ''
+        setting_obj = get_plugin_setting_obj(plugin, "RUN")
+
+        if setting_obj is not None:
+            set_type = setting.get('type')
+            set_value = setting.get('default_value')
+
+            plugin_run = setting_value_to_python_type(set_type, set_value)
 
         if plugin_run is None:
-            mylog('none', ['[Config] DEBUG1 plugin_run: None'])
+            mylog('none', ['[Config] plugin_run (default_value): None'])
         else:
-            mylog('none', ['[Config] DEBUG2 plugin_run: ', plugin_run])
+            mylog('none', ['[Config] plugin_run (default_value): ', plugin_run])
 
         #  get user-defined run value if available
         if pref + "_RUN" in c_d:
             plugin_run =  c_d[pref + "_RUN" ]
 
-        if plugin_run is None:
-            mylog('none', ['[Config] DEBUG3 plugin_run: None'])
-        else:
-            mylog('none', ['[Config] DEBUG4 plugin_run: ', plugin_run])
-        
+        mylog('none', ['[Config] plugin_run (user defined): ', plugin_run])
 
-
-        # only include loaded plugins, and the ones that are enabled
-        # 🔺 update also in settings.php if you update below list/array
-        enabled_run_values = ["once", "schedule", "always_after_scan", "on_new_device", "on_notification", "before_config_save", "before_name_updates"  ]
-        if pref in conf.LOADED_PLUGINS or plugin_run in enabled_run_values or plugin_run is None:
+        # only include loaded plugins, and the ones that are enabled        
+        if pref in conf.LOADED_PLUGINS or plugin_run != 'disabled' or setting_obj is None or plugin_run is None:
 
             stringSqlParams = []
             

@@ -13,7 +13,7 @@ from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder
 from notification import Notification_obj
 
 
@@ -113,7 +113,7 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
         shouldRun = False        
         prefix = plugin["unique_prefix"]
 
-        set = get_plugin_setting(plugin, "RUN")
+        set = get_plugin_setting_obj(plugin, "RUN")
         if set != None and set['value'] == runType:
             if runType != "schedule":
                 shouldRun = True
@@ -130,7 +130,7 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
             updateState(f"Plugins: {prefix}")
                         
             print_plugin_info(plugin, ['display_name'])
-            mylog('debug', ['[Plugins] CMD: ', get_plugin_setting(plugin, "CMD")["value"]])
+            mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])
             pluginsState = execute_plugin(db, all_plugins, plugin, pluginsState) 
             #  update last run time
             if runType == "schedule":
@@ -155,7 +155,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         pluginsState = plugins_state()
 
     # ------- necessary settings check  --------
-    set = get_plugin_setting(plugin, "CMD")
+    set = get_plugin_setting_obj(plugin, "CMD")
 
     #  handle missing "function":"CMD" setting
     if set == None:                
@@ -163,7 +163,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
 
     set_CMD = set["value"]
 
-    set = get_plugin_setting(plugin, "RUN_TIMEOUT")
+    set = get_plugin_setting_obj(plugin, "RUN_TIMEOUT")
 
     #  handle missing "function":"<unique_prefix>_TIMEOUT" setting
     if set == None:   
@@ -313,7 +313,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         mylog('verbose', ['[Plugins] Executing: ', q])
 
         # ------- necessary settings check  --------
-        set = get_plugin_setting(plugin, "DB_PATH")
+        set = get_plugin_setting_obj(plugin, "DB_PATH")
 
         #  handle missing "function":"DB_PATH" setting
         if set == None:                
@@ -706,7 +706,7 @@ class plugin_object_class:
         self.watchedClmns = []
         self.watchedIndxs = []          
 
-        setObj = get_plugin_setting(plugin, 'WATCH')
+        setObj = get_plugin_setting_obj(plugin, 'WATCH')
 
         indexNameColumnMapping = [(6, 'Watched_Value1' ), (7, 'Watched_Value2' ), (8, 'Watched_Value3' ), (9, 'Watched_Value4' )]
 

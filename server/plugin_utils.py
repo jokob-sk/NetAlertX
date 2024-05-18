@@ -35,7 +35,22 @@ def print_plugin_info(plugin, elements = ['display_name']):
 
 #-------------------------------------------------------------------------------
 # Gets the whole setting object
-def get_plugin_setting(plugin, function_key):
+def get_plugin_setting_obj(plugin, function_key):
+    
+    result = None
+
+    for set in plugin['settings']:
+        if set["function"] == function_key:
+          result =  set 
+          
+    # if result == None:
+    #     mylog('debug', [f'[{module_name}] Setting with "function":"', function_key, '" is missing in plugin: ', get_plugin_string(plugin, 'display_name')])
+
+    return result
+
+#-------------------------------------------------------------------------------
+# Gets the setting value for a plugin from the default JSON
+def get_plugin_setting_value(plugin, function_key):
     
     result = None
 

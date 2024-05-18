@@ -283,13 +283,15 @@ def get_setting(key):
 #-------------------------------------------------------------------------------
 # Settings
 #-------------------------------------------------------------------------------
+
 #-------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
+
+    # Returns empty string if not set
+    value = ''
     
     setting = get_setting(key)
-
-    value = ''
 
     if setting is not None:
 
@@ -299,41 +301,50 @@ def get_setting_value(key):
         set_value = 'Error: Not handled'
 
         set_value = setting["Value"]  # Setting value
-        set_type = setting["Type"]  # Setting type        
+        set_type = setting["Type"]  # Setting type    
 
-        # Handle different types of settings
-        if set_type in ['text', 'string', 'password', 'password.SHA256', 'readonly', 'text.select']:
-            value = str(set_value)
-        elif set_type in ['boolean', 'integer.checkbox']:
-            
-            value = False
+        value = setting_value_to_python_type(set_type, set_value)
 
-            if isinstance(set_value, str) and set_value.lower() in ['true', '1']:
-                value = True
-            elif isinstance(set_value, int) and set_value == 1:
-                value = True
-            elif isinstance(set_value, bool):
-                value = set_value
-            
-        elif set_type in ['integer.select', 'integer']:
-            value = int(set_value)
-        elif set_type in ['text.multiselect', 'list', 'subnets']:
-            #  Handle string 
+    return value
 
-            mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])
+#-------------------------------------------------------------------------------
+#  Convert the setting value to the corresponding python type
+def setting_value_to_python_type(set_type, set_value):
 
-            if isinstance(set_value, str):
-                value = json.loads(set_value.replace("'", "\""))
-            # Assuming set_value is a list in this case
-            elif isinstance(set_value, list):
-                value = set_value
-        elif set_type == '.template':
-            # Assuming set_value is a JSON object in this case
-            value = json.loads(set_value)
-        else:
-            mylog('none', [f'[SETTINGS] ⚠ ERROR - set_type not handled:{set_type}'])
-            mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(setting)}'])
+    value = ''
 
+    # Handle different types of settings
+    if set_type in ['text', 'string', 'password', 'password.SHA256', 'readonly', 'text.select']:
+        value = str(set_value)
+    elif set_type in ['boolean', 'integer.checkbox']:
+        
+        value = False
+
+        if isinstance(set_value, str) and set_value.lower() in ['true', '1']:
+            value = True
+        elif isinstance(set_value, int) and set_value == 1:
+            value = True
+        elif isinstance(set_value, bool):
+            value = set_value
+        
+    elif set_type in ['integer.select', 'integer']:
+        value = int(set_value)
+    elif set_type in ['text.multiselect', 'list', 'subnets']:
+        #  Handle string 
+
+        mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])
+
+        if isinstance(set_value, str):
+            value = json.loads(set_value.replace("'", "\""))
+        # Assuming set_value is a list in this case
+        elif isinstance(set_value, list):
+            value = set_value
+    elif set_type == '.template':
+        # Assuming set_value is a JSON object in this case
+        value = json.loads(set_value)
+    else:
+        mylog('none', [f'[SETTINGS] ⚠ ERROR - set_type not handled:{set_type}'])
+        mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(setting)}'])
 
     return value
 
