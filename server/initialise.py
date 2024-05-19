@@ -26,33 +26,64 @@ from plugin_utils import get_plugins_configs, get_plugin_setting_obj
 #-------------------------------------------------------------------------------
 # Import user values
 # Check config dictionary
-def ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {}):
 
-    # use default inintialization value    
-    result = default
-
+#-------------------------------------------------------------------------------
+def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None):
     if events is None:
         events = []
+    if setJsonMetadata is None:
+        setJsonMetadata = {}
+    if overrideTemplate is None:
+        overrideTemplate = {}
 
-    # use existing value if already supplied, otherwise default value is used
+    # Use default initialization value    
+    result = default
+
+    # Use existing value if already supplied, otherwise default value is used
     if key in config_dir:
-        result =  config_dir[key]
+        result = config_dir[key]
 
+    # Single quotes might break SQL queries, replacing them
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
 
-    conf.mySettingsSQLsafe.append((key, name, desc, inputtype, options, regex, str(result), group, str(events)))
-    conf.mySettings.append((key, name, desc, inputtype, options, regex, result, group, str(events)))
+    # Create the tuples
+    sql_safe_tuple = (key, name, desc, inputtype, options, regex, str(result), group, str(events))
+    settings_tuple = (key, name, desc, inputtype, options, regex, result, group, str(events))
 
-    # save metadata in dummy setting
+    # Update or append the tuples in the lists
+    conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, sql_safe_tuple, key)
+    conf.mySettings = update_or_append(conf.mySettings, settings_tuple, key)
+
+    # Save metadata in dummy setting if not a metadata key
     if '__metadata' not in key:
-        tuple = (f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, '[]')
-        conf.mySettingsSQLsafe.append(tuple)
-        conf.mySettings.append(tuple)
-    
-        
+        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, '[]')
+        conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, metadata_tuple, f'{key}__metadata')
+        conf.mySettings = update_or_append(conf.mySettings, metadata_tuple, f'{key}__metadata')
 
     return result
+
+#-------------------------------------------------------------------------------
+# Function to find and update the existing key in the list
+def update_or_append(settings_list, item_tuple, key):
+    if settings_list is None:
+        settings_list = []
+
+    # mylog('debug', ['[Import Config] update_or_append debug '])
+    # mylog('debug', ['[Import Config] update_or_append ', settings_list])
+    # mylog('debug', ['[Import Config] update_or_append item_tuple ' , item_tuple])
+
+    for index, item in enumerate(settings_list):
+        if item[0] == key:
+            settings_list[index] = item_tuple
+            mylog('debug', ['[Import Config] FOUND key : ', key])
+            return settings_list
+    
+    settings_list.append(item_tuple)
+    return settings_list
+
+
+    
 #-------------------------------------------------------------------------------
 
 def importConfigs (db, all_plugins): 
@@ -100,7 +131,7 @@ def importConfigs (db, all_plugins):
     # ----------------------------------------
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'list', '', 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'text.multiselect', '', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
@@ -150,6 +181,8 @@ def importConfigs (db, all_plugins):
     mylog('none', ['[Config] Plugins: Number of all plugins (including not loaded): ', len(all_plugins)])
 
     plugin_indexes_to_remove = []
+    all_plugins_prefixes     = [] # to init the LOADED_PLUGINS setting with correct options
+    loaded_plugins_prefixes  = [] # to init the LOADED_PLUGINS setting with correct initially seelcted values
 
     #  handle plugins
     index = 0
@@ -163,6 +196,7 @@ def importConfigs (db, all_plugins):
         pref = plugin["unique_prefix"]  
         print_plugin_info(plugin, ['display_name','description'])
 
+        all_plugins_prefixes.append(pref)
 
         # The below lines are used to determine if the plugin should be loaded, or skipped based on user settings (conf.LOADED_PLUGINS)
         # ...or based on if is already enabled, or if the default configuration loads the plugin (RUN function != disabled )   
@@ -172,21 +206,14 @@ def importConfigs (db, all_plugins):
         setting_obj = get_plugin_setting_obj(plugin, "RUN")
 
         if setting_obj is not None:
-            set_type = setting_obj.get('type')
+            set_type = setting_obj.get('type')              # lower case "type" - default json value vs uppper-case "Type" (= from user defined settings)
             set_value = setting_obj.get('default_value')
 
             plugin_run = setting_value_to_python_type(set_type, set_value)
 
-        if plugin_run is None:
-            mylog('none', ['[Config] plugin_run (default_value): None'])
-        else:
-            mylog('none', ['[Config] plugin_run (default_value): ', plugin_run])
-
         #  get user-defined run value if available
         if pref + "_RUN" in c_d:
             plugin_run =  c_d[pref + "_RUN" ]
-
-        mylog('none', ['[Config] plugin_run (user defined): ', plugin_run])
 
         # only include loaded plugins, and the ones that are enabled        
         if pref in conf.LOADED_PLUGINS or plugin_run != 'disabled' or setting_obj is None or plugin_run is None:
@@ -245,8 +272,6 @@ def importConfigs (db, all_plugins):
 
             plugin_indexes_to_remove.append(index_to_remove)
 
-            
-
     # remove plugin at index_to_remove from list
     # Sort the list of indexes in descending order to avoid index shifting issues
     plugin_indexes_to_remove.sort(reverse=True)
@@ -255,6 +280,17 @@ def importConfigs (db, all_plugins):
         mylog('none', [f'[Config] ⛔ Unloading plugin {pref} because not in the LOADED_PLUGINS setting or disabled by default'])
         all_plugins.pop(indx)
 
+    # all_plugins has now only initialized plugins, get all prefixes
+    for plugin in all_plugins:
+        pref = plugin["unique_prefix"]  
+        loaded_plugins_prefixes.append(pref)
+
+
+    # save the newly discovered plugins as options and default values
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', 'text.multiselect', str(all_plugins_prefixes), 'General')
+
+    mylog('none', ['[Config] Number of Plugins to load: ', len(loaded_plugins_prefixes)])
+    mylog('none', ['[Config] Plugins to load: ', loaded_plugins_prefixes])
 
     conf.plugins_once_run = False
     # -----------------

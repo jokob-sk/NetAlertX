@@ -32,7 +32,7 @@ class plugin_param:
                 setTyp = inputValue["Type"]  # setting type
 
                 noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'password.SHA256', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
-                arrayConversion         = ['text.multiselect', 'list', 'subnets']                 
+                arrayConversion         = ['text.multiselect', 'list', 'list.select', 'subnets']                 
                 jsonConversion          = ['.template'] 
 
                 mylog('debug', f'[Plugins] setTyp: {setTyp}')

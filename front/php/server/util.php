@@ -342,7 +342,7 @@ function saveSettings()
                 }
 
                 $txt .= $settingKey . "=" . $val . "\n";
-            } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list') {
+            } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list' || $settingType == 'list.select') {
                 $temp = '';
                 
                 if(is_array($settingValue) == FALSE)

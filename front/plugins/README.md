@@ -559,6 +559,7 @@ Required attributes are:
 |  | - `text.select` |
 |  | - `text.multiselect` |
 |  | - `list` |
+|  | - `list.select` |
 |  | - `integer.checkbox` |
 |  | - `text.template` |
 | `"localized"` | A list of properties on the current JSON level that need to be localized. |
@@ -647,7 +648,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
-| `options_params` Property | Used in conjunction with a `"options": "[{value}]"` template and `text.select`. Can specify SQL query (needs to return 2 columns `SELECT dev_Name as name, dev_Mac as id`) or Setting (not tested) to populate the dropdown. Check example below or have a look at the `NEWDEV` plugin `config.json` file. |
+| `options_params` Property | Used in conjunction with a `"options": "[{value}]"` template and `text.select`/`list.select`. Can specify SQL query (needs to return 2 columns `SELECT dev_Name as name, dev_Mac as id`) or Setting (not tested) to populate the dropdown. Check example below or have a look at the `NEWDEV` plugin `config.json` file. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
 | `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
 | `regex` | Applies a regex to the value.  The `options` array contains objects with an `type` (must be set to `regex`) and `param` (must contain the regex itself) property. |

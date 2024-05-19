@@ -416,7 +416,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
           let inputHtml = "";
           if (setType.startsWith('text') || setType.startsWith('string') || setType.startsWith('date-time') ) {
-            
+            // --- process text ---
             if(setType.includes(".select"))
             {
               inputHtml = generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = false)
@@ -435,12 +435,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               inputHtml = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${codeName}" value="${val}" ${readonly}/>`;
             }            
           } else if (setType === 'integer') {
+            // --- process integer ---
             inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${codeName}" type="number" value="${val}"/>`;
           } else if (setType.startsWith('password')) {
+            // --- process password ---
             inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${codeName}" type="password" value="${val}"/>`;
           } else if (setType === 'readonly') {
+            // --- process readonly ---
             inputHtml = `<input class="form-control input"  my-data-type="${setType}"  id="${codeName}"  value="${val}" readonly/>`;
           } else if (setType === 'boolean' || setType === 'integer.checkbox') {
+            // --- process boolean ---
             let checked = val === 'True' || val === '1' ? 'checked' : '';                   
 
             // if it's overridable set readonly accordingly
@@ -455,6 +459,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             inputHtml = generateInputOptions(pluginsData, set, inputHtml)
           
           } else if (setType === 'subnets') {
+            // --- process subnets ---
             inputHtml = `
             <div class="row form-group">
               <div class="col-xs-5">
@@ -471,13 +476,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
               <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initListInteractionOptions(${codeName})" multiple readonly>`;
 
 
-            options = createArray(val);
+            saved_values = createArray(val);
 
-            options.forEach(option => {
-              inputHtml += `<option value="${option}" >${option}</option>`;
+            saved_values.forEach(saved_val => {
+              inputHtml += `<option value="${saved_val}" >${saved_val}</option>`;
             });
-
-            
 
             inputHtml += `</select>
                         </div>
@@ -489,27 +492,39 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                             ${getString("Gen_Remove_All")}
                           </button>                              
                         </div>`;
-          } else if (setType === 'list' || setType === 'list.readonly') {
+          } else if (setType === 'list' || setType === 'list.select' || setType === 'list.readonly') {
+            // --- process list ---
 
             settingKeyOfLists.push(codeName);
 
-            inputHtml = `
+            inputHtml += `
               <div class="row form-group">
-                <div class="col-xs-9">
+                <div class="col-xs-9">`
+
+            if(setType.includes(".select")) // not tested
+            {
+              inputHtml += generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = false)
+            }
+            else
+            {
+              inputHtml += `
                   <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
-                </div>
+                `;
+            }
+
+            inputHtml += `</div>
                 <div class="col-xs-3">
                   <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
                 </div>
               </div>
               <div class="form-group">
-                <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;
+                <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;           
 
-            let options = createArray(val);
+            let saved_values = createArray(val);
 
-            options.forEach(option => {
+            saved_values.forEach(saved_val => {
 
-              inputHtml += `<option value="${option}" >${option}</option>`;
+              inputHtml += `<option value="${saved_val}" >${saved_val}</option>`;
             });
 
             inputHtml += '</select></div>' +
@@ -522,6 +537,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                 </button>                          
             </div>`;
           } else if (setType === 'json') {
+            // --- process json ---
             inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
           }
 
@@ -578,7 +594,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   {
     multi = isMultiSelect ? "multiple" : "";
 
-    optionsArray = getSettingOptions(set['Code_Name'] )
+    // optionsArray = getSettingOptions(set['Code_Name'] )
     valuesArray = createArray(set['Value']);  
 
     // create unique ID  
@@ -650,7 +666,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
     const toId = $(element).attr('my-input-to');
 
     input = $(`#${fromId}`).val();
-    $(`#${toId}`).append($("<option disabled></option>").attr("value", input).text(input));
+    $(`#${toId}`).append($("<option ></option>").attr("value", input).text(input));
     
     // clear input
     $(`#${fromId}`).val("");
@@ -697,7 +713,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       var settingsArray = [];
 
       // collect values for each of the different input form controls
-      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
+      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'list.select', 'integer.select', 'text.multiselect'];
 
       // get settings to determine setting type to store values appropriately
       $.get('api/table_settings.json', function(res) { 
