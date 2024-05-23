@@ -189,7 +189,7 @@ def importConfigs (db, all_plugins):
     for plugin in all_plugins:
 
         # Header on the frontend and the app_state.json
-        updateState(f"Import plugin {index} of {len(all_plugins)}") 
+        updateState(f"Check plugin {index} of {len(all_plugins)}") 
 
         index +=1
 

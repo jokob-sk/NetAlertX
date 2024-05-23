@@ -26,11 +26,8 @@
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
-      case 'createBackupDB':          createBackupDB();                        break;
       
       case 'deleteAllDevices':        deleteAllDevices();                      break;
-      case 'runScan15min':            runScan15min();                          break;
-      case 'runScan1min':             runScan1min();                           break;
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
       case 'deleteEvents':            deleteEvents();                          break;
       case 'deleteEvents30':          deleteEvents30();                        break;

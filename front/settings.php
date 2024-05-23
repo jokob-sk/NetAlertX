@@ -192,14 +192,21 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
         
-        settingsData = res["data"];       
+        settingsData = res["data"];   
+        
+        // Wrong number of settings processing
+        if(settingsNumberDB != settingsData.length) 
+        {
+          showModalOk('WARNING', "<?= lang("settings_missing")?>");    
+        } else
+        {
+          $.get('api/plugins.json?nocache=' + Date.now(), function(res) {  
 
-        $.get('api/plugins.json?nocache=' + Date.now(), function(res) {  
+            pluginsData = res["data"];  
 
-          pluginsData = res["data"];  
-
-          initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
-        })
+            initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
+          })
+        }        
     })
   }
 
@@ -292,13 +299,16 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       `
       }      
 
+      console.log(pluginsData);
+
       // Start constructing the main settings HTML 
       let pluginHtml = `
         <div class="row table_row">
           <div class="table_cell bold">
             <i class="fa-regular fa-book fa-sm"></i>
+            ${getString(group+'_description')} 
             <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
-              ${getString('Gen_ReadDocs')}
+            ${getString('Gen_ReadDocs')}
             </a>
           </div>
         </div>
@@ -650,10 +660,11 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   // display the name of the first person
   // echo $settingsJson[0]->name;
-  var settingsNumber = <?php echo count($settingsJson->data)?>;
+  var settingsNumberDB = <?php echo count($settings)?>;
+  var settingsNumberJSON = <?php echo count($settingsJson->data)?>;
 
   // Wrong number of settings processing
-  if(<?php echo count($settings)?> != settingsNumber) 
+  if(settingsNumberJSON != settingsNumberDB) 
   {
     showModalOk('WARNING', "<?= lang("settings_missing")?>");    
   }
@@ -705,7 +716,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   
   // ---------------------------------------------------------
   function saveSettings() {
-    if(<?php echo count($settings)?> != settingsNumber) 
+    if(settingsNumberJSON != settingsNumberDB) 
     {
       showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
     } else
@@ -720,7 +731,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       
         settingsJSON = res;
             
-        data = settingsJSON["data"];       
+        data = settingsJSON["data"];     
 
         data.forEach(set => {
           if (noConversion.includes(set['Type'])) {
@@ -766,8 +777,13 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             {
               sanityCheck_notOK = isEmpty(value[3])
             }
-            
         });
+
+        // if ok, double check the number collected of settings is correct
+        if(sanityCheck_notOK == false)
+        {
+          sanityCheck_notOK = settingsNumberDB != settingsArray.length;
+        }
 
         if(sanityCheck_notOK == false)
         {

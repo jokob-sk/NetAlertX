@@ -95,7 +95,7 @@
           <a href="#" onclick="javascript: initializeDatatable('down');">
           <div class="small-box bg-red">
             <div class="inner"><h3 id="devicesDown"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_DownAlerts');?></p>
+                <p class="infobox_label"><?= lang('Device_Shortcut_DownOnly');?></p>
             </div>
             <div class="icon"><i class="fa fa-warning text-red-40"></i></div>
           </div>
@@ -403,9 +403,9 @@ function filterDataByStatus(data, status) {
         return item.dev_Favorite === 1;
       case 'new':
         return item.dev_NewDevice === 1;
+      case 'offline':
+        return item.dev_PresentLastScan === 0;
       case 'down':
-        return (item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0) || item.dev_PresentLastScan === 0;
-      case 'down_only':
         return (item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0);
       case 'archived':
         return item.dev_Archived === 1;
@@ -460,7 +460,7 @@ function initializeDatatable (status) {
     case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
     case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
     case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
-    case 'down':       tableTitle = getString('Device_Shortcut_DownAlerts');  color = 'red';     break;
+    case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');  color = 'red';     break;
     case 'archived':   tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
     default:           tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
   } 

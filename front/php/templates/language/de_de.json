@@ -285,6 +285,7 @@
     "Gen_Error": "Fehler",
     "Gen_Filter": "",
     "Gen_LockedDB": "ERROR - DB eventuell gesperrt - Nutze die Konsole in den Entwickler Werkzeugen (F12) zur \u00dcberpr\u00fcfung oder probiere es sp\u00e4ter erneut.",
+    "Gen_Offline": "",
     "Gen_Okay": "Ok",
     "Gen_Purge": "Aufr\u00e4umen",
     "Gen_ReadDocs": "Mehr in der Dokumentation",

@@ -34,6 +34,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Better name resolution with Reverse DNS](/docs/REVERSE_DNS.md)
 - [Network treemap configuration](/docs/NETWORK_TREE.md)
 - [Backups](/docs/BACKUPS.md)
+- [Plugins overview](/front/plugins/README.md)
 
 #### 🐛 Debugging help & tips
 
@@ -67,7 +68,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Server APP code structure](/server/README.md)
 - [Database structure](/docs/DATABASE.md)
 - [API endpoints details](/docs/API.md)
-- [Plugin system details and how to develop your own](/front/plugins/README.md)
+- [Plugin development guide](/docs/PLUGINS_DEV.md)
 - [Settings system](/docs/SETTINGS_SYSTEM.md)
 - [New Version notifications](/docs/VERSIONS.md)
 - [Frontend development tips](/docs/FRONTEND_DEVELOPMENT.md)

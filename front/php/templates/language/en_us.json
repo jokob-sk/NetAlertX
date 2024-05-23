@@ -273,6 +273,7 @@
     "Gen_Error": "Error",
     "Gen_Filter": "Filter",
     "Gen_LockedDB": "ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.",
+    "Gen_Offline": "Offline",
     "Gen_Okay": "Ok",
     "Gen_Purge": "Purge",
     "Gen_ReadDocs": "Read more in the docs.",
