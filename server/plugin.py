@@ -21,6 +21,8 @@ from notification import Notification_obj
 class plugin_param:
     def __init__(self, param, plugin, db):
 
+        mylog('debug', f'[Plugins] Resolving param: {param}')
+
         paramValuesCount = 1
 
         #  Get setting value

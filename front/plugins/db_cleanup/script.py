@@ -36,10 +36,10 @@ def main():
     
     values = parser.parse_args()
 
-    PLUGINS_KEEP_HIST     = int(values.pluginskeephistory.split('=')[1])
-    HRS_TO_KEEP_NEWDEV    = int(values.hourstokeepnewdevice.split('=')[1])
-    DAYS_TO_KEEP_EVENTS   = int(values.daystokeepevents.split('=')[1])
-    PHOLUS_DAYS_DATA      = int(values.pholuskeepdays.split('=')[1])
+    PLUGINS_KEEP_HIST       = int(values.pluginskeephistory.split('=')[1])
+    HRS_TO_KEEP_NEWDEV      = int(values.hourstokeepnewdevice.split('=')[1])
+    DAYS_TO_KEEP_EVENTS     = int(values.daystokeepevents.split('=')[1])
+    PHOLUS_DAYS_DATA        = get_setting_value("PHOLUS_DAYS_DATA")
 
     mylog('verbose', [f'[{pluginName}] In script'])     
 
@@ -148,7 +148,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     # -----------------------------------------------------
     # Cleanup Pholus_Scan
-    if PHOLUS_DAYS_DATA != 0:
+    if PHOLUS_DAYS_DATA != "" and PHOLUS_DAYS_DATA != 0:
         mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
         # todo: improvement possibility: keep at least N per mac
         cursor.execute (f"""DELETE FROM Pholus_Scan 

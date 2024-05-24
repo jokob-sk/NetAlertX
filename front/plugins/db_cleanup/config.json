@@ -39,11 +39,6 @@
       "name"  : "hourstokeepnewdevice",
       "type"  : "setting",
       "value" : "HRS_TO_KEEP_NEWDEV"
-    },
-    {
-      "name"  : "pholuskeepdays",
-      "type"  : "setting",
-      "value" : "PHOLUS_DAYS_DATA"
     }
   ],  
 
