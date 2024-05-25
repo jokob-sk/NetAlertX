@@ -37,6 +37,8 @@ def get_notifications (db):
     json_new_devices_meta = {}
     json_down_devices = []
     json_down_devices_meta = {}
+    json_down_reconnected = []
+    json_down_reconnected_meta = {}
     json_events = []    
     json_events_meta = {}
     json_plugins = []
@@ -72,7 +74,7 @@ def get_notifications (db):
         json_obj = db.get_table_as_json(sqlQuery)
 
         json_new_devices_meta = {
-            "title": "New devices",
+            "title": "🆕New devices",
             "columnNames": json_obj.columnNames
         }
 
@@ -100,11 +102,36 @@ def get_notifications (db):
         # Get the events as JSON        
         json_obj = db.get_table_as_json(sqlQuery)
 
-        json_down_devices_meta = {
-            "title": "Down devices",
+        json_down_devices_meta = { 
+            "title": "⚠ Down devices",
             "columnNames": json_obj.columnNames
         }
         json_down_devices = json_obj.json["data"]     
+    
+    if 'down_reconnected' in sections:
+        # Compose Reconnected Down Section 
+        # - select only Devices, that were previously down and now are Connected
+        sqlQuery = f"""
+                        SELECT down_events.dev_Name, down_events.eve_MAC, down_events.dev_Vendor, down_events.eve_IP, 
+                            down_events.eve_DateTime AS DownTime, connected_events.eve_DateTime AS ConnectedTime
+                        FROM Events_Devices AS down_events
+                        INNER JOIN Events AS connected_events
+                            ON connected_events.eve_MAC = down_events.eve_MAC
+                        WHERE down_events.eve_EventType = 'Device Down'
+                            AND connected_events.eve_EventType = 'Connected'
+                            AND connected_events.eve_DateTime > down_events.eve_DateTime
+                            AND down_events.eve_PendingAlertEmail = 1
+                        ORDER BY down_events.eve_DateTime;
+                    """
+        
+        # Get the events as JSON        
+        json_obj = db.get_table_as_json(sqlQuery)
+
+        json_down_reconnected_meta = {
+            "title": "🔁 Reconnected down devices",
+            "columnNames": json_obj.columnNames
+        }
+        json_down_reconnected = json_obj.json["data"]     
 
     if 'events' in sections:
         # Compose Events Section
@@ -121,7 +148,7 @@ def get_notifications (db):
         json_obj = db.get_table_as_json(sqlQuery)
 
         json_events_meta = {
-            "title": "Events",
+            "title": "⚡ Events",
             "columnNames": json_obj.columnNames
         }
         json_events = json_obj.json["data"]     
@@ -134,7 +161,7 @@ def get_notifications (db):
         json_obj = db.get_table_as_json(sqlQuery)
 
         json_plugins_meta = {
-            "title": "Plugins",
+            "title": "🔌 Plugins",
             "columnNames": json_obj.columnNames
         }
         json_plugins = json_obj.json["data"]   
@@ -145,6 +172,8 @@ def get_notifications (db):
                     "new_devices_meta": json_new_devices_meta,
                     "down_devices": json_down_devices,
                     "down_devices_meta": json_down_devices_meta,
+                    "down_reconnected": json_down_reconnected,
+                    "down_reconnected_meta": json_down_reconnected_meta,
                     "events": json_events,                    
                     "events_meta": json_events_meta,                    
                     "plugins": json_plugins,

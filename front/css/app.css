@@ -742,7 +742,7 @@ height: 50px;
 {   
     font-size: 20px;
     padding-top: 7px;
-    padding-bottom: 9px;
+    padding-bottom: 9px;    
 }
 
 .overview-section .small-box  .icon
@@ -753,12 +753,12 @@ height: 50px;
 
 .overview-section
 {
-    border: solid;
+    /* border-top: solid;
     border-width: medium;
     border-width: medium;
     border-width: 1px;
-    border-radius: 15px;
-    margin-bottom: 3px;
+     border-radius: 15px; 
+    margin-bottom: 3px; */
   
 }
 
@@ -771,6 +771,7 @@ height: 50px;
     font-size: 20px;
     padding-top: 7px;
     padding-bottom: 9px;
+    margin-left: -20px;
 
 }
 

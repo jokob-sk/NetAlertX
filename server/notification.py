@@ -51,7 +51,7 @@ class Notification_obj:
         write_file (logPath + '/report_output.json', json.dumps(JSON))
         
         # Check if nothing to report, end
-        if JSON["new_devices"] == [] and JSON["down_devices"] == [] and JSON["events"] == [] and JSON["plugins"] == []:
+        if JSON["new_devices"] == [] and JSON["down_devices"] == [] and JSON["events"] == [] and JSON["plugins"] == [] and JSON["down_reconnected"] == []:
             self.HasNotifications = False
         else:            
             self.HasNotifications = True 
@@ -119,19 +119,35 @@ class Notification_obj:
             mail_html = mail_html.replace ('<BUILD_DATE>', BUILDFILE)
 
             # Start generating the TEXT & HTML notification messages
+            # new_devices
+            # ---
             html, text = construct_notifications(self.JSON, "new_devices")
 
             mail_text = mail_text.replace ('<NEW_DEVICES_TABLE>', text + '\n')
             mail_html = mail_html.replace ('<NEW_DEVICES_TABLE>', html)
             mylog('verbose', ['[Notification] New Devices sections done.'])
 
+            # down_devices
+            # ---
             html, text = construct_notifications(self.JSON, "down_devices")
 
 
             mail_text = mail_text.replace ('<DOWN_DEVICES_TABLE>', text + '\n')
             mail_html = mail_html.replace ('<DOWN_DEVICES_TABLE>', html)
             mylog('verbose', ['[Notification] Down Devices sections done.'])
+            
+            # down_reconnected
+            # ---
+            html, text = construct_notifications(self.JSON, "down_reconnected")
 
+
+            mail_text = mail_text.replace ('<DOWN_RECONNECTED_TABLE>', text + '\n')
+            mail_html = mail_html.replace ('<DOWN_RECONNECTED_TABLE>', html)
+            mylog('verbose', ['[Notification] Reconnected Down Devices sections done.'])
+
+
+            # events
+            # ---
             html, text = construct_notifications(self.JSON, "events")           
             
 
@@ -140,6 +156,8 @@ class Notification_obj:
             mylog('verbose', ['[Notification] Events sections done.'])    
 
 
+            # plugins
+            # ---
             html, text = construct_notifications(self.JSON, "plugins")
 
             mail_text = mail_text.replace ('<PLUGINS_TABLE>', text + '\n')
@@ -235,6 +253,21 @@ class Notification_obj:
                                     WHERE eve_PendingAlertEmail = 1 
                                     AND eve_EventType =='Device Down' 
                                     AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
+                            """)
+
+        # Clear the pending email flag for reconnected devices
+        self.db.sql.execute(f"""UPDATE Events_Devices
+                                SET eve_PendingAlertEmail = 0
+                                WHERE eve_MAC IN (
+                                    SELECT down_events.eve_MAC
+                                    FROM Events_Devices AS down_events
+                                    INNER JOIN Events AS connected_events
+                                        ON connected_events.eve_MAC = down_events.eve_MAC
+                                    WHERE down_events.eve_EventType = 'Device Down'
+                                        AND connected_events.eve_EventType = 'Connected'
+                                        AND connected_events.eve_DateTime > down_events.eve_DateTime
+                                )
+                                AND eve_EventType = 'Device Down'
                             """)
 
         # clear plugin events

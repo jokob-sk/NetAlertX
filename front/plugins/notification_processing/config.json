@@ -32,7 +32,7 @@
       "function": "INCLUDED_SECTIONS",
       "type": "text.multiselect",
       "default_value": ["new_devices", "down_devices", "events"],
-      "options": ["new_devices", "down_devices", "events", "plugins"],
+      "options": ["new_devices", "down_devices", "down_reconnected", "events", "plugins"],
       "localized": ["name", "description"],
       "name": [
         {

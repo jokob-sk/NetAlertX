@@ -51,7 +51,7 @@ def main():
     # perform the new IP lookup N times specified by the INTRNT_TRIES setting
     new_internet_IP = ""
     INTRNT_RETRIES  = get_setting_value("INTRNT_RETRIES")
-    tries_needed    = 0
+    retries_needed  = 0
 
     for i in range(INTRNT_RETRIES + 1):
 
@@ -60,7 +60,7 @@ def main():
         if new_internet_IP == no_internet_ip:
             time.sleep(1*i) # Exponential backoff strategy
         else:
-            tries_needed = i
+            retries_needed = i
             break
 
     plugin_objects = Plugin_Objects(RESULT_FILE)    
@@ -70,7 +70,7 @@ def main():
         secondaryId = new_internet_IP,  # IP Address 
         watched1    = f'Previous IP: {PREV_IP}',
         watched2    = cmd_output.replace('\n',''),
-        watched3    = tries_needed,  
+        watched3    = retries_needed,  
         watched4    = '',
         extra       = f'Previous IP: {PREV_IP}', 
         foreignKey  = 'Internet')

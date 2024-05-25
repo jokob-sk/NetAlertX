@@ -33,6 +33,7 @@ services:
       - ${DEV_LOCATION}/back/update_vendors.sh:/app/back/update_vendors.sh
       - ${DEV_LOCATION}/front/lib:/app/front/lib
       - ${DEV_LOCATION}/front/js:/app/front/js
+      - ${DEV_LOCATION}/front/report_templates:/front/report_templates
       - ${DEV_LOCATION}/install/start.debian.sh:/app/install/start.debian.sh
       - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh
       - ${DEV_LOCATION}/install/install.debian.sh:/app/install/install.debian.sh      
