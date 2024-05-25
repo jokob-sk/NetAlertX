@@ -32,7 +32,7 @@ def main():
     parser.add_argument('pluginskeephistory', action="store", help="TBC")
     parser.add_argument('hourstokeepnewdevice', action="store", help="TBC")
     parser.add_argument('daystokeepevents', action="store", help="TBC")
-    parser.add_argument('pholuskeepdays', action="store", help="TBC")
+    parser.add_argument('pholuskeepdays', action="store", help="TBC") # unused
     
     values = parser.parse_args()
 

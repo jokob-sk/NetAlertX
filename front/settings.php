@@ -592,8 +592,10 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     }
 
-
+    // init finished
+    
     setupSmoothScrolling()
+    hideSpinner()
 
   }
 
@@ -840,6 +842,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // -----------------------------------------------------------------------------
   function handleLoadingDialog()
   {
+
+    // check if config file has been updated
     $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
 
       fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
@@ -865,7 +869,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         // check if the app is initialized and hide the spinner
         if(isAppInitialized())
         {          
-          hideSpinner()
+          // init page
+          getData()
           
           // reload page if outdated information might be displayed
           if(secondsSincePageLoad() > 3)
@@ -891,8 +896,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
   }
   
-
-  getData()
 
 </script>
 

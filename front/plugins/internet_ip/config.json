@@ -259,6 +259,28 @@
       ]
     },
     {
+      "function": "RETRIES",
+      "type": "integer",
+      "default_value": 3,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Retries"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Number of retries before Internet is marked as unreachable. Exponential backoff strategy is used between tries (1s - 1st retry, 2s - 2nd retry, etc)."
+        }
+      ]
+    },
+    {
       "function": "WATCH",
       "type": "text.multiselect",
       "default_value": [
@@ -432,6 +454,21 @@
         {
           "language_code": "en_us",
           "string" : "Response"
+        }
+      ]
+    },    
+    {
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",            
+      "default_value":"",
+      "options": [],
+      "localized": ["name"],
+      "name":[
+        {
+          "language_code": "en_us",
+          "string" : "Retries needed"
         }
       ]
     },

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import time
 import pathlib
 import argparse
 import sys
@@ -29,6 +30,8 @@ RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
 pluginName = 'INTRNT'
 
+no_internet_ip = '0.0.0.0'
+
 def main():
 
     mylog('verbose', [f'[{pluginName}] In script'])     
@@ -45,13 +48,20 @@ def main():
 
     mylog('verbose', [f'[{pluginName}] INTRNT_DIG_GET_IP_ARG: ', DIG_GET_IP_ARG])     
 
-    # Decode the base64-encoded value to get the actual value in ASCII format.
-    # DIG_GET_IP_ARG = base64.b64decode(DIG_GET_IP_ARG).decode('ascii')
-    
-    # mylog('verbose', [f'[{pluginName}] DIG_GET_IP_ARG resolved: {DIG_GET_IP_ARG} ']) 
+    # perform the new IP lookup N times specified by the INTRNT_TRIES setting
+    new_internet_IP = ""
+    INTRNT_RETRIES  = get_setting_value("INTRNT_RETRIES")
+    tries_needed    = 0
 
-    # perform the new IP lookup
-    new_internet_IP, cmd_output = check_internet_IP( PREV_IP, DIG_GET_IP_ARG)   
+    for i in range(INTRNT_RETRIES + 1):
+
+        new_internet_IP, cmd_output = check_internet_IP( PREV_IP, DIG_GET_IP_ARG)   
+
+        if new_internet_IP == no_internet_ip:
+            time.sleep(1*i) # Exponential backoff strategy
+        else:
+            tries_needed = i
+            break
 
     plugin_objects = Plugin_Objects(RESULT_FILE)    
     
@@ -60,7 +70,7 @@ def main():
         secondaryId = new_internet_IP,  # IP Address 
         watched1    = f'Previous IP: {PREV_IP}',
         watched2    = cmd_output.replace('\n',''),
-        watched3    = '',  
+        watched3    = tries_needed,  
         watched4    = '',
         extra       = f'Previous IP: {PREV_IP}', 
         foreignKey  = 'Internet')
@@ -84,7 +94,7 @@ def check_internet_IP ( PREV_IP, DIG_GET_IP_ARG ):
     mylog('verbose', [f'[{pluginName}]  Current internet_IP : {internet_IP}'])        
     
     # Check previously stored IP    
-    previous_IP = '0.0.0.0'
+    previous_IP = no_internet_ip
 
     if  PREV_IP is not None and len(PREV_IP) > 0 :
         previous_IP = PREV_IP
@@ -116,7 +126,7 @@ def get_internet_IP (DIG_GET_IP_ARG):
 
     # Handle invalid response
     if IP == '':
-        IP = '0.0.0.0'
+        IP = no_internet_ip
 
     return IP, cmd_output
 

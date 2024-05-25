@@ -1072,7 +1072,9 @@ function clearCache() {
   showSpinner();
   sessionStorage.clear();
   localStorage.clear();
+  setTimeout(() => {
   window.location.reload();
+}, 500);
 }
 
 // -----------------------------------------------------------------------------

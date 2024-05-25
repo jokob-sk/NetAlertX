@@ -60,12 +60,12 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 |-------------|-------------|
 | 📥🐳  | [Docker instructions](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
 | 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) |
+| 📥🟧  | [Unraid App 🧪)](https://unraid.net/community/apps) |
 | 📚     | [All Documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) (App Usage and Configuration) |
  
 > Other Alternatives
 >
 > - Check out [leiweibau's on HW installed fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
-> - Check instructions for [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (unmaintained)
 > - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
 > - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
 > - [NetBox](https://netboxlabs.com/) - Network management software (Commercial)
