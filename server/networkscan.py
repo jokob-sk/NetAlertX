@@ -75,7 +75,7 @@ def void_ghost_disconnections (db):
     sql.execute("""UPDATE Events SET eve_PairEventRowid = Null,
                                 eve_EventType ='VOIDED - ' || eve_EventType
                             WHERE eve_MAC != 'Internet'
-                            AND eve_EventType = 'Connected'
+                            AND eve_EventType in ('Connected', 'Down Reconnected')
                             AND eve_DateTime = ?
                             AND eve_MAC IN (
                                 SELECT Events.eve_MAC
@@ -131,12 +131,12 @@ def pair_sessions_events (db):
                     SET eve_PairEventRowid =
                        (SELECT ROWID
                         FROM Events AS EVE2
-                        WHERE EVE2.eve_EventType IN ('New Device', 'Connected',
+                        WHERE EVE2.eve_EventType IN ('New Device', 'Connected', 'Down Reconnected',
                             'Device Down', 'Disconnected')
                            AND EVE2.eve_MAC = Events.eve_MAC
                            AND EVE2.eve_Datetime > Events.eve_DateTime
                         ORDER BY EVE2.eve_DateTime ASC LIMIT 1)
-                    WHERE eve_EventType IN ('New Device', 'Connected')
+                    WHERE eve_EventType IN ('New Device', 'Connected', 'Down Reconnected')
                     AND eve_PairEventRowid IS NULL
                  """ )
 
@@ -189,15 +189,23 @@ def insert_events (db):
                                       WHERE dev_MAC = cur_MAC
                                          ) """)
 
-    # Check new connections
+    # Check new Connections or Down Reconnections
     mylog('debug','[Events] - 2 - New Connections')
-    sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
-                        eve_EventType, eve_AdditionalInfo,
-                        eve_PendingAlertEmail)
-                    SELECT cur_MAC, cur_IP, '{startTime}', 'Connected', '', dev_AlertEvents
-                    FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC  
-                      AND dev_PresentLastScan = 0 """)
+    sql.execute (f"""    INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
+                                            eve_EventType, eve_AdditionalInfo,
+                                            eve_PendingAlertEmail)
+                        SELECT DISTINCT c.cur_MAC, c.cur_IP, '{startTime}', 
+                                        CASE 
+                                            WHEN last_event.eve_EventType = 'Device Down' and  last_event.eve_PendingAlertEmail = 0 THEN 'Down Reconnected' 
+                                            ELSE 'Connected' 
+                                        END,
+                                        '',
+                                        d.dev_AlertEvents
+                        FROM LatestEventsPerMAC AS d 
+                        JOIN CurrentScan AS c ON d.dev_MAC = c.cur_MAC
+                        LEFT JOIN LatestEventsPerMAC AS last_event ON d.dev_MAC = last_event.eve_MAC 
+                        WHERE d.dev_PresentLastScan = 0   
+                        """)
 
     # Check disconnections
     mylog('debug','[Events] - 3 - Disconnections')

@@ -254,13 +254,13 @@ function getString (key) {
     case 'Norwegian': 
       lang_code = 'nb_no';
       break;
-    case 'Polish': 
+    case 'Polish (pl_pl)': 
       lang_code = 'pl_pl';
       break;
-    case 'Portuguese (Brazil)': 
+    case 'Portuguese (pt_br)': 
       lang_code = 'pt_br';
       break;
-    case 'Italian': 
+    case 'Italian (it_it)': 
       lang_code = 'it_it';
       break;
     case 'Russian': 

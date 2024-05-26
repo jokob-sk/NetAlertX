@@ -381,10 +381,12 @@ class DB():
 
         self.commitDB()        
 
+ 
+
         # -------------------------------------------------------------------------
         # CurrentScan table setup
         # -------------------------------------------------------------------------
-        
+
         # indicates, if CurrentScan table is available
         self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
         self.sql.execute(""" CREATE TABLE CurrentScan (                                
@@ -397,6 +399,33 @@ class DB():
                                 cur_DateTime STRING(250)
                             );
                         """)
+
+        self.commitDB()        
+
+        # -------------------------------------------------------------------------
+        # Create the LatestEventsPerMAC view
+        # -------------------------------------------------------------------------
+
+        # Dynamically generated language strings
+        self.sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
+                                WITH RankedEvents AS (
+                                    SELECT 
+                                        e.*,
+                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
+                                    FROM Events AS e
+                                )
+                                SELECT 
+                                    e.*, 
+                                    d.*, 
+                                    c.*
+                                FROM RankedEvents AS e
+                                LEFT JOIN Devices AS d ON e.eve_MAC = d.dev_MAC
+                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
+                                WHERE e.row_num = 1;
+                            """)
+
+        self.commitDB()       
+
 
         # Init the AppEvent database table
         AppEvent_obj(self)

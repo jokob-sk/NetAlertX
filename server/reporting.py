@@ -112,16 +112,11 @@ def get_notifications (db):
         # Compose Reconnected Down Section 
         # - select only Devices, that were previously down and now are Connected
         sqlQuery = f"""
-                        SELECT down_events.dev_Name, down_events.eve_MAC, down_events.dev_Vendor, down_events.eve_IP, 
-                            down_events.eve_DateTime AS DownTime, connected_events.eve_DateTime AS ConnectedTime
-                        FROM Events_Devices AS down_events
-                        INNER JOIN Events AS connected_events
-                            ON connected_events.eve_MAC = down_events.eve_MAC
-                        WHERE down_events.eve_EventType = 'Device Down'
-                            AND connected_events.eve_EventType = 'Connected'
-                            AND connected_events.eve_DateTime > down_events.eve_DateTime
-                            AND down_events.eve_PendingAlertEmail = 1
-                        ORDER BY down_events.eve_DateTime;
+                        SELECT dev_Name, eve_MAC, dev_Vendor, eve_IP, eve_DateTime, eve_EventType
+                        FROM Events_Devices AS reconnected_devices
+                            WHERE reconnected_devices.eve_EventType = 'Down Reconnected'
+                            AND reconnected_devices.eve_PendingAlertEmail = 1
+                        ORDER BY reconnected_devices.eve_DateTime;
                     """
         
         # Get the events as JSON        
@@ -137,8 +132,7 @@ def get_notifications (db):
         # Compose Events Section
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType IN ('Connected','Disconnected',
-                            'IP Changed') 
+                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') 
                             {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""      
 

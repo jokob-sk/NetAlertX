@@ -255,20 +255,6 @@ class Notification_obj:
                                     AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
                             """)
 
-        # Clear the pending email flag for reconnected devices
-        self.db.sql.execute(f"""UPDATE Events_Devices
-                                SET eve_PendingAlertEmail = 0
-                                WHERE eve_MAC IN (
-                                    SELECT down_events.eve_MAC
-                                    FROM Events_Devices AS down_events
-                                    INNER JOIN Events AS connected_events
-                                        ON connected_events.eve_MAC = down_events.eve_MAC
-                                    WHERE down_events.eve_EventType = 'Device Down'
-                                        AND connected_events.eve_EventType = 'Connected'
-                                        AND connected_events.eve_DateTime > down_events.eve_DateTime
-                                )
-                                AND eve_EventType = 'Device Down'
-                            """)
 
         # clear plugin events
         self.db.sql.execute ("DELETE FROM Plugins_Events")

@@ -60,7 +60,7 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 |-------------|-------------|
 | 📥🐳  | [Docker instructions](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
 | 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) |
-| 📥🟧  | [Unraid App 🧪)](https://unraid.net/community/apps) |
+| 📥🟧  | [Unraid App](https://unraid.net/community/apps) |
 | 📚     | [All Documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) (App Usage and Configuration) |
  
 > Other Alternatives

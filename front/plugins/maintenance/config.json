@@ -89,7 +89,7 @@
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"0 2 * * 3",
+      "default_value":"0 2 * * *",
       "options": [],
       "localized": ["name", "description"],
       "name" : [{

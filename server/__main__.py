@@ -168,7 +168,8 @@ def main ():
             notificationObj = notification.create(final_json, "")
 
             # run all enabled publisher gateways 
-            if notificationObj.HasNotifications:
+            if notificationObj.HasNotifications:                
+                
                 pluginsState = run_plugin_scripts(db, all_plugins, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
                 notification.clearPendingEmailFlag()
