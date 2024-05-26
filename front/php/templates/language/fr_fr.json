@@ -254,6 +254,7 @@
     "Events_TableHead_IPOrder": "",
     "Events_TableHead_Order": "",
     "Events_TableHead_Owner": "Propri\u00e9taire",
+    "Events_TableHead_PendingAlert": "",
     "Events_Table_info": "Affichage de _START_ \u00e0 _END_ sur _TOTAL_ entr\u00e9es",
     "Events_Table_nav_next": "Suivant",
     "Events_Table_nav_prev": "Pr\u00e9c\u00e9dent",

@@ -105,7 +105,7 @@ function getEvents() {
   $periodDate = getDateFromPeriod();
 
   // SQL 
-  $SQL1 = 'SELECT eve_DateTime AS eve_DateTimeOrder, dev_name, dev_owner, eve_DateTime, eve_EventType, NULL, NULL, NULL, NULL, eve_IP, NULL, eve_AdditionalInfo, NULL, Dev_MAC
+  $SQL1 = 'SELECT eve_DateTime AS eve_DateTimeOrder, dev_name, dev_owner, eve_DateTime, eve_EventType, NULL, NULL, NULL, NULL, eve_IP, NULL, eve_AdditionalInfo, NULL, Dev_MAC, eve_PendingAlertEmail
            FROM Events_Devices 
            WHERE eve_DateTime >= '. $periodDate;
  

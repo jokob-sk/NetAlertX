@@ -254,6 +254,7 @@
     "Events_TableHead_IPOrder": "IP-\u0437\u0430\u043f\u0440\u043e\u0441",
     "Events_TableHead_Order": "\u041f\u043e\u0440\u044f\u0434\u043e\u043a",
     "Events_TableHead_Owner": "\u0412\u043b\u0430\u0434\u0435\u043b\u0435\u0446",
+    "Events_TableHead_PendingAlert": "",
     "Events_Table_info": "\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u044b \u0441 _START_ \u043f\u043e _END_ \u0438\u0437 _TOTAL_ \u0437\u0430\u043f\u0438\u0441\u0435\u0439",
     "Events_Table_nav_next": "\u0421\u043b\u0435\u0434\u0443\u044e\u0449\u0430\u044f",
     "Events_Table_nav_prev": "\u041f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0430\u044f",

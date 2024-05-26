@@ -254,6 +254,7 @@
     "Events_TableHead_IPOrder": "Kolejno\u015b\u0107 IP",
     "Events_TableHead_Order": "Kolejno\u015b\u0107",
     "Events_TableHead_Owner": "W\u0142a\u015bciciel",
+    "Events_TableHead_PendingAlert": "",
     "Events_Table_info": "Poka\u017c_START_do_KONIEC_wszystkich_wpis\u00f3w",
     "Events_Table_nav_next": "Nast\u0119pna",
     "Events_Table_nav_prev": "Poprzednia",

@@ -145,6 +145,9 @@
                   <th><?= lang('Events_TableHead_IP');?></th>
                   <th><?= lang('Events_TableHead_IPOrder');?></th>
                   <th><?= lang('Events_TableHead_AdditionalInfo');?></th>
+                  <th>N/A</th> 
+                  <th>MAC</th>
+                  <th><?= lang('Events_TableHead_PendingAlert');?></th>
                 </tr>
                 </thead>
               </table>
@@ -236,7 +239,7 @@ function initializeDatatable () {
     'pageLength'   : tableRows,
 
     'columnDefs'  : [
-      {visible:   false,         targets: [0,5,6,7,8,10] },
+      {visible:   false,         targets: [0,5,6,7,8,10,11,12,13] },
       {className: 'text-center', targets: [] },
       {orderData: [8],           targets: 7 },
       {orderData: [10],          targets: 9 },
@@ -251,6 +254,13 @@ function initializeDatatable () {
       {targets: [3,4,5,6,7],
         "createdCell": function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
+      } },
+
+      // PendingAlert
+      {targets: [14],
+        "createdCell": function (td, cellData, rowData, row, col) {
+          // console.log(cellData);
+          $(td).html (cellData);
       } }
     ],
 
@@ -331,7 +341,7 @@ function getEvents (p_eventsType) {
   $('#tableEventsBox')[0].className = 'box box-' + color;
   $('#tableEventsTitle').html (tableTitle);
 
-  // Coluumns Visibility
+  // Columns Visibility
   $('#tableEvents').DataTable().column(3).visible (!sesionCols);
   $('#tableEvents').DataTable().column(4).visible (!sesionCols);
   $('#tableEvents').DataTable().column(5).visible (sesionCols);

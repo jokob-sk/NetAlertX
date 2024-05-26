@@ -266,6 +266,7 @@
     "Events_TableHead_IPOrder": "IP Order",
     "Events_TableHead_Order": "Order",
     "Events_TableHead_Owner": "Eigent\u00fcmer",
+    "Events_TableHead_PendingAlert": "",
     "Events_Table_info": "Zeige _START_ bis _END_ von _TOTAL_ Eintr\u00e4gen",
     "Events_Table_nav_next": "N\u00e4chste",
     "Events_Table_nav_prev": "Zur\u00fcck",

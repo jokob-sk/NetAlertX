@@ -254,6 +254,7 @@
     "Events_TableHead_IPOrder": "Ordine IP",
     "Events_TableHead_Order": "Ordine",
     "Events_TableHead_Owner": "Proprietario",
+    "Events_TableHead_PendingAlert": "",
     "Events_Table_info": "_START_ - _END_ di _TOTAL_ elementi",
     "Events_Table_nav_next": "Prossimo",
     "Events_Table_nav_prev": "Precedente",

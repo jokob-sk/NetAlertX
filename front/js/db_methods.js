@@ -36,7 +36,8 @@ function checkDbLock() {
             }
         },
         error: function() {
-            console.log('Error checking database lock status');
+            console.log('🟥 Error checking database lock status');
+            $(".header-status-locked-db").show()
         }
     });
 }

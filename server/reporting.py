@@ -46,12 +46,12 @@ def get_notifications (db):
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType != 'Device Down' AND eve_MAC IN
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType not in ('Device Down', 'Down Reconnected') AND eve_MAC IN
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
 						)""")
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType = 'Device Down' AND eve_MAC IN
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType in ('Device Down', 'Down Reconnected') AND eve_MAC IN
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0
 						)""")
@@ -110,7 +110,7 @@ def get_notifications (db):
     
     if 'down_reconnected' in sections:
         # Compose Reconnected Down Section 
-        # - select only Devices, that were previously down and now are Connected
+        # - select only Devices, that were previously down and now are Connected        
         sqlQuery = f"""
                         SELECT dev_Name, eve_MAC, dev_Vendor, eve_IP, eve_DateTime, eve_EventType
                         FROM Events_Devices AS reconnected_devices
