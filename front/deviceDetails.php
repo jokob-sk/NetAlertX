@@ -628,7 +628,7 @@
   <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
   <!-- ----------------------------------------------------------------------- -->
 
-  <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  
   <!-- ----------------------------------------------------------------------- -->
 
 <!-- Dark-Mode Patch -->

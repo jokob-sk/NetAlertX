@@ -72,6 +72,7 @@
       case 'read'  :    read($rawSql);    break;
       case 'update':    update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
       case 'delete':    delete($columnName, $id, $dbtable);  break;
+      case 'checkLock': checkLock();  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -263,5 +264,21 @@ function delete($columnName, $id, $dbtable)
 }
 
 
+
+//------------------------------------------------------------------------------
+//  check if the database is locked
+//------------------------------------------------------------------------------
+function checkLock() {
+  global $db;
+  try {
+      $db->exec('BEGIN EXCLUSIVE TRANSACTION');
+      $db->exec('COMMIT');
+      echo 0; // Not locked
+      return 0;
+  } catch (Exception $e) {
+      echo 1; // Locked
+      return 1;
+  }
+}
 
 ?>

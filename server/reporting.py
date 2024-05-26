@@ -74,7 +74,7 @@ def get_notifications (db):
         json_obj = db.get_table_as_json(sqlQuery)
 
         json_new_devices_meta = {
-            "title": "🆕New devices",
+            "title": "🆕 New devices",
             "columnNames": json_obj.columnNames
         }
 
@@ -103,7 +103,7 @@ def get_notifications (db):
         json_obj = db.get_table_as_json(sqlQuery)
 
         json_down_devices_meta = { 
-            "title": "⚠ Down devices",
+            "title": "🔴 Down devices",
             "columnNames": json_obj.columnNames
         }
         json_down_devices = json_obj.json["data"]     

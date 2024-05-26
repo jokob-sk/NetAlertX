@@ -144,6 +144,17 @@
 {
     background-color: rgba(0, 0, 0, 0);
 }
+.header-status-locked-db
+{
+    width: 25px;
+    height: 25px;
+    color: red;
+    position: absolute;
+    top: 12px;
+    right: -17px;
+    display: none;
+}
+
 .navbar-nav > li > a
 {
     line-height: 30px;

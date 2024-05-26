@@ -55,6 +55,7 @@
 <!-- NetAlertX -->
 <script src="js/handle_version.js"></script>
 <script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+<script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 <!-- Select2 JavaScript -->
 <script src="lib/AdminLTE/bower_components/select2/dist/js/select2.full.min.js" defer></script>
