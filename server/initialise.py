@@ -277,7 +277,7 @@ def importConfigs (db, all_plugins):
     plugin_indexes_to_remove.sort(reverse=True)
     for indx in plugin_indexes_to_remove:
         pref = all_plugins[indx]["unique_prefix"]  
-        mylog('none', [f'[Config] ⛔ Unloading plugin {pref} because not in the LOADED_PLUGINS setting or disabled by default'])
+        mylog('none', [f'[Config] ⛔ Unloading {pref}'])
         all_plugins.pop(indx)
 
     # all_plugins has now only initialized plugins, get all prefixes

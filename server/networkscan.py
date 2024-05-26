@@ -200,7 +200,7 @@ def insert_events (db):
                                             ELSE 'Connected' 
                                         END,
                                         '',
-                                        d.dev_AlertEvents
+                                        1
                         FROM LatestEventsPerMAC AS d 
                         JOIN CurrentScan AS c ON d.dev_MAC = c.cur_MAC
                         LEFT JOIN LatestEventsPerMAC AS last_event ON d.dev_MAC = last_event.eve_MAC 
