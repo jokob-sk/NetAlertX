@@ -147,7 +147,7 @@
 
 
 <!-- Alert float -->
-<div id="notification" class="alert alert-dimissible pa_alert_notification">
+<div id="notification" >
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <div id="alert-message"> Alert message </div>
 </div>

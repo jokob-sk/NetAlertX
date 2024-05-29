@@ -269,16 +269,26 @@ function delete($columnName, $id, $dbtable)
 //  check if the database is locked
 //------------------------------------------------------------------------------
 function checkLock() {
-  global $db;
-  try {
-      $db->exec('BEGIN EXCLUSIVE TRANSACTION');
-      $db->exec('COMMIT');
-      echo 0; // Not locked
-      return 0;
-  } catch (Exception $e) {
-      echo 1; // Locked
-      return 1;
+  global $DBFILE, $db_locked;
+
+  $file = fopen($DBFILE, 'r+');
+
+  if (!$file or $db_locked) {
+      echo 1; // Could not open the file
+      return;
   }
+
+  if (flock($file, LOCK_EX | LOCK_NB)) {
+      // Lock acquired, meaning the database is not locked by another process
+      flock($file, LOCK_UN); // Release the lock
+      echo 0; // Not locked
+  } else {
+      // Could not acquire lock, meaning the database is locked
+      echo 1; // Locked
+  }
+
+  fclose($file);
 }
+
 
 ?>

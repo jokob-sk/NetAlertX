@@ -202,8 +202,92 @@
   }
 
 // -------------------------------------------------------------------
+// Validation
+// -------------------------------------------------------------------
+function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
+
+  // check if the required UI_LANG setting is in the array - if not something went wrong
+  $.each(settingsArray, function(index, value) {
+      if (value[1] == "UI_LANG") {
+        if(isEmpty(value[3]) == true)
+        {
+          console.log(`⚠ Error: Required setting UI_LANG not found`);
+          showModalOk('ERROR', getString('settings_missing_block')); 
+
+          return false;
+        }
+      }
+  });
+
+  const settingsCodeNames = settingsJSON_DB.map(setting => setting.Code_Name);
+  const detailedCodeNames = settingsArray.map(item => item[1]);
+
+  const missingCodeNamesOnPage = detailedCodeNames.filter(codeName => !settingsCodeNames.includes(codeName));
+  const missingCodeNamesInDB = settingsCodeNames.filter(codeName => !detailedCodeNames.includes(codeName));
+
+  // check if the number of settings on the page and in the DB are the same
+  if (missingCodeNamesOnPage.length !== missingCodeNamesInDB.length) {
+
+      console.log(`⚠ Error: The following settings are missing in the DB or on the page (Reload page to fix):`);
+      console.log(missingCodeNamesOnPage);
+      console.log(missingCodeNamesInDB);
+
+      showModalOk('ERROR', getString('settings_missing_block')); 
+
+      return false;
+  }
+
+  //  all OK
+  return true;
+}
+// -------------------------------------------------------------------
 // Manipulating Editable List options
 // -------------------------------------------------------------------
+
+// ---------------------------------------------------------
+function addList(element)
+{
+
+  const fromId = $(element).attr('my-input-from');
+  const toId = $(element).attr('my-input-to');
+
+  input = $(`#${fromId}`).val();
+  $(`#${toId}`).append($("<option ></option>").attr("value", input).text(input));
+  
+  // clear input
+  $(`#${fromId}`).val("");
+
+  settingsChanged();
+}
+// ---------------------------------------------------------
+function removeFromList(element)
+{
+  settingsChanged();    
+  $(`#${$(element).attr('my-input')}`).find("option:last").remove();
+  
+}
+// ---------------------------------------------------------
+function addInterface()
+{
+  ipMask = $('#ipMask').val();
+  ipInterface = $('#ipInterface').val();
+
+  full = ipMask + " --interface=" + ipInterface;
+
+  console.log(full)
+
+  if(ipMask == "" || ipInterface == "")
+  {
+    showModalOk ('Validation error', 'Specify both, the network mask and the interface');
+  } else {
+    $('#SCAN_SUBNETS').append($('<option disabled></option>').attr('value', full).text(full));
+
+    $('#ipMask').val('');
+    $('#ipInterface').val('');
+
+    settingsChanged();
+  }
+}
 
 
 // -------------------------------------------------------------------
@@ -305,32 +389,175 @@ function filterRows(inputText) {
   });
 }
 
-setTimeout(() => {
+  setTimeout(() => {
 
-  // Event listener for input change
-  $('#settingsSearch').on('input', function() {
-    var searchText = $(this).val();
-    // hide the setting overview dashboard
-    $('#settingsOverview').collapse('hide');
+    // Event listener for input change
+    $('#settingsSearch').on('input', function() {
+      var searchText = $(this).val();
+      // hide the setting overview dashboard
+      $('#settingsOverview').collapse('hide');
 
-    filterRows(searchText);
+      filterRows(searchText);
+    });
+
+    // Event listener for input focus
+    // var firstFocus = true;
+    $('#settingsSearch').on('focus', function() {
+      openAllSettings()
+    });
+
+    
+    
+  }, 1000);
+
+
+
+  // ----------------------------------------------------------------------------- 
+  // handling events on the backend initiated by the front end START
+  // ----------------------------------------------------------------------------- 
+
+  modalEventStatusId = 'modal-message-front-event'
+
+  // --------------------------------------------------------
+  // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
+  function addToExecutionQueue(element)
+  {
+
+    // value has to be in format event|param. e.g. run|ARPSCAN
+    action = `${getGuid()}|${$(element).attr('data-myevent')}|${$(element).attr('data-myparam-plugin')}`
+
+    $.ajax({
+      method: "POST",
+      url: "php/server/util.php",
+      data: { function: "addToExecutionQueue", action: action  },
+      success: function(data, textStatus) {
+          // showModalOk ('Result', data );
+
+          // show message
+          showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
+
+          updateModalState()
+      }
+    })
+  }
+
+  // --------------------------------------------------------
+  // Updating the execution queue in in modal pop-up
+  function updateModalState() {
+    setTimeout(function() {
+        // Fetch the content from the log file using an AJAX request
+        $.ajax({
+            url: '/log/execution_queue.log',
+            type: 'GET',
+            success: function(data) {
+                // Update the content of the HTML element (e.g., a div with id 'logContent')
+                $('#'+modalEventStatusId).html(data);
+
+                updateModalState();
+            },
+            error: function() {
+                // Handle error, such as the file not being found
+                $('#logContent').html('Error: Log file not found.');
+            }
+        });
+    }, 2000);
+  }
+
+
+  // ----------------------------------------------------------------------------- 
+  // handling events on the backend initiated by the front end END
+  // ----------------------------------------------------------------------------- 
+
+
+// ---------------------------------------------------------  
+// UNUSED?
+function getParam(targetId, key, skipCache = false) {  
+
+  skipCacheQuery = "";
+
+  if(skipCache)
+  {
+    skipCacheQuery = "&skipcache";
+  }
+
+  // get parameter value
+  $.get('php/server/parameters.php?action=get&defaultValue=0&parameter='+ key + skipCacheQuery, function(data) {
+
+    var result = data;   
+    
+    result = result.replaceAll('"', '');
+    
+    document.getElementById(targetId).innerHTML = result.replaceAll('"', ''); 
   });
+}
 
-  // Event listener for input focus
-  // var firstFocus = true;
-  $('#settingsSearch').on('focus', function() {
-    openAllSettings()
-  });
+  // ----------------------------------------------------------------------------- 
+  // Show/hide the metadata settings
+  // ----------------------------------------------------------------------------- 
+  function toggleMetadata(element)
+  {
+    const id = $(element).attr('my-to-toggle');
+
+    $(`#${id}`).toggle();
+  }
+
+
+
+  // ---------------------------------------------------------  
+  // Helper methods
+  // ---------------------------------------------------------  
+  // Toggle readonly mode of the target element specified by the id in the "my-input-toggle-readonly" attribute
+  function overrideToggle(element) {
+    settingsChanged();
+
+    targetId = $(element).attr("my-input-toggle-readonly");
+
+    inputElement = $(`#${targetId}`)[0];    
+
+    if (!inputElement) {
+      console.error("Input element not found!");
+      return;
+    }
+
+    if (inputElement.type === "text" || inputElement.type === "password") {
+      inputElement.readOnly = !inputElement.readOnly;
+    } else if (inputElement.type === "checkbox") {
+      inputElement.disabled = !inputElement.disabled;
+    } else {
+      console.warn("Unsupported input type. Only text, password, and checkbox inputs are supported.");
+    }
+
+  }
+
+
+  // ---------------------------------------------------------
+  // generate a list of options for a input select
+  function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
+  {
+    multi = isMultiSelect ? "multiple" : "";
+
+    // optionsArray = getSettingOptions(set['Code_Name'] )
+    valuesArray = createArray(set['Value']);  
+
+    // create unique ID  
+    var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
+
+    // execute AJAX callabck + SQL query resolution
+    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)  
+
+    // main selection dropdown wrapper
+    input += `
+      <select onChange="settingsChanged()"  
+              my-data-type="${set['Type']}" 
+              class="form-control" 
+              name="${set['Code_Name']}" 
+              id="${set['Code_Name']}" ${multi}>
+
+            <option id="${targetLocation}" temporary="temporary"></option>
+    
+      </select>`;
+      
+    return input;
+  }
 
   
-  
-}, 1000);
-
-
-
-
-
-
-
-
-

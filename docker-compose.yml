@@ -26,7 +26,7 @@ services:
       - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
       - ${DEV_LOCATION}/server:/app/server            
       - ${DEV_LOCATION}/dockerfiles:/app/dockerfiles
-      - ${APP_DATA_LOCATION}/netalertx/php.ini:/etc/php/8.2/fpm/php.ini      
+      # - ${APP_DATA_LOCATION}/netalertx/php.ini:/etc/php/8.2/fpm/php.ini      
       - ${DEV_LOCATION}/install:/app/install
       - ${DEV_LOCATION}/front/css:/app/front/css
       - ${DEV_LOCATION}/front/img:/app/front/img

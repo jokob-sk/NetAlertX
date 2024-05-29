@@ -492,28 +492,34 @@
 /* -----------------------------------------------------------------------------
    Notification float banner
 ----------------------------------------------------------------------------- */
-.pa_alert_notification {
+.notification_modal {
+
     text-align: center;
-    font-size: large;
-    font-weight: bold;
-    color: #258744;
-
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    border-radius: 5px;
-
-    max-width: 1000px;
-    /* 80% wrapper 1250px */
+    left: 0;
+    right: 0;
     width: 80%;
     z-index: 9999;
-
     position: fixed;
-    top: 30px;
-    margin: auto;
-    transform: translate(0, 0);
-
+    top: 100px;
     display: none;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+.modal_green
+{
+    color: #258744;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.modal_grey
+{
+    color: white;
+    background-color: darkgrey;
+    border-color: #000000;
+}
+
 /* ticker setup */
 .ticker-li
 {
@@ -978,6 +984,11 @@ input[readonly] {
   .settings-sticky-bottom-section:hover {
     border-color: #258744;
   }
+
+.settings-sticky-bottom-section .form-group
+{
+    margin-bottom: 0px;
+}
 
 .clear-filter
 {

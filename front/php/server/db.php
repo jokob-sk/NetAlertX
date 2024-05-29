@@ -12,6 +12,8 @@
 // DB File Path
 $DBFILE = dirname(__FILE__).'/../../../db/app.db';
 
+$db_locked = false;
+
 //------------------------------------------------------------------------------
 // Connect DB
 //------------------------------------------------------------------------------
@@ -20,12 +22,21 @@ function SQLite3_connect ($trytoreconnect) {
   try
   {
     // connect to database
+
+    global $db_locked; 
+
+    $db_locked = false;
+
     // return new SQLite3($DBFILE, SQLITE3_OPEN_READONLY);
     return new SQLite3($DBFILE, SQLITE3_OPEN_READWRITE);
   }
   catch (Exception $exception)
   {
     // sqlite3 throws an exception when it is unable to connect
+    global $db_locked; 
+
+    $db_locked = true;
+
     // try to reconnect one time after 3 seconds
     
     if($trytoreconnect)

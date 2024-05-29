@@ -601,65 +601,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   }
 
 
-  // ---------------------------------------------------------
-  // generate a list of options for a input select
-  function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
-  {
-    multi = isMultiSelect ? "multiple" : "";
-
-    // optionsArray = getSettingOptions(set['Code_Name'] )
-    valuesArray = createArray(set['Value']);  
-
-    // create unique ID  
-    var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
-
-    // execute AJAX callabck + SQL query resolution
-    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)  
-
-    // main selection dropdown wrapper
-    input += `
-      <select onChange="settingsChanged()"  
-              my-data-type="${set['Type']}" 
-              class="form-control" 
-              name="${set['Code_Name']}" 
-              id="${set['Code_Name']}" ${multi}>
-
-            <option id="${targetLocation}" temporary="temporary"></option>
-    
-      </select>`;
-      
-    return input;
-  }
-
-  
-
-  // ---------------------------------------------------------  
-  // Helper methods
-  // ---------------------------------------------------------  
-  // Toggle readonly mode of teh target element specified by the id in the "my-input-toggle-readonly" attribute
-  function overrideToggle(element) {
-    settingsChanged();
-
-    targetId = $(element).attr("my-input-toggle-readonly");
-
-    inputElement = $(`#${targetId}`)[0];    
-
-    if (!inputElement) {
-      console.error("Input element not found!");
-      return;
-    }
-
-    if (inputElement.type === "text" || inputElement.type === "password") {
-      inputElement.readOnly = !inputElement.readOnly;
-    } else if (inputElement.type === "checkbox") {
-      inputElement.disabled = !inputElement.disabled;
-    } else {
-      console.warn("Unsupported input type. Only text, password, and checkbox inputs are supported.");
-    }
-
-  }
-
-  // number of settings has to be equal to
 
   // display the name of the first person
   // echo $settingsJson[0]->name;
@@ -670,61 +611,16 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   // Wrong number of settings processing
   if(settingsNumberJSON != settingsNumberDB) 
   {
-    showModalOk('WARNING', "<?= lang("settings_missing")?>");    
+    showModalOk('WARNING', getString("settings_missing"));    
   }
 
-  // ---------------------------------------------------------
-  function addList(element)
-  {
-
-    const fromId = $(element).attr('my-input-from');
-    const toId = $(element).attr('my-input-to');
-
-    input = $(`#${fromId}`).val();
-    $(`#${toId}`).append($("<option ></option>").attr("value", input).text(input));
-    
-    // clear input
-    $(`#${fromId}`).val("");
-
-    settingsChanged();
-  }
-  // ---------------------------------------------------------
-  function removeFromList(element)
-  {
-    settingsChanged();    
-    $(`#${$(element).attr('my-input')}`).find("option:last").remove();
-    
-  }
-  // ---------------------------------------------------------
-  function addInterface()
-  {
-    ipMask = $('#ipMask').val();
-    ipInterface = $('#ipInterface').val();
-
-    full = ipMask + " --interface=" + ipInterface;
-
-    console.log(full)
-
-    if(ipMask == "" || ipInterface == "")
-    {
-      showModalOk ('Validation error', 'Specify both, the network mask and the interface');
-    } else {
-      $('#SCAN_SUBNETS').append($('<option disabled></option>').attr('value', full).text(full));
-
-      $('#ipMask').val('');
-      $('#ipInterface').val('');
-
-      settingsChanged();
-    }
-  }
-  
   // ---------------------------------------------------------
   function saveSettings() {
     if(settingsNumberJSON != settingsNumberDB) 
     {
       console.log(`Error settingsNumberJSON != settingsNumberDB: ${settingsNumberJSON} !=  ${settingsNumberDB}`);
 
-      showModalOk('WARNING', "<?= lang("settings_missing_block")?>"); 
+      showModalOk('WARNING', getString("settings_missing_block")); 
 
       setTimeout(() => {
               clearCache()  
@@ -778,49 +674,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           }
         });
 
-        console.log(settingsArray);
-
         // sanity check to make sure settings were loaded & collected correctly
-        sanityCheck_notOK = true
-        $.each(settingsArray, function(index, value) {
-            // Do something with each element of the array
-            if(value[1] == "UI_LANG")
-            {
-              sanityCheck_notOK = isEmpty(value[3])
-            }
-        });
-
-        // if ok, double check the number collected of settings is correct
-        if(sanityCheck_notOK == false)
-        {
-          
-          console.log(settingsArray);
-
-          // Step 1: Extract Code_Name values from settingsList
-          const settingsCodeNames = settingsJSON_DB.map(setting => setting.Code_Name);
-
-          // Step 2: Extract second elements from detailedList
-          const detailedCodeNames = settingsArray.map(item => item[1]);
-
-          // Step 3: Find missing Code_Name values
-          const missingCodeNamesOnPage   = detailedCodeNames.filter(codeName => !settingsCodeNames.includes(codeName));
-          const missingCodeNamesInDB     = settingsCodeNames.filter(codeName => !detailedCodeNames.includes(codeName));
-
-          
-          if(missingCodeNamesOnPage.length != missingCodeNamesInDB.length)
-          {
-            sanityCheck_notOK = true;
-
-            console.log(`⚠ Error: The following settings are missing in the DB or on the page (Reload page to fix):`);
-            console.log(missingCodeNamesOnPage);
-            console.log(missingCodeNamesInDB);
-
-            showModalOk('WARNING', "<?= lang("settings_missing_block")?>");            
-          }
-          
-        }
-
-        if(sanityCheck_notOK == false && false)
+        if(settingsCollectedCorrectly(settingsArray, settingsJSON_DB))
         {
           // trigger a save settings event in the backend
           $.ajax({
@@ -831,7 +686,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             settings: JSON.stringify(settingsArray) },
             success: function(data, textStatus) {                    
               
-              showModalOk ('Result', data );
+              showMessage (getString("settings_saved"), 5000, "modal_grey");
             
               // Remove navigation prompt "Are you sure you want to leave..."
               window.onbeforeunload = null;         
@@ -848,30 +703,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     }
   }
 
-  
-  // ---------------------------------------------------------  
-  function getParam(targetId, key, skipCache = false) {  
 
-    skipCacheQuery = "";
 
-    if(skipCache)
-    {
-      skipCacheQuery = "&skipcache";
-    }
+</script>
 
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=0&parameter='+ key + skipCacheQuery, function(data) {
 
-      var result = data;   
-      
-      result = result.replaceAll('"', '');
-      
-      document.getElementById(targetId).innerHTML = result.replaceAll('"', ''); 
-    });
-  }
+<!-- INIT THE PAGE -->
+<script defer>
 
-  // -----------------------------------------------------------------------------
-  function handleLoadingDialog()
+function handleLoadingDialog()
   {
 
     // check if config file has been updated
@@ -926,85 +766,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   }
   
 
-</script>
-
-<script defer>
-
-  
-
-  // ----------------------------------------------------------------------------- 
-  // handling events on the backend initiated by the front end START
-  // ----------------------------------------------------------------------------- 
-  function toggleMetadata(element)
-  {
-    const id = $(element).attr('my-to-toggle');
-
-    $(`#${id}`).toggle();
-  }
-
-
-  // ----------------------------------------------------------------------------- 
-  // handling events on the backend initiated by the front end START
-  // ----------------------------------------------------------------------------- 
-
-  modalEventStatusId = 'modal-message-front-event'
-
-// --------------------------------------------------------
-// Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
-function addToExecutionQueue(element)
-{
-
-  // value has to be in format event|param. e.g. run|ARPSCAN
-  action = `${getGuid()}|${$(element).attr('data-myevent')}|${$(element).attr('data-myparam-plugin')}`
-
-  $.ajax({
-    method: "POST",
-    url: "php/server/util.php",
-    data: { function: "addToExecutionQueue", action: action  },
-    success: function(data, textStatus) {
-        // showModalOk ('Result', data );
-
-        // show message
-        showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
-
-        updateModalState()
-    }
-  })
-}
-
-// --------------------------------------------------------
-// Updating the execution queue in in modal pop-up
-function updateModalState() {
-    setTimeout(function() {
-        // Fetch the content from the log file using an AJAX request
-        $.ajax({
-            url: '/log/execution_queue.log',
-            type: 'GET',
-            success: function(data) {
-                // Update the content of the HTML element (e.g., a div with id 'logContent')
-                $('#'+modalEventStatusId).html(data);
-
-                updateModalState();
-            },
-            error: function() {
-                // Handle error, such as the file not being found
-                $('#logContent').html('Error: Log file not found.');
-            }
-        });
-    }, 2000);
-}
-
-
-  // ----------------------------------------------------------------------------- 
-  // handling events on the backend initiated by the front end END
-  // ----------------------------------------------------------------------------- 
-
-  // ---------------------------------------------------------
-  // Show last time settings have been imported  
-
   showSpinner()
   handleLoadingDialog()
 
-  
+
 
 </script>

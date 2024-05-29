@@ -186,17 +186,24 @@ function modalWarningOK() {
 }
 
 // -----------------------------------------------------------------------------
-function showMessage(textMessage = "") {
+function showMessage(textMessage = "", timeout = 3000, colorClass = "modal_green") {
     if (textMessage.toLowerCase().includes("error")) {
         // show error
         alert(textMessage);
     } else {
-        // show temporal notification
+        // show temporary notification
+        $("#notification").removeClass();                                               // remove all classes
+        $("#notification").addClass("alert alert-dimissible notification_modal");       // add default ones
+        $("#notification").addClass(colorClass);                                       // add color modifiers
+
+        // message
         $("#alert-message").html(textMessage);
+
+        // timeout
         $("#notification").fadeIn(1, function () {
             window.setTimeout(function () {
                 $("#notification").fadeOut(500);
-            }, 3000);
+            }, timeout);
         });
     }
 }

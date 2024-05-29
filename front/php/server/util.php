@@ -387,8 +387,10 @@ function saveSettings()
   // Replace the original file with the temporary file
   rename($tempConfPath, $fullConfPath);
 
-  displayMessage("<br/>Settings saved to the <code>app.conf</code> file.<br/><br/>A time-stamped backup of the previous file created. <br/><br/> Reloading...<br/>", 
-    FALSE, TRUE, TRUE, TRUE);    
+  // displayMessage(lang('settings_saved'), 
+  //   FALSE, TRUE, TRUE, TRUE);    
+
+  echo "OK";
 
 }
 
