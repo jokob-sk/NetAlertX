@@ -1,4 +1,4 @@
-FROM alpine:3.19 as builder
+FROM alpine:3.20 as builder
 
 ARG INSTALL_DIR=/app
 
@@ -19,7 +19,7 @@ RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-lea
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
 # second stage
-FROM alpine:3.19 as runner
+FROM alpine:3.20 as runner
 
 ARG INSTALL_DIR=/app
 
