@@ -218,6 +218,7 @@ function removeOptionItem(option) {
  function updateOptionItem(option, value) {
   settingsChanged();  
   option.html(value);
+  option.val(value);
 }
 
 // -------------------------------------------------------------------
@@ -246,8 +247,6 @@ function initListInteractionOptions(selectorId) {
   // Attach click event listener to options
   $options.on('click', function() {
     const $option = $(this);
-
-    console.log('aaa');
 
     // Increment click counter
     clickCounter++;

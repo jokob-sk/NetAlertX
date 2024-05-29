@@ -724,7 +724,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     {
       console.log(`Error settingsNumberJSON != settingsNumberDB: ${settingsNumberJSON} !=  ${settingsNumberDB}`);
 
-      showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
+      showModalOk('WARNING', "<?= lang("settings_missing_block")?>"); 
+
+      setTimeout(() => {
+              clearCache()  
+            }, 1500);
+         
     } else
     {
       var settingsArray = [];
@@ -773,7 +778,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           }
         });
 
-        // console.log(settingsArray);
+        console.log(settingsArray);
 
         // sanity check to make sure settings were loaded & collected correctly
         sanityCheck_notOK = true
@@ -810,12 +815,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             console.log(missingCodeNamesOnPage);
             console.log(missingCodeNamesInDB);
 
-            showModalOk('WARNING', "<?= lang("settings_missing_block")?>");
+            showModalOk('WARNING', "<?= lang("settings_missing_block")?>");            
           }
           
         }
 
-        if(sanityCheck_notOK == false )
+        if(sanityCheck_notOK == false && false)
         {
           // trigger a save settings event in the backend
           $.ajax({
