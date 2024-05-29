@@ -720,6 +720,8 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   function saveSettings() {
     if(settingsNumberJSON != settingsNumberDB) 
     {
+      console.log(`Error settingsNumberJSON != settingsNumberDB: ${settingsNumberJSON} !=  ${settingsNumberDB}`);
+
       showModalOk('WARNING', "<?= lang("settings_missing_block")?>");    
     } else
     {
@@ -809,6 +811,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             }
           });
         } else{
+          console.log(`Error settingsNumberDB != settingsArray.length: ${settingsNumberDB} !=  ${settingsArray.length}`);
           showModalOk('WARNING', "<?= lang("settings_missing_block")?>");
         }
         

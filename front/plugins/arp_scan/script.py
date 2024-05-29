@@ -38,7 +38,7 @@ def main():
     mylog('verbose', ['[ARP Scan] In script ']) 
 
     #  holds a list of user-submitted subnets.    
-    mylog('verbose', ['[ARP Scan] values.userSubnets: ', values.userSubnets]) 
+    # mylog('verbose', ['[ARP Scan] values.userSubnets: ', values.userSubnets]) 
     
 
     # Extract the base64-encoded subnet information from the first element of the userSubnets list.
@@ -46,7 +46,7 @@ def main():
     userSubnetsParamBase64 = values.userSubnets[0].split('userSubnets=b')[1]
 
     # Printing the extracted base64-encoded subnet information.
-    mylog('verbose', ['[ARP Scan] userSubnetsParamBase64: ', userSubnetsParamBase64]) 
+    # mylog('verbose', ['[ARP Scan] userSubnetsParamBase64: ', userSubnetsParamBase64]) 
     
 
     # Decode the base64-encoded subnet information to get the actual subnet information in ASCII format.
