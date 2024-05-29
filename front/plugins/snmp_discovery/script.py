@@ -64,11 +64,12 @@ def main():
                     
 
                     if len(tmpSplt) == 3:
+
                         
                         ipStr = tmpSplt[0].split('.')[-4:]  # Get the last 4 elements to extract the IP
                         macStr = tmpSplt[1].strip().split(' ')  # Remove leading/trailing spaces from MAC
 
-                        if 'iso.' in output and len(ipStr) == 4:
+                        if len(ipStr) == 4:
                             macAddress = ':'.join(macStr)
                             ipAddress = '.'.join(ipStr)
 
@@ -82,6 +83,8 @@ def main():
                                 extra       = handleEmpty(line),
                                 foreignKey  = handleEmpty(macAddress)  # Use the primary ID as the foreign key
                             )
+                        else:
+                            mylog('verbose', [f'[SNMPDSC] ipStr does not seem to contain a valid IP:', ipStr]) 
 
     mylog('verbose', ['[SNMPDSC] Entries found: ', len(plugin_objects)]) 
 

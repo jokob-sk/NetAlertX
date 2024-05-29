@@ -48,6 +48,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       ); 
 }
 
+$settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
 <!-- Page ------------------------------------------------------------------ -->
@@ -299,7 +300,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                       `
       }      
 
-      console.log(pluginsData);
+      // console.log(pluginsData);
 
       // Start constructing the main settings HTML 
       let pluginHtml = `
@@ -663,6 +664,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
   // display the name of the first person
   // echo $settingsJson[0]->name;
   var settingsNumberDB = <?php echo count($settings)?>;
+  var settingsJSON_DB  = <?php echo $settingsJSON_DB  ?>;
   var settingsNumberJSON = <?php echo count($settingsJson->data)?>;
 
   // Wrong number of settings processing
@@ -731,7 +733,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'list.select', 'integer.select', 'text.multiselect'];
 
       // get settings to determine setting type to store values appropriately
-      $.get('api/table_settings.json', function(res) { 
+      $.get('api/table_settings.json?nocache=' + Date.now(), function(res) { 
       
         settingsJSON = res;
             
@@ -786,10 +788,34 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
         // if ok, double check the number collected of settings is correct
         if(sanityCheck_notOK == false)
         {
-          sanityCheck_notOK = settingsNumberDB != settingsArray.length;
+          
+          console.log(settingsArray);
+
+          // Step 1: Extract Code_Name values from settingsList
+          const settingsCodeNames = settingsJSON_DB.map(setting => setting.Code_Name);
+
+          // Step 2: Extract second elements from detailedList
+          const detailedCodeNames = settingsArray.map(item => item[1]);
+
+          // Step 3: Find missing Code_Name values
+          const missingCodeNamesOnPage   = detailedCodeNames.filter(codeName => !settingsCodeNames.includes(codeName));
+          const missingCodeNamesInDB     = settingsCodeNames.filter(codeName => !detailedCodeNames.includes(codeName));
+
+          
+          if(missingCodeNamesOnPage.length != missingCodeNamesInDB.length)
+          {
+            sanityCheck_notOK = true;
+
+            console.log(`⚠ Error: The following settings are missing in the DB or on the page (Reload page to fix):`);
+            console.log(missingCodeNamesOnPage);
+            console.log(missingCodeNamesInDB);
+
+            showModalOk('WARNING', "<?= lang("settings_missing_block")?>");
+          }
+          
         }
 
-        if(sanityCheck_notOK == false)
+        if(sanityCheck_notOK == false )
         {
           // trigger a save settings event in the backend
           $.ajax({
@@ -810,10 +836,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
             
             }
           });
-        } else{
-          console.log(`Error settingsNumberDB != settingsArray.length: ${settingsNumberDB} !=  ${settingsArray.length}`);
-          showModalOk('WARNING', "<?= lang("settings_missing_block")?>");
-        }
+        } 
         
       })
 
@@ -893,8 +916,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
       }
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 
-
-
      })
 
   }
