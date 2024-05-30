@@ -72,7 +72,7 @@
       case 'read'  :    read($rawSql);    break;
       case 'update':    update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
       case 'delete':    delete($columnName, $id, $dbtable);  break;
-      case 'checkLock': checkLock();  break;
+      case 'checkLock':     checkLock();  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -269,26 +269,44 @@ function delete($columnName, $id, $dbtable)
 //  check if the database is locked
 //------------------------------------------------------------------------------
 function checkLock() {
+
+  return checkLock_file() or checkLock_db(); 
+
+}
+
+function checkLock_db() {
   global $DBFILE, $db_locked;
 
   $file = fopen($DBFILE, 'r+');
 
   if (!$file or $db_locked) {
-      echo 1; // Could not open the file
-      return;
+      // Could not open the file
+      return 1;
   }
 
   if (flock($file, LOCK_EX | LOCK_NB)) {
       // Lock acquired, meaning the database is not locked by another process
       flock($file, LOCK_UN); // Release the lock
-      echo 0; // Not locked
+      return 0; // Not locked
   } else {
       // Could not acquire lock, meaning the database is locked
-      echo 1; // Locked
+      fclose($file);
+      return 1; // Locked
   }
 
-  fclose($file);
+  
 }
 
+function checkLock_file() {
+    $DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../logs/db_is_locked.log';
+
+        if (file_exists($DBFILE_LOCKED_FILE)) {
+            $status = file_get_contents($DBFILE_LOCKED_FILE);
+            return $status; // Output the content of the lock file (0 or 1)
+        } else {
+            return '0'; // If the file doesn't exist, consider it as unlocked
+        }
+        exit;
+}
 
 ?>

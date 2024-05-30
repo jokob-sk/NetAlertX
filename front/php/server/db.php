@@ -5,45 +5,54 @@
 //
 //  db.php - Front module. Server side. DB common file
 //------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#   2022 jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // DB File Path
 $DBFILE = dirname(__FILE__).'/../../../db/app.db';
+$DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../logs/db_is_locked.log';
 
 $db_locked = false;
 
 //------------------------------------------------------------------------------
 // Connect DB
 //------------------------------------------------------------------------------
-function SQLite3_connect ($trytoreconnect) {
-  global $DBFILE;
-  try
-  {
-    // connect to database
+function SQLite3_connect ($trytoreconnect, $retryCount = 0) {
+  global $DBFILE, $DBFILE_LOCKED_FILE;
+  $maxRetries = 5; // Maximum number of retries
+  $baseDelay = 1; // Base delay in seconds
 
-    global $db_locked; 
 
+  try {
+    // Connect to database
+    global $db_locked;
     $db_locked = false;
 
-    // return new SQLite3($DBFILE, SQLITE3_OPEN_READONLY);
-    return new SQLite3($DBFILE, SQLITE3_OPEN_READWRITE);
-  }
-  catch (Exception $exception)
-  {
-    // sqlite3 throws an exception when it is unable to connect
-    global $db_locked; 
+    // Write unlock status to the locked file
+    file_put_contents($DBFILE_LOCKED_FILE, '0');
 
+    return new SQLite3($DBFILE, SQLITE3_OPEN_READWRITE);
+  } catch (Exception $exception) {
+    // sqlite3 throws an exception when it is unable to connect
+    global $db_locked;
     $db_locked = true;
 
-    // try to reconnect one time after 3 seconds
-    
-    if($trytoreconnect)
-    {
-      echo '<script>alert("Error connecting to database, will try in 3s")</script>';
-      sleep(3);      
-      return SQLite3_connect(false);
+    // Write lock status to the locked file
+    file_put_contents($DBFILE_LOCKED_FILE, '1');
+
+    // Connection failed, check if we should retry
+    if ($trytoreconnect && $retryCount < $maxRetries) {
+      // Calculate exponential backoff delay
+      $delay = $baseDelay * pow(2, $retryCount);
+      sleep($delay);
+
+      // Retry the connection with an increased retry count
+      return SQLite3_connect(true, $retryCount + 1);
+    } else {
+      // Maximum retries reached, hide loading spinner and show failure alert
+      echo '<script>alert("Failed to connect to database after ' . $retryCount . ' retries.")</script>';
+      return false; // Or handle the failure appropriately
     }
   }
 }
