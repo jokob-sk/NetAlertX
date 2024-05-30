@@ -1,4 +1,4 @@
-FROM alpine:3.19 as builder
+FROM alpine:3.20 as builder
 
 ARG INSTALL_DIR=/app
 
@@ -19,7 +19,7 @@ RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-lea
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
 # second stage
-FROM alpine:3.19 as runner
+FROM alpine:3.20 as runner
 
 ARG INSTALL_DIR=/app
 
@@ -39,7 +39,7 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 RUN apk update --no-cache \
     && apk add --no-cache bash zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay \
     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute net-tools net-snmp-tools bind-tools awake ca-certificates  \
-    && apk add --no-cache sqlite php82 php82-fpm php82-cgi php82-curl php82-sqlite3 php82-session \
+    && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
