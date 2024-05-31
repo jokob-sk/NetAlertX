@@ -467,6 +467,7 @@ $db->close();
                             <div class="row logs-row" >                            
                               <div>
                                 <div class="log-file" title="/var/log/nginx/error.log">nginx/error.log</div>
+                                <span class="span-padding"><a href="/var/log/nginx/error.log"><i class="fa fa-download"></i> </a></span>
                               </div>
                             </div>
                         </div>                                        

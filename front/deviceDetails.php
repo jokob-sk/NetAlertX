@@ -500,14 +500,10 @@
                   <!-- Buttons -->
                   <div class="col-xs-12">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-                          id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?= lang('DevDetail_button_DeleteEvents');?> </button>
-                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"
-                          id="btnDelete"   onclick="askDeleteDevice()">   <?= lang('DevDetail_button_Delete');?> </button>
-                        <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" 
-                          id="btnRestore"  onclick="getDeviceData(true)"> <?= lang('DevDetail_button_Reset');?> </button>
-                        <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; " 
-                          id="btnSave"     onclick="setDeviceData()" >     <?= lang('DevDetail_button_Save');?> </button>
+                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;" id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?= lang('DevDetail_button_DeleteEvents');?> </button>
+                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"  id="btnDelete"   onclick="askDeleteDevice()">   <?= lang('DevDetail_button_Delete');?> </button>
+                        <!-- <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" id="btnRestore"  onclick="getDeviceData(true)"> <?= lang('DevDetail_button_Reset');?> </button> -->
+                        <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; "  id="btnSave"     onclick="setDeviceData()" >     <?= lang('DevDetail_button_Save');?> </button>
                     </div>
                   </div>
 
