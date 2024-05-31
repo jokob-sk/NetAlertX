@@ -8,7 +8,7 @@ export INSTALL_DIR=/app  # Specify the installation directory here
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 
-CONF_FILE="app.conf" 
+CONF_FILE="app.conf"
 NGINX_CONF_FILE=netalertx.conf
 DB_FILE="app.db"
 FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
@@ -28,14 +28,14 @@ fi
 
 echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
 
-# DANGER ZONE: ALWAYS_FRESH_INSTALL 
+# DANGER ZONE: ALWAYS_FRESH_INSTALL
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
-  
+
   # Delete content of "$INSTALL_DIR/config/"
   rm -rf "$INSTALL_DIR/config/"*
   rm -rf "$INSTALL_DIR_OLD/config/"*
-  
+
   # Delete content of "$INSTALL_DIR/db/"
   rm -rf "$INSTALL_DIR/db/"*
   rm -rf "$INSTALL_DIR_OLD/db/"*
@@ -61,11 +61,11 @@ cp -na "${INSTALL_DIR}/back/${DB_FILE}" "${FULL_FILEDB_PATH}"
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then
   FILECONF="${INSTALL_DIR}/config/${CONF_FILE}"
-  echo "[INSTALL] Setup timezone" 
+  echo "[INSTALL] Setup timezone"
   sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
 
   # set TimeZone in container
-  cp /usr/share/zoneinfo/$TZ /etc/localtime 
+  cp /usr/share/zoneinfo/$TZ /etc/localtime
   echo $TZ > /etc/timezone
 fi
 
@@ -107,9 +107,9 @@ if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
 fi
 
 echo -e "
-            [ENV] PATH                      is ${PATH} 
-            [ENV] PORT                      is ${PORT} 
-            [ENV] TZ                        is ${TZ} 
-            [ENV] LISTEN_ADDR               is ${LISTEN_ADDR} 
-            [ENV] ALWAYS_FRESH_INSTALL      is ${ALWAYS_FRESH_INSTALL} 
+            [ENV] PATH                      is ${PATH}
+            [ENV] PORT                      is ${PORT}
+            [ENV] TZ                        is ${TZ}
+            [ENV] LISTEN_ADDR               is ${LISTEN_ADDR}
+            [ENV] ALWAYS_FRESH_INSTALL      is ${ALWAYS_FRESH_INSTALL}
         "
