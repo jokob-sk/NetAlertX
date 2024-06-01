@@ -513,6 +513,13 @@
     border-color: #c3e6cb;
 }
 
+.modal_red
+{
+    color: rgb(245, 245, 245);
+    background-color: #e2acaa;
+    border-color: #d41001;
+}
+
 .modal_grey
 {
     color: white;

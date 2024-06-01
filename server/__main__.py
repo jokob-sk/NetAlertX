@@ -173,6 +173,7 @@ def main ():
                 pluginsState = run_plugin_scripts(db, all_plugins, 'on_notification', pluginsState) 
                 notification.setAllProcessed()
                 notification.clearPendingEmailFlag()
+                
 
                 
             else:

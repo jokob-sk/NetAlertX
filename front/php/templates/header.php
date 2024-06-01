@@ -32,6 +32,7 @@ require dirname(__FILE__).'/security.php';
 
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -265,7 +266,7 @@ if ($ENABLED_DARKMODE === True) {
 
         <!-- Monitoring menu item -->
 
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-chart-bar"></i> <span><?= lang('Navigation_Monitoring');?></span>
             <span class="pull-right-container">
@@ -281,6 +282,9 @@ if ($ENABLED_DARKMODE === True) {
             </li>
             <li>
               <a href="report.php"> <?= lang("Navigation_Report");?> </a>
+            </li>            
+            <li>
+              <a href="userNotifications.php"> <?= lang("Navigation_Notifications");?> </a>
             </li>            
             
           </ul>

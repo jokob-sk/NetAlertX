@@ -287,7 +287,7 @@ def importConfigs (db, all_plugins):
 
 
     # save the newly discovered plugins as options and default values
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', 'text.multiselect', str(all_plugins_prefixes), 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', 'text.multiselect', str(sorted(all_plugins_prefixes)), 'General')
 
     mylog('none', ['[Config] Number of Plugins to load: ', len(loaded_plugins_prefixes)])
     mylog('none', ['[Config] Plugins to load: ', loaded_plugins_prefixes])

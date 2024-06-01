@@ -192,17 +192,17 @@ function showMessage(textMessage = "", timeout = 3000, colorClass = "modal_green
         alert(textMessage);
     } else {
         // show temporary notification
-        $("#notification").removeClass();                                               // remove all classes
-        $("#notification").addClass("alert alert-dimissible notification_modal");       // add default ones
-        $("#notification").addClass(colorClass);                                       // add color modifiers
+        $("#notification_modal").removeClass();                                               // remove all classes
+        $("#notification_modal").addClass("alert alert-dimissible notification_modal");       // add default ones
+        $("#notification_modal").addClass(colorClass);                                       // add color modifiers
 
         // message
         $("#alert-message").html(textMessage);
 
         // timeout
-        $("#notification").fadeIn(1, function () {
+        $("#notification_modal").fadeIn(1, function () {
             window.setTimeout(function () {
-                $("#notification").fadeOut(500);
+                $("#notification_modal").fadeOut(500);
             }, timeout);
         });
     }
@@ -240,3 +240,66 @@ $(document).ready(function () {
         }
     });
 });
+
+
+// -----------------------------------------------------------------------------
+// Backend notification Polling 
+// -----------------------------------------------------------------------------
+// Function to check for notifications
+function checkNotification() {
+    const notificationEndpoint = 'php/server/utilNotification.php?action=get_unread_notifications';
+    const phpEndpoint = 'php/server/utilNotification.php';
+
+    $.ajax({
+        url: notificationEndpoint, 
+        type: 'GET',
+        success: function(response) {
+            // console.log(response);
+
+            if(response != "[]")
+            {
+
+                // Find the oldest unread notification with level "interrupt"
+                const oldestInterruptNotification = response.find(notification => notification.read === 0 && notification.level === "interrupt");
+
+                if (oldestInterruptNotification) {
+                    // Show modal dialog with the oldest unread notification
+
+                    const decodedContent = JSON.parse(decodeURIComponent(oldestInterruptNotification.content));
+
+                    showModalOK("Notification", decodedContent, function() {
+                        // Mark the notification as read
+                        $.ajax({
+                            url: phpEndpoint,
+                            type: 'GET',
+                            data: {
+                                action: 'mark_notification_as_read',
+                                guid: oldestInterruptNotification.guid
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                // After marking the notification as read, check for the next one
+                                checkNotification();
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error marking notification as read:", status, error);
+                            },
+                            complete:function() {
+                                hideSpinner();
+                            }
+                        });
+                    });
+                }
+            }
+        },
+        error: function() {
+            console.warn(`🟥 Error checking ${notificationEndpoint}`)
+            
+        }
+    });
+}
+
+// Start checking for notifications periodically
+setInterval(checkNotification, 3000);
+
+

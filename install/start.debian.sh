@@ -99,9 +99,8 @@ fi
 # Create an empty log files
 
 # Create the execution_queue.log file if it doesn't exist
-touch "${INSTALL_PATH}/front/log/execution_queue.log"
-# Create the app_front.log file if it doesn't exist
-touch "${INSTALL_PATH}/front/log/app_front.log"
+touch "${INSTALL_DIR}"/front/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+touch "${INSTALL_DIR}"/api/{user_notifications.json}
 
 
 # Fixing file permissions

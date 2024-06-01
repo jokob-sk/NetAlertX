@@ -147,7 +147,7 @@
 
 
 <!-- Alert float -->
-<div id="notification" >
+<div id="notification_modal" class="alert alert-dimissible notification_modal" >
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <div id="alert-message"> Alert message </div>
 </div>
@@ -157,3 +157,6 @@
 <div id="tickerAnnouncement" class="ticker_announcement myhidden">
   <div id="ticker-message"> Announcement message </div>
 </div>
+
+
+

@@ -1437,6 +1437,8 @@ function setDeviceData (direction='', refreshCallback='') {
     return;
   }
 
+  showSpinner()
+
   // update data to server
   $.get('php/server/devices.php?action=setDeviceData&mac='+ mac
     + '&name='           + encodeURIComponent($('#txtName').val())
@@ -1459,28 +1461,33 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&archived='       + ($('#chkArchived')[0].checked * 1)
     , function(msg) {
     
-    showMessage (msg);
+      showMessage (msg);
+      
 
-    // clear session storage 
-    setCache("#dropdownOwner","");
-    setCache("#dropdownDeviceType","");
-    setCache("#dropdownGroup","");
-    setCache("#dropdownLocation","");
-    setCache("#dropdownNetworkNodeMac","");
+      // clear session storage 
+      setCache("#dropdownOwner","");
+      setCache("#dropdownDeviceType","");
+      setCache("#dropdownGroup","");
+      setCache("#dropdownLocation","");
+      setCache("#dropdownNetworkNodeMac","");
 
-    // Remove navigation prompt "Are you sure you want to leave..."
-    window.onbeforeunload = null;
-    somethingChanged      = false;
+      // Remove navigation prompt "Are you sure you want to leave..."
+      window.onbeforeunload = null;
+      somethingChanged      = false;
 
-    // refresh API
-    updateApi()
+      // refresh API
+      updateApi()
 
-    // Callback fuction
-    if (typeof refreshCallback == 'function') {
-      refreshCallback(direction);
-    }
+      hideSpinner()
+
+      // Callback fuction
+      if (typeof refreshCallback == 'function') {
+        refreshCallback(direction);
+      }
   });
 }
+
+
 
 
 

@@ -48,6 +48,10 @@
     $id = $_REQUEST['id'];    
   }
 
+  if (isset ($_REQUEST['delay'])) {
+    $delay = $_REQUEST['delay'];    
+  }
+
   if (isset ($_REQUEST['values'])) {
     $values = $_REQUEST['values'];    
   }
@@ -72,7 +76,7 @@
       case 'read'  :    read($rawSql);    break;
       case 'update':    update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
       case 'delete':    delete($columnName, $id, $dbtable);  break;
-      case 'checkLock':     checkLock();  break;
+      case 'lockDatabase':     lockDatabase($delay);  break;
       default:     logServerConsole ('Action: '. $action);  break;
     }
   }
@@ -264,49 +268,11 @@ function delete($columnName, $id, $dbtable)
 }
 
 
-
-//------------------------------------------------------------------------------
-//  check if the database is locked
-//------------------------------------------------------------------------------
-function checkLock() {
-
-  return checkLock_file() or checkLock_db(); 
-
-}
-
-function checkLock_db() {
-  global $DBFILE, $db_locked;
-
-  $file = fopen($DBFILE, 'r+');
-
-  if (!$file or $db_locked) {
-      // Could not open the file
-      return 1;
-  }
-
-  if (flock($file, LOCK_EX | LOCK_NB)) {
-      // Lock acquired, meaning the database is not locked by another process
-      flock($file, LOCK_UN); // Release the lock
-      return 0; // Not locked
-  } else {
-      // Could not acquire lock, meaning the database is locked
-      fclose($file);
-      return 1; // Locked
-  }
-
-  
-}
-
-function checkLock_file() {
-    $DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../logs/db_is_locked.log';
-
-        if (file_exists($DBFILE_LOCKED_FILE)) {
-            $status = file_get_contents($DBFILE_LOCKED_FILE);
-            return $status; // Output the content of the lock file (0 or 1)
-        } else {
-            return '0'; // If the file doesn't exist, consider it as unlocked
-        }
-        exit;
+// Simulate database locking by starting a transaction
+function lockDatabase($delay) {
+  $db = new SQLite3($GLOBALS['DBFILE']);
+  $db->exec('BEGIN EXCLUSIVE;');
+  sleep($delay); // Sleep for N seconds to simulate long-running transaction
 }
 
 ?>

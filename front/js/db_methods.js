@@ -23,16 +23,19 @@ function readData(sqlQuery, processDataCallback, valuesArray, targetLocation, ta
 // Check if database is locked
 function checkDbLock() {
     $.ajax({
-        url: 'php/server/dbHelper.php', // Replace with the actual path to your PHP file
+        url: 'log/db_is_locked.log', // Replace with the actual path to your PHP file
         type: 'GET',
-        data: { action: 'checkLock' },
+        
         success: function(response) {
-            if (response == 1) {
-                console.log('🟥 Database is locked');            
-                $(".header-status-locked-db").show()    
-            } else {
+            // console.log(response);   
+            if (response == 0) {
                 // console.log('Database is not locked');
                 $(".header-status-locked-db").hide()  
+                  
+            } else {
+                console.log('🟥 Database is locked:');            
+                console.log(response);            
+                $(".header-status-locked-db").show()  
             }
         },
         error: function() {
@@ -42,7 +45,8 @@ function checkDbLock() {
     });
 }
 
-// Start the loop
-setInterval(() => {
-    checkDbLock();
-}, 1000);
+setInterval(checkDbLock(), 1000);
+
+
+
+

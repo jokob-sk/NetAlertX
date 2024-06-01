@@ -205,6 +205,17 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             pluginsData = res["data"];  
 
+            // Sort settingsData alphabetically based on the "Group" property
+            settingsData.sort((a, b) => {
+                if (a["Group"] < b["Group"]) {
+                    return -1;
+                }
+                if (a["Group"] > b["Group"]) {
+                    return 1;
+                }
+                return 0;
+            });
+
             initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
           })
         }        
@@ -215,7 +226,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   // main initialization function
   function initSettingsPage(settingsData, pluginsData){
 
-    const settingGroups = [];
+    const settingPluginPrefixes = [];
     const settingKeyOfLists = [];
     
     const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);    
@@ -225,13 +236,13 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 
     // Loop through the settingsArray and:
-    //    - collect unique settingGroups
+    //    - collect unique settingPluginPrefixes
     //    - collect enabled plugins
 
     settingsData.forEach((set) => {
-      // settingGroups
-      if (!settingGroups.includes(set.Group)) {
-        settingGroups.push(set.Group); // = Unique plugin prefix
+      // settingPluginPrefixes
+      if (!settingPluginPrefixes.includes(set.Group)) {
+        settingPluginPrefixes.push(set.Group); // = Unique plugin prefix
       }      
     });    
 
@@ -281,17 +292,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         `)
     } 
 
-    let isIn = ' in '; // to open the active panel in AdminLTE
-
-    for (const group of settingGroups) {   
+    for (const prefix of settingPluginPrefixes) {   
 
       // enabled / disabled icons
       enabledHtml = ''
 
-      if(getSetting(group+"_RUN") != "")
+      if(getSetting(prefix+"_RUN") != "")
       {
         // show all enabled plugins
-        getSetting(group+"_RUN") != 'disabled' ? onOff = 'dot-circle' : onOff = 'circle';
+        getSetting(prefix+"_RUN") != 'disabled' ? onOff = 'dot-circle' : onOff = 'circle';
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
@@ -307,8 +316,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         <div class="row table_row">
           <div class="table_cell bold">
             <i class="fa-regular fa-book fa-sm"></i>
-            ${getString(group+'_description')} 
-            <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, group)}" target="_blank">
+            ${getString(prefix+'_description')} 
+            <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, prefix)}" target="_blank">
             ${getString('Gen_ReadDocs')}
             </a>
           </div>
@@ -316,34 +325,33 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       `;
 
       // Plugin HEADER
-      headerHtml = `<div class="box box-solid box-primary panel panel-default" id="${group}_header">
-                  <a data-toggle="collapse" data-parent="#accordion_gen" href="#${group}">
+      headerHtml = `<div class="box box-solid box-primary panel panel-default" id="${prefix}_header">
+                  <a data-toggle="collapse" data-parent="#accordion_gen" href="#${prefix}">
                     <div class="panel-heading">
                       <h4 class="panel-title">
-                        <div class="col-sm-1 col-xs-1">${getString(group+"_icon")}   </div>
-                        <div class="col-sm-10 col-xs-8">${getString(group+"_display_name")} </div>     
+                        <div class="col-sm-1 col-xs-1">${getString(prefix+"_icon")}   </div>
+                        <div class="col-sm-10 col-xs-8">${getString(prefix+"_display_name")} </div>     
                         <div class="col-sm-1 col-xs-1">${enabledHtml} </div>
                       </h4>                      
                     </div>
                   </a>
-                  <div id="${group}" data-myid="collapsible" class="panel-collapse collapse ${isIn}">
+                  <div id="${prefix}" data-myid="collapsible" class="panel-collapse collapse ${prefix == "General" ? ' in ' : ""}">
                     <div class="panel-body">
-                    ${group != "general" ? pluginHtml: ""}                    
+                    ${prefix != "General" ? pluginHtml: ""}                    
                     </div>
                   </div>
                 </div>
                     `;
-      isIn = ' '; // open the first panel only by default on page load
 
       // generate headers/sections      
-      $('#'+getPluginType(pluginsData, group) + "_content").append(headerHtml);
+      $('#'+getPluginType(pluginsData, prefix) + "_content").append(headerHtml);
     }  
 
 
     // generate panel content
-    for (const group of settingGroups) {
+    for (const prefix of settingPluginPrefixes) {
 
-      // go thru all settings and collect settings per settings group 
+      // go thru all settings and collect settings per settings prefix 
       settingsData.forEach((set) => {
 
         let val = set['Value'];
@@ -356,7 +364,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // constructing final HTML for the setting
         setHtml = ""
 
-        if(set["Group"] == group)
+        if(set["Group"] == prefix)
         {
           // hide metadata by default by assigning it a special class          
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
@@ -402,7 +410,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             override = overrideObj["override"];            
 
             console.log(setObj)
-            console.log(group)
+            console.log(prefix)
           }
 
           // prepare override checkbox and HTML
@@ -563,7 +571,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
                 data-myparam="${codeName}"
-                data-myparam-plugin="${group}"
+                data-myparam-plugin="${prefix}"
                 data-myevent="${event}"
                 onclick="addToExecutionQueue(this)"
               >
@@ -579,8 +587,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             </div>
           `
 
-          // generate settings in the correct group section
-          $(`#${group} .panel-body`).append(setHtml);
+          // generate settings in the correct prefix (group) section
+          $(`#${prefix} .panel-body`).append(setHtml);
 
           // init remove and edit listitem click gestures
           if(['subnets', 'list' ].includes(setType))
