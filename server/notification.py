@@ -1,4 +1,6 @@
 import datetime
+import os
+import _io
 import json
 import uuid
 import socket
@@ -183,7 +185,7 @@ class Notification_obj:
             self.HTML               = final_html
 
             # Notify frontend
-            write_notification("Report:" + self.GUID, "alert")
+            write_notification(f'Report:{self.GUID}', "alert", self.DateTimeCreated )
 
             self.upsert()
         
@@ -238,37 +240,7 @@ class Notification_obj:
 
         self.save()
 
-    def write_notification(content, level="interrupt"):
-        NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
-
-        # Generate GUID
-        guid = str(uuid.uuid4())
-
-        # Generate timestamp
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # Prepare notification dictionary
-        notification = {
-            'timestamp': timestamp,
-            'guid': guid,
-            'read': 0,
-            'level': level,
-            'content': content
-        }
-
-        # If file exists, load existing data, otherwise initialize as empty list
-        if os.path.exists(NOTIFICATION_API_FILE):
-            with open(NOTIFICATION_API_FILE, 'r') as file:
-                notifications = json.load(file)
-        else:
-            notifications = []
-
-        # Append new notification
-        notifications.append(notification)
-
-        # Write updated data back to file
-        with open(NOTIFICATION_API_FILE, 'w') as file:
-            json.dump(notifications, file, indent=4)
+    
 
 
     def clearPendingEmailFlag(self):
@@ -308,6 +280,46 @@ class Notification_obj:
 #-------------------------------------------------------------------------------
 # Reporting
 #-------------------------------------------------------------------------------
+
+# Handle Frontend User Notifications
+def write_notification(content, level, timestamp):
+        NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
+
+        # Generate GUID
+        guid = str(uuid.uuid4())
+
+        # Prepare notification dictionary
+        notification = {
+            'timestamp': str(timestamp),
+            'guid': guid,
+            'read': 0,
+            'level': level,
+            'content': content
+        }
+
+        # If file exists, load existing data, otherwise initialize as empty list
+        if os.path.exists(NOTIFICATION_API_FILE):
+            with open(NOTIFICATION_API_FILE, 'r') as file:
+                # Check if the file object is of type _io.TextIOWrapper
+                if isinstance(file, _io.TextIOWrapper):
+                    file_contents = file.read()  # Read file contents
+                    if file_contents == '':
+                        file_contents = '[]'  # If file is empty, initialize as empty list
+
+                    mylog('debug', ['[Notification] User Notifications file: ', file_contents])
+                    notifications = json.loads(file_contents)  # Parse JSON data
+                else:
+                    mylog('error', 'File is not of type _io.TextIOWrapper')
+                    notifications = []
+        else:
+            notifications = []
+
+        # Append new notification
+        notifications.append(notification)
+
+        # Write updated data back to file
+        with open(NOTIFICATION_API_FILE, 'w') as file:
+            json.dump(notifications, file, indent=4)
 
 #-------------------------------------------------------------------------------
 def construct_notifications(JSON, section):

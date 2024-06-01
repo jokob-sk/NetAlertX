@@ -273,7 +273,7 @@ if ($ENABLED_DARKMODE === True) {
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
               <a href="presence.php">  <?= lang("Navigation_Presence");?> </a>
             </li>
