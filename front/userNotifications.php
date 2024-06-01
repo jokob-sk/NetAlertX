@@ -25,8 +25,12 @@ require 'php/templates/header.php';
             <!-- Data will be inserted here by DataTables -->
         </tbody>
     </table>
+
+    <button id="clearNotificationsBtn" class="btn btn-danger">Clear All Notifications</button>
+    <button id="notificationsMarkAllRead" class="btn btn-default">Mark All Read</button>
+
 </div>
-<button id="clearNotificationsBtn" class="btn btn-danger">Clear All Notifications</button>
+
 </div>
 <script>
     function fetchData(callback) {
@@ -75,10 +79,10 @@ require 'php/templates/header.php';
                 }
             ],
             "columnDefs": [
-                { "width": "10%", "targets": [0] }, // Set width of the first four columns to 10%
+                { "width": "15%", "targets": [0] }, // Set width of the first four columns to 10%
                 { "width": "20%", "targets": [1] }, // Set width of the first four columns to 10%
                 { "width": "5%", "targets": [2, 3] }, // Set width of the first four columns to 10%
-                { "width": "60%", "targets": 4 } // Set width of the "Content" column to 60%
+                { "width": "50%", "targets": 4 } // Set width of the "Content" column to 60%
             ]
         });
 
@@ -96,6 +100,25 @@ require 'php/templates/header.php';
                 type: 'GET',
                 data: {
                     action: 'notifications_clear'
+                },
+                success: function(response) {
+                    // Clear the table and reload data
+                    table.clear().draw();
+                },
+                error: function(xhr, status, error) {
+                    console.log("An error occurred while clearing notifications: " + error);
+                    // You can display an error message here if needed
+                }
+            });
+        });
+
+        // Function to clear all notifications
+        $('#notificationsMarkAllRead').click(function() {
+            $.ajax({
+                url: phpEndpoint,
+                type: 'GET',
+                data: {
+                    action: 'notifications_mark_all_read'
                 },
                 success: function(response) {
                     // Clear the table and reload data

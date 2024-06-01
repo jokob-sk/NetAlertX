@@ -31,6 +31,10 @@ if (isset($_GET['action'])) {
             // Call the notifications_clear function
             notifications_clear();
             break;
+        case 'notifications_mark_all_read':
+            // Call the notifications_mark_all_read function
+            notifications_mark_all_read();
+            break;
         case 'get_unread_notifications':
             // Call the get_unread_notifications function
             get_unread_notifications();
@@ -120,6 +124,9 @@ function mark_notification_as_read($guid) {
                         // Mark the notification as read
                         $notification['read'] = 1;
                         break;
+                    } elseif ($guid == null) // no guid given, mark all read
+                    {
+                        $notification['read'] = 1;
                     }
                 }
 
@@ -139,6 +146,10 @@ function mark_notification_as_read($guid) {
 
     // If maximum attempts reached or file reading failed, handle the error
     echo "Failed to read notification file after $max_attempts attempts.";
+}
+
+function notifications_mark_all_read() {
+    mark_notification_as_read(null);
 }
 
 function get_unread_notifications() {

@@ -148,19 +148,24 @@ if ($ENABLED_DARKMODE === True) {
         <ul class="nav navbar-nav">    
           <!-- Back Button -->		 
           <li>
-            <a id="back-button" href="javascript:history.go(-1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-left'></i></a>
+            <a id="back-button" href="javascript:history.go(-1);" role="button" span class='fa fa-arrow-left'></a>
           </li>
           <!-- Next Button -->		 
           <li>
-            <a id="next-button" href="javascript:history.go(1);" role="button" span class='of-bt-icon'><i class='fa fa-arrow-right'></i></a>
+            <a id="next-button" href="javascript:history.go(1);" role="button" span class='fa fa-arrow-right'></a>
           </li>			
           <!-- Clear cache & Reload -->		 
           <li>
-            <a id="reload-button" href='#' role="button" span class='of-bt-icon' onclick='clearCache()'><i class='fa fa-repeat'></i></a>
+            <a id="reload-button" href='#' role="button" span class='fa fa-repeat' onclick='clearCache()'></a>
           </li>	
           <!-- Full Screen -->		 
           <li>
-            <a id="fullscreen-button" href='#' role="button" span class='of-bt-icon' onclick='toggleFullscreen()'><i class='fa fa-arrows-alt'></i></a>
+            <a id="fullscreen-button" href='#' role="button" span class='fa fa-arrows-alt' onclick='toggleFullscreen()'></a>
+          </li>	                
+          <!-- Full Screen -->		 
+          <li>
+            <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
+            <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>
           </li>	                
           <!-- Server Status -->
           <li>
@@ -183,11 +188,11 @@ if ($ENABLED_DARKMODE === True) {
           <!-- Header right info -->
           <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <!-- The user image in the navbar-->
+            <a href="#" class="dropdown-toggle" style=" height: 50px;" data-toggle="dropdown">
+              
+              <span class="hidden-xs" ><!-- The user image in the navbar-->
               <img src="img/NetAlertX_logo.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
-              <!-- hidden-xs hides the username on small devices so only the image appears. -->
-              <span class="hidden-xs">Net <b>Alert</b><sup>x</sup></span>
+              <!-- hidden-xs hides the username on small devices so only the image appears. --></span>
             </a>
             <ul class="dropdown-menu">
               <!-- The user image in the menu -->

@@ -261,6 +261,7 @@ function checkNotification() {
 
                 // Find the oldest unread notification with level "interrupt"
                 const oldestInterruptNotification = response.find(notification => notification.read === 0 && notification.level === "interrupt");
+                const allUnreadNotification = response.filter(notification => notification.read === 0);
 
                 if (oldestInterruptNotification) {
                     // Show modal dialog with the oldest unread notification
@@ -290,6 +291,9 @@ function checkNotification() {
                         });
                     });
                 }
+
+                $('#unread-notifications-bell-count').html(allUnreadNotification.length);   
+             
             }
         },
         error: function() {

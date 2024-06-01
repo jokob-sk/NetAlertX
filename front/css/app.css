@@ -144,6 +144,16 @@
 {
     background-color: rgba(0, 0, 0, 0);
 }
+
+.unread-notifications-bell
+{
+    opacity: 70%;
+    color: red;
+    position: absolute;
+    top: 3px;
+    /* display: none; */
+}
+
 .header-status-locked-db
 {
     width: 25px;
