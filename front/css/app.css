@@ -147,11 +147,16 @@
 
 .unread-notifications-bell
 {
-    opacity: 70%;
-    color: red;
     position: absolute;
     top: 3px;
-    /* display: none; */
+    margin-left: 15px;
+    display: none; 
+
+}
+
+.navbar-custom-menu .bg-yellow
+{
+    color: white !important;
 }
 
 .header-status-locked-db
@@ -705,6 +710,11 @@ height: 50px;
 /* --------------------------------------------------------- */
 /*                         report                            */
 /* --------------------------------------------------------- */
+
+#notificationData
+{
+    margin-bottom: 10px;
+}
 
 #notificationData textarea{
     width: 100%;

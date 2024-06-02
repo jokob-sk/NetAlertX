@@ -250,6 +250,33 @@ function updateIconPreview (inputId) {
   
 }
 
+
+// -----------------------------------------------------------------------------
+// Generic function to copy text to clipboard
+function copyToClipboard(buttonElement) {
+  const text = $(buttonElement).data('text');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showMessage('Copied to clipboard: ' + text, 1500);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  } else {
+    // Fallback to execCommand if Clipboard API is not available
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+      document.execCommand('copy');
+      showMessage('Copied to clipboard: ' + text, 1500);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+    document.body.removeChild(tempInput);
+  }
+}
+
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------

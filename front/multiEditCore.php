@@ -290,6 +290,8 @@ function executeAction(action, whereColumnName, key, targetColumns, newTargetCol
             // update API endpoints to refresh the UI
             updateApi()
 
+            writeNotification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
+
         } else {
             showMessage(getString('Gen_LockedDB'));
         }
@@ -313,9 +315,9 @@ function askDeleteSelectedDevices () {
 // Delete selected devices 
 function deleteSelectedDevices()
 { 
-  
-  executeAction('delete', 'dev_MAC', selectorMacs() )
-
+  macs_tmp = selectorMacs()
+  executeAction('delete', 'dev_MAC', macs_tmp )
+  writeNotification('[Multi edit] Manually deleted devices with MACs:' + macs_tmp, 'info')
 }
 
 

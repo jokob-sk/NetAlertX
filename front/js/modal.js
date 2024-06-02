@@ -261,7 +261,7 @@ function checkNotification() {
 
                 // Find the oldest unread notification with level "interrupt"
                 const oldestInterruptNotification = response.find(notification => notification.read === 0 && notification.level === "interrupt");
-                const allUnreadNotification = response.filter(notification => notification.read === 0);
+                const allUnreadNotification = response.filter(notification => notification.read === 0 && notification.level === "alert");
 
                 if (oldestInterruptNotification) {
                     // Show modal dialog with the oldest unread notification
@@ -292,7 +292,8 @@ function checkNotification() {
                     });
                 }
 
-                $('#unread-notifications-bell-count').html(allUnreadNotification.length);   
+                handleUnreadNotifications(allUnreadNotification.length)
+
              
             }
         },
@@ -303,7 +304,106 @@ function checkNotification() {
     });
 }
 
+// Handling unread notifications favicon + bell floating number bublbe
+function handleUnreadNotifications(count) {
+    $('#unread-notifications-bell-count').html(count);
+    if (count > 0) {
+        $('#unread-notifications-bell-count').show();
+        // Change the favicon to show there are notifications
+        $('#favicon').attr('href', 'img/NetAlertX_logo_notification.png');
+        // Update the title to include the count
+        document.title = `(${count}) ` + originalTitle;
+    } else {
+        $('#unread-notifications-bell-count').hide();
+        // Change the favicon back to the original
+        $('#favicon').attr('href', 'img/NetAlertX_logo.png');
+        // Revert the title to the original title
+        document.title = originalTitle;
+    }
+}
+
+// Store the original title of the document
+var originalTitle = document.title;
+
+
 // Start checking for notifications periodically
 setInterval(checkNotification, 3000);
+
+// --------------------------------------------------
+// User notification handling methods
+// --------------------------------------------------
+
+const phpEndpoint = 'php/server/utilNotification.php';
+
+// --------------------------------------------------
+// Write a notification
+function writeNotification(content, level) {    
+
+    $.ajax({
+        url: phpEndpoint, // Change this to the path of your PHP script
+        type: 'GET',
+        data: {
+            action: 'write_notification',
+            content: content,
+            level: level
+        },
+        success: function(response) {
+            console.log('Notification written successfully.');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error writing notification:', error);
+        }
+    });
+}
+
+// --------------------------------------------------
+// Write a notification
+function markNotificationAsRead(guid) {    
+  
+    $.ajax({
+      url: phpEndpoint,
+      type: 'GET',
+      data: {
+        action: 'mark_notification_as_read',
+        guid: guid
+      },
+      success: function(response) {
+        console.log(response);
+        // Perform any further actions after marking the notification as read here
+        showMessage(getString("Gen_Okay"))
+      },
+      error: function(xhr, status, error) {
+        console.error("Error marking notification as read:", status, error);
+      },
+      complete: function() {
+        // Perform any cleanup tasks here
+      }
+    });
+  }
+
+// --------------------------------------------------
+// Remove a notification
+function removeNotification(guid) {    
+  
+    $.ajax({
+      url: phpEndpoint,
+      type: 'GET',
+      data: {
+        action: 'remove_notification',
+        guid: guid
+      },
+      success: function(response) {
+        console.log(response);
+        // Perform any further actions after marking the notification as read here
+        showMessage(getString("Gen_Okay"))
+      },
+      error: function(xhr, status, error) {
+        console.error("Error removing notification:", status, error);
+      },
+      complete: function() {
+        // Perform any cleanup tasks here
+      }
+    });
+  }
 
 

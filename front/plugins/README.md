@@ -6,7 +6,7 @@
 
 ## Plugin types
 
-If you want to discover or import devices into the application enable some of the `🔍 dev scanner` plugins. The next step is to pick a notification plugin, or `💬 publisher` plugin, to get notified about network changes. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
+If you want to discover or import devices into the application enable some of the `🔍 dev scanner` plugins. The next step is to pick a notification plugin, or `▶️ publisher` plugin, to get notified about network changes. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
 
 ### Enabling plugins
 
@@ -31,7 +31,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 | ID            | Type           | Description                  | Required | Data source        | Detailed docs                                                       |
 |---------------|----------------|------------------------------|----------|--------------------|---------------------------------------------------------------------|
-| `APPRISE`       | 💬 publisher   | Apprise publisher plugin     |          | Script             | [📚_publisher_apprise](/front/plugins/_publisher_apprise/)          |
+| `APPRISE`       | ▶️ publisher   | Apprise publisher plugin     |          | Script             | [📚_publisher_apprise](/front/plugins/_publisher_apprise/)          |
 | `ARPSCAN`       | 🔍 dev scanner | ARP scan plugin              |          | Script             | [📚arp_scan](/front/plugins/arp_scan/)                              |
 | `CSVBCKP`       | ⚙ system       | CSV backup plugin            |          | Script             | [📚csv_backup](/front/plugins/csv_backup/)                          |
 | `DBCLNP`        | ⚙ system       | Database cleanup plugin      |  Yes*    | Script             | [📚db_cleanup](/front/plugins/db_cleanup/)                          |
@@ -41,24 +41,24 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `INTRNT`        | 🔍 dev scanner | Internet IP scanner          |          | Script             | [📚internet_ip](/front/plugins/internet_ip/)                        |
 | `INTRSPD`       | ♻ other        | Internet speed test plugin   |          | Script             | [📚internet_speedtest](/front/plugins/internet_speedtest/)          |
 | `MAINT`         | ⚙ system       | Maintenance plugin           |          | Script             | [📚maintenance](/front/plugins/maintenance/)                        |
-| `MQTT`          | 💬 publisher   | MQTT publisher plugin        |          | Script             | [📚_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
+| `MQTT`          | ▶️ publisher   | MQTT publisher plugin        |          | Script             | [📚_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 | `NEWDEV`        | ⚙ system       | New device template          |  Yes     | Template           | [📚newdev_template](/front/plugins/newdev_template/)                |
 | `NMAP`          | ♻ other        | Nmap scan plugin             |          | Script             | [📚nmap_scan](/front/plugins/nmap_scan/)                            |
 | `NMAPDEV`       | 🔍 dev scanner | Nmap device scan plugin      |          | Script             | [📚nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
 | `NSLOOKUP`      | ♻ other        | NSLookup scan plugin         |          | Script             | [📚nslookup_scan](/front/plugins/nslookup_scan/)                    |
 | `NTFPRCS`       | ⚙ system       | Notification processing      |  Yes     | Template           | [📚notification_processing](/front/plugins/notification_processing/)|
-| `NTFY`          | 💬 publisher   | NTFY publisher plugin        |          | Script             | [📚_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
+| `NTFY`          | ▶️ publisher   | NTFY publisher plugin        |          | Script             | [📚_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
 | `PHOLUS`        | ♻ other        | Pholus scan plugin           |          | Script             | [📚pholus_scan](/front/plugins/pholus_scan/)                        |
 | `PIHOLE`        | 🔍 dev scanner | Pi-hole scan plugin          |          | SQLite DB          | [📚pihole_scan](/front/plugins/pihole_scan/)                        |
-| `PUSHSAFER`     | 💬 publisher   | Pushsafer publisher plugin   |          | Script             | [📚_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
-| `PUSHOVER`      | 💬 publisher   | Pushover publisher plugin    |          | Script             | [📚_publisher_pushover](/front/plugins/_publisher_pushover/)        |
+| `PUSHSAFER`     | ▶️ publisher   | Pushsafer publisher plugin   |          | Script             | [📚_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
+| `PUSHOVER`      | ▶️ publisher   | Pushover publisher plugin    |          | Script             | [📚_publisher_pushover](/front/plugins/_publisher_pushover/)        |
 | `SETPWD`        | ⚙ system       | Set password template        |  Yes     | Template           | [📚set_password](/front/plugins/set_password/)                      |
-| `SMTP`          | 💬 publisher   | Email publisher plugin       |          | Script             | [📚_publisher_email](/front/plugins/_publisher_email/)              |
+| `SMTP`          | ▶️ publisher   | Email publisher plugin       |          | Script             | [📚_publisher_email](/front/plugins/_publisher_email/)              |
 | `SNMPDSC`       | 🔍 dev scanner | SNMP discovery plugin        |          | Script             | [📚snmp_discovery](/front/plugins/snmp_discovery/)                  |
 | `UNDIS`         | ♻ other        | Undiscoverables scan plugin  |          | Script             | [📚undiscoverables](/front/plugins/undiscoverables/)                |
 | `UNFIMP`        | 🔍 dev scanner | UniFi import plugin          |          | Script             | [📚unifi_import](/front/plugins/unifi_import/)                      |
 | `VNDRPDT`       | ⚙ system       | Vendor update plugin         |          | Script             | [📚vendor_update](/front/plugins/vendor_update/)                    |
-| `WEBHOOK`       | 💬 publisher   | Webhook publisher plugin     |          | Script             | [📚_publisher_webhook](/front/plugins/_publisher_webhook/)          |
+| `WEBHOOK`       | ▶️ publisher   | Webhook publisher plugin     |          | Script             | [📚_publisher_webhook](/front/plugins/_publisher_webhook/)          |
 | `WEBMON`        | ♻ other        | Website monitor plugin       |          | Script             | [📚website_monitor](/front/plugins/website_monitor/)                |
 
 

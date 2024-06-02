@@ -5,8 +5,7 @@
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
 #  report.php - Front module. Server side. Manage Devices                         #
-#---------------------------------------------------------------------------------#
-#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
+#---------------------------------------------------------------------------------#          #
 #    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
 #    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
@@ -22,58 +21,66 @@
     <section class="content-header">
     <?php require 'php/templates/notification.php'; ?>
       <h1 id="pageTitle">
-        <i class="fa fa-flag"></i>
-        <?= lang('REPORT_TITLE') ;?>	
+        <i class="fa fa-paper-plane"></i>
+        <?= lang('Navigation_Report') ;?>	
       </h1>
     </section>
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content">	
+    <section class="content tab-content">	
 
-    <div class="col-sm-2">
-      <!-- Display data and navigation buttons -->
-      <div id="notificationContainer">
-        <div id="navigationButtons">
-              <button class="btn btn-default text-gray50" id="prevButton">
-                <i class="fa fa-chevron-left"></i>
-              </button>
-              <span id="notificationOutOff"></span>
-              <button class="btn btn-default text-gray50" id="nextButton">
-                <i class="fa fa-chevron-right"></i>
-              </button>
+      <div class="box box-gray col-xs-12" >
+        <div class="box-header">
+              <h3 class="box-title text-aqua"><?= lang('Reports_Sent_Log');?></h3>
+        </div>
+        <div class="box-body  table-responsive ">
+          <!-- Top level <> buttons, Format selection etc.  -->
+          <div class="col-sm-2">
+            <!-- Display data and navigation buttons -->
+            <div id="notificationContainer">
+              <div id="navigationButtons">
+                    <button class="btn btn-default text-gray50" id="prevButton">
+                      <i class="fa fa-chevron-left"></i>
+                    </button>
+                    <span id="notificationOutOff"></span>
+                    <button class="btn btn-default text-gray50" id="nextButton">
+                      <i class="fa fa-chevron-right"></i>
+                    </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select format -->
+          <div class="col-sm-2 ">
+            <label for="formatSelect">
+              <?= lang('report_select_format') ;?>
+            </label>
+            <select id="formatSelect" class="pointer">
+                <option value="HTML">HTML</option>
+                <option value="JSON">JSON</option>
+                <option value="Text">Text</option>        
+            </select>
+          </div>
+
+
+          <div class="col-sm-4">
+            <label><?= lang('report_time') ;?></label>
+            <span id="timestamp"></span>
+          </div>
+
+          <div class="col-sm-4">
+            <label><?= lang('report_guid') ;?></label>
+            <span id="guid"></span>
+          </div>
+
+
+          <div class="col-sm-12" id="notificationData">
+              <!-- Data will be displayed here -->
+          </div>
+
         </div>
       </div>
     </div>
-
-    <!-- Select format -->
-    <div class="col-sm-2 ">
-      <label for="formatSelect">
-        <?= lang('report_select_format') ;?>
-      </label>
-      <select id="formatSelect" class="pointer">
-          <option value="HTML">HTML</option>
-          <option value="JSON">JSON</option>
-          <option value="Text">Text</option>        
-      </select>
-    </div>
-
-
-    <div class="col-sm-4">
-      <label><?= lang('report_time') ;?></label>
-      <span id="timestamp"></span>
-    </div>
-
-    <div class="col-sm-4">
-      <label><?= lang('report_guid') ;?></label>
-      <span id="guid"></span>
-    </div>
-
-
-    <div class="col-sm-12" id="notificationData">
-        <!-- Data will be displayed here -->
-    </div>
-
-  </div>
   </section>
 
   <!-- JavaScript to fetch and display data based on selected format -->

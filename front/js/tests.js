@@ -26,26 +26,7 @@ function lockDatabase(delay=20) {
 }
 
 
-function writeNotification(content, level) {
 
-    const phpEndpoint = 'php/server/utilNotification.php';
-
-    $.ajax({
-        url: phpEndpoint, // Change this to the path of your PHP script
-        type: 'GET',
-        data: {
-            action: 'write_notification',
-            content: content,
-            level: level
-        },
-        success: function(response) {
-            alert('Notification written successfully.');
-        },
-        error: function(xhr, status, error) {
-            console.error('Error writing notification:', error);
-        }
-    });
-}
 
 
 

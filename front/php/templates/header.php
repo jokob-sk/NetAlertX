@@ -62,7 +62,7 @@ require dirname(__FILE__).'/security.php';
   <!-- Google Font -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"> -->
   <link rel="stylesheet" href="css/offline-font.css">
-  <link rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
+  <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">  
@@ -165,7 +165,7 @@ if ($ENABLED_DARKMODE === True) {
           <!-- Full Screen -->		 
           <li>
             <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
-            <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>
+            <span  id="unread-notifications-bell-count" title="" class="badge bg-yellow unread-notifications-bell" >0</span>
           </li>	                
           <!-- Server Status -->
           <li>

@@ -1,5 +1,9 @@
 <?php
 
+
+require dirname(__FILE__).'/../templates/timezone.php';
+
+
 // Check if the action parameter is set in the GET request
 if (isset($_GET['action'])) {
     // Collect GUID if provided
@@ -59,7 +63,7 @@ function write_notification($content, $level = "interrupt") {
     $guid = generate_guid();
 
     // Generate timestamp
-    $timestamp = date("Y-m-d H:i:s");
+    $timestamp = (new DateTime('now'))->format('Y-m-d H:i:s');
 
     // Escape content to prevent breaking JSON
     $escaped_content = json_encode($content);
