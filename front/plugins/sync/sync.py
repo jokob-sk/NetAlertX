@@ -5,14 +5,16 @@ import pathlib
 import sys
 import hashlib
 import requests
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from plugin_utils import get_plugins_configs
-from logger import mylog
-from helper import get_setting_value
+
 
 # Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
+from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from plugin_utils import get_plugins_configs
+from logger import mylog
+from helper import timeNowTZ, get_setting_value
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -43,6 +45,8 @@ def main():
     # Get all plugin configurations
     all_plugins = get_plugins_configs()
 
+    mylog('verbose', [f'[{pluginName}] DEBUG {len(all_plugins)}'])
+    mylog('verbose', [f'[{pluginName}] plugins_to_sync {plugins_to_sync}'])
 
     index = 0
     for plugin in all_plugins:

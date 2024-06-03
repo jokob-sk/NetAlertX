@@ -5,7 +5,7 @@
   "plugin_type": "system",
   "enabled": true,
   "data_source": "template",  
-  "show_ui": false,
+  "show_ui": true,
   "localized": ["display_name", "description", "icon"],
   "display_name": [{
       "language_code": "en_us",
@@ -330,7 +330,7 @@
     }]
   },
   {
-    "function": "target_url",
+    "function": "hub_url",
     "type": "text",
     "display_condition": {
       "type" : "setting",
@@ -350,7 +350,7 @@
     "description": [
       {
         "language_code": "en_us",
-        "string": "Target hub URL to send the data to."
+        "string": "Target hub URL to send the data to without a trailig slash, for example <code>http://192.168.1.82:20211</code>"
       } 
     ]
   },

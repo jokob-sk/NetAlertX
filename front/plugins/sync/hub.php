@@ -1,5 +1,8 @@
 <?php
 
+// External files
+require '/app/front/php/server/init.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the authorization header
     $headers = apache_request_headers();
@@ -10,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($auth_header !== $expected_token) {
         http_response_code(403);
         echo 'Forbidden';
+        write_notification("[Plugin: Sync hub API] Incorrect API Token", "alert"); 
         exit;
     }
 
@@ -24,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Create the storage directory if it doesn't exist
     if (!is_dir($storage_path)) {
         echo "Could not open folder: {$storage_path}";
+        write_notification("[Plugin: Sync hub API] Could not open folder: {$storage_path}", "alert"); 
         http_response_code(500);
         exit;
     }
@@ -43,5 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     http_response_code(405);
     echo 'Method Not Allowed';
+    write_notification("[Plugin: Sync hub API] Method Not Allowed", "alert");
 }
 ?>
