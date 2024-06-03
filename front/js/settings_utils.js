@@ -539,6 +539,7 @@ function getParam(targetId, key, skipCache = false) {
     // optionsArray = getSettingOptions(set['Code_Name'] )
     valuesArray = createArray(set['Value']);  
 
+
     // create unique ID  
     var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
 

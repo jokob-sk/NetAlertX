@@ -95,8 +95,28 @@ function initSettingDropdown(settingKey,       // Identifier for the setting
 {
 
   var optionsHtml = ""
+
+
+  if(settingKey == 'SYNC_plugins' || settingKey == 'VNDRPDT_WATCH')
+    {  
+      console.log('getSettingOptions(settingKey)');
+      console.log(getSettingOptions(settingKey));
+      
+    }
+
  
   optionsArray = createArray(getSettingOptions(settingKey))  
+
+
+  if(settingKey == 'SYNC_plugins' || settingKey == 'VNDRPDT_WATCH')
+    {  
+      console.log('settingKey');
+      console.log(settingKey);
+      console.log('valuesArray');
+      console.log(valuesArray);
+      console.log('optionsArray');
+      console.log(optionsArray);
+    }
 
   // check if the result is a SQL query
   if(isSQLQuery(optionsArray[0]))

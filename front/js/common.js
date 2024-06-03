@@ -144,7 +144,16 @@ function cacheSettings()
                 if(options_params != [])
                 {
                   // handles only strings of length == 1
-                  resolvedOptions = `["${resolveParams(options_params, resolvedOptions[0])}"]`
+
+                  resolved = resolveParams(options_params, resolvedOptions[0])
+
+                  if(resolved.includes('"')) // check if list of strings
+                  {
+                    resolvedOptions = `[${resolved}]`
+                  } else // one value only
+                  { 
+                    resolvedOptions = `["${resolved}"]`
+                  }                  
                 }
               }    
             }
@@ -1027,8 +1036,18 @@ function resolveParams(params, template) {
           // If the parameter type is 'setting', retrieve setting value
           if (param.type == "setting") {
               var value = getSetting(param.value);
+
+              // Remove brackets and single quotes, replace them with double quotes
+              value = value.replace('[','').replace(']','').replace(/'/g, '"');
+
+              // Split the string into an array, remove empty elements
+              const arr = value.split(',').filter(Boolean);
+
+              // Join the array elements with commas
+              const result = arr.join(', ');
+
               // Replace placeholder with setting value
-              template = template.replace("{" + param.name + "}", value);
+              template = template.replace("{" + param.name + "}", result);
           } else {
               // If the parameter type is not 'setting', use the provided value
               template = template.replace("{" + param.name + "}", param.value);
