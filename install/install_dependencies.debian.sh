@@ -30,5 +30,5 @@ source myenv/bin/activate
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 #  install packages thru pip3
-pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython
+pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython pycryptodome
 

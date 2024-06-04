@@ -433,6 +433,26 @@
     ]
   },
   {
+    "function": "encryption_key",
+    "type": "text",
+    "maxLength": 50,
+    "default_value": "",
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "Encryption Key"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "Encryption key used to encrypt the sent data. The key needs to be the same on the hub and on the nodes."
+      } 
+    ]
+  },
+  {
     "function": "CMD",
     "type": "readonly",
     "default_value": "python3 /app/front/plugins/sync/sync.py",

@@ -3,6 +3,30 @@
 // External files
 require '/app/front/php/server/init.php';
 
+
+function decrypt_data($encoded_data) {
+    // Base64 decode the encoded data
+    $decoded_data = base64_decode($encoded_data);
+    
+    // Extract the initialization vector (IV) from the decoded data
+    $iv = substr($decoded_data, 0, 16);
+    
+    // Extract the actual encrypted data
+    $encrypted_data = substr($decoded_data, 16);
+    
+    // Get the encryption key from the settings
+    $key = hash('sha256', getSettingValue('SYNC_encryption_key'), true);
+    
+    // Decrypt the data
+    $decrypted_data = openssl_decrypt($encrypted_data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+    
+    if ($decrypted_data === false) {
+        return null; // Decryption failed
+    }
+    
+    return $decrypted_data;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the authorization header
     $headers = apache_request_headers();
@@ -22,7 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $plugin_folder = $_POST['plugin_folder'] ?? '';
     $node_name = $_POST['node_name'] ?? '';
 
-    $decoded_data = hex2bin($data);
+    $decoded_data = decrypt_data($data);
+
+    if ($decrypted_data === false or $decrypted_data === null) {
+        write_notification("[Plugin: Sync hub API] Bad Request: Decryption failed", "alert");
+        http_response_code(400);
+        echo 'Bad Request: Decryption failed';
+        exit;
+    }
+
     $storage_path = "/app/front/plugins/{$plugin_folder}";
 
     // Create the storage directory if it doesn't exist

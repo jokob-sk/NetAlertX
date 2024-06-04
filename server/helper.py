@@ -13,6 +13,11 @@ import json
 import time
 from pathlib import Path
 import requests
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import base64
+import hashlib
+
 
 import conf
 from const import *
@@ -797,6 +802,13 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
     return stringSqlParams
 
+
+def encrypt_data(data, key):
+    key = hashlib.sha256(key.encode()).digest()  # Ensure the key is 32 bytes long
+    cipher = AES.new(key, AES.MODE_CBC)  # Use CBC mode for encryption
+    iv = cipher.iv  # Initialization vector
+    encrypted_data = cipher.encrypt(pad(data.encode(), AES.block_size))
+    return base64.b64encode(iv + encrypted_data).decode('utf-8')
 
 #-------------------------------------------------------------------------------
 #  Misc
