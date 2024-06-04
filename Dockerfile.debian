@@ -29,6 +29,10 @@ COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 
 # ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗ 
 
+# Install gcc and other necessary build tools
+RUN apt-get update \
+    && apt-get install -y build-essential
+
 RUN apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \

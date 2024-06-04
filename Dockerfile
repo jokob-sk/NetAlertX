@@ -12,6 +12,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . ${INSTALL_DIR}/
 
+# Install gcc and other necessary build tools
+RUN apk update \
+    && apk add --no-cache build-base
+
 
 RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython pycryptodome \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
