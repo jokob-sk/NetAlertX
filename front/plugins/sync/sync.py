@@ -92,7 +92,7 @@ def main():
                         secondaryId = timeNowTZ(),
                         watched1    = node_name,
                         watched2    = response.status_code,
-                        watched3    = response.text,
+                        watched3    = response,
                         watched4    = '',
                         extra       = '',
                         foreignKey  = '')

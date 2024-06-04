@@ -18,7 +18,7 @@ apt-get update  && apt-get install -y build-essential
 # Install dependencies
 apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
+    nginx-light php php-cgi php-fpm php-sqlite3 php-curl php-openssl sqlite3 dnsutils net-tools \
     python3 iproute2 nmap python3-pip zip systemctl usbutils traceroute 
 
 # alternate dependencies
@@ -33,5 +33,5 @@ source myenv/bin/activate
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 #  install packages thru pip3
-pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython pycryptodome
+pip3 install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython cryptography
 

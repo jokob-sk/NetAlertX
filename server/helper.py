@@ -13,8 +13,9 @@ import json
 import time
 from pathlib import Path
 import requests
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.backends import default_backend
 import base64
 import hashlib
 
@@ -804,11 +805,22 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
 
 def encrypt_data(data, key):
-    key = hashlib.sha256(key.encode()).digest()  # Ensure the key is 32 bytes long
-    cipher = AES.new(key, AES.MODE_CBC)  # Use CBC mode for encryption
-    iv = cipher.iv  # Initialization vector
-    encrypted_data = cipher.encrypt(pad(data.encode(), AES.block_size))
-    return base64.b64encode(iv + encrypted_data).decode('utf-8')
+    """
+    Encrypt the data using AES-256-CBC.
+    
+    :param data: The plaintext data to encrypt.
+    :param key: The encryption key.
+    :return: The base64 encoded ciphertext.
+    """
+    key = hashlib.sha256(key.encode()).digest()
+    iv = os.urandom(16)  # Generate a random IV
+    padder = padding.PKCS7(128).padder()
+    padded_data = padder.update(data.encode()) + padder.finalize()
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+    ct = encryptor.update(padded_data) + encryptor.finalize()
+    encrypted_data = base64.b64encode(iv + ct).decode('utf-8')
+    return encrypted_data
 
 #-------------------------------------------------------------------------------
 #  Misc

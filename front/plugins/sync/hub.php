@@ -4,25 +4,22 @@
 require '/app/front/php/server/init.php';
 
 
-function decrypt_data($encoded_data) {
-    // Base64 decode the encoded data
-    $decoded_data = base64_decode($encoded_data);
-    
-    // Extract the initialization vector (IV) from the decoded data
-    $iv = substr($decoded_data, 0, 16);
-    
-    // Extract the actual encrypted data
-    $encrypted_data = substr($decoded_data, 16);
-    
-    // Get the encryption key from the settings
-    $key = hash('sha256', getSettingValue('SYNC_encryption_key'), true);
-    
-    // Decrypt the data
-    $decrypted_data = openssl_decrypt($encrypted_data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
-    
-    if ($decrypted_data === false) {
-        return null; // Decryption failed
-    }
+function decrypt_data($encoded_data, $key) {
+    // Base64 decode the encrypted data
+    $data = base64_decode($encoded_data);
+
+    // Extract the IV and the ciphertext
+    $iv = substr($data, 0, 16);
+    $ciphertext = substr($data, 16);
+
+    // Derive the key using SHA-256
+    $key = hash('sha256', $key, true);
+
+    // Decrypt the ciphertext using AES-256-CBC
+    $decrypted_data = openssl_decrypt($ciphertext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+
+    // Remove padding
+    $decrypted_data = rtrim($decrypted_data, "\0");
     
     return $decrypted_data;
 }
@@ -46,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $plugin_folder = $_POST['plugin_folder'] ?? '';
     $node_name = $_POST['node_name'] ?? '';
 
-    $decoded_data = decrypt_data($data);
+    $decoded_data = decrypt_data($data, getSettingValue('SYNC_encryption_key'));
 
-    if ($decrypted_data === false or $decrypted_data === null) {
+    if ($decoded_data === false or $decoded_data === null) {
         write_notification("[Plugin: Sync hub API] Bad Request: Decryption failed", "alert");
         http_response_code(400);
         echo 'Bad Request: Decryption failed';

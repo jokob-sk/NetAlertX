@@ -17,7 +17,7 @@ RUN apk update \
     && apk add --no-cache build-base
 
 
-RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython pycryptodome \
+RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython cryptography \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
@@ -43,7 +43,7 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 RUN apk update --no-cache \
     && apk add --no-cache bash zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay \
     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute net-tools net-snmp-tools bind-tools awake ca-certificates  \
-    && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
+    && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session php83-openssl \
     && apk add --no-cache python3 nginx \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
