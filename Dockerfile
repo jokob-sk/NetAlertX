@@ -4,7 +4,7 @@ ARG INSTALL_DIR=/app
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --no-cache bash python3 \
+RUN apk add --no-cache bash python3 python3-dev \
     && python -m venv /opt/venv
 
 # Enable venv
