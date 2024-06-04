@@ -12,9 +12,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Install gcc and other necessary build tools
-apt-get update  && apt-get install -y build-essential
-
 # Install dependencies
 apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
