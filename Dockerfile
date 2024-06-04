@@ -4,8 +4,9 @@ ARG INSTALL_DIR=/app
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --no-cache bash python3 python3-dev \
+RUN apk add --no-cache bash python3  \
     && python -m venv /opt/venv
+    
 
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -13,7 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY . ${INSTALL_DIR}/
 
 
-RUN pip install requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython cryptography  \
+RUN pip install pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython   \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
