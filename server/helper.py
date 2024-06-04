@@ -13,9 +13,7 @@ import json
 import time
 from pathlib import Path
 import requests
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.backends import default_backend
+from cryptography.fernet import Fernet
 import base64
 import hashlib
 
@@ -803,24 +801,41 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
     return stringSqlParams
 
+#-------------------------------------------------------------------------------
+#  Cryptography
+#-------------------------------------------------------------------------------
 
-def encrypt_data(data, key):
-    """
-    Encrypt the data using AES-256-CBC.
+def prepare_key(encryption_key):
+    if(len(encryption_key) < 32):
+        encryption_key = (int((32 / len(encryption_key)))+1 )*encryption_key
+
+    key_bytearray  = bytearray(encryption_key[:32], 'ASCII')
+
+    return base64.urlsafe_b64encode(key_bytearray)    
     
-    :param data: The plaintext data to encrypt.
-    :param key: The encryption key.
-    :return: The base64 encoded ciphertext.
-    """
-    key = hashlib.sha256(key.encode()).digest()
-    iv = os.urandom(16)  # Generate a random IV
-    padder = padding.PKCS7(128).padder()
-    padded_data = padder.update(data.encode()) + padder.finalize()
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-    encryptor = cipher.encryptor()
-    ct = encryptor.update(padded_data) + encryptor.finalize()
-    encrypted_data = base64.b64encode(iv + ct).decode('utf-8')
+
+def encrypt_data(data, encryption_key):
+    
+    fernet = Fernet(prepare_key(encryption_key))
+    
+    # then use the Fernet class instance 
+    # to encrypt the string string must
+    # be encoded to byte string before encryption
+    encrypted_data = fernet.encrypt(data.encode())
     return encrypted_data
+
+def decrypt_data(data, encryption_key):
+    
+    
+    fernet = Fernet(prepare_key(encryption_key))
+    
+    # decrypt the encrypted string with the 
+    # Fernet instance of the key,
+    # that was used for encrypting the string
+    # encoded byte string is returned by decrypt method,
+    # so decode it to string with decode methods
+    decrypted_data = fernet.decrypt(data).decode()
+    return decrypted_data
 
 #-------------------------------------------------------------------------------
 #  Misc
