@@ -18,6 +18,7 @@ switch($result){
   case 'Portuguese (pt_br)': $pia_lang_selected = 'pt_br'; break;
   case 'Italian (it_it)': $pia_lang_selected = 'it_it'; break;
   case 'Russian': $pia_lang_selected = 'ru_ru'; break;
+  case 'Turkish (tr_tr)': $pia_lang_selected = 'tr_tr'; break;
   case 'French': $pia_lang_selected = 'fr_fr'; break;
   case 'Chinese (zh_cn)': $pia_lang_selected = 'zh_cn'; break;
   default: $pia_lang_selected = 'en_us'; break;

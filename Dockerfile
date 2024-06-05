@@ -5,9 +5,7 @@ ARG INSTALL_DIR=/app
 ENV PYTHONUNBUFFERED 1
 
 # Install build dependencies
-# RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev
-
-RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev \
+RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev \
     && python -m venv /opt/venv
     
 

@@ -269,6 +269,9 @@ function getString (key) {
     case 'Portuguese (pt_br)': 
       lang_code = 'pt_br';
       break;
+    case 'Turkish (tr_tr)': 
+      lang_code = 'tr_tr';
+      break;
     case 'Italian (it_it)': 
       lang_code = 'it_it';
       break;
