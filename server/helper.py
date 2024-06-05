@@ -860,6 +860,7 @@ def collect_lang_strings(json, pref, stringSqlParams):
 #     return decrypted_data
 
 # pycryptodome -------------------------------------------------------------------------
+
 def prepare_key(encryption_key):
     key = hashlib.sha256(encryption_key.encode()).digest()
     return key
