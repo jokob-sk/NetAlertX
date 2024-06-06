@@ -626,7 +626,11 @@ function initializeDatatable (status) {
         // Dates      
         {targets: [mapIndx(6), mapIndx(7)],
           'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html (translateHTMLcodes (cellData));
+            var result = cellData.toString(); // Convert to string
+            if (result.includes("+")) { // Check if timezone offset is present
+                result = result.split('+')[0]; // Remove timezone offset
+            }
+            $(td).html (translateHTMLcodes (result));
         } },
 
         // Random MAC      
