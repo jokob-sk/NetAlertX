@@ -4,7 +4,7 @@ import sqlite3
 import base64
 
 # Register NetAlertX modules 
-from const import fullDbPath, sql_devices_stats, sql_devices_all
+from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
 
 from logger import mylog
 from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ#, split_string #, updateState
@@ -150,6 +150,34 @@ class DB():
             ALTER TABLE "Devices" ADD "dev_Icon" TEXT
           """)
 
+        # dev_GUID column
+        dev_GUID_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_GUID'
+          """).fetchone()[0] == 0
+
+        if dev_GUID_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_GUID to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "dev_GUID" TEXT
+          """)
+
+        # SQL query to update missing dev_GUID
+        self.sql.execute(f'''
+            UPDATE Devices
+            SET dev_GUID = {sql_generateGuid}
+            WHERE dev_GUID IS NULL
+        ''')
+
+        # dev_SyncHubNodeName column
+        dev_SyncHubNodeName_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SyncHubNodeName'
+          """).fetchone()[0] == 0
+
+        if dev_SyncHubNodeName_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_SyncHubNodeName to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "dev_SyncHubNodeName" TEXT
+          """)
 
         # -------------------------------------------------------------------------
         # Settings table setup
@@ -324,6 +352,17 @@ class DB():
                         ); """
         self.sql.execute(sql_Plugins_Objects)
 
+        # syncHubNodeName column
+        plug_SyncHubNodeName_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='SyncHubNodeName'
+          """).fetchone()[0] == 0
+
+        if plug_SyncHubNodeName_missing :
+          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_Objects table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_Objects" ADD "SyncHubNodeName" TEXT
+          """)
+
         # Plugin execution results
         sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
                                     "Index"	          INTEGER,
@@ -344,6 +383,18 @@ class DB():
                         ); """
         self.sql.execute(sql_Plugins_Events)
 
+        # syncHubNodeName column
+        plug_SyncHubNodeName_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='SyncHubNodeName'
+          """).fetchone()[0] == 0
+
+        if plug_SyncHubNodeName_missing :
+          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_Events table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_Events" ADD "SyncHubNodeName" TEXT
+          """)
+
+
         # Plugin execution history
         sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
                                     "Index"	          INTEGER,
@@ -363,6 +414,18 @@ class DB():
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_History)
+
+        # syncHubNodeName column
+        plug_SyncHubNodeName_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='SyncHubNodeName'
+          """).fetchone()[0] == 0
+
+        if plug_SyncHubNodeName_missing :
+          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_History table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_History" ADD "SyncHubNodeName" TEXT
+          """)
+
 
         # -------------------------------------------------------------------------
         # Plugins_Language_Strings table setup
@@ -389,14 +452,15 @@ class DB():
 
         # indicates, if CurrentScan table is available
         self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-        self.sql.execute(""" CREATE TABLE CurrentScan (                                
+        self.sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
                                 cur_ScanMethod STRING(10),
                                 cur_Name STRING(250),
                                 cur_LastQuery STRING(250),
-                                cur_DateTime STRING(250)
+                                cur_DateTime STRING(250),
+                                cur_SyncHubNodeName STRING(50)
                             );
                         """)
 

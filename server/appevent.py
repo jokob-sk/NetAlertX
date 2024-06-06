@@ -4,7 +4,7 @@ import uuid
 
 # Register NetAlertX modules 
 import conf
-from const import applicationPath, logPath, apiPath, confFileName
+from const import applicationPath, logPath, apiPath, confFileName, sql_generateGuid
 from logger import logResult, mylog, print_log
 from helper import  timeNowTZ
 
@@ -52,17 +52,6 @@ class AppEvent_obj:
             PRIMARY KEY("Index" AUTOINCREMENT)
         );
         """)
-
-        # Generate a GUID
-        sql_generateGuid = '''
-                        lower(
-                            hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                            substr(hex( randomblob(2)), 2) || '-' || 
-                            substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                            substr(hex(randomblob(2)), 2) || '-' || 
-                            hex(randomblob(6))
-                        )
-                    '''
 
         # -------------
         # Device events

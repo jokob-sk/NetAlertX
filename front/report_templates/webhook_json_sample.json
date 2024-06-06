@@ -114,7 +114,11 @@
                 "Watched_Value2",
                 "Watched_Value3",
                 "Watched_Value4",
-                "Status"
+                "Status",
+                "Extra",
+                "UserData",
+                "ForeignKey",
+                "SyncHubNodeName"
               ]
             },
             "plugins": [
@@ -132,7 +136,8 @@
                 "Status": "missing-in-last-scan",
                 "Extra": "null",
                 "UserData": "null",
-                "ForeignKey": "null"
+                "ForeignKey": "null",
+                "SyncHubNodeName": "null"
               }
             ]
           }

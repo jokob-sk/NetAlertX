@@ -537,7 +537,10 @@ function getDevicesColumns(){
               "dev_Archived",
               "dev_Network_Node_port",
               "dev_Network_Node_MAC_ADDR",
-              "dev_Icon"]; 
+              "dev_Icon",
+              "dev_GUID",
+              "dev_SyncHubNodeName"
+            ]; 
               
   return $columns;
 }

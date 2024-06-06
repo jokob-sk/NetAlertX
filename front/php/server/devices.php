@@ -590,7 +590,9 @@ function getDevicesList() {
     array("connected_devices", 15, 15),
     array("dev_Location", 16, 16),
     array("dev_Vendor", 17, 17),           
-    array("dev_Network_Node_port", 18, 18)           
+    array("dev_Network_Node_port", 18, 18),           
+    array("dev_GUID", 19, 19),           
+    array("dev_SyncHubNodeName", 20, 20)           
   );
 
   if($forceDefaultOrder == FALSE) 
@@ -659,7 +661,9 @@ function getDevicesList() {
                             handleNull($row['connected_devices']),
                             handleNull($row['dev_Location']), 
                             handleNull($row['dev_Vendor']),                            
-                            handleNull($row['dev_Network_Node_port'])                            
+                            handleNull($row['dev_Network_Node_port']),                            
+                            handleNull($row['dev_GUID']),                            
+                            handleNull($row['dev_SyncHubNodeName'])                            
                           );
 
     $newOrder = array();

@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents($file_path, $data);
     http_response_code(200);
     echo 'Data received and stored successfully';
-    write_notification("[Plugin: Sync hub API] Data received", "info");
+    write_notification("[Plugin: Sync hub API] Data received ({$plugin_folder})", "info");
 } else {
     http_response_code(405);
     echo 'Method Not Allowed';

@@ -242,8 +242,13 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
             # Check if the file exists
             if os.path.exists(file_path):
 
+                tmp_SyncHubNodeName = 'null' 
+
                 # Check if the file name contains "encoded"
                 if '.encoded.' in filename and encryption_key != '':
+
+                    # store e.g. Node_1 from last_result.encoded.Node_1.1.log
+                    tmp_SyncHubNodeName = filename.split('.')[2]
                     
                     # Decrypt the entire file
                     with open(file_path, 'r+') as f:
@@ -255,7 +260,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                         f.write(decrypted_data)
                         f.truncate()
 
-                        # Rename the file
+                        # Rename the file e.g. from last_result.encoded.Node_1.1.log to last_result.decoded.Node_1.1.log
                         new_filename = filename.replace('.encoded.', '.decoded.')
                         os.rename(file_path, os.path.join(file_dir, new_filename))
 
@@ -295,7 +300,8 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                                     'not-processed',            #  "Status" column (placeholder)
                                     columns[7],                 # "Extra" value from columns list
                                     'null',                     # Placeholder for "UserData" column
-                                    columns[8]                  # "ForeignKey" value from columns list
+                                    columns[8],                 # "ForeignKey" value from columns list
+                                    tmp_SyncHubNodeName         # Sync Hub Node name
                                 )
                             )
                         else:
@@ -339,7 +345,8 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                         'not-processed',            #  "Status" column (placeholder)
                         row[7],                     # "Extra" row
                         'null',                     # Placeholder "UserData" column
-                        row[8]                      # "ForeignKey" row
+                        row[8],                     # "ForeignKey" row
+                        'null'                      # Sync Hub Node name - Only supported with scripts
                     )
                 )
             else:
@@ -396,7 +403,9 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                     'not-processed',              #  "Status" column (placeholder)
                     row[7],                       #  "Extra" 
                     'null',                       #  "UserData" column (null placeholder)
-                    row[8]))                      #  "ForeignKey" 
+                    row[8],                       #  "ForeignKey" 
+                    'null'                        #  Sync Hub Node name - Only supported with scripts
+                    ))                      
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
 
@@ -535,12 +544,12 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
-                #  13 values without Index
+                #  14 values without Index
                 values = (
                     plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
                     plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
                     plugObj.watched4, plugObj.status, plugObj.extra, plugObj.userData,
-                    plugObj.foreignKey
+                    plugObj.foreignKey, plugObj.syncHubNodeName
                 )
 
                 if plugObj.status == 'new':
@@ -573,8 +582,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_Objects 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, objects_to_insert
                 )
 
@@ -585,7 +594,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     UPDATE Plugins_Objects
                     SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
                         "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
-                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?
                     WHERE "Index" = ?
                     """, objects_to_update
                 )
@@ -598,8 +607,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_Events 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, events_to_insert
                 )
 
@@ -611,8 +620,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_History 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, history_to_insert
                 )
 
@@ -689,6 +698,8 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     tmpList.append(plgEv.extra)
                 elif col['column'] == 'Status':
                     tmpList.append(plgEv.status)
+                elif col['column'] == 'SyncHubNodeName':
+                    tmpList.append(plgEv.syncHubNodeName)
 
                 # Check if there's a default value specified for this column in the JSON.
                 if 'mapped_to_column_data' in col and 'value' in col['mapped_to_column_data']:
@@ -723,20 +734,21 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 #-------------------------------------------------------------------------------
 class plugin_object_class:
     def __init__(self, plugin, objDbRow):
-        self.index        = objDbRow[0]
-        self.pluginPref   = objDbRow[1]
-        self.primaryId    = objDbRow[2]
-        self.secondaryId  = objDbRow[3]
-        self.created      = objDbRow[4] # can be null
-        self.changed      = objDbRow[5] # never null (data coming from plugin)
-        self.watched1     = objDbRow[6]
-        self.watched2     = objDbRow[7]
-        self.watched3     = objDbRow[8]
-        self.watched4     = objDbRow[9]
-        self.status       = objDbRow[10]
-        self.extra        = objDbRow[11]
-        self.userData     = objDbRow[12]
-        self.foreignKey   = objDbRow[13]
+        self.index             = objDbRow[0]
+        self.pluginPref        = objDbRow[1]
+        self.primaryId         = objDbRow[2]
+        self.secondaryId       = objDbRow[3]
+        self.created           = objDbRow[4] # can be null
+        self.changed           = objDbRow[5] # never null (data coming from plugin)
+        self.watched1          = objDbRow[6]
+        self.watched2          = objDbRow[7]
+        self.watched3          = objDbRow[8]
+        self.watched4          = objDbRow[9]
+        self.status            = objDbRow[10]
+        self.extra             = objDbRow[11]
+        self.userData          = objDbRow[12]
+        self.foreignKey        = objDbRow[13]
+        self.syncHubNodeName   = objDbRow[14]
 
         # Check if self.status is valid
         if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:

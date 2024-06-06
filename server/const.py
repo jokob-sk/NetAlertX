@@ -48,3 +48,14 @@ sql_new_devices = """SELECT * FROM (
                         LEFT JOIN 
                         ( SELECT dev_Name, dev_MAC as dev_MAC_t2 FROM Devices) t2 
                         ON t1.dev_MAC = t2.dev_MAC_t2"""
+
+
+sql_generateGuid = '''
+                lower(
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
+                    substr(hex( randomblob(2)), 2) || '-' || 
+                    substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
+                    substr(hex(randomblob(2)), 2) || '-' || 
+                    hex(randomblob(6))
+                )
+            '''

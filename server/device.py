@@ -6,7 +6,7 @@ import os
 import re
 from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nslookup, check_IP_format
 from logger import mylog, print_log
-from const import vendorsPath, vendorsPathNewest
+from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 
 #-------------------------------------------------------------------------------
 # Device object handling (WIP)
@@ -198,12 +198,12 @@ def create_new_devices (db):
     # Bulk-inserting devices from the CurrentScan table as new devices in the table Devices ... 
     # ... with new device defaults and ignoring specidfied IPs and MACs)
     sqlQuery = f"""INSERT OR IGNORE INTO Devices (dev_MAC, dev_name, dev_Vendor,
-                        dev_LastIP, dev_FirstConnection, dev_LastConnection,
+                        dev_LastIP, dev_FirstConnection, dev_LastConnection, dev_SyncHubNodeName, dev_GUID,
                         {newDevColumns})
                     SELECT cur_MAC, 
                         CASE WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name
                                 ELSE '(unknown)' END,
-                        cur_Vendor, cur_IP, ?, ?,
+                        cur_Vendor, cur_IP, ?, ?, cur_SyncHubNodeName, {sql_generateGuid},
                         {newDevDefaults}
                     FROM CurrentScan
                         WHERE 1=1
