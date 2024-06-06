@@ -266,17 +266,25 @@ def update_devices_data_from_scan (db):
 
     # Update (unknown) or (name not found) Names if available
     mylog('debug','[Update Devices] - 4 Unknown Name')
-    sql.execute ("""UPDATE Devices
-                    SET dev_NAME = (SELECT cur_Name FROM CurrentScan
-                                    WHERE cur_MAC = dev_MAC 
-                                    and dev_Name not in ("(unknown)", "(name not found)", ""))
-                    WHERE (dev_Name in ("(unknown)", "(name not found)", "" )
-                           OR dev_Name IS NULL)
-                      AND EXISTS (SELECT 1 FROM CurrentScan
-                                  WHERE cur_MAC = dev_MAC
-                                    AND cur_Name IS NOT NULL
-                                    AND cur_Name IS NOT 'null'
-                                    AND cur_Name <> '') """)
+    sql.execute ("""    UPDATE Devices
+                        SET dev_NAME = COALESCE((
+                            SELECT cur_Name 
+                            FROM CurrentScan
+                            WHERE cur_MAC = dev_MAC
+                            AND cur_Name IS NOT NULL
+                            AND cur_Name <> 'null'
+                            AND cur_Name <> ''
+                        ), dev_NAME)
+                        WHERE (dev_NAME IN ('(unknown)', '(name not found)', '') 
+                            OR dev_NAME IS NULL)
+                        AND EXISTS (
+                            SELECT 1 
+                            FROM CurrentScan
+                            WHERE cur_MAC = dev_MAC
+                            AND cur_Name IS NOT NULL
+                            AND cur_Name <> 'null'
+                            AND cur_Name <> ''
+                        ) """)
 
     recordsToUpdate = []
     query = """SELECT * FROM Devices

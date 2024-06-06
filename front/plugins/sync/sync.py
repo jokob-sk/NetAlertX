@@ -14,7 +14,8 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs
 from logger import mylog
-from helper import timeNowTZ, get_setting_value, encrypt_data 
+from helper import timeNowTZ, get_setting_value 
+from cryptography import encrypt_data
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
