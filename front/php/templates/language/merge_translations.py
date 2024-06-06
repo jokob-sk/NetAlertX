@@ -32,6 +32,7 @@ def merge_translations(main_file, other_files):
 
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
+    # language codes can be found here: http://www.lingoes.net/en/translator/langcode.htm
     json_files = ["en_us.json", "de_de.json", "es_es.json", "fr_fr.json", "nb_no.json", "ru_ru.json", "it_it.json", "pt_br.json", "pl_pl.json", "zh_cn.json", "tr_tr.json"]
     file_paths = [os.path.join(current_path, file) for file in json_files]
     merge_translations(file_paths[0], file_paths[1:])

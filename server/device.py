@@ -268,7 +268,8 @@ def update_devices_data_from_scan (db):
     mylog('debug','[Update Devices] - 4 Unknown Name')
     sql.execute ("""UPDATE Devices
                     SET dev_NAME = (SELECT cur_Name FROM CurrentScan
-                                    WHERE cur_MAC = dev_MAC)
+                                    WHERE cur_MAC = dev_MAC 
+                                    and dev_Name not in ("(unknown)", "(name not found)", ""))
                     WHERE (dev_Name in ("(unknown)", "(name not found)", "" )
                            OR dev_Name IS NULL)
                       AND EXISTS (SELECT 1 FROM CurrentScan
