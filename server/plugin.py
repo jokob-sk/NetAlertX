@@ -15,8 +15,6 @@ from helper import timeNowTZ,  updateState, get_file_content, write_file, get_se
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from notification import Notification_obj
-from cryptography import decrypt_data
-
 
 #-------------------------------------------------------------------------------
 class plugin_param:

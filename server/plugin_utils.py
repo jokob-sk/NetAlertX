@@ -5,6 +5,7 @@ import conf
 from logger import mylog
 from const import pluginsPath, logPath, apiPath
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
+from cryptography import decrypt_data
 
 module_name = 'Plugin utils'
 
