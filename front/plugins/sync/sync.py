@@ -19,6 +19,7 @@ from logger import mylog
 from const import pluginsPath, fullDbPath
 from helper import timeNowTZ, get_setting_value 
 from cryptography import encrypt_data
+from notification import write_notification
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -151,6 +152,11 @@ def main():
             # Use executemany for batch insertion
             cursor.executemany(sql, values)
 
+            message = f'[{pluginName}] Inserted "{len(new_devices)}" new devices'
+
+            mylog('verbose', [message])
+            write_notification(message, 'info', timeNowTZ())
+
     # Commit and close the connection
     conn.commit()
     conn.close()
@@ -181,9 +187,13 @@ def send_data(api_token, file_content, encryption_key, plugin_folder, node_name,
     mylog('verbose', [f'[{pluginName}] response: "{response}"'])
 
     if response.status_code == 200:
-        mylog('verbose', [f'[{pluginName}] Data for "{plugin_folder}" sent successfully'])
+        message = f'[{pluginName}] Data for "{plugin_folder}" sent successfully'
+        mylog('verbose', [message])
+        write_notification(message, 'info', timeNowTZ())
     else:
-        mylog('verbose', [f'[{pluginName}] Failed to send data for "{plugin_folder}"'])
+        message = f'[{pluginName}] Failed to send data for "{plugin_folder}" (Status code: {response.status_code})'
+        mylog('verbose', [message])
+        write_notification(message, 'alert', timeNowTZ())
 
     # log result
     plugin_objects.add_object(

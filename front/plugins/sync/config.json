@@ -4,7 +4,7 @@
   "unique_prefix": "SYNC",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "template",  
+  "data_source": "script",  
   "show_ui": true,
   "localized": ["display_name", "description", "icon"],
   "display_name": [{

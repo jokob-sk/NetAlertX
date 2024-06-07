@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($auth_header !== $expected_token) {
         http_response_code(403);
         echo 'Forbidden';
-        write_notification("[Plugin: Sync hub API] Incorrect API Token", "alert"); 
+        write_notification("[Plugin: SYNC] Incorrect API Token", "alert"); 
         exit;
     }
 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Create the storage directory if it doesn't exist
     if (!is_dir($storage_path)) {
         echo "Could not open folder: {$storage_path}";
-        write_notification("[Plugin: Sync hub API] Could not open folder: {$storage_path}", "alert"); 
+        write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert"); 
         http_response_code(500);
         exit;
     }
@@ -43,10 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents($file_path, $data);
     http_response_code(200);
     echo 'Data received and stored successfully';
-    write_notification("[Plugin: Sync hub API] Data received ({$plugin_folder})", "info");
+    write_notification("[Plugin: SYNC] Data received ({$plugin_folder})", "info");
 } else {
     http_response_code(405);
     echo 'Method Not Allowed';
-    write_notification("[Plugin: Sync hub API] Method Not Allowed", "alert");
+    write_notification("[Plugin: SYNC] Method Not Allowed", "alert");
 }
 ?>
