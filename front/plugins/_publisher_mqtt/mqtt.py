@@ -329,6 +329,8 @@ def mqtt_start(db):
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
             create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'first_connection', 'calendar-start', device["dev_MAC"])
+            create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
         
             # update device sensors in home assistant              
 
@@ -337,7 +339,9 @@ def mqtt_start(db):
                     "last_ip": device["dev_LastIP"], 
                     "is_new": str(device["dev_NewDevice"]), 
                     "vendor": sanitize_string(device["dev_Vendor"]), 
-                    "mac_address": str(device["dev_MAC"])
+                    "mac_address": str(device["dev_MAC"]),
+                    "last_connection": str(device["dev_LastConnection"]),
+                    "first_connection": str(device["dev_FirstConnection"])
                 }
             ) 
 
