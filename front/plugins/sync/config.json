@@ -514,7 +514,7 @@
       "name" : "SYNC_instance_type",
       "value": "hub"
     },   
-    "default_value":"0 2 * * 3",
+    "default_value":"*/5 * * * *",
     "options": [],
     "localized": ["name", "description"],
     "name" : [{

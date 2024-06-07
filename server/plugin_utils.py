@@ -285,11 +285,8 @@ def decode_and_rename_files(file_dir, file_prefix):
 
                     files_to_process.append(new_filename)
 
-            elif filename == 'last_result.log':
-                files_to_process.append(filename)
             else:
-                # Skipping decoded and other files
-                continue
+                files_to_process.append(filename)
         else:
             mylog('debug', [f'[Plugins] The file {file_path} does not exist'])
 

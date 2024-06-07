@@ -44,7 +44,6 @@ def main():
     # Get all plugin configurations
     all_plugins = get_plugins_configs()
 
-    mylog('verbose', [f'[{pluginName}] DEBUG {len(all_plugins)}'])
     mylog('verbose', [f'[{pluginName}] plugins_to_sync {plugins_to_sync}'])
 
     # Plugins processing
@@ -104,6 +103,8 @@ def main():
     unique_mac_addresses = set()
     device_data = []
 
+    mylog('verbose', [f'[{pluginName}] Devices files to process: "{files_to_process}"'])
+
     for file_path in files_to_process:
 
         # only process received .log files, skipping the one logging the progress of this plugin
@@ -112,8 +113,8 @@ def main():
 
             # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
             tmp_SyncHubNodeName = ''
-            if len(filename.split('.')) > 3:
-                tmp_SyncHubNodeName = filename.split('.')[2]   
+            if len(file_path.split('.')) > 3:
+                tmp_SyncHubNodeName = file_path.split('.')[2]   
             
             with open(file_path, 'r') as f:
                 data = json.load(f)
@@ -131,10 +132,14 @@ def main():
         # Filter out existing devices
         new_devices = [device for device in device_data if device['dev_MAC'] not in existing_mac_addresses]
 
+        #  Remove 'rowid' key if it exists 
+        for device in new_devices:
+            device.pop('rowid', None)
+
         # Prepare the insert statement
         if new_devices:
-            columns = ', '.join(new_devices[0].keys())
-            placeholders = ', '.join('?' for _ in new_devices[0])
+            columns = ', '.join(k for k in new_devices[0].keys() if k != 'rowid')
+            placeholders = ', '.join('?' for k in new_devices[0] if k != 'rowid')
             sql = f'INSERT INTO Devices ({columns}) VALUES ({placeholders})'
 
             # Extract values for the new devices
