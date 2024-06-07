@@ -243,4 +243,53 @@ def getPluginObject(keyValues):
 
         return {}
 
+# ------------------------------------------------------------------
+# decode any encoded last_result files
+def decode_and_rename_files(file_dir, file_prefix):
+    """
+    Decodes and renames files in the specified directory if they are encrypted.
+    Returns a list of files to be processed and the Sync Hub Node name.
+    """
+    # Initialize the list of files to be processed and Sync Hub Node name
+    files_to_process = []
 
+    # key to decrypt data if available
+    encryption_key = get_setting_value('SYNC_encryption_key')
+
+    # Check for files starting with the specified prefix
+    matching_files = [f for f in os.listdir(file_dir) if f.startswith(file_prefix)]
+
+    for filename in matching_files:
+        # Create the full file path
+        file_path = os.path.join(file_dir, filename)
+        
+        # Check if the file exists
+        if os.path.exists(file_path):
+
+            # Check if the file name contains "encoded"
+            if '.encoded.' in filename and encryption_key:
+                # Decrypt the entire file
+                with open(file_path, 'r+') as f:
+                    encrypted_data = f.read()
+                    decrypted_data = decrypt_data(encrypted_data, encryption_key)
+
+                    # Write the decrypted data back to the file
+                    f.seek(0)
+                    f.write(decrypted_data)
+                    f.truncate()
+
+                    # Rename the file e.g. from last_result.encoded.Node_1.1.log to last_result.decoded.Node_1.1.log
+                    new_filename = filename.replace('.encoded.', '.decoded.')
+                    os.rename(file_path, os.path.join(file_dir, new_filename))
+
+                    files_to_process.append(new_filename)
+
+            elif filename == 'last_result.log':
+                files_to_process.append(filename)
+            else:
+                # Skipping decoded and other files
+                continue
+        else:
+            mylog('debug', [f'[Plugins] The file {file_path} does not exist'])
+
+    return files_to_process

@@ -5,6 +5,8 @@ import pathlib
 import sys
 import hashlib
 import requests
+import json
+import sqlite3
 
 
 # Define the installation path and extend the system path for plugin imports
@@ -12,8 +14,9 @@ INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from plugin_utils import get_plugins_configs
+from plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog
+from const import pluginsPath, fullDbPath
 from helper import timeNowTZ, get_setting_value 
 from cryptography import encrypt_data
 
@@ -22,14 +25,13 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+# Initialize the Plugin obj output file
+plugin_objects = Plugin_Objects(RESULT_FILE)
+
 pluginName = 'SYNC'
 
 def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
-
-
-    # Initialize the Plugin obj output file
-    plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Retrieve configuration settings
     plugins_to_sync = get_setting_value('SYNC_plugins')
@@ -37,6 +39,7 @@ def main():
     encryption_key = get_setting_value('SYNC_encryption_key')
     hub_url = get_setting_value('SYNC_hub_url')
     node_name = get_setting_value('SYNC_node_name')
+    send_devices = get_setting_value('SYNC_devices')
 
     # Get all plugin configurations
     all_plugins = get_plugins_configs()
@@ -44,6 +47,7 @@ def main():
     mylog('verbose', [f'[{pluginName}] DEBUG {len(all_plugins)}'])
     mylog('verbose', [f'[{pluginName}] plugins_to_sync {plugins_to_sync}'])
 
+    # Plugins processing
     index = 0
     for plugin in all_plugins:
         pref = plugin["unique_prefix"]  
@@ -63,47 +67,130 @@ def main():
 
                     mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
 
-                    # Encrypt the log data using the encryption_key
-                    encrypted_data = encrypt_data(file_content, encryption_key)
+                    # encrypt and send data to the hub
+                    send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url)
 
-                    mylog('verbose', [f'[{pluginName}] Sending encrypted_data: "{encrypted_data}"'])
-
-                    # Prepare the data payload for the POST request
-                    data = {
-                        'data': encrypted_data,
-                        'plugin_folder': plugin_folder,
-                        'node_name': node_name
-                    }
-
-                    # Set the authorization header with the API token
-                    headers = {'Authorization': f'Bearer {api_token}'}
-                    api_endpoint = f"{hub_url}/plugins/sync/hub.php"
-                    response = requests.post(api_endpoint, data=data, headers=headers)
-
-                    mylog('verbose', [f'[{pluginName}] response: "{response}"'])
-
-                    if response.status_code == 200:
-                        mylog('verbose', [f'[{pluginName}] Data for "{plugin_folder}" sent successfully'])
-                    else:
-                        mylog('verbose', [f'[{pluginName}] Failed to send data for "{plugin_folder}"'])
-
-                    # log result
-                    plugin_objects.add_object(
-                        primaryId   = pref,
-                        secondaryId = timeNowTZ(),
-                        watched1    = node_name,
-                        watched2    = response.status_code,
-                        watched3    = response,
-                        watched4    = '',
-                        extra       = '',
-                        foreignKey  = '')
             else:
                 mylog('verbose', [f'[{pluginName}] {plugin_folder}/last_result.log not found'])             
+
+    # Devices procesing
+    if send_devices:
+
+        file_path = f"{INSTALL_PATH}/front/api/table_devices.json"
+        plugin_folder = 'sync'
+        pref = 'SYNC'
+
+        if os.path.exists(file_path):
+            # Read the content of the log file
+            with open(file_path, 'r') as f:
+                file_content = f.read()
+
+                mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
+                send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url)
+
+    # process any received data for the Device DB table
+    # Create the file path
+    file_dir = os.path.join(pluginsPath, 'sync')
+    file_prefix = 'last_result'
+
+    # Decode files, rename them, and get the list of files
+    files_to_process = decode_and_rename_files(file_dir, file_prefix)
+
+    # Connect to the App database
+    conn    = sqlite3.connect(fullDbPath)
+    cursor  = conn.cursor()
+
+    # Collect all unique dev_MAC values from the JSON files
+    unique_mac_addresses = set()
+    device_data = []
+
+    for file_path in files_to_process:
+
+        # only process received .log files, skipping the one logging the progress of this plugin
+        if file_path != 'last_result.log':
+            mylog('verbose', [f'[{pluginName}] Processing: "{file_path}"'])
+
+            # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
+            tmp_SyncHubNodeName = ''
+            if len(filename.split('.')) > 3:
+                tmp_SyncHubNodeName = filename.split('.')[2]   
+            
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+                for device in data['data']:
+                    device['dev_SyncHubNodeName'] = tmp_SyncHubNodeName
+                    unique_mac_addresses.add(device['dev_MAC'])
+                    device_data.append(device)
+
+    if len(device_data) > 0:
+        # Retrieve existing dev_MAC values from the Devices table
+        placeholders = ', '.join('?' for _ in unique_mac_addresses)
+        cursor.execute(f'SELECT dev_MAC FROM Devices WHERE dev_MAC IN ({placeholders})', tuple(unique_mac_addresses))
+        existing_mac_addresses = set(row[0] for row in cursor.fetchall())
+
+        # Filter out existing devices
+        new_devices = [device for device in device_data if device['dev_MAC'] not in existing_mac_addresses]
+
+        # Prepare the insert statement
+        if new_devices:
+            columns = ', '.join(new_devices[0].keys())
+            placeholders = ', '.join('?' for _ in new_devices[0])
+            sql = f'INSERT INTO Devices ({columns}) VALUES ({placeholders})'
+
+            # Extract values for the new devices
+            values = [tuple(device.values()) for device in new_devices]
+
+            mylog('verbose', [f'[{pluginName}] Inserting Devices SQL   : "{sql}"'])
+            mylog('verbose', [f'[{pluginName}] Inserting Devices VALUES: "{values}"'])
+
+            # Use executemany for batch insertion
+            cursor.executemany(sql, values)
+
+    # Commit and close the connection
+    conn.commit()
+    conn.close()
 
     # log result
     plugin_objects.write_result_file()
 
     return 0
+
+
+def send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url):
+    # Encrypt the log data using the encryption_key
+    encrypted_data = encrypt_data(file_content, encryption_key)
+
+    mylog('verbose', [f'[{pluginName}] Sending encrypted_data: "{encrypted_data}"'])
+
+    # Prepare the data payload for the POST request
+    data = {
+        'data': encrypted_data,
+        'plugin_folder': plugin_folder,
+        'node_name': node_name
+    }
+    # Set the authorization header with the API token
+    headers = {'Authorization': f'Bearer {api_token}'}
+    api_endpoint = f"{hub_url}/plugins/sync/hub.php"
+    response = requests.post(api_endpoint, data=data, headers=headers)
+
+    mylog('verbose', [f'[{pluginName}] response: "{response}"'])
+
+    if response.status_code == 200:
+        mylog('verbose', [f'[{pluginName}] Data for "{plugin_folder}" sent successfully'])
+    else:
+        mylog('verbose', [f'[{pluginName}] Failed to send data for "{plugin_folder}"'])
+
+    # log result
+    plugin_objects.add_object(
+        primaryId   = pref,
+        secondaryId = timeNowTZ(),
+        watched1    = node_name,
+        watched2    = response.status_code,
+        watched3    = response,
+        watched4    = '',
+        extra       = '',
+        foreignKey  = '')
+
 
 if __name__ == '__main__':
     main()

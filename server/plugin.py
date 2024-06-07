@@ -13,7 +13,7 @@ from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
-from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder
+from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from notification import Notification_obj
 from cryptography import decrypt_data
 
@@ -211,17 +211,15 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         mylog('debug',   ['[Plugins] Resolved : ', command])        
 
         try:
-            # try runnning a subprocess with a forced timeout in case the subprocess hangs
-            output = subprocess.check_output (command, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
+            # try running a subprocess with a forced timeout in case the subprocess hangs
+            output = subprocess.check_output(command, universal_newlines=True, stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
         except subprocess.CalledProcessError as e:
-            # An error occured, handle it
+            # An error occurred, handle it
             mylog('none', [e.output])
             mylog('none', ['[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs'])            
         except subprocess.TimeoutExpired as timeErr:
             mylog('none', [f'[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin["unique_prefix"]} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval.']) 
 
-
-        #  check the last run output
         # Initialize newLines
         newLines = []
 
@@ -229,85 +227,52 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         file_dir = os.path.join(pluginsPath, plugin["code_name"])
         file_prefix = 'last_result'
 
-        # key to decrypt data if available
-        encryption_key = get_setting_value('SYNC_encryption_key')
 
-        # Check for files starting with the specified prefix
-        matching_files = [f for f in os.listdir(file_dir) if f.startswith(file_prefix)]
+        # Decode files, rename them, and get the list of files
+        files_to_process = decode_and_rename_files(file_dir, file_prefix)
 
-        for filename in matching_files:
-            # Create the full file path
-            file_path = os.path.join(file_dir, filename)
+        for filename in files_to_process:
+            # Open the decrypted file and process its contents
+            with open(os.path.join(file_dir, filename), 'r') as f:
+                newLines = f.read().split('\n')
+
+                # if the script produced some output, clean it up to ensure it's the correct format        
+                # cleanup - select only lines containing a separator to filter out unnecessary data
+                newLines = list(filter(lambda x: '|' in x, newLines))    
+
+                # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
+                tmp_SyncHubNodeName = ''
+                if len(filename.split('.')) > 3:
+                    tmp_SyncHubNodeName = filename.split('.')[2]   
             
-            # Check if the file exists
-            if os.path.exists(file_path):
-
-                tmp_SyncHubNodeName = 'null' 
-
-                # Check if the file name contains "encoded"
-                if '.encoded.' in filename and encryption_key != '':
-
-                    # store e.g. Node_1 from last_result.encoded.Node_1.1.log
-                    tmp_SyncHubNodeName = filename.split('.')[2]
-                    
-                    # Decrypt the entire file
-                    with open(file_path, 'r+') as f:
-                        encrypted_data = f.read()
-                        decrypted_data = decrypt_data(encrypted_data, encryption_key)
-
-                        # Write the decrypted data back to the file
-                        f.seek(0)
-                        f.write(decrypted_data)
-                        f.truncate()
-
-                        # Rename the file e.g. from last_result.encoded.Node_1.1.log to last_result.decoded.Node_1.1.log
-                        new_filename = filename.replace('.encoded.', '.decoded.')
-                        os.rename(file_path, os.path.join(file_dir, new_filename))
-
-                elif filename == 'last_result.log' :
-                    new_filename = filename
-                else:
-                    # skipping decoded and other files
-                    continue
-
-                # Open the decrypted file and process its contents
-                with open(os.path.join(file_dir, new_filename), 'r') as f:
-                    newLines = f.read().split('\n')
-
-                    # if the script produced some outpout, clean it up to ensure it's the correct format        
-                    # cleanup - select only lines containing a separator to filter out unnecessary data
-                    newLines = list(filter(lambda x: '|' in x, newLines))        
-                    
-                    for line in newLines:
-                        columns = line.split("|")
-                        # There has to be always 9 columns
-                        if len(columns) == 9:
-                            # Create a tuple containing values to be inserted into the database.
-                            # Each value corresponds to a column in the table in the order of the columns.
-                            # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
-                            sqlParams.append(
-                                (
-                                    0,                          # "Index" placeholder
-                                    plugin["unique_prefix"],    # "Plugin" column value from the plugin dictionary
-                                    columns[0],                 # "Object_PrimaryID" value from columns list
-                                    columns[1],                 # "Object_SecondaryID" value from columns list
-                                    'null',                     # Placeholder for "DateTimeCreated" column
-                                    columns[2],                 # "DateTimeChanged" value from columns list
-                                    columns[3],                 # "Watched_Value1" value from columns list
-                                    columns[4],                 # "Watched_Value2" value from columns list
-                                    columns[5],                 # "Watched_Value3" value from columns list
-                                    columns[6],                 # "Watched_Value4" value from columns list
-                                    'not-processed',            #  "Status" column (placeholder)
-                                    columns[7],                 # "Extra" value from columns list
-                                    'null',                     # Placeholder for "UserData" column
-                                    columns[8],                 # "ForeignKey" value from columns list
-                                    tmp_SyncHubNodeName         # Sync Hub Node name
-                                )
+                for line in newLines:
+                    columns = line.split("|")
+                    # There have to be always 9 columns
+                    if len(columns) == 9:
+                        # Create a tuple containing values to be inserted into the database.
+                        # Each value corresponds to a column in the table in the order of the columns.
+                        # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
+                        sqlParams.append(
+                            (
+                                0,                          # "Index" placeholder
+                                plugin["unique_prefix"],    # "Plugin" column value from the plugin dictionary
+                                columns[0],                 # "Object_PrimaryID" value from columns list
+                                columns[1],                 # "Object_SecondaryID" value from columns list
+                                'null',                     # Placeholder for "DateTimeCreated" column
+                                columns[2],                 # "DateTimeChanged" value from columns list
+                                columns[3],                 # "Watched_Value1" value from columns list
+                                columns[4],                 # "Watched_Value2" value from columns list
+                                columns[5],                 # "Watched_Value3" value from columns list
+                                columns[6],                 # "Watched_Value4" value from columns list
+                                'not-processed',            #  "Status" column (placeholder)
+                                columns[7],                 # "Extra" value from columns list
+                                'null',                     # Placeholder for "UserData" column
+                                columns[8],                 # "ForeignKey" value from columns list
+                                tmp_SyncHubNodeName         # Sync Hub Node name
                             )
-                        else:
-                            mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])            
-            else:
-                mylog('debug', [f'[Plugins] The file {file_path} does not exist'])        
+                        )
+                    else:
+                        mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])            
 
             # TODO: delete processed files 
             # os.rename(file_path, os.path.join(file_dir, new_filename))
@@ -428,9 +393,6 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         update_api(db, all_plugins, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
     
     return pluginsState
-
-
-
 
 
 #-------------------------------------------------------------------------------

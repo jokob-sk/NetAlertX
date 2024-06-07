@@ -380,6 +380,25 @@
     ]
   },
   {
+    "function": "devices",
+    "type": "boolean",
+    "default_value": false,
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "Send Devices"
+      }  
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "When enabled the whole Devices table is sent over. Only new devices with new MACs are inserted in the target hub."
+      }
+    ]
+  },
+  {
     "function": "plugins",
     "type": "text.multiselect",
     "display_condition": {
@@ -402,7 +421,7 @@
     "name": [
       {
         "language_code": "en_us",
-        "string": "Plugins"
+        "string": "Send Plugins"
       } 
     ],
     "description": [
