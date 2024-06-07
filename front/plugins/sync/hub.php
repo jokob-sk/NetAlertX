@@ -35,9 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Generate a unique file path to avoid overwriting existing files
-    $files = glob("{$storage_path}/last_result.encoded.{$node_name}.*.log");
+    $files = glob("{$storage_path}/last_result.{encoded,decoded}.{$node_name}.*.log", GLOB_BRACE);
     $file_count = count($files) + 1;
     $file_path = "{$storage_path}/last_result.encoded.{$node_name}.{$file_count}.log";
+
 
     // Save the decoded data to the file
     file_put_contents($file_path, $data);

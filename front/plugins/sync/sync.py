@@ -106,23 +106,27 @@ def main():
 
     mylog('verbose', [f'[{pluginName}] Devices files to process: "{files_to_process}"'])
 
-    for file_path in files_to_process:
+    for file_name in files_to_process:
 
         # only process received .log files, skipping the one logging the progress of this plugin
-        if file_path != 'last_result.log':
-            mylog('verbose', [f'[{pluginName}] Processing: "{file_path}"'])
+        if file_name != 'last_result.log':
+            mylog('verbose', [f'[{pluginName}] Processing: "{file_name}"'])
 
             # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
             tmp_SyncHubNodeName = ''
-            if len(file_path.split('.')) > 3:
-                tmp_SyncHubNodeName = file_path.split('.')[2]   
+            if len(file_name.split('.')) > 3:
+                tmp_SyncHubNodeName = file_name.split('.')[2]   
+
+
+            file_path = f"{INSTALL_PATH}/front/plugins/sync/{file_name}"
             
             with open(file_path, 'r') as f:
                 data = json.load(f)
                 for device in data['data']:
-                    device['dev_SyncHubNodeName'] = tmp_SyncHubNodeName
-                    unique_mac_addresses.add(device['dev_MAC'])
-                    device_data.append(device)
+                    if device['dev_MAC'] not in unique_mac_addresses:
+                        device['dev_SyncHubNodeName'] = tmp_SyncHubNodeName
+                        unique_mac_addresses.add(device['dev_MAC'])
+                        device_data.append(device)
 
     if len(device_data) > 0:
         # Retrieve existing dev_MAC values from the Devices table
