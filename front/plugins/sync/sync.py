@@ -141,8 +141,21 @@ def main():
         for device in new_devices:
             device.pop('rowid', None)
 
+
         # Prepare the insert statement
         if new_devices:
+            # insert devices into the lats_result.log to manage state
+            for device in new_devices:
+                plugin_objects.add_object(
+                    primaryId   = device['dev_MAC'],
+                    secondaryId = device['dev_LastIP'],
+                    watched1    = device['dev_Name'],
+                    watched2    = device['dev_Vendor'],
+                    watched3    = device['dev_SyncHubNodeName'],
+                    watched4    = device['dev_GUID'],
+                    extra       = '',
+                    foreignKey  = device['dev_GUID'])
+
             columns = ', '.join(k for k in new_devices[0].keys() if k != 'rowid')
             placeholders = ', '.join('?' for k in new_devices[0] if k != 'rowid')
             sql = f'INSERT INTO Devices ({columns}) VALUES ({placeholders})'
@@ -199,16 +212,6 @@ def send_data(api_token, file_content, encryption_key, plugin_folder, node_name,
         mylog('verbose', [message])
         write_notification(message, 'alert', timeNowTZ())
 
-    # log result
-    plugin_objects.add_object(
-        primaryId   = pref,
-        secondaryId = timeNowTZ(),
-        watched1    = node_name,
-        watched2    = response.status_code,
-        watched3    = response,
-        watched4    = '',
-        extra       = '',
-        foreignKey  = '')
 
 
 if __name__ == '__main__':
