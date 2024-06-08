@@ -32,35 +32,11 @@
   ],
   "params" : [], 
   "settings":[   
-    {
-    "function": "instance_type",
-    "type": "text.select",
-    "maxLength": 50,
-    "default_value": ["hub"],
-    "options": ["hub", "node"],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Instance type"
-      } 
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "If this app instance is to receive the synchronization data, select <code>hub</code>. If this instance is sending the data, select <code>node</code>"
-      } 
-    ]
-  },
   {
     "function": "RUN",      
     "events": ["run"],      
     "type": "text.select",   
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "hub"
-    },         
+             
     "default_value":"disabled",
     "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device", "on_notification"],
     "localized": ["name", "description"],
@@ -84,11 +60,7 @@
   {
     "function": "RUN_SCHD",
     "type": "text",
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "hub"
-    },   
+       
     "default_value":"*/5 * * * *",
     "options": [],
     "localized": ["name", "description"],
@@ -160,11 +132,7 @@
   {
     "function": "hub_url",
     "type": "text",
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "hub"
-    },
+    
     "maxLength": 50,
     "default_value": "",
     "options": [],
@@ -185,11 +153,6 @@
   {
     "function": "node_name",
     "type": "text",
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "node"
-    },
     "maxLength": 50,
     "default_value": "",
     "options": [],
@@ -229,11 +192,6 @@
   {
     "function": "plugins",
     "type": "text.multiselect",
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "node"
-    },
     "maxLength": 50,
     "default_value": [
     ],
