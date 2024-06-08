@@ -6,11 +6,7 @@
   "data_source": "script",
   "mapped_to_table": "CurrentScan",
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -63,21 +59,11 @@
   "settings": [
     {
       "function": "RUN",
-      "events": [
-        "run"
-      ],
+      "events": ["run"],
       "type": "text.select",
       "default_value": "disabled",
-      "options": [
-        "disabled",
-        "once",
-        "schedule",
-        "always_after_scan"
-      ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "options": ["disabled", "once", "schedule", "always_after_scan"],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -112,10 +98,7 @@
       "type": "text",
       "default_value": "python3 /app/front/plugins/undiscoverables/script.py devices={devices}",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -150,10 +133,7 @@
       "type": "integer",
       "default_value": 10,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -188,10 +168,7 @@
       "type": "readonly",
       "default_value": [],
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -231,10 +208,7 @@
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -267,14 +241,9 @@
     {
       "function": "devices_to_import",
       "type": "list",
-      "default_value": [
-        "dummy_router"
-      ],
+      "default_value": ["dummy_router"],
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -305,27 +274,31 @@
       ]
     },
     {
-        "function": "RUN_SCHD",
-        "type": "text",
-        "default_value":"*/5 * * * *",
-        "options": [],
-        "localized": ["name", "description"],
-        "name" : [{
-            "language_code":"en_us",
-            "string" : "Schedule"
+      "function": "RUN_SCHD",
+      "type": "text",
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
         },
         {
-            "language_code":"es_es",
-            "string" : "Schedule"
-        }],
-        "description": [{
-            "language_code":"en_us",
-            "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices. "
+          "language_code": "es_es",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices. "
         },
         {
-            "language_code":"es_es",
-            "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-        }]
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#UNDIS_RUN\"><code>UNDIS_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        }
+      ]
     }
   ],
   "database_column_definitions": [
@@ -337,9 +310,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -363,9 +334,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -389,9 +358,7 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -414,9 +381,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -440,9 +405,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -469,9 +432,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -494,9 +455,7 @@
       "type": "device_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",

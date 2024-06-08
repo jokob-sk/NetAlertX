@@ -671,7 +671,7 @@
     "settings_publishers": "Enabled notification gateways - publishers, that will send a notification depending on your settings.",
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_label": "Publishers",
-    "settings_saved": "<br/>Settings saved. <br/><br/> Reloading... <br/><br/> <i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
+    "settings_saved": "<br/>Settings saved. <br/> Reloading... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "System",
     "settings_update_item_warning": "Update the value below. Be careful to follow the previous format. <b>Validation is not performed.</b>",

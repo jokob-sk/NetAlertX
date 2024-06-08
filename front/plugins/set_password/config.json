@@ -1,28 +1,32 @@
-{    
+{
   "code_name": "set_password",
   "template_type": "database-entry",
   "unique_prefix": "SETPWD",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "template",  
+  "data_source": "template",
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
-  "display_name": [{
+  "display_name": [
+    {
       "language_code": "en_us",
       "string": "Set password"
     },
-	{
+    {
       "language_code": "es_es",
       "string": "Establecer contraseña"
-    }],
-  "description": [{
-    "language_code": "en_us",
-    "string": "A simple plugin to set the web ui password on app start."
-  },
-  {
-    "language_code": "es_es",
-    "string": "Un complemento simple para configurar la contraseña de la interfaz de usuario web al iniciar la aplicación."
-  }],
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A simple plugin to set the web ui password on app start."
+    },
+    {
+      "language_code": "es_es",
+      "string": "Un complemento simple para configurar la contraseña de la interfaz de usuario web al iniciar la aplicación."
+    }
+  ],
   "icon": [
     {
       "language_code": "en_us",
@@ -31,61 +35,58 @@
     {
       "language_code": "es_es",
       "string": "<i class=\"fa fa-lock\"></i>"
-    }	
-  ],
-  "params" : [
-    {
-        "name"  : "password",
-        "type"  : "setting",
-        "value" : "SETPWD_password"
     }
-  ], 
-  "settings":[   
-  {
-    "function": "enable_password",
-    "type": "boolean",
-    "default_value": false,
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Enable login"
-      }  
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "When enabled a login dialog is displayed. If facing issues, you can always disable the login by setting <code>SETPWD_enable_password=False</code> in your <code>app.conf</code> file."
-      }
-    ]
-  },
-  {
-    "function": "password",
-    "type": "password.SHA256",
-    "maxLength": 50,
-    "default_value": "123456",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Password"
-      },
-      {
-        "language_code": "es_es",
-        "string": "Contraseña"
-      }	  
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "The default password is <code>123456</code>."
-      } 
-    ]
-  }
-    
-          
+  ],
+  "params": [
+    {
+      "name": "password",
+      "type": "setting",
+      "value": "SETPWD_password"
+    }
+  ],
+  "settings": [
+    {
+      "function": "enable_password",
+      "type": "boolean",
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Enable login"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When enabled a login dialog is displayed. If facing issues, you can always disable the login by setting <code>SETPWD_enable_password=False</code> in your <code>app.conf</code> file."
+        }
+      ]
+    },
+    {
+      "function": "password",
+      "type": "password.SHA256",
+      "maxLength": 50,
+      "default_value": "123456",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Password"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Contraseña"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The default password is <code>123456</code>."
+        }
+      ]
+    }
   ]
-    
-  }
+}

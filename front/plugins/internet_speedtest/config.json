@@ -5,11 +5,7 @@
   "enabled": true,
   "data_source": "script",
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -49,9 +45,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -74,9 +68,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -99,9 +91,7 @@
       "type": "url",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -120,9 +110,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -145,9 +133,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -166,9 +152,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -208,9 +192,7 @@
           "hexColor": "#05483C"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -246,9 +228,7 @@
           "hexColor": "#05483C"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -267,9 +247,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -292,9 +270,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -317,9 +293,7 @@
       "type": "textbox_save",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -359,9 +333,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -384,9 +356,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -406,21 +376,11 @@
   "settings": [
     {
       "function": "RUN",
-      "events": [
-        "run"
-      ],
+      "events": ["run"],
       "type": "text.select",
       "default_value": "disabled",
-      "options": [
-        "disabled",
-        "once",
-        "schedule",
-        "always_after_scan"
-      ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "options": ["disabled", "once", "schedule", "always_after_scan"],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -451,10 +411,7 @@
       "type": "readonly",
       "default_value": "python3 /app/front/plugins/internet_speedtest/script.py",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -489,10 +446,7 @@
       "type": "text",
       "default_value": "*/30 * * * *",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -527,10 +481,7 @@
       "type": "integer",
       "default_value": 60,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -570,10 +521,7 @@
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -609,10 +557,7 @@
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",

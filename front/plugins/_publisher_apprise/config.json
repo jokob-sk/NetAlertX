@@ -1,430 +1,483 @@
 {
-    "code_name": "_publisher_apprise",
-    "unique_prefix": "APPRISE",
-    "plugin_type": "publisher",
-    "enabled": true,    
-    "data_source":  "script",
-    "show_ui": true,
-    "localized": ["display_name", "description", "icon"],
-	"display_name" : [
+  "code_name": "_publisher_apprise",
+  "unique_prefix": "APPRISE",
+  "plugin_type": "publisher",
+  "enabled": true,
+  "data_source": "script",
+  "show_ui": true,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Apprise publisher"
+    },
+    {
+      "language_code": "es_es",
+      "string": "Habilitar Apprise"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-bullhorn\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to publish a notification via the Apprise gateway."
+    }
+  ],
+  "params": [],
+  "database_column_definitions": [
+    {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
         {
-		  "language_code": "en_us",
-		  "string" : "Apprise publisher"
-		},
-        {
-		  "language_code": "es_es",
-		  "string" : "Habilitar Apprise"
-		}
-    ],
-    "icon":[{
-        "language_code": "en_us",
-        "string" : "<i class=\"fa-solid fa-bullhorn\"></i>"
-		}],     
-    "description": [
-        {
-        "language_code": "en_us",
-        "string" : "A plugin to publish a notification via the Apprise gateway."
-		}
-    ],
-    "params" : [],  
-    "database_column_definitions":
-    [          
-        {
-            "column": "Index",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Plugin",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Plugin",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Object_PrimaryID",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "url",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				}]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Object_PrimaryID",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "url",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Object_SecondaryID",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sent when"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
         },
         {
-            "column": "DateTimeCreated",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Sent when"
-				}]
+          "language_code": "es_es",
+          "string": "Cambiado"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "eval",
+      "default_value": "",
+      "options": [
+        {
+          "type": "eval",
+          "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notification GUID"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "css_classes": "col-sm-8",
+      "show": true,
+      "type": "textarea_readonly",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Result"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "DateTimeChanged",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Changed"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Cambiado"					
-                }]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Watched_Value1",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "eval",            
-            "default_value":"",
-            "options": [
-                {
-                    "type": "eval",
-                    "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
-                }          
-            ],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Notification GUID"
-				}]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "UserData",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "textbox_save",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Comments"
         },
         {
-            "column": "Watched_Value2",
-            "css_classes": "col-sm-8",
-            "show": true,
-            "type": "textarea_readonly",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Result"
-				}]
+          "language_code": "es_es",
+          "string": "Comentarios"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": false,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
         },
         {
-            "column": "Watched_Value3",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
         },
         {
-            "column": "Watched_Value4",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
-        },       
-        {
-            "column": "UserData",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "textbox_save",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Comments"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comentarios"					
-                }]
-        },        
-        {
-            "column": "Status",
-            "css_classes": "col-sm-1",
-            "show": false,
-            "type": "replace",            
-            "default_value":"",
-            "options": [
-                {
-                    "equals": "watched-not-changed",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
-                },
-                {
-                    "equals": "watched-changed",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
-                },
-                {
-                    "equals": "new",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
-                },
-                {
-                    "equals": "missing-in-last-scan",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
-                }
-            ],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Status"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Estado"					
-                }]
-        },        
-        {
-            "column": "Extra",
-            "css_classes": "col-sm-3",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Extra"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Extra"					
-                }]
-        }            
-    ],
-    "settings":[
-        {
-            "function": "RUN",         
-            "events": ["test"],   
-            "type": "text.select",            
-            "default_value":"disabled",
-            "options": ["disabled", "on_notification" ],
-            "localized": ["name", "description"],
-            "name" :[{
-                "language_code": "en_us",
-                "string" : "When to run"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Cuando ejecuta"
-            }],
-            "description": [
-                {
-                "language_code": "en_us",
-                "string" : "Enable sending notifications via a self-hosted <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a> instance. Please specify the URL on which you are running your instance in the <code>APPRISE_HOST</code> setting."
-				},
-                {
-                "language_code": "es_es",
-                "string" : "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a>."
-				}
-            ]
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
         },
         {
-            "function": "CMD",
-            "type": "readonly",
-            "default_value":"python3 /app/front/plugins/_publisher_apprise/apprise.py",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Command"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comando"						
-            }],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Command to run"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comando a ejecutar"	
-            }]
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
         },
         {
-            "function": "RUN_TIMEOUT",
-            "type": "integer",
-            "default_value": 10,
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Run timeout"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tiempo de espera de ejecución"				
-				},
-				{
-                "language_code": "de_de",
-                "string" : "Wartezeit"
-            }],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-            }]
+          "language_code": "es_es",
+          "string": "Estado"
+        }
+      ]
+    },
+    {
+      "column": "Extra",
+      "css_classes": "col-sm-3",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Extra"
         },
         {
-            "function": "HOST",
-            "type": "text",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Apprise host URL"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "URL del host de Apprise"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Apprise host URL starting with <code>http://</code> or <code>https://</code>. (do not forget to include <code>/notify</code> at the end)"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "URL del host de Apprise que comienza con <code>http://</code> o <code>https://</code>. (no olvide incluir <code>/notify</code> al final)"
-            }]
+          "language_code": "es_es",
+          "string": "Extra"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["test"],
+      "type": "text.select",
+      "default_value": "disabled",
+      "options": ["disabled", "on_notification"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
         },
         {
-            "function": "URL",
-            "type": "text",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Apprise notification URL"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "URL de notificación de Apprise"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Informar de la URL de destino de la notificación. Por ejemplo, para Telegram sería <code>tgram://{bot_token}/{chat_id}</code>."
-            }]
+          "language_code": "es_es",
+          "string": "Cuando ejecuta"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enable sending notifications via a self-hosted <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a> instance. Please specify the URL on which you are running your instance in the <code>APPRISE_HOST</code> setting."
         },
         {
-            "function": "PAYLOAD",
-            "type": "text.select",
-            "default_value": "html",
-            "options": ["html", "text"],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Payload type"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tipo de carga"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Seleccione el tipo de carga útil enviada a Apprise. Por ejemplo, <code>html</code> funciona bien con correos electrónicos, <code>text</code> con aplicaciones de chat, como Telegram."
-            }]
+          "language_code": "es_es",
+          "string": "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://hub.docker.com/r/caronc/apprise\">Apprise</a>."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": "readonly",
+      "default_value": "python3 /app/front/plugins/_publisher_apprise/apprise.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
         },
         {
-            "function": "SIZE",
-            "type": "integer",
-            "default_value": 1024,
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Max payload size"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tamaño máximo de carga útil"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "The maximum size of the apprise payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "El tamaño máximo de la carga útil de información como número de caracteres en la cadena pasada. Si supera el límite, se truncará y se agregará un mensaje <code>(text was truncated)</code>."
-            }]
-        }         
-    ]
+          "language_code": "es_es",
+          "string": "Comando"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 10,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo de espera de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wartezeit"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        }
+      ]
+    },
+    {
+      "function": "HOST",
+      "type": "text",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise host URL"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL del host de Apprise"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise host URL starting with <code>http://</code> or <code>https://</code>. (do not forget to include <code>/notify</code> at the end)"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL del host de Apprise que comienza con <code>http://</code> o <code>https://</code>. (no olvide incluir <code>/notify</code> al final)"
+        }
+      ]
+    },
+    {
+      "function": "URL",
+      "type": "text",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise notification URL"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL de notificación de Apprise"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise notification target URL. For example for Telegram it would be <code>tgram://{bot_token}/{chat_id}</code>."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar de la URL de destino de la notificación. Por ejemplo, para Telegram sería <code>tgram://{bot_token}/{chat_id}</code>."
+        }
+      ]
+    },
+    {
+      "function": "PAYLOAD",
+      "type": "text.select",
+      "default_value": "html",
+      "options": ["html", "text"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Payload type"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tipo de carga"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Seleccione el tipo de carga útil enviada a Apprise. Por ejemplo, <code>html</code> funciona bien con correos electrónicos, <code>text</code> con aplicaciones de chat, como Telegram."
+        }
+      ]
+    },
+    {
+      "function": "SIZE",
+      "type": "integer",
+      "default_value": 1024,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Max payload size"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tamaño máximo de carga útil"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The maximum size of the apprise payload as number of characters in the passed string. If above limit, it will be truncated and a <code>(text was truncated)</code> message is appended."
+        },
+        {
+          "language_code": "es_es",
+          "string": "El tamaño máximo de la carga útil de información como número de caracteres en la cadena pasada. Si supera el límite, se truncará y se agregará un mensaje <code>(text was truncated)</code>."
+        }
+      ]
+    }
+  ]
 }

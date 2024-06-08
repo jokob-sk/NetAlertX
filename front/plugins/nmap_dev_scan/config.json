@@ -15,11 +15,7 @@
     }
   ],
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -58,13 +54,8 @@
         "always_after_scan",
         "on_new_device"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
-      "events": [
-        "run"
-      ],
+      "localized": ["name", "description"],
+      "events": ["run"],
       "name": [
         {
           "language_code": "en_us",
@@ -99,10 +90,7 @@
       "type": "readonly",
       "default_value": "python3 /app/front/plugins/nmap_dev_scan/nmap_dev.py ",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -137,10 +125,7 @@
       "type": "integer",
       "default_value": 300,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -175,10 +160,7 @@
       "type": "text",
       "default_value": "*/5 * * * *",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -211,18 +193,14 @@
     {
       "function": "WATCH",
       "type": "text.multiselect",
-      "default_value": [
-      ],
+      "default_value": [],
       "options": [
         "Watched_Value1",
         "Watched_Value2",
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -255,19 +233,14 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": [
-        "new"
-      ],
+      "default_value": ["new"],
       "options": [
         "new",
         "watched-changed",
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -302,10 +275,7 @@
       "type": "text",
       "default_value": "sudo nmap -sn -PR -oX - ",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -329,9 +299,7 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -355,9 +323,7 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -381,9 +347,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -399,9 +363,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -422,18 +384,20 @@
       "mapped_to_column": "cur_LastQuery",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Interface"
-          },
-          {
-          "language_code":"es_es",
-          "string" : "Interfaz"
-          }]
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Interface"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Interfaz"
+        }
+      ]
     },
     {
       "column": "Dummy",
@@ -446,9 +410,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -471,9 +433,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -496,9 +456,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -538,9 +496,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",

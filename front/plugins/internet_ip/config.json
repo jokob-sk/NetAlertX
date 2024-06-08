@@ -15,11 +15,7 @@
   ],
   "data_source": "script",
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -66,21 +62,11 @@
   "settings": [
     {
       "function": "RUN",
-      "events": [
-        "run"
-      ],
+      "events": ["run"],
       "type": "text.select",
       "default_value": "schedule",
-      "options": [
-        "disabled",
-        "once",
-        "schedule",
-        "always_after_scan"
-      ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "options": ["disabled", "once", "schedule", "always_after_scan"],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -111,10 +97,7 @@
       "type": "readonly",
       "default_value": "python3 /app/front/plugins/internet_ip/script.py prev_ip={prev_ip} INTRNT_DIG_GET_IP_ARG={INTRNT_DIG_GET_IP_ARG}",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -149,10 +132,7 @@
       "type": "text",
       "default_value": "-4 myip.opendns.com @resolver1.opendns.com",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -187,10 +167,7 @@
       "type": "text",
       "default_value": "*/5 * * * *",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -225,10 +202,7 @@
       "type": "integer",
       "default_value": 30,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -263,10 +237,7 @@
       "type": "integer",
       "default_value": 3,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -283,19 +254,14 @@
     {
       "function": "WATCH",
       "type": "text.multiselect",
-      "default_value": [
-        "Watched_Value1"
-      ],
+      "default_value": ["Watched_Value1"],
       "options": [
         "Watched_Value1",
         "Watched_Value2",
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -324,20 +290,14 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": [
-        "new",
-        "watched-changed"
-      ],
+      "default_value": ["new", "watched-changed"],
       "options": [
         "new",
         "watched-changed",
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -377,9 +337,7 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -403,9 +361,7 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -428,9 +384,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -446,29 +400,29 @@
       "column": "Watched_Value2",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "textarea_readonly",            
-      "default_value":"",
+      "type": "textarea_readonly",
+      "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name":[
+      "name": [
         {
           "language_code": "en_us",
-          "string" : "Response"
+          "string": "Response"
         }
       ]
-    },    
+    },
     {
       "column": "Watched_Value3",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name":[
+      "name": [
         {
           "language_code": "en_us",
-          "string" : "Retries needed"
+          "string": "Retries needed"
         }
       ]
     },
@@ -483,9 +437,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -508,9 +460,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -534,9 +484,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -576,9 +524,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",

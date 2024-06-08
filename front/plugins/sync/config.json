@@ -1,9 +1,9 @@
-{    
+{
   "code_name": "sync",
   "unique_prefix": "SYNC",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "mapped_to_table": "CurrentScan",
   "data_filters": [
     {
@@ -16,279 +16,287 @@
   ],
   "show_ui": true,
   "localized": ["display_name", "description", "icon"],
-  "display_name": [{
+  "display_name": [
+    {
       "language_code": "en_us",
       "string": "Sync Hub"
-    }],
-  "description": [{
-    "language_code": "en_us",
-    "string": "Plugin to synchronize multiple NetAlertX instances."
-  }],
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Plugin to synchronize multiple NetAlertX instances."
+    }
+  ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa fa-group-arrows-rotate\"></i>"
     }
   ],
-  "params" : [], 
-  "settings":[   
-  {
-    "function": "RUN",      
-    "events": ["run"],      
-    "type": "text.select",   
-             
-    "default_value":"disabled",
-    "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device", "on_notification"],
-    "localized": ["name", "description"],
-    "name" :[{
-        "language_code":"en_us",
-        "string" : "When to run"
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["run"],
+      "type": "text.select",
+
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan",
+        "on_new_device",
+        "on_notification"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run [n,h]"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecutar [n,h]"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann laufen [n,h]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the sync should run. Data might be lost if you run the sync less frequently. Good options are <code>always_after_scan</code>, <code>on_new_device</code>, <code>on_notification</code>"
+        }
+      ]
     },
     {
-        "language_code":"es_es",
-        "string" : "Cuándo ejecutar"
+      "function": "RUN_SCHD",
+      "type": "text",
+
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule [n,h]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+        }
+      ]
     },
     {
-        "language_code":"de_de",
-        "string" : "Wann laufen"
-    }],
-    "description": [{
-        "language_code":"en_us",
-        "string" : "When the node sync should run. Data might be lost if you run the sync less frequently. Good options are <code>always_after_scan</code>, <code>on_new_device</code>, <code>on_notification</code>"
-    }]
-  },
-  {
-    "function": "RUN_SCHD",
-    "type": "text",
-       
-    "default_value":"*/5 * * * *",
-    "options": [],
-    "localized": ["name", "description"],
-    "name" : [{
-        "language_code":"en_us",
-        "string" : "Schedule"
+      "function": "api_token",
+      "type": "text",
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "API token [n,h]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "API token to secure communication. It's sent in the request header. The API token needs to be the same on the hub and on the nodes."
+        }
+      ]
     },
     {
-        "language_code":"es_es",
-        "string" : "Schedule"
+      "function": "encryption_key",
+      "type": "text",
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Encryption Key [n,h]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Encryption key used to encrypt the data before sending and for decryption on th ehub. The key needs to be the same on the hub and on the nodes."
+        }
+      ]
     },
     {
-        "language_code":"de_de",
-        "string" : "Schedule"
-    }],
-    "description": [{
-        "language_code":"en_us",
-        "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+      "function": "hub_url",
+      "type": "text",
+
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Hub URL [n]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The URL of the hub (target instance). Set on the Node. Without a trailig slash, for example <code>http://192.168.1.82:20211</code>"
+        }
+      ]
     },
     {
-        "language_code":"es_es",
-        "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+      "function": "node_name",
+      "type": "text",
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Node name [n]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Use a unique node name, without spaces or special characters, such as <code>Node_Vlan01</code>"
+        }
+      ]
     },
     {
-        "language_code":"de_de",
-        "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
-    }]
-  },    
-  {
-    "function": "api_token",
-    "type": "text",
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "API token"
-      }
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "API token to secure communication. The API token needs to be the same on the hub and on the nodes."
-      } 
-    ]
-  },
-  {
-    "function": "encryption_key",
-    "type": "text",
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Encryption Key"
-      }
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Encryption key used to encrypt the sent data. The key needs to be the same on the hub and on the nodes."
-      } 
-    ]
-  },
-  {
-    "function": "hub_url",
-    "type": "text",
-    
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Hub URL"
-      } 
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Target hub URL to send the data to without a trailig slash, for example <code>http://192.168.1.82:20211</code>"
-      } 
-    ]
-  },
-  {
-    "function": "node_name",
-    "type": "text",
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Node name"
-      } 
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Use a unique node name, without spaces or special characters, such as <code>Node_Vlan01</code>"
-      } 
-    ]
-  },
-  {
-    "function": "devices",
-    "type": "boolean",
-    "default_value": false,
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Send Devices"
-      }  
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "When enabled the whole Devices table is sent over. Only new devices with new MACs are inserted in the target hub."
-      }
-    ]
-  },
-  {
-    "function": "plugins",
-    "type": "text.multiselect",
-    "maxLength": 50,
-    "default_value": [
-    ],
-    "options": ["{value}"],
-    "options_params" : [
-      {
-        "name"  : "value",
-        "type"  : "setting",
-        "value" : "LOADED_PLUGINS"
-      }
-    ],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Send Plugins"
-      } 
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Plugins to synchronize. Only plugins that produce some kind of output in <code>last_result.log</code> can be synchronized."
-      } 
-    ]
-  },
-  {
-    "function": "CMD",
-    "type": "readonly",
-    "default_value": "python3 /app/front/plugins/sync/sync.py",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Command"
-      },
-      {
-        "language_code": "es_es",
-        "string": "Comando"
-      },
-      {
-        "language_code": "de_de",
-        "string": "Befehl"
-      }	        
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Command to run. This can not be changed"
-      },
-      {
-        "language_code": "es_es",
-        "string": "Comando a ejecutar. Esto no se puede cambiar"
-      },
-      {
-        "language_code": "de_de",
-        "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
-      }	        
-    ]
-  },
-  {
-    "function": "RUN_TIMEOUT",
-    "type": "integer",
-    "default_value": 30,
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Run timeout"
-      },
-      {
-        "language_code": "es_es",
-        "string": "Tiempo límite de ejecución"
-      },
-      {
-        "language_code": "de_de",
-        "string": "Zeitüberschreitung"
-      }	        
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-      },
-      {
-        "language_code": "es_es",
-        "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-      },
-      {
-        "language_code": "de_de",
-        "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
-      }        
-    ]
-  }
-    
-          
+      "function": "devices",
+      "type": "boolean",
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sync Devices [n]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When enabled the whole Devices table is sent over. Only new devices with new MACs are inserted in the target hub."
+        }
+      ]
+    },
+    {
+      "function": "plugins",
+      "type": "text.multiselect",
+      "maxLength": 50,
+      "default_value": [],
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "setting",
+          "value": "LOADED_PLUGINS"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sync Plugins [n]"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Plugins to synchronize. Only plugins that produce some kind of output in <code>last_result.log</code> can be synchronized."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": "readonly",
+      "default_value": "python3 /app/front/plugins/sync/sync.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar. Esto no se puede cambiar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 30,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitüberschreitung"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
+        }
+      ]
+    }
   ],
   "database_column_definitions": [
     {
@@ -299,9 +307,7 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -325,9 +331,7 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -351,9 +355,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -369,9 +371,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -392,27 +392,31 @@
       "mapped_to_column": "cur_SyncHubNodeName",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Sync Node"
-          }]
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sync Node"
+        }
+      ]
     },
     {
       "column": "Watched_Value4",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",            
-      "default_value":"",
+      "type": "label",
+      "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name":[{
-          "language_code":"en_us",
-          "string" : "Device GUID"
-          }]
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device GUID"
+        }
+      ]
     },
     {
       "column": "Dummy",
@@ -425,9 +429,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -450,9 +452,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -475,9 +475,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -517,9 +515,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -536,5 +532,4 @@
       ]
     }
   ]
-    
-  }
+}

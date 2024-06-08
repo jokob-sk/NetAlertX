@@ -1,654 +1,656 @@
-{    
+{
   "code_name": "newdev_template",
   "template_type": "database-entry",
   "unique_prefix": "NEWDEV",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "template",  
+  "data_source": "template",
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
-  "display_name": [{
+  "display_name": [
+    {
       "language_code": "en_us",
       "string": "New Devices"
-    }],
-  "description": [{
-    "language_code": "en_us",
-    "string": "The template used for new devices."
-  }],
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "The template used for new devices."
+    }
+  ],
   "icon": [
     {
       "language_code": "en_us",
       "string": "<i class=\"fa fa-plus\"></i>"
     }
   ],
-  "settings":[
+  "settings": [
+    {
+      "function": "ignored_MACs",
+      "type": "list",
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
         {
-          "function": "ignored_MACs",
-          "type": "list",
-          "default_value": [
-          ],
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Ignored MACs"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
-            }
-          ]
-        },
-        {
-          "function": "ignored_IPs",
-          "type": "list",
-          "default_value": [
-          ],
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Ignored IPs"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out an IP range."
-            }
-          ]
-        },
-        {
-          "function": "dev_MAC",
-          "type": "readonly",
-          "maxLength": 50,
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device MAC"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The MAC address of the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-        {
-          "function": "dev_Name",
-          "type": "readonly",
-          "maxLength": 50,
-          "default_value": "(unknown)",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Name"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The name of the device. Uneditable as internal functionality is dependent on specific new device names."
-            }
-          ]
-        },
-        {
-          "function": "dev_Owner",
-          "type": "text.select",
-          "maxLength": 30,
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Owner"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The owner of the device."
-            }
-          ]
-        },
-        {
-          "function": "dev_DeviceType",
-          "type": "text.select",
-          "maxLength": 30,
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT DISTINCT 9 as ord, dev_DeviceType as id, dev_DeviceType as name FROM Devices WHERE dev_DeviceType NOT IN ('', 'Smartphone', 'Tablet', 'Laptop', 'Mini PC', 'PC', 'Printer', 'Server', 'Singleboard Computer (SBC)', 'NAS', 'Domotic', 'IP Camera', 'Game Console', 'SmartTV', 'TV Decoder', 'Virtual Assistance', 'Clock', 'House Appliance', 'Phone', 'Radio', 'AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router', 'USB LAN Adapter', 'USB WIFI Adapter') UNION SELECT 0 as ord, '', '❌None' UNION SELECT 1 as ord, '-----', '-- 📱Handhelds --' UNION SELECT 1 as ord, 'Smartphone', 'Smartphone' UNION SELECT 1 as ord, 'Tablet', 'Tablet' UNION SELECT 2 as ord, '-----', '-- 💻Computers --' UNION SELECT 2 as ord, 'Laptop', 'Laptop' UNION SELECT 2 as ord, 'Mini PC', 'Mini PC' UNION SELECT 2 as ord, 'PC', 'PC' UNION SELECT 2 as ord, 'Printer', 'Printer' UNION SELECT 2 as ord, 'Server', 'Server' UNION SELECT 2 as ord, 'Singleboard Computer (SBC)', 'Singleboard Computer (SBC)' UNION SELECT 2 as ord, 'NAS', 'NAS' UNION SELECT 3 as ord, '-----', '-- 🏠Smart home --' UNION SELECT 3 as ord, 'Domotic', 'Domotic' UNION SELECT 3 as ord, 'IP Camera', 'IP Camera' UNION SELECT 3 as ord, 'Game Console', 'Game Console' UNION SELECT 3 as ord, 'SmartTV', 'SmartTV' UNION SELECT 3 as ord, 'TV Decoder', 'TV Decoder' UNION SELECT 3 as ord, 'Virtual Assistance', 'Virtual Assistance' UNION SELECT 4 as ord, '-----', '-- Wired --' UNION SELECT 4 as ord, 'Clock', 'Clock' UNION SELECT 4 as ord, 'House Appliance', 'House Appliance' UNION SELECT 4 as ord, 'Phone', 'Phone' UNION SELECT 4 as ord, 'Radio', 'Radio' UNION SELECT 5 as ord, '-----', '-- 📡Network nodes --' UNION SELECT 5 as ord, 'AP', 'AP' UNION SELECT 5 as ord, 'Gateway', 'Gateway' UNION SELECT 5 as ord, 'Firewall', 'Firewall' UNION SELECT 5 as ord, 'Hypervisor', 'Hypervisor' UNION SELECT 5 as ord, 'Powerline', 'Powerline' UNION SELECT 5 as ord, 'Switch', 'Switch' UNION SELECT 5 as ord, 'WLAN', 'WLAN' UNION SELECT 5 as ord, 'PLC', 'PLC' UNION SELECT 5 as ord, 'Router', 'Router' UNION SELECT 5 as ord, 'USB LAN Adapter', 'USB LAN Adapter' UNION SELECT 5 as ord, 'USB WIFI Adapter', 'USB WIFI Adapter' UNION SELECT 9 as ord, '-----', '-- ⚙Custom --' UNION SELECT 10 as ord, '-----', '-----' UNION SELECT 10 as ord, 'Other', 'Other' ORDER BY 1,2;"
-            },
-            {
-              "name"  : "uilang",
-              "type"  : "setting",
-              "value" : "UI_LANG"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Type"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The type of the device."
-            }
-          ]
-        },
-         {
-          "function": "dev_Vendor",
-          "type": "readonly",
-          "maxLength": 250,
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Vendor"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The vendor of the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-        {
-          "function": "dev_Favorite",
-          "type": "integer.checkbox",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Favorite Device"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether the device is marked as a favorite."
-            }
-          ]
-        },
-        {
-          "function": "dev_Group",
-          "type": "text.select",
-          "maxLength": 10,
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices WHERE dev_Group <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Group"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The group to which the device belongs."
-            }
-          ]
-        },
-         {
-          "function": "dev_Comments",
-          "type": "string",
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Comments"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Additional comments or notes about the device."
-            }
-          ]
-        },
-        {
-          "function": "dev_FirstConnection",
-          "type": "readonly",
-          "format": "date-time",
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "First Connection"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The date and time of the first connection with the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-        {
-          "function": "dev_LastConnection",
-          "type": "readonly",
-          "format": "date-time",
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Last Connection"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-        {
-          "function": "dev_LastIP",
-          "type": "readonly",
-          "maxLength": 50,
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Last IP"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The last known IP address of the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-        {
-          "function": "dev_StaticIP",
-          "type": "integer.checkbox",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Static IP"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether the device has a static IP address."
-            }
-          ]
-        },
-        {
-          "function": "dev_ScanCycle",
-          "type": "integer.checkbox",
-          "default_value": 1,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Scan Cycle"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The default value of the <code>Scan device</code> dropdown. Enable if newly discovered devices should be scanned."
-            }
-          ]
-        },
-        {
-          "function": "dev_LogEvents",
-          "type": "integer.checkbox",
-          "default_value": 1,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Log Events"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether events related to the device shouldbe logged."
-          }]
-        },
-        {
-          "function": "dev_AlertEvents",
-          "type": "integer.checkbox",
-          "default_value": 1,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Alert Events"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox."
-            }
-          ]
-        },
-        {
-          "function": "dev_AlertDeviceDown",
-          "type": "integer.checkbox",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Alert Device Down"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox."
-            }
-          ]
-        },
-        {
-          "function": "dev_SkipRepeated",
-          "type": "text.select",
-          "default_value": 0,
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT '0' as id, '0 (notify all)' as name UNION SELECT '168' as id, '1 week' as name UNION SELECT '24' as id, '1 day' as name UNION SELECT '8' as id, '8 h' as name UNION SELECT '1' as id, '1 h' as name"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Skip Repeated (h)"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you enter <code>0</code> then you get notified on all events."
-            }
-          ]
-        },
-        {
-          "function": "dev_LastNotification",
-          "type": "readonly",
-          "format": "date-time",
-          "default_value": "",
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Last Notification"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected."
-            }
-          ]
-        },
-       {
-          "function": "dev_PresentLastScan",
-          "type": "integer.checkbox",
-          "default_value": 1,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Present Last Scan"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether the device should be marked as present after detected in a scan."
-            }
-          ]
-        },
-        {
-          "function": "dev_NewDevice",
-          "type": "integer.checkbox",
-          "default_value": 1,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "New Device"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications."
-            }
-          ]
-        },
-         {
-          "function": "dev_Location",
-          "type": "text.select",
-          "maxLength": 250,
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Location"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The location of the device."
-            }
-          ]
-        },
-        {
-          "function": "dev_Archived",
-          "type": "integer.checkbox",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Archived"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Indicates whether the device is archived. The default value of the <code>Archived</code> checkbox."
-            }
-          ]
-        },
-        {
-          "function": "dev_Network_Node_MAC_ADDR",
-          "type": "text.select",
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "SELECT '❌None' as name, '' as id UNION SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
-            },
-            {
-              "name"  : "target_macs",
-              "type"  : "setting",
-              "value" : "KNWN_target_macs"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Network Node MAC Address"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The MAC address of the network node."
-            }
-          ]
-        },
-         {
-          "function": "dev_Network_Node_port",
-          "type": "readonly",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-         "name": [
-            {
-              "language_code": "en_us",
-              "string": "Network Node Port"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The port number of the network node. Uneditable."
-            }
-          ]
-        },
-         {
-          "function": "dev_Icon",
-          "type": "text.select",
-          "default_value": "",
-          "options": ["{value}"],
-          "options_params" : [
-            {
-              "name"  : "value",
-              "type"  : "sql",
-              "value" : "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(Value, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE Code_Name = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '') AS combined_results;"
-            }
-          ],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Device Icon"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
-            }
-          ]
-        },
-	      {
-          "function": "LESS_NAME_CLEANUP",
-          "type": "integer.checkbox",
-          "default_value": 0,
-          "options": [],
-          "localized": ["name", "description"],
-          "name": [
-            {
-              "language_code": "en_us",
-              "string": "Less Name Cleanup"
-            }
-          ],
-          "description": [
-            {
-              "language_code": "en_us",
-              "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
-            }
-          ]
+          "language_code": "en_us",
+          "string": "Ignored MACs"
         }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
+        }
+      ]
+    },
+    {
+      "function": "ignored_IPs",
+      "type": "list",
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Ignored IPs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out an IP range."
+        }
+      ]
+    },
+    {
+      "function": "dev_MAC",
+      "type": "readonly",
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device MAC"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The MAC address of the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_Name",
+      "type": "readonly",
+      "maxLength": 50,
+      "default_value": "(unknown)",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Name"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The name of the device. Uneditable as internal functionality is dependent on specific new device names."
+        }
+      ]
+    },
+    {
+      "function": "dev_Owner",
+      "type": "text.select",
+      "maxLength": 30,
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Owner"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The owner of the device."
+        }
+      ]
+    },
+    {
+      "function": "dev_DeviceType",
+      "type": "text.select",
+      "maxLength": 30,
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT 9 as ord, dev_DeviceType as id, dev_DeviceType as name FROM Devices WHERE dev_DeviceType NOT IN ('', 'Smartphone', 'Tablet', 'Laptop', 'Mini PC', 'PC', 'Printer', 'Server', 'Singleboard Computer (SBC)', 'NAS', 'Domotic', 'IP Camera', 'Game Console', 'SmartTV', 'TV Decoder', 'Virtual Assistance', 'Clock', 'House Appliance', 'Phone', 'Radio', 'AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router', 'USB LAN Adapter', 'USB WIFI Adapter') UNION SELECT 0 as ord, '', '❌None' UNION SELECT 1 as ord, '-----', '-- 📱Handhelds --' UNION SELECT 1 as ord, 'Smartphone', 'Smartphone' UNION SELECT 1 as ord, 'Tablet', 'Tablet' UNION SELECT 2 as ord, '-----', '-- 💻Computers --' UNION SELECT 2 as ord, 'Laptop', 'Laptop' UNION SELECT 2 as ord, 'Mini PC', 'Mini PC' UNION SELECT 2 as ord, 'PC', 'PC' UNION SELECT 2 as ord, 'Printer', 'Printer' UNION SELECT 2 as ord, 'Server', 'Server' UNION SELECT 2 as ord, 'Singleboard Computer (SBC)', 'Singleboard Computer (SBC)' UNION SELECT 2 as ord, 'NAS', 'NAS' UNION SELECT 3 as ord, '-----', '-- 🏠Smart home --' UNION SELECT 3 as ord, 'Domotic', 'Domotic' UNION SELECT 3 as ord, 'IP Camera', 'IP Camera' UNION SELECT 3 as ord, 'Game Console', 'Game Console' UNION SELECT 3 as ord, 'SmartTV', 'SmartTV' UNION SELECT 3 as ord, 'TV Decoder', 'TV Decoder' UNION SELECT 3 as ord, 'Virtual Assistance', 'Virtual Assistance' UNION SELECT 4 as ord, '-----', '-- Wired --' UNION SELECT 4 as ord, 'Clock', 'Clock' UNION SELECT 4 as ord, 'House Appliance', 'House Appliance' UNION SELECT 4 as ord, 'Phone', 'Phone' UNION SELECT 4 as ord, 'Radio', 'Radio' UNION SELECT 5 as ord, '-----', '-- 📡Network nodes --' UNION SELECT 5 as ord, 'AP', 'AP' UNION SELECT 5 as ord, 'Gateway', 'Gateway' UNION SELECT 5 as ord, 'Firewall', 'Firewall' UNION SELECT 5 as ord, 'Hypervisor', 'Hypervisor' UNION SELECT 5 as ord, 'Powerline', 'Powerline' UNION SELECT 5 as ord, 'Switch', 'Switch' UNION SELECT 5 as ord, 'WLAN', 'WLAN' UNION SELECT 5 as ord, 'PLC', 'PLC' UNION SELECT 5 as ord, 'Router', 'Router' UNION SELECT 5 as ord, 'USB LAN Adapter', 'USB LAN Adapter' UNION SELECT 5 as ord, 'USB WIFI Adapter', 'USB WIFI Adapter' UNION SELECT 9 as ord, '-----', '-- ⚙Custom --' UNION SELECT 10 as ord, '-----', '-----' UNION SELECT 10 as ord, 'Other', 'Other' ORDER BY 1,2;"
+        },
+        {
+          "name": "uilang",
+          "type": "setting",
+          "value": "UI_LANG"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The type of the device."
+        }
+      ]
+    },
+    {
+      "function": "dev_Vendor",
+      "type": "readonly",
+      "maxLength": 250,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Vendor"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The vendor of the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_Favorite",
+      "type": "integer.checkbox",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Favorite Device"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is marked as a favorite."
+        }
+      ]
+    },
+    {
+      "function": "dev_Group",
+      "type": "text.select",
+      "maxLength": 10,
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices WHERE dev_Group <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Group"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The group to which the device belongs."
+        }
+      ]
+    },
+    {
+      "function": "dev_Comments",
+      "type": "string",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Comments"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Additional comments or notes about the device."
+        }
+      ]
+    },
+    {
+      "function": "dev_FirstConnection",
+      "type": "readonly",
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "First Connection"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the first connection with the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_LastConnection",
+      "type": "readonly",
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Connection"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_LastIP",
+      "type": "readonly",
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The last known IP address of the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_StaticIP",
+      "type": "integer.checkbox",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Static IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device has a static IP address."
+        }
+      ]
+    },
+    {
+      "function": "dev_ScanCycle",
+      "type": "integer.checkbox",
+      "default_value": 1,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan Cycle"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The default value of the <code>Scan device</code> dropdown. Enable if newly discovered devices should be scanned."
+        }
+      ]
+    },
+    {
+      "function": "dev_LogEvents",
+      "type": "integer.checkbox",
+      "default_value": 1,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Log Events"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether events related to the device shouldbe logged."
+        }
+      ]
+    },
+    {
+      "function": "dev_AlertEvents",
+      "type": "integer.checkbox",
+      "default_value": 1,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Alert Events"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox."
+        }
+      ]
+    },
+    {
+      "function": "dev_AlertDeviceDown",
+      "type": "integer.checkbox",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Alert Device Down"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox."
+        }
+      ]
+    },
+    {
+      "function": "dev_SkipRepeated",
+      "type": "text.select",
+      "default_value": 0,
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT '0' as id, '0 (notify all)' as name UNION SELECT '168' as id, '1 week' as name UNION SELECT '24' as id, '1 day' as name UNION SELECT '8' as id, '8 h' as name UNION SELECT '1' as id, '1 h' as name"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Skip Repeated (h)"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you enter <code>0</code> then you get notified on all events."
+        }
+      ]
+    },
+    {
+      "function": "dev_LastNotification",
+      "type": "readonly",
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Notification"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
+      "function": "dev_PresentLastScan",
+      "type": "integer.checkbox",
+      "default_value": 1,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Present Last Scan"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device should be marked as present after detected in a scan."
+        }
+      ]
+    },
+    {
+      "function": "dev_NewDevice",
+      "type": "integer.checkbox",
+      "default_value": 1,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "New Device"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications."
+        }
+      ]
+    },
+    {
+      "function": "dev_Location",
+      "type": "text.select",
+      "maxLength": 250,
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Location"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The location of the device."
+        }
+      ]
+    },
+    {
+      "function": "dev_Archived",
+      "type": "integer.checkbox",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Archived"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is archived. The default value of the <code>Archived</code> checkbox."
+        }
+      ]
+    },
+    {
+      "function": "dev_Network_Node_MAC_ADDR",
+      "type": "text.select",
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT '❌None' as name, '' as id UNION SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+        },
+        {
+          "name": "target_macs",
+          "type": "setting",
+          "value": "KNWN_target_macs"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Network Node MAC Address"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The MAC address of the network node."
+        }
+      ]
+    },
+    {
+      "function": "dev_Network_Node_port",
+      "type": "readonly",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Network Node Port"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The port number of the network node. Uneditable."
+        }
+      ]
+    },
+    {
+      "function": "dev_Icon",
+      "type": "text.select",
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(Value, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE Code_Name = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '') AS combined_results;"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
+        }
+      ]
+    },
+    {
+      "function": "LESS_NAME_CLEANUP",
+      "type": "integer.checkbox",
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Less Name Cleanup"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
+        }
+      ]
+    }
   ],
-    "required": [
-      "dev_MAC",
-      "dev_Name",
-      "dev_Owner",
-      "dev_FirstConnection",
-      "dev_LastConnection",
-      "dev_LastIP",
-      "dev_StaticIP",
-      "dev_ScanCycle",
-      "dev_LogEvents",
-      "dev_AlertEvents",
-      "dev_AlertDeviceDown",
-      "dev_SkipRepeated",
-      "dev_LastNotification",
-      "dev_PresentLastScan",
-      "dev_NewDevice",
-      "dev_Location",
-      "dev_Archived",
-      "dev_Network_Node_MAC_ADDR",
-      "dev_Network_Node_port",
-      "dev_Icon",
-      "LESS_NAME_CLEANUP"
-    ],
-    "additionalProperties": false
-  }
-
+  "required": [
+    "dev_MAC",
+    "dev_Name",
+    "dev_Owner",
+    "dev_FirstConnection",
+    "dev_LastConnection",
+    "dev_LastIP",
+    "dev_StaticIP",
+    "dev_ScanCycle",
+    "dev_LogEvents",
+    "dev_AlertEvents",
+    "dev_AlertDeviceDown",
+    "dev_SkipRepeated",
+    "dev_LastNotification",
+    "dev_PresentLastScan",
+    "dev_NewDevice",
+    "dev_Location",
+    "dev_Archived",
+    "dev_Network_Node_MAC_ADDR",
+    "dev_Network_Node_port",
+    "dev_Icon",
+    "LESS_NAME_CLEANUP"
+  ],
+  "additionalProperties": false
+}

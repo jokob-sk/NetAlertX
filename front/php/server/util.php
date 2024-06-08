@@ -327,6 +327,13 @@ function saveSettings()
         $settingType = $setting[2]; 
         $settingValue = $setting[3];
 
+        // sanity check
+        if($settingKey == "UI_LANG" && $settingValue == "")
+        {
+          echo "🔴 Error: important settings missing. Refresh the page with 🔃 on the top and try again.";
+          return;
+        }
+
         if ($group == $settingGroup) {
             if ($settingType == 'text' || $settingType == 'password' || $settingType == 'password.SHA256' || $settingType == 'readonly' || $settingType == 'text.select') {
                 $val = encode_single_quotes($settingValue);

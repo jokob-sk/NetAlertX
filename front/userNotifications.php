@@ -32,10 +32,10 @@ require 'php/templates/header.php';
           <thead>
             <tr>
               <th>Timestamp</th>
-              <th>GUID</th>
-              <th>Read</th>
               <th>Level</th>
               <th>Content</th>
+              <th>GUID</th>
+              <th>Read</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -45,13 +45,12 @@ require 'php/templates/header.php';
         </table> 
 
         
-
+        <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
+        <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
       </div>
+      
     </div>
-  </section>
-  <section  class="content">
-    <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
-    <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
+    
   </section>
 
   
@@ -97,7 +96,44 @@ require 'php/templates/header.php';
             }
             return result;
           }
+        },        
+        {
+          "data": "level",
+          "render": function(data, type, row) {
+             
+
+            switch (data) {
+              case "info":
+                color = 'green'                
+                break;
+            
+              case "alert":
+                color = 'yellow'                
+                break;
+
+              case "interrupt":
+                color = 'red'                
+                break;
+            
+              default:
+                color = 'red'
+                break;
+            }
+
+            return `<span title="" class="badge bg-${color}" style="display: inline;"> ${data} </span>`
+          }
         },
+        { "data": "content",
+          "render": function(data, type, row) {
+              if (data.includes("Report:")) {
+                  var guid = data.split(":")[1].trim();
+                  return `<a href="/report.php?guid=${guid}">Go to Report</a>`;
+                } else {
+                  return data;
+                }
+          }
+         },
+        
         { "data": "guid", 
           "render": function(data, type, row) {
             return `<button class="copy-btn btn btn-info btn-flat" data-text="${data}" title="copy" onclick="copyToClipboard(this)">
@@ -117,18 +153,6 @@ require 'php/templates/header.php';
           }
           
         },
-        { "data": "level" },
-        {
-          "data": "content",
-          "render": function(data, type, row) {
-            if (data.includes("Report:")) {
-                var guid = data.split(":")[1].trim();
-                return `<a href="/report.php?guid=${guid}">Go to Report</a>`;
-              } else {
-                return data;
-              }
-          }
-        },
         {
             targets: -1, // Target the last column
             data: 'guid', // Assuming 'guid' is the key for the unique identifier
@@ -141,9 +165,9 @@ require 'php/templates/header.php';
       ],
       "columnDefs": [
         { "width": "15%", "targets": [0] }, // Set width of the first four columns to 10%
-        { "width": "5%", "targets": [1] }, // Set width of the first four columns to 10%
-        { "width": "5%", "targets": [2, 3] }, // Set width of the first four columns to 10%
-        { "width": "50%", "targets": 4 }, // Set width of the "Content" column to 60%
+        { "width": "5%", "targets": [1,3] }, // Set width of the first four columns to 10%
+        { "width": "50%", "targets": [2] }, // Set width of the first four columns to 10%
+        { "width": "5%", "targets": 4 }, // Set width of the "Content" column to 60%
         
       ],
       "order": [[0, "desc"]]

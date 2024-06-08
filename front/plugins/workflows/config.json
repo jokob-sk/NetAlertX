@@ -3,7 +3,7 @@
   "unique_prefix": "WORKFLOWS",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
 
@@ -23,12 +23,11 @@
     {
       "language_code": "en_us",
       "string": "A plugin to adjust behavior of workflows."
-    }  
+    }
   ],
-  "params" : [
-  ],  
+  "params": [],
 
-  "settings": [    
+  "settings": [
     {
       "function": "AppEvents_hist",
       "type": "integer",
@@ -50,8 +49,5 @@
     }
   ],
 
-  "database_column_definitions": 
-  [          
-           
-  ]
+  "database_column_definitions": []
 }

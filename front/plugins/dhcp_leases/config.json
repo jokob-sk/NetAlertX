@@ -14,11 +14,7 @@
     }
   ],
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "mapped_to_table": "CurrentScan",
   "display_name": [
     {
@@ -73,9 +69,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -98,9 +92,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -124,9 +116,7 @@
       "type": "device_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -150,9 +140,7 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -175,9 +163,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -201,9 +187,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -226,9 +210,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -252,9 +234,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -277,9 +257,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -302,9 +280,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -327,9 +303,7 @@
       "type": "textbox_save",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -352,9 +326,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -381,9 +353,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -423,9 +393,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -445,9 +413,7 @@
   "settings": [
     {
       "function": "RUN",
-      "events": [
-        "run"
-      ],
+      "events": ["run"],
       "type": "text.select",
       "default_value": "disabled",
       "options": [
@@ -457,10 +423,7 @@
         "always_after_scan",
         "on_new_device"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -495,10 +458,7 @@
       "type": "text",
       "default_value": "python3 /app/front/plugins/dhcp_leases/script.py paths={paths}",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -531,15 +491,9 @@
     {
       "function": "paths_to_check",
       "type": "list",
-      "default_value": [
-        "/mnt/dhcp1.leases",
-        "/mnt/dhcp2.leases"
-      ],
+      "default_value": ["/mnt/dhcp1.leases", "/mnt/dhcp2.leases"],
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -574,10 +528,7 @@
       "type": "text",
       "default_value": "0 2 * * *",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -612,10 +563,7 @@
       "type": "integer",
       "default_value": 5,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -648,20 +596,14 @@
     {
       "function": "WATCH",
       "type": "text.multiselect",
-      "default_value": [
-        "Watched_Value1",
-        "Watched_Value4"
-      ],
+      "default_value": ["Watched_Value1", "Watched_Value4"],
       "options": [
         "Watched_Value1",
         "Watched_Value2",
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -694,20 +636,14 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": [
-        "new",
-        "watched-changed"
-      ],
+      "default_value": ["new", "watched-changed"],
       "options": [
         "new",
         "watched-changed",
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",

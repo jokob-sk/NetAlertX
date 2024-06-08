@@ -6,11 +6,7 @@
   "enabled": true,
   "data_source": "template",
   "show_ui": false,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -159,9 +155,7 @@
           ],
           "type": "string",
           "default_value": "1",
-          "localized": [
-            "name"
-          ]
+          "localized": ["name"]
         },
         {
           "name": [
@@ -172,9 +166,7 @@
           ],
           "type": "string",
           "default_value": "device_down",
-          "localized": [
-            "name"
-          ]
+          "localized": ["name"]
         },
         {
           "name": [
@@ -185,15 +177,10 @@
           ],
           "type": "integer",
           "default_value": 3,
-          "localized": [
-            "name"
-          ]
+          "localized": ["name"]
         }
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -213,10 +200,7 @@
       "maxLength": 50,
       "default_value": [],
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -235,10 +219,7 @@
       "type": "text",
       "default_value": "UPDATE Devices SET dev_AlertDeviceDown = {KNWN_dev_AlertDeviceDown}, dev_AlertEvents = {KNWN_dev_AlertEvents} WHERE dev_MAC in ({target_macs})",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -258,10 +239,7 @@
       "maxLength": 50,
       "default_value": "(unknown)",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -284,10 +262,7 @@
         "override": false
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -307,10 +282,7 @@
       "maxLength": 30,
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -330,10 +302,7 @@
       "maxLength": 250,
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -355,10 +324,7 @@
         "override": false
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -381,10 +347,7 @@
         "override": false
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -403,10 +366,7 @@
       "type": "string",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -426,10 +386,7 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -449,10 +406,7 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -472,10 +426,7 @@
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -497,10 +448,7 @@
         "override": true
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -522,10 +470,7 @@
         "override": true
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -547,10 +492,7 @@
         "override": false
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -572,10 +514,7 @@
         "override": true
       },
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -594,10 +533,7 @@
       "type": "integer.checkbox",
       "default_value": 0,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -616,10 +552,7 @@
       "type": "integer",
       "default_value": 0,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -639,10 +572,7 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -661,10 +591,7 @@
       "type": "integer.checkbox",
       "default_value": 1,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -683,10 +610,7 @@
       "type": "integer.checkbox",
       "default_value": true,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -706,10 +630,7 @@
       "maxLength": 250,
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -728,10 +649,7 @@
       "type": "integer.checkbox",
       "default_value": 0,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -750,10 +668,7 @@
       "type": "string",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -772,10 +687,7 @@
       "type": "readonly",
       "default_value": 0,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -794,10 +706,7 @@
       "type": "string",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",

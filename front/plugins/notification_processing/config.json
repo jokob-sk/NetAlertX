@@ -3,7 +3,7 @@
   "unique_prefix": "NTFPRCS",
   "plugin_type": "system",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "show_ui": false,
   "localized": ["display_name", "description", "icon"],
   "display_name": [
@@ -22,17 +22,22 @@
     {
       "language_code": "en_us",
       "string": "A plugin to for advanced notification processing."
-    }  
+    }
   ],
-    "params" : [
-  ],  
+  "params": [],
 
-  "settings": [   
+  "settings": [
     {
       "function": "INCLUDED_SECTIONS",
       "type": "text.multiselect",
       "default_value": ["new_devices", "down_devices", "events"],
-      "options": ["new_devices", "down_devices", "down_reconnected", "events", "plugins"],
+      "options": [
+        "new_devices",
+        "down_devices",
+        "down_reconnected",
+        "events",
+        "plugins"
+      ],
       "localized": ["name", "description"],
       "name": [
         {
@@ -52,16 +57,16 @@
         {
           "language_code": "en_us",
           "string": "Specifies which events trigger notifications. Remove the event type(s) you do not want to get notified on. This setting overrides device-specific settings in the UI. (<code>CTRL + Click</code> to select/deselect)."
-        },    
+        },
         {
           "language_code": "de_de",
           "string": "Spezifiziert, bei welchen Events Benachrichtigungen versendet werden. Entfernen Sie die Eventtypen, bei welchen Sie nicht benachrichtigt werden wollen. Diese Einstellung überschreibt gerätespezifische Einstellungen im UI. (<code>STRG + klicken</code> zum aus-/abwählen)."
-        },    
+        },
         {
           "language_code": "es_es",
           "string": "Especifica que eventos envían notificaciones. Elimina los tipos de eventos de los que no quieras recibir notificaciones. Este ajuste sobreescribe los ajustes específicos de los dispositivos en la interfaz. (<code>CTRL + Clic</code> para seleccionar / deseleccionar)."
         }
-      ]    
+      ]
     },
     {
       "function": "alert_down_time",
@@ -79,8 +84,8 @@
         {
           "language_code": "en_us",
           "string": "After how many minutes a device is reported as down and a notification is sent."
-        }    
-      ]    
+        }
+      ]
     },
     {
       "function": "new_dev_condition",
@@ -98,8 +103,8 @@
         {
           "language_code": "en_us",
           "string": "You can specify a SQL where condition to filter out New Devices from notifications. For example <code>AND dev_LastIP NOT LIKE '192.168.3.%'</code> will always exlude New Device notifications for all devices with the IP starting with <code>192.168.3.%</code>."
-        }    
-      ]        
+        }
+      ]
     },
     {
       "function": "event_condition",
@@ -117,13 +122,10 @@
         {
           "language_code": "en_us",
           "string": "You can specify a SQL where condition to filter out Events from notifications. For example <code>AND dev_LastIP NOT LIKE '192.168.3.%'</code> will always exlude New Device notifications for all devices with the IP starting with <code>192.168.3.%</code>."
-        }    
-      ]    
+        }
+      ]
     }
   ],
 
-  "database_column_definitions": 
-  [          
-           
-  ]
+  "database_column_definitions": []
 }

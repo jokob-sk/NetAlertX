@@ -1005,7 +1005,7 @@ input[readonly] {
     border-width: 1px;
     border-style: solid;
     border-color: inherit;
-    width: 87%;
+    /* width: 87%; */
   }
 
   .settings-sticky-bottom-section:hover {

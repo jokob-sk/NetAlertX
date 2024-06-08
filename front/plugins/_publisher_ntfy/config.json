@@ -1,405 +1,456 @@
 {
-    "code_name": "_publisher_ntfy",
-    "unique_prefix": "NTFY",
-    "plugin_type": "publisher",
-    "enabled": true,    
-    "data_source":  "script",
-    "show_ui": true,
-    "localized": ["display_name", "description", "icon"],
-	"display_name" : [
+  "code_name": "_publisher_ntfy",
+  "unique_prefix": "NTFY",
+  "plugin_type": "publisher",
+  "enabled": true,
+  "data_source": "script",
+  "show_ui": true,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "NTFY publisher"
+    },
+    {
+      "language_code": "es_es",
+      "string": "Habilitar NTFY"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-terminal\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to publish a notification via the NTFY gateway."
+    }
+  ],
+  "params": [],
+  "database_column_definitions": [
+    {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
         {
-		  "language_code": "en_us",
-		  "string" : "NTFY publisher"
-		},
-        {
-		  "language_code": "es_es",
-		  "string" : "Habilitar NTFY"
-		}
-    ],
-    "icon":[{
-        "language_code": "en_us",
-        "string" : "<i class=\"fa-solid fa-terminal\"></i>"
-		}],     
-    "description": [
-        {
-        "language_code": "en_us",
-        "string" : "A plugin to publish a notification via the NTFY gateway."
-		}
-    ],
-    "params" : [        
-    ],  
-    "database_column_definitions":
-    [          
-        {
-            "column": "Index",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Plugin",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "N/A"					
-                }]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Plugin",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
         },
         {
-            "column": "Object_PrimaryID",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "N/A"
-				}]
+          "language_code": "es_es",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Object_PrimaryID",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sent when"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-3",
+      "show": true,
+      "type": "eval",
+      "default_value": "",
+      "options": [
+        {
+          "type": "eval",
+          "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notification GUID"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "textarea_readonly",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Response"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Response code"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "device_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device"
+        }
+      ]
+    },
+    {
+      "column": "UserData",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "textbox_save",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Comments"
         },
         {
-            "column": "Object_SecondaryID",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Sent when"
-				}]
+          "language_code": "es_es",
+          "string": "Comentarios"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": false,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
         },
         {
-            "column": "Watched_Value1",
-            "css_classes": "col-sm-3",
-            "show": true,
-            "type": "eval",            
-            "default_value":"",
-            "options": [
-                {
-                    "type": "eval",
-                    "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
-                }          
-            ],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Notification GUID"
-				}]
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
         },
         {
-            "column": "Watched_Value2",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "textarea_readonly",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Response"
-				}]
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
         },
         {
-            "column": "Watched_Value3",
-            "css_classes": "col-sm-2",
-            "show": true,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Response code"
-				}]
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
         },
         {
-            "column": "Watched_Value4",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "device_mac",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Device"
-				}
-				]
-        },       
+          "language_code": "es_es",
+          "string": "Estado"
+        }
+      ]
+    },
+    {
+      "column": "Extra",
+      "css_classes": "col-sm-3",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
         {
-            "column": "UserData",
-            "css_classes": "col-sm-2",
-            "show": false,
-            "type": "textbox_save",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Comments"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comentarios"					
-                }]
-        },        
-        {
-            "column": "Status",
-            "css_classes": "col-sm-1",
-            "show": false,
-            "type": "replace",            
-            "default_value":"",
-            "options": [
-                {
-                    "equals": "watched-not-changed",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
-                },
-                {
-                    "equals": "watched-changed",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
-                },
-                {
-                    "equals": "new",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
-                },
-                {
-                    "equals": "missing-in-last-scan",
-                    "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
-                }
-            ],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Status"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Estado"					
-                }]
-        },        
-        {
-            "column": "Extra",
-            "css_classes": "col-sm-3",
-            "show": false,
-            "type": "label",            
-            "default_value":"",
-            "options": [],
-            "localized": ["name"],
-            "name":[{
-                "language_code": "en_us",
-                "string" : "Extra"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Extra"					
-                }]
-        }            
-    ],
-    "settings":[
-        {
-            "function": "RUN",         
-            "events": ["test"],   
-            "type": "text.select",            
-            "default_value":"disabled",
-            "options": ["disabled", "on_notification" ],
-            "localized": ["name", "description"],
-            "name" :[{
-                "language_code": "en_us",
-                "string" : "When to run"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Cuando ejecuta"
-            }],
-            "description": [
-                {
-                "language_code": "en_us",
-                "string" : "Enable sending notifications via <a target=\"_blank\" href=\"https://ntfy.sh/\">NTFY</a>."
-				},
-                {
-                "language_code": "es_es",
-                "string" : "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://ntfy.sh/\">NTFY</a>."
-				}
-            ]
+          "language_code": "en_us",
+          "string": "Extra"
         },
         {
-            "function": "CMD",
-            "type": "readonly",
-            "default_value":"python3 /app/front/plugins/_publisher_ntfy/ntfy.py",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Command"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comando"						
-            }],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Command to run"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Comando a ejecutar"	
-            }]
+          "language_code": "es_es",
+          "string": "Extra"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["test"],
+      "type": "text.select",
+      "default_value": "disabled",
+      "options": ["disabled", "on_notification"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
         },
         {
-            "function": "RUN_TIMEOUT",
-            "type": "integer",
-            "default_value": 10,
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Run timeout"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tiempo de espera de ejecución"				
-				},
-				{
-                "language_code": "de_de",
-                "string" : "Wartezeit"
-            }],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-            }]
-        },        
+          "language_code": "es_es",
+          "string": "Cuando ejecuta"
+        }
+      ],
+      "description": [
         {
-            "function": "HOST",
-            "type": "text",
-            "default_value": "https://ntfy.sh",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "NTFY host URL"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "URL del host NTFY"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "NTFY host URL starting with <code>http://</code> or <code>https://</code>. You can use the hosted instance on <a target=\"_blank\" href=\"https://ntfy.sh/\">https://ntfy.sh</a> by simply entering <code>https://ntfy.sh</code>."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "URL de host NTFY que comienza con <code>http://</code> o <code>https://</code>. Puede usar la instancia alojada en <a target=\"_blank\" href=\"https://ntfy.sh/\">https://ntfy.sh</a> simplemente ingresando <code>https://ntfy. sh</código>."
-            }]
+          "language_code": "en_us",
+          "string": "Enable sending notifications via <a target=\"_blank\" href=\"https://ntfy.sh/\">NTFY</a>."
         },
         {
-            "function": "TOPIC",
-            "type": "text",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "NTFY topic"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tema de NTFY"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Your secret topic."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Tu tema secreto."
-                }]
+          "language_code": "es_es",
+          "string": "Habilitar el envío de notificaciones a través de <a target=\"_blank\" href=\"https://ntfy.sh/\">NTFY</a>."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": "readonly",
+      "default_value": "python3 /app/front/plugins/_publisher_ntfy/ntfy.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
         },
         {
-            "function": "USER",
-            "type": "text",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "NTFY user"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Usuario de NTFY"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Enter user if you need (host) an instance with enabled authetication."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Ingrese usuario si necesita (alojar) una instancia con autenticación habilitada."
-            }]
+          "language_code": "es_es",
+          "string": "Comando"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run"
         },
         {
-            "function": "PASSWORD",
-            "type": "password",
-            "default_value": "",
-            "options": [],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "NTFY password"
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Contraseña de NTFY"				
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "Enter password if you need (host) an instance with enabled authetication."
-				},
-				{
-                "language_code": "es_es",
-                "string" : "Ingrese la contraseña si necesita (host) una instancia con autenticación habilitada."
-            }]
+          "language_code": "es_es",
+          "string": "Comando a ejecutar"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": "integer",
+      "default_value": 10,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
         },
         {
-            "function": "PRIORITY",
-            "type": "text.select",            
-            "default_value":"urgent",
-            "options": ["urgent", "high", "default" , "low" , "min"  ],
-            "localized": ["name", "description"],
-            "name" : [{
-                "language_code": "en_us",
-                "string" : "Message priority"
-				}],
-            "description": [{
-                "language_code": "en_us",
-                "string" : "All NTFY messages have a priority, which defines how urgently your phone notifies you. On Android, you can set custom notification sounds and vibration patterns on your phone to map to these priorities (see <a href=\"https://docs.ntfy.sh/subscribe/phone/\">Android config</a>)."
-				}]
-        }     
-    ]
+          "language_code": "es_es",
+          "string": "Tiempo de espera de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wartezeit"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        }
+      ]
+    },
+    {
+      "function": "HOST",
+      "type": "text",
+      "default_value": "https://ntfy.sh",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY host URL"
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL del host NTFY"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY host URL starting with <code>http://</code> or <code>https://</code>. You can use the hosted instance on <a target=\"_blank\" href=\"https://ntfy.sh/\">https://ntfy.sh</a> by simply entering <code>https://ntfy.sh</code>."
+        },
+        {
+          "language_code": "es_es",
+          "string": "URL de host NTFY que comienza con <code>http://</code> o <code>https://</code>. Puede usar la instancia alojada en <a target=\"_blank\" href=\"https://ntfy.sh/\">https://ntfy.sh</a> simplemente ingresando <code>https://ntfy. sh</código>."
+        }
+      ]
+    },
+    {
+      "function": "TOPIC",
+      "type": "text",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY topic"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tema de NTFY"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Your secret topic."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tu tema secreto."
+        }
+      ]
+    },
+    {
+      "function": "USER",
+      "type": "text",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY user"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Usuario de NTFY"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enter user if you need (host) an instance with enabled authetication."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Ingrese usuario si necesita (alojar) una instancia con autenticación habilitada."
+        }
+      ]
+    },
+    {
+      "function": "PASSWORD",
+      "type": "password",
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY password"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Contraseña de NTFY"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enter password if you need (host) an instance with enabled authetication."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Ingrese la contraseña si necesita (host) una instancia con autenticación habilitada."
+        }
+      ]
+    },
+    {
+      "function": "PRIORITY",
+      "type": "text.select",
+      "default_value": "urgent",
+      "options": ["urgent", "high", "default", "low", "min"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Message priority"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "All NTFY messages have a priority, which defines how urgently your phone notifies you. On Android, you can set custom notification sounds and vibration patterns on your phone to map to these priorities (see <a href=\"https://docs.ntfy.sh/subscribe/phone/\">Android config</a>)."
+        }
+      ]
+    }
+  ]
 }

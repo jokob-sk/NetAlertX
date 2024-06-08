@@ -3,7 +3,7 @@
   "unique_prefix": "NSLOOKUP",
   "plugin_type": "other",
   "enabled": true,
-  "data_source": "script",  
+  "data_source": "script",
   "show_ui": true,
   "localized": ["display_name", "description", "icon"],
   "display_name": [
@@ -22,41 +22,52 @@
     {
       "language_code": "en_us",
       "string": "A plugin to discover device names."
-    }  
+    }
   ],
-    "params" : [
-      {
-        "name"              : "ips",
-        "type"              : "sql",
-        "value"             : "SELECT dev_LastIP from DEVICES order by dev_MAC",
-        "timeoutMultiplier" : true
-      }
-  ],  
+  "params": [
+    {
+      "name": "ips",
+      "type": "sql",
+      "value": "SELECT dev_LastIP from DEVICES order by dev_MAC",
+      "timeoutMultiplier": true
+    }
+  ],
   "settings": [
     {
-      "function": "RUN",   
-      "events": ["run"],         
-      "type": "text.select",            
-      "default_value":"before_name_updates",
-      "options": ["disabled", "before_name_updates", "on_new_device", "once", "schedule", "always_after_scan"],
+      "function": "RUN",
+      "events": ["run"],
+      "type": "text.select",
+      "default_value": "before_name_updates",
+      "options": [
+        "disabled",
+        "before_name_updates",
+        "on_new_device",
+        "once",
+        "schedule",
+        "always_after_scan"
+      ],
       "localized": ["name", "description"],
-      "name" :[{
-          "language_code":"en_us",
-          "string" : "When to run"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Cuándo ejecutar"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Wann laufen"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>on_new_device</code> or a daily <code>schedule</code> is recommended.<br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
-      }]
-  },    
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann laufen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>on_new_device</code> or a daily <code>schedule</code> is recommended.<br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
+        }
+      ]
+    },
     {
       "function": "CMD",
       "type": "readonly",
@@ -75,7 +86,7 @@
         {
           "language_code": "de_de",
           "string": "Befehl"
-        }	        
+        }
       ],
       "description": [
         {
@@ -89,40 +100,44 @@
         {
           "language_code": "de_de",
           "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
-        }	        
+        }
       ]
     },
     {
       "function": "RUN_SCHD",
       "type": "text",
-      "default_value":"*/30 * * * *",
+      "default_value": "*/30 * * * *",
       "options": [],
       "localized": ["name", "description"],
-      "name" : [{
-          "language_code":"en_us",
-          "string" : "Schedule"
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Schedule"
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Schedule"
-      }],
-      "description": [{
-          "language_code":"en_us",
-          "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-      },
-      {
-          "language_code":"es_es",
-          "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-      },
-      {
-          "language_code":"de_de",
-          "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
-      }]
-    },    
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#NSLOOKUP_RUN\"><code>NSLOOKUP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+        }
+      ]
+    },
     {
       "function": "RUN_TIMEOUT",
       "type": "integer",
@@ -141,7 +156,7 @@
         {
           "language_code": "de_de",
           "string": "Zeitüberschreitung"
-        }	        
+        }
       ],
       "description": [
         {
@@ -155,22 +170,19 @@
         {
           "language_code": "de_de",
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
-        }        
+        }
       ]
     }
   ],
-  "database_column_definitions": 
-  [          
+  "database_column_definitions": [
     {
-      "column": "Object_PrimaryID",      
+      "column": "Object_PrimaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -183,15 +195,13 @@
       ]
     },
     {
-      "column": "Object_SecondaryID",      
+      "column": "Object_SecondaryID",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -204,15 +214,13 @@
       ]
     },
     {
-      "column": "Watched_Value1",      
+      "column": "Watched_Value1",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -221,15 +229,13 @@
       ]
     },
     {
-      "column": "Watched_Value2",      
+      "column": "Watched_Value2",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -238,15 +244,13 @@
       ]
     },
     {
-      "column": "DateTimeCreated",      
+      "column": "DateTimeCreated",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -265,9 +269,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -303,9 +305,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -316,6 +316,6 @@
           "string": "Estado"
         }
       ]
-    }        
+    }
   ]
 }

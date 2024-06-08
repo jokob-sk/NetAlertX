@@ -15,11 +15,7 @@
     }
   ],
   "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
@@ -75,13 +71,8 @@
         "always_after_scan",
         "on_new_device"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
-      "events": [
-        "run"
-      ],
+      "localized": ["name", "description"],
+      "events": ["run"],
       "name": [
         {
           "language_code": "en_us",
@@ -108,10 +99,7 @@
       "type": "readonly",
       "default_value": "python3 /app/front/plugins/pholus_scan/script.py userSubnets={subnets} timeoutSec={timeout}",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -138,10 +126,7 @@
       "type": "integer",
       "default_value": 300,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -168,10 +153,7 @@
       "type": "text",
       "default_value": "30 3 * * *",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -198,10 +180,7 @@
       "type": "integer",
       "default_value": 30,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -226,20 +205,14 @@
     {
       "function": "WATCH",
       "type": "text.multiselect",
-      "default_value": [
-        "Watched_Value1",
-        "Watched_Value2"
-      ],
+      "default_value": ["Watched_Value1", "Watched_Value2"],
       "options": [
         "Watched_Value1",
         "Watched_Value2",
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -264,19 +237,14 @@
     {
       "function": "REPORT_ON",
       "type": "text.multiselect",
-      "default_value": [
-        "new"
-      ],
+      "default_value": ["new"],
       "options": [
         "new",
         "watched-changed",
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -308,9 +276,7 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -330,9 +296,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -352,9 +316,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -374,9 +336,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -396,9 +356,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -418,9 +376,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -439,9 +395,7 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
@@ -477,9 +431,7 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": [
-        "name"
-      ],
+      "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",

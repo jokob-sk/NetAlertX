@@ -98,7 +98,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       </a>  
         <div id="settingsOverview" class="panel-collapse collapse in"> 
           <div class="panel-body"></div>
-        <div class =" col-sm-12" id=""></div>
+        <div class =" col-sm-12 " id=""></div>
       </div>
     </section>
 
@@ -148,32 +148,26 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     </section>
 
 
-      <section class=" settings-sticky-bottom-section  col-sm-10">
-        <div class="col-sm-8 settingsSearchWrap form-group has-success bg-white color-palette ">
-          <div class ="col-sm-8">
+      <section class=" settings-sticky-bottom-section  col-sm-10 col-xs-12">
+        <div class="col-xs-8 settingsSearchWrap form-group has-success bg-white color-palette ">
+          <div class ="col-xs-8">
             <i class="fa-solid fa-filter"></i> <?= lang("Gen_Filter");?>  
           </div>
-            <div class ="col-sm-12">
+            <div class ="col-xs-12">
 
-              <input type="text" id="settingsSearch" class="form-control input-sm col-sm-12" placeholder="Filter Settings...">
+              <input type="text" id="settingsSearch" class="form-control input-xs col-xs-12" placeholder="Filter Settings...">
               <div class="clear-filter ">
                 <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('');filterRows();$('#settingsSearch').focus()"></i>
-              </div>
-
-            
-          </div>
-          
+              </div>            
+          </div>          
         </div>
 
-        <div class="col-sm-4 saveSettingsWrapper">
+        <div class="col-xs-4 saveSettingsWrapper">
             <button type="button" class="   btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveSettings()"><?= lang('DevDetail_button_Save');?></button>
         </div>
         <div id="result"></div>
     </section>
 </div>
-
-
-
 
   <!-- /.content-wrapper -->
 
@@ -265,7 +259,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
       overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
                                   <div class="col-sm-12 " title="${getString("settings_"+section)}">
-                                    <div class="overview-group col-sm-12">
+                                    <div class="overview-group col-sm-12 col-xs-12">
                                     
                                       <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>       
           
@@ -694,14 +688,22 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             settings: JSON.stringify(settingsArray) },
             success: function(data, textStatus) {                    
               
-              showMessage (getString("settings_saved"), 5000, "modal_grey");
-            
-              // Remove navigation prompt "Are you sure you want to leave..."
-              window.onbeforeunload = null;         
+              if(data == "OK")
+              {
+                showMessage (getString("settings_saved"), 5000, "modal_grey");
+                // Remove navigation prompt "Are you sure you want to leave..."
+                window.onbeforeunload = null;         
 
-              // Reloads the current page
-              setTimeout("clearCache()", 5000);            
-            
+                // Reloads the current page
+                setTimeout("clearCache()", 5000);    
+              } else{
+                // something went wrong
+                // writeNotification(data, 'interrupt')
+                writeNotification("Please screenshot the next popup (or check Monitoring > Notifications), dev console (F12) and submit it as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
+                console.log(settingsArray);
+                console.log(JSON.stringify(settingsArray));
+                writeNotification(JSON.stringify(settingsArray), 'interrupt')
+              }
             }
           });
         } 

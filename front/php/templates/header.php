@@ -21,7 +21,7 @@ require dirname(__FILE__).'/security.php';
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Net Alert ✖ - <?php echo gethostname();?></title>
+  <title>NetAlertX - <?php echo gethostname();?></title>
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -126,7 +126,7 @@ if ($ENABLED_DARKMODE === True) {
         <img src="img/NetAlertX_logo.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg">Net <b>Alert</b><sup>x</sup>
+      <span class="logo-lg">Net<b>Alert</b><sup>x</sup>
 
       </span>
       
