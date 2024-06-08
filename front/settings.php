@@ -179,8 +179,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 <script>
   
-
-
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
   function getData(){
@@ -210,7 +208,38 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 return 0;
             });
 
-            initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
+            exception_occurred = false;
+
+            // check if cache needs to be refreshed
+            // the getSetting method returns an empty string even if a setting is not found
+            // however, __metadata needs to be always a JSON object
+            // let's use that to verify settings were initialized correctly
+            settingsData.forEach((set) => {
+
+              codeName = set['Code_Name']
+
+              try {                
+                const isMetadata = codeName.includes('__metadata');
+                // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
+                const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
+                
+              } catch (error) {
+                console.error(`Error getting setting for ${codeName}:`, error);
+                showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");  
+
+                setTimeout(() => {
+                  clearCache()
+                }, 3000);
+
+                exception_occurred = true;                
+              }
+            });
+  
+            // only proceed if everything was loaded correctly
+            if(!exception_occurred)
+            {
+              initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
+            }
           })
         }        
     })
@@ -226,7 +255,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);    
     const enabledOthers         = getPluginsByType(pluginsData, "other", true);    
     const enabledPublishers     = getPluginsByType(pluginsData, "publisher", true);
-
 
 
     // Loop through the settingsArray and:

@@ -167,7 +167,7 @@ require 'php/templates/header.php';
         { "width": "15%", "targets": [0] }, // Set width of the first four columns to 10%
         { "width": "5%", "targets": [1,3] }, // Set width of the first four columns to 10%
         { "width": "50%", "targets": [2] }, // Set width of the first four columns to 10%
-        { "width": "5%", "targets": 4 }, // Set width of the "Content" column to 60%
+        { "width": "5%", "targets": [4,5] }, // Set width of the "Content" column to 60%
         
       ],
       "order": [[0, "desc"]]
