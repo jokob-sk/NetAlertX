@@ -6,7 +6,7 @@ Synchronization plugin to synchronize multiple app instances. The Plugin can syc
 1. 🔌 Plugin data:  The plugin sends encrypted `last_result.log` files for individual plugins. 
 
 > [!TIP]
-> `[n]` indicates a setting taht is usually specified for the node instance. `[n,h]` indicates a setting used both, on the node and on the hub instance.
+> `[n]` indicates a setting that is usually specified for the node instance. `[n,h]` indicates a setting used both, on the node and on the hub instance.
 
 ### Synchronizing 💻 Devices data or 🔌 Plugins data
 
@@ -37,3 +37,5 @@ Most of the setups will probably only use 💻 Devices synchronization. 🔌 Plu
 ### Notes
 
 - If a MAC address already exists on the hub, the device will be skipped in the data coming from this SYNC plugin. 
+
+![Syn Hub Setup Diagram](/front/plugins/sync/sync_hub.png)
