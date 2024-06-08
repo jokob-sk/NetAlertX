@@ -225,13 +225,15 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         file_dir = os.path.join(pluginsPath, plugin["code_name"])
         file_prefix = 'last_result'
 
-
         # Decode files, rename them, and get the list of files
         files_to_process = decode_and_rename_files(file_dir, file_prefix)
 
         for filename in files_to_process:
+
+            full_path = os.path.join(file_dir, filename)
+
             # Open the decrypted file and process its contents
-            with open(os.path.join(file_dir, filename), 'r') as f:
+            with open(full_path, 'r') as f:
                 newLines = f.read().split('\n')
 
                 # if the script produced some output, clean it up to ensure it's the correct format        
@@ -271,9 +273,11 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                         )
                     else:
                         mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])            
-
-            # TODO: delete processed files 
-            # os.rename(file_path, os.path.join(file_dir, new_filename))
+            
+            # keep current instance log file, delete all from other nodes
+            if filename != 'last_result.log' and os.path.exists(full_path):
+                os.remove(full_path)
+                mylog('verbose', [f'[Plugins] Processed and deleted file: {full_path} '])   
 
     
     # app-db-query

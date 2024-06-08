@@ -165,7 +165,7 @@ if ($ENABLED_DARKMODE === True) {
           <!-- Full Screen -->		 
           <li>
             <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
-            <span  id="unread-notifications-bell-count" title="" class="badge bg-yellow unread-notifications-bell" >0</span>
+            <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>
           </li>	                
           <!-- Server Status -->
           <li>

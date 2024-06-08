@@ -35,8 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Generate a unique file path to avoid overwriting existing files
-    $files = glob("{$storage_path}/last_result.{encoded,decoded}.{$node_name}.*.log", GLOB_BRACE);
+    $encoded_files = glob("{$storage_path}/last_result.encoded.{$node_name}.*.log");
+    $decoded_files = glob("{$storage_path}/last_result.decoded.{$node_name}.*.log");
+
+    $files = array_merge($encoded_files, $decoded_files);
     $file_count = count($files) + 1;
+
     $file_path = "{$storage_path}/last_result.encoded.{$node_name}.{$file_count}.log";
 
 

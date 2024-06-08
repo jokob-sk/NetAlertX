@@ -128,24 +128,18 @@ def main():
                         unique_mac_addresses.add(device['dev_MAC'])
                         device_data.append(device)
 
+    
+
     if len(device_data) > 0:
         # Retrieve existing dev_MAC values from the Devices table
         placeholders = ', '.join('?' for _ in unique_mac_addresses)
         cursor.execute(f'SELECT dev_MAC FROM Devices WHERE dev_MAC IN ({placeholders})', tuple(unique_mac_addresses))
         existing_mac_addresses = set(row[0] for row in cursor.fetchall())
+        
 
-        # Filter out existing devices
-        new_devices = [device for device in device_data if device['dev_MAC'] not in existing_mac_addresses]
-
-        #  Remove 'rowid' key if it exists 
-        for device in new_devices:
-            device.pop('rowid', None)
-
-
-        # Prepare the insert statement
-        if new_devices:
-            # insert devices into the lats_result.log to manage state
-            for device in new_devices:
+        # insert devices into the lats_result.log to manage state
+        for device in device_data:
+            if device['dev_PresentLastScan'] == 1:
                 plugin_objects.add_object(
                     primaryId   = device['dev_MAC'],
                     secondaryId = device['dev_LastIP'],
@@ -155,6 +149,19 @@ def main():
                     watched4    = device['dev_GUID'],
                     extra       = '',
                     foreignKey  = device['dev_GUID'])
+
+        # Filter out existing devices
+        new_devices = [device for device in device_data if device['dev_MAC'] not in existing_mac_addresses]
+
+        #  Remove 'rowid' key if it exists 
+        for device in new_devices:
+            device.pop('rowid', None)
+
+        mylog('verbose', [f'[{pluginName}] All devices: "{len(device_data)}"'])
+        mylog('verbose', [f'[{pluginName}] New devices: "{len(new_devices)}"'])
+
+        # Prepare the insert statement
+        if new_devices:
 
             columns = ', '.join(k for k in new_devices[0].keys() if k != 'rowid')
             placeholders = ', '.join('?' for k in new_devices[0] if k != 'rowid')

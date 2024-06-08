@@ -82,6 +82,82 @@
     }]
   },
   {
+    "function": "RUN_SCHD",
+    "type": "text",
+    "display_condition": {
+      "type" : "setting",
+      "name" : "SYNC_instance_type",
+      "value": "hub"
+    },   
+    "default_value":"*/5 * * * *",
+    "options": [],
+    "localized": ["name", "description"],
+    "name" : [{
+        "language_code":"en_us",
+        "string" : "Schedule"
+    },
+    {
+        "language_code":"es_es",
+        "string" : "Schedule"
+    },
+    {
+        "language_code":"de_de",
+        "string" : "Schedule"
+    }],
+    "description": [{
+        "language_code":"en_us",
+        "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+    },
+    {
+        "language_code":"es_es",
+        "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+    },
+    {
+        "language_code":"de_de",
+        "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+    }]
+  },    
+  {
+    "function": "api_token",
+    "type": "text",
+    "maxLength": 50,
+    "default_value": "",
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "API token"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "API token to secure communication. The API token needs to be the same on the hub and on the nodes."
+      } 
+    ]
+  },
+  {
+    "function": "encryption_key",
+    "type": "text",
+    "maxLength": 50,
+    "default_value": "",
+    "options": [],
+    "localized": ["name", "description"],
+    "name": [
+      {
+        "language_code": "en_us",
+        "string": "Encryption Key"
+      }
+    ],
+    "description": [
+      {
+        "language_code": "en_us",
+        "string": "Encryption key used to encrypt the sent data. The key needs to be the same on the hub and on the nodes."
+      } 
+    ]
+  },
+  {
     "function": "hub_url",
     "type": "text",
     "display_condition": {
@@ -184,46 +260,6 @@
     ]
   },
   {
-    "function": "api_token",
-    "type": "text",
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "API token"
-      }
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "API token to secure communication. The API token needs to be the same on the hub and on the nodes."
-      } 
-    ]
-  },
-  {
-    "function": "encryption_key",
-    "type": "text",
-    "maxLength": 50,
-    "default_value": "",
-    "options": [],
-    "localized": ["name", "description"],
-    "name": [
-      {
-        "language_code": "en_us",
-        "string": "Encryption Key"
-      }
-    ],
-    "description": [
-      {
-        "language_code": "en_us",
-        "string": "Encryption key used to encrypt the sent data. The key needs to be the same on the hub and on the nodes."
-      } 
-    ]
-  },
-  {
     "function": "CMD",
     "type": "readonly",
     "default_value": "python3 /app/front/plugins/sync/sync.py",
@@ -258,42 +294,6 @@
       }	        
     ]
   },
-  {
-    "function": "RUN_SCHD",
-    "type": "text",
-    "display_condition": {
-      "type" : "setting",
-      "name" : "SYNC_instance_type",
-      "value": "hub"
-    },   
-    "default_value":"*/5 * * * *",
-    "options": [],
-    "localized": ["name", "description"],
-    "name" : [{
-        "language_code":"en_us",
-        "string" : "Schedule"
-    },
-    {
-        "language_code":"es_es",
-        "string" : "Schedule"
-    },
-    {
-        "language_code":"de_de",
-        "string" : "Schedule"
-    }],
-    "description": [{
-        "language_code":"en_us",
-        "string" : "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-    },
-    {
-        "language_code":"es_es",
-        "string" : "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-    },
-    {
-        "language_code":"de_de",
-        "string" : "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
-    }]
-  },    
   {
     "function": "RUN_TIMEOUT",
     "type": "integer",
