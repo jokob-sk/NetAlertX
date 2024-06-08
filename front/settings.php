@@ -104,35 +104,35 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     <div class="content settingswrap " id="accordion_gen">
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="core_content_header" >        
+      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12 col-lg-6 col-xxl-4 box-default box-info" id="core_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>       
           </div>        
           <div class =" col-sm-12" id="core_content"></div>
       </div>    
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="system_content_header" >        
+      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12 col-lg-6 col-xxl-4  box-default box-info" id="system_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>       
           </div>        
           <div class =" col-sm-12" id="system_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="device_scanner_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12 col-lg-6 col-xxl-4  box-default box-info" id="device_scanner_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
           </div>        
           <div class =" col-sm-12" id="device_scanner_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="other_content_header">        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12 col-lg-6 col-xxl-4  box-default box-info" id="other_content_header">        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>       
           </div>        
           <div class =" col-sm-12" id="other_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette box panel panel-default col-sm-12 box-default box-info" id="publisher_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12 col-lg-6 col-xxl-4  box-default box-info" id="publisher_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        

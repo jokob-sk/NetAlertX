@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($auth_header !== $expected_token) {
         http_response_code(403);
         echo 'Forbidden';
-        write_notification("[Plugin: SYNC] Incorrect API Token", "alert"); 
+        write_notification("[Plugin: SYNC] Incoming data: Incorrect API Token", "alert"); 
         exit;
     }
 
