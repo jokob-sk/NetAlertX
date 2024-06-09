@@ -391,7 +391,7 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
 def checkIPV4(ip):
     """ Define a function to validate an Ip address
     """
-    ipRegex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+    ipRegex = r"^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 
     if(re.search(ipRegex, ip)):
         return True
@@ -667,7 +667,7 @@ def bytes_to_string(value):
 def if_byte_then_to_str(input):
     if isinstance(input, bytes):
         input = input.decode('utf-8')
-        input = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+        input = bytes_to_string(re.sub(r'[^a-zA-Z0-9-_\s]', '', str(input)))
     return input
 
 #-------------------------------------------------------------------------------
@@ -699,7 +699,7 @@ def removeDuplicateNewLines(text):
 def sanitize_string(input):
     if isinstance(input, bytes):
         input = input.decode('utf-8')
-    value = bytes_to_string(re.sub('[^a-zA-Z0-9-_\s]', '', str(input)))
+    input = bytes_to_string(re.sub(r'[^a-zA-Z0-9-_\s]', '', str(input)))
     return value
 
 
