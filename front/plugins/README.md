@@ -3,12 +3,73 @@
 >[!NOTE]
 > Please check this [Plugins debugging guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
 
+## ⚡ Quick start
+
+1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
+1. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
+1. Setup your [Network topology diagram](/docs/NETWORK_TREE.md)
+1. [Backup your setup](/docs/BACKUPS.md)
+1. Contribute and [Create custom plugins](/docs/PLUGINS_DEV.md)
+1. Consider [donating](https://github.com/jokob-sk/NetAlertX?tab=readme-ov-file#-sponsors) to keep me going
+
+
+## 📑 Available Plugins
+
+Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
+
+
+| ID            | Type    | Description                                 | Required | Data source  | Detailed docs                                                       |
+|---------------|---------|---------------------------------------------|----------|--------------------|---------------------------------------------------------------|
+| `APPRISE`     | ▶️      | Apprise notification proxy                  |          | Script       | [📚_publisher_apprise](/front/plugins/_publisher_apprise/)          |
+| `ARPSCAN`     | 🔍      | ARP-scan on current network                 |          | Script       | [📚arp_scan](/front/plugins/arp_scan/)                              |
+| `CSVBCKP`     | ⚙       | CSV devices backup                          |          | Script       | [📚csv_backup](/front/plugins/csv_backup/)                          |
+| `DBCLNP`      | ⚙       | Database cleanup                            |  Yes*    | Script       | [📚db_cleanup](/front/plugins/db_cleanup/)                          |
+| `DDNS`        | ⚙       | DDNS update                                 |          | Script       | [📚ddns_update](/front/plugins/ddns_update/)                        |
+| `DHCPLSS`     | 🔍/📥   | Import devices from DHCP leases             |          | Script       | [📚dhcp_leases](/front/plugins/dhcp_leases/)                        |
+| `DHCPSRVS`    | ♻       | DHCP servers                                |          | Script       | [📚dhcp_servers](/front/plugins/dhcp_servers/)                      |
+| `INTRNT`      | 🔍      | Internet IP scanner                         |          | Script       | [📚internet_ip](/front/plugins/internet_ip/)                        |
+| `INTRSPD`     | ♻       | Internet speed test                         |          | Script       | [📚internet_speedtest](/front/plugins/internet_speedtest/)          |
+| `MAINT`       | ⚙       | Maintenance of logs, etc.                   |          | Script       | [📚maintenance](/front/plugins/maintenance/)                        |
+| `MQTT`        | ▶️      | MQTT for synching to Home Assistant         |          | Script       | [📚_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
+| `NEWDEV`      | ⚙       | New device template                         |  Yes     | Template     | [📚newdev_template](/front/plugins/newdev_template/)                |
+| `NMAP`        | ♻       | Nmap port scanning & discovery              |          | Script       | [📚nmap_scan](/front/plugins/nmap_scan/)                            |
+| `NMAPDEV`     | 🔍      | Nmap dev scan on current network            |          | Script       | [📚nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
+| `NSLOOKUP`    | ♻       | NSLookup name resolution                    |          | Script       | [📚nslookup_scan](/front/plugins/nslookup_scan/)                    |
+| `NTFPRCS`     | ⚙       | Notification processing                     |  Yes     | Template     | [📚notification_processing](/front/plugins/notification_processing/)|
+| `NTFY`        | ▶️      | NTFY notifications                          |          | Script       | [📚_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
+| `PHOLUS`      | ♻       | Pholus name resolution                      |          | Script       | [📚pholus_scan](/front/plugins/pholus_scan/)                        |
+| `PIHOLE`      | 🔍/📥   | Pi-hole device import & sync                |          | SQLite DB    | [📚pihole_scan](/front/plugins/pihole_scan/)                        |
+| `PUSHSAFER`   | ▶️      | Pushsafer notifications                     |          | Script       | [📚_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
+| `PUSHOVER`    | ▶️      | Pushover notifications                      |          | Script       | [📚_publisher_pushover](/front/plugins/_publisher_pushover/)        |
+| `SETPWD`      | ⚙       | Set password                                |  Yes     | Template     | [📚set_password](/front/plugins/set_password/)                      |
+| `SMTP`        | ▶️      | Email notifications                         |          | Script       | [📚_publisher_email](/front/plugins/_publisher_email/)              |
+| `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                   |          | Script       | [📚snmp_discovery](/front/plugins/snmp_discovery/)                  |
+| `SYNC`        | 🔍/⚙/📥| Sync & import from other NetAlertX instances |          | Script       | [📚snmp_discovery](/front/plugins/snmp_discovery/)                  |
+| `UNDIS`       | 🔍/📥   | Create dummy devices                        |          | Script       | [📚undiscoverables](/front/plugins/undiscoverables/)                |
+| `UNFIMP`      | 🔍/📥   | UniFi device import & sync                  |          | Script       | [📚unifi_import](/front/plugins/unifi_import/)                      |
+| `VNDRPDT`     | ⚙       | Vendor database update                      |          | Script       | [📚vendor_update](/front/plugins/vendor_update/)                    |
+| `WEBHOOK`     | ▶️      | Webhook notifications                       |          | Script       | [📚_publisher_webhook](/front/plugins/_publisher_webhook/)          |
+| `WEBMON`      | ♻       | Website down monitoring                     |          | Script       | [📚website_monitor](/front/plugins/website_monitor/)                
+
+
+> \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
+>
+> \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+
+> ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
 ## Plugin types
 
-If you want to discover or import devices into the application enable some of the `🔍 dev scanner` plugins. The next step is to pick a notification plugin, or `▶️ publisher` plugin, to get notified about network changes. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
 
-### Enabling plugins
+| Plugin type   | Icon  | Description                                                  |  When to run         | Required | Data source [?](/docs/PLUGINS_DEV.md) |
+|---------------|------|---------------------------------------------------------------|--------------------------|----|---------|
+|  publisher    | ▶️   | Sending notifications to services.                              | `on_notification`       |  ✖ | Script | 
+|  dev scanner  | 🔍   | Create devices in the app, usually scanning the current network. | `schedule`             |  ✖ | Script / SQLite DB  | 
+|  importer     | 📥   | Importing devices from another service.                         | `schedule`             |  ✖ | Script / SQLite DB  | 
+|  system       | ⚙   | Providing core system functionality.                             | `schedule` / always on  |  ✖/✔ | Script / Template | 
+|  other        | ♻   | Other scanners, e.g. for name resolution                         | misc                    |  ✖ | Script / Template | 
+
+## ✅Enabling plugins
 
 Plugins can be enabled via Settings, and can be disabled as needed. 
 
@@ -24,51 +85,6 @@ Plugins can be enabled via Settings, and can be disabled as needed.
     - Careful, once you save the Settings Unloaded plugin settings will be lost (old `app.conf` files are kept in the `/config` folder) 
 1. You can completely ignore plugins by placing a `ignore_plugin` file into the plugin directory. Ignored plugins won't show up in the `LOADED_PLUGINS` setting.
 
-
-## Available Plugins
-
-Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have a least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
-
-| ID            | Type           | Description                  | Required | Data source        | Detailed docs                                                       |
-|---------------|----------------|------------------------------|----------|--------------------|---------------------------------------------------------------------|
-| `APPRISE`       | ▶️ publisher   | Apprise publisher plugin     |          | Script             | [📚_publisher_apprise](/front/plugins/_publisher_apprise/)          |
-| `ARPSCAN`       | 🔍 dev scanner | ARP scan plugin              |          | Script             | [📚arp_scan](/front/plugins/arp_scan/)                              |
-| `CSVBCKP`       | ⚙ system       | CSV backup plugin            |          | Script             | [📚csv_backup](/front/plugins/csv_backup/)                          |
-| `DBCLNP`        | ⚙ system       | Database cleanup plugin      |  Yes*    | Script             | [📚db_cleanup](/front/plugins/db_cleanup/)                          |
-| `DDNS`          | ⚙ system       | DDNS update plugin           |          | Script             | [📚ddns_update](/front/plugins/ddns_update/)                        |
-| `DHCPLSS`       | 🔍 dev scanner | DHCP leases plugin           |          | Script             | [📚dhcp_leases](/front/plugins/dhcp_leases/)                        |
-| `DHCPSRVS`      | ♻ other        | DHCP servers plugin          |          | Script             | [📚dhcp_servers](/front/plugins/dhcp_servers/)                      |
-| `INTRNT`        | 🔍 dev scanner | Internet IP scanner          |          | Script             | [📚internet_ip](/front/plugins/internet_ip/)                        |
-| `INTRSPD`       | ♻ other        | Internet speed test plugin   |          | Script             | [📚internet_speedtest](/front/plugins/internet_speedtest/)          |
-| `MAINT`         | ⚙ system       | Maintenance plugin           |          | Script             | [📚maintenance](/front/plugins/maintenance/)                        |
-| `MQTT`          | ▶️ publisher   | MQTT publisher plugin        |          | Script             | [📚_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
-| `NEWDEV`        | ⚙ system       | New device template          |  Yes     | Template           | [📚newdev_template](/front/plugins/newdev_template/)                |
-| `NMAP`          | ♻ other        | Nmap scan plugin             |          | Script             | [📚nmap_scan](/front/plugins/nmap_scan/)                            |
-| `NMAPDEV`       | 🔍 dev scanner | Nmap device scan plugin      |          | Script             | [📚nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
-| `NSLOOKUP`      | ♻ other        | NSLookup scan plugin         |          | Script             | [📚nslookup_scan](/front/plugins/nslookup_scan/)                    |
-| `NTFPRCS`       | ⚙ system       | Notification processing      |  Yes     | Template           | [📚notification_processing](/front/plugins/notification_processing/)|
-| `NTFY`          | ▶️ publisher   | NTFY publisher plugin        |          | Script             | [📚_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
-| `PHOLUS`        | ♻ other        | Pholus scan plugin           |          | Script             | [📚pholus_scan](/front/plugins/pholus_scan/)                        |
-| `PIHOLE`        | 🔍 dev scanner | Pi-hole scan plugin          |          | SQLite DB          | [📚pihole_scan](/front/plugins/pihole_scan/)                        |
-| `PUSHSAFER`     | ▶️ publisher   | Pushsafer publisher plugin   |          | Script             | [📚_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
-| `PUSHOVER`      | ▶️ publisher   | Pushover publisher plugin    |          | Script             | [📚_publisher_pushover](/front/plugins/_publisher_pushover/)        |
-| `SETPWD`        | ⚙ system       | Set password template        |  Yes     | Template           | [📚set_password](/front/plugins/set_password/)                      |
-| `SMTP`          | ▶️ publisher   | Email publisher plugin       |          | Script             | [📚_publisher_email](/front/plugins/_publisher_email/)              |
-| `SNMPDSC`       | 🔍 dev scanner | SNMP discovery plugin        |          | Script             | [📚snmp_discovery](/front/plugins/snmp_discovery/)                  |
-| `UNDIS`         | ♻ other        | Undiscoverables scan plugin  |          | Script             | [📚undiscoverables](/front/plugins/undiscoverables/)                |
-| `UNFIMP`        | 🔍 dev scanner | UniFi import plugin          |          | Script             | [📚unifi_import](/front/plugins/unifi_import/)                      |
-| `VNDRPDT`       | ⚙ system       | Vendor update plugin         |          | Script             | [📚vendor_update](/front/plugins/vendor_update/)                    |
-| `WEBHOOK`       | ▶️ publisher   | Webhook publisher plugin     |          | Script             | [📚_publisher_webhook](/front/plugins/_publisher_webhook/)          |
-| `WEBMON`        | ♻ other        | Website monitor plugin       |          | Script             | [📚website_monitor](/front/plugins/website_monitor/)                |
-
-
-
-> \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
->
-> \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
-
-> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
-
-## Developing custom plugins
+## 🆕 Developing new custom plugins
 
 If you want to develop a custom plugin, please read this [Plugin development guide](/docs/PLUGINS_DEV.md).

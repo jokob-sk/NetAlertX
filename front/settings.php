@@ -178,7 +178,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 
 <script>
-  
+
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
   function getData(){
@@ -190,7 +190,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // Wrong number of settings processing
         if(settingsNumberDB != settingsData.length) 
         {
-          showModalOk('WARNING', "<?= lang("settings_missing")?>");    
+          showModalOk('WARNING', "<?= lang("settings_old")?>");    
+          setTimeout(() => {
+                  clearCache()
+                }, 3000);
         } else
         {
           $.get('api/plugins.json?nocache=' + Date.now(), function(res) {  
