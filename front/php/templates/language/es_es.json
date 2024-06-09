@@ -751,7 +751,7 @@
     "settings_publishers": "Puertas de enlace para las notificación habilitadas: editores, que enviarán una notificación según su configuración.",
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_label": "Editores",
-    "settings_saved": "<br/>Ajustes guardados. <br/><br/> Recargando... <br/><br/> <i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
+    "settings_saved": "<br/>Ajustes guardados. <br/><br/> Recargando... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Sistema",
     "settings_update_item_warning": "Actualice el valor a continuación. Tenga cuidado de seguir el formato anterior. <b>O la validación no se realiza.</b>",
