@@ -588,26 +588,6 @@
       ]
     },
     {
-      "function": "PRESENCE_SENSOR_TYPE",
-      "events": [],
-      "type": "text.select",
-      "default_value": "binary_sensor",
-      "options": ["binary_sensor", "device_tracker"],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Presence Sensor Type"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "The type of the sensor that should be generated for the <code>is_present</code> sensor. Inserted into the <code>homeassistant/{MQTT_PRESENCE_SENSOR_TYPE}/mac_44_ef_44_ef_44_ef/is_present/</code> topic. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/_publisher_mqtt/README.md#usage\">Plugin readme</a> for details."
-        }
-      ]
-    },
-    {
       "function": "QOS",
       "type": "integer.select",
       "default_value": 0,

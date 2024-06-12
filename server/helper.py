@@ -700,7 +700,7 @@ def sanitize_string(input):
     if isinstance(input, bytes):
         input = input.decode('utf-8')
     input = bytes_to_string(re.sub(r'[^a-zA-Z0-9-_\s]', '', str(input)))
-    return value
+    return input
 
 
 #-------------------------------------------------------------------------------
