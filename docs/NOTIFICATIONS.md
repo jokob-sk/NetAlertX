@@ -32,13 +32,15 @@ On almost all plugins there are 2 core settings, `<plugin>_WATCH` and `<plugin>_
 1. `<plugin>_WATCH` specifies the columns which the app should watch. If watched columns change the device state is considered changed. This changed status is then used to decide to send out notifications based on the `<plugin>_REPORT_ON` setting. 
 2. `<plugin>_REPORT_ON` let's you specify on which events the app should notify you. This is related to the `<plugin>_WATCH` setting. So if you select `watched-changed` and in `<plugin>_WATCH` you only select `Watched_Value1`, then a notification is triggered if `Watched_Value1` is changed from the previous value, but no notification is send if `Watched_Value2` changes. 
 
+Click the **Read more in the docs.** Link at the top of each plugin to get more details on how the given plugin works. 
+
 ## Global settings ⚙
 
 ![Global notification settings](/docs/img/NOTIFICATIONS/Global-notification-settings.png)
 
-In the Notification Processing section, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
+In Notification Processing settings, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
 
-1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `events` set. Setting `plugin` might be too noisy for most setups.
+1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `events` set. Setting `plugin` might be too noisy for most setups. More info in the [NTFPRCS plugin](/front/plugins/notification_processing/README.md)
 2. Alert down after (`NTFPRCS_alert_down_time`) is useful if you want to wait for some time before the system sends out a down notification for a device. This is related to the on-device **Alert down** setting and only devices with this checked will trigger a down notification.
 3. A filter to allow you to set device-specific exceptions to New devices being added to the app.
 4. A filter to allow you to set device-specific exceptions to generated Events.

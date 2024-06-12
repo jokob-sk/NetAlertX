@@ -87,6 +87,7 @@ class sensor_config:
         self.sensorType      = sensorType
         self.sensorName      = sensorName
         self.icon            = icon 
+        self.mac             = mac 
         self.state_topic     = ''
         self.json_attr_topic = ''
         self.topic           = ''

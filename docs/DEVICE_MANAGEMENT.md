@@ -33,7 +33,7 @@ To edit device information:
 ## Session Info
   - **Status**: Show device status : On-line / Off-Line
   - **First Session**: Date and time of the first connection
-  - **Last Session**: Date and time of the last connection
+  - **Last Offline**: Date and time of the last last time the device was offline
   - **Last IP**: Last known IP used during the last connection
   - **Static IP**: Check this box to identify devices that always use the
       same IP
