@@ -123,12 +123,15 @@ class sensor_config:
             self.json_attr_topic = f'system-sensors/device_tracker/{self.deviceId}/attributes'
             self.unique_id       = f'{self.deviceId}_{self.sensorType}_{self.sensorName}'
 
+            payload_home = 'home'
+            payload_away = 'away'
+
             self.message =  {
                                 "state_topic": self.state_topic, 
                                 "json_attributes_topic": self.json_attr_topic,
                                 "name": self.sensorName,
-                                "payload_home": "home", 
-                                "payload_not_home": "away",
+                                "payload_home": payload_home, 
+                                "payload_not_home": payload_away,
                                 "unique_id" : self.unique_id, 
                                 "icon": f'mdi:{self.icon}',
                                 "device": 
