@@ -82,14 +82,64 @@ def check_config():
 # Sensor configs are tracking which sensors in NetAlertX exist and if a config has changed
 class sensor_config:
     def __init__(self, deviceId, deviceName, sensorType, sensorName, icon, mac):
-        self.deviceId = deviceId
-        self.deviceName = deviceName
-        self.sensorType = sensorType
-        self.sensorName = sensorName
-        self.icon = icon 
+        self.deviceId        = deviceId
+        self.deviceName      = deviceName
+        self.sensorType      = sensorType
+        self.sensorName      = sensorName
+        self.icon            = icon 
+        self.state_topic     = ''
+        self.json_attr_topic = ''
+        self.topic           = ''
+        self.message         = ''
+        self.unique_id       = ''
+
+        # binary sensor only sensor
+        if self.sensorType == 'binary_sensor' or self.sensorType == 'sensor':   
+
+            self.topic          = f'homeassistant/{self.sensorType}/{self.deviceId}/{self.sensorName}/config'
+            self.state_topic    = f'system-sensors/{self.sensorType}/{self.deviceId}/state'
+            self.unique_id      = self.deviceId+'_sensor_'+self.sensorName            
+
+            self.message = { 
+                                "name" : self.sensorName, 
+                                "state_topic" : self.state_topic, 
+                                "value_template" : "{{value_json."+self.sensorName+"}}", 
+                                "unique_id" : self.unique_id, 
+                                "device": 
+                                    { 
+                                        "identifiers" : [self.deviceId+"_sensor"], 
+                                        "manufacturer" : "NetAlertX", 
+                                        "name" : self.deviceName
+                                    }, 
+                                "icon": f'mdi:{self.icon}'
+                            }        
+            
+
+        elif self.sensorType == 'device_tracker':
+
+            self.topic           = f'homeassistant/device_tracker/{self.deviceId}/config'
+            self.state_topic     = f'system-sensors/device_tracker/{self.deviceId}/state'
+            self.json_attr_topic = f'system-sensors/device_tracker/{self.deviceId}/attributes'
+            self.unique_id       = f'{self.deviceId}_{self.sensorType}_{self.sensorName}'
+
+            self.message =  {
+                                "state_topic": self.state_topic, 
+                                "json_attributes_topic": self.json_attr_topic,
+                                "name": self.sensorName,
+                                "payload_home": "home", 
+                                "payload_not_home": "away",
+                                "unique_id" : self.unique_id, 
+                                "icon": f'mdi:{self.icon}',
+                                "device": 
+                                        { 
+                                            "identifiers" : [self.deviceId+"_sensor", self.unique_id], 
+                                            "manufacturer" : "NetAlertX", 
+                                            "name" : self.deviceName
+                                        }, 
+                            }
 
         # Define your input string
-        input_string = str(deviceId) + str(deviceName) + str(sensorType) + str(sensorName) + str(icon)
+        input_string = str(self.deviceId) + str(self.deviceName) + str(self.sensorType) + str(self.sensorName) + str(self.icon)
 
         # Hash the input string and convert the hash to a string
         # Update the hash object with the bytes of the input string
@@ -107,8 +157,8 @@ class sensor_config:
 
         if plugObj == {}:
             self.isNew = True
-            mylog('verbose', [f"[{pluginName}] New sensor entry name         : {deviceName}"])  
-            mylog('verbose', [f"[{pluginName}] New sensor entry mac          : {mac}"])  
+            mylog('verbose', [f"[{pluginName}] New sensor entry name         : {self.deviceName}"])  
+            mylog('verbose', [f"[{pluginName}] New sensor entry mac          : {self.mac}"])  
             mylog('verbose', [f"[{pluginName}] New sensor entry hash_value   : {hash_value}"])  
         else:
             device_name = plugObj.get("Watched_Value1", "Unknown")
@@ -174,6 +224,7 @@ def publish_mqtt(mqtt_client, topic, message):
     return True
 
 #-------------------------------------------------------------------------------
+# Create a generic device for overal stats
 def create_generic_device(mqtt_client, deviceId, deviceName):  
         
     create_sensor(mqtt_client, deviceId, deviceName, 'sensor', 'online', 'wifi-check')    
@@ -185,7 +236,7 @@ def create_generic_device(mqtt_client, deviceId, deviceName):
         
 
 #-------------------------------------------------------------------------------
-
+# Register sensor config on the broker
 def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):    
 
     global mqtt_sensors    
@@ -194,87 +245,19 @@ def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, ico
     sensorConfig = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac) 
 
     mylog('verbose', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])
-
-    state_topic = ''
-    topic = ''
-
-    # binary sensor only sensor
-    if sensorConfig.sensorType == 'binary_sensor' or sensorConfig.sensorType == 'sensor':   
-
-        topic = f'homeassistant/{sensorConfig.sensorType}/{sensorConfig.deviceId}/{sensorConfig.sensorName}/config'
-        state_topic  = f'system-sensors/{sensorConfig.sensorType}/{sensorConfig.deviceId}/state'
-        
-
-        message = { 
-                        "name" : sensorConfig.sensorName, 
-                        "state_topic" : state_topic, 
-                        "value_template" : "{{value_json."+sensorConfig.sensorName+"}}", 
-                        "unique_id" : sensorConfig.deviceId+'_sensor_'+sensorConfig.sensorName, 
-                        "device": 
-                            { 
-                                "identifiers" : [sensorConfig.deviceId+"_sensor"], 
-                                "manufacturer" : "NetAlertX", 
-                                "name" : sensorConfig.deviceName
-                            }, 
-                        "icon": f'mdi:{sensorConfig.icon}'
-                    }        
-        
-        
-
-    elif sensorConfig.sensorType == 'device_tracker':
-
-
-        topic = f'homeassistant/device_tracker/{sensorConfig.deviceId}/config'
-        state_topic = f'system-sensors/device_tracker/{sensorConfig.deviceId}/state'
-        unique_id = f'{sensorConfig.deviceId}_{sensorConfig.sensorType}_{sensorConfig.sensorName}'
-
-        message =  {
-                    "state_topic": state_topic, 
-                    "name": sensorConfig.sensorName,
-                    "payload_home": "home", 
-                    "payload_not_home": "away",
-                    "unique_id" : unique_id, 
-                    "icon": f'mdi:{sensorConfig.icon}',
-                    "device": 
-                            { 
-                                "identifiers" : [sensorConfig.deviceId+"_sensor", unique_id], 
-                                "manufacturer" : "NetAlertX", 
-                                "name" : sensorConfig.deviceName
-                            }, 
-                    }
-
-        
-
-        # mosquitto_pub -h 127.0.0.1 -t homeassistant/device_tracker/a4567d663eaf/config -m '{"state_topic": "a4567d663eaf/state", "name": "My Tracker", "payload_home": "home", "payload_not_home": "not_home"}'
-
-
-
-        # mosquitto_pub -h 127.0.0.1 -t homeassistant/device_tracker/a4567d663eaf/config -m '{"json_attributes_topic": "a4567d663eaf/attributes", "name": "My Tracker"}'
-        # mosquitto_pub -h 127.0.0.1 -t a4567d663eaf/state -m 'home'
-
-
-        # # create device tracker attributes
-        # publish_mqtt(mqtt_client, f'homeassistant/device_tracker/a4567d663eaf/config', 
-        #     {
-        #         "json_attributes_topic": f"{deviceId}/attributes", 
-        #         "name": deviceNameDisplay
-        #     }
-        # ) 
-
-    # send if new TODO uncomment
-    # if sensorConfig.isNew: 
-
-    # add the sensor to the global list to keep track of succesfully added sensors
-    if publish_mqtt(mqtt_client, topic, message):        
-                                    # hack - delay adding to the queue in case the process is 
-        time.sleep(get_setting_value('MQTT_DELAY_SEC'))   # restarted and previous publish processes aborted 
-                                    # (it takes ~2s to update a sensor config on the broker)
-        mqtt_sensors.append(sensorConfig)    
-
-    return state_topic
-
     
 
+    # send if new 
+    if sensorConfig.isNew: 
+
+        # add the sensor to the global list to keep track of succesfully added sensors
+        if publish_mqtt(mqtt_client, sensorConfig.topic, sensorConfig.message):        
+                                        # hack - delay adding to the queue in case the process is 
+            time.sleep(get_setting_value('MQTT_DELAY_SEC'))   # restarted and previous publish processes aborted 
+                                        # (it takes ~2s to update a sensor config on the broker)
+            mqtt_sensors.append(sensorConfig)    
+
+    return sensorConfig
 
 #-------------------------------------------------------------------------------
 def mqtt_create_client():    
@@ -365,60 +348,54 @@ def mqtt_start(db):
         debug_index = 0
         
         for device in devices:      
+
+            # debug statement
+            # if 'Moto' in device["dev_Name"]:
             
             # Create devices in Home Assistant - send config messages
-            deviceId = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
-            deviceNameDisplay = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
+            deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
+            devDisplayName  = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
 
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'vendor', 'cog', device["dev_MAC"])
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'first_connection', 'calendar-start', device["dev_MAC"])
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'vendor', 'cog', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'first_connection', 'calendar-start', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
+
+            devJson = { 
+                        "last_ip": device["dev_LastIP"], 
+                        "is_new": str(device["dev_NewDevice"]), 
+                        "vendor": sanitize_string(device["dev_Vendor"]), 
+                        "mac_address": str(device["dev_MAC"]),
+                        "last_connection": str(device["dev_LastConnection"]),
+                        "first_connection": str(device["dev_FirstConnection"])
+                    }
         
-            # bulk update device sensors in home assistant              
-
-            publish_mqtt(mqtt_client, state_topic, 
-                { 
-                    "last_ip": device["dev_LastIP"], 
-                    "is_new": str(device["dev_NewDevice"]), 
-                    "vendor": sanitize_string(device["dev_Vendor"]), 
-                    "mac_address": str(device["dev_MAC"]),
-                    "last_connection": str(device["dev_LastConnection"]),
-                    "first_connection": str(device["dev_FirstConnection"])
-                }
-            ) 
+            # bulk update device sensors in home assistant      
+            publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson) 
 
             #  create and update is_present sensor
-            state_topic = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
-            publish_mqtt(mqtt_client, state_topic, 
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+            publish_mqtt(mqtt_client, sensorConfig.state_topic, 
                 { 
                     "is_present": to_binary_sensor(str(device["dev_PresentLastScan"]))
                 }
             ) 
 
             # handle device_tracker
-            state_topic  = create_sensor(mqtt_client, deviceId, deviceNameDisplay, 'device_tracker', 'is_home', 'home', device["dev_MAC"])
+            sensorConfig  = create_sensor(mqtt_client, deviceId, devDisplayName, 'device_tracker', 'is_home', 'home', device["dev_MAC"])
 
             # <away|home> are only valid states
             state = 'away'
             if to_binary_sensor(str(device["dev_PresentLastScan"])) == "ON":
                 state = 'home'
 
-            publish_mqtt(mqtt_client, state_topic, state) 
-                
+            publish_mqtt(mqtt_client, sensorConfig.state_topic, state) 
+            
+            # publish device_tracker attributes
+            publish_mqtt(mqtt_client, sensorConfig.json_attr_topic, devJson) 
 
-
-            # delete device / topic
-            #  homeassistant/sensor/mac_44_ef_bf_c4_b1_af/is_present/config
-            # client.publish(
-            #     topic="homeassistant/sensor/"+deviceId+"/is_present/config",
-            #     payload="",
-            #     qos=1,
-            #     retain=True,
-            # )        
-        # time.sleep(10)
 
 
 #===============================================================================
