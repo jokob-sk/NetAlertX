@@ -112,7 +112,7 @@
     "DevDetail_Run_Actions_Tooltip": "Wykonaj akcje na tym urządzeniu z listy rozwijanej.",
     "DevDetail_SessionInfo_FirstSession": "Pierwsza Sesja",
     "DevDetail_SessionInfo_LastIP": "Ostatnie IP",
-    "DevDetail_SessionInfo_LastSession": "Ostatnia Sesja",
+    "DevDetail_SessionInfo_LastSession": "Ostatnie Wyłączone",
     "DevDetail_SessionInfo_StaticIP": "Statyczne IP",
     "DevDetail_SessionInfo_Status": "Status",
     "DevDetail_SessionInfo_Title": "<i class=\"fa fa-calendar\"></i>Informacje o Sesji",
