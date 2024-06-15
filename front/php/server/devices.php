@@ -592,7 +592,9 @@ function getDevicesList() {
     array("dev_Vendor", 17, 17),           
     array("dev_Network_Node_port", 18, 18),           
     array("dev_GUID", 19, 19),           
-    array("dev_SyncHubNodeName", 20, 20)           
+    array("dev_SyncHubNodeName", 20, 20),           
+    array("dev_NetworkSite", 21, 21),           
+    array("dev_SSID", 22, 22)           
   );
 
   if($forceDefaultOrder == FALSE) 

@@ -313,6 +313,8 @@ $db->close();
                                 <option value="18"><?= lang('Device_TableHead_Port');?></option>
                                 <option value="19"><?= lang('Device_TableHead_GUID');?></option>
                                 <option value="20"><?= lang('Device_TableHead_SyncHubNodeName');?></option>
+                                <option value="21"><?= lang('Device_TableHead_NetworkSite');?></option>
+                                <option value="22"><?= lang('Device_TableHead_SSID');?></option>
                               </select>
                               <span class="input-group-addon"><i title="<?= lang('Gen_Save');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
                             </div>

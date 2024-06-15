@@ -546,7 +546,9 @@ function getDevicesColumns(){
               "dev_Network_Node_MAC_ADDR",
               "dev_Icon",
               "dev_GUID",
-              "dev_SyncHubNodeName"
+              "dev_SyncHubNodeName",
+              "dev_NetworkSite",
+              "dev_SSID"
             ]; 
               
   return $columns;

@@ -161,6 +161,28 @@ class DB():
             ALTER TABLE "Devices" ADD "dev_GUID" TEXT
           """)
 
+        # dev_NetworkSite column
+        dev_NetworkSite_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_NetworkSite'
+          """).fetchone()[0] == 0
+
+        if dev_NetworkSite_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_NetworkSite to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "dev_NetworkSite" TEXT
+          """)
+
+        # dev_SSID column
+        dev_SSID_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SSID'
+          """).fetchone()[0] == 0
+
+        if dev_SSID_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_SSID to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "dev_SSID" TEXT
+          """)
+
         # SQL query to update missing dev_GUID
         self.sql.execute(f'''
             UPDATE Devices
@@ -460,7 +482,11 @@ class DB():
                                 cur_Name STRING(250),
                                 cur_LastQuery STRING(250),
                                 cur_DateTime STRING(250),
-                                cur_SyncHubNodeName STRING(50)
+                                cur_SyncHubNodeName STRING(50),
+                                cur_NetworkSite STRING(250),
+                                cur_SSID STRING(250),
+                                cur_NetworkNodeMAC STRING(250),
+                                cur_PORT STRING(250)
                             );
                         """)
 

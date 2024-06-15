@@ -174,7 +174,6 @@ def create_new_devices (db):
                           dev_Comments, 
                           dev_LogEvents, 
                           dev_Location, 
-                          dev_Network_Node_MAC_ADDR, 
                           dev_Icon"""
 
     newDevDefaults =  f"""{get_setting_value('NEWDEV_dev_AlertEvents')}, 
@@ -191,31 +190,50 @@ def create_new_devices (db):
                           '{get_setting_value('NEWDEV_dev_Comments')}', 
                           {get_setting_value('NEWDEV_dev_LogEvents')}, 
                           '{get_setting_value('NEWDEV_dev_Location')}',  
-                          '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}',  
                           '{get_setting_value('NEWDEV_dev_Icon')}'
                     """
-    
+
     # Bulk-inserting devices from the CurrentScan table as new devices in the table Devices ... 
     # ... with new device defaults and ignoring specidfied IPs and MACs)
-    sqlQuery = f"""INSERT OR IGNORE INTO Devices (dev_MAC, dev_name, dev_Vendor,
-                        dev_LastIP, dev_FirstConnection, dev_LastConnection, dev_SyncHubNodeName, dev_GUID,
-                        {newDevColumns})
-                    SELECT cur_MAC, 
-                        CASE WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name
-                                ELSE '(unknown)' END,
-                        cur_Vendor, cur_IP, ?, ?, cur_SyncHubNodeName, {sql_generateGuid},
-                        {newDevDefaults}
+    sqlQuery = f"""INSERT OR IGNORE INTO Devices 
+                        (
+                            dev_MAC, 
+                            dev_name, 
+                            dev_Vendor,
+                            dev_LastIP, 
+                            dev_FirstConnection, 
+                            dev_LastConnection, 
+                            dev_SyncHubNodeName, 
+                            dev_GUID,
+                            dev_Network_Node_MAC_ADDR, 
+                            dev_Network_Node_port,
+                            dev_NetworkSite, 
+                            dev_SSID,                          
+                            {newDevColumns}
+                        )
+                        SELECT 
+                            cur_MAC, 
+                            CASE WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name ELSE '(unknown)' END,
+                            cur_Vendor, 
+                            cur_IP, 
+                            ?, 
+                            ?, 
+                            cur_SyncHubNodeName, 
+                            {sql_generateGuid},             
+                            CASE WHEN LENGTH(TRIM(cur_NetworkNodeMAC)) > 0 THEN cur_NetworkNodeMAC ELSE '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}' END,
+                            cur_PORT,
+                            cur_NetworkSite, 
+                            cur_SSID,
+                            {newDevDefaults}
                     FROM CurrentScan
                         WHERE 1=1
                         {list_to_where('OR', 'cur_MAC', 'NOT LIKE', get_setting_value('NEWDEV_ignored_MACs'))}
                         {list_to_where('OR', 'cur_IP', 'NOT LIKE', get_setting_value('NEWDEV_ignored_IPs'))}
                 """
 
-
     mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
 
     sql.execute (sqlQuery, (startTime, startTime) ) 
-
     
     mylog('debug','[New Devices] New Devices end')
     db.commitDB()

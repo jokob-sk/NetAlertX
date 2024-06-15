@@ -213,9 +213,7 @@
   var tableOrder      = [[3,'desc'], [0,'asc']];
   
   var tableColumnHide = [];
-  var columnsStr = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]';
-  var tableColumnOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; 
-  var tableColumnVisible = tableColumnOrder;
+
   //initialize the table headers in the correct order
   var headersDefaultOrder = [ 
                               getString('Device_TableHead_Name'),
@@ -238,8 +236,15 @@
                               getString('Device_TableHead_Vendor'),
                               getString('Device_TableHead_Port'),
                               getString('Device_TableHead_GUID'),
-                              getString('Device_TableHead_SyncHubNodeName')
+                              getString('Device_TableHead_SyncHubNodeName'),
+                              getString('Device_TableHead_NetworkSite'),
+                              getString('Device_TableHead_SSID')
                             ];
+
+  // generate default order lists of given length
+  var columnsStr = JSON.stringify(Array.from({ length: headersDefaultOrder.length }, (_, i) => i));
+  var tableColumnOrder = Array.from({ length: headersDefaultOrder.length }, (_, i) => i);
+  var tableColumnVisible = tableColumnOrder;
 
   // Read parameters & Initialize components
   showSpinner();
@@ -515,7 +520,9 @@ function initializeDatatable (status) {
                 item.dev_Vendor || "",
                 item.dev_Network_Node_port || 0,
                 item.dev_GUID || "",
-                item.dev_SyncHubNodeName || ""
+                item.dev_SyncHubNodeName || "",
+                item.dev_NetworkSite || "",
+                item.dev_SSID || ""
             ];
 
             var newRow = [];
