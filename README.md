@@ -87,6 +87,7 @@ Thank you to all the wonderful people who are sponsoring this project.
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 | All Sponsors |
 |---|
+| [fama-lama](https://github.com/fama-lama) |
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
