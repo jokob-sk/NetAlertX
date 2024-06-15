@@ -152,6 +152,8 @@ function setDeviceData() {
                  dev_Comments               = "'. quotes($_REQUEST['comments'])     .'",
                  dev_Network_Node_MAC_ADDR  = "'. quotes($_REQUEST['networknode']).'",
                  dev_Network_Node_port      = "'. quotes($_REQUEST['networknodeport']).'",
+                 dev_SSID                   = "'. quotes($_REQUEST['ssid']).'",
+                 dev_NetworkSite            = "'. quotes($_REQUEST['networksite']).'",
                  dev_StaticIP               = "'. quotes($_REQUEST['staticIP'])     .'",
                  dev_ScanCycle              = "'. quotes($_REQUEST['scancycle'])    .'",
                  dev_AlertEvents            = "'. quotes($_REQUEST['alertevents'])  .'",

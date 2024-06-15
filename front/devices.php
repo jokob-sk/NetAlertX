@@ -429,7 +429,7 @@ function getDeviceStatus(item)
   if(item.dev_NewDevice === 1)
   {
     return 'New';
-  }
+  } 
   else if(item.dev_PresentLastScan === 1)
   {
     return 'On-line';
@@ -467,7 +467,7 @@ function initializeDatatable (status) {
     case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
     case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
     case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
-    case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');  color = 'red';     break;
+    case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
     case 'archived':   tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
     default:           tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
   } 
@@ -659,17 +659,27 @@ function initializeDatatable (status) {
         {targets: [mapIndx(10)],
           'createdCell': function (td, cellData, rowData, row, col) {
 
-            // console.log(cellData)
-            switch (cellData) {
-              case 'Down':      color='red';              break;
-              case 'New':       color='yellow';           break;
-              case 'On-line':   color='green';            break;
-              case 'Off-line':  color='gray text-white';  break;
-              case 'Archived':  color='gray text-white';  break;
-              default:          color='aqua';             break;
-            };
+            devData = getDeviceDataByMac(rowData[mapIndx(11)])
+
+            if (devData.dev_PresentLastScan == 1)
+            {
+              css = "green text-white statusOnline"
+              icon = '<i class="fa-solid fa-plug"></i>'
+            } else if (devData.dev_PresentLastScan != 1 && devData.dev_AlertDeviceDown == 1)
+            {
+              css = "red text-white statusDown"
+              icon = '<i class="fa-solid fa-triangle-exclamation"></i>'
+            } else if(devData.dev_PresentLastScan != 1)
+            {
+              css = "gray text-white statusOffline"
+              icon = '<i class="fa-solid fa-xmark"></i>'
+            } else
+            {
+              css = "gray text-white statusUnknown"
+              icon = '<i class="fa-solid fa-question"></i>'
+            }
         
-            $(td).html ('<a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="badge bg-'+ color +'">'+ cellData.replace('-', '') +'</a>');
+            $(td).html (`<a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="badge bg-${css}">${icon} ${cellData.replace('-', '')}</a>`);
         } },
       ],
       

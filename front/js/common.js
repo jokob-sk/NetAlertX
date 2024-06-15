@@ -649,7 +649,7 @@ function navigateToDeviceWithIp (ip) {
 
 // -----------------------------------------------------------------------------
 function getNameByMacAddress(macAddress) {
-  return getDeviceDataByMacAddress(macAddress, "dev_Name")
+  return getDeviceDataByMac(macAddress, "dev_Name")
 }
 
 // -----------------------------------------------------------------------------
@@ -798,7 +798,7 @@ function isRandomMAC(mac)
 // -----------------------------------------------------------------------------
 // A function to get a device property using the mac address as key and DB column nakme as parameter
 //  for the value to be returned
-function getDeviceDataByMacAddress(macAddress, dbColumn) {
+function getDeviceDataByMac(macAddress, dbColumn) {
 
   const sessionDataKey = 'devicesListAll_JSON';  
   const devicesCache = getCache(sessionDataKey);
@@ -813,7 +813,14 @@ function getDeviceDataByMacAddress(macAddress, dbColumn) {
   for (const device of devices) {
       if (device["dev_MAC"].toLowerCase() === macAddress.toLowerCase()) {
 
+        if(dbColumn)
+        {
           return device[dbColumn];
+        }
+        else
+        {
+          return device
+        }
       }
   }
 

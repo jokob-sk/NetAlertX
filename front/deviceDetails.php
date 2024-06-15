@@ -350,6 +350,18 @@
                           <input class="form-control" id="txtNetworkPort" type="text" value="--">
                         </div>
                       </div>
+                      <div class="form-group" >
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_SSID');?></label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtSSID" type="text" value="--">
+                        </div>
+                      </div>
+                      <div class="form-group" >
+                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network_Site');?></label>
+                        <div class="col-sm-9">
+                          <input class="form-control" id="txtNetworkSite" type="text" value="--">
+                        </div>
+                      </div>
 
                       
       
@@ -1210,6 +1222,8 @@ function getDeviceData (readAllData=false) {
       $('#txtComments').val            ('--');
       $('#txtNetworkNodeMac').val      ('--');
       $('#txtNetworkPort').val         ('--');
+      $('#txtNetworkSite').val         ('--');
+      $('#txtSSID').val                ('--');
 
       $('#txtFirstConnection').val     ('--');
       $('#txtLastConnection').val      ('--');
@@ -1293,7 +1307,7 @@ function getDeviceData (readAllData=false) {
         networkParentMac = deviceData['dev_Network_Node_MAC_ADDR']
         if(networkParentMac)
         {
-          networkParentMacName = getDeviceDataByMacAddress(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")
+          networkParentMacName = getDeviceDataByMac(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")
         } else
         {
           networkParentMacName = '--'
@@ -1314,6 +1328,8 @@ function getDeviceData (readAllData=false) {
         $('#txtNetworkNodeMac').val                  ( networkParentMacName) ;
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
+        $('#txtNetworkSite').val                     (deviceData['dev_NetworkSite']);
+        $('#txtSSID').val                            (deviceData['dev_SSID']);
         // disabling network node configuration if root Internet node
         toggleNetworkConfiguration(mac == 'Internet')         
         
@@ -1452,6 +1468,8 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&comments='       + encodeURIComponent($('#txtComments').val())
     + '&networknode='    + $('#txtNetworkNodeMac').attr('data-mynodemac')
     + '&networknodeport=' + $('#txtNetworkPort').val()
+    + '&ssid='            + $('#txtSSID').val()
+    + '&networksite='     + $('#txtNetworkSite').val()
     + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
     + '&scancycle='      + ($('#txtScanCycle').val() == "yes" ? "1" : "0")
     + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
@@ -1738,7 +1756,7 @@ function setTextValue (textElement, textValue) {
   if(textElement == "txtNetworkNodeMac")
   {
     $('#'+textElement).attr ('data-mynodemac', textValue);
-    $('#'+textElement).val (getDeviceDataByMacAddress(textValue, "dev_Name")); 
+    $('#'+textElement).val (getDeviceDataByMac(textValue, "dev_Name")); 
   } else
   {
     $('#'+textElement).attr ('data-myvalue', textValue);

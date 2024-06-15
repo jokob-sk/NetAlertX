@@ -1112,7 +1112,10 @@ input[readonly] {
 }
 
 
-
+#tableDevices .badge i
+{
+    height: 1em !important;
+}
 
 /* ----------------------------------------------------------------- */
 /* MODAL popups */
