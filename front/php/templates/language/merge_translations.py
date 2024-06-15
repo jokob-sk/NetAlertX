@@ -4,7 +4,7 @@ import sys
 
 def merge_translations(main_file, other_files):
     # Load main file
-    with open(main_file, 'r') as f:
+    with open(main_file, 'r', encoding='utf-8') as f:
         main_data = json.load(f)
 
     # Get keys and sort them alphabetically
@@ -14,12 +14,12 @@ def merge_translations(main_file, other_files):
     main_data = {k: main_data[k] for k in keys}
 
     # Rewrite sorted main file
-    with open(main_file, 'w') as f:
-        json.dump(main_data, f, indent=4)
+    with open(main_file, 'w', encoding='utf-8') as f:
+        json.dump(main_data, f, indent=4, ensure_ascii=False)
 
     # Merge keys into other files
     for file_name in other_files:
-        with open(file_name, 'r+') as f:
+        with open(file_name, 'r+', encoding='utf-8') as f:
             data = json.load(f)
             for key in keys:
                 if key not in data:
@@ -27,7 +27,7 @@ def merge_translations(main_file, other_files):
             # Sort the keys alphabetically for each language
             data = {k: data[k] for k in sorted(data.keys())}
             f.seek(0)
-            json.dump(data, f, indent=4)
+            json.dump(data, f, indent=4, ensure_ascii=False)
             f.truncate()
 
 if __name__ == "__main__":
