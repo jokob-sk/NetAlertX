@@ -667,7 +667,9 @@ function getDevicesList() {
                             handleNull($row['dev_Vendor']),                            
                             handleNull($row['dev_Network_Node_port']),                            
                             handleNull($row['dev_GUID']),                            
-                            handleNull($row['dev_SyncHubNodeName'])                            
+                            handleNull($row['dev_SyncHubNodeName']),                            
+                            handleNull($row['dev_NetworkSite']),                            
+                            handleNull($row['dev_SSID'])                            
                           );
 
     $newOrder = array();

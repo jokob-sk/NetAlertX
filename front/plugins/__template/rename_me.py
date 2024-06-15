@@ -72,7 +72,7 @@ def get_device_data(some_setting):
     
     device_data = []
 
-    # do some processing, call exteranl APIs, and return a device list
+    # do some processing, call exteranl APIs, and return a device_data list
     #  ...
     # 
 
