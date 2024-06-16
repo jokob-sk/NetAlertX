@@ -132,24 +132,24 @@ def importConfigs (db, all_plugins):
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
     conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'text.multiselect', '', 'General')
-    # conf.TEST_TEST2 = ccd('TEST_TEST2', [] , c_d, 'TEST_TEST2', 'text.multiselect', '', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', 'text', '', 'General')
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)' ]", 'General')
-    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'General')    
-    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', 'text.multiselect', "['Tile Cards', 'Device Presence']", 'General')    
-    conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', 'text.multiselect', "['online', 'offline', 'archived', 'new', 'down']", 'General')    
-    conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', 'list', "", 'General')    
-    conf.UI_ICONS = ccd('UI_ICONS', ['PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4', 'PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4']  , c_d, 'Icons', 'list', "", 'General')    
-    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', 'integer', "", 'General')    
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
           
+    # UI
+    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)' ]", 'UI')
+    conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', 'list', "", 'UI')    
+    conf.UI_ICONS = ccd('UI_ICONS', ['PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4', 'PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4']  , c_d, 'Icons', 'list', "", 'UI')    
+    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', 'integer', "", 'UI')    
+    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', 'text.multiselect', "['Tile Cards', 'Device Presence']", 'UI')    
+    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'UI') 
+    conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', 'text.multiselect', "['online', 'offline', 'archived', 'new', 'down']", 'UI')    
     
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 

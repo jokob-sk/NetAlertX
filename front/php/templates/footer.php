@@ -17,7 +17,7 @@
     <!-- Default to the left -->
 
     <!-- NetAlertX footer with url -->
-    <a href="https://github.com/jokob-sk/NetAlertX" target="_blank">Net <b>Alert</b><sup>x</sup></a>
+    <a href="https://github.com/jokob-sk/NetAlertX" target="_blank">Net<b>Alert</b><sup>x</sup></a>
      
     
     <!-- To the right -->

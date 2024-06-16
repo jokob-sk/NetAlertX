@@ -1,0 +1,17 @@
+[
+    {
+      "onclickEvent": "handleClick(1)",
+      "color": "bg-primary",
+      "title": "Default Infobox 1",
+      "label": "Default label for Infobox 1",
+      "icon": "fa-bell"
+    },
+    {
+      "onclickEvent": "handleClick(2)",
+      "color": "bg-success",
+      "title": "Default Infobox 2",
+      "label": "Default label for Infobox 2",
+      "icon": "fa-envelope"
+    }
+]
+  

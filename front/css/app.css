@@ -1106,6 +1106,10 @@ input[readonly] {
     height: 1.5em !important;
 }
 
+#TileCards .tile .inner
+{
+    color: white;
+}
 
 #dropdownIcon li svg, #dropdownIcon li i{
     height: 1.5em !important;

@@ -42,77 +42,7 @@
 
       <!-- Tile toggle cards ------------------------------------------------------- -->
       <div class="row" id="TileCards">
-        <!-- top small box 1 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('my');">
-          <div class="small-box bg-aqua">
-            <div class="inner"><h3 id="devicesMy"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_AllDevices');?></p>
-            </div>
-            <div class="icon"><i class="fa fa-laptop text-aqua-40"></i></div>
-          </div>
-          </a>
-        </div>
-        
-        <!-- top small box 2 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('connected');">
-          <div class="small-box bg-green">
-            <div class="inner"><h3 id="devicesConnected"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_Connected');?></p>
-            </div>
-            <div class="icon"><i class="fa fa-plug text-green-40"></i></div>
-          </div>
-          </a>
-        </div>
-
-        <!-- top small box 3 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('favorites');">
-          <div class="small-box bg-yellow">
-            <div class="inner"><h3 id="devicesFavorites"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_Favorites');?></p>
-            </div>
-            <div class="icon"><i class="fa fa-star text-yellow-40"></i></div>
-          </div>
-          </a>
-        </div>
-
-        <!-- top small box 4 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('new');">
-          <div class="small-box bg-yellow">
-            <div class="inner"><h3 id="devicesNew"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_NewDevices');?></p>
-            </div>
-            <div class="icon"><i class="ion ion-plus-round text-yellow-40"></i></div>
-          </div>
-          </a>
-        </div>
-
-        <!-- top small box 5 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('down');">
-          <div class="small-box bg-red">
-            <div class="inner"><h3 id="devicesDown"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_DownOnly');?></p>
-            </div>
-            <div class="icon"><i class="fa fa-warning text-red-40"></i></div>
-          </div>
-          </a>
-        </div>
-
-        <!-- top small box 6 ------------------------------------------------------- -->
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <a href="#" onclick="javascript: initializeDatatable('archived');">
-          <div class="small-box bg-gray top_small_box_gray_text">
-            <div class="inner"><h3 id="devicesArchived"> -- </h3>
-                <p class="infobox_label"><?= lang('Device_Shortcut_Archived');?></p>
-            </div>
-            <div class="icon"><i class="fa fa-eye-slash text-gray-40"></i></div>
-          </div>
-          </a>
-        </div>
+        <!-- Placeholder ------------------------------------------------------- -->
 
       </div>
 
@@ -321,9 +251,7 @@ function main () {
 
           // Initialize components with parameters
 
-          initializeDatatable(getUrlAnchor('my'));
-
-
+          initializeDatatable(getUrlAnchor('my_devices'));
           
           // check if data outdated and show spinner if so
           handleLoadingDialog()
@@ -358,21 +286,49 @@ function getDevicesTotals(devicesData) {
   if (getCache("getDevicesTotals") !== "") {
     resultJSON = getCache("getDevicesTotals");
   } else {
-    // combined query
-    const devices = filterDataByStatus(devicesData, 'my');
-    const connectedDevices = filterDataByStatus(devicesData, 'connected');
-    const favoritesDevices = filterDataByStatus(devicesData, 'favorites');
-    const newDevices = filterDataByStatus(devicesData, 'new');
-    const downDevices = filterDataByStatus(devicesData, 'down');
-    const archivedDevices = filterDataByStatus(devicesData, 'archived');
 
+    // Define filter conditions and corresponding objects
+    const filters = [
+      { status: 'my_devices', color: 'bg-aqua',   label: getString('Device_Shortcut_AllDevices'), icon: 'fa-laptop' },
+      { status: 'all',        color: 'bg-aqua',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
+      { status: 'connected',  color: 'bg-green',  label: getString('Device_Shortcut_Connected'),  icon: 'fa-plug' },
+      { status: 'favorites',  color: 'bg-yellow', label: getString('Device_Shortcut_Favorites'),  icon: 'fa-star' },
+      { status: 'new',        color: 'bg-yellow', label: getString('Device_Shortcut_NewDevices'), icon: 'fa-plus' },
+      { status: 'down',       color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
+      { status: 'archived',   color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
+      { status: 'offline',    color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' }
+    ];
 
-    $('#devicesMy').html        (devices.length);
-    $('#devicesConnected').html  (connectedDevices.length);
-    $('#devicesFavorites').html  (favoritesDevices.length);
-    $('#devicesNew').html        (newDevices.length);
-    $('#devicesDown').html       (downDevices.length);
-    $('#devicesArchived').html   (archivedDevices.length);
+    // Initialize an empty array to store the final objects
+    let dataArray = [];
+
+    // Loop through each filter condition
+    filters.forEach(filter => {
+      // Calculate count dynamically based on filter condition
+      let count = filterDataByStatus(devicesData, filter.status).length;
+
+      console.log(getSetting('UI_hide_empty'));
+
+      // Check any condition to skip adding the object to dataArray
+      if (
+        (['', 'False'].includes(getSetting('UI_hide_empty')) || (getSetting('UI_hide_empty') == "True" && count > 0)) &&
+        (getSetting('UI_shown_cards') == "" || getSetting('UI_shown_cards').includes(filter.status))
+      ) {
+        dataArray.push({
+          onclickEvent: `initializeDatatable('${filter.status}')`,
+          color: filter.color,
+          title: count,
+          label: filter.label,
+          icon: filter.icon
+        });
+      }
+
+    });
+
+    // render info boxes/tile cards
+    renderInfoboxes(
+      dataArray
+    )
 
     // save to cache
     setCache("getDevicesTotals", resultJSON);
@@ -381,12 +337,28 @@ function getDevicesTotals(devicesData) {
   // console.log(resultJSON);
 }
 
+//------------------------------------------------------------------------------
+function renderInfoboxes(customData) {
+    $.ajax({
+      url: 'php/components/tile_cards.php', // PHP script URL
+      type: 'POST', // Use POST method to send data
+      dataType: 'html', // Expect HTML response
+      data: { items: JSON.stringify(customData) }, // Send customData as JSON
+      success: function(response) {
+        $('#TileCards').html(response); // Replace container content with fetched HTML
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching infoboxes:', error);
+      }
+    });
+  }
+
 // -----------------------------------------------------------------------------
 // Define a function to filter data based on deviceStatus
 function filterDataByStatus(data, status) {
   return data.filter(function(item) {
     switch (status) {
-      case 'my':
+      case 'my_devices':
         to_display = getSetting('UI_MY_DEVICES');
         
         let result = true;
@@ -403,7 +375,7 @@ function filterDataByStatus(data, status) {
             result = false;
         }  
 
-        return result; // Include all items for 'my' status
+        return result; // Include all items for 'my_devices' status
       case 'connected':
         return item.dev_PresentLastScan === 1;
       case 'favorites':
@@ -455,7 +427,7 @@ function initializeDatatable (status) {
 
   if(!status)
   {
-    status = 'my'
+    status = 'my_devices'
   }
 
   // Save status selected
@@ -463,12 +435,14 @@ function initializeDatatable (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'my':        tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
+    case 'my_devices': tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
     case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
+    case 'all':        tableTitle = getString('Gen_All_Devices');             color = 'aqua';    break;
     case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
     case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
     case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
     case 'archived':   tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
+    case 'offline':    tableTitle = getString('Gen_Offline');                 color = 'gray';    break;
     default:           tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
   } 
 

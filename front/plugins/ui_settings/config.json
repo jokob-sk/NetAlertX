@@ -1,0 +1,85 @@
+{
+  "code_name": "ui_settings",
+  "unique_prefix": "UI",
+  "plugin_type": "core",
+  "enabled": true,
+  "data_source": "template",
+  "show_ui": false,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "UI settings"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Plugin to adjust UI settings."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-paint-roller\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "shown_cards",
+      "type": "text.multiselect",
+      "maxLength": 50,
+      "default_value": [
+        "my_devices",
+        "connected",
+        "favorites",
+        "new",
+        "down",
+        "archived"
+      ],
+      "options": [
+        "my_devices",
+        "connected",
+        "favorites",
+        "new",
+        "down",
+        "archived",
+        "offline",
+        "all"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Tiles to Show"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which tiles to show on teh top of the Devices page."
+        }
+      ]
+    },
+    {
+      "function": "hide_empty",
+      "type": "boolean",
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Hide empty tiles"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Hide Device tiles with zero results."
+        }
+      ]
+    }
+  ]
+}
