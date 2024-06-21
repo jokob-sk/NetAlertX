@@ -266,7 +266,7 @@ function checkNotification() {
                 if (oldestInterruptNotification) {
                     // Show modal dialog with the oldest unread notification
 
-                    const decodedContent = JSON.parse(decodeURIComponent(oldestInterruptNotification.content));
+                    const decodedContent = decodeURIComponent(oldestInterruptNotification.content);
 
                     showModalOK("Notification", decodedContent, function() {
                         // Mark the notification as read

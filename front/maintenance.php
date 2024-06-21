@@ -425,8 +425,10 @@ $db->close();
                                 <div class="log-file">app.log <div class="logs-size"><?php echo number_format((filesize("./log/app.log") / 1000000),2,",",".") . ' MB';?> 
                                 <span class="span-padding"><a href="./log/app.log" target="_blank"><i class="fa fa-download"></i> </a></span>
                               </div></div>             
+                              <button class="btn btn-primary col-sm-2 col-xs-2" onclick="restartBackend()">Not working: Restart Backend</button>
                                 <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('app.log','cleanLog')"><?= lang('Gen_Purge');?></button>
+                                  
+                                  <button class="btn btn-primary " onclick="logManage('app.log','cleanLog')"><?= lang('Gen_Purge');?></button>
                                 </div>
                               </div>
                             </div>
@@ -688,6 +690,22 @@ function PiaPurgeDBBackups()
   $.get('php/server/devices.php?action=PiaPurgeDBBackups', function(msg) {
     showMessage (msg);
   });
+}
+
+// Restart Backend 
+function restartBackend() {
+  // Execute
+  $.ajax({
+    method: "POST",
+    url: "php/server/util.php",
+    data: { function: 'restartBackend'  },
+    success: function(data, textStatus) {
+        showModalOk ('Result', data );
+    }
+  })
+  
+  
+  
 }
 
 // Export CSV

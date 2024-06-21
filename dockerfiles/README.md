@@ -38,7 +38,7 @@ docker run -d --rm --network=host \
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
-|`ALWAYS_FRESH_INSTALL` | Setting `ALWAYS_FRESH_INSTALL=true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`-dev` image.   |    `N/A` |
+|`ALWAYS_FRESH_INSTALL` | Setting  to `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`-dev` image.   |    `N/A` |
 
 ### Docker paths
 

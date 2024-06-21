@@ -122,7 +122,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
           </div>        
-          <div class =" col-sm-12" id="device_scanner_content"></div>
+          <div class =" col-sm-12" id="device_scanner_content"> <?= lang("settings_device_scanners_info");?> </div>
       </div> 
 
       <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_content_header">        
@@ -136,7 +136,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        
-          <div class =" col-sm-12" id="publisher_content"></div>
+          <div class =" col-sm-12" id="publisher_content"><?= lang("settings_publishers_info");?></div>
       </div> 
      
    </div>

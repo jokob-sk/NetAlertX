@@ -14,7 +14,8 @@ from logger import mylog
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
-from notification import Notification_obj
+from notification import Notification_obj, write_notification
+
 
 #-------------------------------------------------------------------------------
 class plugin_param:
@@ -750,6 +751,9 @@ class plugin_object_class:
 def check_and_run_user_event(db, all_plugins, pluginsState):
     # Check if the log file exists
     logFile = os.path.join(logPath, "execution_queue.log")
+
+    # track if not an API event
+    show_events_completed = False
     
     if not os.path.exists(logFile):
         return pluginsState
@@ -767,8 +771,10 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         event, param = columns
 
         if event == 'test':
+            show_events_completed = True
             pluginsState = handle_test(param, db, all_plugins, pluginsState)
         if event == 'run':
+            show_events_completed = True
             pluginsState = handle_run(param, db, all_plugins, pluginsState)
         if event == 'update_api':
             # update API endpoints
@@ -776,6 +782,10 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
 
     # Clear the log file
     open(logFile, "w").close()
+
+    # only show pop up if not an API event
+    if show_events_completed:
+        write_notification('[Ad-hoc events] All Events executed', 'interrupt', timeNowTZ())
 
     return pluginsState
 

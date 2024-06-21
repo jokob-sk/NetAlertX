@@ -52,4 +52,4 @@ In Notification Processing settings, you can specify blanket rules. These allow 
 You can completely ignore detected devices globally. This could be because your instance detects docker containers, you want to ignore devices from a specific manufacturer via MAC rules or you want to ignore devices on a specific IP range. 
 
 1. Ignored MACs (`NEWDEV_ignored_MACs`) - List of MACs to ignore.
-2. Ignored IPs (`NEWDEV_ignored_MACs`) - List of IPs to ignore. 
+2. Ignored IPs (`NEWDEV_ignored_IPs`) - List of IPs to ignore. 

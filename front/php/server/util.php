@@ -28,6 +28,10 @@ if(array_key_exists('settings', $_REQUEST) != FALSE)
 
 // call functions based on requested params
 switch ($FUNCTION) {
+  case 'restartBackend':
+      
+      restartBackend();
+      break;
   case 'savesettings':
       
       saveSettings();
@@ -240,6 +244,28 @@ function addToExecutionQueue($action)
     } else {
         displayMessage('Log file not found or couldn\'t be created.', false, true, true, true);
     }
+}
+
+
+// ----------------------------------------------------------------------------------------
+function restartBackend()
+{
+  $command = 'pkill -f "python /app/server" && (python /app/server > /dev/null 2>&1 &) && echo "done" 2>&1';
+
+  // Execute the command
+  $output = [];
+  $output_str = "";
+  $return_var = 0;
+  exec($command, $output, $return_var);
+
+  // Format the output
+  foreach ($output as $line) {
+    $output_str .= $line . "\n";
+  }
+
+ 
+  echo "Command result: $return_var, $output_str";
+  
 }
 
 

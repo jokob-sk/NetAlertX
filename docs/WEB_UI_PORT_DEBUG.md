@@ -43,4 +43,7 @@ In the container execute:
 
 ## 7. Make sure permissions are correct
 
+> [!TIP]
+> You can try to start the container without mapping the `/app/config` and `/app/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
+
 Please read the [Permissions troubleshooting guide](/docs/FILE_PERMISSIONS.md) and provide a screesnhot of the permissions and ownership in the `/app/db` and `app/config` directories. 

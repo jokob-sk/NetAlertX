@@ -1,23 +1,8 @@
 ## Overview
 
-PLugin functionality overview and links to external resources if relevant. Include use cases if available. 
-
-> [!TIP]
-> Some tip.
-
-### Quick setup guide
-
-To set up the plugin correctly, make sure...
-
-#### Required Settings
-
-- When to run `PREF_RUN`
-- 
+UI-related settings.
 
 ### Usage
 
-- Head to **Settings** > **Plugin name** to adjust the default values.
+- Head to **Settings** > **UI Settings** to adjust the default values.
 
-### Notes
-
-- Additional notes, limitations, Author info. 

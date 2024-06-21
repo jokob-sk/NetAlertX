@@ -1,6 +1,6 @@
 ## Overview
 
-PLugin functionality overview and links to external resources if relevant. Include use cases if available. 
+Plugin functionality overview and links to external resources if relevant. Include use cases if available. 
 
 > [!TIP]
 > Some tip.

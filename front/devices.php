@@ -307,8 +307,6 @@ function getDevicesTotals(devicesData) {
       // Calculate count dynamically based on filter condition
       let count = filterDataByStatus(devicesData, filter.status).length;
 
-      console.log(getSetting('UI_hide_empty'));
-
       // Check any condition to skip adding the object to dataArray
       if (
         (['', 'False'].includes(getSetting('UI_hide_empty')) || (getSetting('UI_hide_empty') == "True" && count > 0)) &&

@@ -136,7 +136,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Encryption key used to encrypt the data before sending and for decryption on th ehub. The key needs to be the same on the hub and on the nodes."
+          "string": "Encryption key used to encrypt the data before sending and for decryption on the hub. The key needs to be the same on the hub and on the nodes."
         }
       ]
     },
