@@ -168,7 +168,6 @@ def create_new_devices (db):
                           dev_SkipRepeated, 
                           dev_ScanCycle, 
                           dev_Owner, 
-                          dev_DeviceType, 
                           dev_Favorite, 
                           dev_Group, 
                           dev_Comments, 
@@ -184,7 +183,6 @@ def create_new_devices (db):
                           {get_setting_value('NEWDEV_dev_SkipRepeated')}, 
                           {get_setting_value('NEWDEV_dev_ScanCycle')}, 
                           '{get_setting_value('NEWDEV_dev_Owner')}', 
-                          '{get_setting_value('NEWDEV_dev_DeviceType')}',
                           {get_setting_value('NEWDEV_dev_Favorite')}, 
                           '{get_setting_value('NEWDEV_dev_Group')}', 
                           '{get_setting_value('NEWDEV_dev_Comments')}', 
@@ -208,7 +206,8 @@ def create_new_devices (db):
                             dev_Network_Node_MAC_ADDR, 
                             dev_Network_Node_port,
                             dev_NetworkSite, 
-                            dev_SSID,                          
+                            dev_SSID,
+                            dev_DeviceType,                          
                             {newDevColumns}
                         )
                         SELECT 
@@ -224,6 +223,7 @@ def create_new_devices (db):
                             cur_PORT,
                             cur_NetworkSite, 
                             cur_SSID,
+                            CASE WHEN LENGTH(TRIM(cur_Type)) > 0 THEN cur_Type ELSE '{get_setting_value('NEWDEV_dev_DeviceType')}' END,
                             {newDevDefaults}
                     FROM CurrentScan
                         WHERE 1=1

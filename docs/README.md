@@ -66,6 +66,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 👩‍💻For Developers👨‍💻
 
+- [Setting up your DEV environment](/docs/DEV_ENV_SETUP.md)
 - [Server APP code structure](/server/README.md)
 - [Database structure](/docs/DATABASE.md)
 - [API endpoints details](/docs/API.md)
