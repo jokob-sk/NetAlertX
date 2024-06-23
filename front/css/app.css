@@ -1238,6 +1238,13 @@ input[readonly] {
     /* background-color:red; */
 }
 
+.sort-btn {
+    
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
 
 
 /* ----------------------------------------------------------------- */

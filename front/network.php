@@ -7,6 +7,7 @@
   define('badge_offline', '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>');
   define('circle_online', '<div class="badge bg-green text-white" style="width: 10px; height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
   define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>'); 
+  define('sortable_column', ' <span class="sort-btn" onclick="sortColumn(this)"><i class="fa-solid fa-arrow-up-short-wide"></i></span>'); 
   
 ?>
 
@@ -140,13 +141,18 @@
                              ';
 
         $str_table =      '   <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th  class="col-sm-1" >Port</th>
+                                    <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
+                                    <th  class="col-sm-2" >'.lang('Network_Table_Hostname').sortable_column.'</th>
+                                    <th  class="col-sm-1" >'.lang('Network_Table_IP').sortable_column.'</th>
+                                    <th  class="col-sm-3" >'.lang('Network_ManageLeaf').'</th>
+                                  </tr>
+                                </thead>
                                 <tbody>
                                 <tr>
-                                  <th class="col-sm-1" >Port</th>
-                                  <th class="col-sm-1" >'.lang('Network_Table_State').'</th>
-                                  <th class="col-sm-2" >'.lang('Network_Table_Hostname').'</th>
-                                  <th class="col-sm-1" >'.lang('Network_Table_IP').'</th>
-                                  <th class="col-sm-3" >'.lang('Network_ManageLeaf').'</th>
+
                                 </tr>';
         
         // Prepare Array for Devices with Port value
@@ -383,13 +389,18 @@
                                 <i class="fa fa-laptop"></i> '.lang('Network_UnassignedDevices').'
                               </h3>
                               <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th  class="col-sm-1" ></th>
+                                    <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
+                                    <th  class="col-sm-2" >'.lang('Network_Table_Hostname').sortable_column.'</th>
+                                    <th  class="col-sm-1" >'.lang('Network_Table_IP').sortable_column.'</th>
+                                    <th  class="col-sm-3" >'.lang('Network_Assign').'</th>
+                                  </tr>
+                                </thead>
                                 <tbody>
                                 <tr>                              
-                                  <th  class="col-sm-1" ></th>
-                                  <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
-                                  <th  class="col-sm-2" >'.lang('Network_Table_Hostname').'</th>
-                                  <th  class="col-sm-1" >'.lang('Network_Table_IP').'</th>
-                                  <th  class="col-sm-3" >'.lang('Network_Assign').'</th>
+
                                 </tr>';   
 
       $str_table_rows = "";        
@@ -851,7 +862,6 @@
 
   // init Assign/Unassign buttons
   initButtons()
-
 
 </script>
 

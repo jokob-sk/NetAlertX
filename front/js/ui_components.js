@@ -271,6 +271,43 @@ function copyToClipboard(buttonElement) {
 }
 
 // -----------------------------------------------------------------------------
+// Simple Sortable Table columns 
+// -----------------------------------------------------------------------------
+
+function sortColumn(element) {
+  var th = $(element).closest('th');
+  var table = th.closest('table');
+  var columnIndex = th.index();
+  var ascending = !th.data('asc');
+  sortTable(table, columnIndex, ascending);
+  th.data('asc', ascending);
+}
+
+function sortTable(table, columnIndex, ascending) {
+  var tbody = table.find('tbody');
+  var rows = tbody.find('tr').toArray().sort(comparer(columnIndex));
+  if (!ascending) {
+    rows = rows.reverse();
+  }
+  for (var i = 0; i < rows.length; i++) {
+    tbody.append(rows[i]);
+  }
+}
+
+function comparer(index) {
+  return function(a, b) {
+    var valA = getCellValue(a, index);
+    var valB = getCellValue(b, index);
+    return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+  };
+}
+
+function getCellValue(row, index) {
+  return $(row).children('td').eq(index).text();
+}
+
+
+// -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------
 
