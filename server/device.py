@@ -267,7 +267,7 @@ def update_devices_data_from_scan (db):
                                   WHERE dev_MAC = cur_MAC) """)
 
     # Update only devices with empty or NULL vendors
-    mylog('debug', '[Update Devices] - 3 Vendor')
+    mylog('debug', '[Update Devices] - 3 cur_Vendor -> dev_Vendor')
     sql.execute("""UPDATE Devices
                     SET dev_Vendor = (
                         SELECT cur_Vendor
@@ -276,6 +276,86 @@ def update_devices_data_from_scan (db):
                     )
                     WHERE 
                         (dev_Vendor = "" OR dev_Vendor IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
+
+    # Update only devices with empty or NULL dev_Network_Node_port 
+    mylog('debug', '[Update Devices] - 3 cur_Port -> dev_Network_Node_port')
+    sql.execute("""UPDATE Devices
+                    SET dev_Network_Node_port = (
+                        SELECT cur_Port
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_Network_Node_port = "" OR dev_Network_Node_port IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
+
+    # Update only devices with empty or NULL dev_Network_Node_MAC_ADDR 
+    mylog('debug', '[Update Devices] - 3 cur_NetworkNodeMAC -> dev_Network_Node_MAC_ADDR')
+    sql.execute("""UPDATE Devices
+                    SET dev_Network_Node_MAC_ADDR = (
+                        SELECT cur_NetworkNodeMAC
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_Network_Node_MAC_ADDR = "" OR dev_Network_Node_MAC_ADDR IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
+
+    # Update only devices with empty or NULL dev_Network_Node_MAC_ADDR 
+    mylog('debug', '[Update Devices] - 3 cur_NetworkSite -> dev_NetworkSite')
+    sql.execute("""UPDATE Devices
+                    SET dev_NetworkSite = (
+                        SELECT cur_NetworkSite
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_NetworkSite = "" OR dev_NetworkSite IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
+
+    # Update only devices with empty or NULL dev_SSID 
+    mylog('debug', '[Update Devices] - 3 cur_SSID -> dev_SSID')
+    sql.execute("""UPDATE Devices
+                    SET dev_SSID = (
+                        SELECT cur_SSID
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_SSID = "" OR dev_SSID IS NULL)
+                        AND EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE dev_MAC = cur_MAC
+                        )""")
+
+    # Update only devices with empty or NULL dev_DeviceType
+    mylog('debug', '[Update Devices] - 3 cur_Type -> dev_DeviceType')
+    sql.execute("""UPDATE Devices
+                    SET dev_DeviceType = (
+                        SELECT cur_Type
+                        FROM CurrentScan
+                        WHERE dev_MAC = cur_MAC
+                    )
+                    WHERE 
+                        (dev_DeviceType = "" OR dev_DeviceType IS NULL)
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
