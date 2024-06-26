@@ -34,7 +34,7 @@ def main():
     # Retrieve configuration settings
     some_setting = get_setting_value('SYNC_plugins')
 
-    mylog('verbose', [f'[{pluginName}] some_setting calue {some_setting}'])
+    mylog('verbose', [f'[{pluginName}] some_setting value {some_setting}'])
 
     # retrieve data
     device_data = get_device_data(some_setting)

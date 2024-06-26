@@ -275,7 +275,7 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_Vendor = "" OR dev_Vendor IS NULL)
+                        (dev_Vendor IS NULL OR dev_Vendor IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
@@ -291,7 +291,7 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_Network_Node_port = "" OR dev_Network_Node_port IS NULL)
+                        (dev_Network_Node_port IS NULL OR dev_Network_Node_port IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
@@ -307,14 +307,14 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_Network_Node_MAC_ADDR = "" OR dev_Network_Node_MAC_ADDR IS NULL)
+                        (dev_Network_Node_MAC_ADDR IS NULL OR dev_Network_Node_MAC_ADDR IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
                             WHERE dev_MAC = cur_MAC
                         )""")
 
-    # Update only devices with empty or NULL dev_Network_Node_MAC_ADDR 
+    # Update only devices with empty or NULL dev_NetworkSite 
     mylog('debug', '[Update Devices] - 3 cur_NetworkSite -> dev_NetworkSite')
     sql.execute("""UPDATE Devices
                     SET dev_NetworkSite = (
@@ -323,7 +323,7 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_NetworkSite = "" OR dev_NetworkSite IS NULL)
+                        (dev_NetworkSite IS NULL OR dev_NetworkSite IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
@@ -339,7 +339,7 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_SSID = "" OR dev_SSID IS NULL)
+                        (dev_SSID IS NULL OR dev_SSID IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
@@ -355,7 +355,7 @@ def update_devices_data_from_scan (db):
                         WHERE dev_MAC = cur_MAC
                     )
                     WHERE 
-                        (dev_DeviceType = "" OR dev_DeviceType IS NULL)
+                        (dev_DeviceType IS NULL OR dev_DeviceType IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
