@@ -12,22 +12,25 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
   |----------------------|----------------------| ----------------------|  ----------------------| 
 
 
-  | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
+  | ![Main screen][main] | ![device_details 1][device_details]  | ![Screen network][network] |
   |----------------------|----------------------| ----------------------| 
 
   ![network_setup][network_setup] 
 
+
+Head to [https://netalertx.com/](https://netalertx.com/) for more screenshots.
+
 <details>
   <summary>📷 Click for more screenshots</summary>
 
-  | ![Screen 3][screen3] | ![Screen 4][screen4] | ![Screen 6][screen6]  |
+  | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
   |----------------------|----------------------|----------------------|
-  | ![Screen 8][screen8] | ![Report 2][report2] | ![Screen 9][screen9]  |
+  | ![sync_hub][sync_hub] | ![report1][report1] | ![device_nmap][device_nmap]  |
 
 </details>
 
 <details>
-  <summary>❓ Why use Net <b>Alert</b><sup>x</sup>?</summary>
+  <summary>❓ Why use Net<b>Alert</b><sup>x</sup>?</summary>
 
   <hr>
 
@@ -134,20 +137,21 @@ Help out and suggest languages in the [online portal of Weblate](https://hosted.
 
 
 <!--- --------------------------------------------------------------------- --->
-[main]:           ./docs/img/devices_split.png                   "Main screen"
-[screen1]:        ./docs/img/device_details.png                  "Screen 1"
-[screen2]:        ./docs/img/events.png                          "Screen 2"
-[screen3]:        ./docs/img/presence.png                        "Screen 3"
-[screen4]:        ./docs/img/maintenance.png                     "Screen 4"
-[screen5]:        ./docs/img/network.png                         "Screen 5"
-[screen6]:        ./docs/img/settings.png                        "Screen 6"
-[network_setup]:  ./docs/img/network_setup.gif                  "Screen 6"
-[screen7]:        ./docs/img/help_faq.png                        "Screen 7"
-[screen8]:        ./docs/img/sync_hub.png                        "Screen 8"
-[screen9]:        ./docs/img/device_nmap.png                     "Screen 9"
-[report1]:        ./docs/img/4_report_1.jpg                      "Report sample 1"
-[report2]:        ./docs/img/4_report_2.jpg                      "Report sample 2"
-[main_dark]:      /docs/img/1_devices_dark.jpg                 "Main screen dark"
-[maintain_dark]:  /docs/img/5_maintain.jpg                 "Maintain screen dark"
-[follow_star]:    /docs/img/Follow_Releases_and_Star.gif     "Follow and Star"
+[main]:                     ./docs/img/devices_split.png                  "Main screen"
+[device_details]:           ./docs/img/device_details.png                 "Screen 1"
+[events]:                   ./docs/img/events.png                         "Screen 2"
+[presence]:                 ./docs/img/presence.png                       "Screen 3"
+[maintenance]:              ./docs/img/maintenance.png                    "Screen 4"
+[network]:                  ./docs/img/network.png                        "Screen 5"
+[settings]:                 ./docs/img/settings.png                       "Screen 6"
+[network_setup]:            ./docs/img/network_setup.gif                  "Screen 6"
+[help_faq]:                 ./docs/img/help_faq.png                       "Screen 7"
+[sync_hub]:                 ./docs/img/sync_hub.png                       "Screen 8"
+[notification_center]:      ./docs/img/notification_center.png            "Screen 8"
+[sent_reports_text]:        ./docs/img/sent_reports_text.png              "Screen 8"
+[device_nmap]:              ./docs/img/device_nmap.png                    "Screen 9"
+[report1]:                  ./docs/img/report_sample.png                  "Report sample 1"
+[main_dark]:                /docs/img/1_devices_dark.jpg                  "Main screen dark"
+[maintain_dark]:            /docs/img/5_maintain.jpg                      "Maintain screen dark"
+[follow_star]:              /docs/img/Follow_Releases_and_Star.gif        "Follow and Star"
 
