@@ -1,9 +1,14 @@
 # 🔌 Plugins
 
+NetAlertX supports additional plugins to extend its functionality, each with its own settings and options. Plugins can be loaded via the General -> `LOADED_PLUGINS` setting by using Ctrl + Click. For custom plugin development, refer to the [Plugin development guide](/docs/PLUGINS_DEV.md).   
+
 >[!NOTE]
 > Please check this [Plugins debugging guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
 
 ## ⚡ Quick start
+
+> [!TIP]
+> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. Use `Ctrl + Click` to select/deselect. 
 
 1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
 1. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 

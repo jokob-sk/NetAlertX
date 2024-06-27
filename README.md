@@ -15,6 +15,8 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
   | ![Main screen][main] | ![Screen 1][screen1]  | ![Screen 5][screen5] |
   |----------------------|----------------------| ----------------------| 
 
+  ![network_setup][network_setup] 
+
 <details>
   <summary>📷 Click for more screenshots</summary>
 
@@ -132,19 +134,20 @@ Help out and suggest languages in the [online portal of Weblate](https://hosted.
 
 
 <!--- --------------------------------------------------------------------- --->
-[main]:    ./docs/img/devices_split.png                   "Main screen"
-[screen1]: ./docs/img/device_details.png                  "Screen 1"
-[screen2]: ./docs/img/events.png                          "Screen 2"
-[screen3]: ./docs/img/presence.png                        "Screen 3"
-[screen4]: ./docs/img/maintenance.png                     "Screen 4"
-[screen5]: ./docs/img/network.png                         "Screen 5"
-[screen6]: ./docs/img/settings.png                        "Screen 6"
-[screen7]: ./docs/img/help_faq.png                        "Screen 7"
-[screen8]: ./docs/img/plugins_rogue_dhcp.png              "Screen 8"
-[screen9]: ./docs/img/device_nmap.png                     "Screen 9"
-[report1]: ./docs/img/4_report_1.jpg                      "Report sample 1"
-[report2]: ./docs/img/4_report_2.jpg                      "Report sample 2"
-[main_dark]: /docs/img/1_devices_dark.jpg                 "Main screen dark"
-[maintain_dark]: /docs/img/5_maintain.jpg                 "Maintain screen dark"
-[follow_star]: /docs/img/Follow_Releases_and_Star.gif     "Follow and Star"
+[main]:           ./docs/img/devices_split.png                   "Main screen"
+[screen1]:        ./docs/img/device_details.png                  "Screen 1"
+[screen2]:        ./docs/img/events.png                          "Screen 2"
+[screen3]:        ./docs/img/presence.png                        "Screen 3"
+[screen4]:        ./docs/img/maintenance.png                     "Screen 4"
+[screen5]:        ./docs/img/network.png                         "Screen 5"
+[screen6]:        ./docs/img/settings.png                        "Screen 6"
+[network_setup]:  ./docs/img/network_setup.gif                  "Screen 6"
+[screen7]:        ./docs/img/help_faq.png                        "Screen 7"
+[screen8]:        ./docs/img/sync_hub.png                        "Screen 8"
+[screen9]:        ./docs/img/device_nmap.png                     "Screen 9"
+[report1]:        ./docs/img/4_report_1.jpg                      "Report sample 1"
+[report2]:        ./docs/img/4_report_2.jpg                      "Report sample 2"
+[main_dark]:      /docs/img/1_devices_dark.jpg                 "Main screen dark"
+[maintain_dark]:  /docs/img/5_maintain.jpg                 "Maintain screen dark"
+[follow_star]:    /docs/img/Follow_Releases_and_Star.gif     "Follow and Star"
 
