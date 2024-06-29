@@ -413,58 +413,6 @@ function filterRows(inputText) {
 
 
   // ----------------------------------------------------------------------------- 
-  // handling events on the backend initiated by the front end START
-  // ----------------------------------------------------------------------------- 
-
-  modalEventStatusId = 'modal-message-front-event'
-
-  // --------------------------------------------------------
-  // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
-  function addToExecutionQueue(element)
-  {
-
-    // value has to be in format event|param. e.g. run|ARPSCAN
-    action = `${getGuid()}|${$(element).attr('data-myevent')}|${$(element).attr('data-myparam-plugin')}`
-
-    $.ajax({
-      method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: action  },
-      success: function(data, textStatus) {
-          // showModalOk ('Result', data );
-
-          // show message
-          showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
-
-          updateModalState()
-      }
-    })
-  }
-
-  // --------------------------------------------------------
-  // Updating the execution queue in in modal pop-up
-  function updateModalState() {
-    setTimeout(function() {
-        // Fetch the content from the log file using an AJAX request
-        $.ajax({
-            url: '/log/execution_queue.log',
-            type: 'GET',
-            success: function(data) {
-                // Update the content of the HTML element (e.g., a div with id 'logContent')
-                $('#'+modalEventStatusId).html(data);
-
-                updateModalState();
-            },
-            error: function() {
-                // Handle error, such as the file not being found
-                $('#logContent').html('Error: Log file not found.');
-            }
-        });
-    }, 2000);
-  }
-
-
-  // ----------------------------------------------------------------------------- 
   // handling events on the backend initiated by the front end END
   // ----------------------------------------------------------------------------- 
 

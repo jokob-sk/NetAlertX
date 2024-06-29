@@ -1,0 +1,80 @@
+[
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('app.log', 'cleanLog')"
+            },
+            {
+                "labelStringCode": "Maint_RestartServer",
+                "event": "askRestartBackend()"
+            }
+        ],
+        "fileName": "app.log",
+        "filePath": "/app/front/log/app.log",
+        "textAreaCssClass": "logs"
+
+    },
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('app_front.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "app_front.log",
+        "filePath": "/app/front/log/app_front.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('app.php_errors.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "app.php_errors.log",
+        "filePath": "/app/front/log/app.php_errors.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
+        ],
+        "fileName": "nginx/error.log",
+        "filePath": "/var/log/nginx/error.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('app_front.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "app_front.log",
+        "filePath": "/app/front/log/app_front.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('stdout.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "stdout.log",
+        "filePath": "/app/front/log/stdout.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('stderr.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "stderr.log",
+        "filePath": "/app/front/log/stderr.log",
+        "textAreaCssClass": "logs logs-small"
+    }
+]

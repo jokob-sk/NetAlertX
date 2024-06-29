@@ -405,112 +405,8 @@ $db->close();
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
                     <div class="db_info_table">
-                        <div class="log-area box box-solid box-primary">
-                            <div class="row logs-row">
-                              <textarea id="app_log" class="logs" cols="70" rows="10" wrap='off' readonly >
-                                <?php                               
-                                if(filesize("./log/app.log") > 2000000)
-                                {
-                                  echo file_get_contents( "./log/app.log", false, null, -2000000); 
-                                }
-                                else{
-                                  echo file_get_contents( "./log/app.log" );
-                                }
-                              
-                              ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >
-                              <div>
-                                <div class="log-file">app.log <div class="logs-size"><?php echo number_format((filesize("./log/app.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/app.log" target="_blank"><i class="fa fa-download"></i> </a></span>
-                              </div></div>             
-                              <button class="btn btn-primary col-sm-2 col-xs-2" onclick="restartBackend()">Not working: Restart Backend</button>
-                                <div class="log-purge">
-                                  
-                                  <button class="btn btn-primary " onclick="logManage('app.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                </div>
-                              </div>
-                            </div>
-                        </div> 
-                        <div class="log-area box box-solid box-primary">
-                            <div class="row logs-row">
-                              <textarea id="app_front_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/app_front.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >                            
-                              <div>
-                                <div class="log-file">app_front.log<div class="logs-size"><?php echo number_format((filesize("./log/app_front.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/app_front.log"><i class="fa fa-download"></i> </a></span>
-                              </div></div>
-                                <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('app_front.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                </div>
-                              </div>
-                            </div>
-                        </div> 
-                        <div class="log-area box box-solid box-primary">
-                            <div class="row logs-row">
-                              <textarea id="app_php_log" class="logs" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/app.php_errors.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >                            
-                              <div>
-                                <div class="log-file">app.php_errors.log<div class="logs-size"><?php echo number_format((filesize("./log/app.php_errors.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/app.php_errors.log"><i class="fa fa-download"></i> </a></span>
-                              </div></div>
-                                <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('app.php_errors.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                </div>
-                              </div>
-                            </div>
-                        </div>         
-                        <div class="log-area box box-solid box-primary ">
-                            <div class="row logs-row">
-                              <textarea id="nginx_error_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "/var/log/nginx/error.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >                            
-                              <div>
-                                <div class="log-file" title="/var/log/nginx/error.log">nginx/error.log</div>
-                                <span class="span-padding"><a href="/var/log/nginx/error.log"><i class="fa fa-download"></i> </a></span>
-                              </div>
-                            </div>
-                        </div>                                        
-                        <div class="log-area box box-solid box-primary">
-                            <div class="row logs-row">
-                              <textarea id="stdout_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stdout.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >                            
-                              <div>
-                                <div class="log-file">stdout.log<div class="logs-size"><?php echo number_format((filesize("./log/stdout.log") / 1000000),2,",",".") . ' MB';?> 
-                                <span class="span-padding"><a href="./log/stdout.log"><i class="fa fa-download"></i> </a></span>
-                              </div></div>
-                                <div class="log-purge">
-                                  <button class="btn btn-primary" onclick="logManage('stdout.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                                </div>
-                              </div>
-                          </div>
 
-                        </div> 
-                        <div class="log-area box box-solid box-primary">
-                            <div class="row logs-row">
-                              <textarea id="stderr_log" class="logs logs-small" cols="70" rows="10" wrap='off' readonly><?php echo file_get_contents( "./log/stderr.log" ); ?>
-                              </textarea>
-                            </div>
-                            <div class="row logs-row" >
-                              <div>
-                              <div class="log-file">stderr.log<div class="logs-size"><?php echo number_format((filesize("./log/stderr.log") / 1000000),2,",",".") . ' MB';?> 
-                              <span class="span-padding"><a href="./log/stderr.log"><i class="fa fa-download"></i> </a></span>
-                            </div></div>
-                              <div class="log-purge">
-                                <button class="btn btn-primary" onclick="logManage('stderr.log','cleanLog')"><?= lang('Gen_Purge');?></button>
-                              </div>                            
-                              </div>                            
-                            </div>
-
-                        </div>      
+                      <div id="logsPlc"></div>
                                 
                     </div>
               </div>
@@ -566,12 +462,14 @@ var selectedTab                 = 'tab_Settings_id';
 
 initializeTabs();
 
+// -----------------------------------------------------------
 // delete devices with emty macs
 function askDeleteDevicesWithEmptyMACs () {
   // Ask 
   showModalWarning('<?= lang('Maintenance_Tool_del_empty_macs_noti');?>', '<?= lang('Maintenance_Tool_del_empty_macs_noti_text');?>',
     'Cancel', 'Delete', 'deleteDevicesWithEmptyMACs');
 }
+// -----------------------------------------------------------
 function deleteDevicesWithEmptyMACs()
 { 
   // Delete device
@@ -580,12 +478,14 @@ function deleteDevicesWithEmptyMACs()
   });
 }
 
+// -----------------------------------------------------------
 // delete all devices 
 function askDeleteAllDevices () {
   // Ask 
   showModalWarning('<?= lang('Maintenance_Tool_del_alldev_noti');?>', '<?= lang('Maintenance_Tool_del_alldev_noti_text');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteAllDevices');
 }
+// -----------------------------------------------------------
 function deleteAllDevices()
 { 
   // Delete device
@@ -594,12 +494,14 @@ function deleteAllDevices()
   });
 }
 
+// -----------------------------------------------------------
 // delete all (unknown) devices 
 function askDeleteUnknown () {
   // Ask 
   showModalWarning('<?= lang('Maintenance_Tool_del_unknowndev_noti');?>', '<?= lang('Maintenance_Tool_del_unknowndev_noti_text');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteUnknownDevices');
 }
+// -----------------------------------------------------------
 function deleteUnknownDevices()
 { 
   // Execute
@@ -608,12 +510,14 @@ function deleteUnknownDevices()
   });
 }
 
+// -----------------------------------------------------------
 // delete all Events 
 function askDeleteEvents () {
   // Ask 
   showModalWarning('<?= lang('Maintenance_Tool_del_allevents_noti');?>', '<?= lang('Maintenance_Tool_del_allevents_noti_text');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteEvents');
 }
+// -----------------------------------------------------------
 function deleteEvents()
 { 
   // Execute
@@ -622,12 +526,14 @@ function deleteEvents()
   });
 }
 
+// -----------------------------------------------------------
 // delete all Events older than 30 days
 function askDeleteEvents30 () {
   // Ask 
   showModalWarning('<?= lang('Maintenance_Tool_del_allevents30_noti');?>', '<?= lang('Maintenance_Tool_del_allevents30_noti_text');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteEvents30');
 }
+// -----------------------------------------------------------
 function deleteEvents30()
 { 
   // Execute
@@ -636,6 +542,7 @@ function deleteEvents30()
   });
 }
 
+// -----------------------------------------------------------
 // delete History 
 function askDeleteActHistory () {
   // Ask 
@@ -650,6 +557,7 @@ function deleteActHistory()
   });
 }
 
+// -----------------------------------------------------------
 // Backup DB to Archive 
 function askPiaBackupDBtoArchive () {
   // Ask 
@@ -664,6 +572,7 @@ function PiaBackupDBtoArchive()
   });
 }
 
+// -----------------------------------------------------------
 // Restore DB from Archive 
 function askPiaRestoreDBfromArchive () {
   // Ask 
@@ -678,6 +587,7 @@ function PiaRestoreDBfromArchive()
   });
 }
 
+// -----------------------------------------------------------
 // Purge Backups 
 function askPiaPurgeDBBackups() {
   // Ask 
@@ -692,22 +602,37 @@ function PiaPurgeDBBackups()
   });
 }
 
-// Restart Backend 
-function restartBackend() {
-  // Execute
-  $.ajax({
-    method: "POST",
-    url: "php/server/util.php",
-    data: { function: 'restartBackend'  },
-    success: function(data, textStatus) {
-        showModalOk ('Result', data );
-    }
-  })
-  
-  
-  
+// -----------------------------------------------------------
+// Restart Backend Python Server
+
+function askRestartBackend() {
+  // Ask 
+  showModalWarning('<?= lang('Maint_RestartServer');?>', '<?= lang('Maint_Restart_Server_noti_text');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Maint_RestartServer');?>', 'restartBackend');
 }
 
+// -----------------------------------------------------------
+function restartBackend() {
+
+  modalEventStatusId = 'modal-message-front-event'
+  
+  // Execute
+  $.ajax({
+      method: "POST",
+      url: "php/server/util.php",
+      data: { function: "addToExecutionQueue", action: 'cron_restart_backend'  },
+      success: function(data, textStatus) {
+          // showModalOk ('Result', data );
+
+          // show message
+          showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
+
+          updateModalState()
+      }
+    })
+}
+
+// -----------------------------------------------------------
 // Export CSV
 function askExportCSV() {
   // Ask 
@@ -720,6 +645,7 @@ function ExportCSV()
   openInNewTab("php/server/devices.php?action=ExportCSV")
 }
 
+// -----------------------------------------------------------
 // Import CSV
 function askImportCSV() {
   // Ask 
@@ -952,13 +878,31 @@ function initializeTabs () {
   
 }
 
+//------------------------------------------------------------------------------
+function renderLogs(customData) {
+    $.ajax({
+      url: 'php/components/logs.php', // PHP script URL
+      type: 'POST', // Use POST method to send data
+      dataType: 'html', // Expect HTML response
+      // data: { items: JSON.stringify(customData) }, // Send customData as JSON
+      success: function(response) {
+        $('#logsPlc').html(response); // Replace container content with fetched HTML
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching infoboxes:', error);
+      }
+    });
+  }
 
-// load footer asynchronously not to block the page load/other sections
+
+// Init
 window.onload = function asyncFooter()
 {
   initializeSelectedColumns();
-  scrollDown();
-  initializeTabs();
+  renderLogs();
+  scrollDown(); // scroll down the logs
+  
+  // initializeTabs();
 
   $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/netalertx/main?logo=github"></a>');
 
@@ -966,10 +910,6 @@ window.onload = function asyncFooter()
     '<a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
 
 }
-
-// scroll to the latest log entrie sat teh bottom of the file 
-
-
 
 </script>
 

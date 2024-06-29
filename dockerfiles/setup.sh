@@ -109,6 +109,10 @@ if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
     chown nginx:www-data "${INSTALL_DIR}/front/buildtimestamp.txt"
 fi
 
+# Start crond service in the background
+echo "[INSTALL] Starting crond service..."
+crond -f -d 8 > /dev/null 2>&1 &
+
 echo -e "
             [ENV] PATH                      is ${PATH}
             [ENV] PORT                      is ${PORT}

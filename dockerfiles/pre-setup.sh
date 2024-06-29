@@ -38,4 +38,6 @@ touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,$APP_N
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm
 touch /etc/s6-overlay/s6-rc.d/$APP_NAME/dependencies.d/nginx
 
+
+
 rm -f $0

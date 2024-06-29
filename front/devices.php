@@ -336,6 +336,7 @@ function getDevicesTotals(devicesData) {
 }
 
 //------------------------------------------------------------------------------
+//  Render the info boxes/tiles on top
 function renderInfoboxes(customData) {
     $.ajax({
       url: 'php/components/tile_cards.php', // PHP script URL

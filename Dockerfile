@@ -43,12 +43,17 @@ RUN apk update --no-cache \
     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute net-tools net-snmp-tools bind-tools awake ca-certificates  \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx \
+    && apk add --no-cache dcron \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
     && rm -f /etc/nginx/http.d/default.conf
 
 COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 
+# Add crontab file
+COPY install/crontab /etc/crontabs/root
+
+# Start all required services
 RUN ${INSTALL_DIR}/dockerfiles/pre-setup.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \

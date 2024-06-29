@@ -27,11 +27,17 @@
   font-family: 'Courier New', monospace;
   
 }
+.logs-row textarea
+{
+    width: 100%;
+}
+.logs-row button{
+    margin: 2px;
+}
 .logs-row
 {
     align-content: center;
     width: 100%;
-    display: grid;
     margin: 5px;
 }
 .logs-size
@@ -52,8 +58,7 @@
 }
 .log-file
 {
-    width: 145px;
-    display: inline-grid;
+
     font-size: 20px;
 }
 .log-purge

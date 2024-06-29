@@ -150,19 +150,6 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion_det" href="#collapse301">
-        <?= lang('HelpFAQ_Cat_Detail_301_head_a');?> "<?= lang('DevDetail_EveandAl_ScanCycle');?>" <?= lang('HelpFAQ_Cat_Detail_301_head_b');?></a>
-      </h4>
-    </div>
-    <div id="collapse301" class="panel-collapse collapse" style="font-size: 16px;">
-      <div class="panel-body">
-        <?= lang('HelpFAQ_Cat_Detail_301_text');?>
-      </div>
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
         <a data-toggle="collapse" data-parent="#accordion_det" href="#collapse302">
         <?= lang('HelpFAQ_Cat_Detail_302_head_a');?> "<?= lang('DevDetail_EveandAl_RandomMAC');?>" <?= lang('HelpFAQ_Cat_Detail_302_head_b');?></a>
       </h4>

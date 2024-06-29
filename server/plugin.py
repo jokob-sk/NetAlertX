@@ -752,20 +752,24 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
     # Check if the log file exists
     logFile = os.path.join(logPath, "execution_queue.log")
 
-    # track if not an API event
+    # Track if not an API event and list of executed events
     show_events_completed = False
-    
+    executed_events = []
+
     if not os.path.exists(logFile):
         return pluginsState
 
     with open(logFile, "r") as file:
         lines = file.readlines()
 
+    remaining_lines = []
+
     for line in lines:
         # Split the line by '|', and take the third and fourth columns (indices 2 and 3)
         columns = line.strip().split('|')[2:4]
 
         if len(columns) != 2:
+            remaining_lines.append(line)
             continue
 
         event, param = columns
@@ -773,19 +777,26 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         if event == 'test':
             show_events_completed = True
             pluginsState = handle_test(param, db, all_plugins, pluginsState)
-        if event == 'run':
+            executed_events.append(f"test with param {param}")
+        elif event == 'run':
             show_events_completed = True
             pluginsState = handle_run(param, db, all_plugins, pluginsState)
-        if event == 'update_api':
-            # update API endpoints
-            update_api(db, all_plugins, False, param.split(','))  
+            executed_events.append(f"run with param {param}")
+        elif event == 'update_api':
+            # Update API endpoints
+            update_api(db, all_plugins, False, param.split(','))
+            executed_events.append(f"update_api with param {param}")
+        else:
+            remaining_lines.append(line)
 
-    # Clear the log file
-    open(logFile, "w").close()
+    # Rewrite the log file with remaining lines
+    with open(logFile, "w") as file:
+        file.writelines(remaining_lines)
 
-    # only show pop up if not an API event
+    # Only show pop-up if not an API event
     if show_events_completed:
-        write_notification('[Ad-hoc events] All Events executed', 'interrupt', timeNowTZ())
+        executed_events_message = ', '.join(executed_events)
+        write_notification(f'[Ad-hoc events] Events executed: {executed_events_message}', 'interrupt', timeNowTZ())
 
     return pluginsState
 
