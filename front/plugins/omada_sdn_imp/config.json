@@ -119,22 +119,21 @@
       ]
     },
     {
-      "function": "site",
-      "type": "text",
-      "maxLength": 50,
-      "default_value": "",
+      "function": "sites",
+      "type": "list",
+      "default_value": [],
       "options": [],
       "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
-          "string": "OMADA site"
+          "string": "OMADA sites"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "Omada SDN site id. You can get it by..."
+          "string": "Omada SDN site IDs. You can get it by..."
         }
       ]
     },
@@ -175,6 +174,25 @@
         {
           "language_code": "en_us",
           "string": "Omada SDN instance password"
+        }
+      ]
+    },
+    {
+      "function": "force_overwrite",
+      "type": "boolean",
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Force overwrite"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address) ; with this setting toggled, it will overwrite existing values regardless."
         }
       ]
     },
@@ -247,6 +265,58 @@
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
+    },
+    {
+      "default_value": [],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Hostname </li><li><code>Watched_Value2</code> is Parent Node </li><li><code>Watched_Value3</code> is Port </li><li><code>Watched_Value4</code> is SSID </li></ul>"
+        }
+      ],
+      "function": "WATCH",
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Watched"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Visto"
+        }
+      ],
+      "options": [
+        "Watched_Value1",
+        "Watched_Value2",
+        "Watched_Value3",
+        "Watched_Value4"
+      ],
+      "type": "text.multiselect"
+    },
+    {
+      "default_value": ["new", "watched-changed"],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>Watched_ValueN</code> columns changed."
+        }
+      ],
+      "function": "REPORT_ON",
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        }
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "type": "text.multiselect"
     }
   ],
   "database_column_definitions": [

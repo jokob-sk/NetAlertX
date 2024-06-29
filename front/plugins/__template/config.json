@@ -1,9 +1,9 @@
 {
   "code_name": "folder_name",
   "unique_prefix": "",
-  "plugin_type": "core|general|system|scanner|other|publisher",
+  "plugin_type": "scanner",
   "enabled": true,
-  "data_source": "script|app-db-query|template|sqlite-db-query",
+  "data_source": "script",
   "mapped_to_table": "CurrentScan",
   "data_filters": [
     {
@@ -107,6 +107,25 @@
       "function": "boolean_example",
       "type": "boolean",
       "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Setting name"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Description / simple setup instructions"
+        }
+      ]
+    },
+    {
+      "function": "list_example",
+      "type": "list",
+      "default_value": ["existing_entry_1", "existing_entry_2"],
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -255,7 +274,7 @@
     },
     {
       "column": "Watched_Value3",
-      "mapped_to_column": "cur_SyncHubNodeName",
+      "mapped_to_column": "cur_Type",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -265,14 +284,14 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Sync Node"
+          "string": "Device Type"
         }
       ]
     },
     {
       "column": "Watched_Value4",
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],
@@ -280,7 +299,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device GUID"
+          "string": "N/A"
         }
       ]
     },
@@ -288,7 +307,7 @@
       "column": "Dummy",
       "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "sync"
+        "value": "Example Plugin"
       },
       "css_classes": "col-sm-2",
       "show": true,

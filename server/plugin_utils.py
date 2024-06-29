@@ -254,8 +254,10 @@ def decode_and_rename_files(file_dir, file_prefix):
     # Initialize the list of files to be processed and Sync Hub Node name
     files_to_process = []
 
-    # key to decrypt data if available
-    encryption_key = get_setting_value('SYNC_encryption_key')
+    # key to decrypt data if SYNC loaded and key available
+    encryption_key = None
+    if "SYNC" in get_setting_value('LOADED_PLUGINS'):
+        encryption_key = get_setting_value('SYNC_encryption_key')
 
     # Check for files starting with the specified prefix
     matching_files = [f for f in os.listdir(file_dir) if f.startswith(file_prefix)]

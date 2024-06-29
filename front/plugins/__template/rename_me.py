@@ -6,7 +6,6 @@ import sys
 import json
 import sqlite3
 
-
 # Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
@@ -47,18 +46,18 @@ def main():
         #"database_column_definitions": [
         # {
         #   "column": "Object_PrimaryID",                 <--------- the value I save into primaryId
-        #   "mapped_to_column": "cur_MAC",                <--------- gets unserted into the CurrentScan DB table column cur_MAC
+        #   "mapped_to_column": "cur_MAC",                <--------- gets inserted into the CurrentScan DB table column cur_MAC
         # 
         for device in device_data:
                 plugin_objects.add_object(
-                    primaryId   = device['some_id'],
-                    secondaryId = device['some_id'],
-                    watched1    = device['some_id'],
-                    watched2    = device['some_id'],
-                    watched3    = device['some_id'],
-                    watched4    = device['some_id'],
+                    primaryId   = device['mac_address'],
+                    secondaryId = device['ip_address'],
+                    watched1    = device['hostname'],
+                    watched2    = device['vendor'],
+                    watched3    = device['device_type'],
+                    watched4    = device['last_seen'],
                     extra       = '',
-                    foreignKey  = device['some_id'])
+                    foreignKey  = device['mac_address'])
 
         mylog('verbose', [f'[{pluginName}] New entries: "{len(new_devices)}"'])
 
@@ -75,7 +74,34 @@ def get_device_data(some_setting):
     # do some processing, call exteranl APIs, and return a device_data list
     #  ...
     # 
+    # Sample data for testing purposes, you can adjust the processing in main() as needed
+    # ... before adding it to the plugin_objects.add_object(...)
+    device_data = [
+        {
+            'device_id': 'device1',
+            'mac_address': '00:11:22:33:44:55',
+            'ip_address': '192.168.1.2',
+            'hostname': 'iPhone 12',
+            'vendor': 'Apple Inc.',
+            'device_type': 'Smartphone',
+            'last_seen': '2024-06-27 10:00:00',
+            'port': '1',
+            'network_id': 'network1'
+        },
+        {
+            'device_id': 'device2',
+            'mac_address': '00:11:22:33:44:66',
+            'ip_address': '192.168.1.3',
+            'hostname': 'Moto G82',
+            'vendor': 'Motorola Inc.',
+            'device_type': 'Laptop',
+            'last_seen': '2024-06-27 10:05:00',
+            'port': '',
+            'network_id': 'network1'
+        }
+    ]
 
+    # Return the data to be detected by teh main application 
     return device_data
 
 if __name__ == '__main__':

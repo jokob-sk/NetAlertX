@@ -85,8 +85,8 @@
 
   <!-- JavaScript to fetch and display data based on selected format -->
   <script>
-      // JavaScript to fetch and display data based on selected format
-      document.addEventListener('DOMContentLoaded', function() {
+  // JavaScript to fetch and display data based on selected format
+  document.addEventListener('DOMContentLoaded', function() {
     const notificationData = document.getElementById('notificationData');
     const timestamp = document.getElementById('timestamp');
     const notiGuid = document.getElementById('guid');

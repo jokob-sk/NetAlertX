@@ -4,7 +4,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-# NetAlertX 💻🔍 Network security scanner & notification framework
+# NetAlertX 💻🔍 Network scanner & notification framework
 
   | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 
@@ -12,6 +12,8 @@
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" width="1000px" />
 </a>
+
+Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.
 
 > [!NOTE]
 > There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) method available. 

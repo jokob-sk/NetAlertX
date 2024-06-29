@@ -1,4 +1,4 @@
-# 💻🔍 Network security scanner & notification framework
+# 💻🔍 Network scanner & notification framework
 
 Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
@@ -18,7 +18,7 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
   ![network_setup][network_setup] 
 
 
-Head to [https://netalertx.com/](https://netalertx.com/) for more screenshots.
+Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.
 
 <details>
   <summary>📷 Click for more screenshots</summary>
@@ -36,13 +36,13 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more screenshots.
 
   Most of us don't know what's going on on our home network, but we want our family and data to be safe.  _Command-line tools_ are great, but the output can be _hard to understand_ and action if you are not a network specialist.
 
-  Net <b>Alert</b><sup>x</sup> gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
+  Net<b>Alert</b><sup>x</sup> gives you peace of mind. _Visualize and immediately report 📬_ what is going on in your network - this is the first step to enhance your _network security 🔐_. 
 
-  Net <b>Alert</b><sup>x</sup> combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
+  Net<b>Alert</b><sup>x</sup> combines several network and other scanning tools 🔍 with notifications 📧 into one user-friendly package 📦. 
 
   Set up a _kill switch ☠_ for your network via a smart plug with the available [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md) integration. Implement custom automations with the [CSV device Exports 📤](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup), [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md), or [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) features. 
 
-  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) and handle the results and notifications in Net <b>Alert</b><sup>x</sup>. 
+  Extend the app if you want to create your own scanner [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) and handle the results and notifications in Net<b>Alert</b><sup>x</sup>. 
 
   Looking forward to your contributions if you decide to share your work with the community ❤.
 
@@ -96,13 +96,15 @@ Thank you to all the wonderful people who are sponsoring this project.
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
 
-| [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
-| --- | --- | --- | 
+
 
 <details>
   <summary>Click for more ways to donate</summary>
   
   <hr>
+
+  | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
+| --- | --- | --- | 
 
   - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
   - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
