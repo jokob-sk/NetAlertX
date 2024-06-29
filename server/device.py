@@ -242,7 +242,7 @@ def create_new_devices (db):
 #-------------------------------------------------------------------------------
 def update_devices_data_from_scan (db):
     sql = db.sql #TO-DO    
-    startTime = timeNowTZ()
+    startTime = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
 
     # Update Last Connection
     mylog('debug', '[Update Devices] 1 Last Connection')

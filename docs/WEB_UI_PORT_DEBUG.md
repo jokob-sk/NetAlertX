@@ -19,7 +19,6 @@ When opening an issue please:
 
 Check for browser console (F12 browser dev console) errors + check different browsers.
 
-
 ## 3. Clear the app cache and cached JavaScript files
 
 Refresh the browser cache (usually shoft + refresh), try a private window, or different browsers. Please also refresh the app cache by clicking the 🔃 (reload) button in the header of the application. 
@@ -28,11 +27,15 @@ Refresh the browser cache (usually shoft + refresh), try a private window, or di
 
 If you have any reverse proxy or similar, try disabling it. 
 
-## 5. Post your docker start details
+## 5. Disable your firewall
+
+If you are using a firewall, try to temporarily disabling it. 
+
+## 6. Post your docker start details
 
 If you haven't, post your docker compose/run command.
 
-## 6. Check for errors in your PHP/NGINX error logs
+## 7. Check for errors in your PHP/NGINX error logs
 
 In the container execute:
 
@@ -40,8 +43,7 @@ In the container execute:
 
 `cat /app/front/log/app.php_errors.log`
 
-
-## 7. Make sure permissions are correct
+## 8. Make sure permissions are correct
 
 > [!TIP]
 > You can try to start the container without mapping the `/app/config` and `/app/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
