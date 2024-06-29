@@ -729,11 +729,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 setTimeout("clearCache()", 5000);    
               } else{
                 // something went wrong
-                // writeNotification(data, 'interrupt')
-                writeNotification("Please screenshot the next popup (or check Monitoring > Notifications), dev console (F12) and submit it as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
+                // write_notification(data, 'interrupt')
+                write_notification("Please screenshot the next popup (or check Monitoring > Notifications), dev console (F12) and submit it as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
                 console.log(settingsArray);
                 console.log(JSON.stringify(settingsArray));
-                writeNotification(JSON.stringify(settingsArray), 'interrupt')
+                write_notification(JSON.stringify(settingsArray), 'interrupt')
               }
             }
           });

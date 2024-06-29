@@ -337,7 +337,7 @@ const phpEndpoint = 'php/server/utilNotification.php';
 
 // --------------------------------------------------
 // Write a notification
-function writeNotification(content, level) {    
+function write_notification(content, level) {    
 
     $.ajax({
         url: phpEndpoint, // Change this to the path of your PHP script

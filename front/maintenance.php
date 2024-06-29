@@ -454,7 +454,6 @@ $db->close();
 
 
 
-
 <script>
 
 var emptyArr = ['undefined', "", undefined, null];
@@ -475,6 +474,7 @@ function deleteDevicesWithEmptyMACs()
   // Delete device
   $.get('php/server/devices.php?action=deleteAllWithEmptyMACs', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] All devices witout a Mac manually deleted`, 'info')
   });
 }
 
@@ -491,6 +491,7 @@ function deleteAllDevices()
   // Delete device
   $.get('php/server/devices.php?action=deleteAllDevices', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] All devices manually deleted`, 'info')
   });
 }
 
@@ -507,6 +508,7 @@ function deleteUnknownDevices()
   // Execute
   $.get('php/server/devices.php?action=deleteUnknownDevices', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] Unknown devices manually deleted`, 'info')
   });
 }
 
@@ -523,6 +525,7 @@ function deleteEvents()
   // Execute
   $.get('php/server/devices.php?action=deleteEvents', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] Events manually deleted (all)`, 'info')
   });
 }
 
@@ -539,6 +542,7 @@ function deleteEvents30()
   // Execute
   $.get('php/server/devices.php?action=deleteEvents30', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] Events manually deleted (last 30 days kep)`, 'info')
   });
 }
 
@@ -628,6 +632,8 @@ function restartBackend() {
           showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
 
           updateModalState()
+
+          write_notification('[Maintenance] App manually restarted', 'info')
       }
     })
 }
@@ -657,6 +663,7 @@ function ImportCSV()
   // Execute
   $.get('php/server/devices.php?action=ImportCSV', function(msg) {
     showMessage (msg);
+    write_notification(`[Maintenance] Devices imported from CSV file`, 'info')
   });
 }
 
@@ -726,6 +733,7 @@ function performLogManage() {
     data: { function: logFileAction, settings: targetLogFile  },
     success: function(data, textStatus) {
         showModalOk ('Result', data );
+        write_notification(`[Maintenance] Log file "${targetLogFile}" manually purged`, 'info')
     }
   })
 }
