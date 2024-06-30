@@ -12,7 +12,7 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 ### 🎥 Watch the video:
 
-[![Watch the video](https://img.youtube.com/vi/bjA7wIK_jXY/maxresdefault.jpg)](https://youtu.be/bjA7wIK_jXY)
+[![Watch the video](/docs/img/YouTube_thumbnail.png)](https://youtu.be/bjA7wIK_jXY)
 
 ### 📸 Screenshots
 
