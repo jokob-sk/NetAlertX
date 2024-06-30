@@ -192,7 +192,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address) ; with this setting toggled, it will overwrite existing values regardless."
+          "string": "The plugin synchronizes names from NetAlertX to OMADA. By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address); with this setting toggled, it will overwrite existing values regardless."
         }
       ]
     },
