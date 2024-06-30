@@ -1,7 +1,7 @@
 {
-  "code_name": "folder_name",
-  "unique_prefix": "",
-  "plugin_type": "scanner",
+  "code_name": "__template",
+  "unique_prefix": "TMP",
+  "plugin_type": "device_scanner",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",

@@ -386,6 +386,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
         const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
 
+        // not initialized properly, reload
+        if(isMetadata && val == "" )
+        {
+          clearCache();
+        }
+
         // constructing final HTML for the setting
         setHtml = ""
 

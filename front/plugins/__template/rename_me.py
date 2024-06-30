@@ -59,7 +59,7 @@ def main():
                     extra       = '',
                     foreignKey  = device['mac_address'])
 
-        mylog('verbose', [f'[{pluginName}] New entries: "{len(new_devices)}"'])
+        mylog('verbose', [f'[{pluginName}] New entries: "{len(device_data)}"'])
 
     # log result
     plugin_objects.write_result_file()
