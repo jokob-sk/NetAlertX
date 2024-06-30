@@ -1,9 +1,5 @@
 ## 🌟 Create a custom plugin: Overview
 
-| ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 3][screen3] | 
-|----------------------|----------------------| ----------------------| 
-| ![Screen 4][screen4] |  ![Screen 5][screen5] | 
-
 NetAlertX comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
 
 * dynamic creation of a simple UI to interact with the discovered objects,
@@ -12,7 +8,19 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 * different column types for reported values to e.g. link back to a device
 * import objects into existing NetAlertX database tables 
 
-> (Currently, update/overwriting of existing objects is not supported.)
+> (Currently, update/overwriting of existing objects is only supported for devices via the `CurrentScan` table.)
+
+### 🎥 Watch the video:
+
+[![Watch the video](https://img.youtube.com/vi/bjA7wIK_jXY/maxresdefault.jpg)](https://youtu.be/bjA7wIK_jXY)
+
+### 📸 Screenshots
+
+| ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 3][screen3] | 
+|----------------------|----------------------| ----------------------| 
+| ![Screen 4][screen4] |  ![Screen 5][screen5] | 
+
+## Use cases
 
 Example use cases for plugins could be:
 
