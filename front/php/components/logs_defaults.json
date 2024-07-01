@@ -39,6 +39,17 @@
     },
     {
         "buttons": [
+            {
+                "labelStringCode": "Maint_PurgeLog",
+                "event": "logManage('execution_queue.log', 'cleanLog')"
+            }
+        ],
+        "fileName": "execution_queue.log",
+        "filePath": "/app/front/log/execution_queue.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
         ],
         "fileName": "nginx/error.log",
         "filePath": "/var/log/nginx/error.log",

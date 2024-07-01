@@ -624,7 +624,7 @@ function restartBackend() {
   $.ajax({
       method: "POST",
       url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: 'cron_restart_backend'  },
+      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 

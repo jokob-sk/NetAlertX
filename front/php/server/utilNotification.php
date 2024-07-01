@@ -3,7 +3,7 @@
 
 require dirname(__FILE__).'/../templates/timezone.php';
 
-
+// ----------------------------------------------------------------------------------------
 // Check if the action parameter is set in the GET request
 if (isset($_GET['action'])) {
     // Collect GUID if provided
@@ -46,6 +46,8 @@ if (isset($_GET['action'])) {
     }
 }
 
+// ----------------------------------------------------------------------------------------
+// Generates a random GUID
 function generate_guid() {
     if (function_exists('com_create_guid') === true) {
         return trim(com_create_guid(), '{}');
@@ -54,8 +56,10 @@ function generate_guid() {
         mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535),
         mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535),
         mt_rand(0, 65535), mt_rand(0, 65535));
-}
+  }
 
+// ----------------------------------------------------------------------------------------
+// Logs a notification in in-app notification system
 function write_notification($content, $level = "interrupt") {
     $NOTIFICATION_API_FILE = '/app/front/api/user_notifications.json';
 
@@ -87,6 +91,8 @@ function write_notification($content, $level = "interrupt") {
     file_put_contents($NOTIFICATION_API_FILE, json_encode($notifications));
 }
 
+// ----------------------------------------------------------------------------------------
+// Removes a notification based on GUID
 function remove_notification($guid) {
     $NOTIFICATION_API_FILE = '/app/front/api/user_notifications.json';
 
@@ -102,6 +108,8 @@ function remove_notification($guid) {
     file_put_contents($NOTIFICATION_API_FILE, json_encode(array_values($filtered_notifications)));
 }
 
+// ----------------------------------------------------------------------------------------
+// Deletes all notifications
 function notifications_clear() {
     $NOTIFICATION_API_FILE = '/app/front/api/user_notifications.json';
 
@@ -109,6 +117,8 @@ function notifications_clear() {
     file_put_contents($NOTIFICATION_API_FILE, json_encode(array()));
 }
 
+// ----------------------------------------------------------------------------------------
+// Mark a notification read based on GUID
 function mark_notification_as_read($guid) {
     $NOTIFICATION_API_FILE = '/app/front/api/user_notifications.json';
     $max_attempts = 3;
@@ -152,10 +162,12 @@ function mark_notification_as_read($guid) {
     echo "Failed to read notification file after $max_attempts attempts.";
 }
 
+// ----------------------------------------------------------------------------------------
 function notifications_mark_all_read() {
     mark_notification_as_read(null);
 }
 
+// ----------------------------------------------------------------------------------------
 function get_unread_notifications() {
     $NOTIFICATION_API_FILE = '/app/front/api/user_notifications.json';
 

@@ -314,7 +314,7 @@ function getCellValue(row, index) {
 
   // --------------------------------------------------------
   // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
-  function addToExecutionQueue(element)
+  function addToExecutionQueue_settingEvent(element)
   {
 
     // value has to be in format event|param. e.g. run|ARPSCAN

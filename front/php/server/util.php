@@ -225,6 +225,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
 
 }
 
+
 // ----------------------------------------------------------------------------------------
 // Adds an action to perform into the execution_queue.log file
 function addToExecutionQueue($action)
@@ -253,7 +254,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pholus_lastrun.log", 'app.php_errors.log'];
+  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pholus_lastrun.log", 'app.php_errors.log', 'execution_queue.log'];
   
   if(in_array($logFile, $allowedFiles))
   {

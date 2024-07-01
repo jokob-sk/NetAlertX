@@ -389,6 +389,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // not initialized properly, reload
         if(isMetadata && val == "" )
         {
+          console.warn(`Metadata setting value is empty: ${codeName}`);
           clearCache();
         }
 
@@ -604,7 +605,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 data-myparam="${codeName}"
                 data-myparam-plugin="${prefix}"
                 data-myevent="${event}"
-                onclick="addToExecutionQueue(this)"
+                onclick="addToExecutionQueue_settingEvent(this)"
               >
                 <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}">                 
                 </i>

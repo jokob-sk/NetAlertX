@@ -768,11 +768,9 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         # Split the line by '|', and take the third and fourth columns (indices 2 and 3)
         columns = line.strip().split('|')[2:4]
 
-        if len(columns) != 2:
-            remaining_lines.append(line)
-            continue
-
-        event, param = columns
+        event, param = "", ""
+        if len(columns) == 2:
+            event, param = columns
 
         if event == 'test':
             show_events_completed = True
