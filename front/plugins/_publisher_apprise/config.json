@@ -444,7 +444,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Select the payoad type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram."
+          "string": "Select the payload type sent to Apprise. For example <code>html</code> works well with emails, <code>text</code> with chat apps, such as Telegram."
         },
         {
           "language_code": "es_es",

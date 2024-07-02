@@ -29,6 +29,17 @@ class Device_obj:
         """)
         return self.db.sql.fetchall()
 
+    # Get specific column value based on dev_MAC
+    def getValueWithMac(self, column_name, dev_MAC):
+
+        query = f"SELECT {column_name} FROM Devices WHERE dev_MAC = ?"
+
+        self.db.sql.execute(query, (dev_MAC,))
+
+        result = self.db.sql.fetchone()
+
+        return result[column_name] if result else None
+
 
 #-------------------------------------------------------------------------------
 def save_scanned_devices (db):
