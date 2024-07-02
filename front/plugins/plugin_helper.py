@@ -79,6 +79,22 @@ def decodeBase64(inputParamBase64):
 
     return result
 
+# -------------------------------------------------------------------
+def normalize_mac(mac):
+    # Split the MAC address by colon (:) or hyphen (-) and convert each part to uppercase
+    parts = mac.upper().split(':')
+    
+    # If the MAC address is split by hyphen instead of colon
+    if len(parts) == 1:
+        parts = mac.upper().split('-')
+
+    # Normalize each part to have exactly two hexadecimal digits
+    normalized_parts = [part.zfill(2) for part in parts]
+
+    # Join the parts with colon (:)
+    normalized_mac = ':'.join(normalized_parts)
+    
+    return normalized_mac
 
 # -------------------------------------------------------------------
 class Plugin_Object:

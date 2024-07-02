@@ -11,7 +11,7 @@ import sys
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
+from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty, normalize_mac
 from logger import mylog
 from helper import timeNowTZ
 from const import logPath, applicationPath
@@ -91,7 +91,7 @@ def main():
                         if len(parts) == 2:
 
                             ipAddress  = parts[0].split('[')[-1][:-1]
-                            macAddress = parts[1]
+                            macAddress = normalize_mac(parts[1])
 
                             mylog('verbose', [f'[SNMPDSC] IP: {ipAddress} MAC: {macAddress}'])
 
