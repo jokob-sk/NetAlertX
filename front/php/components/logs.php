@@ -29,15 +29,25 @@ function renderLogArea($params) {
 
     // Prepare buttons HTML
     $buttonsHtml = '';
+    $totalButtons = count($buttons);
+    if ($totalButtons > 0) {
+        $colClass = 12 / $totalButtons;
+        // Use $colClass in your HTML generation or further logic
+    } else {
+        // Handle case where $buttons array is empty
+        $colClass = 12;
+    }
+
     foreach ($buttons as $button) {
         $labelStringCode = isset($button['labelStringCode']) ? $button['labelStringCode'] : '';
         $event = isset($button['event']) ? $button['event'] : '';
 
         $buttonsHtml .= '
-            <div class="col-sm-6 col-xs-6">
-                <button class="btn btn-primary" onclick="' . htmlspecialchars($event) . '">' . lang($labelStringCode) . '</button>
+            <div class="button-wrap col-sm-' . $colClass . ' col-xs-' . $colClass . '">
+                <button class="btn btn-primary col-sm-12 col-xs-12" onclick="' . htmlspecialchars($event) . '">' . lang($labelStringCode) . '</button>
             </div>';
     }
+
 
     // Render the log area HTML
     $html = '
@@ -48,12 +58,12 @@ function renderLogArea($params) {
                 '</textarea>
             </div>
             <div class="row logs-row">
-                <div class="log-file col-sm-8 col-xs-12">' . htmlspecialchars($fileName) . '
+                <div class="log-file col-sm-6 col-xs-12">' . htmlspecialchars($fileName) . '
                     <div class="logs-size">' . number_format((filesize($filePath) / 1000000), 2, ",", ".") . ' MB'
                     . $downloadButtonHtml .
                     '</div>
                 </div>
-                <div class="col-sm-4 col-xs-12">'
+                <div class="col-sm-6 col-xs-12">'
                     . $buttonsHtml .
                 '</div>
             </div>

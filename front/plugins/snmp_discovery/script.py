@@ -60,11 +60,9 @@ def main():
 
                 for line in lines: 
 
-                    tmpSplt = line.split('"')   
-                    
+                    tmpSplt = line.split('"')  
 
                     if len(tmpSplt) == 3:
-
                         
                         ipStr = tmpSplt[0].split('.')[-4:]  # Get the last 4 elements to extract the IP
                         macStr = tmpSplt[1].strip().split(' ')  # Remove leading/trailing spaces from MAC
@@ -85,6 +83,26 @@ def main():
                             )
                         else:
                             mylog('verbose', [f'[SNMPDSC] ipStr does not seem to contain a valid IP:', ipStr]) 
+
+
+                    elif line.startswith('ipNetToMediaPhysAddress'):
+                        # Format: snmpwalk -OXsq output
+                        parts = line.split()
+                        if len(parts) == 2:
+
+                            ipAddress  = parts[0].split('[')[-1][:-1]
+                            macAddress = parts[1]
+
+                            mylog('verbose', [f'[SNMPDSC] IP: {ipAddress} MAC: {macAddress}'])
+
+                            plugin_objects.add_object(
+                                primaryId   = handleEmpty(macAddress),
+                                secondaryId = handleEmpty(ipAddress.strip()),
+                                watched1    = '(unknown)',
+                                watched2    = handleEmpty(snmpwalkArgs[6]),
+                                extra       = handleEmpty(line),
+                                foreignKey  = handleEmpty(macAddress)
+                            )
 
     mylog('verbose', ['[SNMPDSC] Entries found: ', len(plugin_objects)]) 
 

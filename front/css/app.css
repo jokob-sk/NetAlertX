@@ -31,7 +31,11 @@
 {
     width: 100%;
 }
-.logs-row button{
+.logs-row .button-wrap{
+    /* margin: 2px; */
+    
+}
+.logs-row .button{
     margin: 2px;
 }
 .logs-row
