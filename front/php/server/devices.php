@@ -901,18 +901,11 @@ function copyFromDevice() {
 
   $MAC_FROM = $_REQUEST['macFrom'];
   $MAC_TO   = $_REQUEST['macTo'];
-
-  if ((false === filter_var($MAC_FROM , FILTER_VALIDATE_MAC) && $MAC_FROM != "Internet" && $MAC_FROM != "")  ) {
-    throw new Exception('Invalid mac address');
-  }
-  if ((false === filter_var($MAC_TO , FILTER_VALIDATE_MAC) && $MAC_TO != "Internet" && $MAC_TO != "")  ) {
-    throw new Exception('Invalid mac address');
-  }
   
   global $db;
 
   // clean-up temporary table  
-  $sql = "DROP TABLE temp_devices ";
+  $sql = "DROP TABLE IF EXISTS temp_devices ";
   $result = $db->query($sql);
 
   // create temporary table with the source data

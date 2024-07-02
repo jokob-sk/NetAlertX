@@ -68,6 +68,13 @@
     },
     {
         "buttons": [
+        ],
+        "fileName": "db_is_locked.log",
+        "filePath": "/app/front/log/db_is_locked.log",
+        "textAreaCssClass": "logs logs-small"
+    },
+    {
+        "buttons": [
             {
                 "labelStringCode": "Maint_PurgeLog",
                 "event": "logManage('stdout.log', 'cleanLog')"
