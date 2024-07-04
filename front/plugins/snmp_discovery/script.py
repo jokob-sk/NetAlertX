@@ -25,7 +25,7 @@ def main():
     mylog('verbose', ['[SNMPDSC] In script ']) 
 
     # init global variables
-    global ROUTERS
+    global snmpWalkCmds
 
     
     parser = argparse.ArgumentParser(description='This plugin is used to discover devices via the arp table(s) of a RFC1213 compliant router or switch.')    
@@ -35,18 +35,20 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     if values.routers:        
-        ROUTERS = values.routers.split('=')[1].replace('\'','')  
+        snmpWalkCmds = values.routers.split('=')[1].replace('\'','')  
         
 
-        if ',' in ROUTERS:
-            routers = ROUTERS.split(',')
+        if ',' in snmpWalkCmds:
+            commands = snmpWalkCmds.split(',')
         else:
-            routers = [ROUTERS]
+            commands = [snmpWalkCmds]
     
-        for router in routers:
-            mylog('verbose', ['[SNMPDSC] Router snmpwalk command: ', router]) 
+        for cmd in commands:
+            mylog('verbose', ['[SNMPDSC] Router snmpwalk command: ', cmd]) 
             timeoutSec = 10
-            snmpwalkArgs = router.split(' ')
+            # split the string, remove white spaces around each item, and exclude any empty strings
+            snmpwalkArgs = [arg.strip() for arg in cmd.split(' ') if arg.strip()]
+
 
             # Execute N probes and insert in list
             probes = 1  # N probes

@@ -270,7 +270,7 @@ def update_devices_data_from_scan (db):
                                       WHERE dev_MAC = cur_MAC) """)
 
     # Update IP 
-    mylog('debug', '[Update Devices] - cur_IP -> dev_LastIP ')
+    mylog('debug', '[Update Devices] - cur_IP -> dev_LastIP (always updated)')
     sql.execute("""UPDATE Devices
                     SET dev_LastIP = (SELECT cur_IP FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC)
