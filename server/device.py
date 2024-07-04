@@ -270,7 +270,7 @@ def update_devices_data_from_scan (db):
                                       WHERE dev_MAC = cur_MAC) """)
 
     # Update IP 
-    mylog('debug', '[Update Devices] - 3 LastIP ')
+    mylog('debug', '[Update Devices] - cur_IP -> dev_LastIP ')
     sql.execute("""UPDATE Devices
                     SET dev_LastIP = (SELECT cur_IP FROM CurrentScan
                                       WHERE dev_MAC = cur_MAC)
@@ -278,7 +278,7 @@ def update_devices_data_from_scan (db):
                                   WHERE dev_MAC = cur_MAC) """)
 
     # Update only devices with empty or NULL vendors
-    mylog('debug', '[Update Devices] - 3 cur_Vendor -> dev_Vendor')
+    mylog('debug', '[Update Devices] - cur_Vendor -> (if empty) dev_Vendor')
     sql.execute("""UPDATE Devices
                     SET dev_Vendor = (
                         SELECT cur_Vendor
@@ -294,39 +294,36 @@ def update_devices_data_from_scan (db):
                         )""")
 
     # Update only devices with empty or NULL dev_Network_Node_port 
-    mylog('debug', '[Update Devices] - 3 cur_Port -> dev_Network_Node_port')
+    mylog('debug', '[Update Devices] - (if not empty) cur_Port -> dev_Network_Node_port')
     sql.execute("""UPDATE Devices
                     SET dev_Network_Node_port = (
-                        SELECT cur_Port
-                        FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
-                    )
-                    WHERE 
-                        (dev_Network_Node_port IS NULL OR dev_Network_Node_port IN ("", "null"))
-                        AND EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
-                        )""")
+                    SELECT cur_Port
+                    FROM CurrentScan                    
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM CurrentScan
+                    WHERE Devices.dev_MAC = CurrentScan.cur_MAC
+                      AND CurrentScan.cur_Port IS NOT NULL AND CurrentScan.cur_Port NOT IN ("", "null")
+                )""")
 
     # Update only devices with empty or NULL dev_Network_Node_MAC_ADDR 
-    mylog('debug', '[Update Devices] - 3 cur_NetworkNodeMAC -> dev_Network_Node_MAC_ADDR')
+    mylog('debug', '[Update Devices] - (if not empty) cur_NetworkNodeMAC -> dev_Network_Node_MAC_ADDR')
     sql.execute("""UPDATE Devices
                     SET dev_Network_Node_MAC_ADDR = (
-                        SELECT cur_NetworkNodeMAC
-                        FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
-                    )
-                    WHERE 
-                        (dev_Network_Node_MAC_ADDR IS NULL OR dev_Network_Node_MAC_ADDR IN ("", "null"))
-                        AND EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
-                        )""")
+                    SELECT cur_NetworkNodeMAC
+                    FROM CurrentScan
+                    WHERE Devices.dev_MAC = CurrentScan.cur_MAC
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM CurrentScan
+                    WHERE Devices.dev_MAC = CurrentScan.cur_MAC
+                        AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
+                )""")
 
     # Update only devices with empty or NULL dev_NetworkSite 
-    mylog('debug', '[Update Devices] - 3 cur_NetworkSite -> dev_NetworkSite')
+    mylog('debug', '[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) dev_NetworkSite')
     sql.execute("""UPDATE Devices
                     SET dev_NetworkSite = (
                         SELECT cur_NetworkSite
@@ -339,10 +336,11 @@ def update_devices_data_from_scan (db):
                             SELECT 1
                             FROM CurrentScan
                             WHERE dev_MAC = cur_MAC
-                        )""")
+                                AND CurrentScan.cur_NetworkSite IS NOT NULL AND CurrentScan.cur_NetworkSite NOT IN ("", "null")
+                )""")
 
     # Update only devices with empty or NULL dev_SSID 
-    mylog('debug', '[Update Devices] - 3 cur_SSID -> dev_SSID')
+    mylog('debug', '[Update Devices] - (if not empty) cur_SSID -> (if empty) dev_SSID')
     sql.execute("""UPDATE Devices
                     SET dev_SSID = (
                         SELECT cur_SSID
@@ -355,10 +353,11 @@ def update_devices_data_from_scan (db):
                             SELECT 1
                             FROM CurrentScan
                             WHERE dev_MAC = cur_MAC
+                                AND CurrentScan.cur_SSID IS NOT NULL AND CurrentScan.cur_SSID NOT IN ("", "null")
                         )""")
 
     # Update only devices with empty or NULL dev_DeviceType
-    mylog('debug', '[Update Devices] - 3 cur_Type -> dev_DeviceType')
+    mylog('debug', '[Update Devices] - (if not empty) cur_Type -> (if empty) dev_DeviceType')
     sql.execute("""UPDATE Devices
                     SET dev_DeviceType = (
                         SELECT cur_Type
@@ -371,10 +370,11 @@ def update_devices_data_from_scan (db):
                             SELECT 1
                             FROM CurrentScan
                             WHERE dev_MAC = cur_MAC
+                                AND CurrentScan.cur_Type IS NOT NULL AND CurrentScan.cur_Type NOT IN ("", "null")
                         )""")
 
     # Update (unknown) or (name not found) Names if available
-    mylog('debug','[Update Devices] - 4 Unknown Name')
+    mylog('debug','[Update Devices] - (if not empty) cur_Name -> (if empty) dev_NAME')
     sql.execute ("""    UPDATE Devices
                         SET dev_NAME = COALESCE((
                             SELECT cur_Name 
