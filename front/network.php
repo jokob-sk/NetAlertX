@@ -528,8 +528,10 @@
     for(var i in list)
     {
       //... of the current node
-      if(list[i].parentMac == node.mac && !hiddenMacs.includes(list[i].parentMac))
+      
+      if(list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac))
       {   
+
         visibleNodesCount++
 
         // and process them 
@@ -570,7 +572,6 @@
   
   function getHierarchy()
   { 
-
     for(i in deviceListGlobal)
     {      
       if(deviceListGlobal[i].mac == 'Internet')
@@ -618,7 +619,7 @@
   // Handle network node click - select correct tab in teh bottom table
   function handleNodeClick(event)
   {
-    console.log(event.target.offsetParent.offsetParent)
+    // console.log(event.target.offsetParent.offsetParent)
 
     const targetTabMAC = $(event.target.offsetParent.offsetParent).attr("data-mytreemacmain");    
 
@@ -728,7 +729,7 @@
       onNodeClick: (nodeData) => handleNodeClick(nodeData),
         relationnalField: "children",
       });
-
+      
       console.log(myHierarchy)
 
       myTree.refresh(myHierarchy);

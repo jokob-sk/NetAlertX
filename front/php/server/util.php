@@ -353,7 +353,7 @@ function saveSettings()
                 }
 
                 $txt .= $settingKey . "=" . $val . "\n";
-            } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list' || $settingType == 'list.select') {
+            } elseif ($settingType == 'text.multiselect' || $settingType == 'subnets' || $settingType == 'list' || $settingType == 'list.select' || $settingType == 'list.base64') {
                 $temp = '';
                 
                 if(is_array($settingValue) == FALSE)

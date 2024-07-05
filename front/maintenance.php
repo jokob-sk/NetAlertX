@@ -390,7 +390,7 @@ $db->close();
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="askExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
+                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="ExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
                     </div>
@@ -640,11 +640,6 @@ function restartBackend() {
 
 // -----------------------------------------------------------
 // Export CSV
-function askExportCSV() {
-  // Ask 
-  showModalWarning('<?= lang('Maintenance_Tool_ExportCSV_noti');?>', '<?= lang('Maintenance_Tool_ExportCSV_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'ExportCSV');
-}
 function ExportCSV()
 { 
   // Execute

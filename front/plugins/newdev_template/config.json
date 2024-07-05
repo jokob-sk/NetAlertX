@@ -630,7 +630,7 @@
     },
     {
       "function": "NAME_CLEANUP_REGEX",
-      "type": "list",
+      "type": "list.base64",
       "default_value": ["XC5fYWlycGxheQ==", "XC5fdGNw", "XC5sb2NhbGRvbWFpbg==", "XC5sb2NhbA==", "XC5fZXNwaG9tZWxpYg==", "XC5fZ29vZ2xlY2FzdA==", "XC5sYW4=", "XC5ob21l",  "LVthLWZBLUYwLTldezMyfQ==", "Iy4q" ],
       "options": [],
       "localized": ["name", "description"],

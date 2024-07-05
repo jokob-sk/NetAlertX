@@ -279,7 +279,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Previous IP (not recommended)</li><li><code>Watched_Value2</code> unused</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> type </li></ul>"
         },
         {
           "language_code": "de_de",
@@ -423,6 +423,22 @@
         {
           "language_code": "en_us",
           "string": "Retries needed"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "mapped_to_column": "cur_Type",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Type"
         }
       ]
     },

@@ -314,7 +314,7 @@ def get_setting_value(key):
 #  Convert the setting value to the corresponding python type
 def setting_value_to_python_type(set_type, set_value):
 
-    value = ''
+    value = '----not processed----'
 
     # Handle different types of settings
     if set_type in ['text', 'string', 'password', 'password.SHA256', 'readonly', 'text.select']:
@@ -332,23 +332,35 @@ def setting_value_to_python_type(set_type, set_value):
         
     elif set_type in ['integer.select', 'integer']:
         value = int(set_value)
-    # belwo covers 'text.multiselect', 'list', 'subnets', 'list.select', 'textarea.list', 'list'
-    elif set_type in ['text.multiselect', 'list', 'subnets', 'list.select', 'textarea.list'] or 'list' in set_type:
-        #  Handle string 
+    # belwo covers 'text.multiselect', 'list', 'subnets', 'list.select', 'list'
+    elif set_type in ['subnets' ] or 'list' in set_type:        
 
         mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])
 
+        # Handle string 
         if isinstance(set_value, str):
             value = json.loads(set_value.replace("'", "\""))
-        # Assuming set_value is a list in this case
-        elif isinstance(set_value, list):
+
+        # Assuming set_value is a list at this point
+        if isinstance(set_value, list):
+            if 'base64' in set_type:
+                tmp_value = []
+                for item in set_value:
+                    tmp_value.append(base64.b64decode(item))
+
+                set_value = tmp_value
+
             value = set_value
+
     elif set_type == '.template':
         # Assuming set_value is a JSON object in this case
         value = json.loads(set_value)
-    else:
+    
+    #  log debug info if not processed
+    if value == '----not processed----':
         mylog('none', [f'[SETTINGS] ⚠ ERROR - set_type not handled:{set_type}'])
-        mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(setting)}'])
+        mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(set_value)}'])
+        value = ''
 
     return value
 

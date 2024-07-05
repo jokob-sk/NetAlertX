@@ -26,12 +26,9 @@ $settingsJson = json_decode($data);
 // get settings from the DB
 
 global $db;
-global $settingKeyOfLists;
 
 $result = $db->query("SELECT * FROM Settings");  
 
-// array 
-$settingKeyOfLists = array();
 
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
@@ -51,7 +48,6 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
-<!-- Page ------------------------------------------------------------------ -->
 <!-- Page ------------------------------------------------------------------ -->
 
 <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
@@ -253,7 +249,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   function initSettingsPage(settingsData, pluginsData){
 
     const settingPluginPrefixes = [];
-    const settingKeyOfLists = [];
     
     const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);    
     const enabledOthers         = getPluginsByType(pluginsData, "other", true);    
@@ -470,11 +465,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             // --- process text ---
             if(setType.includes(".select"))
             {
-              inputHtml = generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = false)
+              inputHtml = generateOptions(pluginsData, set, inputHtml, isMultiSelect = false)
 
             } else if(setType.includes(".multiselect"))
             {
-              inputHtml = generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = true)
+              inputHtml = generateOptions(pluginsData, set, inputHtml, isMultiSelect = true)
             } else{
 
               // if it's overridable set readonly accordingly
@@ -507,7 +502,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} ${disabled}/>`;          
           } else if (setType === 'integer.select') {
 
-            inputHtml = generateInputOptions(pluginsData, set, inputHtml)
+            inputHtml = generateOptions(pluginsData, set, inputHtml)
           
           } else if (setType === 'subnets') {
             // --- process subnets ---
@@ -543,10 +538,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                             ${getString("Gen_Remove_All")}
                           </button>                              
                         </div>`;
-          } else if (setType === 'list' || setType === 'list.select' || setType === 'list.readonly') {
+          } else if (setType.startsWith('list')) {
             // --- process list ---
-
-            settingKeyOfLists.push(codeName);
 
             inputHtml += `
               <div class="row form-group">
@@ -554,7 +547,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             if(setType.includes(".select")) // not tested
             {
-              inputHtml += generateInputOptions(pluginsData, set, inputHtml, isMultiSelect = false)
+              inputHtml += generateOptions(pluginsData, set, inputHtml, isMultiSelect = false, isValueSource = false)
+            }
+            else if(setType.includes(".multiselect"))
+            {
+              inputHtml += generateOptions(pluginsData, set, inputHtml, isMultiSelect = true)
             }
             else
             {
@@ -565,7 +562,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             inputHtml += `</div>
                 <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
+                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this, false);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
                 </div>
               </div>
               <div class="form-group">
@@ -623,7 +620,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           $(`#${prefix} .panel-body`).append(setHtml);
 
           // init remove and edit listitem click gestures
-          if(['subnets', 'list' ].includes(setType))
+          if(['subnets'].includes(setType) || setType.startsWith('list'))
           {
             initListInteractionOptions(codeName)
           }
@@ -639,8 +636,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     hideSpinner()
 
   }
-
-
 
   // display the name of the first person
   // echo $settingsJson[0]->name;
@@ -671,52 +666,58 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       var settingsArray = [];
 
       // collect values for each of the different input form controls
-      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'list.select', 'integer.select', 'text.multiselect'];
+      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
 
       // get settings to determine setting type to store values appropriately
       $.get('api/table_settings.json?nocache=' + Date.now(), function(res) { 
-      
-        settingsJSON = res;
+        // loop through the settings definitions from the json
+        res["data"].forEach(set => {
+
+          prefix = set["Group"]
+          setType = set["Type"]
+          setCodeName = set["Code_Name"]
+
+          if (noConversion.includes(setType)) {
+
+            settingsArray.push([prefix, setCodeName, setType, $('#'+setCodeName).val()]);
+
+          } else if (setType === 'boolean' || setType === 'integer.checkbox') {
             
-        data = settingsJSON["data"];     
-
-        data.forEach(set => {
-          if (noConversion.includes(set['Type'])) {
-
-            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], $('#'+set["Code_Name"]).val()]);
-
-          } else if (set['Type'] === 'boolean' || set['Type'] === 'integer.checkbox') {
-            
-            const temp = $(`#${set["Code_Name"]}`).is(':checked') ? 1 : 0;
-            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temp]);
+            const temp = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
+            settingsArray.push([prefix, setCodeName, setType, temp]);
           
-          } else if (set['Type'] === 'list' || set['Type'] === 'subnets') {
+          } else if (setType.startsWith('list') || setType === 'subnets') {
+            
             const temps = [];
-            $(`#${set["Code_Name"]} option`).each(function (i, selected) {
+            $(`#${setCodeName} option`).each(function (i, selected) {
               const vl = $(selected).val();
               if (vl !== '') {
                 temps.push(vl);
               }
             });        
-            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], JSON.stringify(temps)]);
-          } else if (set['Type'] === 'json') {        
-            const temps = $('#'+set["Code_Name"]).val();        
-            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);          
-          } else if (set['Type'] === 'password.SHA256') { 
+            
+            settingsArray.push([prefix, setCodeName, setType, JSON.stringify(temps)]);
+          } else if (setType === 'json') {        
+            const temps = $('#'+setCodeName).val();        
+            settingsArray.push([prefix, setCodeName, setType, temps]);          
+          } else if (setType === 'password.SHA256') { 
             // save value as SHA256 if value isn't SHA256 already       
-            var temps = $('#'+set["Code_Name"]).val(); 
+            var temps = $('#'+setCodeName).val(); 
             
             if(temps != "" && !isSHA256(temps))
             {
               temps = CryptoJS.SHA256(temps).toString(CryptoJS.enc.Hex);
             } 
-            settingsArray.push([set["Group"], set["Code_Name"], set["Type"], temps]);
+            settingsArray.push([prefix, setCodeName, setType, temps]);
           }
         });
 
         // sanity check to make sure settings were loaded & collected correctly
         if(settingsCollectedCorrectly(settingsArray, settingsJSON_DB))
         {
+
+          // console.log(settingsArray);
+          
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",

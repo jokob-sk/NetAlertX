@@ -71,7 +71,7 @@ def main():
         watched1    = f'Previous IP: {PREV_IP}',
         watched2    = cmd_output.replace('\n',''),
         watched3    = retries_needed,  
-        watched4    = '',
+        watched4    = 'Gateway',
         extra       = f'Previous IP: {PREV_IP}', 
         foreignKey  = 'Internet')
 

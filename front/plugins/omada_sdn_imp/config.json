@@ -434,7 +434,7 @@
     },
     {
       "column": "Extra",
-      "mapped_to_column": "cur_NetworkSite",
+      "mapped_to_column": "cur_Type",
       "css_classes": "col-sm-2",
       "show": false,
       "type": "label",

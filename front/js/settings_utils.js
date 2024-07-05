@@ -245,18 +245,28 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 // -------------------------------------------------------------------
 
 // ---------------------------------------------------------
-function addList(element)
+function addList(element, clearInput = true)
 {
 
   const fromId = $(element).attr('my-input-from');
   const toId = $(element).attr('my-input-to');
 
+  
+
   input = $(`#${fromId}`).val();
+
+  console.log(input);
+  console.log(toId);
+  console.log($(`#${toId}`));
+
   $(`#${toId}`).append($("<option ></option>").attr("value", input).text(input));
   
   // clear input
-  $(`#${fromId}`).val("");
-
+  if (clearInput)
+  {
+    $(`#${fromId}`).val("");
+  }
+  
   settingsChanged();
 }
 // ---------------------------------------------------------
@@ -340,6 +350,8 @@ function initListInteractionOptions(selectorId) {
       // Perform action based on click count
       if (clickCounter === 1) {
         // Single-click action
+        // btoa(iconHtml.replace(/"/g, "'")   <-- encode
+        // atob()    <--- decode
         showModalFieldInput(
           `<i class="fa-regular fa-pen-to-square"></i> ${getString('Gen_Update_Value')}`,
           getString('settings_update_item_warning'),
@@ -480,7 +492,7 @@ function getParam(targetId, key, skipCache = false) {
 
   // ---------------------------------------------------------
   // generate a list of options for a input select
-  function generateInputOptions(pluginsData, set, input, isMultiSelect = false)
+  function generateOptions(pluginsData, set, input, isMultiSelect = false, isValueSource = true)
   {
     multi = isMultiSelect ? "multiple" : "";
 
@@ -492,15 +504,19 @@ function getParam(targetId, key, skipCache = false) {
     var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
 
     // execute AJAX callabck + SQL query resolution
-    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions)  
+    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions); 
 
+    //  generate different ID depending on if it's the source for the value to be saved or only used as an input
+    isValueSource ? id = set['Code_Name'] : id = set['Code_Name'] + '_input';
+    
     // main selection dropdown wrapper
     input += `
       <select onChange="settingsChanged()"  
               my-data-type="${set['Type']}" 
               class="form-control" 
               name="${set['Code_Name']}" 
-              id="${set['Code_Name']}" ${multi}>
+              id="${id}" 
+              ${multi}>
 
             <option id="${targetLocation}" temporary="temporary"></option>
     

@@ -65,7 +65,7 @@ def main():
         mylog('verbose', [f'[{pluginName}] New entries: "{len(new_devices)}"'])
 
     # log result
-    plugin_objects.write_result_file()
+    # plugin_objects.write_result_file()
 
     return 0
 
