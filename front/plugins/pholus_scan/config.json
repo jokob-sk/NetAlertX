@@ -63,7 +63,7 @@
     {
       "function": "RUN",
       "type": "text.select",
-      "default_value": "on_new_device",
+      "default_value": "disabled",
       "options": [
         "disabled",
         "once",
