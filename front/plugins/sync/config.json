@@ -202,7 +202,7 @@
     },
     {
       "function": "plugins",
-      "type": "text.multiselect",
+      "type": "list.select",
       "maxLength": 50,
       "default_value": [],
       "options": ["{value}"],

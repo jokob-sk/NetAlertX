@@ -64,7 +64,7 @@
       "function": "RUN",
       "events": ["run"],
       "type": "text.select",
-      "default_value": "schedule",
+      "default_value": "disabled",
       "options": ["disabled", "once", "schedule", "always_after_scan"],
       "localized": ["name", "description"],
       "name": [

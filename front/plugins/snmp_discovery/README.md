@@ -54,7 +54,7 @@ jokob@SecurityGateway-USG:~$ snmptranslate -On -IR ipNetToMediaPhysAddress
 .1.3.6.1.2.1.4.22.1.2
 ```
 
-- Use the `snmpwalk -v 2c -OXsq  -c public 192.168.1.1 .1.3.6.1.2.1.4.22.1.2` command in NetAlertX
+- Use the `snmpwalk -v 2c -OXsq -c public 192.168.1.1 .1.3.6.1.2.1.4.22.1.2` command in NetAlertX
 
 
 

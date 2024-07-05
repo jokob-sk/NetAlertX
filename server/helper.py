@@ -332,7 +332,8 @@ def setting_value_to_python_type(set_type, set_value):
         
     elif set_type in ['integer.select', 'integer']:
         value = int(set_value)
-    elif set_type in ['text.multiselect', 'list', 'subnets', 'list.select']:
+    # belwo covers 'text.multiselect', 'list', 'subnets', 'list.select', 'textarea.list', 'list'
+    elif set_type in ['text.multiselect', 'list', 'subnets', 'list.select', 'textarea.list'] or 'list' in set_type:
         #  Handle string 
 
         mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])

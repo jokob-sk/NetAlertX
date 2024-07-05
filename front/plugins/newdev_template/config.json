@@ -627,6 +627,25 @@
           "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
         }
       ]
+    },
+    {
+      "function": "NAME_CLEANUP_REGEX",
+      "type": "list",
+      "default_value": ["XC5fYWlycGxheQ==", "XC5fdGNw", "XC5sb2NhbGRvbWFpbg==", "XC5sb2NhbA==", "XC5fZXNwaG9tZWxpYg==", "XC5fZ29vZ2xlY2FzdA==", "XC5sYW4=", "XC5ob21l",  "LVthLWZBLUYwLTldezMyfQ==", "Iy4q" ],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Cleanup REGEX"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "All the newly discovered device names are clened up by applying the following REGEX expression in this order."
+        }
+      ]
     }
   ],
   "required": [

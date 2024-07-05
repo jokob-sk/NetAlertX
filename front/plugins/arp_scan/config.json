@@ -70,7 +70,7 @@
     {
       "function": "RUN",
       "type": "text.select",
-      "default_value": "schedule",
+      "default_value": "disabled",
       "options": [
         "disabled",
         "once",
