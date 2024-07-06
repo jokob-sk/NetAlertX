@@ -506,7 +506,7 @@ def update_devices_names (db):
 # Check if the variable contains a valid MAC address or "Internet"
 def check_mac_or_internet(input_str):
     # Regular expression pattern for matching a MAC address
-    mac_pattern = r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+    mac_pattern = r'([0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2})'
 
     if input_str.lower() == 'internet':
         return True

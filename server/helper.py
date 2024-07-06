@@ -739,7 +739,7 @@ def extract_between_strings(text, start, end):
 
 #-------------------------------------------------------------------------------
 def extract_mac_addresses(text):
-    mac_pattern = r"([0-9A-Fa-f]{2}(?:[:-][0-9A-Fa-f]{2}){5})"
+    mac_pattern = r"([0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2})"
     mac_addresses = re.findall(mac_pattern, text)
     return mac_addresses
 
