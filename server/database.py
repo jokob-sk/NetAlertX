@@ -473,6 +473,7 @@ class DB():
         # -------------------------------------------------------------------------
 
         # indicates, if CurrentScan table is available
+        # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
         self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
         self.sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,

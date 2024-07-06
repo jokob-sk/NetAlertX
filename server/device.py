@@ -283,14 +283,14 @@ def update_devices_data_from_scan (db):
                     SET dev_Vendor = (
                         SELECT cur_Vendor
                         FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
+                        WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                     )
                     WHERE 
                         (dev_Vendor IS NULL OR dev_Vendor IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
+                            WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                         )""")
 
     # Update only devices with empty or NULL dev_Network_Node_port 
@@ -298,7 +298,8 @@ def update_devices_data_from_scan (db):
     sql.execute("""UPDATE Devices
                     SET dev_Network_Node_port = (
                     SELECT cur_Port
-                    FROM CurrentScan                    
+                    FROM CurrentScan        
+                    WHERE Devices.dev_MAC = CurrentScan.cur_MAC          
                 )
                 WHERE EXISTS (
                     SELECT 1
@@ -328,14 +329,14 @@ def update_devices_data_from_scan (db):
                     SET dev_NetworkSite = (
                         SELECT cur_NetworkSite
                         FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
+                        WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                     )
                     WHERE 
                         (dev_NetworkSite IS NULL OR dev_NetworkSite IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
+                            WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                                 AND CurrentScan.cur_NetworkSite IS NOT NULL AND CurrentScan.cur_NetworkSite NOT IN ("", "null")
                 )""")
 
@@ -345,14 +346,14 @@ def update_devices_data_from_scan (db):
                     SET dev_SSID = (
                         SELECT cur_SSID
                         FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
+                        WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                     )
                     WHERE 
                         (dev_SSID IS NULL OR dev_SSID IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
+                            WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                                 AND CurrentScan.cur_SSID IS NOT NULL AND CurrentScan.cur_SSID NOT IN ("", "null")
                         )""")
 
@@ -362,14 +363,14 @@ def update_devices_data_from_scan (db):
                     SET dev_DeviceType = (
                         SELECT cur_Type
                         FROM CurrentScan
-                        WHERE dev_MAC = cur_MAC
+                        WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                     )
                     WHERE 
                         (dev_DeviceType IS NULL OR dev_DeviceType IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
-                            WHERE dev_MAC = cur_MAC
+                            WHERE Devices.dev_MAC = CurrentScan.cur_MAC
                                 AND CurrentScan.cur_Type IS NOT NULL AND CurrentScan.cur_Type NOT IN ("", "null")
                         )""")
 

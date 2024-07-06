@@ -61,7 +61,7 @@ def process_scan (db):
     skip_repeated_notifications (db)
 
     # Clear current scan as processed 
-    # TODO comment below for CurrentScan debugging
+    # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
     db.sql.execute ("DELETE FROM CurrentScan") 
   
     # Commit changes    
