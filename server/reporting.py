@@ -107,6 +107,8 @@ def get_notifications (db):
             "columnNames": json_obj.columnNames
         }
         json_down_devices = json_obj.json["data"]     
+
+        mylog('debug', ['[Notification] json_down_devices: ', json.dumps(json_down_devices) ])
     
     if 'down_reconnected' in sections:
         # Compose Reconnected Down Section 
@@ -127,6 +129,8 @@ def get_notifications (db):
             "columnNames": json_obj.columnNames
         }
         json_down_reconnected = json_obj.json["data"]     
+
+        mylog('debug', ['[Notification] json_down_reconnected: ', json.dumps(json_down_reconnected) ])
 
     if 'events' in sections:
         # Compose Events Section

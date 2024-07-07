@@ -201,6 +201,13 @@
     }
   }
 
+  // -------------------------------------------------------------------
+  // Utility function to check if the value is already Base64
+  function isBase64(value) {
+    const base64Regex = /^(?:[A-Za-z0-9+\/]{4})*?(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
+    return base64Regex.test(value);
+  }
+
 // -------------------------------------------------------------------
 // Validation
 // -------------------------------------------------------------------
@@ -245,35 +252,37 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 // -------------------------------------------------------------------
 
 // ---------------------------------------------------------
+// Add item to list
 function addList(element, clearInput = true)
 {
-
   const fromId = $(element).attr('my-input-from');
-  const toId = $(element).attr('my-input-to');
+  const toId = $(element).attr('my-input-to');  
 
+  const input = $(`#${fromId}`).val();
+
+  console.log(`fromId | toId | input : ${fromId} | ${toId} | ${input}`);
+
+  const newOption = $("<option class='interactable-option'></option>").attr("value", input).text(input);
   
-
-  input = $(`#${fromId}`).val();
-
-  console.log(input);
-  console.log(toId);
-  console.log($(`#${toId}`));
-
-  $(`#${toId}`).append($("<option ></option>").attr("value", input).text(input));
+  const el = $(`#${toId}`).append(newOption);
   
   // clear input
   if (clearInput)
   {
     $(`#${fromId}`).val("");
   }
+
+  // Initialize interaction options only for the newly added option
+  initListInteractionOptions(newOption);
   
   settingsChanged();
 }
+
 // ---------------------------------------------------------
 function removeFromList(element)
 {
   settingsChanged();    
-  $(`#${$(element).attr('my-input')}`).find("option:last").remove();
+  $(`#${$(element).attr('my-input-to')}`).find("option:last").remove();
   
 }
 // ---------------------------------------------------------
@@ -320,7 +329,7 @@ function removeOptionItem(option) {
 function removeAllOptions(element)
 {
   settingsChanged();    
-  $(`#${$(element).attr('my-input')}`).empty();
+  $(`#${$(element).attr('my-input-to')}`).empty();
   
 }
 
@@ -331,12 +340,14 @@ function removeAllOptions(element)
 let clickCounter = 0;
 
 // Function to initialize list interaction options
-function initListInteractionOptions(selectorId) {
-  // Select all options within the specified selector
-  const $options = $(`#${selectorId} option`);
-
-  // Add class to make options interactable
-  $options.addClass('interactable-option');
+function initListInteractionOptions(element) {
+  if(element)
+  {
+    $options = $(element);
+  } else
+  {
+    $options = $(`.interactable-option`);
+  }
 
   // Attach click event listener to options
   $options.on('click', function() {
@@ -350,8 +361,6 @@ function initListInteractionOptions(selectorId) {
       // Perform action based on click count
       if (clickCounter === 1) {
         // Single-click action
-        // btoa(iconHtml.replace(/"/g, "'")   <-- encode
-        // atob()    <--- decode
         showModalFieldInput(
           `<i class="fa-regular fa-pen-to-square"></i> ${getString('Gen_Update_Value')}`,
           getString('settings_update_item_warning'),
@@ -371,6 +380,7 @@ function initListInteractionOptions(selectorId) {
       clickCounter = 0;
     }, 300); // Adjust delay as needed
   });
+
 }
 
 
@@ -490,39 +500,165 @@ function getParam(targetId, key, skipCache = false) {
   }
 
 
-  // ---------------------------------------------------------
-  // generate a list of options for a input select
-  function generateOptions(pluginsData, set, input, isMultiSelect = false, isValueSource = true)
-  {
-    multi = isMultiSelect ? "multiple" : "";
+    // ---------------------------------------------------------
+     // generate a list of options for a input select
+    function generateOptions(pluginsData, set, input, dataType, isMultiSelect = false, editable = false, transformers = []) {
+      let multi           = isMultiSelect ? "multiple" : "";
+      let valuesArray     = createArray(set['Value']);
+      let settingKey      = set['Code_Name'];
+      // editable ? classNames += " interactable-option" : classNames = ""
+  
+      //  generate different ID depending on if it's the source for the value to be saved or only used as an input
+      // isValueSource ? id = settingKey : id = settingKey + '_input';
 
-    // optionsArray = getSettingOptions(set['Code_Name'] )
-    valuesArray = createArray(set['Value']);  
-
-
-    // create unique ID  
-    var targetLocation = set['Code_Name'] + "_initSettingDropdown";  
-
-    // execute AJAX callabck + SQL query resolution
-    initSettingDropdown(set['Code_Name'] , valuesArray,  targetLocation, generateDropdownOptions); 
-
-    //  generate different ID depending on if it's the source for the value to be saved or only used as an input
-    isValueSource ? id = set['Code_Name'] : id = set['Code_Name'] + '_input';
+      // main selection dropdown wrapper
+      input += `
+        <select onChange="settingsChanged()" my-data-type="${dataType}"  my-editable="${editable}" class="form-control" name="${settingKey}" id="${settingKey}" ${multi}>          
+      `;
     
-    // main selection dropdown wrapper
-    input += `
-      <select onChange="settingsChanged()"  
-              my-data-type="${set['Type']}" 
-              class="form-control" 
-              name="${set['Code_Name']}" 
-              id="${id}" 
-              ${multi}>
+      // if available transformers are applied
+      valuesArray = valuesArray.map(value => applyTransformers(value, transformers));
 
-            <option id="${targetLocation}" temporary="temporary"></option>
+      // get all options
+      optionsArray = createArray(getSettingOptions(settingKey)) 
+
+      // loop over all options and select the ones selected in the valuesArray (saved by the user)
+      if(optionsArray.length > 0 )
+      {
+        //  check if needs to be processed ASYNC
+        if(isSQLQuery(optionsArray[0]))
+        {
+          // create temporary placeholder
+          targetLocation = settingKey + "_temp_"
+          input += `<option value="" id="${targetLocation}" ></option>`; 
+
+          //  callback to the DB
+          readData(optionsArray[0], generateDropdownOptions, valuesArray, targetLocation, settingKey);
+        } else // sync processing
+        {
+          optionsArray.forEach(option => {
+            let selected = valuesArray.includes(option) ? 'selected' : '';
+            input += `<option value="${option}" ${selected}>${option}</option>`;
+          });  
+        }
+      } else // this is an interactable list with default and user-defined values
+      {
+        // generates [1x 📝 | 2x 🚮]
+        valuesArray.forEach(option => {          
+          input += `<option class="interactable-option" value="${option}">${option}</option>`;
+        });  
+      }
     
-      </select>`;
-      
-    return input;
+      input += `</select>`;
+    
+      // add values from the setting options - execute AJAX callback + SQL query resolution
+      // initSettingDropdown(settingKey, valuesArray, targetLocation, generateDropdownOptions);
+
+      return input;
+    }
+
+// ------------------------------------------------------------
+// Function to apply transformers to a value
+function applyTransformers(val, transformers) {
+  transformers.forEach(transformer => {
+    switch (transformer) {
+      case 'sha256':
+        // Implement sha256 hashing logic
+        if (!isSHA256(val)) {
+          val = CryptoJS.SHA256(val).toString(CryptoJS.enc.Hex);
+        }
+        break;
+      case 'base64':
+        // Implement base64  logic
+        if (!isBase64(val)) {
+          val = btoa(val);
+        }        
+        break;
+      default:
+        console.warn(`Unknown transformer: ${transformer}`);
+    }
+  });
+  return val;
+}
+
+
+
+// ------------------------------------------------------------
+// Function to initialize relevant variables based on HTML element
+const handleElementOptions = (codeName, elementOptions, transformers, val) => {
+  let inputType = 'text';
+  let readOnly = "";
+  let isMultiSelect = false;
+  let cssClasses = '';
+  let placeholder = '';
+  let suffix = '';
+  let separator = '';
+  let editable = false;
+  let valRes = val;
+  let sourceIds = [];
+  let getStringKey = "";
+  let onClick  = "alert('Not implemented');";
+
+  elementOptions.forEach(option => {
+    if (option.prefillValue) {
+      valRes = option.prefillValue === 'null' ? "" : option.prefillValue;
+    }
+    if (option.type) {
+      inputType = option.type;
+    }
+    if (option.readonly === "true") {
+      readOnly = `readonly`;
+    }
+    if (option.multiple === "true") {
+      isMultiSelect = true;
+    }
+    if (option.editable === "true") {
+      editable = true;
+    }
+    if (option.cssClasses) {
+      cssClasses = option.cssClasses;
+    }
+    if (option.placeholder) {
+      placeholder = option.placeholder;
+    }
+    if (option.suffix) {
+      suffix = option.suffix;
+    }
+    if (option.sourceSuffixes) {
+      $.each(option.sourceSuffixes, function(index, suf) {
+        sourceIds.push(codeName + suf)
+      })
+    }
+    if (option.separator) {
+      separator = option.separator;
+    }
+    if (option.getStringKey) {
+      getStringKey = option.getStringKey;
+    }
+    if (option.onClick) {
+      onClick = option.onClick;
+    }
+  });
+
+  if (transformers.includes('sha256')) {
+    inputType = 'password';
   }
 
+  return {
+    inputType,
+    readOnly,
+    isMultiSelect,
+    cssClasses,
+    placeholder,
+    suffix,
+    sourceIds,
+    separator,
+    editable,
+    valRes,
+    getStringKey,
+    onClick
+  };
+};
+
+  
   

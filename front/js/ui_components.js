@@ -79,7 +79,7 @@ function initDeviceSelectors() {
 
 
 // -----------------------------------------------------------------------------
-// Initiate dropdown
+// (ASYNC) Initiate dropdown
 function initSettingDropdown(settingKey,       // Identifier for the setting
                             valuesArray,       // Array of values to be pre-selected in the dropdown
                             targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
@@ -93,9 +93,15 @@ function initSettingDropdown(settingKey,       // Identifier for the setting
   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
   optionsArray = createArray(getSettingOptions(settingKey))  
 
+
   // check if the result is a SQL query
-  if(isSQLQuery(optionsArray[0]))
+  if(optionsArray.length > 0 && isSQLQuery(optionsArray[0]))
   {    
+
+    if (settingKey == "NEWDEV_dev_Network_Node_MAC_ADDR") {
+      console.log("isSQLQuery in initSettingDropdown");
+
+    }
     readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField, nameTransformer);
 
   } else // this should be already an array, e.g. from a setting or pre-defined
@@ -103,16 +109,18 @@ function initSettingDropdown(settingKey,       // Identifier for the setting
     optionsArray.forEach(option => {
       let selected = valuesArray.includes(option) ? 'selected' : '';
       optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-    });    
-    
+    });   
+
     // Replace the specified placeholder div with the resulting HTML 
     setTimeout(() => {
 
       $("#" + targetLocation).replaceWith(optionsHtml);
       
-      }, 50);   
-    
+      }, 50); 
   }
+
+
+  
 }
 
 

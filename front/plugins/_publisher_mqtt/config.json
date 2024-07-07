@@ -278,7 +278,7 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -312,7 +312,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
       "options": [],
       "localized": ["name", "description"],
@@ -339,7 +339,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "0 2 * * 3",
       "options": [],
       "localized": ["name", "description"],
@@ -374,7 +374,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 20,
       "options": [],
       "localized": ["name", "description"],
@@ -405,7 +405,7 @@
     },
     {
       "function": "BROKER",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -432,7 +432,7 @@
     },
     {
       "function": "PORT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 1883,
       "options": [],
       "localized": ["name", "description"],
@@ -459,7 +459,7 @@
     },
     {
       "function": "USER",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -486,7 +486,7 @@
     },
     {
       "function": "PASSWORD",
-      "type": "password",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -513,7 +513,7 @@
     },
     {
       "function": "SEND_STATS",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": true,
       "options": [],
       "localized": ["name", "description"],
@@ -532,7 +532,7 @@
     },
     {
       "function": "DEVICE_ID",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "netalertx",
       "options": [],
       "localized": ["name", "description"],
@@ -551,7 +551,7 @@
     },
     {
       "function": "DEVICE_NAME",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "NetAlertX",
       "options": [],
       "localized": ["name", "description"],
@@ -570,7 +570,7 @@
     },
     {
       "function": "SEND_DEVICES",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": true,
       "options": [],
       "localized": ["name", "description"],
@@ -589,7 +589,7 @@
     },
     {
       "function": "QOS",
-      "type": "integer.select",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": 0,
       "options": [0, 1, 2],
       "localized": ["name", "description"],
@@ -616,7 +616,7 @@
     },
     {
       "function": "VERSION",
-      "type": "integer.select",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": 1,
       "options": [1, 2],
       "localized": ["name", "description"],
@@ -635,7 +635,7 @@
     },
     {
       "function": "DELAY_SEC",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 2,
       "options": [2, 3, 4, 5],
       "localized": ["name", "description"],

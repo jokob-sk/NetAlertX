@@ -39,7 +39,7 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
 
       "default_value": "disabled",
       "options": [
@@ -74,7 +74,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
 
       "default_value": "*/5 * * * *",
       "options": [],
@@ -102,7 +102,7 @@
     },
     {
       "function": "api_token",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -122,7 +122,7 @@
     },
     {
       "function": "encryption_key",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -142,7 +142,7 @@
     },
     {
       "function": "hub_url",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
 
       "maxLength": 50,
       "default_value": "",
@@ -163,7 +163,7 @@
     },
     {
       "function": "node_name",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -183,7 +183,7 @@
     },
     {
       "function": "devices",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -202,7 +202,7 @@
     },
     {
       "function": "plugins",
-      "type": "list.select",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": [],
       "options": ["{value}"],
@@ -229,7 +229,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/sync/sync.py",
       "options": [],
       "localized": ["name", "description"],
@@ -264,7 +264,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 30,
       "options": [],
       "localized": ["name", "description"],

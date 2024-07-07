@@ -307,7 +307,7 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -340,7 +340,7 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/dhcp_servers/script.py",
       "options": [],
       "localized": ["name", "description"],
@@ -367,7 +367,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "0 2 * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -394,7 +394,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
@@ -425,7 +425,7 @@
     },
     {
       "function": "WATCH",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["Watched_Value1"],
       "options": [
         "Watched_Value1",
@@ -457,7 +457,7 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["new", "watched-changed"],
       "options": ["new", "watched-changed", "watched-not-changed"],
       "localized": ["name", "description"],

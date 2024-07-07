@@ -191,7 +191,7 @@ This SQL query is executed on the `app.db` SQLite database file.
 > ```json
 > {
 >             "function": "CMD",
->            "type": "text",
+>            "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
 >            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
 >            "options": [],
 >            "localized": ["name", "description"],
@@ -222,7 +222,7 @@ For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`.
 >  ...
 >{
 >        "function": "DB_PATH",
->        "type": "readonly",
+>        "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
 >        "default_value":"/etc/pihole/pihole-FTL.db",
 >        "options": [],
 >        "localized": ["name", "description"],
@@ -247,7 +247,7 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 >```json
 >{
 >      "function": "CMD",
->      "type": "text",
+>      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
 >      "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM EXTERNAL_PIHOLE.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr <> '00:00:00:00:00:00';            ",
 >      "options": [],
 >      "localized": ["name", "description"],
@@ -425,7 +425,7 @@ The `params` array in the `config.json` is used to enable the user to change the
 ```json
  {
             "function": "CMD",
-            "type": "text",
+            "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
             "default_value":"python3 /app/front/plugins/website_monitor/script.py urls={urls}",
             "options": [],
             "localized": ["name", "description"],
@@ -508,18 +508,7 @@ Required attributes are:
 | -------- | ----------- |
 | `"function"` | Specifies the function the setting drives or a simple unique code name. See Supported settings function values for options. |
 | `"type"` | Specifies the form control used for the setting displayed in the Settings page and what values are accepted. Supported options include: |
-|  | - `text` |
-|  | - `integer` |
-|  | - `boolean` |
-|  | - `password` |
-|  | - `readonly` |
-|  | - `integer.select` |
-|  | - `text.select` |
-|  | - `text.multiselect` |
-|  | - `list` |
-|  | - `list.select` |
-|  | - `integer.checkbox` |
-|  | - `text.template` |
+|  | - `{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": ["sha256"]}]}` |
 | `"localized"` | A list of properties on the current JSON level that need to be localized. |
 | `"name"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
 | `"description"` | Displayed on the Settings page. An array of localized strings. See Localized strings below. |
@@ -562,7 +551,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 > ```json
 > {
 >     "function": "RUN",            
->     "type": "text.select",            
+>     "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},            
 >     "default_value":"disabled",
 >     "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
 >     "localized": ["name", "description"],
@@ -627,7 +616,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 ```json
         "function": "dev_DeviceType",
-        "type": "text.select",
+        "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
         "maxLength": 30,
         "default_value": "",
         "options": ["{value}"],

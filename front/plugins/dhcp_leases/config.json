@@ -414,7 +414,12 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -455,7 +460,12 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/dhcp_leases/script.py paths={paths}",
       "options": [],
       "localized": ["name", "description"],
@@ -490,7 +500,63 @@
     },
     {
       "function": "paths_to_check",
-      "type": "list",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },         
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-2" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["/mnt/dhcp1.leases", "/mnt/dhcp2.leases"],
       "options": [],
       "localized": ["name", "description"],
@@ -525,7 +591,12 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "0 2 * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -560,7 +631,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 5,
       "options": [],
       "localized": ["name", "description"],
@@ -595,7 +675,16 @@
     },
     {
       "function": "WATCH",
-      "type": "text.multiselect",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["Watched_Value1", "Watched_Value4"],
       "options": [
         "Watched_Value1",
@@ -635,7 +724,16 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "text.multiselect",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["new", "watched-changed"],
       "options": [
         "new",

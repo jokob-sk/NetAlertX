@@ -483,7 +483,7 @@
         "always_after_scan",
         "on_new_device"
       ],
-      "type": "text.select"
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": "python3 /app/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites} port={port} verifyssl={verifyssl} version={version} fullimport={fullimport}",
@@ -518,7 +518,7 @@
         }
       ],
       "options": [],
-      "type": "text"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": "",
@@ -545,7 +545,7 @@
         }
       ],
       "options": [],
-      "type": "text"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": "",
@@ -572,7 +572,7 @@
         }
       ],
       "options": [],
-      "type": "password"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": []}]}
     },
     {
       "default_value": "192.168.1.1",
@@ -599,7 +599,7 @@
         }
       ],
       "options": [],
-      "type": "text"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": "8443",
@@ -626,7 +626,7 @@
         }
       ],
       "options": [],
-      "type": "text"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": "false",
@@ -653,11 +653,11 @@
         }
       ],
       "options": ["true", "false"],
-      "type": "text.select"
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "function": "version",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "v4",
       "options": [],
       "localized": ["name", "description"],
@@ -707,7 +707,7 @@
         }
       ],
       "options": [],
-      "type": "list"
+      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]}
     },
     {
       "default_value": "0 2 * * *",
@@ -734,7 +734,7 @@
         }
       ],
       "options": [],
-      "type": "text"
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}
     },
     {
       "default_value": 5,
@@ -769,7 +769,7 @@
         }
       ],
       "options": [],
-      "type": "integer"
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}
     },
     {
       "default_value": ["Watched_Value1", "Watched_Value4"],
@@ -801,7 +801,7 @@
         "Watched_Value3",
         "Watched_Value4"
       ],
-      "type": "text.multiselect"
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}
     },
     {
       "default_value": ["new", "watched-changed"],
@@ -833,7 +833,7 @@
         "watched-not-changed",
         "missing-in-last-scan"
       ],
-      "type": "text.multiselect"
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}
     },
     {
       "default_value": "disabled",
@@ -868,7 +868,7 @@
         }
       ],
       "options": ["disabled", "once", "always"],
-      "type": "text.select"
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}
     }
   ]
 }

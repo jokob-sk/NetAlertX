@@ -60,7 +60,7 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": ["disabled", "once", "schedule", "always_after_scan"],
       "localized": ["name", "description"],
@@ -95,7 +95,7 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/undiscoverables/script.py devices={devices}",
       "options": [],
       "localized": ["name", "description"],
@@ -130,7 +130,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
@@ -165,7 +165,7 @@
     },
     {
       "function": "WATCH",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -200,7 +200,7 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": [],
       "options": [
         "new",
@@ -240,7 +240,7 @@
     },
     {
       "function": "devices_to_import",
-      "type": "list",
+      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
       "default_value": ["dummy_router"],
       "options": [],
       "localized": ["name", "description"],
@@ -275,7 +275,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "*/5 * * * *",
       "options": [],
       "localized": ["name", "description"],

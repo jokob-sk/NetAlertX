@@ -28,7 +28,7 @@
   "settings": [
     {
       "function": "shown_cards",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": [
         "my_devices",
@@ -64,7 +64,7 @@
     },
     {
       "function": "hide_empty",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],

@@ -159,7 +159,7 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "UPDATE Devices SET dev_AlertDeviceDown = {KNWN_dev_AlertDeviceDown}, dev_AlertEvents = {KNWN_dev_AlertEvents} WHERE dev_MAC in ({target_macs})",
       "options": [],
       "localized": ["name", "description"],
@@ -178,7 +178,7 @@
     },
     {
       "function": "dev_Name",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "(unknown)",
       "options": [],
@@ -198,7 +198,7 @@
     },
     {
       "function": "dev_Owner",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 30,
       "default_value": "House",
       "override_value": {
@@ -221,7 +221,7 @@
     },
     {
       "function": "dev_DeviceType",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 30,
       "default_value": "",
       "options": [],
@@ -241,7 +241,7 @@
     },
     {
       "function": "dev_Vendor",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 250,
       "default_value": "",
       "options": [],
@@ -261,7 +261,7 @@
     },
     {
       "function": "dev_Favorite",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "override_value": {
         "override": false
@@ -283,7 +283,7 @@
     },
     {
       "function": "dev_Group",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 10,
       "default_value": "",
       "override_value": {
@@ -306,7 +306,7 @@
     },
     {
       "function": "dev_Comments",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -325,7 +325,7 @@
     },
     {
       "function": "dev_FirstConnection",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -345,7 +345,7 @@
     },
     {
       "function": "dev_LastConnection",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -365,7 +365,7 @@
     },
     {
       "function": "dev_LastIP",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -385,7 +385,7 @@
     },
     {
       "function": "dev_StaticIP",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "override_value": {
         "override": true
@@ -407,7 +407,7 @@
     },
     {
       "function": "dev_ScanCycle",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "override_value": {
         "override": true
@@ -429,7 +429,7 @@
     },
     {
       "function": "dev_LogEvents",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "override_value": {
         "override": false
@@ -451,7 +451,7 @@
     },
     {
       "function": "dev_AlertEvents",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "override_value": {
         "override": true
@@ -473,7 +473,7 @@
     },
     {
       "function": "dev_AlertDeviceDown",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -492,7 +492,7 @@
     },
     {
       "function": "dev_SkipRepeated",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -511,7 +511,7 @@
     },
     {
       "function": "dev_LastNotification",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -531,7 +531,7 @@
     },
     {
       "function": "dev_PresentLastScan",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -550,7 +550,7 @@
     },
     {
       "function": "dev_NewDevice",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": true,
       "options": [],
       "localized": ["name", "description"],
@@ -569,7 +569,7 @@
     },
     {
       "function": "dev_Location",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 250,
       "default_value": "",
       "options": [],
@@ -589,7 +589,7 @@
     },
     {
       "function": "dev_Archived",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -608,7 +608,7 @@
     },
     {
       "function": "dev_Network_Node_MAC_ADDR",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -627,7 +627,7 @@
     },
     {
       "function": "dev_Network_Node_port",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -646,7 +646,7 @@
     },
     {
       "function": "dev_Icon",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],

@@ -1,5 +1,5 @@
 
-
+<script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 
 <div class="col-md-12">
@@ -102,22 +102,31 @@
                 // Append form groups to the column
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
 
-                  let inputType;
+                  const setTypeObject  = JSON.parse(columns[j].Type.replace(/'/g, '"'));         
+                  // console.log(setTypeObject);         
+                  const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]
 
-                  switch (columns[j].Type) {
-                    case 'integer.checkbox':
-                    case 'checkbox':
-                      inputType = 'checkbox';
-                      break;
-                    case 'text.select':
-                      inputType = 'text.select';
-                      break;
-                    default:
-                      inputType = 'text';
-                      break;
-                  }                    
-                  
-                  if (inputType === 'text.select') {
+                  const { elementType, elementOptions = [], transformers = [] } = lastElementObj;
+                  const { 
+                    inputType,
+                    readOnly,
+                    isMultiSelect,
+                    cssClasses,
+                    placeholder,
+                    suffix,
+                    sourceIds,
+                    separator,
+                    editable,
+                    valRes,
+                    getStringKey,
+                    onClick
+                  } = handleElementOptions('none', elementOptions, transformers, val = "");
+
+                  // console.log(setTypeObject);
+                  // console.log(inputType);
+
+                  //  render based on element type
+                  if (lastElementObj.elementType === 'select') {
 
                     targetLocation = columns[j].Code_Name + "_initSettingDropdown"
 
@@ -147,15 +156,11 @@
                     }
 
 
-                  } else { 
+                  } else if (lastElementObj.elementType === 'input'){ 
                     
                     // Add classes specifically for checkboxes
-                    if (inputType === 'checkbox') {
-                      inputClass = 'checkbox';
-                  
-                    } else {
-                      inputClass = 'form-control';
-                    }
+                    inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';
+                    
 
                     input =  `<input  class="${inputClass}" 
                                       id="${columns[j].Code_Name}"  

@@ -29,7 +29,7 @@
   "settings": [
     {
       "function": "INCLUDED_SECTIONS",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["new_devices", "down_devices", "events"],
       "options": [
         "new_devices",
@@ -70,7 +70,7 @@
     },
     {
       "function": "alert_down_time",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 5,
       "options": [],
       "localized": ["name", "description"],
@@ -89,7 +89,7 @@
     },
     {
       "function": "new_dev_condition",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -108,7 +108,7 @@
     },
     {
       "function": "event_condition",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],

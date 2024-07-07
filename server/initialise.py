@@ -48,7 +48,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
         result = result.replace('\'', "{s-quote}")
 
     # Create the tuples
-    sql_safe_tuple = (key, name, desc, inputtype, options, regex, str(result), group, str(events))
+    sql_safe_tuple = (key, name, desc, str(inputtype), options, regex, str(result), group, str(events))
     settings_tuple = (key, name, desc, inputtype, options, regex, result, group, str(events))
 
     # Update or append the tuples in the lists
@@ -57,7 +57,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
 
     # Save metadata in dummy setting if not a metadata key
     if '__metadata' not in key:
-        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", 'json', "", "", json.dumps(setJsonMetadata), group, '[]')
+        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", '{"dataType":"json", "elements": [{"elementType" : "textarea", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]}', '[]', "", json.dumps(setJsonMetadata), group, '[]')
         conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, metadata_tuple, f'{key}__metadata')
         conf.mySettings = update_or_append(conf.mySettings, metadata_tuple, f'{key}__metadata')
 
@@ -131,25 +131,25 @@ def importConfigs (db, all_plugins):
     # ----------------------------------------
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', 'list.select', '', 'General')
-    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', 'subnets', '', 'General')    
-    conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', 'text.select', "['none', 'minimal', 'verbose', 'debug']", 'General')
-    conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', 'text', '', 'General')    
-    conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', 'integer', '', 'General') 
-    conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', 'text', '', 'General')
-    conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', 'integer', '', 'General')
-    conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', 'integer', "0", 'General')        
-    conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', 'text', '', 'General')
-    conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', 'list', '', 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', '[]', 'General')
+    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '{"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "192.168.1.0/24 --interface=eth1" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]}', '[]', 'General')    
+    conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['none', 'minimal', 'verbose', 'debug']", 'General')
+    conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')    
+    conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General') 
+    conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
+    conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General')
+    conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
+    conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
+    conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]}', '[]', 'General')
           
     # UI
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', 'text.select', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)' ]", 'UI')
-    conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', 'list', "", 'UI')    
-    conf.UI_ICONS = ccd('UI_ICONS', ['PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4', 'PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4']  , c_d, 'Icons', 'list', "", 'UI')    
-    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', 'integer', "", 'UI')    
-    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', 'text.multiselect', "['Tile Cards', 'Device Presence']", 'UI')    
-    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', 'text.multiselect', "['online', 'offline', 'archived']", 'UI') 
-    conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', 'text.multiselect', "['online', 'offline', 'archived', 'new', 'down']", 'UI')    
+    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)' ]", 'UI')
+    conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', '{"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]}', "[]", 'UI')    
+    conf.UI_ICONS = ccd('UI_ICONS', ['PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4', 'PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4']  , c_d, 'Icons', '{"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]}', "[]", 'UI')    
+    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'UI')    
+    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['Tile Cards', 'Device Presence']", 'UI')    
+    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['online', 'offline', 'archived']", 'UI') 
+    conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['online', 'offline', 'archived', 'new', 'down']", 'UI')    
     
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
@@ -288,7 +288,7 @@ def importConfigs (db, all_plugins):
 
 
     # save the newly discovered plugins as options and default values
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', 'text.multiselect', str(sorted(all_plugins_prefixes)), 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', str(sorted(all_plugins_prefixes)), 'General')
 
     mylog('none', ['[Config] Number of Plugins to load: ', len(loaded_plugins_prefixes)])
     mylog('none', ['[Config] Plugins to load: ', loaded_plugins_prefixes])

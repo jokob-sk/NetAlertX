@@ -288,7 +288,7 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": ["disabled", "on_notification"],
       "localized": ["name", "description"],
@@ -315,7 +315,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/_publisher_email/email_smtp.py",
       "options": [],
       "localized": ["name", "description"],
@@ -342,7 +342,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 20,
       "options": [],
       "localized": ["name", "description"],
@@ -373,7 +373,7 @@
     },
     {
       "function": "SERVER",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -400,7 +400,7 @@
     },
     {
       "function": "PORT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 587,
       "options": [],
       "localized": ["name", "description"],
@@ -427,7 +427,7 @@
     },
     {
       "function": "SKIP_LOGIN",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -454,7 +454,7 @@
     },
     {
       "function": "USER",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -481,7 +481,7 @@
     },
     {
       "function": "PASS",
-      "type": "password",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -508,7 +508,7 @@
     },
     {
       "function": "SKIP_TLS",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -535,7 +535,7 @@
     },
     {
       "function": "FORCE_SSL",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -562,7 +562,7 @@
     },
     {
       "function": "REPORT_TO",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "user@gmail.com",
       "options": [],
       "localized": ["name", "description"],
@@ -589,7 +589,7 @@
     },
     {
       "function": "REPORT_FROM",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "NetAlertX <user@gmail.com>",
       "options": [],
       "localized": ["name", "description"],

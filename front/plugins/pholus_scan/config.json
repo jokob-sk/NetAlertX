@@ -62,7 +62,7 @@
   "settings": [
     {
       "function": "RUN",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -96,7 +96,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/pholus_scan/script.py userSubnets={subnets} timeoutSec={timeout}",
       "options": [],
       "localized": ["name", "description"],
@@ -123,7 +123,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 300,
       "options": [],
       "localized": ["name", "description"],
@@ -150,7 +150,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "30 3 * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -177,7 +177,7 @@
     },
     {
       "function": "DAYS_DATA",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 30,
       "options": [],
       "localized": ["name", "description"],
@@ -204,7 +204,7 @@
     },
     {
       "function": "WATCH",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["Watched_Value1", "Watched_Value2"],
       "options": [
         "Watched_Value1",
@@ -236,7 +236,7 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["new"],
       "options": [
         "new",

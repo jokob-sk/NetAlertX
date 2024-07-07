@@ -1,6 +1,6 @@
 ## Overview
 
-PLugin functionality overview and links to external resources if relevant. Include use cases if available. 
+Plugin functionality overview and links to external resources if relevant. Include use cases if available. 
 
 > [!TIP]
 > Some tip.
@@ -21,3 +21,5 @@ To set up the plugin correctly, make sure...
 ### Notes
 
 - Additional notes, limitations, Author info. 
+
+Made with ❤ by [@FlyingToto](https://github.com/FlyingToto) 🙏

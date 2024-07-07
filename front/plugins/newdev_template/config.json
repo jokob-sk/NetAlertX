@@ -28,7 +28,7 @@
   "settings": [
     {
       "function": "ignored_MACs",
-      "type": "list",
+      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -47,7 +47,7 @@
     },
     {
       "function": "ignored_IPs",
-      "type": "list",
+      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -66,7 +66,7 @@
     },
     {
       "function": "dev_MAC",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -86,7 +86,7 @@
     },
     {
       "function": "dev_Name",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "(unknown)",
       "options": [],
@@ -106,7 +106,7 @@
     },
     {
       "function": "dev_Owner",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 30,
       "default_value": "",
       "options": ["{value}"],
@@ -133,7 +133,7 @@
     },
     {
       "function": "dev_DeviceType",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 30,
       "default_value": "",
       "options": ["{value}"],
@@ -165,7 +165,7 @@
     },
     {
       "function": "dev_Vendor",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 250,
       "default_value": "",
       "options": [],
@@ -185,7 +185,7 @@
     },
     {
       "function": "dev_Favorite",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -204,7 +204,7 @@
     },
     {
       "function": "dev_Group",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 10,
       "default_value": "",
       "options": ["{value}"],
@@ -231,7 +231,7 @@
     },
     {
       "function": "dev_Comments",
-      "type": "string",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -250,7 +250,7 @@
     },
     {
       "function": "dev_FirstConnection",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -270,7 +270,7 @@
     },
     {
       "function": "dev_LastConnection",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -290,7 +290,7 @@
     },
     {
       "function": "dev_LastIP",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -310,7 +310,7 @@
     },
     {
       "function": "dev_StaticIP",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -329,7 +329,7 @@
     },
     {
       "function": "dev_ScanCycle",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -348,7 +348,7 @@
     },
     {
       "function": "dev_LogEvents",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -367,7 +367,7 @@
     },
     {
       "function": "dev_AlertEvents",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -386,7 +386,7 @@
     },
     {
       "function": "dev_AlertDeviceDown",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -405,7 +405,7 @@
     },
     {
       "function": "dev_SkipRepeated",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": 0,
       "options": ["{value}"],
       "options_params": [
@@ -431,7 +431,7 @@
     },
     {
       "function": "dev_LastNotification",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -451,7 +451,7 @@
     },
     {
       "function": "dev_PresentLastScan",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -470,7 +470,7 @@
     },
     {
       "function": "dev_NewDevice",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -489,7 +489,7 @@
     },
     {
       "function": "dev_Location",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "maxLength": 250,
       "default_value": "",
       "options": ["{value}"],
@@ -516,7 +516,7 @@
     },
     {
       "function": "dev_Archived",
-      "type": "integer.checkbox",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -535,7 +535,7 @@
     },
     {
       "function": "dev_Network_Node_MAC_ADDR",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": ["{value}"],
       "options_params": [
@@ -566,7 +566,7 @@
     },
     {
       "function": "dev_Network_Node_port",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -585,7 +585,7 @@
     },
     {
       "function": "dev_Icon",
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "",
       "options": ["{value}"],
       "options_params": [
@@ -611,7 +611,7 @@
     },
     {
       "function": "LESS_NAME_CLEANUP",
-      "type": "integer.checkbox",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -630,7 +630,7 @@
     },
     {
       "function": "NAME_CLEANUP_REGEX",
-      "type": "list.base64",
+      "type": {"dataType":"string", "elements": [{"elementType" : "textarea", "elementOptions" : [] ,"transformers": ["base64"]}]},
       "default_value": ["XC5fYWlycGxheQ==", "XC5fdGNw", "XC5sb2NhbGRvbWFpbg==", "XC5sb2NhbA==", "XC5fZXNwaG9tZWxpYg==", "XC5fZ29vZ2xlY2FzdA==", "XC5sYW4=", "XC5ob21l",  "LVthLWZBLUYwLTldezMyfQ==", "Iy4q" ],
       "options": [],
       "localized": ["name", "description"],

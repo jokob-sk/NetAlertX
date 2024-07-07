@@ -374,9 +374,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       // go thru all settings and collect settings per settings prefix 
       settingsData.forEach((set) => {
 
-        let val = set['Value'];
+        const val = set['Value'];
         const codeName = set['Code_Name'];
-        const setType = set['Type'].toLowerCase();
+        const setType = set['Type'];
         const isMetadata = codeName.includes('__metadata');
         // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
         const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
@@ -414,7 +414,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       <div class="table_cell setting_description">
                         ${getString(codeName + '_description', set['Description'])}
                       </div>
-                      <div class="table_cell setting_input input-group">
+                      <div class="table_cell setting_input input-group col-sm-12">
                   `;
 
           // OVERRIDE
@@ -452,142 +452,87 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                               <div class="override-text col-xs-11" title="${getString("Setting_Override_Description")}">
                                 ${getString("Setting_Override")}
                               </div>
-                            </div>`;            
+                            </div>`;           
 
           } 
-
           
           // INPUT
-          // pre-processing done, render setting based on type        
-
-          let inputHtml = "";
-          if (setType.startsWith('text') || setType.startsWith('string') || setType.startsWith('date-time') ) {
-            // --- process text ---
-            if(setType.includes(".select"))
-            {
-              inputHtml = generateOptions(pluginsData, set, inputHtml, isMultiSelect = false)
-
-            } else if(setType.includes(".multiselect"))
-            {
-              inputHtml = generateOptions(pluginsData, set, inputHtml, isMultiSelect = true)
-            } else{
-
-              // if it's overridable set readonly accordingly
-              if(overridable)
-              {
-                override ? readonly = "" : readonly = " readonly" ; 
-              }
-
-              inputHtml = `<input class="form-control" onChange="settingsChanged()"  my-data-type="${setType}"  id="${codeName}" value="${val}" ${readonly}/>`;
-            }            
-          } else if (setType === 'integer') {
-            // --- process integer ---
-            inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}" class="form-control" id="${codeName}" type="number" value="${val}"/>`;
-          } else if (setType.startsWith('password')) {
-            // --- process password ---
-            inputHtml = `<input onChange="settingsChanged()"  my-data-type="${setType}"  class="form-control input" id="${codeName}" type="password" value="${val}"/>`;
-          } else if (setType === 'readonly') {
-            // --- process readonly ---
-            inputHtml = `<input class="form-control input"  my-data-type="${setType}"  id="${codeName}"  value="${val}" readonly/>`;
-          } else if (setType === 'boolean' || setType === 'integer.checkbox') {
-            // --- process boolean ---
-            let checked = val === 'True' || val === '1' ? 'checked' : '';                   
-
-            // if it's overridable set readonly accordingly
-            if(overridable)
-            {
-              override ? disabled = "" : disabled = " disabled" ;
-            }             
-
-            inputHtml = `<input onChange="settingsChanged()" my-data-type="${setType}" class="checkbox" id="${codeName}" type="checkbox" value="${val}" ${checked} ${disabled}/>`;          
-          } else if (setType === 'integer.select') {
-
-            inputHtml = generateOptions(pluginsData, set, inputHtml)
           
-          } else if (setType === 'subnets') {
-            // --- process subnets ---
-            inputHtml = `
-            <div class="row form-group">
-              <div class="col-xs-5">
-                <input class="form-control"  id="ipMask" type="text" placeholder="192.168.1.0/24"/>
-              </div>
-              <div class="col-xs-4">
-                <input class="form-control" id="ipInterface" type="text" placeholder="eth0" />
-              </div>
-              <div class="col-xs-3">
-                <button class="btn btn-primary" onclick="addInterface();initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
-              </div>
-            </div>
-            <div class="form-group">
-              <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" onchange="initListInteractionOptions(${codeName})" multiple readonly>`;
+          // Parse the setType JSON string into an object
+          let inputHtml = '';
+          const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));
 
+          const dataType = setTypeObject.dataType;
+          const elements = setTypeObject.elements || [];
 
-            saved_values = createArray(val);
+          // Iterate through each element in elements array
+          elements.forEach(elementObj => {
+            const { elementType, elementOptions = [], transformers = [] } = elementObj;
+            const { 
+              inputType,
+              readOnly,
+              isMultiSelect,
+              cssClasses,
+              placeholder,
+              suffix,
+              sourceIds,
+              separator,
+              editable,
+              valRes,
+              getStringKey,
+              onClick
+            } = handleElementOptions(codeName, elementOptions, transformers, val);
 
-            saved_values.forEach(saved_val => {
-              inputHtml += `<option value="${saved_val}" >${saved_val}</option>`;
-            });
+            // Generate HTML based on dataType and elementType
+            switch (elementType) {
+              case 'select':
+                inputHtml = generateOptions(pluginsData, set, inputHtml, dataType, isMultiSelect, editable, transformers);
+                break;
 
-            inputHtml += `</select>
-                        </div>
-                        <div class="col-xs-12">
-                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
-                            ${getString("Gen_Remove_Last")}
-                          </button>     
-                          <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
-                            ${getString("Gen_Remove_All")}
-                          </button>                              
-                        </div>`;
-          } else if (setType.startsWith('list')) {
-            // --- process list ---
+              case 'input':
+                let checked = val === 'True' || val === '1' ? 'checked' : ''; 
+                inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';
 
-            inputHtml += `
-              <div class="row form-group">
-                <div class="col-xs-9">`
+                inputHtml += `
+                  <input 
+                    class="${inputClass} ${cssClasses}" 
+                    onChange="settingsChanged()" 
+                    my-data-type="${dataType}" 
+                    id="${codeName}${suffix}" 
+                    type="${inputType}" 
+                    value="${valRes}" 
+                    ${readOnly}
+                    ${checked}
+                    placeholder="${placeholder}" 
+                  />`;
+                break;
 
-            if(setType.includes(".select")) // not tested
-            {
-              inputHtml += generateOptions(pluginsData, set, inputHtml, isMultiSelect = false, isValueSource = false)
+              case 'button':
+                
+                inputHtml += `
+                  <button 
+                    class="btn btn-primary ${cssClasses}" 
+                    my-input-from="${sourceIds}" 
+                    my-input-to="${codeName}" 
+                    onclick="${onClick}">
+                    ${getString(getStringKey)}
+                  </button>`;
+                break;
+              case 'textarea':                
+                inputHtml += `
+                  <textarea 
+                    class="form-control input" 
+                    my-data-type="${dataType}" 
+                    id="${codeName}" 
+                    ${readOnly}>
+                      ${val}
+                    </textarea>`;
+                break;
+
+              default:
+                console.warn(`Unknown element type: ${elementType}`);
             }
-            else if(setType.includes(".multiselect"))
-            {
-              inputHtml += generateOptions(pluginsData, set, inputHtml, isMultiSelect = true)
-            }
-            else
-            {
-              inputHtml += `
-                  <input class="form-control" type="text" id="${codeName}_input" placeholder="Enter value"/>
-                `;
-            }
-
-            inputHtml += `</div>
-                <div class="col-xs-3">
-                  <button class="btn btn-primary" my-input-from="${codeName}_input" my-input-to="${codeName}" onclick="addList(this, false);initListInteractionOptions('${codeName}')">${getString("Gen_Add")}</button>
-                </div>
-              </div>
-              <div class="form-group">
-                <select class="form-control" my-data-type="${setType}" name="${codeName}" id="${codeName}" multiple readonly>`;           
-
-            let saved_values = createArray(val);
-
-            saved_values.forEach(saved_val => {
-
-              inputHtml += `<option value="${saved_val}" >${saved_val}</option>`;
-            });
-
-            inputHtml += '</select></div>' +
-            `<div>
-                <button class="btn btn-primary" my-input="${codeName}" onclick="removeFromList(this)">
-                  ${getString("Gen_Remove_Last")}
-                </button>     
-                <button class="btn btn-primary" my-input="${codeName}" onclick="removeAllOptions(this)">
-                  ${getString("Gen_Remove_All")}
-                </button>                          
-            </div>`;
-          } else if (setType === 'json') {
-            // --- process json ---
-            inputHtml = `<textarea class="form-control input" my-data-type="${setType}" id="${codeName}" readonly>${JSON.stringify(val, null, 2)}</textarea>`;
-          }
+          });
 
           // EVENTS
           // process events (e.g. run ascan, or test a notification) if associated with the setting
@@ -617,21 +562,14 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           `
 
           // generate settings in the correct prefix (group) section
-          $(`#${prefix} .panel-body`).append(setHtml);
-
-          // init remove and edit listitem click gestures
-          if(['subnets'].includes(setType) || setType.startsWith('list'))
-          {
-            initListInteractionOptions(codeName)
-          }
-          
+          $(`#${prefix} .panel-body`).append(setHtml);          
         }
       });
 
     }
 
     // init finished
-    
+    initListInteractionOptions()  // init remove and edit listitem click gestures
     setupSmoothScrolling()
     hideSpinner()
 
@@ -666,49 +604,78 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       var settingsArray = [];
 
       // collect values for each of the different input form controls
-      const noConversion = ['text', 'integer', 'string', 'password', 'readonly', 'text.select', 'integer.select', 'text.multiselect'];
-
       // get settings to determine setting type to store values appropriately
       $.get('api/table_settings.json?nocache=' + Date.now(), function(res) { 
         // loop through the settings definitions from the json
         res["data"].forEach(set => {
 
-          prefix = set["Group"]
-          setType = set["Type"]
+          prefix      = set["Group"]
+          setType     = set["Type"]
           setCodeName = set["Code_Name"]
 
-          if (noConversion.includes(setType)) {
+          const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));         
+          // console.log(setTypeObject);
 
-            settingsArray.push([prefix, setCodeName, setType, $('#'+setCodeName).val()]);
+          const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1];
+          const { elementType, elementOptions = [], transformers = [] } = lastElementObj;
+          const { 
+            inputType,
+            readOnly,
+            isMultiSelect,
+            cssClasses,
+            placeholder,
+            suffix,
+            sourceIds,
+            separator,
+            editable,
+            valRes,
+            getStringKey,
+            onClick
+          } = handleElementOptions('none', elementOptions, transformers, val = "");
 
-          } else if (setType === 'boolean' || setType === 'integer.checkbox') {
+          let value;
+
+          if (setTypeObject.dataType === "string" || 
+              (setTypeObject.dataType === "integer" && (inputType === "number" || inputType === "text"))) {
             
-            const temp = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
-            settingsArray.push([prefix, setCodeName, setType, temp]);
-          
-          } else if (setType.startsWith('list') || setType === 'subnets') {
+            value = $('#' + setCodeName).val();
+            value = applyTransformers(value, transformers);
+            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+
+          } else if (inputType === 'checkbox') {
             
+            value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
+            value = applyTransformers(value, transformers);
+            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+
+          } else if (setTypeObject.dataType === "array" ) {
+            
+            // make sure to collect all if set as "editable" or selected only otherwise
+            $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected" 
+
             const temps = [];
-            $(`#${setCodeName} option`).each(function (i, selected) {
-              const vl = $(selected).val();
+            $(`#${setCodeName} option${additionalSelector}`).each(function() {
+              const vl = $(this).val();
               if (vl !== '') {
                 temps.push(vl);
               }
-            });        
+            });
+          
+            value = JSON.stringify(temps);
+            value = applyTransformers(value, transformers);
+            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+
+          } else if (setTypeObject.dataType === "json") {
             
-            settingsArray.push([prefix, setCodeName, setType, JSON.stringify(temps)]);
-          } else if (setType === 'json') {        
-            const temps = $('#'+setCodeName).val();        
-            settingsArray.push([prefix, setCodeName, setType, temps]);          
-          } else if (setType === 'password.SHA256') { 
-            // save value as SHA256 if value isn't SHA256 already       
-            var temps = $('#'+setCodeName).val(); 
-            
-            if(temps != "" && !isSHA256(temps))
-            {
-              temps = CryptoJS.SHA256(temps).toString(CryptoJS.enc.Hex);
-            } 
-            settingsArray.push([prefix, setCodeName, setType, temps]);
+            value = $('#' + setCodeName).val();
+            value = applyTransformers(value, transformers);
+            value = JSON.stringify(value, null, 2)
+            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+
+          } else {
+            value = $('#' + setCodeName).val();
+            value = applyTransformers(value, transformers);
+            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
           }
         });
 
@@ -716,8 +683,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         if(settingsCollectedCorrectly(settingsArray, settingsJSON_DB))
         {
 
-          // console.log(settingsArray);
-          
+          console.log(settingsArray);
+          console.log( JSON.stringify(settingsArray));
+          // return;
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",
@@ -734,7 +702,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 window.onbeforeunload = null;         
 
                 // Reloads the current page
-                setTimeout("clearCache()", 5000);    
+                // setTimeout("clearCache()", 5000);    
               } else{
                 // something went wrong
                 // write_notification(data, 'interrupt')

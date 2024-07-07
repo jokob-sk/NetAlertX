@@ -47,7 +47,7 @@
   "settings": [
     {
       "function": "enable_password",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -66,7 +66,7 @@
     },
     {
       "function": "password",
-      "type": "password.SHA256",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": ["sha256"]}]},
       "maxLength": 50,
       "default_value": "123456",
       "options": [],

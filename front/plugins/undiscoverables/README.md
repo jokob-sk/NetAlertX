@@ -25,3 +25,6 @@ Allowing Un-Discoverable devices like hubs, switches or APs to be added to the n
 ### Known Limitations
  - Un-Discoverable Devices always show as offline. That is expected as they can not be discovered by NetAlertX.
  - All IPs are set to 0.0.0.0 therefore the "Random MAC" icon might show up.
+
+Made with ❤ by [@Data-Monkey](https://github.com/Data-Monkey) 🙏
+

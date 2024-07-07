@@ -306,7 +306,7 @@ def write_notification(content, level, timestamp):
                     if file_contents == '':
                         file_contents = '[]'  # If file is empty, initialize as empty list
 
-                    mylog('debug', ['[Notification] User Notifications file: ', file_contents])
+                    # mylog('debug', ['[Notification] User Notifications file: ', file_contents])
                     notifications = json.loads(file_contents)  # Parse JSON data
                 else:
                     mylog('error', 'File is not of type _io.TextIOWrapper')

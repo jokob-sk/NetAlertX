@@ -242,7 +242,7 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": ["disabled", "on_notification"],
       "localized": ["name", "description"],
@@ -269,7 +269,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/_publisher_pushsafer/pushsafer.py",
       "options": [],
       "localized": ["name", "description"],
@@ -296,7 +296,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
@@ -327,7 +327,7 @@
     },
     {
       "function": "TOKEN",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "ApiKey",
       "options": [],
       "localized": ["name", "description"],

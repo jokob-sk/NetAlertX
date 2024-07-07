@@ -56,6 +56,19 @@ def main():
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
+    # mylog('verbose', [f'[{pluginName}] new_notifications: ', new_notifications])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_SERVER: ', get_setting_value("SMTP_SERVER")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_PORT: ', get_setting_value("SMTP_PORT")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_SKIP_LOGIN: ', get_setting_value("SMTP_SKIP_LOGIN")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_USER: ', get_setting_value("SMTP_USER")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_PASS: ', get_setting_value("SMTP_PASS")])  
+
+    # mylog('verbose', [f'[{pluginName}] SMTP_SKIP_TLS: ', get_setting_value("SMTP_SKIP_TLS")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_FORCE_SSL: ', get_setting_value("SMTP_FORCE_SSL")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_TO: ', get_setting_value("SMTP_REPORT_TO")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_FROM: ', get_setting_value("SMTP_REPORT_FROM")])  
+
+
     # Process the new notifications (see the Notifications DB table for structure or check the /api/table_notifications.json endpoint)
     for notification in new_notifications:
 

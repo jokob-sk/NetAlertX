@@ -344,7 +344,7 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -377,7 +377,7 @@
     },
     {
       "function": "CMD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/website_monitor/script.py urls={urls}",
       "options": [],
       "localized": ["name", "description"],
@@ -404,7 +404,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "0 2 * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -431,7 +431,7 @@
     },
     {
       "function": "API_SQL",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "SELECT * FROM plugin_website_monitor",
       "options": [],
       "localized": ["name", "description"],
@@ -458,7 +458,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 5,
       "options": [],
       "localized": ["name", "description"],
@@ -489,7 +489,7 @@
     },
     {
       "function": "WATCH",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["Watched_Value1"],
       "options": [
         "Watched_Value1",
@@ -521,7 +521,7 @@
     },
     {
       "function": "REPORT_ON",
-      "type": "text.multiselect",
+      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
       "default_value": ["new", "watched-changed"],
       "options": [
         "new",
@@ -553,7 +553,7 @@
     },
     {
       "function": "urls_to_check",
-      "type": "list",
+      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
       "default_value": ["https://google.com", "https://duck.com"],
       "options": [],
       "localized": ["name", "description"],
@@ -580,7 +580,7 @@
     },
     {
       "function": "SQL_internet_ip",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
       "options": [],
       "localized": ["name", "description"],

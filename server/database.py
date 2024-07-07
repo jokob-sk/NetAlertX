@@ -2,6 +2,7 @@
 
 import sqlite3
 import base64
+import json
 
 # Register NetAlertX modules 
 from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
@@ -556,6 +557,7 @@ class DB():
             result["data"].append(tmp)
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
+        # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
         return json_obj(result, columnNames)
 
     #-------------------------------------------------------------------------------

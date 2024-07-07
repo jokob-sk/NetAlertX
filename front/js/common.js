@@ -124,8 +124,10 @@ function cacheSettings()
           settingsData.forEach((set) => {  
 
             resolvedOptions = createArray(set.Options)
+            resolvedOptionsOld = resolvedOptions
             setPlugObj     = {};
             options_params = [];
+            resolved = ""
           
             // proceed only if first option item contains something to resolve
             if( !set.Code_Name.includes("__metadata") && 
@@ -158,7 +160,12 @@ function cacheSettings()
               }    
             }
 
+            console.log(resolved);
+            console.log(resolvedOptionsOld);
+            console.log(resolvedOptions);
+
             setCache(`pia_set_${set.Code_Name}`, set.Value) 
+            
             setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
           });
         }).then(() => handleSuccess('cacheSettings', resolve())).catch(() => handleFailure('cacheSettings', reject("cacheSettings already completed")));    // handle AJAX synchronization
@@ -179,6 +186,7 @@ function getSettingOptions (key) {
   if (result == "")
   {
     console.log(`Setting options with key "${key}" not found`)
+    result = []
   }
 
   return result;
@@ -743,10 +751,14 @@ function isRandomMAC(mac)
   // ---------------------------------------------------------  
   // Generate an array object from a string representation of an array
   function createArray(input) {
+    // Is already array, return
+    if (Array.isArray(input)) {
+      return input;
+    }
     // Empty array
     if (input === '[]') {
       return [];
-    }
+    } 
   
     // Regex pattern for brackets
     const patternBrackets = /(^\s*\[)|(\]\s*$)/g;

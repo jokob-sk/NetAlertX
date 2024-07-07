@@ -312,57 +312,98 @@ def get_setting_value(key):
 
 #-------------------------------------------------------------------------------
 #  Convert the setting value to the corresponding python type
-def setting_value_to_python_type(set_type, set_value):
+import json
+import base64
+import hashlib
 
+import json
+import base64
+import hashlib
+
+def setting_value_to_python_type(set_type, set_value):
     value = '----not processed----'
 
-    # Handle different types of settings
-    if set_type in ['text', 'string', 'password', 'password.SHA256', 'readonly', 'text.select']:
+    # "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}
+ 
+
+    setTypJSN = json.loads(str(set_type).replace('"','\"').replace("'",'"'))
+
+    # Handle different types of settings based on set_type dictionary
+    dataType = setTypJSN.get('dataType', '')
+    elements = setTypJSN.get('elements', [])
+
+    # Ensure there's at least one element in the elements list
+    if not elements:
+        mylog('none', [f'[HELPER] No elements provided in set_type: {set_type} '])
+        return value
+
+    # Use the last element in the list
+    last_element = elements[len(elements)-1]
+    elementType = last_element.get('elementType', '')
+    elementOptions = last_element.get('elementOptions', [])
+    transformers = last_element.get('transformers', [])
+
+    # Apply transformers to the value
+    for transformer in transformers:
+        if transformer == 'base64':
+            if isinstance(set_value, str):
+                set_value = base64.b64decode(set_value).decode('utf-8')
+        elif transformer == 'sha256':
+            if isinstance(set_value, str):
+                set_value = hashlib.sha256(set_value.encode()).hexdigest()
+
+    # Convert value based on dataType and elementType
+    if dataType == 'string' and elementType in ['input', 'select']:
         value = str(set_value)
-    elif set_type in ['boolean', 'integer.checkbox']:
-        
-        value = False
 
-        if isinstance(set_value, str) and set_value.lower() in ['true', '1']:
-            value = True
-        elif isinstance(set_value, int) and set_value == 1:
-            value = True
+    elif dataType == 'integer' and elementType == 'input':    
+        # handle storing/retrieving boolean values as 1/0
+        if set_value.lower() not in ['true', 'false'] and isinstance(set_value, str):
+            value = int(set_value)
         elif isinstance(set_value, bool):
-            value = set_value
-        
-    elif set_type in ['integer.select', 'integer']:
-        value = int(set_value)
-    # belwo covers 'text.multiselect', 'list', 'subnets', 'list.select', 'list'
-    elif set_type in ['subnets', 'text.multiselect' ] or 'list' in set_type:        
+            value = 1 if set_value else 0
+        elif isinstance(set_value, str): 
+            value = 1 if set_value.lower() == 'true' else 0
+        else: 
+            value = int(set_value)
 
-        mylog('debug', [f'[SETTINGS] Handling set_type: "{set_type}", set_value: "{set_value}"'])
+    elif dataType == 'boolean' and elementType == 'input':
+        value = set_value.lower() in ['true', '1']
 
-        # Handle string 
+    elif dataType == 'array' and elementType == 'select':
         if isinstance(set_value, str):
-            value = json.loads(set_value.replace("'", "\""))
-
-        # Assuming set_value is a list at this point
-        if isinstance(set_value, list):
-            if 'base64' in set_type:
-                tmp_value = []
-                for item in set_value:
-                    tmp_value.append(base64.b64decode(item))
-
-                set_value = tmp_value
-
+            try:
+                value = json.loads(set_value.replace("'", "\""))
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON array: {e}")
+                value = []
+        elif isinstance(set_value, list):
             value = set_value
 
-    elif set_type == '.template':
-        # Assuming set_value is a JSON object in this case
-        value = json.loads(set_value)
-    
-    #  log debug info if not processed
+    elif dataType == 'object' and elementType == 'input':
+        if isinstance(set_value, str):
+            try:
+                value = json.loads(set_value)
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON object: {e}")
+                value = {}
+        elif isinstance(set_value, dict):
+            value = set_value
+
+    elif dataType == 'string' and elementType == 'input' and any(opt.get('readonly') == "true" for opt in elementOptions):
+        value = str(set_value)
+
+    elif dataType == 'string' and elementType == 'input' and any(opt.get('type') == "password" for opt in elementOptions) and 'sha256' in transformers:
+        value = hashlib.sha256(set_value.encode()).hexdigest()
+
+
     if value == '----not processed----':
-        mylog('none', [f'[SETTINGS] ⚠ ERROR - set_type not handled:{set_type}'])
-        mylog('none', [f'[SETTINGS] ⚠ ERROR - setting json:{json.dumps(set_value)}'])
-        value = ''
+        mylog('none', [f'[HELPER] ⚠ ERROR not processed set_type:  {set_type} '])  
+        mylog('none', [f'[HELPER] ⚠ ERROR not processed set_value: {set_value} '])  
 
     return value
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -601,6 +642,10 @@ import dns.resolver
 
 def cleanDeviceName(str, match_IP):
 
+    # add matching info
+    if match_IP:
+        str = str + " (IP match)"
+
     if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
         mylog('debug', ["[Name cleanup] Using new cleanDeviceName(" + str + ")"])
 
@@ -628,9 +673,7 @@ def cleanDeviceName(str, match_IP):
         if str.endswith('.'):
             str = str[:-1]
 
-        # add matching info
-        if match_IP:
-            str = str + " (IP match)"
+
 
         # done
         mylog('debug', ["[Name cleanup] cleanDeviceName = " + str])
@@ -655,9 +698,6 @@ def cleanDeviceName(str, match_IP):
     # remove trailing dots
     if str.endswith('.'):
         str = str[:-1]
-
-    if match_IP:
-        str = str + " (IP match)"
 
     mylog('debug', ["cleanDeviceName = " + str])
     return str

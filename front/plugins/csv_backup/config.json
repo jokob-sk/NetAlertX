@@ -58,7 +58,7 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": "text.select",
+      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "schedule",
       "options": [
         "disabled",
@@ -99,7 +99,7 @@
     },
     {
       "function": "CMD",
-      "type": "readonly",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
       "default_value": "python3 /app/front/plugins/csv_backup/script.py overwrite={overwrite} location={location}",
       "options": [],
       "localized": ["name", "description"],
@@ -134,7 +134,7 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "0 2 * * 3",
       "options": [],
       "localized": ["name", "description"],
@@ -169,7 +169,7 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": "integer",
+      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
       "default_value": 30,
       "options": [],
       "localized": ["name", "description"],
@@ -204,7 +204,7 @@
     },
     {
       "function": "overwrite",
-      "type": "boolean",
+      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
       "default_value": false,
       "options": [],
       "localized": ["name", "description"],
@@ -239,7 +239,7 @@
     },
     {
       "function": "location",
-      "type": "text",
+      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
       "default_value": "/app/config",
       "options": [],
       "localized": ["name", "description"],

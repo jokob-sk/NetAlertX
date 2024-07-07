@@ -33,30 +33,35 @@ class plugin_param:
                 setVal = inputValue["Value"] # setting value
                 setTyp = inputValue["Type"]  # setting type
 
-                noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'password.SHA256', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
-                arrayConversion         = ['text.multiselect', 'list', 'list.select', 'subnets']                 
-                jsonConversion          = ['.template'] 
+                setTypJSN = json.loads(setTyp.replace('"','\"').replace("'",'"'))
 
                 mylog('debug', f'[Plugins] setTyp: {setTyp}')
+                mylog('debug', f'[Plugins] setTypJSN: {setTypJSN}')
 
-                if '.select' in setTyp or setTyp in arrayConversion:
+                dataType  = setTypJSN["dataType"]
+
+                mylog('debug', f'[Plugins] dType: {dataType}')
+
+                # noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'password.SHA256', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
+                # arrayConversion         = ['text.multiselect', 'list', 'list.select', 'subnets']                 
+                # jsonConversion          = ['.template'] 
+
+                
+
+                if dataType  == 'array':
                     # store number of returned values
                     paramValuesCount = len(setVal)
 
-                if setTyp in noConversion:
+                if dataType in ['string','integer', 'boolean']:
                     resolved =  setVal
                 
-                elif setTyp in arrayConversion:
+                elif dataType == 'array':
                     #  make them safely passable to a python or linux script
                     resolved =  list_to_csv(setVal)
 
                 else:
-                    for item in jsonConversion:
-                        if setTyp.endswith(item):
-                            return json.dumps(setVal)
-                        else:
-                            mylog('none', ['[Plugins] ⚠ ERROR: Parameter not converted.'])  
-                
+                    mylog('none', ['[Plugins] ⚠ ERROR: Parameter probably not converted.'])  
+                    return json.dumps(setVal)
 
         #  Get SQL result
         if param["type"] == "sql":
