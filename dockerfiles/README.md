@@ -85,7 +85,7 @@ These are the most important settings to get at least some output in your Device
 
 Use the official installation guides at first and use community content as supplementary material. Open an issue if you'd like to add your link to the list 🙏 
 
-- ▶ [Home Lab Network Monitoring - Scotti-BYTE Enterprise Consulting Services](https://www.youtube.com/watch?v=0DryhzrQSJA)
+- ▶ [Home Lab Network Monitoring - Scotti-BYTE Enterprise Consulting Services](https://www.youtube.com/watch?v=0DryhzrQSJA) (July 2024)
 - 📄 [How to Install NetAlertX on Your Synology NAS - Marius hosting](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
 - 📄 [Using the PiAlert Network Security Scanner on a Raspberry Pi - PiMyLifeUp](https://pimylifeup.com/raspberry-pi-pialert/)
 - ▶ [How to Setup Pi.Alert on Your Synology NAS - Digital Aloha](https://www.youtube.com/watch?v=M4YhpuRFaUg) 

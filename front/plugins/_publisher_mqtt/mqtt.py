@@ -13,6 +13,7 @@ import paho.mqtt.client as mqtt
 # from paho.mqtt import client as mqtt_client
 # from paho.mqtt import CallbackAPIVersion as mqtt_CallbackAPIVersion
 import hashlib
+import sqlite3
 
 
 # Register NetAlertX directories
@@ -27,7 +28,7 @@ from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
-from database import DB, get_all_devices, get_device_stats
+from database import DB, get_device_stats
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -340,10 +341,10 @@ def mqtt_start(db):
     # Generate device-specific MQTT messages if enabled
     if get_setting_value('MQTT_SEND_DEVICES') == True:
 
-        # Specific devices
+        # Specific devices processing
 
         # Get all devices
-        devices = get_all_devices(db)
+        devices = db.read(get_setting_value('MQTT_DEVICES_SQL').replace('{s-quote}',"'"))
 
         sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
 

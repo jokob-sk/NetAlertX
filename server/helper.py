@@ -325,7 +325,6 @@ def setting_value_to_python_type(set_type, set_value):
 
     # "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}
  
-
     setTypJSN = json.loads(str(set_type).replace('"','\"').replace("'",'"'))
 
     # Handle different types of settings based on set_type dictionary
@@ -356,15 +355,20 @@ def setting_value_to_python_type(set_type, set_value):
     if dataType == 'string' and elementType in ['input', 'select']:
         value = str(set_value)
 
-    elif dataType == 'integer' and elementType == 'input':    
+    elif dataType == 'integer' and (elementType == 'input' or elementType == 'select'):    
         # handle storing/retrieving boolean values as 1/0
+
         if set_value.lower() not in ['true', 'false'] and isinstance(set_value, str):
             value = int(set_value)
+
         elif isinstance(set_value, bool):
             value = 1 if set_value else 0
+
         elif isinstance(set_value, str): 
+
             value = 1 if set_value.lower() == 'true' else 0
         else: 
+
             value = int(set_value)
 
     elif dataType == 'boolean' and elementType == 'input':

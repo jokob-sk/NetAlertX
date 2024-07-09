@@ -25,7 +25,7 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "A plugin to publish a notification via the Apprise gateway."
+      "string": "A plugin to publish a notification via MQTT to Home Assistant."
     }
   ],
   "params": [
@@ -668,6 +668,30 @@
         {
           "language_code": "en_us",
           "string": "Check to send individual devices to the broker with details, such as <code>is_new</code>, <code>is_present</code>, or <code>mac_address</code> of the devices."
+        }
+      ]
+    },
+    {
+      "function": "DEVICES_SQL",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "select rowid, * from Devices where dev_Name not in ({s-quote}null{s-quote}, {s-quote}(name not found){s-quote}, {s-quote}(unknown){s-quote})",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device SQL"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The SQL condition used to select which Devices are sent via MQTT. Please note that you need to use <code>{s-quote}</code> for single quotes replacement and double-quotes are not supported."
         }
       ]
     },
