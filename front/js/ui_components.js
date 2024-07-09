@@ -78,50 +78,50 @@ function initDeviceSelectors() {
 
 
 
-// -----------------------------------------------------------------------------
-// (ASYNC) Initiate dropdown
-function initSettingDropdown(settingKey,       // Identifier for the setting
-                            valuesArray,       // Array of values to be pre-selected in the dropdown
-                            targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
-                            callbackToGenerateEntries,  // Callback function to generate entries based on options
-                            targetField,      // Target field or element where selected value should be applied or updated
-                            nameTransformer)      // callback to transform the name (e.g. base64)
-{
+// // -----------------------------------------------------------------------------
+// // (ASYNC) Initiate dropdown
+// function generateSetOptions(settingKey,       // Identifier for the setting
+//                             valuesArray,       // Array of values to be pre-selected in the dropdown
+//                             targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
+//                             callbackToGenerateEntries,  // Callback function to generate entries based on options
+//                             targetField,      // Target field or element where selected value should be applied or updated
+//                             nameTransformer)      // callback to transform the name (e.g. base64)
+// {
 
-  var optionsHtml = ""
+//   var optionsHtml = ""
  
-  // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
-  optionsArray = createArray(getSettingOptions(settingKey))  
+//   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
+//   optionsArray = createArray(getSettingOptions(settingKey))  
 
 
-  // check if the result is a SQL query
-  if(optionsArray.length > 0 && isSQLQuery(optionsArray[0]))
-  {    
+//   // check if the result is a SQL query
+//   if(optionsArray.length > 0 && isSQLQuery(optionsArray[0]))
+//   {    
 
-    if (settingKey == "NEWDEV_dev_Network_Node_MAC_ADDR") {
-      console.log("isSQLQuery in initSettingDropdown");
+//     if (settingKey == "NEWDEV_dev_Network_Node_MAC_ADDR") {
+//       console.log("isSQLQuery in generateSetOptions");
 
-    }
-    readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField, nameTransformer);
+//     }
+//     readData(optionsArray[0], callbackToGenerateEntries, valuesArray, targetLocation, targetField, nameTransformer);
 
-  } else // this should be already an array, e.g. from a setting or pre-defined
-  {     
-    optionsArray.forEach(option => {
-      let selected = valuesArray.includes(option) ? 'selected' : '';
-      optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-    });   
+//   } else // this should be already an array, e.g. from a setting or pre-defined
+//   {     
+//     optionsArray.forEach(option => {
+//       let selected = valuesArray.includes(option) ? 'selected' : '';
+//       optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+//     });   
 
-    // Replace the specified placeholder div with the resulting HTML 
-    setTimeout(() => {
+//     // Replace the specified placeholder div with the resulting HTML 
+//     setTimeout(() => {
 
-      $("#" + targetLocation).replaceWith(optionsHtml);
+//       $("#" + targetLocation).replaceWith(optionsHtml);
       
-      }, 50); 
-  }
+//       }, 50); 
+//   }
 
 
   
-}
+// }
 
 
 // -----------------------------------------------------------------------------
@@ -153,86 +153,6 @@ function hideUIelements(settingKey) {
 }
 
 
-// -----------------------------------------------------------------------------
-// Data processors
-// -----------------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------------
-// Processor to generate options for a dropdown menu
-function generateDropdownOptions(data, valuesArray, targetField, nameTransformer) {
-  var optionsHtml = "";
-  data.forEach(function(item) {
-
-    labelName = item.name
-
-    // console.log(nameTransformer);
-    // console.log(labelName);
-
-    // if(nameTransformer && nameTransformer != '' && labelName != '❌None')
-    // {
-    //   console.log(labelName);
-    //   labelName = nameTransformer(labelName)
-    //   console.log(labelName);
-    // }
-
-    let selected = valuesArray.includes(item.id) ? 'selected' : '';
-
-    optionsHtml += `<option value="${item.id}" ${selected}>${labelName}</option>`;
-  });
-  return `${optionsHtml}`;
-}
-
-
-// -----------------------------------------------------------------------------
-// Processor to generate a list
-function generateList(data, valuesArray, targetField, nameTransformer) {
-  var listHtml = "";
-  data.forEach(function(item) {
-
-    labelName = item.name
-
-    if(nameTransformer && nameTransformer != '' && labelName != '❌None')
-    {
-      labelName = nameTransformer(labelName)
-    }
-
-    let selected = valuesArray.includes(item.id) ? 'selected' : '';
-
-    listHtml += `<li ${selected}>${labelName}</li>`;
-  });
-
-  return listHtml;
-}
-
-// -----------------------------------------------------------------------------
-// Processor to generate a list in the deviceDetails page
-function genListWithInputSet(data, valuesArray, targetField, nameTransformer) {
-
-  var listHtml = "";
-
-  console.log(data);
-  data.forEach(function(item) {
-
-    let selected = valuesArray.includes(item.id) ? 'selected' : '';
-
-    // console.log(item);
-
-    labelName = item.name
-
-    if(nameTransformer && nameTransformer != '' && labelName != '❌None')
-    {
-      labelName = nameTransformer(labelName)
-    }
-
-    listHtml += `<li ${selected}>
-                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${labelName}</a> 
-                </li>`;
-    
-  });
-
-  return listHtml;
-}
 
 
 // -----------------------------------------------------------------------------

@@ -84,7 +84,7 @@ def execute_scan(subnets_list, timeout):
     for interface in subnets_list:
         nmap_output = execute_scan_on_interface(interface, timeout)
 
-        mylog('verbose', [f"[{pluginName}] nmap_output: ", nmap_output])
+        # mylog('verbose', [f"[{pluginName}] nmap_output XML: ", nmap_output])
 
         if nmap_output:  # Proceed only if nmap output is not empty
             # Parse the XML output using python-nmap

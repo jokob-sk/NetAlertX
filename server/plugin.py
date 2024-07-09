@@ -42,11 +42,6 @@ class plugin_param:
 
                 mylog('debug', f'[Plugins] dType: {dataType}')
 
-                # noConversion            = ['text', 'string', 'integer', 'boolean', 'password', 'password.SHA256', 'readonly', 'integer.select', 'text.select', 'integer.checkbox'  ]
-                # arrayConversion         = ['text.multiselect', 'list', 'list.select', 'subnets']                 
-                # jsonConversion          = ['.template'] 
-
-                
 
                 if dataType  == 'array':
                     # store number of returned values

@@ -28,7 +28,63 @@
   "settings": [
     {
       "function": "ignored_MACs",
-      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-12" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -47,7 +103,63 @@
     },
     {
       "function": "ignored_IPs",
-      "type": {"dataType": "array","elements": [  {"elementType": "input","elementOptions": [{ "placeholder": "Enter value" },{ "suffix": "_in" },{ "cssClasses": "col-sm-10" },{ "prefillValue": "null" }],"transformers": []  },  {"elementType": "button","elementOptions": [{ "sourceSuffixes": ["_in"] },{ "separator": "" },{ "cssClasses": "col-sm-12" },{ "onClick": "addList(this, false)" },{ "getStringKey": "Gen_Add" }],"transformers": []  }, {"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeAllOptions(this)" },{ "getStringKey": "Gen_Remove_All" }],"transformers": []},{"elementType": "button","elementOptions": [{ "sourceSuffixes": [] },{ "separator": "" },{ "cssClasses": "col-sm-6" },{ "onClick": "removeFromList(this)" },{ "getStringKey": "Gen_Remove_Last" }],"transformers": []}, {"elementType": "select","elementOptions": [{ "multiple": "true" },{ "readonly": "true" },{ "editable": "true" }],"transformers": []  }]},
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-12" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": [],
       "options": [],
       "localized": ["name", "description"],
@@ -66,7 +178,16 @@
     },
     {
       "function": "dev_MAC",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -86,7 +207,16 @@
     },
     {
       "function": "dev_Name",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "maxLength": 50,
       "default_value": "(unknown)",
       "options": [],
@@ -106,7 +236,12 @@
     },
     {
       "function": "dev_Owner",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "maxLength": 30,
       "default_value": "",
       "options": ["{value}"],
@@ -133,7 +268,12 @@
     },
     {
       "function": "dev_DeviceType",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "maxLength": 30,
       "default_value": "",
       "options": ["{value}"],
@@ -165,7 +305,16 @@
     },
     {
       "function": "dev_Vendor",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "maxLength": 250,
       "default_value": "",
       "options": [],
@@ -185,7 +334,16 @@
     },
     {
       "function": "dev_Favorite",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -204,7 +362,12 @@
     },
     {
       "function": "dev_Group",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "maxLength": 10,
       "default_value": "",
       "options": ["{value}"],
@@ -231,7 +394,12 @@
     },
     {
       "function": "dev_Comments",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -250,7 +418,16 @@
     },
     {
       "function": "dev_FirstConnection",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -270,7 +447,16 @@
     },
     {
       "function": "dev_LastConnection",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -290,7 +476,16 @@
     },
     {
       "function": "dev_LastIP",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "maxLength": 50,
       "default_value": "",
       "options": [],
@@ -310,7 +505,16 @@
     },
     {
       "function": "dev_StaticIP",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -329,7 +533,16 @@
     },
     {
       "function": "dev_ScanCycle",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -348,7 +561,16 @@
     },
     {
       "function": "dev_LogEvents",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -367,7 +589,16 @@
     },
     {
       "function": "dev_AlertEvents",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -386,7 +617,16 @@
     },
     {
       "function": "dev_AlertDeviceDown",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -405,7 +645,12 @@
     },
     {
       "function": "dev_SkipRepeated",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": 0,
       "options": ["{value}"],
       "options_params": [
@@ -431,7 +676,16 @@
     },
     {
       "function": "dev_LastNotification",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "format": "date-time",
       "default_value": "",
       "options": [],
@@ -451,7 +705,16 @@
     },
     {
       "function": "dev_PresentLastScan",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -470,7 +733,16 @@
     },
     {
       "function": "dev_NewDevice",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1,
       "options": [],
       "localized": ["name", "description"],
@@ -489,7 +761,12 @@
     },
     {
       "function": "dev_Location",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "maxLength": 250,
       "default_value": "",
       "options": ["{value}"],
@@ -516,7 +793,16 @@
     },
     {
       "function": "dev_Archived",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -535,7 +821,12 @@
     },
     {
       "function": "dev_Network_Node_MAC_ADDR",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": ["{value}"],
       "options_params": [
@@ -566,7 +857,16 @@
     },
     {
       "function": "dev_Network_Node_port",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -585,7 +885,12 @@
     },
     {
       "function": "dev_Icon",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": ["{value}"],
       "options_params": [
@@ -611,7 +916,16 @@
     },
     {
       "function": "LESS_NAME_CLEANUP",
-      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 0,
       "options": [],
       "localized": ["name", "description"],
@@ -630,8 +944,75 @@
     },
     {
       "function": "NAME_CLEANUP_REGEX",
-      "type": {"dataType":"string", "elements": [{"elementType" : "textarea", "elementOptions" : [] ,"transformers": ["base64"]}]},
-      "default_value": ["XC5fYWlycGxheQ==", "XC5fdGNw", "XC5sb2NhbGRvbWFpbg==", "XC5sb2NhbA==", "XC5fZXNwaG9tZWxpYg==", "XC5fZ29vZ2xlY2FzdA==", "XC5sYW4=", "XC5ob21l",  "LVthLWZBLUYwLTldezMyfQ==", "Iy4q" ],
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },         
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-2" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": ["base64"]
+          }
+        ]
+      },
+      "default_value": [
+        "XC5fYWlycGxheQ==",
+        "XC5fdGNw",
+        "XC5sb2NhbGRvbWFpbg==",
+        "XC5sb2NhbA==",
+        "XC5fZXNwaG9tZWxpYg==",
+        "XC5fZ29vZ2xlY2FzdA==",
+        "XC5sYW4=",
+        "XC5ob21l",
+        "LVthLWZBLUYwLTldezMyfQ==",
+        "Iy4q"
+      ],
       "options": [],
       "localized": ["name", "description"],
       "name": [

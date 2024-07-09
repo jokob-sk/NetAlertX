@@ -25,6 +25,7 @@
   color:white;
   background-color: black;
   font-family: 'Courier New', monospace;
+  font-size: .85em;
   
 }
 .logs-row textarea
@@ -58,7 +59,7 @@
 }
 .logs-small
 {
-    height: 100px;
+    height: 150px;
 }
 .log-file
 {

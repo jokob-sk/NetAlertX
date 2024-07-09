@@ -735,34 +735,21 @@ function performLogManage() {
 
 // --------------------------------------------------------
 // scroll down the log areas
-function scrollDown()
-{
-  setTimeout(() => {
-
+function scrollDown() {
+ 
     var elementToCheck = $("#tab_Logging_id");
 
     // Check if the parent <li> is active
     if (elementToCheck.parent().hasClass("active")) {
-    {
-        var areaIDs = ['app_log', 'app_front_log', 'IP_changes_log', 'stdout_log', 'stderr_log', 'app_pholus_log',  'app_pholus_lastrun_log', 'app_php_log'];
-      
-        for (let i = 0; i < areaIDs.length; i++) {
+      var textAreas = $("#logsPlc textarea");
 
-          var tempArea = $('#' + areaIDs[i]);
-          
-          if (tempArea.length > 0)
-          {
-            $(tempArea[0]).scrollTop(tempArea[0].scrollHeight);
-          }
-
-        }
-      }
+      textAreas.each(function() {
+        $(this).scrollTop(this.scrollHeight);
+      });
     }
-    
-  }, 200);
-    
-  
+ 
 }
+
 
 // --------------------------------------------------------
 // Manage displayed columns
@@ -890,6 +877,7 @@ function renderLogs(customData) {
       // data: { items: JSON.stringify(customData) }, // Send customData as JSON
       success: function(response) {
         $('#logsPlc').html(response); // Replace container content with fetched HTML
+        scrollDown(); // scroll down the logs
       },
       error: function(xhr, status, error) {
         console.error('Error fetching infoboxes:', error);
@@ -903,8 +891,7 @@ window.onload = function asyncFooter()
 {
   initializeSelectedColumns();
   renderLogs();
-  scrollDown(); // scroll down the logs
-  
+
   // initializeTabs();
 
   $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/netalertx/main?logo=github"></a>');

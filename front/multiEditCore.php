@@ -1,6 +1,4 @@
 
-<script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
-
 
 <div class="col-md-12">
     <div class="callout callout-warning">
@@ -128,9 +126,9 @@
                   //  render based on element type
                   if (lastElementObj.elementType === 'select') {
 
-                    targetLocation = columns[j].Code_Name + "_initSettingDropdown"
+                    targetLocation = columns[j].Code_Name + "_generateSetOptions"
 
-                    initSettingDropdown(columns[j].Code_Name, [], targetLocation, generateDropdownOptions)
+                    generateOptionsOrSetOptions(columns[j].Code_Name, [], targetLocation, generateOptions)
 
                     //  Handle Icons as tehy need a preview                 
                     if(columns[j].Code_Name == 'NEWDEV_dev_Icon')

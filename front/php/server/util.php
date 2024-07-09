@@ -370,18 +370,7 @@ function saveSettings()
 
               $temp = '['.$temp.']'; // wrap brackets
               $txt .= $settingKey . "=" . $temp . "\n";
-              // $temp = '';
-              // if (is_array($settingValue) == FALSE) {
-              //     $settingValue = json_decode($settingValue);
-              // }
-              // if (count($setting) > 3 && is_array($settingValue) == true) {
-              //     foreach ($settingValue as $val) {
-              //         $temp .= "'" . encode_single_quotes($val) . "',";
-              //     }
-              //     $temp = substr_replace($temp, "", -1); // remove last comma ','
-              // }
-              // $temp = '[' . $temp . ']'; // wrap brackets
-              // $txt .= $settingKey . "=" . $temp . "\n";
+ 
           } else  {
               $txt .= $settingKey . "='⭕Not handled⭕'\n";
           }

@@ -824,7 +824,7 @@ function initializeCombos () {
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
 
   // Initiate dropdown
-  //  initSettingDropdown(settingKey,       // Identifier for the setting
+  //  generateSetOptions(settingKey,       // Identifier for the setting
   //                      valuesArray,       // Array of values to be pre-selected in the dropdown
   //                      targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
   //                      callbackToGenerateEntries,  // Callback function to generate entries based on options
@@ -832,12 +832,12 @@ function initializeCombos () {
   //                      nameTransformer)   // callback to transform name
 
 
-  initSettingDropdown("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', atob )
-  initSettingDropdown("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
-  initSettingDropdown("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
-  initSettingDropdown("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
-  initSettingDropdown("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
-  initSettingDropdown("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
+  generateOptionsOrSetOptions("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', ["base64"])
+  generateOptionsOrSetOptions("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
+  generateOptionsOrSetOptions("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
+  generateOptionsOrSetOptions("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
+  generateOptionsOrSetOptions("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
+  generateOptionsOrSetOptions("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
 
   // Initialize static combos
   initializeComboSkipRepeated ();

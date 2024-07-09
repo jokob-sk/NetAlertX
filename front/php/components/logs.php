@@ -53,7 +53,7 @@ function renderLogArea($params) {
     $html = '
         <div class="log-area box box-solid box-primary">
             <div class="row logs-row col-sm-12 col-xs-12">
-                <textarea id="app_log" class="' . htmlspecialchars($textAreaCssClass) . '" cols="70" rows="10" wrap="off" readonly>'
+                <textarea class="' . htmlspecialchars($textAreaCssClass) . '" cols="70" rows="20" wrap="off" readonly>'
                     . htmlspecialchars($content) .
                 '</textarea>
             </div>

@@ -50,7 +50,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 ?>
 <!-- Page ------------------------------------------------------------------ -->
 
-<script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+
 
 <script src="lib/crypto/crypto-js.min.js"></script>
 
@@ -237,7 +237,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             // only proceed if everything was loaded correctly
             if(!exception_occurred)
             {
-              initSettingsPage(settingsData, pluginsData, generateDropdownOptions);
+              initSettingsPage(settingsData, pluginsData);
             }
           })
         }        
@@ -374,7 +374,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       // go thru all settings and collect settings per settings prefix 
       settingsData.forEach((set) => {
 
-        const val = set['Value'];
+        const valIn = set['Value'];
         const codeName = set['Code_Name'];
         const setType = set['Type'];
         const isMetadata = codeName.includes('__metadata');
@@ -382,7 +382,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
 
         // not initialized properly, reload
-        if(isMetadata && val == "" )
+        if(isMetadata && valIn == "" )
         {
           console.warn(`Metadata setting value is empty: ${codeName}`);
           clearCache();
@@ -481,12 +481,22 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               valRes,
               getStringKey,
               onClick
-            } = handleElementOptions(codeName, elementOptions, transformers, val);
+            } = handleElementOptions(codeName, elementOptions, transformers, valIn);
+
+            // override
+            val = valRes;
 
             // Generate HTML based on dataType and elementType
             switch (elementType) {
               case 'select':
-                inputHtml = generateOptions(pluginsData, set, inputHtml, dataType, isMultiSelect, editable, transformers);
+                let multi = isMultiSelect ? "multiple" : "";
+
+                inputHtml += `<select onChange="settingsChanged()" my-data-type="${dataType}" my-editable="${editable}" class="form-control" name="${codeName}" id="${codeName}" ${multi}>
+                                <option value="" id="${codeName + "_temp_"}"></option>
+                              </select>`;
+
+                generateOptionsOrSetOptions(codeName, createArray(val), `${codeName}_temp_`, generateOptions, targetField = null, transformers);
+
                 break;
 
               case 'input':
@@ -500,7 +510,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                     my-data-type="${dataType}" 
                     id="${codeName}${suffix}" 
                     type="${inputType}" 
-                    value="${valRes}" 
+                    value="${val}" 
                     ${readOnly}
                     ${checked}
                     placeholder="${placeholder}" 
@@ -530,7 +540,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 break;
 
               default:
-                console.warn(`Unknown element type: ${elementType}`);
+                console.warn(`🟥Unknown element type: ${elementType}`);
             }
           });
 
@@ -538,7 +548,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // process events (e.g. run ascan, or test a notification) if associated with the setting
           let eventsHtml = "";          
 
-          const eventsList = createArray(set['Events']);          
+          const eventsList = createArray(set['Events']);      
 
           if (eventsList.length > 0) {
             // console.log(eventsList)
@@ -569,7 +579,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     }
 
     // init finished
-    initListInteractionOptions()  // init remove and edit listitem click gestures
+    setTimeout(() => {
+      initListInteractionOptions()  // init remove and edit listitem click gestures
+    }, 50);
+    
     setupSmoothScrolling()
     hideSpinner()
 
@@ -616,6 +629,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));         
           // console.log(setTypeObject);
 
+          const dataType = setTypeObject.dataType;
           const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1];
           const { elementType, elementOptions = [], transformers = [] } = lastElementObj;
           const { 
@@ -635,20 +649,20 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           let value;
 
-          if (setTypeObject.dataType === "string" || 
-              (setTypeObject.dataType === "integer" && (inputType === "number" || inputType === "text"))) {
+          if (dataType === "string" || 
+              (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
             
             value = $('#' + setCodeName).val();
             value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+            settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (inputType === 'checkbox') {
             
             value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
             value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+            settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (setTypeObject.dataType === "array" ) {
+          } else if (dataType === "array" ) {
             
             // make sure to collect all if set as "editable" or selected only otherwise
             $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected" 
@@ -657,25 +671,27 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             $(`#${setCodeName} option${additionalSelector}`).each(function() {
               const vl = $(this).val();
               if (vl !== '') {
-                temps.push(vl);
+                temps.push(applyTransformers(vl, transformers));
               }
             });
           
             value = JSON.stringify(temps);
-            value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+            settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (setTypeObject.dataType === "json") {
+          } else if (dataType === "json") {
             
             value = $('#' + setCodeName).val();
             value = applyTransformers(value, transformers);
             value = JSON.stringify(value, null, 2)
-            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+            settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else {
+            
+            console.error(`[saveSettings] Couldn't determnine how to handle (setCodeName|dataType|inputType):(${setCodeName}|${dataType}|${inputType})`);
+
             value = $('#' + setCodeName).val();
             value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, setTypeObject.dataType, value]);
+            settingsArray.push([prefix, setCodeName, dataType, value]);
           }
         });
 
@@ -702,7 +718,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 window.onbeforeunload = null;         
 
                 // Reloads the current page
-                // setTimeout("clearCache()", 5000);    
+                setTimeout("clearCache()", 5000);    
               } else{
                 // something went wrong
                 // write_notification(data, 'interrupt')

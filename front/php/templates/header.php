@@ -33,6 +33,8 @@ require dirname(__FILE__).'/security.php';
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">

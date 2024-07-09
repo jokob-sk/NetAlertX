@@ -160,12 +160,7 @@ function cacheSettings()
               }    
             }
 
-            console.log(resolved);
-            console.log(resolvedOptionsOld);
-            console.log(resolvedOptions);
-
-            setCache(`pia_set_${set.Code_Name}`, set.Value) 
-            
+            setCache(`pia_set_${set.Code_Name}`, set.Value)             
             setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
           });
         }).then(() => handleSuccess('cacheSettings', resolve())).catch(() => handleFailure('cacheSettings', reject("cacheSettings already completed")));    // handle AJAX synchronization
@@ -756,7 +751,7 @@ function isRandomMAC(mac)
       return input;
     }
     // Empty array
-    if (input === '[]') {
+    if (input === '[]' || input === '') {
       return [];
     } 
   
