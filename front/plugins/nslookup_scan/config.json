@@ -36,7 +36,12 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -70,7 +75,16 @@
     },
     {
       "function": "CMD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/nslookup_scan/nslookup.py",
       "options": [],
       "localized": ["name", "description"],
@@ -105,7 +119,12 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "*/30 * * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -140,7 +159,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],

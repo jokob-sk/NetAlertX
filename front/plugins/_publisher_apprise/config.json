@@ -288,7 +288,12 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": ["disabled", "on_notification"],
       "localized": ["name", "description"],
@@ -315,7 +320,16 @@
     },
     {
       "function": "CMD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/_publisher_apprise/apprise.py",
       "options": [],
       "localized": ["name", "description"],
@@ -342,7 +356,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
@@ -373,7 +396,12 @@
     },
     {
       "function": "HOST",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -400,7 +428,12 @@
     },
     {
       "function": "URL",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -427,7 +460,12 @@
     },
     {
       "function": "PAYLOAD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "html",
       "options": ["html", "text"],
       "localized": ["name", "description"],
@@ -454,7 +492,16 @@
     },
     {
       "function": "SIZE",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1024,
       "options": [],
       "localized": ["name", "description"],

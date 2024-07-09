@@ -242,7 +242,12 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": ["disabled", "on_notification"],
       "localized": ["name", "description"],
@@ -269,7 +274,16 @@
     },
     {
       "function": "CMD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/_publisher_ntfy/ntfy.py",
       "options": [],
       "localized": ["name", "description"],
@@ -296,7 +310,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 10,
       "options": [],
       "localized": ["name", "description"],
@@ -327,7 +350,12 @@
     },
     {
       "function": "HOST",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "https://ntfy.sh",
       "options": [],
       "localized": ["name", "description"],
@@ -354,7 +382,12 @@
     },
     {
       "function": "TOPIC",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -381,7 +414,12 @@
     },
     {
       "function": "USER",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -408,7 +446,16 @@
     },
     {
       "function": "PASSWORD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "password" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -435,7 +482,12 @@
     },
     {
       "function": "PRIORITY",
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "urgent",
       "options": ["urgent", "high", "default", "low", "min"],
       "localized": ["name", "description"],

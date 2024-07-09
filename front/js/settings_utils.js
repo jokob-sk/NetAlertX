@@ -487,12 +487,12 @@ function overrideToggle(element) {
 
 
 
-// Refactored function to generate options or set options based on the provided parameters
+// Generate options or set options based on the provided parameters
 function generateOptionsOrSetOptions(
   codeName,
   valuesArray, // Array of values to be pre-selected in the dropdown
   placeholder, // ID of the HTML element where dropdown should be rendered (will be replaced)
-  callbackToGenerateEntries, // Callback function to generate entries based on options
+  processDataCallback, // Callback function to generate entries based on options
   targetField, // Target field or element where selected value should be applied or updated
   transformers = [] // Transformers to be applied to the values
 ) {
@@ -505,155 +505,16 @@ function generateOptionsOrSetOptions(
   // Call to render lists
   renderList(
     options,
-    callbackToGenerateEntries,
+    processDataCallback,
     valuesArray,
     placeholder,
     targetField,
     transformers
   );
   
-  // valuesArray = valuesArray.map((value) => applyTransformers(value, transformers));
-
-  // let optionsArray = createArray(getSettingOptions(settingKey));
-
-  // if (optionsArray.length > 0 && isSQLQuery(optionsArray[0])) {
-  //   // Add temporary placeholder for async options
-  //   input += `<option value="" id="${placeholder}"></option>`;
-  //   input += `</select>`;
-
-  //   // Replace the specified placeholder div with the resulting HTML
-  //   setTimeout(() => {
-  //     $("#" + targetLocation).replaceWith(input);
-  //   }, 50);
-
-
-
-  // } 
-  // else {
-    
-  //   optionsArray.forEach((option) => {
-  //     let transformedOption = nameTransformer ? nameTransformer(option) : option;
-  //     let selected = valuesArray.includes(option) ? "selected" : "";
-  //     input += `<option value="${option}" ${selected}>${transformedOption}</option>`;
-  //   });
-  //   input += `</select>`;
-
-  //   setTimeout(() => {
-  //     $("#" + targetLocation).replaceWith(input);
-  //   }, 500);
-  // }
-
-  // return input;
+  
 }
 
-
-
-
-// // -----------------------------------------------------------------------------
-// // (ASYNC) Initiate dropdown
-// function generateSetOptions(
-//   settingKey, // Identifier for the setting
-//   valuesArray, // Array of values to be pre-selected in the dropdown
-//   targetLocation, // ID of the HTML element where dropdown should be rendered (will be replaced)
-//   callbackToGenerateEntries, // Callback function to generate entries based on options
-//   targetField, // Target field or element where selected value should be applied or updated
-//   nameTransformer
-// ) {
-//   // callback to transform the name (e.g. base64)
-//   var optionsHtml = "";
-
-//   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
-//   optionsArray = createArray(getSettingOptions(settingKey));
-
-//   // check if the result is a SQL query
-//   if (optionsArray.length > 0 && isSQLQuery(optionsArray[0])) {
-
-//     readData(
-//       optionsArray[0],
-//       callbackToGenerateEntries,
-//       valuesArray,
-//       targetLocation,
-//       targetField,
-//       nameTransformer
-//     );
-//   } // this should be already an array, e.g. from a setting or pre-defined
-//   else {
-//     optionsArray.forEach((option) => {
-//       let selected = valuesArray.includes(option) ? "selected" : "";
-//       optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
-//     });
-
-//     // Replace the specified placeholder div with the resulting HTML
-//     setTimeout(() => {
-//       $("#" + targetLocation).replaceWith(optionsHtml);
-//     }, 50);
-//   }
-// }
-
-// // ---------------------------------------------------------
-// // generate a list of options for a input select
-// function generateOptions(
-//   settingKey,
-//   input,
-//   dataType,
-//   isMultiSelect = false,
-//   editable = false,
-//   transformers = []
-// ) {
-//   let multi = isMultiSelect ? "multiple" : "";
-//   let valuesArray = createArray(set["Value"]);
-
-//   // main selection dropdown wrapper
-//   input += `
-//         <select onChange="settingsChanged()" my-data-type="${dataType}"  my-editable="${editable}" class="form-control" name="${settingKey}" id="${settingKey}" ${multi}>          
-//       `;
-
-//   // if available transformers are applied
-//   valuesArray = valuesArray.map((value) =>
-//     applyTransformers(value, transformers)
-//   );
-
-//   // get all options
-//   optionsArray = createArray(getSettingOptions(settingKey));
-
-//   // loop over all options and select the ones selected in the valuesArray (saved by the user)
-//   if (optionsArray.length > 0) {
-//     //  check if needs to be processed ASYNC
-//     if (isSQLQuery(optionsArray[0])) {
-//       // create temporary placeholder
-//       targetLocation = settingKey + "_temp_";
-//       input += `<option value="" id="${targetLocation}" ></option>`;
-
-//       //  callback to the DB
-//       readData(
-//         optionsArray[0],
-//         generateOptions,
-//         valuesArray,
-//         targetLocation,
-//         settingKey
-//       );
-//     } // sync processing
-//     else {
-//       optionsArray.forEach((option) => {
-//         let selected = valuesArray.includes(option) ? "selected" : "";
-//         input += `<option value="${option}" ${selected}>${option}</option>`;
-//       });
-//     }
-//   } // this is an interactable list with default and user-defined values
-//   else {
-//     // generates [1x 📝 | 2x 🚮]
-//     valuesArray.forEach((option) => {
-//       input += `<option class="interactable-option" value="${option}">${option}</option>`;
-//     });
-//   }
-
-//   input += `</select>`;
-
-//   // add values from the setting options - execute AJAX callback + SQL query resolution
-//   // generateSetOptions(settingKey, valuesArray, targetLocation, generateOptions);
-
-//   return input;
-// }
 
 // ------------------------------------------------------------
 // Function to apply transformers to a value
@@ -815,33 +676,21 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
 
     // editable list -> values only     
     resultArray   = arrayToObject(valuesArray)
-    cssClass = "interactable-option"
+    cssClass = "interactable-option"  // generates [1x 📝 | 2x 🚮]
   } else if (options.length > 0){
 
     // dropdown -> options only (value == 1 STRING not ARRAY)
     resultArray   = options;
   }
 
-
-
   resultArray.forEach(function(item) {
 
     labelName = item.name
-
-    // console.log(nameTransformer);
-    // console.log(labelName);
 
     if(labelName != '❌None')
     {
       labelName = reverseTransformers(labelName, transformers)
     }
-
-    // what's teh source?
-    //   if options & vlaues -> source is options + select
-    //   if values only ignore options
-    // if options.length == 0 -> editable list -> combine -> don't select
-    // if not selected ->  all options (combined) and all values combined
-    // if selected     ->  options (combined) only
 
     // needs to happen always if options ued as source
     let selected = options.length != 0 && valuesArray.includes(item.id) ? 'selected' : '';

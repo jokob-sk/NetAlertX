@@ -29,7 +29,16 @@
   "settings": [
     {
       "function": "INCLUDED_SECTIONS",
-      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["new_devices", "down_devices", "events"],
       "options": [
         "new_devices",
@@ -70,7 +79,16 @@
     },
     {
       "function": "alert_down_time",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 5,
       "options": [],
       "localized": ["name", "description"],
@@ -89,7 +107,12 @@
     },
     {
       "function": "new_dev_condition",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -108,7 +131,12 @@
     },
     {
       "function": "event_condition",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],

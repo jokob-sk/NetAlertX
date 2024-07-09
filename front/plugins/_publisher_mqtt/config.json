@@ -278,7 +278,12 @@
     {
       "function": "RUN",
       "events": ["test"],
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": [
         "disabled",
@@ -312,7 +317,16 @@
     },
     {
       "function": "CMD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
       "options": [],
       "localized": ["name", "description"],
@@ -339,7 +353,12 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "0 2 * * 3",
       "options": [],
       "localized": ["name", "description"],
@@ -374,7 +393,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 20,
       "options": [],
       "localized": ["name", "description"],
@@ -405,7 +433,12 @@
     },
     {
       "function": "BROKER",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -432,7 +465,16 @@
     },
     {
       "function": "PORT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 1883,
       "options": [],
       "localized": ["name", "description"],
@@ -459,7 +501,12 @@
     },
     {
       "function": "USER",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -486,7 +533,16 @@
     },
     {
       "function": "PASSWORD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "password" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "",
       "options": [],
       "localized": ["name", "description"],
@@ -513,7 +569,16 @@
     },
     {
       "function": "SEND_STATS",
-      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": true,
       "options": [],
       "localized": ["name", "description"],
@@ -532,7 +597,12 @@
     },
     {
       "function": "DEVICE_ID",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "netalertx",
       "options": [],
       "localized": ["name", "description"],
@@ -551,7 +621,12 @@
     },
     {
       "function": "DEVICE_NAME",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "NetAlertX",
       "options": [],
       "localized": ["name", "description"],
@@ -570,7 +645,16 @@
     },
     {
       "function": "SEND_DEVICES",
-      "type": {"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"checkbox"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": true,
       "options": [],
       "localized": ["name", "description"],
@@ -589,7 +673,12 @@
     },
     {
       "function": "QOS",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": 0,
       "options": [0, 1, 2],
       "localized": ["name", "description"],
@@ -616,7 +705,12 @@
     },
     {
       "function": "VERSION",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": 1,
       "options": [1, 2],
       "localized": ["name", "description"],
@@ -635,7 +729,16 @@
     },
     {
       "function": "DELAY_SEC",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 2,
       "options": [2, 3, 4, 5],
       "localized": ["name", "description"],

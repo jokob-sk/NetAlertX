@@ -956,7 +956,7 @@
               { "prefillValue": "null" }
             ],
             "transformers": []
-          },         
+          },
           {
             "elementType": "button",
             "elementOptions": [

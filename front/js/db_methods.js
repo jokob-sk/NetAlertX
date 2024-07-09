@@ -2,6 +2,15 @@
 // General utilities to interact with the database
 // -----------------------------------------------------------------------------
 
+// // Call to render lists
+// renderList(
+//   options,
+//   callbackToGenerateEntries,
+//   valuesArray,
+//   placeholder,
+//   targetField,
+//   transformers
+// );
 
 // --------------------------------------------------
 // Read data and place intotarget location, callback processies the results
@@ -31,7 +40,8 @@ function renderList(
         const sqlOption = JSON.parse(sqlOptionsData);
 
         // Concatenate options from SQL query with the supplied options
-        options = options.concat(sqlOption);        
+        options = options.concat(sqlOption);
+        
 
         // Process the combined options
         setTimeout(() => {

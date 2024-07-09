@@ -63,7 +63,12 @@
     {
       "function": "RUN",
       "events": ["run"],
-      "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "disabled",
       "options": ["disabled", "once", "schedule", "always_after_scan"],
       "localized": ["name", "description"],
@@ -94,7 +99,16 @@
     },
     {
       "function": "CMD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": "python3 /app/front/plugins/internet_ip/script.py prev_ip={prev_ip} INTRNT_DIG_GET_IP_ARG={INTRNT_DIG_GET_IP_ARG}",
       "options": [],
       "localized": ["name", "description"],
@@ -129,7 +143,12 @@
     },
     {
       "function": "DIG_GET_IP_ARG",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "-4 myip.opendns.com @resolver1.opendns.com",
       "options": [],
       "localized": ["name", "description"],
@@ -164,7 +183,12 @@
     },
     {
       "function": "RUN_SCHD",
-      "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
       "default_value": "*/5 * * * *",
       "options": [],
       "localized": ["name", "description"],
@@ -199,7 +223,16 @@
     },
     {
       "function": "RUN_TIMEOUT",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 30,
       "options": [],
       "localized": ["name", "description"],
@@ -234,7 +267,16 @@
     },
     {
       "function": "RETRIES",
-      "type": {"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": 3,
       "options": [],
       "localized": ["name", "description"],
@@ -253,7 +295,16 @@
     },
     {
       "function": "WATCH",
-      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["Watched_Value1"],
       "options": [
         "Watched_Value1",
@@ -289,7 +340,16 @@
     },
     {
       "function": "REPORT_ON",
-      "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]},
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
       "default_value": ["new", "watched-changed"],
       "options": [
         "new",
