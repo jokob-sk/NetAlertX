@@ -372,7 +372,7 @@ if ($ENABLED_DARKMODE === True) {
           </a>
           <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
             <li>
-              <div class="info-icon-nav work-in-progress">  </div>
+              <div class="info-icon-nav">  </div>
               <a href="workflows.php"><?= lang('Navigation_Workflows');?></a>
             </li>
             <li>

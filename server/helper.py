@@ -646,9 +646,12 @@ import dns.resolver
 
 def cleanDeviceName(str, match_IP):
 
+    mylog('debug', ["[cleanDeviceName] input: " + str])
+
     # add matching info
     if match_IP:
         str = str + " (IP match)"
+    
 
     if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
         mylog('debug', ["[Name cleanup] Using new cleanDeviceName(" + str + ")"])
@@ -688,22 +691,32 @@ def cleanDeviceName(str, match_IP):
     # OLD cleanDeviceName
     mylog('debug', ["[Name cleanup] Using old cleanDeviceName(" + str + ")"])
 
-    # alternative str.split('.')[0]
-    str = str.replace("._airplay", "")
-    str = str.replace("._tcp", "")
-    str = str.replace(".localdomain", "")
-    str = str.replace(".local", "")
-    str = str.replace("._esphomelib", "")
-    str = str.replace("._googlecast", "")
-    str = str.replace(".lan", "")
-    str = str.replace(".home", "")
-    str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-    str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
-    # remove trailing dots
-    if str.endswith('.'):
-        str = str[:-1]
+    # # alternative str.split('.')[0]
+    # str = str.replace("._airplay", "")
+    # str = str.replace("._tcp", "")
+    # str = str.replace(".localdomain", "")
+    # str = str.replace(".local", "")
+    # str = str.replace("._esphomelib", "")
+    # str = str.replace("._googlecast", "")
+    # str = str.replace(".lan", "")
+    # str = str.replace(".home", "")
+    # str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
+    # str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
+    # # remove trailing dots
+    # if str.endswith('.'):
+    #     str = str[:-1]
 
-    mylog('debug', ["cleanDeviceName = " + str])
+    regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX')
+
+    for rgx in regexes:
+        mylog('debug', ["[cleanDeviceName] applying regex    : " + rgx])
+        mylog('debug', ["[cleanDeviceName] name before regex : " + str])
+        
+        str = re.sub(rgx, "", str)
+        mylog('debug', ["[cleanDeviceName] name after regex  : " + str])
+
+    mylog('debug', ["[cleanDeviceName] output: " + str])
+    
     return str
 
 #-------------------------------------------------------------------------------
