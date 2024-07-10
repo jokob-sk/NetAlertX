@@ -710,8 +710,8 @@ def cleanDeviceName(str, match_IP):
         str = re.sub(rgx, "", str)
         mylog('debug', ["[cleanDeviceName] name after regex  : " + str])
 
-    # removing any trailing dots
-    str = re.sub(r'\b\.(\s)', r'\1', str)
+    str = re.sub(r'\.\b', '', str)  # trailing dot after words
+    str = re.sub(r'\.$', '', str)   # trailing dot at the end of the string
     
     mylog('debug', ["[cleanDeviceName] output: " + str])
     
