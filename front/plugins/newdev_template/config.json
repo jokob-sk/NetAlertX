@@ -177,6 +177,120 @@
       ]
     },
     {
+      "function": "LESS_NAME_CLEANUP",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Less Name Cleanup"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
+        }
+      ]
+    },
+    {
+      "function": "NAME_CLEANUP_REGEX",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-sm-2" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": ["base64"]
+          }
+        ]
+      },
+      "default_value": [
+        "XC5fYWlycGxheQ==",
+        "XC5fdGNw",
+        "XC5sb2NhbGRvbWFpbg==",
+        "XC5sb2NhbA==",
+        "XC5fZXNwaG9tZWxpYg==",
+        "XC5fZ29vZ2xlY2FzdA==",
+        "XC5sYW4=",
+        "XC5ob21l",
+        "LVthLWZBLUYwLTldezMyfQ==",
+        "Iy4q"
+      ],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name Cleanup REGEX"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "All the newly discovered device names are clened up by applying the following REGEX expression in this order. All the below are replaced by a blank string."
+        }
+      ]
+    },
+    {
       "function": "dev_MAC",
       "type": {
         "dataType": "string",
@@ -911,120 +1025,6 @@
         {
           "language_code": "en_us",
           "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
-        }
-      ]
-    },
-    {
-      "function": "LESS_NAME_CLEANUP",
-      "type": {
-        "dataType": "boolean",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": 0,
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Less Name Cleanup"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
-        }
-      ]
-    },
-    {
-      "function": "NAME_CLEANUP_REGEX",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [
-              { "placeholder": "Enter value" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-sm-3" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-sm-3" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-sm-2" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
-            ],
-            "transformers": ["base64"]
-          }
-        ]
-      },
-      "default_value": [
-        "XC5fYWlycGxheQ==",
-        "XC5fdGNw",
-        "XC5sb2NhbGRvbWFpbg==",
-        "XC5sb2NhbA==",
-        "XC5fZXNwaG9tZWxpYg==",
-        "XC5fZ29vZ2xlY2FzdA==",
-        "XC5sYW4=",
-        "XC5ob21l",
-        "LVthLWZBLUYwLTldezMyfQ==",
-        "Iy4q"
-      ],
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Cleanup REGEX"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "All the newly discovered device names are clened up by applying the following REGEX expression in this order."
         }
       ]
     }

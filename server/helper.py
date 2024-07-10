@@ -342,22 +342,12 @@ def setting_value_to_python_type(set_type, set_value):
     elementOptions = last_element.get('elementOptions', [])
     transformers = last_element.get('transformers', [])
 
-    # Apply transformers to the value
-    for transformer in transformers:
-        if transformer == 'base64':
-            if isinstance(set_value, str):
-                set_value = base64.b64decode(set_value).decode('utf-8')
-        elif transformer == 'sha256':
-            if isinstance(set_value, str):
-                set_value = hashlib.sha256(set_value.encode()).hexdigest()
-
     # Convert value based on dataType and elementType
     if dataType == 'string' and elementType in ['input', 'select']:
-        value = str(set_value)
+        value = reverseTransformers(str(set_value))
 
     elif dataType == 'integer' and (elementType == 'input' or elementType == 'select'):    
         # handle storing/retrieving boolean values as 1/0
-
         if set_value.lower() not in ['true', 'false'] and isinstance(set_value, str):
             value = int(set_value)
 
@@ -365,37 +355,46 @@ def setting_value_to_python_type(set_type, set_value):
             value = 1 if set_value else 0
 
         elif isinstance(set_value, str): 
-
             value = 1 if set_value.lower() == 'true' else 0
+            
         else: 
-
             value = int(set_value)
 
+    # boolean handling 
     elif dataType == 'boolean' and elementType == 'input':
         value = set_value.lower() in ['true', '1']
 
+    # array handling
     elif dataType == 'array' and elementType == 'select':
         if isinstance(set_value, str):
             try:
                 value = json.loads(set_value.replace("'", "\""))
+                
+                # reverse transformations to all entries
+                value = reverseTransformers(value, transformers)
+                    
             except json.JSONDecodeError as e:
-                print(f"Error decoding JSON array: {e}")
+                mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
+                mylog('none', [set_value])  
                 value = []
+                
         elif isinstance(set_value, list):
             value = set_value
 
     elif dataType == 'object' and elementType == 'input':
         if isinstance(set_value, str):
             try:
-                value = json.loads(set_value)
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON object: {e}")
+                value = reverseTransformers(json.loads(set_value))
+            except json.JSONDecodeError as e:                
+                mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
+                mylog('none', [{set_value}])  
                 value = {}
+                
         elif isinstance(set_value, dict):
             value = set_value
 
     elif dataType == 'string' and elementType == 'input' and any(opt.get('readonly') == "true" for opt in elementOptions):
-        value = str(set_value)
+        value = reverseTransformers(str(set_value))
 
     elif dataType == 'string' and elementType == 'input' and any(opt.get('type') == "password" for opt in elementOptions) and 'sha256' in transformers:
         value = hashlib.sha256(set_value.encode()).hexdigest()
@@ -407,8 +406,24 @@ def setting_value_to_python_type(set_type, set_value):
 
     return value
 
+#-------------------------------------------------------------------------------
+# Reverse transformed values if needed
+def reverseTransformers(val, transformers):
+    # Function to apply transformers to a single value
+    def reverse_transformers(value, transformers):
+        for transformer in transformers:
+            if transformer == 'base64':
+                if isinstance(value, str):
+                    value = base64.b64decode(value).decode('utf-8')
+            elif transformer == 'sha256':
+                mylog('none', [f'[reverseTransformers] sha256 is irreversible'])
+        return value
 
-
+    # Check if the value is a list
+    if isinstance(val, list):
+        return [reverse_transformers(item, transformers) for item in val]
+    else:
+        return reverse_transformers(val, transformers)
 
 #-------------------------------------------------------------------------------
 # Generate a WHERE condition for SQLite based on a list of values.
@@ -680,41 +695,24 @@ def cleanDeviceName(str, match_IP):
         if str.endswith('.'):
             str = str[:-1]
 
-
-
         # done
         mylog('debug', ["[Name cleanup] cleanDeviceName = " + str])
         return str
 
-    ################################
-    #
-    # OLD cleanDeviceName
+    # Applying cleanup REGEXEs
     mylog('debug', ["[Name cleanup] Using old cleanDeviceName(" + str + ")"])
-
-    # # alternative str.split('.')[0]
-    # str = str.replace("._airplay", "")
-    # str = str.replace("._tcp", "")
-    # str = str.replace(".localdomain", "")
-    # str = str.replace(".local", "")
-    # str = str.replace("._esphomelib", "")
-    # str = str.replace("._googlecast", "")
-    # str = str.replace(".lan", "")
-    # str = str.replace(".home", "")
-    # str = re.sub(r'-[a-fA-F0-9]{32}', '', str)    # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-    # str = re.sub(r'#.*', '', str) # Remove everything after '#' including the '#'
-    # # remove trailing dots
-    # if str.endswith('.'):
-    #     str = str[:-1]
 
     regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX')
 
     for rgx in regexes:
         mylog('debug', ["[cleanDeviceName] applying regex    : " + rgx])
-        mylog('debug', ["[cleanDeviceName] name before regex : " + str])
-        
+        mylog('debug', ["[cleanDeviceName] name before regex : " + str])        
         str = re.sub(rgx, "", str)
         mylog('debug', ["[cleanDeviceName] name after regex  : " + str])
 
+    # removing any trailing dots
+    str = re.sub(r'\b\.(\s)', r'\1', str)
+    
     mylog('debug', ["[cleanDeviceName] output: " + str])
     
     return str
