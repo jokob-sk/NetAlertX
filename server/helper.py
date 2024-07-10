@@ -344,7 +344,7 @@ def setting_value_to_python_type(set_type, set_value):
 
     # Convert value based on dataType and elementType
     if dataType == 'string' and elementType in ['input', 'select']:
-        value = reverseTransformers(str(set_value))
+        value = reverseTransformers(str(set_value), transformers)
 
     elif dataType == 'integer' and (elementType == 'input' or elementType == 'select'):    
         # handle storing/retrieving boolean values as 1/0
@@ -384,7 +384,7 @@ def setting_value_to_python_type(set_type, set_value):
     elif dataType == 'object' and elementType == 'input':
         if isinstance(set_value, str):
             try:
-                value = reverseTransformers(json.loads(set_value))
+                value = reverseTransformers(json.loads(set_value), transformers)
             except json.JSONDecodeError as e:                
                 mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
                 mylog('none', [{set_value}])  
@@ -394,7 +394,7 @@ def setting_value_to_python_type(set_type, set_value):
             value = set_value
 
     elif dataType == 'string' and elementType == 'input' and any(opt.get('readonly') == "true" for opt in elementOptions):
-        value = reverseTransformers(str(set_value))
+        value = reverseTransformers(str(set_value), transformers)
 
     elif dataType == 'string' and elementType == 'input' and any(opt.get('type') == "password" for opt in elementOptions) and 'sha256' in transformers:
         value = hashlib.sha256(set_value.encode()).hexdigest()
