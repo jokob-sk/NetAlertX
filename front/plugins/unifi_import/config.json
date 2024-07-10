@@ -769,7 +769,7 @@
             "elementOptions": [
               { "sourceSuffixes": ["_in"] },
               { "separator": "" },
-              { "cssClasses": "col-sm-12" },
+              { "cssClasses": "col-xs-12" },
               { "onClick": "addList(this, false)" },
               { "getStringKey": "Gen_Add" }
             ],
@@ -780,7 +780,7 @@
             "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-6" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeAllOptions(this)" },
               { "getStringKey": "Gen_Remove_All" }
             ],
@@ -791,7 +791,7 @@
             "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-6" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
             ],

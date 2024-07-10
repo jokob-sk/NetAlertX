@@ -404,26 +404,50 @@ $db->close();
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
-                    <div class="db_info_table">
-
-                      <div id="logsPlc"></div>
-                                
-                    </div>
+          <div class="container">
+            <div class="row actions">
+              <div class="col-sm-2">
+                <div class="form-check toggle">
+                  <label class="form-check-label" for="logsAutoRefresh">
+                    <input class="form-check-input" type="checkbox" id="logsAutoRefresh" onchange="toggleAutoRefresh()" />
+                    Auto-refresh
+                  </label>
+                </div>
               </div>
-            <!-- ---------------------------Bulk edit -------------------------------------------- -->
-              <div class="tab-pane" id="tab_multiEdit">
-                    <div class="db_info_table">
-                        <div class="box box-solid">
-                            <?php
-                              require 'multiEditCore.php';
-                            ?>
+              <div class="col-sm-2">
+                <div class="form-check  toggle">
+                  <label class="form-check-label" for="logsAutoScroll">
+                    <input class="form-check-input" type="checkbox" checked id="logsAutoScroll" />
+                    Auto-scroll
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <div class="form-inline toggle">                  
+                  <input class="form-control" type="text" id="logsFilter" onchange="toggleFilter()" oninput="applyFilter()" placeholder="Filter lines with text..." />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="db_info_table">
+            
+            <div id="logsPlc"></div>                                
+          </div>
+        </div>
+        <!-- ---------------------------Bulk edit -------------------------------------------- -->
+        <div class="tab-pane" id="tab_multiEdit">
+            <div class="db_info_table">
+                <div class="box box-solid">
+                    <?php
+                      require 'multiEditCore.php';
+                    ?>
 
-                        </div>
-                    </div>
+                </div>
+            </div>
           </div>
 
-          </div>
-          <!-- ------------------------------------------------------------------------------ -->
+        </div>
+        <!-- ------------------------------------------------------------------------------ -->
 
       </div>
 
@@ -867,8 +891,46 @@ function initializeTabs () {
   }, 50);
   
 }
+//------------------------------------------------------------------------------
+//  Logs render functionality
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+// Manages the auto-refresh functionality for the logs
+let intervalId;
+
+function toggleAutoRefresh() {
+  const checkbox = $('#logsAutoRefresh')[0];
+
+  if (checkbox.checked) {
+    intervalId = setInterval(renderLogs, 1000);
+  } else {
+    clearInterval(intervalId);
+  }
+}
+
+//------------------------------------------------------------------------------
+// Manages thefilter application
+function applyFilter() {
+      const filterText = $("#logsFilter").val().toLowerCase();
+      
+      $(".logs").each(function() {
+        const originalText = $(this).data('originalText') || $(this).val();
+        
+        if (!$(this).data('originalText')) {
+          $(this).data('originalText', originalText);
+        }
+
+        const filteredLines = originalText.split('\n').filter(line => 
+          line.toLowerCase().includes(filterText)
+        );
+
+        $(this).val(filteredLines.join('\n'));
+      });
+    }
+
+//------------------------------------------------------------------------------
+// Renders all the logs
 function renderLogs(customData) {
     $.ajax({
       url: 'php/components/logs.php', // PHP script URL
@@ -877,7 +939,14 @@ function renderLogs(customData) {
       // data: { items: JSON.stringify(customData) }, // Send customData as JSON
       success: function(response) {
         $('#logsPlc').html(response); // Replace container content with fetched HTML
-        scrollDown(); // scroll down the logs
+
+        applyFilter();
+
+        if($('#logsAutoScroll')[0].checked)
+        {
+          scrollDown(); // scroll down the logs
+        }
+        
       },
       error: function(xhr, status, error) {
         console.error('Error fetching infoboxes:', error);
@@ -885,7 +954,7 @@ function renderLogs(customData) {
     });
   }
 
-
+//------------------------------------------------------------------------------
 // Init
 window.onload = function asyncFooter()
 {

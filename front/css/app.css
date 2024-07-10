@@ -32,10 +32,19 @@
 {
     width: 100%;
 }
-.logs-row .button-wrap{
-    /* margin: 2px; */
+#tab_Logging .actions{
+    display:contents;
+    position: relative;
+    padding: 0.4em
     
 }
+
+#tab_Logging .actions .toggle{
+
+    margin: 0.5em;    
+    height: 3em;
+}
+
 .logs-row .button{
     margin: 2px;
 }
