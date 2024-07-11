@@ -4,7 +4,7 @@ import subprocess
 import conf
 import os
 import re
-from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nslookup, check_IP_format
+from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nbtlookup, get_device_name_nslookup, check_IP_format
 from logger import mylog, print_log
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 
@@ -426,6 +426,7 @@ def update_devices_names (db):
 
     foundDig = 0
     foundNsLookup = 0
+    foundNbtLookup = 0
     foundPholus = 0
 
     # Gen unknown devices
@@ -465,6 +466,14 @@ def update_devices_names (db):
 
             if newName != nameNotFound:
                foundNsLookup += 1
+               
+        # Resolve device name with NSLOOKUP plugin data
+        if newName == nameNotFound:
+            newName = get_device_name_nbtlookup(db, device['dev_MAC'], device['dev_LastIP'])
+
+            if newName != nameNotFound:
+               foundNbtLookup += 1
+
 
         # Resolve with Pholus 
         if newName == nameNotFound:

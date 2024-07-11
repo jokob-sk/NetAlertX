@@ -525,11 +525,11 @@ def get_device_name_nslookup(db, pMAC, pIP):
             Object_PrimaryID = '{pMAC}'
          """
     )         
-    nslookupEntry = sql.fetchall() 
+    nameEntry = sql.fetchall() 
     db.commitDB()
 
-    if len(nslookupEntry) != 0:
-        name = cleanDeviceName(nslookupEntry[0][0], False)
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], False)
 
         return name
 
@@ -542,11 +542,56 @@ def get_device_name_nslookup(db, pMAC, pIP):
             Object_SecondaryID = '{pIP}'
          """
     )         
-    nslookupEntry = sql.fetchall() 
+    nameEntry = sql.fetchall() 
     db.commitDB()
 
-    if len(nslookupEntry) != 0:
-        name = cleanDeviceName(nslookupEntry[0][0], True)
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], True)
+
+        return name
+
+    return name
+
+#-------------------------------------------------------------------------------
+def get_device_name_nbtlookup(db, pMAC, pIP):
+    
+    nameNotFound = "(name not found)"
+
+    sql = db.sql
+
+    name = nameNotFound
+    
+    #  get names from the NBTSCAN plugin entries vased on MAC
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'NBTSCAN' AND 
+            Object_PrimaryID = '{pMAC}'
+         """
+    )         
+    nameEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], False)
+
+        return name
+
+    #  get names from the NSLOOKUP plugin entries based on IP
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'NBTSCAN' AND             
+            Object_SecondaryID = '{pIP}'
+         """
+    )         
+    nameEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], True)
 
         return name
 
