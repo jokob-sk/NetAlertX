@@ -1,23 +1,7 @@
 ## Overview
 
-Plugin functionality overview and links to external resources if relevant. Include use cases if available. 
-
-> [!TIP]
-> Some tip.
-
-### Quick setup guide
-
-To set up the plugin correctly, make sure...
-
-#### Required Settings
-
-- When to run `PREF_RUN`
-- 
+Plugin for device name discovery via the [nbtscan](https://linuxcommandlibrary.com/man/nbtscan) network utility supporting NetBIOS.
 
 ### Usage
 
-- Head to **Settings** > **Plugin name** to adjust the default values.
-
-### Notes
-
-- Additional notes, limitations, Author info. 
+- Check the Settings page for details.
