@@ -379,55 +379,84 @@ function initListInteractionOptions(element) {
 // -------------------------------------------------------------------
 // Function to filter rows based on input text
 function filterRows(inputText) {
+
+  // open everything if input text is empty
   if (!inputText) {
     inputText = "";
-  }
 
-  $(".panel").each(function () {
-    var $panel = $(this);
-    var $panelHeader = $panel.find('.panel-heading');
-    var $panelBody = $panel.find('.panel-collapse');
+    $(".panel").each(function () {
+      var $panel = $(this);
+      var $panelHeader = $panel.find('.panel-heading');
+      var $panelBody = $panel.find('.panel-collapse');
 
-    var anyVisible = false; // Flag to check if any row is visible
+      $panel.show() 
+      $panelHeader.show() 
+      $panelBody.collapse('show');
 
-    $panelBody.find(".table_row:not(.docs)").each(function () {
-      var $row = $(this);
+      $panelBody.find(".table_row:not(.docs)").each(function () {
+        var $row = $(this)
+        var rowId = $row.attr("id");
+        var isMetadataRow = rowId && rowId.endsWith("__metadata");
+        if (!isMetadataRow) {
+          $row.show()
+        }        
+      });
+      
+    });
+    
+  } else{
+    // filter
 
-      // Check if the row ID ends with "__metadata"
-      var rowId = $row.attr("id");
-      var isMetadataRow = rowId && rowId.endsWith("__metadata");
-
-      // Always hide metadata rows
-      if (isMetadataRow) {
-        $row.hide();
-        return; // Skip further processing for metadata rows
-      }
-
-      var description = $row.find(".setting_description").text().toLowerCase();
-      var codeName = $row.find(".setting_name code").text().toLowerCase();
-
-      if (
-        description.includes(inputText.toLowerCase()) ||
-        codeName.includes(inputText.toLowerCase())
-      ) {
-        $row.show();
-        anyVisible = true; // Set the flag to true if at least one row is visible
+    $(".panel").each(function () {
+      var $panel = $(this);
+      var $panelHeader = $panel.find('.panel-heading');
+      var $panelBody = $panel.find('.panel-collapse');
+  
+      var anyVisible = false; // Flag to check if any row is visible
+  
+      $panelBody.find(".table_row:not(.docs)").each(function () {
+        var $row = $(this);
+  
+        // Check if the row ID ends with "__metadata"
+        var rowId = $row.attr("id");
+        var isMetadataRow = rowId && rowId.endsWith("__metadata");
+  
+        // Always hide metadata rows
+        if (isMetadataRow) {
+          $row.hide();
+          return; // Skip further processing for metadata rows
+        }
+  
+        var description = $row.find(".setting_description").text().toLowerCase();
+        var codeName = $row.find(".setting_name code").text().toLowerCase();
+  
+        if (
+          description.includes(inputText.toLowerCase()) ||
+          codeName.includes(inputText.toLowerCase())
+        ) {
+          $row.show();
+          anyVisible = true; // Set the flag to true if at least one row is visible
+        } else {
+          $row.hide();
+        }
+      });
+  
+      // Determine whether to hide or show the panel based on visibility of rows
+      if (anyVisible) {
+        $panelBody.collapse('show'); // Ensure the panel body is shown if there are visible rows
+        $panelHeader.show(); // Show the panel header
+        $panel.show(); // Show the entire panel if there are visible rows
       } else {
-        $row.hide();
+        $panelBody.collapse('hide'); // Hide the panel body if no rows are visible
+        $panelHeader.hide(); // Hide the panel header if no rows are visible
+        $panel.hide(); // Hide the entire panel if no rows are visible
       }
     });
 
-    // Determine whether to hide or show the panel based on visibility of rows
-    if (anyVisible) {
-      $panelBody.collapse('show'); // Ensure the panel body is shown if there are visible rows
-      $panelHeader.show(); // Show the panel header
-      $panel.show(); // Show the entire panel if there are visible rows
-    } else {
-      $panelBody.collapse('hide'); // Hide the panel body if no rows are visible
-      $panelHeader.hide(); // Hide the panel header if no rows are visible
-      $panel.hide(); // Hide the entire panel if no rows are visible
-    }
-  });
+
+  }
+
+  
 }
 
 

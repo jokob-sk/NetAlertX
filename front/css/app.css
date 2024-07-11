@@ -240,6 +240,7 @@
     display: grid;
 }
 
+
 @media (max-width: 767px) {
     .main-header .logo {
         width: 100%;
@@ -253,6 +254,15 @@
     .content-wrapper,
     .main-footer {
         margin-left: 0px;
+    }
+    .fixed .content-wrapper, .fixed .right-side {
+        padding-top: 50px;
+    }
+    .main-sidebar {
+        padding-top: 50px;
+    }
+    .content-header {
+        display: none;
     }
 }
 

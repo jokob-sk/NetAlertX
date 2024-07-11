@@ -548,7 +548,6 @@
     {
       parentNodesCount++
     }  
-
     
     return { 
       name: node.name,      
@@ -616,7 +615,7 @@
   }
 
   // --------------------------------------------------------------------------- 
-  // Handle network node click - select correct tab in teh bottom table
+  // Handle network node click - select correct tab in the bottom table
   function handleNodeClick(event)
   {
     // console.log(event.target.offsetParent.offsetParent)
@@ -631,14 +630,24 @@
 
   // --------------------------------------------------------------------------- 
   var myTree;
-  var visibleTreeArea = $(window).height()-135;
-  var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
+  var visibleTreeArea = $(window).height()-155;
+  var nodeWidth = 160;
   var emSize;
   var nodeHeight;
   var sizeCoefficient = 1
 
   function initTree(myHierarchy)
   {
+    console.log(myHierarchy)
+
+    // calculate the drawing area based on teh tree width and available screen size
+    var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
+    let screenWidth = $('.content-header').width();
+    let treeWidth = (nodeWidth + 20) *  parentNodesCount;
+    let treeAreaWidth  =  screenWidth < treeWidth ? treeWidth : screenWidth;
+
+    // init the drawing area size
+    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${treeAreaWidth}px`)
 
     if(myHierarchy.type == "")
     {
@@ -655,7 +664,7 @@
     // nodeHeight = ((emSize*100*0.30).toFixed(0))
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
-    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${$('.content-header').width()}px`)
+    
 
     myTree = Treeviz.create({
       htmlId: "networkTree",
@@ -704,7 +713,7 @@
                           >
                             <div class="netNodeText">
                               <strong>${devicePort}  ${deviceIcon}
-                                <span class="spanNetworkTree anonymizeDev">${nodeData.data.name}</span>
+                                <span class="spanNetworkTree anonymizeDev" >${nodeData.data.name}</span>
                               </strong>
                               ${collapseExpandHtml}
                             </div>
@@ -719,8 +728,8 @@
       secondaryAxisNodeSpacing: 0.3,
       nodeHeight: nodeHeight.toString(),
       marginTop: '5',
-      hasZoom: false,
-      hasPan: false,
+      hasZoom: true,
+      hasPan: true,
       // marginLeft: '15',
       idKey: "id",
       hasFlatData: false,
@@ -730,7 +739,7 @@
         relationnalField: "children",
       });
       
-      console.log(myHierarchy)
+
 
       myTree.refresh(myHierarchy);
 
