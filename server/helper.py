@@ -773,6 +773,7 @@ def cleanDeviceName(str, match_IP):
 
     str = re.sub(r'\.\b', '', str)  # trailing dot after words
     str = re.sub(r'\.$', '', str)   # trailing dot at the end of the string
+    str = str.replace(". (IP match)", " (IP match)") # Remove dot if (IP match) is added
     
     mylog('debug', ["[cleanDeviceName] output: " + str])
     

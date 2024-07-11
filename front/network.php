@@ -50,10 +50,10 @@
 
         $decoded_icon = base64_decode($icon);
         $idFromMac = str_replace(":", "_", $node_mac);
-        $str_tab_header = '<li class="'.$activetab.'">
+        $str_tab_header = '<li class="networkNodeTabHeaders '.$activetab.' " >
                               
-                              <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" >' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                .'<div class="icon">'.$decoded_icon.' </div>'.$node_name.' ' .$str_port.$node_badge.
+                              <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" title="'.$node_name.' ">' // _id is added so it doesn't conflict with AdminLTE tab behavior
+                                .'<div class="icon">'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.$node_badge.
                               '</a>
                           </li>';
 
@@ -464,7 +464,7 @@
 <script src="lib/treeviz/require.js"></script>
 
 
-<script>
+<script defer>
   $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
 
     rawData = JSON.parse (data)      
@@ -664,7 +664,7 @@
     // nodeHeight = ((emSize*100*0.30).toFixed(0))
     nodeHeight = ((emSize*100*0.30).toFixed(0))
 
-    
+    console.log(Treeviz);
 
     myTree = Treeviz.create({
       htmlId: "networkTree",

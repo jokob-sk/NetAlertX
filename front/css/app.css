@@ -1145,7 +1145,7 @@ input[readonly] {
     color: white;
 }
 
-#dropdownIcon li svg, #dropdownIcon li i{
+#dropdownIcon li svg, #dropdownIcon li i, .dropdownIcon li svg, .dropdownIcon li i, .icon-maxsize svg, .icon-maxsize i{
     height: 1.5em !important;
 }
 
@@ -1280,6 +1280,21 @@ input[readonly] {
     cursor: pointer;
 }
 
+.networkNodeTabHeaders
+{
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+}
+
+@media (max-width: 767px) {
+
+    .networkNodeTabHeaders .node-name
+    {
+        display: none;
+    }
+}
 
 /* ----------------------------------------------------------------- */
 /* PLUGINS page */

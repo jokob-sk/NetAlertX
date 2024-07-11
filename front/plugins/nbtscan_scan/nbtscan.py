@@ -104,7 +104,7 @@ def execute_name_lookup (ip, timeout):
         # Look for the first line containing a valid NetBIOS name entry
         index = 0
         for line in lines:
-            if ip in line:
+            if 'Doing NBT name scan' not in line and ip in line:
                 # Split the line and extract the primary NetBIOS name
                 parts = line.split()
                 if parts:
