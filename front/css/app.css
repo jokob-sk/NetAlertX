@@ -232,7 +232,12 @@
 .content-wrapper,
 .right-side,
 .main-footer {
-    margin-left: 150px;
+    margin-left: 150px;    
+}
+
+#settingsPage
+{
+    display: grid;
 }
 
 @media (max-width: 767px) {

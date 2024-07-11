@@ -577,15 +577,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file. (If you are mapping a PiHole dhcp.leases file the path in the container must contain <code>pihole</code>, e.g.: <code>:/etc/pihole/dhcp.leases</code>)"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Agregue todas las rutas asignadas de dhcp.leases para observar. Ingrese la ruta completa dentro del contenedor, p.e. <code>/mnt/dhcp2.leases</code>. Debe asignar estos archivos en consecuencia en su archivo <code>docker-compose.yml</code>. (Si está asignando un archivo PiHole dhcp.leases, la ruta en el contenedor debe contener <code>pihole</code>, por ejemplo: <code>:/etc/pihole/dhcp.leases</code>)"
-        },
-        {
-          "language_code": "de_de",
-          "string": "Alle zu überwachenden dhcp.leases-Pfade hinzufügen. Den absoluten Pfad innerhalb des Containers angeben, z.B. <code>/mnt/dchp2.leases</code>. Diese Dateien müssen korrekt in der <code>docker-compose.yml</code> gemapped werden. Wird eine PiHole dhcp.leases-Datei in den Container gemapped, so muss der Pfad im Container <code>pihole</code> inkludieren, z.B. <code>:/etc/pihole/dhcp.leases</code>"
+          "string": "Add all dhcp.leases mapped paths to watch. Enter full path within the container, e.g. <code>/mnt/dhcp2.leases</code>. You must map these files accordingly in your <code>docker-compose.yml</code> file. Supports pihole, dnsmasq, and generic formats. <br><br> For dnsmasq or pihole the path in the container must contain <code>pihole</code> or <code>dnsmasq</code>; e.g.: <code>:/etc/pihole/dhcp.leases</code>). See the above docs for details."
         }
       ]
     },

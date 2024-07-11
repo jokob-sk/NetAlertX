@@ -58,6 +58,7 @@ class app_state_class:
     def __init__(self, currentState, settingsSaved=None, settingsImported=None, showSpinner=False):
         # json file containing the state to communicate with the frontend
         stateFile = apiPath + '/app_state.json'
+        previousState = ""
 
         # if currentState == 'Initializing':
         #     checkNewVersion(False)
@@ -65,16 +66,22 @@ class app_state_class:
         # Update self
         self.currentState = currentState
         self.lastUpdated = str(timeNowTZ())
+        
+        if os.path.exists(stateFile):
+            try:            
+                with open(stateFile, 'r') as json_file:
+                    previousState            = json.load(json_file)
+            except json.decoder.JSONDecodeError as e:
+                mylog('none', [f'[app_state_class] Failed to handle app_state.json: {e}'])
+                 
 
         # Check if the file exists and init values
-        if os.path.exists(stateFile):
-            with open(stateFile, 'r') as json_file:
-                previousState               = json.load(json_file)
-                self.settingsSaved          = previousState.get("settingsSaved", 0)
-                self.settingsImported       = previousState.get("settingsImported", 0)
-                self.showSpinner            = previousState.get("showSpinner", False)
-                self.isNewVersion           = previousState.get("isNewVersion", False)
-                self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
+        if previousState != "":            
+            self.settingsSaved          = previousState.get("settingsSaved", 0)
+            self.settingsImported       = previousState.get("settingsImported", 0)
+            self.showSpinner            = previousState.get("showSpinner", False)
+            self.isNewVersion           = previousState.get("isNewVersion", False)
+            self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
         else:
             self.settingsSaved          = 0
             self.settingsImported       = 0
@@ -96,8 +103,17 @@ class app_state_class:
             self.isNewVersionChecked    = int(timeNow().timestamp())
 
         # Update .json file
-        with open(stateFile, 'w') as json_file:
-            json.dump(self, json_file, cls=AppStateEncoder, indent=4)
+        # with open(stateFile, 'w') as json_file:
+        #     json.dump(self, json_file, cls=AppStateEncoder, indent=4)
+            
+        # Sanity check before saving the .json file
+        try:
+            json_data = json.dumps(self, cls=AppStateEncoder, indent=4)
+            with open(stateFile, 'w') as json_file:
+                json_file.write(json_data)
+        except (TypeError, ValueError) as e:
+            mylog('none', [f'[app_state_class] Failed to serialize object to JSON: {e}'])
+
 
          
     def isSet(self):  

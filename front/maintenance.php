@@ -408,7 +408,7 @@ $db->close();
             <div class="row actions">
               <div class="col-sm-2">
                 <div class="form-check toggle">
-                  <label class="form-check-label" for="logsAutoRefresh">
+                  <label class="form-check-label pointer" for="logsAutoRefresh">
                     <input class="form-check-input" type="checkbox" id="logsAutoRefresh" onchange="toggleAutoRefresh()" />
                     Auto-refresh
                   </label>
@@ -416,7 +416,7 @@ $db->close();
               </div>
               <div class="col-sm-2">
                 <div class="form-check  toggle">
-                  <label class="form-check-label" for="logsAutoScroll">
+                  <label class="form-check-label pointer" for="logsAutoScroll">
                     <input class="form-check-input" type="checkbox" checked id="logsAutoScroll" />
                     Auto-scroll
                   </label>

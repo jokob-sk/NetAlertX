@@ -40,7 +40,7 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 
 RUN apk update --no-cache \
     && apk add --no-cache bash zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay \
-    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute net-tools net-snmp-tools bind-tools awake ca-certificates  \
+    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates  \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx \
     && apk add --no-cache dcron \

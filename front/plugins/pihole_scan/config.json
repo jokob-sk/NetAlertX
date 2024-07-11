@@ -184,11 +184,11 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#PIHOLE_RUN\"><code>PIHOLE_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>*/30 * * * *</code> will run the scan every 30 minutes. Will be run NEXT time the time passes. <br/> It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
         },
         {
           "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#ARPSCAN_RUN\"><code>ARPSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#PIHOLE_RUN\"><code>PIHOLE_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>*/30 * * * *</code> ejecutará el escaneo cada 30 minutos. Se ejecutará la PRÓXIMA vez que pase el tiempo. <br/> Se recomienda utilizar el mismo intervalo de programación para todos los complementos que analizan su red."
         }
       ]
     },

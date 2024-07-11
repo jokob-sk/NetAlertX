@@ -442,14 +442,6 @@
         {
           "language_code": "en_us",
           "string": "Vendor"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Proveedor"
-        },
-        {
-          "language_code": "de_de",
-          "string": "Hersteller"
         }
       ]
     },
