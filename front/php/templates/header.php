@@ -416,7 +416,7 @@ if ($ENABLED_DARKMODE === True) {
 // Generate work-in-progress icons
 function workInProgress() {
 
-  if($(".work-in-progress").html().trim() == "")
+  if($(".work-in-progress").length > 0 && $(".work-in-progress").html().trim() == "")
   {
     $(".work-in-progress").append(`
               <a href="https://github.com/jokob-sk/NetAlertX/issues" target="_blank">

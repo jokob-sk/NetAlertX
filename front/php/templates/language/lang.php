@@ -103,7 +103,8 @@ function lang($key)
         }
     }
 
-    return $result;
+    // HTML encode the result before returning
+    return str_replace("'", '&#39;', $result);
 }
 
 

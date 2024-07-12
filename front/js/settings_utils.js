@@ -609,7 +609,6 @@ function reverseTransformers(val, transformers) {
         break;
       case "base64":
         // Implement base64 decoding logic
-        console.log("💌");
         if (isBase64(val)) {
           val = atob(val);
         }
@@ -801,7 +800,7 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
     if(labelName != '❌None')
     {
       labelName = reverseTransformers(labelName, transformers)
-      console.log(transformers);
+      // console.log(transformers);
     }
 
     listHtml += `<li ${selected}>
