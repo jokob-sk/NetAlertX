@@ -91,6 +91,16 @@ More on specifics below.
 
 The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to NetAlertX objects. 
 
+## Execution order
+
+The execution order is used to specify wwhen a plugin is executed. This is useful if a plugin has access and surfaces more information than others. If a device is detected by 2 plugins and inserted into the `CurrentScan` table, the plugin with the higher priority (e.g.: `Level_0` is a higher priority than `Level_1`) will insert it's values first. These values (devices) will be then prioritized over any values inserted later.
+
+```json
+{
+    "execution_order" : "Layer_0"
+}
+```
+
 ## Supported data sources
 
 Currently, these data sources are supported (valid `data_source` value). 

@@ -370,9 +370,27 @@ $db->close();
         </div>
         <div class="tab-pane" id="tab_BackupRestore">
                 <div class="db_info_table">
+                  <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="ExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
+                    </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?= lang('Maintenance_Tool_backup');?></button>
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?= lang('Maintenance_Tool_ImportCSV');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportCSV_text');?></div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedCSV" onclick="askImportPastedCSV()"><?= lang('Maintenance_Tool_ImportPastedCSV');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedCSV_text');?></div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?= lang('Maintenance_Tool_backup');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_backup_text');?></div>
                     </div>
@@ -387,18 +405,6 @@ $db->close();
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?= lang('Maintenance_Tool_purgebackup');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_purgebackup_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="ExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?= lang('Maintenance_Tool_ImportCSV');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportCSV_text');?></div>
                     </div>
                  </div>
         </div>
@@ -683,6 +689,26 @@ function ImportCSV()
   $.get('php/server/devices.php?action=ImportCSV', function(msg) {
     showMessage (msg);
     write_notification(`[Maintenance] Devices imported from CSV file`, 'info')
+  });
+}
+
+// -----------------------------------------------------------
+// Import pasted CSV
+function askImportPastedCSV() {
+
+  // Add new icon as base64 string 
+  showModalInput ('<i class="fa fa-square-plus pointer"></i> <?= lang('Maintenance_Tool_ImportCSV_noti');?>', '<?= lang('Maintenance_Tool_ImportPastedCSV_noti_text');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'ImportPastedCSV');
+}
+
+function ImportPastedCSV()
+{   
+  var csv = $('#modal-input-textarea').val();
+  csvBase64 = btoa(csv)
+  // Execute
+  $.get('php/server/devices.php?action=ImportCSV&content=', function(msg) {
+    showMessage (msg);
+    write_notification(`[Maintenance] Devices imported from pasted content`, 'info')
   });
 }
 

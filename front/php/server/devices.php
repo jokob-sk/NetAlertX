@@ -463,15 +463,30 @@ function ExportCSV() {
 //  Import CSV of devices
 //------------------------------------------------------------------------------
 function ImportCSV() {
-  $file = '../../../config/devices.csv';
 
-  if (file_exists($file)) {
+  $file = '../../../config/devices.csv';
+  $data = "";
+
+  // check if content passed in query string
+  if(isset ($_REQUEST['content']) && !empty ($_REQUEST['content']))
+  {
+
+    // Decode the Base64 string
+    $data = base64_decode($_REQUEST['content']);
+
+  } else if (file_exists($file)) { // try to get the data form the file
     global $db;    
     $skipped = "";
     $error = "";
 
     // Read the CSV file
     $data = file_get_contents($file); 
+  } else {
+    echo lang('BackDevices_DBTools_ImportCSVMissing');    
+  }
+
+  if($data != "")
+  {
     $lines = explode("\n", $data); 
 
     // Get the column headers from the first line of the CSV
@@ -517,8 +532,6 @@ function ImportCSV() {
       // An error occurred while writing to the DB, display the last error message 
       echo lang('BackDevices_DBTools_ImportCSVError') . "\n" . $error . "\n" . $sql . "\n\n" . $result;
     }
-  } else {
-    echo lang('BackDevices_DBTools_ImportCSVMissing');    
   }
 }
 
