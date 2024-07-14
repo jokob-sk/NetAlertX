@@ -424,7 +424,7 @@ $db->close();
               </div>
               <div class="col-sm-8">
                 <div class="form-inline toggle">                  
-                  <input class="form-control" type="text" id="logsFilter" onchange="toggleFilter()" oninput="applyFilter()" placeholder="Filter lines with text..." />
+                  <input class="form-control" type="text" id="logsFilter" oninput="applyFilter()" placeholder="Filter lines with text..." />
                 </div>
               </div>
             </div>
