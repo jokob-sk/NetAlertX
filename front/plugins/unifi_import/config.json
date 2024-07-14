@@ -3,6 +3,7 @@
   "show_ui": true,
   "unique_prefix": "UNFIMP",
   "plugin_type": "device_scanner",
+  "execution_order" : "Layer_1",
   "data_source": "script",
   "localized": ["display_name", "description", "icon"],
   "display_name": [

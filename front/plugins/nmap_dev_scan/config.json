@@ -2,6 +2,7 @@
   "code_name": "nmap_dev_scan",
   "unique_prefix": "NMAPDEV",
   "plugin_type": "device_scanner",
+  "execution_order" : "Layer_3",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",

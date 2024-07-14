@@ -172,14 +172,24 @@ def resolve_wildcards_arr(commandArr, params):
 
     return commandArr   
 
-
+#-------------------------------------------------------------------------------
+# Function to extract layer number from "execution_order"
+def get_layer(plugin):
+    order = plugin.get("execution_order", "Layer_N")
+    if order == "Layer_N":
+      return float('inf')  # Treat as the last layer if "execution_order" is missing
+    return int(order.split('_')[1])
 
 #-------------------------------------------------------------------------------
 def get_plugins_configs():
     pluginsList = []  # Create an empty list to store plugin configurations
+    pluginsListSorted = []  # Sorted by "execution_order" : "Layer_0" first, Layer_N last
     
     # Get a list of top-level directories in the specified pluginsPath
     dirs = next(os.walk(pluginsPath))[1]
+    
+    # Sort the directories list if needed
+    dirs.sort()  # This will sort the directories alphabetically
     
     # Loop through each directory (plugin folder) in dirs
     for d in dirs:
@@ -194,7 +204,10 @@ def get_plugins_configs():
                 # Load the contents of the config.json file as a JSON object and append it to pluginsList
                 pluginsList.append(json.loads(get_file_content(config_path)))
     
-    return pluginsList  # Return the list of plugin configurations
+    # Sort pluginsList based on "execution_order"
+    pluginsListSorted = sorted(pluginsList, key=get_layer)
+    
+    return pluginsListSorted  # Return the sorted list of plugin configurations
 
 
 #-------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
   "code_name": "dhcp_leases",
   "unique_prefix": "DHCPLSS",
   "plugin_type": "device_scanner",
+  "execution_order" : "Layer_3",
   "enabled": true,
   "data_source": "script",
   "data_filters": [
@@ -516,9 +517,20 @@
           {
             "elementType": "button",
             "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-3" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeAllOptions(this)" },
               { "getStringKey": "Gen_Remove_All" }
             ],
@@ -529,20 +541,9 @@
             "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-3" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-sm-2" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
             ],
             "transformers": []
           },

@@ -2,6 +2,7 @@
   "code_name": "pihole_scan",
   "unique_prefix": "PIHOLE",
   "plugin_type": "device_scanner",
+  "execution_order" : "Layer_2",
   "enabled": true,
   "data_source": "sqlite-db-query",
   "mapped_to_table": "CurrentScan",

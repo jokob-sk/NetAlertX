@@ -4,6 +4,7 @@
   "plugin_type": "other",
   "enabled": true,
   "data_source": "script",
+  "execution_order" : "Layer_3",
   "show_ui": true,
   "localized": ["display_name", "description", "icon"],
   "display_name": [

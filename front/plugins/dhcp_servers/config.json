@@ -2,6 +2,7 @@
   "code_name": "dhcp_servers",
   "unique_prefix": "DHCPSRVS",
   "plugin_type": "other",
+  "execution_order" : "Layer_3",
   "enabled": true,
   "data_source": "script",
   "show_ui": true,

@@ -1,6 +1,7 @@
 {
   "code_name": "arp_scan",
   "unique_prefix": "ARPSCAN",
+  "execution_order" : "Layer_2",
   "plugin_type": "device_scanner",
   "enabled": true,
   "data_source": "script",

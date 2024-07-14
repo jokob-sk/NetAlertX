@@ -2,6 +2,7 @@
   "code_name": "nmap_scan",
   "unique_prefix": "NMAP",
   "plugin_type": "other",
+  "execution_order" : "Layer_4",
   "enabled": true,
   "data_source": "script",
   "data_filters": [
