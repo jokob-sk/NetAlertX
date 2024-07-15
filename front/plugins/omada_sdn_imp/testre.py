@@ -1,5 +1,38 @@
 import re
 
+""""
+how to rebuild and re-run...
+savefolder=~/naxdev/NetAlertX.v6
+cd ~/naxdev
+mv NetAlertX $savefolder
+gh repo clone FlyingToto/NetAlertX
+cd NetAlertX
+ln -s ../docker-compose.yml.ffsb42 .
+ln -s ../.env.omada.ffsb42 .
+cd front/plugins/omada_sdn_imp/
+cp -p $savefoder/front/plugins/omada_sdn_imp/omada_sdn.py .
+cp -p $savefoder/front/plugins/omada_sdn_imp/README.md .
+cp -p $savefoder/front/plugins/omada_sdn_imp/omada_account_sample.png .
+cp -p $savefoder/front/plugins/omada_sdn_imp/testre.py .
+cp -p $savefoder/front/plugins/omada_sdn_imp/config.json config.json.v6
+cd ~/naxdev/NetAlertX
+sudo docker-compose --env-file .env.omada.ffsb42  -f ./docker-compose.yml.ffsb42  up
+
+to gather data for Boris:
+today=$(date +%Y_%m_%d__%H_%M)
+mkdir /drives/c/temp/4boris/$today
+cd  /drives/c/temp/4boris/$today
+scp hal:~/naxdev/logs/app.log .
+scp hal:~/naxdev/NetAlertX/front/plugins/omada_sdn_imp/* .
+gzip -c app.log  > app.$today.log.gz
+
+
+
+"""
+
+
+
+
 def extract_mac_addresses(text):
     mac_pattern = r"([0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2})"
     #mac_pattern = r'([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})'
@@ -77,7 +110,7 @@ def extract_uplinks_mac_and_ports(tplink_device_dump):
     return(0)
 
 
-
+'''
 with open('/tmp/switch.bigroom.dump.json', 'r') as file:
     foo3 = file_content = file.read()
 print("bigroom", end="")
@@ -86,7 +119,7 @@ with open('/tmp/switch.office.dump.json', 'r') as file:
     foo4 = file_content = file.read()
 print("office", end="")
 extract_uplinks_mac_and_ports(foo4)
-
+'''
 
 import netifaces
 gw = netifaces.gateways()
@@ -98,3 +131,12 @@ d = {'a': ['0', 'Arthur'], 'b': ['foo', 'Belling']}
 print(d.items())
 print(d.keys())
 print(d.values())
+
+
+foo = 2
+#while foo > 0:
+#    foo = 'toto'
+
+print("foo is ",foo)
+
+
