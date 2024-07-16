@@ -223,18 +223,32 @@ def create_new_devices (db):
                         )
                         SELECT 
                             cur_MAC, 
-                            CASE WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name ELSE '(unknown)' END,
+                            CASE 
+                                WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name ELSE '(unknown)' 
+                            END,
                             cur_Vendor, 
                             cur_IP, 
                             ?, 
                             ?, 
                             cur_SyncHubNodeName, 
                             {sql_generateGuid},             
-                            CASE WHEN LENGTH(TRIM(cur_NetworkNodeMAC)) > 0 THEN cur_NetworkNodeMAC ELSE '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}' END,
+                            CASE 
+                                WHEN LENGTH(TRIM(cur_NetworkNodeMAC)) > 0 
+                                    AND cur_MAC != 'Internet' 
+                                THEN cur_NetworkNodeMAC 
+                                ELSE 
+                                    CASE 
+                                        WHEN cur_MAC = 'Internet' 
+                                    THEN 'null' 
+                                        ELSE '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}' 
+                                    END 
+                                END,
                             cur_PORT,
                             cur_NetworkSite, 
                             cur_SSID,
-                            CASE WHEN LENGTH(TRIM(cur_Type)) > 0 THEN cur_Type ELSE '{get_setting_value('NEWDEV_dev_DeviceType')}' END,
+                            CASE 
+                                WHEN LENGTH(TRIM(cur_Type)) > 0 THEN cur_Type ELSE '{get_setting_value('NEWDEV_dev_DeviceType')}' 
+                            END,
                             {newDevDefaults}
                     FROM CurrentScan
                         WHERE 1=1
