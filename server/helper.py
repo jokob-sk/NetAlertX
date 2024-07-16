@@ -727,38 +727,6 @@ def cleanDeviceName(str, match_IP):
     # add matching info
     if match_IP:
         str = str + " (IP match)"
-    
-
-    if get_setting_value('NEWDEV_LESS_NAME_CLEANUP'):
-        mylog('debug', ["[Name cleanup] Using new cleanDeviceName(" + str + ")"])
-
-        # replace all labels starting with underscore
-        str = re.sub(r'^_[^\.]*\.', '', str)   # leading label
-        str = re.sub(r'\._[^\.]*\.', '.', str) # nested label
-
-        # get a stub resolver for access to resolv.conf configuration
-        resolv = dns.resolver.Resolver()
-
-        # replace the local domain name
-        str = re.sub(r'\.' + resolv.domain.to_text() + r'$', '', str)
-
-        # replace dns search list
-        for name in resolv.search:
-            str = re.sub(r'\.' + name.to_text() + r'$', '', str)
-
-        # removing last part of e.g. Nest-Audio-ff77ff77ff77ff77ff77ff77ff77ff77
-        str = re.sub(r'-[a-fA-F0-9]{32}', '', str)
-
-        # Remove everything after '#' including the '#'
-        str = re.sub(r'#.*', '', str)
-
-        # remove trailing dot
-        if str.endswith('.'):
-            str = str[:-1]
-
-        # done
-        mylog('debug', ["[Name cleanup] cleanDeviceName = " + str])
-        return str
 
     # Applying cleanup REGEXEs
     mylog('debug', ["[Name cleanup] Using old cleanDeviceName(" + str + ")"])
@@ -766,10 +734,10 @@ def cleanDeviceName(str, match_IP):
     regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX')
 
     for rgx in regexes:
-        mylog('debug', ["[cleanDeviceName] applying regex    : " + rgx])
-        mylog('debug', ["[cleanDeviceName] name before regex : " + str])        
+        mylog('trace', ["[cleanDeviceName] applying regex    : " + rgx])
+        mylog('trace', ["[cleanDeviceName] name before regex : " + str])        
         str = re.sub(rgx, "", str)
-        mylog('debug', ["[cleanDeviceName] name after regex  : " + str])
+        mylog('trace', ["[cleanDeviceName] name after regex  : " + str])
 
     str = re.sub(r'\.\b', '', str)  # trailing dot after words
     str = re.sub(r'\.$', '', str)   # trailing dot at the end of the string

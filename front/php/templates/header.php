@@ -341,7 +341,7 @@ if ($ENABLED_DARKMODE === True) {
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
-              <a href="settings.php#pageTitle">  <?= lang("settings_enabled");?> </a>
+              <a href="settings.php#settingsOverview">  <?= lang("settings_enabled");?> </a>
             </li>
             <li>
               <a href="settings.php#core_content_header">  <?= lang("settings_core_label");?> </a>
@@ -350,13 +350,13 @@ if ($ENABLED_DARKMODE === True) {
               <a href="settings.php#system_content_header"> <?= lang("settings_system_label");?> </a>
             </li>
             <li>
-              <a href="settings.php#device_scanner_content_header">  <?= lang("settings_device_scanners_label");?> </a>
+              <a href="settings.php#device_scanners_content_header">  <?= lang("settings_device_scanners_label");?> </a>
             </li>
             <li>
-              <a href="settings.php#other_content_header">  <?= lang("settings_other_scanners_label");?> </a>
+              <a href="settings.php#other_scanners_content_header">  <?= lang("settings_other_scanners_label");?> </a>
             </li>
             <li>
-              <a href="settings.php#publisher_content_header"> <?= lang("settings_publishers_label");?> </a>
+              <a href="settings.php#publishers_content_header"> <?= lang("settings_publishers_label");?> </a>
             </li>
             
           </ul>

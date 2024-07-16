@@ -114,21 +114,21 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           <div class =" col-sm-12" id="system_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="device_scanner_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="device_scanners_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
           </div>        
           <div class =" col-sm-12" id="device_scanner_content"> <?= lang("settings_device_scanners_info");?> </div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_content_header">        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_scanners_content_header">        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>       
           </div>        
           <div class =" col-sm-12" id="other_content"></div>
       </div> 
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="publisher_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="publishers_content_header" >        
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
           </div>        
@@ -285,12 +285,14 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
       overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
                                   <div class="col-sm-12 " title="${getString("settings_"+section)}">
-                                    <div class="overview-group col-sm-12 col-xs-12">
-                                    
-                                      <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>       
-          
-                                      ${getString("settings_"+section+"_label")}                                      
-                                    </div>                                    
+                                    <a href="#${section}_content_header">
+                                      <div class="overview-group col-sm-12 col-xs-12">
+                                      
+                                        <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>       
+            
+                                        ${getString("settings_"+section+"_label")}                                      
+                                      </div>     
+                                    </a>                               
                                   </div>
                                   <div class="col-sm-12">
                                     ${overviewSectionsHtml[index]}        

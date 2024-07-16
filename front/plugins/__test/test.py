@@ -60,11 +60,11 @@ def main():
     print(subnets)
 
     for rgx in regexes: 
-        mylog('debug', ["[cleanDeviceName] applying regex    : " + rgx])
-        mylog('debug', ["[cleanDeviceName] name before regex : " + str])
+        mylog('trace', ["[cleanDeviceName] applying regex    : " + rgx])
+        mylog('trace', ["[cleanDeviceName] name before regex : " + str])
         
         str = re.sub(rgx, "", str)
-        mylog('debug', ["[cleanDeviceName] name after regex  : " + str])
+        mylog('trace', ["[cleanDeviceName] name after regex  : " + str])
 
     mylog('debug', ["[cleanDeviceName] output: " + str])
     

@@ -177,34 +177,6 @@
       ]
     },
     {
-      "function": "LESS_NAME_CLEANUP",
-      "type": {
-        "dataType": "boolean",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": 0,
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Less Name Cleanup"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Check to start using the new code for cleaning device names. Removes all labels starting with underscore and removes network domain and search list."
-        }
-      ]
-    },
-    {
       "function": "NAME_CLEANUP_REGEX",
       "type": {
         "dataType": "array",

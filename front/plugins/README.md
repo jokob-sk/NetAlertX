@@ -37,7 +37,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `INTRSPD`     | ♻       | Internet speed test                         |          | Script       | [internet_speedtest](/front/plugins/internet_speedtest/)          |
 | `MAINT`       | ⚙       | Maintenance of logs, etc.                   |          | Script       | [maintenance](/front/plugins/maintenance/)                        |
 | `MQTT`        | ▶️      | MQTT for synching to Home Assistant         |          | Script       | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
-| `NBTSCAN`     | ♻       | NSLookup (NetBIOS-based) name resolution    |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |
+| `NBTSCAN`     | ♻       | Nbtscan (NetBIOS-based) name resolution    |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |
 | `NEWDEV`      | ⚙       | New device template                         |  Yes     | Template     | [newdev_template](/front/plugins/newdev_template/)                |
 | `NMAP`        | ♻       | Nmap port scanning & discovery              |          | Script       | [nmap_scan](/front/plugins/nmap_scan/)                            |
 | `NMAPDEV`     | 🔍      | Nmap dev scan on current network            |          | Script       | [nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
@@ -80,7 +80,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 Plugins can be enabled via Settings, and can be disabled as needed. 
 
-1. Research which plugin you'd like to use below and then load the required plugins in Settings via the `LOADED_PLUGINS` setting.
+1. Research which plugin you'd like to use and load the required plugins in Settings via the `LOADED_PLUGINS` setting.
 1. Save the changes and review the Settings of the newly loaded plugins. 
 1. Change the `<prefix>_RUN` Setting to the recommended or custom value as per the documentation of the given setting  
     - If using `schedule` on a `🔍 dev scanner` plugin, make sure the schedules are the same across all `🔍 dev scanner` plugins
