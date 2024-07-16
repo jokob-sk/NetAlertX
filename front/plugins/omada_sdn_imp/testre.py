@@ -136,7 +136,52 @@ print(d.values())
 foo = 2
 #while foo > 0:
 #    foo = 'toto'
-
 print("foo is ",foo)
 
+if foo in ( 'bar', '', 'null'):
+    print("foo is bar")
+else:
+    print("foo is not bar")
 
+foo='192-168-0-150.local'
+bar = foo.split('.')[0]
+print("bar=",bar,"-")
+bar2 = 'toto'
+print("bar2=",bar2,"-")
+
+
+
+import concurrent.futures
+import time
+import random
+
+def phello(arg):
+    print('running phell',arg)
+    time.sleep(random.uniform(0, 6))
+    return f"parallel hello : {arg}"
+
+def testparalel():
+    arguments = ["Alice", "Bob", "Charlie", "David"]
+    results = {}
+    para = 10
+
+    # Using ThreadPoolExecutor for parallel execution
+    with concurrent.futures.ThreadPoolExecutor(max_workers=para) as executor:
+        # Submit tasks to the executor
+        future_to_arg = {executor.submit(phello, arg): arg for arg in arguments}
+        concurrent.futures.wait(future_to_arg)
+
+        # Retrieve results as they complete
+        for future in concurrent.futures.as_completed(future_to_arg):
+            arg = future_to_arg[future]
+            try:
+                result = future.result()
+                results[arg] = result
+            except Exception as exc:
+                print(f"{arg} generated an exception: {exc}")
+
+    # Print results
+    for arg, result in results.items():
+        print(f"{arg}: {result}")
+
+testparalel()

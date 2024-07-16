@@ -6,11 +6,11 @@ The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK O
 2. extract list of OAMDA Devices (switches and access points) and sync them up with NetAlertX
 
 > [!TIP]
-> Some tip.
+> some omada devices are apparently not fully compatible with the API which might lead to partial results.
 
 ### Quick setup guide
 
-1. You SHOULD (ie: strongly recommend) setting up a dedicated account in your OMADA SDN console dedicated to NetAlertX OMADA_SDN plugin.
+1. You SHOULD (ie: strongly recommend) set up an account in your OMADA SDN console dedicated to NetAlertX OMADA_SDN plugin.
 - you should set  USER TYPE = Local USer
 - you should set  USER ROLE = Administrator  (if you use a read-only role you won't be able to sync names from NetAlerX to OMADA SDN)
 - you can set  Site Privileges = All Sites (or limit it to specific sites )
@@ -19,12 +19,15 @@ The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK O
 
 
 
-To set up the plugin correctly, make sure...
 
 #### Required Settings
 
-- When to run `PREF_RUN`
-- 
+- OMDSDN_url
+- OMDSDN_sites
+- OMDSDN_username
+- OMDSDN_password
+- OMDSDN_force_overwrite
+
 
 ### Usage
 
