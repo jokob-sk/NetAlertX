@@ -2,7 +2,8 @@ import re
 
 """"
 how to rebuild and re-run...
-savefolder=~/naxdev/NetAlertX.v6
+
+savefolder=~/naxdev/NetAlertX.v7
 cd ~/naxdev
 mv NetAlertX $savefolder
 gh repo clone FlyingToto/NetAlertX
@@ -10,11 +11,11 @@ cd NetAlertX
 ln -s ../docker-compose.yml.ffsb42 .
 ln -s ../.env.omada.ffsb42 .
 cd front/plugins/omada_sdn_imp/
-cp -p $savefoder/front/plugins/omada_sdn_imp/omada_sdn.py .
+cp -p $savefoder/front/plugins/omada_sdn_imp/omada_sdn.py* .
 cp -p $savefoder/front/plugins/omada_sdn_imp/README.md .
 cp -p $savefoder/front/plugins/omada_sdn_imp/omada_account_sample.png .
 cp -p $savefoder/front/plugins/omada_sdn_imp/testre.py .
-cp -p $savefoder/front/plugins/omada_sdn_imp/config.json config.json.v6
+#cp -p $savefoder/front/plugins/omada_sdn_imp/config.json config.json.v6
 cd ~/naxdev/NetAlertX
 sudo docker-compose --env-file .env.omada.ffsb42  -f ./docker-compose.yml.ffsb42  up
 
@@ -24,10 +25,10 @@ mkdir /drives/c/temp/4boris/$today
 cd  /drives/c/temp/4boris/$today
 scp hal:~/naxdev/logs/app.log .
 scp hal:~/naxdev/NetAlertX/front/plugins/omada_sdn_imp/* .
-gzip -c app.log  > app.$today.log.gz
+gzip -c app.log  > app_$today.log.gz
 
 
-
+scp hal:~/naxdev/NetAlertX/front/plugins/omada_sdn_imp/omada_sdn.py /drives/c/temp/4boris/
 """
 
 
@@ -157,31 +158,38 @@ import random
 
 def phello(arg):
     print('running phell',arg)
-    time.sleep(random.uniform(0, 6))
-    return f"parallel hello : {arg}"
+    delay = random.uniform(0, 6)
+    time.sleep(delay)
+    return f"parallel hello : {arg}", delay
 
 def testparalel():
     arguments = ["Alice", "Bob", "Charlie", "David"]
     results = {}
+    results2 = {}
     para = 10
 
     # Using ThreadPoolExecutor for parallel execution
     with concurrent.futures.ThreadPoolExecutor(max_workers=para) as executor:
         # Submit tasks to the executor
         future_to_arg = {executor.submit(phello, arg): arg for arg in arguments}
-        concurrent.futures.wait(future_to_arg)
+        
+        # Wait for all futures to complete
+        done, _ = concurrent.futures.wait(future_to_arg)
 
-        # Retrieve results as they complete
-        for future in concurrent.futures.as_completed(future_to_arg):
+        # Retrieve results
+        for future in done:
             arg = future_to_arg[future]
             try:
-                result = future.result()
+                result, result2 = future.result()
                 results[arg] = result
+                results2[arg] = result2
             except Exception as exc:
                 print(f"{arg} generated an exception: {exc}")
 
-    # Print results
+    # Print results after all threads have completed
+    print("All threads completed. Results:")
     for arg, result in results.items():
-        print(f"{arg}: {result}")
+        print(f"arg:{arg}, result={results[arg]}, result2={results2[arg]}")
+
 
 testparalel()

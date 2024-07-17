@@ -3,6 +3,7 @@ __author__ = "ffsb"
 __version__ = "0.1"  #initial
 __version__ = "0.2"  # added logic to retry omada api call once as it seems to sometimes fail for some reasons, and error handling logic...
 __version__ = "0.3"  # split devices API calls to allow multithreading but had to stop due to concurency issues.
+__version__ = "0.6"  # found issue with multithreading - my omada calls redirect stdout which gets clubbered by normal stdout... not sure how to fix for now...
 # query OMADA SDN to populate NetAlertX witch omada switches, access points, clients.
 # try to identify and populate their connections by switch/accesspoints and ports/SSID
 # try to differentiate root bridges from accessory 
@@ -138,29 +139,12 @@ def find_default_gateway_ip ():
     return default_route[2] if default_route[2] else None
 
 
-    return('192.168.0.1')
-
-""" 
-def find_port_of_uplink_switch(switch_mac, uplink_mac):
-    mylog(OMDLOGLEVEL, [f'[{pluginName}] find_port uplink="{uplink_mac}" on switch="{switch_mac}"'])
-    myport = []
-    switchdump = callomada(['-t','myomada','switch','-d',switch_mac])
-    port_pattern = r"(?:{[^}]*\"port\"\: )([0-9]+)(?=[^}]*"+re.escape(uplink_mac)+r")"
-    myport = re.findall(port_pattern, switchdump,re.DOTALL)
-    # print("myswitch=",mymac, "- link_switch=", mylink, "myport=", myport) 
-    mylog(OMDLOGLEVEL, [f'[{pluginName}] finding port="{myport}" of uplink switch="{uplink_mac}" on switch="{switch_mac}"'])    
-    try:
-        myport2=myport[0]    
-    except IndexError:
-        myport2 = 'defaultGateWay'
-    return(myport2)
-
- """
+    #return('192.168.0.1')
 
 
 def add_uplink (uplink_mac, switch_mac, device_data_bymac, sadevices_linksbymac,port_byswitchmac_byclientmac):
-    mylog(OMDLOGLEVEL, [f'[{pluginName}] trying to add uplink="{uplink_mac}" to switch="{switch_mac}"'])
-    mylog(OMDLOGLEVEL, [f'[{pluginName}] before adding:"{device_data_bymac[switch_mac]}"'])
+    #mylog(OMDLOGLEVEL, [f'[{pluginName}] trying to add uplink="{uplink_mac}" to switch="{switch_mac}"'])
+    #mylog(OMDLOGLEVEL, [f'[{pluginName}] before adding:"{device_data_bymac[switch_mac]}"'])
     if device_data_bymac[switch_mac][SWITCH_AP] == 'null': 
         device_data_bymac[switch_mac][SWITCH_AP] = uplink_mac
         if device_data_bymac[switch_mac][TYPE] == 'Switch' and device_data_bymac[uplink_mac][TYPE] == 'Switch':
@@ -169,7 +153,7 @@ def add_uplink (uplink_mac, switch_mac, device_data_bymac, sadevices_linksbymac,
         else:
             port_to_uplink=device_data_bymac[uplink_mac][PORT_SSID]
         device_data_bymac[switch_mac][PORT_SSID] = port_to_uplink
-        mylog(OMDLOGLEVEL, [f'[{pluginName}] after adding:"{device_data_bymac[switch_mac]}"'])    
+    #    mylog(OMDLOGLEVEL, [f'[{pluginName}] after adding:"{device_data_bymac[switch_mac]}"'])    
     for link  in sadevices_linksbymac[switch_mac]:
         if device_data_bymac[link][SWITCH_AP] == 'null' and device_data_bymac[switch_mac][TYPE] == 'Switch':
             add_uplink(switch_mac, link, device_data_bymac, sadevices_linksbymac,port_byswitchmac_byclientmac)
@@ -275,17 +259,6 @@ def get_omada_devices_details(msadevice_data):
     else:
         mswitch_detail = ''
         nswitch_dump = ''
-    details_outfile = OMADA_API_RETURN_FILE+"_"+mthisswitch+"_det"
-    dump_outfile = OMADA_API_RETURN_FILE+"_"+mthisswitch+"_dmp"
-    for tmpdfle in [details_outfile+".tmp", dump_outfile+".tmp", details_outfile+".txt", dump_outfile+".txt"]:
-        if os.path.exists(tmpdfle):
-            os.remove(tmpdfle)
-    with open(details_outfile+".tmp", 'w') as f:
-        f.write(mswitch_detail)
-    with open(dump_outfile+".tmp", 'w') as f:
-        f.write(mswitch_dump)
-    os.rename(details_outfile+".tmp", details_outfile+".txt")   
-    os.rename(dump_outfile+".tmp", dump_outfile+".txt")   
     return mswitch_detail, mswitch_dump
 
 
@@ -340,9 +313,9 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
             else:
                 sadevice_links = extract_mac_addresses(sadevice_details)
             sadevices_linksbymac[thisswitch] = sadevice_links[1:]
-            mylog(OMDLOGLEVEL, [f'[{pluginName}]adding switch details: "{sadevice_details}"'])
-            mylog(OMDLOGLEVEL, [f'[{pluginName}]links are: "{sadevice_links}"'])
-            mylog(OMDLOGLEVEL, [f'[{pluginName}]linksbymac are: "{sadevices_linksbymac[thisswitch]}"'])
+            #mylog(OMDLOGLEVEL, [f'[{pluginName}]adding switch details: "{sadevice_details}"'])
+            #mylog(OMDLOGLEVEL, [f'[{pluginName}]links are: "{sadevice_links}"'])
+            #mylog(OMDLOGLEVEL, [f'[{pluginName}]linksbymac are: "{sadevices_linksbymac[thisswitch]}"'])
         elif sadevice_data[dTYPE] == 'switch':
             sadevice_type = 'Switch'
             #sadevice_details=callomada(['switch', thisswitch])
@@ -360,7 +333,7 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
             for link in sadevices_linksbymac[thisswitch]:
                 port_pattern = r"(?:{[^}]*\"port\"\: )([0-9]+)(?=[^}]*"+re.escape(link)+r")"
                 myport = re.findall(port_pattern, switchdump,re.DOTALL)
-                mylog(OMDLOGLEVEL, [f'[{pluginName}] switchdump: link={link} myport:{myport}'])
+                #mylog(OMDLOGLEVEL, [f'[{pluginName}] switchdump: link={link} myport:{myport}'])
                 port_byswitchmac_byclientmac[thisswitch][link] = myport[0] if myport else ''
             #mylog(OMDLOGLEVEL, [f'[{pluginName}]links are: "{sadevice_links}"'])
             #mylog(OMDLOGLEVEL, [f'[{pluginName}]linksbymac are: "{sadevices_linksbymac[thisswitch]}"'])
@@ -409,23 +382,6 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
         # if the name stored in Nax for a device is empty or the MAC addres or has some parenthhesis or is the same as in omada
         # don't bother updating omada's name at all.
         #
-        '''
-        if real_naxname == None or ietf2ieee_mac_formater(real_naxname) == odevice_data[cMAC] or '('in real_naxname or  real_naxname == odevice_data[cNAME] or  real_naxname == 'null':
-            naxname = None
-        else:
-            naxname = real_naxname
-        mylog('debug', [f'[{pluginName}] TEST name from MAC: {naxname}'])    
-        if odevice_data[cMAC] == odevice_data[cNAME]:
-            if naxname != None:
-                callomada(['set-client-name', odevice_data[cMAC], naxname])
-                odevice_data_reordered[NAME] = naxname
-            else:
-                odevice_data_reordered[NAME] = real_naxname
-        else:
-            if omada_force_overwrite and naxname != None:
-                callomada(['set-client-name', odevice_data[cMAC], naxname])
-            odevice_data_reordered[NAME] = odevice_data[cNAME]
-        '''
         
         naxname = real_naxname
         if real_naxname != None:
