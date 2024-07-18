@@ -396,7 +396,7 @@
     "Maintenance_Tool_ExportCSV_text": "Generiere eine CSV-Datei (comma separated values) mit einer Liste aller Geräte und deren Beziehungen zwischen Netzwerkknoten und verbundenen Geräten. Dies kann auch durch das Besuchen der URL <code>your NetAlertX url/php/server/devices.php?action=ExportCSV</code> oder durch Aktivieren des <a href=\"settings.php#CSVBCKP_header\">CSV-Backups</a> ausgelöst werden.",
     "Maintenance_Tool_ImportCSV": "CSV Import",
     "Maintenance_Tool_ImportCSV_noti": "CSV Import",
-    "Maintenance_Tool_ImportCSV_noti_text": "Sind Sie sich sicher, dass Sie die CSV-Datei importieren wollen? Dies wird alle Geräte in der Datenbank überschreiben.",
+    "Maintenance_Tool_ImportCSV_noti_text": "Sind Sie sich sicher, dass Sie die CSV-Datei importieren wollen? Dies wird <b>alle Geräte in der Datenbank überschreiben</b>.",
     "Maintenance_Tool_ImportCSV_text": "Machen Sie ein Backup, bevor Sie diese Funk­tion nutzen. Importiere eine CSV-Datei (comma separated values) mit einer Liste aller Geräte und deren Beziehungen zwischen Netzwerkknoten und verbundenen Geräten. Um dies zu tun platziere die <b>devices.csv</b> benannte CSV-Datei in deinen <b>/config</b> Ordner.",
     "Maintenance_Tool_ImportPastedCSV": "",
     "Maintenance_Tool_ImportPastedCSV_noti_text": "",
