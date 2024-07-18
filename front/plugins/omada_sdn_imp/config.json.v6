@@ -2,7 +2,6 @@
   "code_name": "omada_sdn_imp",
   "unique_prefix": "OMDSDN",
   "plugin_type": "device_scanner",
-  "execution_order" : "Layer_0",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",
@@ -125,7 +124,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enter full URL with protocol <code>https://CHANGEME_omada.mylocaldomain:PORT</code>."
+          "string": "Enter full URL with protocol <code>https://CHANGEME_omada.mylocaldomain</code>."
         }
       ]
     },
@@ -200,7 +199,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Omada SDN site IDs. For now, we only process the first site listed since NetAlertX's other probes won't traverse across NAT and routers. But if needed please submit an issue in github with your specific use case for consideration:  <code>https://github.com/jokob-sk/NetAlertX/issues </code> "
+          "string": "Omada SDN site IDs. You can get it by..."
         }
       ]
     },
@@ -282,7 +281,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The plugin synchronizes names from NetAlertX to OMADA Clietnts. By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address); with this setting toggled, it will overwrite existing values regardless."
+          "string": "The plugin synchronizes names from NetAlertX to OMADA. By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address); with this setting toggled, it will overwrite existing values regardless."
         }
       ]
     },
