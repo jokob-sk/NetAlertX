@@ -25,6 +25,7 @@ import io
 import re
 import concurrent.futures
 
+
 #import netifaces
 
 # Define the installation path and extend the system path for plugin imports
@@ -49,7 +50,7 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 #
 # sample target output:
 #  0 MAC, 1 IP, 2 Name, 3 switch/AP, 4 port/SSID, 5 TYPE    
-#17:27:10 [<unique_prefix>] token: "['9C-04-A0-82-67-45', '192.168.0.217', '9C-04-A0-82-67-45', '17', '40-AE-30-A5-A7-50, 'Switch']"
+#17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', '1A-2B-3C-4D-5E-6F', '17', '40-AE-30-A5-A7-50, 'Switch']"
     
 # Constants for array indices
 MAC, IP, NAME, SWITCH_AP, PORT_SSID, TYPE = range(6)
@@ -57,16 +58,16 @@ MAC, IP, NAME, SWITCH_AP, PORT_SSID, TYPE = range(6)
 # sample omada devices input format:
 # 
 #  0.MAC                    1.IP    2.type  3.status           4.name              5.model
-#40-AE-30-A5-A7-50    192.168.0.11      ap CONNECTED        ompapaoffice         EAP773(US) v1.0
+#40-AE-30-A5-A7-50    192.168.0.11      ap CONNECTED        office_Access_point         EAP773(US) v1.0
 #B0-95-75-46-0C-39     192.168.0.4  switch CONNECTED        pantry12             T1600G-52PS v4.0
 dMAC, dIP, dTYPE, dSTATUS, dNAME, dMODEL = range(6) 
 
 # sample omada clients input format:
 #  0 MAC, 1 IP, 2 Name, 3 switch/AP, 4 port/SSID, 
-#17:27:10 [<unique_prefix>] token: "['9C-04-A0-82-67-45', '192.168.0.217', '9C-04-A0-82-67-45', 'froggies2', '(ompapaoffice)']"
-#17:27:10 [<unique_prefix>] token: "['50-02-91-29-E7-53', '192.168.0.153', 'frontyard_ESP_29E753', 'pantry12', '(48)']"
-#17:27:10 [<unique_prefix>] token: "['00-E2-59-00-A0-8E', '192.168.0.1', 'bastion', 'office24', '(23)']"
-#17:27:10 [<unique_prefix>] token: "['60-DD-8E-CA-A4-B3', '192.168.0.226', 'brick', 'froggies3', '(ompapaoffice)']"
+#17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', '1A-2B-3C-4D-5E-6F', 'myssid_name2', '(office_Access_point)']"
+#17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-01', '192.168.0.153', 'frontyard_ESP_29E753', 'pantry12', '(48)']"
+#17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-02', '192.168.0.1', 'bastion', 'office24', '(23)']"
+#17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-03', '192.168.0.226', 'brick', 'myssid_name3', '(office_Access_point)']"
 cMAC, cIP, cNAME, cSWITCH_AP, cPORT_SSID = range(5)
 
 OMDLOGLEVEL = 'debug'
@@ -270,12 +271,12 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
     
     # sample omada devices input format:
     #  0.MAC                    1.IP    2.type  3.status           4.name              5.model
-    #40-AE-30-A5-A7-50    192.168.0.11      ap CONNECTED        ompapaoffice         EAP773(US) v1.0
+    #40-AE-30-A5-A7-50    192.168.0.11      ap CONNECTED        office_Access_point         EAP773(US) v1.0
     #B0-95-75-46-0C-39     192.168.0.4  switch CONNECTED        pantry12             T1600G-52PS v4.0
     #
     # sample target output:
     #  0 MAC, 1 IP, 2 Name, 3 switch/AP, 4 port/SSID, 5 TYPE    
-    #17:27:10 [<unique_prefix>] token: "['9C-04-A0-82-67-45', '192.168.0.217', '9C-04-A0-82-67-45', '17', '40-AE-30-A5-A7-50, 'Switch']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', '1A-2B-3C-4D-5E-6F', '17', '40-AE-30-A5-A7-50, 'Switch']"
     #constants
     sadevices_macbyname = {}
     sadevices_macbymac = {}
@@ -360,14 +361,14 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
     #  ...
     # sample omada clients input format:
     #  0 MAC, 1 IP, 2 Name, 3 switch/AP, 4 port/SSID, 
-    #17:27:10 [<unique_prefix>] token: "['9C-04-A0-82-67-45', '192.168.0.217', '9C-04-A0-82-67-45', 'froggies2', '(ompapaoffice)']"
-    #17:27:10 [<unique_prefix>] token: "['50-02-91-29-E7-53', '192.168.0.153', 'frontyard_ESP_29E753', 'pantry12', '(48)']"
-    #17:27:10 [<unique_prefix>] token: "['00-E2-59-00-A0-8E', '192.168.0.1', 'bastion', 'office24', '(23)']"
-    #17:27:10 [<unique_prefix>] token: "['60-DD-8E-CA-A4-B3', '192.168.0.226', 'brick', 'froggies3', '(ompapaoffice)']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', '1A-2B-3C-4D-5E-6F', 'myssid_name2', '(office_Access_point)']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-01', '192.168.0.153', 'frontyard_ESP_29E753', 'pantry12', '(48)']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-02', '192.168.0.1', 'bastion', 'office24', '(23)']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-03', '192.168.0.226', 'brick', 'myssid_name3', '(office_Access_point)']"
    
     # sample target output:
     #  0 MAC, 1 IP, 2 Name, 3 MAC of switch/AP, 4 port/SSID, 5 TYPE    
-    #17:27:10 [<unique_prefix>] token: "['9C-04-A0-82-67-45', '192.168.0.217', 'brick', 'ompapaoffice','froggies2', , 'Switch']"
+    #17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', 'brick', 'office_Access_point','myssid_name2', , 'Switch']"
 
     odevices = omada_clients_output.splitlines()
     mylog(OMDLOGLEVEL, [f'[{pluginName}] omada_clients_outputs rows: "{len(odevices)}"'])
