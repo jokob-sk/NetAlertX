@@ -6,7 +6,7 @@ Please follow tips 1 - 4 to get a more detailed error.
 
 When debugging an issue always set the highest log level:
 
-`LOG_LEVEL='debug'`
+`LOG_LEVEL='trace'`
 
 
 ## 2. Surfacing errors when container restarts 🔁
