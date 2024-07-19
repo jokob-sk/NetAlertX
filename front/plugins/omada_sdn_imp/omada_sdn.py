@@ -4,6 +4,9 @@ __version__ = "0.1"  #initial
 __version__ = "0.2"  # added logic to retry omada api call once as it seems to sometimes fail for some reasons, and error handling logic...
 __version__ = "0.3"  # split devices API calls to allow multithreading but had to stop due to concurency issues.
 __version__ = "0.6"  # found issue with multithreading - my omada calls redirect stdout which gets clubbered by normal stdout... not sure how to fix for now...
+__version__ = "0.7"  # avoid updating omada sdn client name when it is the MAC, and naxname is also the same MAC...
+__version__ = "1.0"  # fixed the timzone mylog issue by resetting the tz value at the begining of the script... I suspect it doesn't inherit the tz from the main.
+
 # query OMADA SDN to populate NetAlertX witch omada switches, access points, clients.
 # try to identify and populate their connections by switch/accesspoints and ports/SSID
 # try to differentiate root bridges from accessory 
@@ -38,6 +41,9 @@ from logger import mylog
 from const import pluginsPath, fullDbPath
 from helper import timeNowTZ, get_setting_value 
 from notification import write_notification
+from pytz import timezone
+import conf
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -165,6 +171,7 @@ def add_uplink (uplink_mac, switch_mac, device_data_bymac, sadevices_linksbymac,
 # Main initialization
 def main():
     start_time = time.time()
+
     mylog('verbose', [f'[{pluginName}] starting execution']) 
     from database import DB
     from device import Device_obj
@@ -395,8 +402,12 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
             naxname = odevice_data[cNAME] if odevice_data[cNAME] != '' else odevice_data[cMAC]
         naxname = naxname.strip()
         mylog('debug', [f'[{pluginName}] TEST name from MAC: {naxname}'])    
-        if odevice_data[cNAME] in (odevice_data[cMAC], 'null', ''):
+        if odevice_data[cNAME] in ('null', ''):
             mylog('verbose', [f'[{pluginName}] updating omada server because odevice_data is: {odevice_data[cNAME]} and naxname is: "{naxname}"'])
+            callomada(['set-client-name', odevice_data[cMAC], naxname])
+            odevice_data_reordered[NAME] = naxname
+        elif odevice_data[cNAME] == odevice_data[cMAC] and ieee2ietf_mac_formater(naxname) != ieee2ietf_mac_formater(odevice_data[cNAME]) :
+            mylog('verbose', [f'[{pluginName}] updating omada server because odevice_data is: "{odevice_data[cNAME]} and naxname is: "{naxname}"'])
             callomada(['set-client-name', odevice_data[cMAC], naxname])
             odevice_data_reordered[NAME] = naxname
         else:
