@@ -20,7 +20,7 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 
 
 ## 📑 Available Plugins
-
+ 
 Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
 
 

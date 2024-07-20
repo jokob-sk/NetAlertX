@@ -14,12 +14,18 @@ from requests import Request, Session, packages
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from pyunifi.controller import Controller
 
+
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects
 from logger import mylog
+import conf
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')

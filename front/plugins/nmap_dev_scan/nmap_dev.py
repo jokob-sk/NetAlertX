@@ -25,6 +25,11 @@ from helper import timeNowTZ, get_setting_value, extract_between_strings, extrac
 from const import logPath, applicationPath, fullDbPath
 from database import DB
 from device import Device_obj
+import conf
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())

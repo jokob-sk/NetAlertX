@@ -18,6 +18,11 @@ from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
 from helper import timeNowTZ
 from const import logPath, applicationPath
+import conf
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 CUR_PATH        = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE        = os.path.join(CUR_PATH, 'script.log')
