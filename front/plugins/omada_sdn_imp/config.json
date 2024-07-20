@@ -254,7 +254,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Omada SDN instance password"
+          "string": "Omada SDN instance password."
         }
       ]
     },
@@ -282,7 +282,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The plugin synchronizes names from NetAlertX to OMADA Clietnts. By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address); with this setting toggled, it will overwrite existing values regardless."
+          "string": "The plugin synchronizes names from NetAlertX to OMADA Clients. By default NetAlertX will only populate missing names in OMADASDN devices (i.e.: where the name is defaulting to the device MAC address); with this setting toggled, it will overwrite existing values regardless."
         }
       ]
     },

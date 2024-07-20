@@ -706,9 +706,9 @@ function ImportPastedCSV()
   var csv = $('#modal-input-textarea').val();
   csvBase64 = btoa(csv)
   // Execute
-  $.get('php/server/devices.php?action=ImportCSV&content=', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] Devices imported from pasted content`, 'info')
+  $.post('php/server/devices.php?action=ImportCSV', { content: csvBase64 }, function(msg) {
+    showMessage(msg);
+    write_notification(`[Maintenance] Devices imported from pasted content`, 'info');
   });
 }
 

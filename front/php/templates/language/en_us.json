@@ -655,7 +655,7 @@
     "UI_REFRESH_description": "Enter number of seconds after which the UI reloads. Set to <code>0</code> to disable.",
     "UI_REFRESH_name": "Auto-refresh UI",
     "devices_old": "Refreshing...",
-    "general_event_description": "The event you have triggered might take a while until background processes finish. The execution ended once the below execution queue empties (Check the <a  href='/maintenance.php#tab_Logging'>error log</a> if you encounter issues). <br/> <br/>  Execution queue:",
+    "general_event_description": "The event you have triggered might take a while until background processes finish. The execution ended once the below execution queue empties (Check the <a href='/maintenance.php#tab_Logging'>error log</a> if you encounter issues). <br/> <br/> Execution queue:",
     "general_event_title": "Executing an ad-hoc event",
     "report_guid": "Notification guid:",
     "report_guid_missing": "Linked notification not found. There is a small delay between recently sent notifications and them being available. Referesh your page and cache after a few seconds. It's also possible the selected notification have been deleted during maintenance as specified in the <code>DBCLNP_NOTIFI_HIST</code> setting. <br/> <br/>The latest notification is displayed instead. The missing notification has the following GUID:",
