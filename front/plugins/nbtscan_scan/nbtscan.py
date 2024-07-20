@@ -19,6 +19,11 @@ from helper import timeNowTZ, get_setting_value
 from notification import write_notification
 from database import DB
 from device import Device_obj
+import conf
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())

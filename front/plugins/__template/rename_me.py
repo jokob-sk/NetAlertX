@@ -5,6 +5,7 @@ import pathlib
 import sys
 import json
 import sqlite3
+from pytz import timezone
 
 # Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
@@ -16,6 +17,10 @@ from logger import mylog
 from const import pluginsPath, fullDbPath
 from helper import timeNowTZ, get_setting_value 
 from notification import write_notification
+import conf
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())

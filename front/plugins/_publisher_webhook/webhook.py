@@ -25,6 +25,10 @@ from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value, hide_string, write_file
 from notification import Notification_obj
 from database import DB
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
