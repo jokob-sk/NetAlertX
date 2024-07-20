@@ -192,4 +192,47 @@ def testparalel():
         print(f"arg:{arg}, result={results[arg]}, result2={results2[arg]}")
 
 
-testparalel()
+#testparalel()
+
+
+
+import netifaces
+import ipaddress
+
+def get_interfaces_and_subnets():
+    result = []
+    for interface in netifaces.interfaces():
+        addrs = netifaces.ifaddresses(interface)
+        if netifaces.AF_INET in addrs:
+            for addr in addrs[netifaces.AF_INET]:
+                ip = addr['addr']
+                mask = addr['netmask']
+                try:
+                    network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
+                    result.append((interface, str(network)))
+                except ValueError:
+                    pass
+    return result
+
+# Example usage:
+interfaces_and_subnets = get_interfaces_and_subnets()
+for interface, subnet in interfaces_and_subnets:
+    print(f"interface={interface}, subnet={subnet}")
+
+
+'''
+interface=lo, subnet=127.0.0.0/8
+interface=enp6s0, subnet=192.168.0.0/24
+interface=br-ba0070d71f2a, subnet=172.16.0.16/29
+interface=br-bc4a4c4e0f93, subnet=172.16.0.40/29
+interface=br-e043e0ae9c8c, subnet=172.16.0.72/29
+interface=br-6acc3945cfba, subnet=172.16.0.48/29
+interface=br-6f931807e709, subnet=172.16.0.80/29
+interface=docker0, subnet=172.17.0.0/16
+interface=br-9ce2cb7c38c3, subnet=172.16.0.24/29
+interface=br-eec81501f666, subnet=172.16.0.32/29
+interface=br-1064712a4791, subnet=172.16.0.56/29
+interface=br-a93ebdba2a28, subnet=172.16.0.8/29
+interface=br-d8fa7a3015e2, subnet=172.16.0.64/29
+interface=br-e7cdd041d3d3, subnet=172.16.0.0/29
+'''
