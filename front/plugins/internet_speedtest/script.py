@@ -13,7 +13,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ
+from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
 

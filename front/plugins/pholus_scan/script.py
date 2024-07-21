@@ -16,7 +16,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from plugin_helper import Plugin_Object, Plugin_Objects
-from helper import timeNowTZ
+from helper import timeNowTZ, get_setting_value 
 from const import logPath, applicationPath
 import conf
 from pytz import timezone
