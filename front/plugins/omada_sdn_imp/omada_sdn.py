@@ -6,6 +6,8 @@ __version__ = "0.3"  # split devices API calls to allow multithreading but had t
 __version__ = "0.6"  # found issue with multithreading - my omada calls redirect stdout which gets clubbered by normal stdout... not sure how to fix for now...
 __version__ = "0.7"  # avoid updating omada sdn client name when it is the MAC, and naxname is also the same MAC...
 __version__ = "1.0"  # fixed the timzone mylog issue by resetting the tz value at the begining of the script... I suspect it doesn't inherit the tz from the main.
+__version__ = "1.1"  # added logic to handle gracefully a failure of omada devices so it won't try to populate uplinks on non-existent switches and AP.
+
 
 # query OMADA SDN to populate NetAlertX witch omada switches, access points, clients.
 # try to identify and populate their connections by switch/accesspoints and ports/SSID
@@ -454,7 +456,8 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
     # step4, let's go recursively through switches other links to mark update their uplinks
     #  and pray it ends one day... 
     # 
-    add_uplink(default_router_mac,first_switch, device_data_bymac,sadevices_linksbymac,port_byswitchmac_byclientmac)                       
+    if len(sadevices) > 0:
+        add_uplink(default_router_mac,first_switch, device_data_bymac,sadevices_linksbymac,port_byswitchmac_byclientmac)                       
     return device_data_bymac.values()
 
 if __name__ == '__main__':
