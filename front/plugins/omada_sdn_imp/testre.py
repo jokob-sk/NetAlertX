@@ -236,3 +236,50 @@ interface=br-a93ebdba2a28, subnet=172.16.0.8/29
 interface=br-d8fa7a3015e2, subnet=172.16.0.64/29
 interface=br-e7cdd041d3d3, subnet=172.16.0.0/29
 '''
+
+
+import timeit
+
+# Setup: Create a dictionary and a function with if-elif statements
+data = {
+    "apple": 1,
+    "banana": 2,
+    "cherry": 3,
+    "date": 4,
+    "elderberry": 5
+}
+
+def get_value_dict(key):
+    return data.get(key, 0)
+
+def get_value_if_elif(key):
+    if key == "apple":
+        return 1
+    elif key == "banana":
+        return 2
+    elif key == "cherry":
+        return 3
+    elif key == "date":
+        return 4
+    elif key == "elderberry":
+        return 5
+    else:
+        return 0
+
+# Test dictionary lookup
+dict_time = timeit.timeit(
+    'get_value_dict("elderberry")',
+    setup='from __main__ import get_value_dict',
+    number=1000000
+)
+
+# Test if-elif statements
+if_elif_time = timeit.timeit(
+    'get_value_if_elif("elderberry")',
+    setup='from __main__ import get_value_if_elif',
+    number=1000000
+)
+
+print(f"Dictionary lookup time: {dict_time:.6f} seconds")
+print(f"If-elif statements time: {if_elif_time:.6f} seconds")
+print(f"Dictionary is {if_elif_time / dict_time:.2f}x faster")
