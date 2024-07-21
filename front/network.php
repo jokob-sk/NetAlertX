@@ -673,7 +673,9 @@
 
         (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
 
-        (port == "" || port == 0 ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+        (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+
+        portHtml = (port == "" || port == 0 || port == 'None' ) ? "" : port
 
         // Build HTML for individual nodes in the network diagram        
         deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
@@ -682,7 +684,7 @@
                   </div>` : "";
         devicePort = `<div  class="netPort" 
                             style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
-                        ${port}</div> 
+                        ${portHtml}</div> 
                       <div  class="portBckgIcon" 
                             style="margin-left:-${emSize*sizeCoefficient}em;">
                             ${portBckgIcon}

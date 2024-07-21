@@ -431,6 +431,22 @@ def update_devices_data_from_scan (db):
     
     if len(recordsToUpdate) > 0:        
         sql.executemany ("UPDATE Devices SET dev_Icon = ? WHERE dev_MAC = ? ", recordsToUpdate )
+
+    # Guess Type
+    recordsToUpdate = []
+    query = """SELECT * FROM Devices
+               WHERE dev_DeviceType in ('', 'null')
+                  OR dev_DeviceType IS NULL"""
+    default_type = get_setting_value('NEWDEV_dev_DeviceType')
+    
+    for device in sql.execute (query) :
+        # Conditional logic for dev_Icon guessing        
+        dev_DeviceType = guess_type(device['dev_Vendor'], device['dev_MAC'], device['dev_LastIP'], device['dev_Name'], default_type)
+
+        recordsToUpdate.append ([dev_DeviceType, device['dev_MAC']])
+    
+    if len(recordsToUpdate) > 0:        
+        sql.executemany ("UPDATE Devices SET dev_DeviceType = ? WHERE dev_MAC = ? ", recordsToUpdate )
     
     
     mylog('debug','[Update Devices] Update devices end')
@@ -669,6 +685,40 @@ def guess_icon(vendor, mac, ip, name,  default):
     elif ip.startswith("192.168.1."):
         result = icons.get("laptop")       
 
+    
+    return result
+
+#-------------------------------------------------------------------------------
+# Guess device type
+def guess_type(vendor, mac, ip, name,  default):
+    result = default
+    mac    = mac.upper()
+    vendor = vendor.lower()
+    name   = name.lower()
+
+    # Guess icon based on vendor
+    if any(brand in vendor for brand in {"samsung", "motorola"}):
+        result = "Phone"
+    elif "cisco" in vendor:
+        result = "Router" 
+    elif "lg" in vendor:
+        result = "TV"
+    elif "google" in vendor:
+        result = "Phone"
+    elif "ubiquiti" in vendor:
+        result = "Router" 
+
+    # Guess type based on MAC address patterns
+    elif mac == "INTERNET":  
+        result = "Internet"      
+        
+    # Guess type based on name
+    elif 'google' in name:
+        result = "Phone"
+    
+    # Guess type based on IP address ranges
+    elif ip == ("192.168.1.1"):
+        result = "Router"      
     
     return result
     
