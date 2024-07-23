@@ -500,6 +500,38 @@
       ]
     },
     {
+      "function": "TLS",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MQTT TLS"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enable TLS support."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Habilitar soporte TLS."
+        }
+      ]
+    },
+    {
       "function": "USER",
       "type": {
         "dataType": "string",
