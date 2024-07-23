@@ -295,9 +295,11 @@ def mqtt_create_client():
     if get_setting_value('MQTT_VERSION') == 1:
         mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)  
     else:
-        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)  
+        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-         
+    if get_setting_value('MQTT_TLS'):
+        mqtt_client.tls_set()
+
     mqtt_client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
     mqtt_client.on_connect = on_connect
     mqtt_client.on_disconnect = on_disconnect
