@@ -6,6 +6,9 @@ __version__ = "0.3"  # split devices API calls to allow multithreading but had t
 __version__ = "0.6"  # found issue with multithreading - my omada calls redirect stdout which gets clubbered by normal stdout... not sure how to fix for now...
 __version__ = "0.7"  # avoid updating omada sdn client name when it is the MAC, and naxname is also the same MAC...
 __version__ = "1.0"  # fixed the timzone mylog issue by resetting the tz value at the begining of the script... I suspect it doesn't inherit the tz from the main.
+__version__ = "1.1"  # added logic to handle gracefully a failure of omada devices so it won't try to populate uplinks on non-existent switches and AP.
+__version__ = "1.2"  # finally got multiprocessing to work to parse devices AND to update names! yeah!
+
 
 # query OMADA SDN to populate NetAlertX witch omada switches, access points, clients.
 # try to identify and populate their connections by switch/accesspoints and ports/SSID
@@ -26,8 +29,10 @@ import importlib.util
 import time
 import io
 import re
-import concurrent.futures
-
+#import concurrent.futures
+import subprocess
+import multiprocessing
+ 
 
 #import netifaces
 
@@ -44,6 +49,7 @@ from notification import write_notification
 from pytz import timezone
 import conf
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+PARALLELISM = 4
 
 # Define the current path and log file paths
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
@@ -269,6 +275,20 @@ def get_omada_devices_details(msadevice_data):
         nswitch_dump = ''
     return mswitch_detail, mswitch_dump
 
+def get_omada_devices_details_parallel(msadevice_data):
+    mthisswitch = msadevice_data[dMAC]
+    mtype = msadevice_data[dTYPE]
+    mswitch_detail = ''
+    mswitch_dump = ''
+    if mtype == 'ap':
+        mswitch_detail = subprocess.run('omada access-point '+mthisswitch, capture_output=True, text=True, shell=True).stdout
+    elif mtype  == 'switch':        
+        mswitch_detail = subprocess.run('omada switch '+mthisswitch, capture_output=True, text=True, shell=True).stdout
+        mswitch_dump = subprocess.run('omada access-point '+mthisswitch, capture_output=True, text=True, shell=True).stdout
+    else:
+        mswitch_detail = ''
+        mswitch_dump = ''
+    return mthisswitch, mswitch_detail, mswitch_dump
 
 
 # ----------------------------------------------
@@ -294,19 +314,36 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
     omada_force_overwrite = get_setting_value('OMDSDN_force_overwrite')
     switch_details = {}
     switch_dumps = {}
-   
+    '''
+    command = 'which omada'
+    def run_command(command, index):
+        result = subprocess.run(command, capture_output=True, text=True, shell=True)
+        return str(index), result.stdout.strip()
+    
+    myindex, command_output= run_command(command, 2)
+    mylog('verbose', [f'[{pluginName}] command={command} index={myindex} results={command_output}'])
+    '''
     sadevices = switches_and_aps.splitlines()
     mylog(OMDLOGLEVEL, [f'[{pluginName}] switches_and_aps rows: "{len(sadevices)}"'])
     
+    with multiprocessing.Pool(processes = PARALLELISM) as mypool:
+        oresults = mypool.map(get_omada_devices_details_parallel, [sadevice.split() for sadevice in sadevices])
+
+    for thisswitch, details, dump in oresults:
+        switch_details[thisswitch] = details
+        switch_dumps[thisswitch] = dump
+        mylog(OMDLOGLEVEL, [f'[{pluginName}] switch={thisswitch} details={details}'])
+    
+    '''
     for sadevice in sadevices:
         sadevice_data = sadevice.split()
         thisswitch = sadevice_data[dMAC]
         thistype = sadevice_data[dTYPE]
         switch_details[thisswitch], switch_dumps[thisswitch] = get_omada_devices_details(sadevice_data)
+    '''
     
     mylog('verbose', [f'[{pluginName}] switches details collected "{len(switch_details)}"'])
     mylog('verbose', [f'[{pluginName}] dump details collected "{len(switch_details)}"'])
-    # Using ThreadPoolExecutor for parallel execution
         
     for sadevice in sadevices:
         sadevice_data = sadevice.split()
@@ -379,6 +416,8 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
 
     odevices = omada_clients_output.splitlines()
     mylog(OMDLOGLEVEL, [f'[{pluginName}] omada_clients_outputs rows: "{len(odevices)}"'])
+    omada_clients_to_rename = []
+
     for odevice in odevices:
         odevice_data = odevice.split()
         odevice_data_reordered = [ MAC, IP, NAME, SWITCH_AP, PORT_SSID, TYPE]
@@ -390,7 +429,7 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
         # if the name stored in Nax for a device is empty or the MAC addres or has some parenthhesis or is the same as in omada
         # don't bother updating omada's name at all.
         #
-        
+
         naxname = real_naxname
         if real_naxname != None:
             if '(' in real_naxname:
@@ -404,17 +443,25 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
         mylog('debug', [f'[{pluginName}] TEST name from MAC: {naxname}'])    
         if odevice_data[cNAME] in ('null', ''):
             mylog('verbose', [f'[{pluginName}] updating omada server because odevice_data is: {odevice_data[cNAME]} and naxname is: "{naxname}"'])
-            callomada(['set-client-name', odevice_data[cMAC], naxname])
+            omada_clients_to_rename.append(['set-client-name',odevice_data[cMAC], naxname])
+            #callomada(['set-client-name', odevice_data[cMAC], naxname])
             odevice_data_reordered[NAME] = naxname
         elif odevice_data[cNAME] == odevice_data[cMAC] and ieee2ietf_mac_formater(naxname) != ieee2ietf_mac_formater(odevice_data[cNAME]) :
             mylog('verbose', [f'[{pluginName}] updating omada server because odevice_data is: "{odevice_data[cNAME]} and naxname is: "{naxname}"'])
-            callomada(['set-client-name', odevice_data[cMAC], naxname])
+            omada_clients_to_rename.append(['set-client-name',odevice_data[cMAC], naxname])
+            #callomada(['set-client-name', odevice_data[cMAC], naxname])
             odevice_data_reordered[NAME] = naxname
         else:
             if omada_force_overwrite and naxname != odevice_data[cNAME] :
                 mylog('verbose', [f'[{pluginName}] updating omada server because odevice_data is: "{odevice_data[cNAME]} and naxname is: "{naxname}"'])
-                callomada(['set-client-name', odevice_data[cMAC], naxname])
+                omada_clients_to_rename.append(['set-client-name',odevice_data[cMAC], naxname])
+                #callomada(['set-client-name', odevice_data[cMAC], naxname])
             odevice_data_reordered[NAME] = naxname
+  
+
+  
+  
+  
         mightbeport = odevice_data[cPORT_SSID].lstrip('(')
         mightbeport = mightbeport.rstrip(')')
         if mightbeport.isdigit():
@@ -436,9 +483,17 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
         device_data_mac_byip[odevice_data_reordered[IP]] = odevice_data_reordered[MAC]
         mylog(OMDLOGLEVEL, [f'[{pluginName}] tokens: "{odevice_data}"'])
         mylog(OMDLOGLEVEL, [f'[{pluginName}] tokens_reordered: "{odevice_data_reordered}"'])
+    # RENAMING
+    #for omada_client_to_rename in omada_clients_to_rename:
+    #   mylog('verbose', [f'[{pluginName}] calling omada: "{omada_client_to_rename}"'])
+        #callomada(omada_client_to_rename)
+
     # populating the uplinks nodes of the omada switches and access points manually 
     # since OMADA SDN makes is unreliable if the gateway is not their own tplink hardware...
-
+    # 	
+    with multiprocessing.Pool(processes = PARALLELISM) as mypool2:
+        oresults = mypool2.map(callomada, omada_clients_to_rename)
+    mylog(OMDLOGLEVEL, [f'[{pluginName}] results are: "{oresults}"'])
     
     # step1 let's find the the default router
     # 
@@ -454,7 +509,8 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
     # step4, let's go recursively through switches other links to mark update their uplinks
     #  and pray it ends one day... 
     # 
-    add_uplink(default_router_mac,first_switch, device_data_bymac,sadevices_linksbymac,port_byswitchmac_byclientmac)                       
+    if len(sadevices) > 0:
+        add_uplink(default_router_mac,first_switch, device_data_bymac,sadevices_linksbymac,port_byswitchmac_byclientmac)                       
     return device_data_bymac.values()
 
 if __name__ == '__main__':

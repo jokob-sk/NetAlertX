@@ -21,8 +21,10 @@ __pycache__/
 **/pialert.conf_bak
 **/pialert.db_bak
 
-
 front/img/account/*
 **/account.php
 **/account.js
 front/css/account.css
+
+docker-compose.yml.ffsb42
+.env.omada.ffsb42
