@@ -20,3 +20,9 @@ __pycache__/
 **/script.log
 **/pialert.conf_bak
 **/pialert.db_bak
+
+
+front/img/account/*
+**/account.php
+**/account.js
+front/css/account.css

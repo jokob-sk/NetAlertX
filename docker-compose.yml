@@ -54,6 +54,7 @@ services:
       - ${DEV_LOCATION}/front/presence.php:/app/front/presence.php
       - ${DEV_LOCATION}/front/settings.php:/app/front/settings.php      
       - ${DEV_LOCATION}/front/systeminfo.php:/app/front/systeminfo.php      
+      - ${DEV_LOCATION}/front/account.php:/app/front/account.php      
       - ${DEV_LOCATION}/front/report.php:/app/front/report.php      
       - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
       - ${DEV_LOCATION}/front/appEventsCore.php:/app/front/appEventsCore.php      
