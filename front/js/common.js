@@ -10,9 +10,10 @@
 // -----------------------------------------------------------------------------
 var timerRefreshData = ''
 
-var emptyArr            = ['undefined', "", undefined, null, 'null'];
-var UI_LANG = "English";
-var settingsJSON = {}
+var   emptyArr      = ['undefined', "", undefined, null, 'null'];
+var   UI_LANG       = "English";
+const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn"]; // needs to be same as in lang.php
+var   settingsJSON  = {}
 
 
 // -----------------------------------------------------------------------------
@@ -207,95 +208,120 @@ function getSetting (key) {
 // -----------------------------------------------------------------------------
 // Get language string
 // -----------------------------------------------------------------------------
-function cacheStrings()
-{  
+function cacheStrings() {
   return new Promise((resolve, reject) => {
-    if(!getCache('completedCalls').includes('cacheStrings'))
-    {
-      // handle core strings and translations
-      var allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn"]; // needs to be same as in lang.php
-
-      allLanguages.forEach(function (language_code) {
-        $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`, function (res) {
-          // Iterate over each language
-          Object.entries(res).forEach(([key, value]) => {
-            // Store translations for each key-value pair
-            setCache(`pia_lang_${key}_${language_code}`, value)
-          });
-
-          // handle strings and translations from plugins
-          $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`, function(res) {    
-                
-            data = res["data"];       
-
-            data.forEach((langString) => {      
-              setCache(`pia_lang_${langString.String_Key}_${langString.Language_Code}`, langString.String_Value) 
-            });        
-          }).then(() => handleSuccess('cacheStrings', resolve())).catch(() => handleFailure('cacheStrings', reject("cacheStrings already completed"))); // handle AJAX synchronization
+    
+      // Create a promise for each language
+      const languagePromises = allLanguages.map((language_code) => {
+        return new Promise((resolveLang, rejectLang) => {
+          // Fetch core strings and translations
           
+          $.get(`php/templates/language/${language_code}.json?nocache=${Date.now()}`)
+            .done((res) => {
+              // Iterate over each key-value pair and store the translations
+              Object.entries(res).forEach(([key, value]) => {
+                setCache(`pia_lang_${key}_${language_code}`, value);
+              });
+
+              // Fetch strings and translations from plugins
+              $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`)
+                .done((pluginRes) => {
+                  const data = pluginRes["data"];
+                  
+                  // Store plugin translations
+                  data.forEach((langString) => {
+                    setCache(`pia_lang_${langString.String_Key}_${langString.Language_Code}`, langString.String_Value);
+                  });
+
+                  // Handle successful completion of language processing
+                  handleSuccess(`cacheStrings[${language_code}]`, resolveLang);
+                })
+                .fail((pluginError) => {
+                  // Handle failure in plugin strings fetching
+                  rejectLang(pluginError);
+                });
+            })
+            .fail((error) => {
+              // Handle failure in core strings fetching
+              rejectLang(error);
+            });
         });
       });
-    }
+
+      // Wait for all language promises to complete
+      Promise.all(languagePromises)
+        .then(() => {
+          // All languages processed successfully
+          resolve();
+        })
+        .catch((error) => {
+          // Handle failure in any of the language processing
+          handleFailure('cacheStrings', reject);
+        });
+    
   });
 }
 
+// -----------------------------------------------------------------------------
 // Get translated language string
-function getString (key) {
+function getString(key) {
 
-  // handle initial load to make sure everything is set-up and cached
-  handleFirstLoad(getString)
- 
-  UI_LANG = getSetting("UI_LANG");
+  function fetchString(key) {
+    UI_LANG = getSetting("UI_LANG");
 
-  lang_code = 'en_us';
+    let lang_code = 'en_us';
 
-  switch(UI_LANG)
-  {
-    case 'English': 
-      lang_code = 'en_us';
-      break;
-    case 'Spanish': 
-      lang_code = 'es_es';
-      break;
-    case 'German': 
-      lang_code = 'de_de';
-      break;
-    case 'French': 
-      lang_code = 'fr_fr';
-      break;
-    case 'Norwegian': 
-      lang_code = 'nb_no';
-      break;
-    case 'Polish (pl_pl)': 
-      lang_code = 'pl_pl';
-      break;
-    case 'Portuguese (pt_br)': 
-      lang_code = 'pt_br';
-      break;
-    case 'Turkish (tr_tr)': 
-      lang_code = 'tr_tr';
-      break;
-    case 'Italian (it_it)': 
-      lang_code = 'it_it';
-      break;
-    case 'Russian': 
-      lang_code = 'ru_ru';
-      break;
-    case 'Chinese (zh_cn)': 
-      lang_code = 'zh_cn';
-      break;
+    switch (UI_LANG) {
+      case 'English':
+        lang_code = 'en_us';
+        break;
+      case 'Spanish':
+        lang_code = 'es_es';
+        break;
+      case 'German':
+        lang_code = 'de_de';
+        break;
+      case 'French':
+        lang_code = 'fr_fr';
+        break;
+      case 'Norwegian':
+        lang_code = 'nb_no';
+        break;
+      case 'Polish (pl_pl)':
+        lang_code = 'pl_pl';
+        break;
+      case 'Portuguese (pt_br)':
+        lang_code = 'pt_br';
+        break;
+      case 'Turkish (tr_tr)':
+        lang_code = 'tr_tr';
+        break;
+      case 'Italian (it_it)':
+        lang_code = 'it_it';
+        break;
+      case 'Russian':
+        lang_code = 'ru_ru';
+        break;
+      case 'Chinese (zh_cn)':
+        lang_code = 'zh_cn';
+        break;
+    }
+
+    let result = getCache(`pia_lang_${key}_${lang_code}`, true);
+
+    if (isEmpty(result)) {
+      result = getCache(`pia_lang_${key}_en_us`, true);
+    }
+
+    return result;
   }
-  result = getCache(`pia_lang_${key}_${lang_code}`, true);
 
-
-  if(isEmpty(result))
-  {    
-    result = getCache(`pia_lang_${key}_en_us`, true);
+  if (isAppInitialized()) {
+    return fetchString(key);
+  } else {
+    callAfterAppInitialized(() => fetchString(key));
   }
-
-  return result;
 }
-
 
 
 
@@ -333,6 +359,15 @@ function isValidBase64(str) {
   return invalidCharacters === '';
 }
 
+
+function isValidJSON(jsonString) {
+  try {
+      JSON.parse(jsonString);
+      return true;
+  } catch (e) {
+      return false;
+  }
+}
 
 // -----------------------------------------------------------------------------
 // General utilities
@@ -835,7 +870,7 @@ function getDeviceDataByMac(macAddress, dbColumn) {
 }
 
 // -----------------------------------------------------------------------------
-// Cache teh devices as one JSON
+// Cache the devices as one JSON
 function cacheDevices()
 { 
 
@@ -917,6 +952,8 @@ function showSpinner(stringKey='Loading')
   {
     text = getString(stringKey)
   }
+
+  text = isEmpty(text) ?  "Loading" : text;
 
   if($("#loadingSpinner").length)
   {    
@@ -1102,6 +1139,8 @@ function arraysContainSameValues(arr1, arr2) {
 const sessionStorageKey = "myScriptExecuted_common_js";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
+var completedCallsCount  = 0; 
+var completedCallsCount_final  = allLanguages.length + 2; // number of language files + cacheDevices + cacheSettings
 
 // -----------------------------------------------------------------------------
 // Clearing all the caches
@@ -1140,9 +1179,23 @@ async function handleFirstLoad(callback) {
 }
 
 // -----------------------------------------------------------------------------
+// Execute callback once app initialized
+function callAfterAppInitialized(callback) {
+  if (!isAppInitialized()) {
+    setTimeout(() => {
+      callAfterAppInitialized(callback)
+    }, 500);
+  } else
+  {
+    callback();
+  }
+}
+
+// -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
-   return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
+  //  return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
+  return (parseInt(getCache("completedCallsCount")) ==  completedCallsCount_final);
 }
 
 // Define a function that will execute the code only once
@@ -1151,9 +1204,10 @@ async function executeOnce() {
 
   if (!isAppInitialized()) {
     try {
-      await cacheStrings();
-      await cacheSettings();
       await cacheDevices();
+      await cacheSettings();
+      await cacheStrings();     
+      
       console.log("✅ All AJAX callbacks have completed");
       onAllCallsComplete();
     } catch (error) {
@@ -1166,8 +1220,20 @@ async function executeOnce() {
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
   console.log(`AJAX call successful: ${callName}`);
-  completedCalls.push(callName);
-  setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]));
+  // completedCalls.push(callName);
+  // setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]));
+
+  val = getCache('completedCallsCount');
+
+  if(val == "")
+  {
+    val = 0;
+  } else
+  {
+    val = parseInt(val)
+  }
+
+  setCache('completedCallsCount', val + 1)
 };
 
 // -----------------------------------------------------------------------------
@@ -1190,6 +1256,10 @@ const onAllCallsComplete = () => {
     sessionStorage.setItem(sessionStorageKey + '_time', millisecondsNow);
 
     console.log('✔ Cache initialized');
+    // setTimeout(() => {
+    //   location.reload()
+    // }, 10);
+   
   } else {
     // If not all strings are initialized, retry initialization
     console.log('❌ Not all strings are initialized. Retrying...');
@@ -1199,14 +1269,13 @@ const onAllCallsComplete = () => {
 
   // Call any other initialization functions here if needed
 
-  // No need for location.reload() here
 };
 
 // Function to check if all necessary strings are initialized
 const areAllStringsInitialized = () => {
   // Implement logic to check if all necessary strings are initialized
   // Return true if all strings are initialized, false otherwise
-  return getString('UI_LANG') != ""
+  return getString('UI_LANG_name') != ""
 };
 
 // Call the function to execute the code

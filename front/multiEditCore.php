@@ -101,10 +101,19 @@
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
 
                   const setTypeObject  = JSON.parse(columns[j].Type.replace(/'/g, '"'));         
-                  // console.log(setTypeObject);         
-                  const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]
+                  // console.log(setTypeObject); 🔽        
+                  // const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]
 
-                  const { elementType, elementOptions = [], transformers = [] } = lastElementObj;
+                  // get the element with the input value(s)
+                  let elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+
+                  //  if none found, take last
+                  if(elementsWithInputValue.length == 0)
+                  {
+                    elementsWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+                  }
+
+                  const { elementType, elementOptions = [], transformers = [] } = elementsWithInputValue;
                   const { 
                     inputType,
                     readOnly,
@@ -123,8 +132,8 @@
                   // console.log(setTypeObject);
                   // console.log(inputType);
 
-                  //  render based on element type
-                  if (lastElementObj.elementType === 'select') {
+                  //  render based on element type 
+                  if (elementsWithInputValue.elementType === 'select') {
 
                     targetLocation = columns[j].Code_Name + "_generateSetOptions"
 
@@ -154,7 +163,7 @@
                     }
 
 
-                  } else if (lastElementObj.elementType === 'input'){ 
+                  } else if (elementsWithInputValue.elementType === 'input'){ 
                     
                     // Add classes specifically for checkboxes
                     inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';

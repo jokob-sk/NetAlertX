@@ -143,9 +143,23 @@
   var tableOrder      = [[3,'desc'], [0,'asc']];
   
   var tableColumnHide = [];
+  var tableColumnOrder = [];
+  var tableColumnVisible = [];
 
-  //initialize the table headers in the correct order
-  var headersDefaultOrder = [ 
+
+
+
+  // Read parameters & Initialize components
+  callAfterAppInitialized(main)
+  showSpinner();
+  
+
+
+// -----------------------------------------------------------------------------
+function main () {
+
+    //initialize the table headers in the correct order
+    var headersDefaultOrder = [ 
                               getString('Device_TableHead_Name'),
                               getString('Device_TableHead_Owner'),
                               getString('Device_TableHead_Type'),   
@@ -173,16 +187,8 @@
 
   // generate default order lists of given length
   var columnsStr = JSON.stringify(Array.from({ length: headersDefaultOrder.length }, (_, i) => i));
-  var tableColumnOrder = Array.from({ length: headersDefaultOrder.length }, (_, i) => i);
-  var tableColumnVisible = tableColumnOrder;
-
-  // Read parameters & Initialize components
-  showSpinner();
-  main();
-
-
-// -----------------------------------------------------------------------------
-function main () {
+  tableColumnOrder = Array.from({ length: headersDefaultOrder.length }, (_, i) => i);
+  tableColumnVisible = tableColumnOrder;
 
   handleLoadingDialog()
 

@@ -219,7 +219,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
               try {                
                 const isMetadata = codeName.includes('__metadata');
-                // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
+                // if this isn't a metadata entry, get corresponding metadata object from the dummy setting
                 const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
                 
               } catch (error) {
@@ -459,6 +459,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           } 
           
           // INPUT
+
+          console.log(codeName);
           
           // Parse the setType JSON string into an object
           let inputHtml = '';
@@ -614,8 +616,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               clearCache()  
             }, 1500);
          
-    } else
-    {
+    } else {
       var settingsArray = [];
 
       // collect values for each of the different input form controls
@@ -628,12 +629,18 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           setType     = set["Type"]
           setCodeName = set["Code_Name"]
 
+          console.log(prefix);
+
           const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));         
           // console.log(setTypeObject);
 
           const dataType = setTypeObject.dataType;
-          const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1];
-          const { elementType, elementOptions = [], transformers = [] } = lastElementObj;
+          // const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]; //🔽
+
+          // get the element with the input value(s)
+          const elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+
+          const { elementType, elementOptions = [], transformers = [] } = elementsWithInputValue;
           const { 
             inputType,
             readOnly,
@@ -714,13 +721,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             success: function(data, textStatus) {                    
               
               if(data == "OK")
-              {
-                showMessage (getString("settings_saved"), 5000, "modal_grey");
+              {                
+                // showMessage (getString("settings_saved"), 5000, "modal_grey");
                 // Remove navigation prompt "Are you sure you want to leave..."
                 window.onbeforeunload = null;         
 
                 // Reloads the current page
-                setTimeout("clearCache()", 5000);    
+                // setTimeout("clearCache()", 5000);    
+
+                clearCache()
               } else{
                 // something went wrong
                 // write_notification(data, 'interrupt')
@@ -746,7 +755,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 <!-- INIT THE PAGE -->
 <script defer>
 
-function handleLoadingDialog()
+  function handleLoadingDialog()
   {
 
     // check if config file has been updated
@@ -779,7 +788,7 @@ function handleLoadingDialog()
           getData()
           
           // reload page if outdated information might be displayed
-          if(secondsSincePageLoad() > 3)
+          if(secondsSincePageLoad() > 5)
           {
             clearCache()
           }

@@ -89,7 +89,7 @@ function checkDbLock() {
     type: "GET",
 
     success: function (response) {
-      console.log(response);
+      // console.log(response);
       if (response == 0) {
         // console.log('Database is not locked');
         $(".header-status-locked-db").hide();

@@ -1149,7 +1149,7 @@ function initializeCalendar () {
         } else {
           setTimeout(() => {
             updateIconPreview('#txtIcon')  
-          }, 100);
+          }, 500);
           
           hideSpinner()
         }
