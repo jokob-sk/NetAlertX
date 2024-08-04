@@ -385,6 +385,18 @@ class DB():
           self.sql.execute("""
             ALTER TABLE "Plugins_Objects" ADD "SyncHubNodeName" TEXT
           """)
+          
+        # helper columns HelpVal1-4
+        plug_HelpValues_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='HelpVal1'
+          """).fetchone()[0] == 0
+
+        if plug_HelpValues_missing :
+          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_Objects table"])
+          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal1" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal2" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal3" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal4" TEXT')
 
         # Plugin execution results
         sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
@@ -416,6 +428,18 @@ class DB():
           self.sql.execute("""
             ALTER TABLE "Plugins_Events" ADD "SyncHubNodeName" TEXT
           """)
+          
+        # helper columns HelpVal1-4
+        plug_HelpValues_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='HelpVal1'
+          """).fetchone()[0] == 0
+
+        if plug_HelpValues_missing :
+          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_Events table"])
+          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal1" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal2" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal3" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal4" TEXT')
 
 
         # Plugin execution history
@@ -448,6 +472,18 @@ class DB():
           self.sql.execute("""
             ALTER TABLE "Plugins_History" ADD "SyncHubNodeName" TEXT
           """)
+          
+        # helper columns HelpVal1-4
+        plug_HelpValues_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='HelpVal1'
+          """).fetchone()[0] == 0
+
+        if plug_HelpValues_missing :
+          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_History table"])
+          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal1" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal2" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal3" TEXT')
+          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal4" TEXT')
 
 
         # -------------------------------------------------------------------------

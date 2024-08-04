@@ -33,24 +33,9 @@ Example use cases for plugins could be:
 
 If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `app.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
 
-Again, please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
-
 ## ⚠ Disclaimer
 
-Follow the below very carefully and check example plugin(s) if you'd like to write one yourself. Plugin UI is not my priority right now, happy to approve PRs if you are interested in extending/improving the UI experience (See [Frontend guidelines](/docs/FRONTEND_DEVELOPMENT.md)). Example improvements for the taking:
-
-* Making the tables sortable/filterable
-* Using the same approach to display table data as in the Devices section (solves above)
-* Adding form controls supported to display the data (Currently supported ones are listed in the section "UI settings in database_column_definitions" below)
-* ...
-
-## ❗ Known limitations:
-
-These issues will be hopefully fixed with time, so please don't report them. Instead, if you know how, feel free to investigate and submit a PR to fix the below. Keep the PRs small as it's easier to approve them:
-
-* Existing plugin objects are sometimes not interpreted correctly and a new object is created instead, resulting in duplicate entries. (race condition?)
-* Occasional (experienced twice) hanging of processing plugin script file.
-* UI displays outdated values until the API endpoints get refreshed. 
+Please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
 
 ## Plugin file structure overview 
 
@@ -67,10 +52,10 @@ These issues will be hopefully fixed with time, so please don't report them. Ins
 
 More on specifics below.
 
-### Column order and values
+### Column order and values (plugins interface contract)
 
 > [!IMPORTANT] 
-> Spend some time reading and trying to understand the below table. This is the interface between the Plugins and the core application.  
+> Spend some time reading and trying to understand the below table. This is the interface between the Plugins and the core application. The application expets 9 or 13 values The first 9 values are mandatory. The next 4 values (`HelpVal1` to `HelpVal4`) are optional. However, if you use any of these optional values (e.g., `HelpVal1`), you need to supply all optional values (e.g., `HelpVal2`, `HelpVal3`, and `HelpVal4`). If a value is not used, it should be padded with `null`.
 
   | Order | Represented Column | Value Required | Description | 
   |----------------------|----------------------|----------------------|----------------------| 
@@ -83,6 +68,11 @@ More on specifics below.
   | 6 | `Watched_Value4` | no | As above  |
   | 7 | `Extra` | no | Any other data you want to pass and display in NetAlertX and the notifications |
   | 8 | `ForeignKey` | no | A foreign key that can be used to link to the parent object (usually a MAC address) |
+  | 9 | `HelpVal1` | no | (optional) A helper value |
+  | 10 | `HelpVal2` | no | (optional) A helper value |
+  | 11 | `HelpVal3` | no | (optional) A helper value |
+  | 12 | `HelpVal4` | no | (optional) A helper value |
+  
 
 > [!NOTE] 
 > De-duplication is run once an hour on the `Plugins_Objects` database table and duplicate entries with the same value in columns `Object_PrimaryID`, `Object_SecondaryID`, `Plugin` (auto-filled based on `unique_prefix` of the plugin), `UserData` (can be populated with the `"type": "textbox_save"` column type) are removed.

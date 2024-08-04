@@ -352,11 +352,16 @@ def setting_value_to_python_type(set_type, set_value):
         mylog('none', [f'[HELPER] No elements provided in set_type: {set_type} '])
         return value
 
-    # Use the last element in the list
-    last_element = elements[len(elements)-1]
-    elementType = last_element.get('elementType', '')
-    elementOptions = last_element.get('elementOptions', [])
-    transformers = last_element.get('transformers', [])
+    # Find the first element where elementHasInputValue is 1
+    element_with_input_value = next((elem for elem in elements if elem.get("elementHasInputValue") == 1), None)
+
+    # If no such element is found, use the last element
+    if element_with_input_value is None:
+        element_with_input_value = elements[-1]
+        
+    elementType     = element_with_input_value.get('elementType', '')
+    elementOptions  = element_with_input_value.get('elementOptions', [])
+    transformers    = element_with_input_value.get('transformers', [])
 
     # Convert value based on dataType and elementType
     if dataType == 'string' and elementType in ['input', 'select']:

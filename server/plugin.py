@@ -248,32 +248,51 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
             
                 for line in newLines:
                     columns = line.split("|")
-                    # There have to be always 9 columns
-                    if len(columns) == 9:
-                        # Create a tuple containing values to be inserted into the database.
-                        # Each value corresponds to a column in the table in the order of the columns.
-                        # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
-                        sqlParams.append(
-                            (
-                                0,                          # "Index" placeholder
-                                plugin["unique_prefix"],    # "Plugin" column value from the plugin dictionary
-                                columns[0],                 # "Object_PrimaryID" value from columns list
-                                columns[1],                 # "Object_SecondaryID" value from columns list
-                                'null',                     # Placeholder for "DateTimeCreated" column
-                                columns[2],                 # "DateTimeChanged" value from columns list
-                                columns[3],                 # "Watched_Value1" value from columns list
-                                columns[4],                 # "Watched_Value2" value from columns list
-                                columns[5],                 # "Watched_Value3" value from columns list
-                                columns[6],                 # "Watched_Value4" value from columns list
-                                'not-processed',            #  "Status" column (placeholder)
-                                columns[7],                 # "Extra" value from columns list
-                                'null',                     # Placeholder for "UserData" column
-                                columns[8],                 # "ForeignKey" value from columns list
-                                tmp_SyncHubNodeName         # Sync Hub Node name
-                            )
-                        )
+                    # There have to be 9 or 13 columns
+                    # Common part of the SQL parameters
+                    base_params = [
+                        0,                          # "Index" placeholder
+                        plugin["unique_prefix"],    # "Plugin" column value from the plugin dictionary
+                        columns[0],                 # "Object_PrimaryID" value from columns list
+                        columns[1],                 # "Object_SecondaryID" value from columns list
+                        'null',                     # Placeholder for "DateTimeCreated" column
+                        columns[2],                 # "DateTimeChanged" value from columns list
+                        columns[3],                 # "Watched_Value1" value from columns list
+                        columns[4],                 # "Watched_Value2" value from columns list
+                        columns[5],                 # "Watched_Value3" value from columns list
+                        columns[6],                 # "Watched_Value4" value from columns list
+                        'not-processed',            # "Status" column (placeholder)
+                        columns[7],                 # "Extra" value from columns list
+                        'null',                     # Placeholder for "UserData" column
+                        columns[8],                 # "ForeignKey" value from columns list
+                        tmp_SyncHubNodeName         # Sync Hub Node name
+                    ]
+                    
+                    # Extend the common part with the additional values if there are 13 columns
+                    if len(columns) == 13:
+                        base_params.extend([
+                            columns[9],                 # "HelpVal1" value from columns list
+                            columns[10],                # "HelpVal2" value from columns list
+                            columns[11],                # "HelpVal3" value from columns list
+                            columns[12]                 # "HelpVal4" value from columns list
+                        ])
+                    elif len(columns) == 9:                                        
+                        # add padding
+                        base_params.extend([
+                            'null',   # "HelpVal1"
+                            'null',   # "HelpVal2"
+                            'null',   # "HelpVal3"
+                            'null'    # "HelpVal4"
+                        ])
                     else:
-                        mylog('none', ['[Plugins] Skipped invalid line in the output: ', line])            
+                        mylog('none', [f'[Plugins] Wrong number of input values, must be 9 or 13, got {len(columns)} from: {line} '])
+                        
+                    # Create a tuple containing values to be inserted into the database.
+                    # Each value corresponds to a column in the table in the order of the columns.
+                    # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
+                    
+                    # Append the final parameters to sqlParams
+                    sqlParams.append(tuple(base_params))     
             
             # keep current instance log file, delete all from other nodes
             if filename != 'last_result.log' and os.path.exists(full_path):
@@ -293,30 +312,48 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         arr = db.get_sql_array (q) 
 
         for row in arr:
-            # There has to be always 9 columns
-            if len(row) == 9 and (row[0] in ['','null']) == False :
-                # Create a tuple containing values to be inserted into the database.
+            # There has to be always 9 or 13 columns
+            if len(row) in [9, 13] and row[0] not in ['', 'null']:
+                # Create a base tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
-                sqlParams.append(
-                    (
-                        0,                          # "Index" placeholder
-                        plugin["unique_prefix"],    # "Plugin" plugin dictionary
-                        row[0],                     # "Object_PrimaryID" row
-                        handle_empty(row[1]),       # "Object_SecondaryID" column after handling empty values
-                        'null',                     # Placeholder "DateTimeCreated" column
-                        row[2],                     # "DateTimeChanged" row
-                        row[3],                     # "Watched_Value1" row
-                        row[4],                     # "Watched_Value2" row
-                        handle_empty(row[5]),       # "Watched_Value3" column after handling empty values
-                        handle_empty(row[6]),       # "Watched_Value4" column after handling empty values
-                        'not-processed',            #  "Status" column (placeholder)
-                        row[7],                     # "Extra" row
-                        'null',                     # Placeholder "UserData" column
-                        row[8],                     # "ForeignKey" row
-                        'null'                      # Sync Hub Node name - Only supported with scripts
-                    )
-                )
+                # Must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
+                base_params = [
+                    0,                          # "Index" placeholder
+                    plugin["unique_prefix"],    # "Plugin" plugin dictionary
+                    row[0],                     # "Object_PrimaryID" row
+                    handle_empty(row[1]),       # "Object_SecondaryID" column after handling empty values
+                    'null',                     # Placeholder "DateTimeCreated" column
+                    row[2],                     # "DateTimeChanged" row
+                    row[3],                     # "Watched_Value1" row
+                    row[4],                     # "Watched_Value2" row
+                    handle_empty(row[5]),       # "Watched_Value3" column after handling empty values
+                    handle_empty(row[6]),       # "Watched_Value4" column after handling empty values
+                    'not-processed',            # "Status" column (placeholder)
+                    row[7],                     # "Extra" row
+                    'null',                     # Placeholder "UserData" column
+                    row[8],                     # "ForeignKey" row
+                    'null'                      # Sync Hub Node name - Only supported with scripts
+                ]
+
+                # Extend the base tuple with additional values if there are 13 columns
+                if len(row) == 13:
+                    base_params.extend([
+                        row[9],   # "HelpVal1" row
+                        row[10],  # "HelpVal2" row
+                        row[11],  # "HelpVal3" row
+                        row[12]   # "HelpVal4" row
+                    ])
+                else:
+                    # add padding
+                    base_params.extend([
+                        'null',   # "HelpVal1"
+                        'null',   # "HelpVal2"
+                        'null',   # "HelpVal3"
+                        'null'    # "HelpVal4"
+                    ])
+
+                # Append the final parameters to sqlParams
+                sqlParams.append(tuple(base_params))
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
     
@@ -352,28 +389,48 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
             return pluginsState            
 
         for row in arr:
-            # There has to be always 9 columns
-            if len(row) == 9 and (row[0] in ['','null']) == False :
-                # Create a tuple containing values to be inserted into the database.
+            # There has to be always 9 or 13 columns
+            if len(row) in [9, 13] and row[0] not in ['', 'null']:
+                # Create a base tuple containing values to be inserted into the database.
                 # Each value corresponds to a column in the table in the order of the columns.
-                # must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class
-                sqlParams.append((
-                    0,                            #  "Index" placeholder
-                    plugin["unique_prefix"],      #  "Plugin" 
-                    row[0],                       #  "Object_PrimaryID" 
-                    handle_empty(row[1]),         #  "Object_SecondaryID" 
-                    'null',                       #  "DateTimeCreated" column (null placeholder)
-                    row[2],                       #  "DateTimeChanged" 
-                    row[3],                       #  "Watched_Value1" 
-                    row[4],                       #  "Watched_Value2" 
-                    handle_empty(row[5]),         #  "Watched_Value3" 
-                    handle_empty(row[6]),         #  "Watched_Value4" 
-                    'not-processed',              #  "Status" column (placeholder)
-                    row[7],                       #  "Extra" 
-                    'null',                       #  "UserData" column (null placeholder)
-                    row[8],                       #  "ForeignKey" 
-                    'null'                        #  Sync Hub Node name - Only supported with scripts
-                    ))                      
+                # Must match the Plugins_Objects and Plugins_Events database tables and can be used as input for the plugin_object_class.
+                base_params = [
+                    0,                            # "Index" placeholder
+                    plugin["unique_prefix"],      # "Plugin" 
+                    row[0],                       # "Object_PrimaryID" 
+                    handle_empty(row[1]),         # "Object_SecondaryID" 
+                    'null',                       # "DateTimeCreated" column (null placeholder)
+                    row[2],                       # "DateTimeChanged" 
+                    row[3],                       # "Watched_Value1" 
+                    row[4],                       # "Watched_Value2" 
+                    handle_empty(row[5]),         # "Watched_Value3" 
+                    handle_empty(row[6]),         # "Watched_Value4" 
+                    'not-processed',              # "Status" column (placeholder)
+                    row[7],                       # "Extra" 
+                    'null',                       # "UserData" column (null placeholder)
+                    row[8],                       # "ForeignKey" 
+                    'null'                        # Sync Hub Node name - Only supported with scripts
+                ]
+
+                # Extend the base tuple with additional values if there are 13 columns
+                if len(row) == 13:
+                    base_params.extend([
+                        row[9],    # "HelpVal1"
+                        row[10],   # "HelpVal2"
+                        row[11],   # "HelpVal3"
+                        row[12]    # "HelpVal4"
+                    ])
+                else:
+                    # add padding
+                    base_params.extend([
+                        'null',   # "HelpVal1"
+                        'null',   # "HelpVal2"
+                        'null',   # "HelpVal3"
+                        'null'    # "HelpVal4"
+                    ])
+
+                # Append the final parameters to sqlParams
+                sqlParams.append(tuple(base_params))
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
 
@@ -509,12 +566,13 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
-                #  14 values without Index
+                #  18 values without Index
                 values = (
                     plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
                     plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
                     plugObj.watched4, plugObj.status, plugObj.extra, plugObj.userData,
-                    plugObj.foreignKey, plugObj.syncHubNodeName
+                    plugObj.foreignKey, plugObj.syncHubNodeName,
+                    plugObj.helpVal1, plugObj.helpVal2, plugObj.helpVal3, plugObj.helpVal4
                 )
 
                 if plugObj.status == 'new':
@@ -547,8 +605,9 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_Objects 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, objects_to_insert
                 )
 
@@ -559,7 +618,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     UPDATE Plugins_Objects
                     SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
                         "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
-                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?
                     WHERE "Index" = ?
                     """, objects_to_update
                 )
@@ -572,8 +631,9 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_Events 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4")  
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, events_to_insert
                 )
 
@@ -585,8 +645,9 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     INSERT INTO Plugins_History 
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
-                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4")  
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, history_to_insert
                 )
 
@@ -665,6 +726,14 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
                     tmpList.append(plgEv.status)
                 elif col['column'] == 'SyncHubNodeName':
                     tmpList.append(plgEv.syncHubNodeName)
+                elif col['column'] == 'HelpVal1':
+                    tmpList.append(plgEv.helpVal1)
+                elif col['column'] == 'HelpVal2':
+                    tmpList.append(plgEv.helpVal2)
+                elif col['column'] == 'HelpVal3':
+                    tmpList.append(plgEv.helpVal3)
+                elif col['column'] == 'HelpVal4':
+                    tmpList.append(plgEv.helpVal4)
 
                 # Check if there's a default value specified for this column in the JSON.
                 if 'mapped_to_column_data' in col and 'value' in col['mapped_to_column_data']:
@@ -714,6 +783,11 @@ class plugin_object_class:
         self.userData          = objDbRow[12]
         self.foreignKey        = objDbRow[13]
         self.syncHubNodeName   = objDbRow[14]
+        self.helpVal1          = objDbRow[15]
+        self.helpVal2          = objDbRow[16]
+        self.helpVal3          = objDbRow[17]
+        self.helpVal4          = objDbRow[18]
+
 
         # Check if self.status is valid
         if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:
@@ -727,6 +801,7 @@ class plugin_object_class:
 
         setObj = get_plugin_setting_obj(plugin, 'WATCH')
 
+        # hash for comapring watched value changes
         indexNameColumnMapping = [(6, 'Watched_Value1' ), (7, 'Watched_Value2' ), (8, 'Watched_Value3' ), (9, 'Watched_Value4' )]
 
         if setObj is not None:            
