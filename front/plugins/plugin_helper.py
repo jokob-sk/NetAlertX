@@ -99,7 +99,7 @@ def normalize_mac(mac):
 # -------------------------------------------------------------------
 class Plugin_Object:
     """ 
-    Plugin_Object class to manage one object introduced by the plugin
+    Plugin_Object class to manage one object introduced by the plugin.
     An object typically is a device but could also be a website or something 
     else that is monitored by the plugin.
     """
@@ -114,11 +114,15 @@ class Plugin_Object:
         watched4="",
         extra="",
         foreignKey="",
+        helpVal1="",
+        helpVal2="",
+        helpVal3="",
+        helpVal4="",
     ):
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = datetime.now(timeZone).strftime("%Y-%m-%d %H:%M:%S")
+        self.created = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2
@@ -128,13 +132,17 @@ class Plugin_Object:
         self.extra = extra
         self.userData = ""
         self.foreignKey = foreignKey
+        self.helpVal1 = helpVal1 or ""
+        self.helpVal2 = helpVal2 or ""
+        self.helpVal3 = helpVal3 or ""
+        self.helpVal4 = helpVal4 or ""
 
     def write(self):
         """ 
-        write the object details as a string in the 
-        format required to write the result file
+        Write the object details as a string in the 
+        format required to write the result file.
         """
-        line = "{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
+        line = "{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}\n".format(
             self.primaryId,
             self.secondaryId,
             self.created,
@@ -144,10 +152,12 @@ class Plugin_Object:
             self.watched4,
             self.extra,
             self.foreignKey,
+            self.helpVal1,
+            self.helpVal2,
+            self.helpVal3,
+            self.helpVal4
         )
         return line
-    
-
 
 class Plugin_Objects:
     """
@@ -155,7 +165,7 @@ class Plugin_Objects:
     It contains a list of Plugin_Object instances.
     And can write the required result file.
     """
-    
+
     def __init__(self, result_file):
         self.result_file = result_file
         self.objects = []
@@ -170,6 +180,10 @@ class Plugin_Objects:
         watched4="",
         extra="",
         foreignKey="",
+        helpVal1="",
+        helpVal2="",
+        helpVal3="",
+        helpVal4="",
     ):
         self.objects.append(
             Plugin_Object(
@@ -181,16 +195,17 @@ class Plugin_Objects:
                 watched4,
                 extra,
                 foreignKey,
+                helpVal1,
+                helpVal2,
+                helpVal3,
+                helpVal4
             )
         )
 
     def write_result_file(self):
-        # print ("writing file: "+self.result_file)
         with open(self.result_file, mode="w") as fp:
             for obj in self.objects:
                 fp.write(obj.write())
-        fp.close()
-
 
     def __add__(self, other):
         if isinstance(other, Plugin_Objects):

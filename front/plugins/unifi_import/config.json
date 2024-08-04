@@ -390,6 +390,38 @@
       "type": "label"
     },
     {
+      "column": "HelpVal1",
+      "mapped_to_column": "cur_NetworkNodeMAC",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent Network MAC"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "label"
+    },
+    {
+      "column": "HelpVal2",
+      "mapped_to_column": "cur_PORT",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Port"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "label"
+    },
+    {
       "column": "Status",
       "css_classes": "col-sm-1",
       "default_value": "",
@@ -493,7 +525,7 @@
       }
     },
     {
-      "default_value": "python3 /app/front/plugins/unifi_import/script.py username={username} password={password}  host={host} sites={sites} port={port} verifyssl={verifyssl} version={version} fullimport={fullimport}",
+      "default_value": "python3 /app/front/plugins/unifi_import/script.py",
       "description": [
         {
           "language_code": "en_us",
