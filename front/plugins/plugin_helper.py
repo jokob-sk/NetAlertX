@@ -49,6 +49,15 @@ def handleEmpty(input):
             input = re.sub(r'[^\x00-\x7F]+', ' ', input)
             input = input.replace('\n', '')  # Removing new lines
         return input
+    
+# -------------------------------------------------------------------
+# Sanitizes string
+def rmBadChars(input):
+    
+    input = handleEmpty(input)
+    input = input.replace("'", '_')  # Removing ' (single quotes)
+    
+    return input
 
 # -------------------------------------------------------------------
 # Check if a valid MAC address

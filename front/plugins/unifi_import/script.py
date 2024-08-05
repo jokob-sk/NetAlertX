@@ -19,7 +19,7 @@ from pyunifi.controller import Controller
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects
+from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars
 from logger import mylog
 from helper import timeNowTZ, get_setting_value 
 import conf
@@ -200,7 +200,7 @@ def get_unifi_val(obj, key, default='null'):
 def get_name(*names: str) -> str:
     for name in names:
         if name and name != 'null':
-            return name
+            return rmBadChars(name)
     return 'null'
 
 # -----------------------------------------------------------------------------
