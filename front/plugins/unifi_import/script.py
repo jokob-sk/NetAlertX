@@ -105,7 +105,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='client',
-            device_vendor=""
+            device_vendor="",
+            force_import=True # These are online clients, force import
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Online Devices'])
@@ -125,7 +126,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='ap',
-            device_vendor="Ubiquiti Networks Inc."
+            device_vendor="Ubiquiti Networks Inc.",
+            force_import=perform_full_run
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Unifi Devices'])
@@ -138,7 +140,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='user',
-            device_vendor=""
+            device_vendor="",
+            force_import=perform_full_run
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Users'])
@@ -154,7 +157,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
 
 # -----------------------------------------------------------------------------
-def collect_details(device_type, devices, online_macs, processed_macs, plugin_objects, device_label, device_vendor):
+def collect_details(device_type, devices, online_macs, processed_macs, plugin_objects, device_label, device_vendor, force_import):
     for device in devices:
         mylog('verbose', [f'{json.dumps(device)}'])
 
@@ -171,7 +174,7 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
             parentMac = 'Internet'            
 
         # Add object only if not processed
-        if macTmp not in processed_macs:
+        if macTmp not in processed_macs and ( status == 1 or force_import is True ):
             plugin_objects.add_object(
                 primaryId=macTmp,
                 secondaryId=ipTmp,
