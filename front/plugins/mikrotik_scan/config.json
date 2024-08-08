@@ -1,0 +1,437 @@
+{
+  "code_name": "mikrotik_scan",
+  "unique_prefix": "MTSCAN",
+  "plugin_type": "other",
+  "execution_order" : "Layer_4",
+  "enabled": true,
+  "data_source": "script",
+  "mapped_to_table": "CurrentScan",
+  "show_ui": true,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Mikrotik (Name discovery)"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to discover device names."
+    }
+  ],
+  "params": [
+    {
+      "name": "ips",
+      "type": "sql",
+      "value": "SELECT dev_LastIP from DEVICES order by dev_MAC",
+      "timeoutMultiplier": true
+    },
+    {
+      "name": "mt_host",
+      "type": "setting",
+      "value": "MTSCAN_MT_HOST"
+    },
+    {
+      "name": "mt_port",
+      "type": "setting",
+      "value": "MTSCAN_MT_PORT"
+    },
+    {
+      "name": "mt_user",
+      "type": "setting",
+      "value": "MTSCAN_MT_USER"
+    },
+    {
+      "name": "mt_pass",
+      "type": "setting",
+      "value": "MTSCAN_MT_PASS"
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "before_name_updates",
+        "on_new_device",
+        "once",
+        "schedule",
+        "always_after_scan"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>on_new_device</code> or a daily <code>schedule</code> is recommended."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/front/plugins/mikrotik_scan/mikrotik.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "*/30 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#MKTSCAN_RUN\"><code>MKTSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
+      "function": "MT_HOST",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "192.168.88.1",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Mikrotik Host IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "IP for Mikrotik Router"
+        }
+      ]
+    },
+    {
+      "function": "MT_PORT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 8728,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Mikrotik API Port"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "API Port for Mikrotik Router"
+        }
+      ]
+    },
+    {
+      "function": "MT_USER",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "admin",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Mikrotik User"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "User for Mikrotik Router"
+        }
+      ]
+    },
+    {
+      "function": "MT_PASS",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "password" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Mikrotik Password"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Password for Mikrotik Router"
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "Object_PrimaryID",
+      "mapped_to_column": "cur_MAC",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "ForeignKey",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "mapped_to_column": "cur_IP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Lease IP"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "mapped_to_column": "cur_Name",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Host Name"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Seen"
+        }
+      ]
+    },
+    {
+      "column": "HelpVal1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Comment"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column_data": {
+        "value": "MTSCAN"
+      },
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Creado"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambiado"
+        }
+      ]
+    }
+  ]
+}
