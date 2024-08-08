@@ -171,40 +171,48 @@ def create_new_devices (db):
     mylog('debug','[New Devices] 2 Create devices')
 
     # default New Device values preparation
-    newDevColumns  =   """dev_AlertEvents, 
-                          dev_AlertDeviceDown, 
-                          dev_PresentLastScan, 
-                          dev_Archived, 
-                          dev_NewDevice, 
-                          dev_SkipRepeated, 
-                          dev_ScanCycle, 
-                          dev_Owner, 
-                          dev_Favorite, 
-                          dev_Group, 
-                          dev_Comments, 
-                          dev_LogEvents, 
-                          dev_Location, 
-                          dev_Icon"""
+    newDevColumns = """dev_AlertEvents, 
+                    dev_AlertDeviceDown, 
+                    dev_PresentLastScan, 
+                    dev_Archived, 
+                    dev_NewDevice, 
+                    dev_SkipRepeated, 
+                    dev_ScanCycle, 
+                    dev_Owner, 
+                    dev_Favorite, 
+                    dev_Group, 
+                    dev_Comments, 
+                    dev_LogEvents, 
+                    dev_Location"""
 
-    newDevDefaults =  f"""{get_setting_value('NEWDEV_dev_AlertEvents')}, 
-                          {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 
-                          {get_setting_value('NEWDEV_dev_PresentLastScan')}, 
-                          {get_setting_value('NEWDEV_dev_Archived')}, 
-                          {get_setting_value('NEWDEV_dev_NewDevice')}, 
-                          {get_setting_value('NEWDEV_dev_SkipRepeated')}, 
-                          {get_setting_value('NEWDEV_dev_ScanCycle')}, 
-                          '{get_setting_value('NEWDEV_dev_Owner')}', 
-                          {get_setting_value('NEWDEV_dev_Favorite')}, 
-                          '{get_setting_value('NEWDEV_dev_Group')}', 
-                          '{get_setting_value('NEWDEV_dev_Comments')}', 
-                          {get_setting_value('NEWDEV_dev_LogEvents')}, 
-                          '{get_setting_value('NEWDEV_dev_Location')}',  
-                          '{get_setting_value('NEWDEV_dev_Icon')}'
-                    """
+    newDevDefaults = f"""{get_setting_value('NEWDEV_dev_AlertEvents')}, 
+                        {get_setting_value('NEWDEV_dev_AlertDeviceDown')}, 
+                        {get_setting_value('NEWDEV_dev_PresentLastScan')}, 
+                        {get_setting_value('NEWDEV_dev_Archived')}, 
+                        {get_setting_value('NEWDEV_dev_NewDevice')}, 
+                        {get_setting_value('NEWDEV_dev_SkipRepeated')}, 
+                        {get_setting_value('NEWDEV_dev_ScanCycle')}, 
+                        '{get_setting_value('NEWDEV_dev_Owner')}', 
+                        {get_setting_value('NEWDEV_dev_Favorite')}, 
+                        '{get_setting_value('NEWDEV_dev_Group')}', 
+                        '{get_setting_value('NEWDEV_dev_Comments')}', 
+                        {get_setting_value('NEWDEV_dev_LogEvents')}, 
+                        '{get_setting_value('NEWDEV_dev_Location')}'"""
 
-    # Bulk-inserting devices from the CurrentScan table as new devices in the table Devices ... 
-    # ... with new device defaults and ignoring specidfied IPs and MACs)
-    sqlQuery = f"""INSERT OR IGNORE INTO Devices 
+    # Fetch data from CurrentScan
+    current_scan_data = sql.execute("SELECT cur_MAC, cur_Name, cur_Vendor, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type FROM CurrentScan").fetchall()
+
+    for row in current_scan_data:
+        cur_MAC, cur_Name, cur_Vendor, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
+
+        # Handle NoneType
+        cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
+        cur_Type = cur_Type.strip() if cur_Type else get_setting_value("NEWDEV_dev_DeviceType")
+        cur_NetworkNodeMAC = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ''
+        cur_NetworkNodeMAC = cur_NetworkNodeMAC if cur_NetworkNodeMAC and cur_MAC != "Internet" else (get_setting_value("NEWDEV_dev_Network_Node_MAC_ADDR") if cur_MAC != "Internet" else "null")
+
+        # Preparing the individual insert statement
+        sqlQuery = f"""INSERT OR IGNORE INTO Devices 
                         (
                             dev_MAC, 
                             dev_name, 
@@ -221,44 +229,28 @@ def create_new_devices (db):
                             dev_DeviceType,                          
                             {newDevColumns}
                         )
-                        SELECT 
-                            cur_MAC, 
-                            CASE 
-                                WHEN LENGTH(TRIM(cur_Name)) > 0 THEN cur_Name ELSE '(unknown)' 
-                            END,
-                            cur_Vendor, 
-                            cur_IP, 
+                        VALUES 
+                        (
+                            '{cur_MAC}', 
+                            '{cur_Name}',
+                            '{cur_Vendor}', 
+                            '{cur_IP}', 
                             ?, 
                             ?, 
-                            cur_SyncHubNodeName, 
-                            {sql_generateGuid},             
-                            CASE 
-                                WHEN LENGTH(TRIM(cur_NetworkNodeMAC)) > 0 
-                                    AND cur_MAC != 'Internet' 
-                                THEN cur_NetworkNodeMAC 
-                                ELSE 
-                                    CASE 
-                                        WHEN cur_MAC = 'Internet' 
-                                    THEN 'null' 
-                                        ELSE '{get_setting_value('NEWDEV_dev_Network_Node_MAC_ADDR')}' 
-                                    END 
-                                END,
-                            cur_PORT,
-                            cur_NetworkSite, 
-                            cur_SSID,
-                            CASE 
-                                WHEN LENGTH(TRIM(cur_Type)) > 0 THEN cur_Type ELSE '{get_setting_value('NEWDEV_dev_DeviceType')}' 
-                            END,
+                            '{cur_SyncHubNodeName}', 
+                            {sql_generateGuid},
+                            '{cur_NetworkNodeMAC}',
+                            '{cur_PORT}',
+                            '{cur_NetworkSite}', 
+                            '{cur_SSID}',
+                            '{cur_Type}', 
                             {newDevDefaults}
-                    FROM CurrentScan
-                        WHERE 1=1
-                        {list_to_where('OR', 'cur_MAC', 'NOT LIKE', get_setting_value('NEWDEV_ignored_MACs'))}
-                        {list_to_where('OR', 'cur_IP', 'NOT LIKE', get_setting_value('NEWDEV_ignored_IPs'))}
-                """
+                        )"""
 
-    mylog('debug',f'[New Devices] Create devices SQL: {sqlQuery}')
+        mylog('trace', f'[New Devices] Create device SQL: {sqlQuery}')
 
-    sql.execute (sqlQuery, (startTime, startTime) ) 
+        sql.execute(sqlQuery, (startTime, startTime))
+
     
     mylog('debug','[New Devices] New Devices end')
     db.commitDB()
@@ -410,6 +402,7 @@ def update_devices_data_from_scan (db):
                             AND cur_Name <> ''
                         ) """)
 
+    # Update VENDORS
     recordsToUpdate = []
     query = """SELECT * FROM Devices
                WHERE dev_Vendor = '(unknown)' OR dev_Vendor =''
@@ -420,8 +413,40 @@ def update_devices_data_from_scan (db):
         if vendor != -1 and vendor != -2 :
             recordsToUpdate.append ([vendor, device['dev_MAC']])
 
-    sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ",
-        recordsToUpdate )
+    if len(recordsToUpdate) > 0: 
+        sql.executemany ("UPDATE Devices SET dev_Vendor = ? WHERE dev_MAC = ? ", recordsToUpdate )
+    
+    # Guess ICONS
+    recordsToUpdate = []
+    query = """SELECT * FROM Devices
+               WHERE dev_Icon in ('', 'null')
+                  OR dev_Icon IS NULL"""
+    default_icon = get_setting_value('NEWDEV_dev_Icon')
+    
+    for device in sql.execute (query) :
+        # Conditional logic for dev_Icon guessing        
+        dev_Icon = guess_icon(device['dev_Vendor'], device['dev_MAC'], device['dev_LastIP'], device['dev_Name'], default_icon)
+
+        recordsToUpdate.append ([dev_Icon, device['dev_MAC']])
+    
+    if len(recordsToUpdate) > 0:        
+        sql.executemany ("UPDATE Devices SET dev_Icon = ? WHERE dev_MAC = ? ", recordsToUpdate )
+
+    # Guess Type
+    recordsToUpdate = []
+    query = """SELECT * FROM Devices
+               WHERE dev_DeviceType in ('', 'null')
+                  OR dev_DeviceType IS NULL"""
+    default_type = get_setting_value('NEWDEV_dev_DeviceType')
+    
+    for device in sql.execute (query) :
+        # Conditional logic for dev_Icon guessing        
+        dev_DeviceType = guess_type(device['dev_Vendor'], device['dev_MAC'], device['dev_LastIP'], device['dev_Name'], default_type)
+
+        recordsToUpdate.append ([dev_DeviceType, device['dev_MAC']])
+    
+    if len(recordsToUpdate) > 0:        
+        sql.executemany ("UPDATE Devices SET dev_DeviceType = ? WHERE dev_MAC = ? ", recordsToUpdate )
     
     
     mylog('debug','[Update Devices] Update devices end')
@@ -582,3 +607,118 @@ def query_MAC_vendor (pMAC):
         mylog('none', [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
         return -1
 
+
+#===============================================================================
+# Icons
+#===============================================================================
+#-------------------------------------------------------------------------------
+# Base64 encoded HTML string for FontAwesome icons
+icons = {
+    "globe": "PGkgY2xhc3M9ImZhcyBmYS1nbG9iZSI+PC9pPg==",  # globe icon
+    "phone": "PGkgY2xhc3M9ImZhcyBmYS1tb2JpbGUtYWx0Ij48L2k+",
+    "laptop": "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",
+    "printer": "PGkgY2xhc3M9ImZhIGZhLXByaW50ZXIiPjwvaT4=",
+    "router": "PGkgY2xhc3M9ImZhcyBmYS1yYW5kb20iPjwvaT4=",
+    "tv": "PGkgY2xhc3M9ImZhIGZhLXR2Ij48L2k+",
+    "desktop": "PGkgY2xhc3M9ImZhIGZhLWRlc2t0b3AiPjwvaT4=",
+    "tablet": "PGkgY2xhc3M9ImZhIGZhLXRhYmxldCI+PC9pPg==",
+    "watch": "PGkgY2xhc3M9ImZhIGZhLXdhbmNoIj48L2k+",
+    "camera": "PGkgY2xhc3M9ImZhIGZhLWNhbWVyYSI+PC9pPg==",
+    "home": "PGkgY2xhc3M9ImZhIGZhLWhvbWUiPjwvaT4=",
+    "apple": "PGkgY2xhc3M9ImZhYiBmYS1hcHBsZSI+PC9pPg==",
+    "ethernet": "PGkgY2xhc3M9ImZhcyBmYS1ldGhlcm5ldCI+PC9pPg==",
+    "google": "PGkgY2xhc3M9ImZhYiBmYS1nb29nbGUiPjwvaT4=",
+    "raspberry": "PGkgY2xhc3M9ImZhYiBmYS1yYXNwYmVycnktcGkiPjwvaT4=",
+    "microchip": "PGkgY2xhc3M9ImZhcyBmYS1taWNyb2NoaXAiPjwvaT4="
+}
+
+#-------------------------------------------------------------------------------
+# Guess device icon
+def guess_icon(vendor, mac, ip, name,  default):
+    result = default
+    mac    = mac.upper()
+    vendor = vendor.lower()
+    name   = name.lower()
+
+    # Guess icon based on vendor
+    if any(brand in vendor for brand in {"samsung", "motorola"}):
+        result = icons.get("phone")
+    elif "dell" in vendor:
+        result = icons.get("laptop")
+    elif "hp" in vendor:
+        result = icons.get("printer")
+    elif "cisco" in vendor:
+        result = icons.get("router")
+    elif "lg" in vendor:
+        result = icons.get("tv")
+    elif "raspberry" in vendor:
+        result = icons.get("raspberry")
+    elif "apple" in vendor:
+        result = icons.get("apple")
+    elif "google" in vendor:
+        result = icons.get("google")
+    elif "ubiquiti" in vendor:
+        result = icons.get("router")
+    elif any(brand in vendor for brand in {"espressif"}):
+        result = icons.get("microchip")
+
+    # Guess icon based on MAC address patterns
+    elif mac == "INTERNET":  # Apple
+        result = icons.get("globe")
+    elif mac.startswith("00:1A:79"):  # Apple
+        result = icons.get("apple")
+    elif mac.startswith("B0:BE:83"):  # Apple
+        result = icons.get("apple")
+    elif mac.startswith("00:1B:63"):  # Sony
+        result = icons.get("tablet")
+    elif mac.startswith("74:AC:B9"):  # Unifi
+        result = icons.get("ethernet")
+        
+        
+    # Guess icon based on name
+    elif 'google' in name:
+        result = icons.get("google")
+    elif 'desktop' in name:
+        result = icons.get("desktop")
+    
+    # Guess icon based on IP address ranges
+    elif ip.startswith("192.168.1."):
+        result = icons.get("laptop")       
+
+    
+    return result
+
+#-------------------------------------------------------------------------------
+# Guess device type
+def guess_type(vendor, mac, ip, name,  default):
+    result = default
+    mac    = mac.upper()
+    vendor = vendor.lower()
+    name   = name.lower()
+
+    # Guess icon based on vendor
+    if any(brand in vendor for brand in {"samsung", "motorola"}):
+        result = "Phone"
+    elif "cisco" in vendor:
+        result = "Router" 
+    elif "lg" in vendor:
+        result = "TV"
+    elif "google" in vendor:
+        result = "Phone"
+    elif "ubiquiti" in vendor:
+        result = "Router" 
+
+    # Guess type based on MAC address patterns
+    elif mac == "INTERNET":  
+        result = "Internet"      
+        
+    # Guess type based on name
+    elif 'google' in name:
+        result = "Phone"
+    
+    # Guess type based on IP address ranges
+    elif ip == ("192.168.1.1"):
+        result = "Router"      
+    
+    return result
+    

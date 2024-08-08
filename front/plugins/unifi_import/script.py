@@ -14,12 +14,19 @@ from requests import Request, Session, packages
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from pyunifi.controller import Controller
 
+
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects
+from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars, is_typical_router_ip
 from logger import mylog
+from helper import timeNowTZ, get_setting_value 
+import conf
+from pytz import timezone
+
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
@@ -98,7 +105,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='client',
-            device_vendor=""
+            device_vendor="",
+            force_import=True # These are online clients, force import
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Online Devices'])
@@ -118,7 +126,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='ap',
-            device_vendor="Ubiquiti Networks Inc."
+            device_vendor="Ubiquiti Networks Inc.",
+            force_import=perform_full_run
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Unifi Devices'])
@@ -131,7 +140,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             processed_macs=processed_macs,
             plugin_objects=plugin_objects,
             device_label='user',
-            device_vendor=""
+            device_vendor="",
+            force_import=perform_full_run
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Users'])
@@ -147,18 +157,24 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
 
 # -----------------------------------------------------------------------------
-def collect_details(device_type, devices, online_macs, processed_macs, plugin_objects, device_label, device_vendor):
+def collect_details(device_type, devices, online_macs, processed_macs, plugin_objects, device_label, device_vendor, force_import):
     for device in devices:
         mylog('verbose', [f'{json.dumps(device)}'])
 
+        # try extracting variables from teh json
         name = get_name(get_unifi_val(device, 'name'), get_unifi_val(device, 'hostname'))
-        ipTmp = get_ip(get_unifi_val(device, 'last_ip'), get_unifi_val(device, 'fixed_ip'), get_unifi_val(device, 'ip'))
+        ipTmp = get_ip(get_unifi_val(device, 'lan_ip'), get_unifi_val(device, 'last_ip'), get_unifi_val(device, 'fixed_ip'), get_unifi_val(device, 'ip'))
         macTmp = device['mac']
         status = 1 if macTmp in online_macs else device.get('state', 0)
         deviceType = device_type.get(device.get('type'), '')
+        parentMac = get_parent_mac(get_unifi_val(device, 'uplink_mac'), get_unifi_val(device, 'ap_mac'), get_unifi_val(device, 'sw_mac'))
+        
+        # override parent MAC if this is a router
+        if parentMac == 'null' and is_typical_router_ip(ipTmp):
+            parentMac = 'Internet'            
 
         # Add object only if not processed
-        if macTmp not in processed_macs:
+        if macTmp not in processed_macs and ( status == 1 or force_import is True ):
             plugin_objects.add_object(
                 primaryId=macTmp,
                 secondaryId=ipTmp,
@@ -168,7 +184,7 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
                 watched4=status,
                 extra=get_unifi_val(device, 'connection_network_name', ''),
                 foreignKey="",
-                helpVal1=get_parent_mac(get_unifi_val(device, 'uplink_mac'), get_unifi_val(device, 'ap_mac'), get_unifi_val(device, 'sw_mac')),
+                helpVal1=parentMac,
                 helpVal2=get_port(get_unifi_val(device, 'sw_port'), get_unifi_val(device, 'uplink_remote_port')),
                 helpVal3=device_label,
                 helpVal4="",
@@ -193,7 +209,7 @@ def get_unifi_val(obj, key, default='null'):
 def get_name(*names: str) -> str:
     for name in names:
         if name and name != 'null':
-            return name
+            return rmBadChars(name)
     return 'null'
 
 # -----------------------------------------------------------------------------

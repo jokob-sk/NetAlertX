@@ -259,7 +259,8 @@ function addList(element, clearInput = true) {
     .attr("value", input)
     .text(input);
 
-  const el = $(`#${toId}`).append(newOption);
+  // add new option
+  $(`#${toId}`).append(newOption);
 
   // clear input
   if (clearInput) {
@@ -269,6 +270,7 @@ function addList(element, clearInput = true) {
   // Initialize interaction options only for the newly added option
   initListInteractionOptions(newOption);
 
+  // flag something changes to prevent navigating from page
   settingsChanged();
 }
 
@@ -278,31 +280,6 @@ function removeFromList(element) {
   $(`#${$(element).attr("my-input-to")}`)
     .find("option:last")
     .remove();
-}
-// ---------------------------------------------------------
-function addInterface() {
-  ipMask = $("#ipMask").val();
-  ipInterface = $("#ipInterface").val();
-
-  full = ipMask + " --interface=" + ipInterface;
-
-  console.log(full);
-
-  if (ipMask == "" || ipInterface == "") {
-    showModalOk(
-      "Validation error",
-      "Specify both, the network mask and the interface"
-    );
-  } else {
-    $("#SCAN_SUBNETS").append(
-      $("<option disabled></option>").attr("value", full).text(full)
-    );
-
-    $("#ipMask").val("");
-    $("#ipInterface").val("");
-
-    settingsChanged();
-  }
 }
 
 // -------------------------------------------------------------------
@@ -555,7 +532,7 @@ function generateOptionsOrSetOptions(
   transformers = [] // Transformers to be applied to the values
 ) {
 
-  console.log(codeName);
+  // console.log(codeName);
 
   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
   options = arrayToObject(createArray(getSettingOptions(codeName)))

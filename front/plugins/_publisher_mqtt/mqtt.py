@@ -29,7 +29,10 @@ from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string
 from notification import Notification_obj
 from database import DB, get_device_stats
+from pytz import timezone
 
+# Make sure the TIMEZONE for logging is correct
+conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
@@ -292,9 +295,11 @@ def mqtt_create_client():
     if get_setting_value('MQTT_VERSION') == 1:
         mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)  
     else:
-        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)  
+        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-         
+    if get_setting_value('MQTT_TLS'):
+        mqtt_client.tls_set()
+
     mqtt_client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
     mqtt_client.on_connect = on_connect
     mqtt_client.on_disconnect = on_disconnect

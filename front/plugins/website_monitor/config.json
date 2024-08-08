@@ -625,6 +625,16 @@
             "transformers": []
           },
           {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
             "elementType": "button",
             "elementOptions": [
               { "sourceSuffixes": [] },
@@ -643,15 +653,6 @@
               { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
             ],
             "transformers": []
           }

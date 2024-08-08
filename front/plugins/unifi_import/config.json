@@ -271,6 +271,7 @@
     },
     {
       "column": "Watched_Value3",
+      "mapped_to_column": "cur_Type",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
@@ -809,6 +810,16 @@
             "transformers": []
           },
           {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
             "elementType": "button",
             "elementOptions": [
               { "sourceSuffixes": [] },
@@ -827,15 +838,6 @@
               { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
             ],
             "transformers": []
           }

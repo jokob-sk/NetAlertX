@@ -53,6 +53,16 @@
             "transformers": []
           },
           {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
             "elementType": "button",
             "elementOptions": [
               { "sourceSuffixes": [] },
@@ -71,15 +81,6 @@
               { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
             ],
             "transformers": []
           }
@@ -128,6 +129,16 @@
             "transformers": []
           },
           {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
             "elementType": "button",
             "elementOptions": [
               { "sourceSuffixes": [] },
@@ -146,15 +157,6 @@
               { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
             ],
             "transformers": []
           }
@@ -194,13 +196,23 @@
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
+              { "sourceSuffixes": ["_in"] },
               { "separator": "" },
-              { "cssClasses": "col-sm-3" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
+              { "cssClasses": "col-sm-2" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
             ],
             "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": ["base64"]
           },
           {
             "elementType": "button",
@@ -216,22 +228,13 @@
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
+              { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-2" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
+              { "cssClasses": "col-sm-3" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
             ],
             "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
-            ],
-            "transformers": ["base64"]
           }
         ]
       },
