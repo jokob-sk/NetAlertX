@@ -36,7 +36,7 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
-pluginName = 'NSLOOKUP'
+pluginName = 'MTSCAN'
 
 def main():
 
