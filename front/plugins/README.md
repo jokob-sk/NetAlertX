@@ -44,7 +44,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `NSLOOKUP`    | ♻       | NSLookup (DNS-based) name resolution      |           |          | Script       | [nslookup_scan](/front/plugins/nslookup_scan/)                    |
 | `NTFPRCS`     | ⚙       | Notification processing                   |           |  Yes     | Template     | [notification_processing](/front/plugins/notification_processing/)|
 | `NTFY`        | ▶️      | NTFY notifications                        |           |          | Script       | [_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
-| `OMDSDN`      | 📥      | OMADA TP-Link import                      |   📊🔄   |          | Script       | [omada_sdn_imp](/front/plugins/omada_sdn_imp/)                    |
+| `OMDSDN`      | 📥      | OMADA TP-Link import                      |   🖧 🔄   |          | Script       | [omada_sdn_imp](/front/plugins/omada_sdn_imp/)                    |
 | `PHOLUS`      | ♻       | Pholus name resolution                    |           |          | Script       | [pholus_scan](/front/plugins/pholus_scan/)                        |
 | `PIHOLE`      | 🔍/📥   | Pi-hole device import & sync              |           |          | SQLite DB    | [pihole_scan](/front/plugins/pihole_scan/)                        |
 | `PUSHSAFER`   | ▶️      | Pushsafer notifications                   |           |          | Script       | [_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
@@ -52,9 +52,9 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `SETPWD`      | ⚙       | Set password                              |           |  Yes     | Template     | [set_password](/front/plugins/set_password/)                      |
 | `SMTP`        | ▶️      | Email notifications                       |           |          | Script       | [_publisher_email](/front/plugins/_publisher_email/)              |
 | `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                 |           |          | Script       | [snmp_discovery](/front/plugins/snmp_discovery/)                  |
-| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   📊🔄    |          | Script       | [sync](/front/plugins/sync/)                                     |
+| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄    |          | Script       | [sync](/front/plugins/sync/)                                     |
 | `UNDIS`       | 🔍/📥   | Create dummy devices                      |           |          | Script       | [undiscoverables](/front/plugins/undiscoverables/)                |
-| `UNFIMP`      | 🔍/📥   | UniFi device import & sync                |           |          | Script       | [unifi_import](/front/plugins/unifi_import/)                      |
+| `UNFIMP`      | 🔍/📥   | UniFi device import & sync                |  🖧       |          | Script       | [unifi_import](/front/plugins/unifi_import/)                      |
 | `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](/front/plugins/vendor_update/)                    |
 | `WEBHOOK`     | ▶️      | Webhook notifications                     |           |          | Script       | [_publisher_webhook](/front/plugins/_publisher_webhook/)          |
 | `WEBMON`      | ♻       | Website down monitoring                   |           |          | Script       | [website_monitor](/front/plugins/website_monitor/)                |
@@ -81,7 +81,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 | Icon  | Description                                                  | 
 |------|---------------------------------------------------------------|
-| 📊   | Auto-imports the network topology diagram                     |
+| 🖧    | Auto-imports the network topology diagram                     |
 | 🔄   | Has the option to sync some data back into the plugin source  |
 
 

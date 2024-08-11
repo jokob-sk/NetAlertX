@@ -243,6 +243,18 @@ $(document).ready(function () {
 
 
 // -----------------------------------------------------------------------------
+// Escape text
+function safeDecodeURIComponent(content) {
+    try {
+      return decodeURIComponent(content);
+    } catch (error) {
+      console.warn('Failed to decode URI component:', error);
+      return content;  // Return the original content if decoding fails
+    }
+  }
+  
+
+// -----------------------------------------------------------------------------
 // Backend notification Polling 
 // -----------------------------------------------------------------------------
 // Function to check for notifications
@@ -266,7 +278,9 @@ function checkNotification() {
                 if (oldestInterruptNotification) {
                     // Show modal dialog with the oldest unread notification
 
-                    const decodedContent = decodeURIComponent(oldestInterruptNotification.content);
+                    console.log(oldestInterruptNotification.content);
+
+                    const decodedContent = safeDecodeURIComponent(oldestInterruptNotification.content);
 
                     showModalOK("Notification", decodedContent, function() {
                         // Mark the notification as read

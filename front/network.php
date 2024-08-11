@@ -359,12 +359,17 @@
   <?php   
 
     // Get all Unassigned / unconnected nodes 
-    $func_sql = 'SELECT dev_MAC as mac,  
-                        dev_PresentLastScan as online, 
-                        dev_Name as name,                        
-                        dev_LastIP as last_ip,
-                        dev_Network_Node_MAC_ADDR
-                    FROM Devices WHERE (dev_Network_Node_MAC_ADDR is null or dev_Network_Node_MAC_ADDR = "" or dev_Network_Node_MAC_ADDR = " " or dev_Network_Node_MAC_ADDR = "undefined") and dev_MAC not like "%internet%" order by name asc'; 
+    $func_sql = 'SELECT 
+                  dev_MAC AS mac,
+                  dev_PresentLastScan AS online,
+                  dev_Name AS name,
+                  dev_LastIP AS last_ip,
+                  dev_Network_Node_MAC_ADDR
+                FROM Devices
+                WHERE dev_Network_Node_MAC_ADDR IS NULL 
+                  OR dev_Network_Node_MAC_ADDR IN ("", " ", "undefined", "null")
+                  AND dev_MAC NOT LIKE "%internet%"
+                ORDER BY name ASC;'; 
 
     global $db;
     $func_result = $db->query($func_sql);  

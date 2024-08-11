@@ -666,7 +666,7 @@ function openUrl(urls) {
 // -----------------------------------------------------------------------------
 function navigateToDeviceWithIp (ip) {
 
-  $.get('api/table_devices.json', function(res) {    
+  $.get('api/table_devices.json?nocache=' + Date.now(), function(res) {    
         
     devices = res["data"];
 
@@ -876,9 +876,9 @@ function cacheDevices()
 
   return new Promise((resolve, reject) => {
 
-    if(!getCache('completedCalls').includes('cacheDevices'))
-    {
-      $.get('api/table_devices.json', function(data) {    
+    // if(!getCache('completedCalls').includes('cacheDevices'))
+    // {
+      $.get('api/table_devices.json?nocache=' + Date.now(), function(data) {    
         
         // console.log(data)
 
@@ -901,7 +901,8 @@ function cacheDevices()
         // console.log(getCache('devicesListAll_JSON'))
       }).then(() => handleSuccess('cacheDevices', resolve())).catch(() => handleFailure('cacheDevices', reject("cacheDevices already completed"))); // handle AJAX synchronization
     } 
-  });
+  // }
+);
 }
 
 var devicesListAll_JSON      = [];   // this will contain a list off all devices 
@@ -1281,7 +1282,7 @@ const areAllStringsInitialized = () => {
 // Call the function to execute the code
 executeOnce();
 
-// Set timer for regular checks 
+// Set timer for regular UI refresh if enabled 
 setTimeout(() => {
 
   // page refresh if configured

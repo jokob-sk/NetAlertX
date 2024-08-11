@@ -1,6 +1,6 @@
 ## Overview
 
-A plugin allowing for importing devices from a UniFi controller.  
+A plugin allowing for importing devices from a UniFi controller. The plugin also tries to import the network map. 
 
 ### Usage
 
@@ -17,5 +17,4 @@ Specify the following settings in the Settings section of NetAlertX:
 
 ### Notes
 
-- Currently only used to import devices, not their status, type or network map.
 - It is recommended to create a read-only user in your UniFi controller 

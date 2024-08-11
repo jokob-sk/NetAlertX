@@ -4,7 +4,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-# NetAlertX 💻🔍 Network scanner & notification framework
+# NetAlertX 🖧🔍 Network scanner & notification framework
 
   | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) |
   |----------------------|----------------------| ----------------------|  ----------------------| 

@@ -1,4 +1,4 @@
-# 💻🔍 Network scanner & notification framework
+# 🖧🔍 Network scanner & notification framework
 
 Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
@@ -64,7 +64,7 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 | Docs        | Link    | 
 |-------------|-------------|
 | 📥🐳  | [Docker instructions](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
-| 📥💻  | [HW install (experimental 🧪)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) |
+| 📥🗄️  | [HW install (experimental 🧪)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) |
 | 📥🟧  | [Unraid App](https://unraid.net/community/apps) |
 | 📚     | [All Documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) (App Usage and Configuration) |
  
