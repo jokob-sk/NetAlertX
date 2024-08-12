@@ -364,7 +364,7 @@ def mqtt_start(db):
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
-            devDisplayName  = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
+            devDisplayName  = re.sub('[^a-zA-Z0-9-_\\s]', '', device["dev_Name"]) 
 
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
