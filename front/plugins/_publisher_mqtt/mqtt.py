@@ -196,7 +196,10 @@ class sensor_config:
 def publish_mqtt(mqtt_client, topic, message):
     status = 1
 
-    message = json.dumps(message).replace("'",'"')
+    # convert anything but a simple string to json
+    if not isinstance(message, str):
+        message = json.dumps(message).replace("'",'"')
+
     qos = get_setting_value('MQTT_QOS')
 
     mylog('verbose', [f"[{pluginName}] Sending MQTT topic: {topic}"])
