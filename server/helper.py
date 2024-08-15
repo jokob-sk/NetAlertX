@@ -909,39 +909,42 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
 #-------------------------------------------------------------------------------
 def checkNewVersion():
-
     mylog('debug', [f"[Version check] Checking if new version available"])
 
     newVersion = False
 
-    f = open(applicationPath + '/front/buildtimestamp.txt', 'r')
-    buildTimestamp = int(f.read().strip())
-    f.close()
-
-    data = ""
+    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
+        buildTimestamp = int(f.read().strip())
 
     try:
-        url = requests.get("https://api.github.com/repos/jokob-sk/NetAlertX/releases")
-        text = url.text
-        data = json.loads(text)
-    except requests.exceptions.ConnectionError as e:
+        response = requests.get("https://api.github.com/repos/jokob-sk/NetAlertX/releases")
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        text = response.text
+    except requests.exceptions.RequestException as e:
         mylog('minimal', ["[Version check] ⚠ ERROR: Couldn't check for new release."])
-        data = ""
+        return False
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as e:
+        mylog('minimal', ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."])
+        return False
 
     # make sure we received a valid response and not an API rate limit exceeded message
-    if data != "" and len(data) > 0 and isinstance(data, list) and "published_at" in data[0]:
-
+    if data and isinstance(data, list) and "published_at" in data[0]:
         dateTimeStr = data[0]["published_at"]
-
         releaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%S%z').timestamp())
 
         if releaseTimestamp > buildTimestamp + 600:
             mylog('none', ["[Version check] New version of the container available!"])
-            newVersion = True       
+            newVersion = True
         else:
             mylog('none', ["[Version check] Running the latest version."])
+    else:
+        mylog('minimal', ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."])
 
     return newVersion
+
 
 
 #-------------------------------------------------------------------------------
