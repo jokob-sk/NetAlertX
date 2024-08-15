@@ -982,19 +982,21 @@ function renderLogs(customData) {
 
 //------------------------------------------------------------------------------
 // Init
-window.onload = function asyncFooter()
-{
+window.onload = function asyncFooter() {
   initializeSelectedColumns();
   renderLogs();
 
   // initializeTabs();
 
-  $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img  alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/netalertx/main?logo=github"></a>');
+  try {
+    $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/netalertx/main?logo=github"></a>');
 
-  $("#lastDockerUpdate").append(
-    '<a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
-
-}
+    $("#lastDockerUpdate").append(
+      '<a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank"><img alt="Docker last pushed" src="https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&label=Latest"></a>');
+  } catch (error) {
+    console.error('Failed to load GitHub badges:', error);
+  }
+};
 
 </script>
 
