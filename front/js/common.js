@@ -12,7 +12,7 @@ var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
 var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn"]; // needs to be same as in lang.php
+const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn", "cs_cz"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -304,6 +304,9 @@ function getString(key) {
         break;
       case 'Chinese (zh_cn)':
         lang_code = 'zh_cn';
+        break;
+      case 'Czech (cs_cz)':
+        lang_code = 'cs_cz';
         break;
     }
 
