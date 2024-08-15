@@ -196,7 +196,10 @@ class sensor_config:
 def publish_mqtt(mqtt_client, topic, message):
     status = 1
 
-    message = json.dumps(message).replace("'",'"')
+    # convert anything but a simple string to json
+    if not isinstance(message, str):
+        message = json.dumps(message).replace("'",'"')
+
     qos = get_setting_value('MQTT_QOS')
 
     mylog('verbose', [f"[{pluginName}] Sending MQTT topic: {topic}"])
@@ -364,7 +367,7 @@ def mqtt_start(db):
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
-            devDisplayName  = re.sub('[^a-zA-Z0-9-_\s]', '', device["dev_Name"]) 
+            devDisplayName  = re.sub('[^a-zA-Z0-9-_\\s]', '', device["dev_Name"]) 
 
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
