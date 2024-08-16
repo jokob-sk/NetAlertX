@@ -735,7 +735,7 @@
     "Webhooks_icon": "<i class=\"fa fa-circle-nodes\"></i>",
     "Webhooks_settings_group": "<i class=\"fa fa-circle-nodes\"></i> Webhooks",
     "devices_old": "Volviendo a actualizar....",
-    "general_event_description": "El evento que ha desencadenado puede tardar un tiempo hasta que finalicen los procesos en segundo plano. La ejecución finalizó una vez que se vació la siguiente cola de ejecución (compruebe el registro de errores <a href='/maintenance.php#tab_Logging'>si</a> tiene problemas). <br/> <br/> Cola de ejecución:",
+    "general_event_description": "El evento que ha activado puede tardar un poco hasta que finalicen los procesos en segundo plano. La ejecución finalizó una vez que se vacía la cola de ejecución a continuación (consulte el <a href='/maintenance.php#tab_Logging'>registro de errores</a> si encuentra problemas). <br/> <br/> Cola de ejecución:",
     "general_event_title": "Ejecutar un evento ad-hoc",
     "report_guid": "Guía de las notificaciones:",
     "report_guid_missing": "No se ha encontrado la notificación vinculada. Hay un pequeño retraso entre las notificaciones enviadas recientemente y su disponibilidad. Actualiza tu página y la caché después de unos segundos. También es posible que la notificación seleccionada se haya eliminado durante el mantenimiento, tal y como se especifica en la configuración <code>de DBCLNP_NOTIFI_HIST</code>. <br/> <br/>En su lugar, se muestra la notificación más reciente. La notificación que falta tiene el siguiente GUID:",
