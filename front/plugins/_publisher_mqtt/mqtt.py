@@ -271,20 +271,23 @@ def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, ico
     return sensorConfig
 
 #-------------------------------------------------------------------------------
-def mqtt_create_client():    
+def mqtt_create_client():
+
+    mytransport = 'tcp' # or 'websockets'
+
     def on_disconnect(mqtt_client, userdata, reason_code):
         
         global mqtt_connected_to_broker
 
+        # REF: If we wanted a auto reconnect, a good source is here: https://www.emqx.com/en/blog/how-to-use-mqtt-in-python
         mqtt_connected_to_broker = False
-        
-        # not sure is below line is correct / necessary        
-        # client = mqtt_create_client() 
+        mylog('debug', [f"[{pluginName}]         Connection terminated, reason_code: {reason_code}"])
 
-    def on_connect(mqtt_client, userdata, flags, reason_code):
+    def on_connect(mqtt_client, userdata, flags, reason_code, properties):
         
         global mqtt_connected_to_broker
 
+        # REF: Good docu on reason codes: https://www.emqx.com/en/blog/mqtt5-new-features-reason-code-and-ack
         if reason_code == 0: 
             mylog('verbose', [f"[{pluginName}]         Connected to broker"])            
             mqtt_connected_to_broker = True     # Signal connection 
@@ -292,21 +295,29 @@ def mqtt_create_client():
             mylog('verbose', [f"[{pluginName}]         Connection failed, reason_code: {reason_code}"])
             mqtt_connected_to_broker = False
 
-
     global mqtt_client
 
-    if get_setting_value('MQTT_VERSION') == 1:
-        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)  
+    # Paho will be soon not supporting V1 anymore, so this really should not be a user choice to start with
+    # This code now uses V2 by default
+    # Ref: https://eclipse.dev/paho/files/paho.mqtt.python/html/migrations.html
+
+    if get_setting_value('MQTT_VERSION') == 3:
+        version = mqtt.MQTTv311
     else:
-        mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        version = mqtt.MQTTv5
+
+    mqtt_client = mqtt.Client(
+        callback_api_version = mqtt.CallbackAPIVersion.VERSION2,
+        transport=mytransport,
+        protocol=mqtt.MQTTv5)
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_disconnect = on_disconnect
 
     if get_setting_value('MQTT_TLS'):
         mqtt_client.tls_set()
 
-    mqtt_client.username_pw_set(get_setting_value('MQTT_USER'), get_setting_value('MQTT_PASSWORD'))    
-    mqtt_client.on_connect = on_connect
-    mqtt_client.on_disconnect = on_disconnect
-    mqtt_client.connect(get_setting_value('MQTT_BROKER'), get_setting_value('MQTT_PORT'))
+    mqtt_client.username_pw_set(username = get_setting_value('MQTT_USER'), password = get_setting_value('MQTT_PASSWORD'))    
+    mqtt_client.connect(host = get_setting_value('MQTT_BROKER'), port = get_setting_value('MQTT_PORT'))
     mqtt_client.loop_start() 
 
     return mqtt_client

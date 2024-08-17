@@ -767,8 +767,8 @@
           { "elementType": "select", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": 1,
-      "options": [1, 2],
+      "default_value": 5,
+      "options": [3, 5],
       "localized": ["name", "description"],
       "name": [
         {
@@ -779,7 +779,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Paho MQTT API version. Depends on the MQTT <a href=\"https://eclipse.dev/paho/files/paho.mqtt.python/html/index.html#callbacks\" target=\"_blank\">version supported by the MQTT broker</a>. Usually set to <code>1</code>."
+          "string": "MQTT Protocol version. Depends on the MQTT broker</a>. Usually set to <code>5</code>, or <code>3</code> for backwards compatibility."
         }
       ]
     },
