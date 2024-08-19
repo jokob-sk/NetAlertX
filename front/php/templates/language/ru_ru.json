@@ -416,7 +416,7 @@
     "Maintenance_Tool_del_unknowndev_text": "Прежде чем использовать эту функцию, сделайте резервную копию. Удаление невозможно отменить. Все названные устройства (неизвестные) будут удалены из базы данных.",
     "Maintenance_Tool_displayed_columns_text": "Измените видимость и порядок столбцов на странице <a href=\"devices.php\"><b> <i class=\"fa fa-laptop\"></i> Устройства</b></a>.",
     "Maintenance_Tool_drag_me": "Перетащите элемент, чтобы изменить порядок столбцов.",
-    "Maintenance_Tool_order_columns_text": "",
+    "Maintenance_Tool_order_columns_text": "Maintenance_Tool_order_columns_text",
     "Maintenance_Tool_purgebackup": "Очистить резервные копии",
     "Maintenance_Tool_purgebackup_noti": "Очистить резервные копии",
     "Maintenance_Tool_purgebackup_noti_text": "Вы уверены, что хотите удалить все резервные копии, кроме трех последних?",
