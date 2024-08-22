@@ -1390,7 +1390,7 @@ input[readonly] {
 
     opacity: 0.8;
     background-color: #fff;
-    z-index: 99;
+    z-index: 1000;
 }
 
 .pa_spinner {
@@ -1403,7 +1403,7 @@ input[readonly] {
     padding: 15px;
     width: 200px;
     background-color: #fff;
-    z-index: 100;
+    z-index: 1001;
 }
 
 #loadingSpinner

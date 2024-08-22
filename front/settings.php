@@ -460,7 +460,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           
           // INPUT
 
-          console.log(codeName);
+          // console.log(codeName);
           
           // Parse the setType JSON string into an object
           let inputHtml = '';
@@ -795,6 +795,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         } 
         else
         {
+          console.log("isAppInitialized() returned false, reloading in 3s");
           // reload the page if not initialized to give time the background tasks to finish 
           setTimeout(() => {
 

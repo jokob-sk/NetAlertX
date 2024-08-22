@@ -399,6 +399,7 @@ function handle_locked_DB(data)
     showSpinner()
 
     setTimeout(function() {
+      console.warn("Database locked - reload")
       location.reload(); 
     }, 5000);
   }
@@ -1153,8 +1154,9 @@ function clearCache() {
   sessionStorage.clear();
   localStorage.clear();
   setTimeout(() => {
-  window.location.reload();
-}, 500);
+    console.warn("clearChache called");
+    window.location.reload();
+  }, 500);
 }
 
 // -----------------------------------------------------------------------------
@@ -1291,6 +1293,7 @@ setTimeout(() => {
   // page refresh if configured
   const refreshTime = getSetting("UI_REFRESH");
   if (refreshTime && refreshTime !== "0" && refreshTime !== "") {
+    console.log("Refreshing page becasue UI_REFRESH setting enabled.");
     newTimerRefreshData(clearCache, parseInt(refreshTime)*1000);
   }
 

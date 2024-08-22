@@ -11,7 +11,7 @@ There are 3 artifacts that can be used to backup the application:
 | `/config/app.conf` | Configuration file |   Doesn't contain settings from the Maintenance section        |
 | `/config/devices.csv`  | CSV file containing device information |     Doesn't contain historical data        |
 
-## Data and cackup storage
+## Data and backup storage
 
 To decide on a backup strategy, check where the data is stored:
 
