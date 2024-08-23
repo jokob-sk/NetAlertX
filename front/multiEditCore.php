@@ -118,6 +118,7 @@
                     inputType,
                     readOnly,
                     isMultiSelect,
+                    isOrdeable,
                     cssClasses,
                     placeholder,
                     suffix,

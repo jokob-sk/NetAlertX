@@ -27,6 +27,66 @@
   "params": [],
   "settings": [
     {
+      "function": "device_columns",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "getString-Device_TableHead_Icon-value-3",
+        "getString-Device_TableHead_Name-value-0",
+        "getString-Device_TableHead_Type-value-2",
+        "getString-Device_TableHead_LastIP-value-8",
+        "getString-Device_TableHead_Status-value-10",
+        "getString-Device_TableHead_MAC_full-value-11"
+      ],
+      "options": [
+        "getString-Device_TableHead_Name-value-0",
+        "getString-Device_TableHead_Owner-value-1",
+        "getString-Device_TableHead_Type-value-2",   
+        "getString-Device_TableHead_Icon-value-3",
+        "getString-Device_TableHead_Favorite-value-4",
+        "getString-Device_TableHead_Group-value-5",
+        "getString-Device_TableHead_FirstSession-value-6",
+        "getString-Device_TableHead_LastSession-value-7",
+        "getString-Device_TableHead_LastIP-value-8",
+        "getString-Device_TableHead_MAC-value-9",
+        "getString-Device_TableHead_Status-value-10",
+        "getString-Device_TableHead_MAC_full-value-11",
+        "getString-Device_TableHead_LastIPOrder-value-12",
+        "getString-Device_TableHead_Rowid-value-13",
+        "getString-Device_TableHead_Parent_MAC-value-14",
+        "getString-Device_TableHead_Connected_Devices-value-15",
+        "getString-Device_TableHead_Location-value-16",
+        "getString-Device_TableHead_Vendor-value-17",
+        "getString-Device_TableHead_Port-value-18",
+        "getString-Device_TableHead_GUID-value-19",
+        "getString-Device_TableHead_SyncHubNodeName-value-20",
+        "getString-Device_TableHead_NetworkSite-value-21",
+        "getString-Device_TableHead_SSID-value-22"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which columns to show on the Devices page."
+        }
+      ]
+    },
+    {
       "function": "shown_cards",
       "type": {
         "dataType": "array",
@@ -67,7 +127,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Which tiles to show on teh top of the Devices page."
+          "string": "Which tiles to show on the top of the Devices page."
         }
       ]
     },

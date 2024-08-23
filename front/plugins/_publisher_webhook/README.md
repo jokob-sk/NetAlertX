@@ -6,3 +6,7 @@ A plugin to publish a notification via the Webhook gateway. Webhooks help you to
 
 - Go to settings and fill in relevant details.
 
+#### Sample Discord Setup
+
+![image](Discord_Config.png)
+

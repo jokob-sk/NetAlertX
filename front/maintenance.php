@@ -142,10 +142,6 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 $db->close();
                             
 
-                        
-
-// Language selector -----------------------------------------------------------------
-
 ?>
 
       <div class="row">

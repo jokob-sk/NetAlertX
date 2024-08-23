@@ -476,6 +476,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               inputType,
               readOnly,
               isMultiSelect,
+              isOrdeable,
               cssClasses,
               placeholder,
               suffix,
@@ -494,8 +495,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             switch (elementType) {
               case 'select':
                 let multi = isMultiSelect ? "multiple" : "";
+                let addCss = isOrdeable ? "select2 select2-hidden-accessible" : "";
 
-                inputHtml += `<select onChange="settingsChanged()" my-data-type="${dataType}" my-editable="${editable}" class="form-control" name="${codeName}" id="${codeName}" ${multi}>
+
+                inputHtml += `<select onChange="settingsChanged()" my-data-type="${dataType}" my-editable="${editable}" class="form-control ${addCss}" name="${codeName}" id="${codeName}" ${multi}>
                                 <option value="" id="${codeName + "_temp_"}"></option>
                               </select>`;
 
@@ -645,6 +648,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             inputType,
             readOnly,
             isMultiSelect,
+            isOrdeable,
             cssClasses,
             placeholder,
             suffix,

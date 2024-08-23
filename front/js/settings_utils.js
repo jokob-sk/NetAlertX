@@ -604,6 +604,7 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
   let inputType = "text";
   let readOnly = "";
   let isMultiSelect = false;
+  let isOrdeable = false;
   let cssClasses = "";
   let placeholder = "";
   let suffix = "";
@@ -626,6 +627,9 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
     }
     if (option.multiple === "true") {
       isMultiSelect = true;
+    }
+    if (option.ordeable === "true") {
+      isOrdeable = true;
     }
     if (option.editable === "true") {
       editable = true;
@@ -663,6 +667,7 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
     inputType,
     readOnly,
     isMultiSelect,
+    isOrdeable,
     cssClasses,
     placeholder,
     suffix,
