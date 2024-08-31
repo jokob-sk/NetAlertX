@@ -11,25 +11,7 @@
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 #---------------------------------------------------------------------------------#
 
-// Skin selector config ----------------------------------------------------
-//
-// For security reasons, new language files must be entered into this array.
-// The files in the language directory are compared with this array and only 
-// then accepted.
-//
-$pia_installed_skins = array('skin-black-light', 
-                             'skin-black', 
-                             'skin-blue-light', 
-                             'skin-blue', 
-                             'skin-green-light', 
-                             'skin-green', 
-                             'skin-purple-light', 
-                             'skin-purple', 
-                             'skin-red-light', 
-                             'skin-red', 
-                             'skin-yellow-light', 
-                             'skin-yellow');
-  
+ 
 
 //------------------------------------------------------------------------------
 ?>
@@ -91,34 +73,6 @@ if (count($latestfiles) > 0)
   $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
 }
 
-
-// Skin selector -----------------------------------------------------------------
-
-if (isset($_POST['submit']) && submit && isset($_POST['skinselector_set'])) {
-  $pia_skin_set_dir = '../db/';
-  $pia_skin_selector = htmlspecialchars($_POST['skinselector']);
-  if (in_array($pia_skin_selector, $pia_installed_skins)) {
-    foreach ($pia_installed_skins as $file) {
-      unlink ($pia_skin_set_dir.'/setting_'.$file);
-    }
-    foreach ($pia_installed_skins as $file) {
-      if (file_exists($pia_skin_set_dir.'/setting_'.$file)) {
-          $pia_skin_error = True;
-          break;
-      } else {
-          $pia_skin_error = False;
-      }
-    }
-    if ($pia_skin_error == False) {
-      $testskin = fopen($pia_skin_set_dir.'setting_'.$pia_skin_selector, 'w');
-      $pia_skin_test = '';
-      echo("<meta http-equiv='refresh' content='1'>"); 
-    } else {
-      $pia_skin_test = '';
-      echo("<meta http-equiv='refresh' content='1'>");
-    }    
-  }
-}
 // Table sizes -----------------------------------------------------------------
 
 $tableSizesHTML = "";
@@ -215,13 +169,7 @@ $db->close();
 
     <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active">          
-          <a id="tab_Settings_id" href="#tab_Settings" data-toggle="tab">
-            <i class="fa fa-cogs"></i> 
-            <?= lang('Maintenance_Tools_Tab_UISettings');?>
-          </a>
-        </li>
-        <li>
+        <li class="active">
           <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab">
             <i class="fa fa-toolbox"></i> 
             <?= lang('Maintenance_Tools_Tab_Tools');?>
@@ -247,84 +195,7 @@ $db->close();
         </li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane active" id="tab_Settings">
-                <div class="db_info_table">
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" style="text-align: center;">
-                            <form method="post" action="maintenance.php">
-                            <div style="display: inline-block; text-align: center;">
-                                <select name="skinselector" class="form-control bg-green" style="width:160px; margin-bottom:5px;">
-                                    <option value=""><?= lang('Maintenance_themeselector_empty');?></option>
-                                    <option value="skin-black-light">black light</option>
-                                    <option value="skin-black">black</option>
-                                    <option value="skin-blue-light">blue light</option>
-                                    <option value="skin-blue">blue</option>
-                                    <option value="skin-green-light">green light</option>
-                                    <option value="skin-green">green</option>
-                                    <option value="skin-purple-light">purple light</option>
-                                    <option value="skin-purple">purple</option>
-                                    <option value="skin-red-light">red light</option>
-                                    <option value="skin-red">red</option>
-                                    <option value="skin-yellow-light">yellow light</option>
-                                    <option value="skin-yellow">yellow</option>
-                                </select></div>
-                            <div style="display: block;"><input type="submit" name="skinselector_set" value="<?= lang('Maintenance_themeselector_apply');?>" class="btn bg-green" style="width:160px;">
-                                <?php // echo $pia_skin_test; ?>
-                            </div>
-                            </form>
-                        </div>
-                        <div class="db_info_table_cell" style="padding: 10px; height:40px; text-align:left; vertical-align: middle;">
-                            <?= lang('Maintenance_themeselector_text'); ?>
-                        </div>    
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a">
-                            <button type="button" class="btn bg-green dbtools-button" id="btnToggleDarkmode" onclick="askToggleDarkmode()"><?= lang('Maintenance_Tool_darkmode');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_darkmode_text');?></div>
-                    </div>   
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a">
-                          <div class="form-group" > 
-                            <div class="input-group" > 
-                              <select id="columnsSelect" class="form-control select2 select2-hidden-accessible" multiple=""   style="width: 100%;"  tabindex="-1" aria-hidden="true">
-                                <option value="0"><?= lang('Device_TableHead_Name');?></option>
-                                <option value="1"><?= lang('Device_TableHead_Owner');?></option>
-                                <option value="2"><?= lang('Device_TableHead_Type');?></option>
-                                <option value="3"><?= lang('Device_TableHead_Icon');?></option>
-                                <option value="4"><?= lang('Device_TableHead_Favorite');?></option>
-                                <option value="5"><?= lang('Device_TableHead_Group');?></option>
-                                <option value="6"><?= lang('Device_TableHead_FirstSession');?></option>
-                                <option value="7"><?= lang('Device_TableHead_LastSession');?></option>
-                                <option value="8"><?= lang('Device_TableHead_LastIP');?></option>
-                                <option value="9"><?= lang('Device_TableHead_MAC');?></option>
-                                <option value="10"><?= lang('Device_TableHead_Status');?></option>                            
-                                <option value="11"><?= lang('Device_TableHead_MAC_full');?></option>                            
-                                <option value="12"><?= lang('Device_TableHead_LastIPOrder');?></option>
-                                <option value="13"><?= lang('Device_TableHead_Rowid');?></option>
-                                <option value="14"><?= lang('Device_TableHead_Parent_MAC');?></option>
-                                <option value="15"><?= lang('Device_TableHead_Connected_Devices');?></option>
-                                <option value="16"><?= lang('Device_TableHead_Location');?></option>
-                                <option value="17"><?= lang('Device_TableHead_Vendor');?></option>
-                                <option value="18"><?= lang('Device_TableHead_Port');?></option>
-                                <option value="19"><?= lang('Device_TableHead_GUID');?></option>
-                                <option value="20"><?= lang('Device_TableHead_SyncHubNodeName');?></option>
-                                <option value="21"><?= lang('Device_TableHead_NetworkSite');?></option>
-                                <option value="22"><?= lang('Device_TableHead_SSID');?></option>
-                              </select>
-                              <span class="input-group-addon"><i title="<?= lang('Gen_Save');?>" class="fa fa-save  pointer" onclick="saveSelectedColumns();"></i></span>   
-                            </div>
-                          </div>
-
-                        </div>
-                        
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_displayed_columns_text');?></div>
-                    </div>  
-                    
-                    
-                </div>
-        </div>
-        <div class="tab-pane" id="tab_DBTools">
+        <div class="tab-pane active" id="tab_DBTools">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" >
@@ -483,7 +354,7 @@ $db->close();
 <script>
 
 var emptyArr = ['undefined', "", undefined, null];
-var selectedTab                 = 'tab_Settings_id';
+var selectedTab                 = 'tab_DBTools_id';
 
 initializeTabs();
 
@@ -710,42 +581,6 @@ function ImportPastedCSV()
 
 
 // --------------------------------------------------------
-// Switch Darkmode 
-function askToggleDarkmode() {
-  // Ask 
-  showModalWarning('<?= lang('Maintenance_Tool_darkmode_noti');?>', '<?= lang('Maintenance_Tool_darkmode_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Switch');?>', 'ToggleDarkmode');
-}
-
-// --------------------------------------------------------
-function ToggleDarkmode()
-{   
-  // get parameter Front_Dark_Mode_Enabled value
-  $.get('php/server/parameters.php?action=get&defaultValue=false&expireMinutes=525600&parameter=Front_Dark_Mode_Enabled', function(data) {
-  var result = JSON.parse(data);
-  if (result) {
-      darkModeEnabled = result == 'true';      
-
-      // invert value
-      darkModeEnabled = !darkModeEnabled;      
-
-      // save inverted value
-      $.get('php/server/parameters.php?action=set&parameter=Front_Dark_Mode_Enabled&expireMinutes=525600&value='+ darkModeEnabled,
-        function(data) {
-          if (data != "OK") {
-            showMessage (data);
-            setTimeout(function (){location.reload()}, 1000);
-            
-          } else {
-            showMessage (data);
-          };
-      } );
-      
-  }
-  });
-}
-
-// --------------------------------------------------------
 
 // Clean log file 
 var targetLogFile = "";
@@ -798,121 +633,55 @@ function scrollDown() {
 
 
 // --------------------------------------------------------
-// Manage displayed columns
-// --------------------------------------------------------
-colDefaultOrder = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'];
-colDefaultOrderTxt = '[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]';
-
-
-function saveSelectedColumns () { 
-  $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ $('#columnsSelect').val().toString() +']&parameter=Front_Devices_Columns_Visible', function(data) {
-    // save full order of all columns to simplify mapping later on
-    
-    colDisplayed = $('#columnsSelect').val();
-    
-    colNewOrder = colDisplayed;
-
-    // append the remaining columns in the previous order
-    for(i = 0; i < colDefaultOrder.length; i++)
-    {
-      if(!colDisplayed.includes(colDefaultOrder[i]))
-      {
-        colNewOrder.push(colDefaultOrder[i])
-      }
-    }    
-
-    // save the setting in the DB
-    $.get('php/server/parameters.php?action=set&expireMinutes=525600&value=['+ colNewOrder.toString() +']&parameter=Front_Devices_Columns_Order', function(data) {
-
-      showMessage(data);
-
-    });
-  });
-}
-
-// --------------------------------------------------------
-function initializeSelectedColumns () { 
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+colDefaultOrderTxt+'&parameter=Front_Devices_Columns_Visible', function(data) {
-
-    handle_locked_DB(data)
-    
-    tableColumnShow = numberArrayFromString(data);
-
-    for(i=0; i < tableColumnShow.length; i++)
-    {
-      // create the option and append to Select2
-      var option = new Option($('#columnsSelect option[value='+tableColumnShow[i]+']').html(), tableColumnShow[i] , true, true);
-      
-      $("#columnsSelect").append(option).trigger('change');
-
-    }
-    
-  });
-} 
-
-
-
-
-// --------------------------------------------------------
 // General initialization
 // --------------------------------------------------------
-function initializeTabs () {  
-
-  setTimeout(function() {
-
-    key = "activeMaintenanceTab"
+function initializeTabs() {  
+  setTimeout(() => {
+    const key = "activeMaintenanceTab";
 
     // default selection
-    selectedTab = "tab_Settings"
+    let selectedTab = "tab_DBTools_id";
 
-    // the #target from the url
-    target = window.location.hash.substr(1) 
+    // the #target from the URL
+    let target = window.location.hash.substr(1);
 
-    
+    console.log(selectedTab);
 
     // get only the part between #...?
-    if(target.includes('?'))
-    {
-      target = target.split('?')[0]
+    if (target.includes('?')) {
+      target = target.split('?')[0];
     }
-
-    console.log(target);
 
     // update cookie if target specified
-    if(target != "")
-    {    
-
-      if (!selectedTab.endsWith("_id")) {
-        selectedTab = target + "_id";
-      } 
-
-      setCache(key, selectedTab) // _id is added so it doesn't conflict with AdminLTE tab behavior
+    if (target) {    
+      selectedTab = target.endsWith("_id") ? target : `${target}_id`;
+      setCache(key, selectedTab); // _id is added so it doesn't conflict with AdminLTE tab behavior
     }
 
-    // get the tab id from the cookie (already overriden by the target)
-    if(!emptyArr.includes(getCache(key)))
-    {
-      selectedTab = getCache(key);
+    // get the tab id from the cookie (already overridden by the target)
+    const cachedTab = getCache(key);
+    if (cachedTab && !emptyArr.includes(cachedTab)) {
+      selectedTab = cachedTab;
     }
 
     // Activate panel
     $('.nav-tabs a[id='+ selectedTab +']').tab('show');
 
     // When changed save new current tab
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      setCache(key, $(e.target).attr('id'))
+    $('a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
+      const newTabId = $(e.target).attr('id');
+      setCache(key, newTabId);
     });
 
     // events on tab change
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      var target = $(e.target).attr("href") // activated tab
+    $('a[data-toggle="tab"]').on('shown.bs.tab', (e) => {
+      const newTarget = $(e.target).attr("href"); // activated tab
     });
 
     hideSpinner();
-     
   }, 50);
-  
 }
+
 //------------------------------------------------------------------------------
 //  Logs render functionality
 //------------------------------------------------------------------------------
@@ -932,7 +701,7 @@ function toggleAutoRefresh() {
 }
 
 //------------------------------------------------------------------------------
-// Manages thefilter application
+// Manages the filter application on the logs
 function applyFilter() {
       const filterText = $("#logsFilter").val().toLowerCase();
       
@@ -979,7 +748,6 @@ function renderLogs(customData) {
 //------------------------------------------------------------------------------
 // Init
 window.onload = function asyncFooter() {
-  initializeSelectedColumns();
   renderLogs();
 
   // initializeTabs();

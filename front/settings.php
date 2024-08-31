@@ -669,7 +669,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             value = applyTransformers(value, transformers);
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (inputType === 'checkbox') {
+          } else if (dataType === 'boolean') {
             
             value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
             value = applyTransformers(value, transformers);

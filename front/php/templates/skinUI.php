@@ -4,9 +4,9 @@
 // ## GUI settings processing start
 // ###################################
 
-if( isset($_COOKIE['Front_Dark_Mode_Enabled']))
+if( isset($_COOKIE['UI_dark_mode']))
 {
-    $ENABLED_DARKMODE = $_COOKIE['Front_Dark_Mode_Enabled'] == "true";
+    $ENABLED_DARKMODE = $_COOKIE['UI_dark_mode'] == "True";
 }else
 {
     $ENABLED_DARKMODE = False;

@@ -1135,6 +1135,25 @@ function arraysContainSameValues(arr1, arr2) {
   }
 }
 
+
+// -----------------------------------------------------------------------------
+// apply dark mode
+
+$(document).ready(function() {
+  // Assume getSetting is a function that returns true or false for dark mode
+  if (getSetting("UI_dark_mode") === "True") {
+    // Add the dark mode stylesheet
+    setCookie("UI_dark_mode", "True")
+    $('head').append('<link rel="stylesheet" href="css/dark-patch.css">');
+    // Set the background image for dark mode
+    $('body').attr('style', 'background-image: url(\'img/boxed-bg-dark.png\');');
+  } else {
+    setCookie("UI_dark_mode", "False")
+    // Set the background image for light mode
+    $('body').attr('style', 'background-image: url(\'img/background.png\');');
+  }
+});
+
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------

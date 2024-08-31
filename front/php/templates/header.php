@@ -69,12 +69,14 @@ require dirname(__FILE__).'/security.php';
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
   <link rel="manifest" href="img/manifest.json">  
   <!-- Dark-Mode Patch -->
-<?php
-if ($ENABLED_DARKMODE === True) {
-   echo '<link rel="stylesheet" href="css/dark-patch.css">';
-   $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
-} else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
-?>
+
+  <?php
+  if ($ENABLED_DARKMODE === True) {
+    echo '<link rel="stylesheet" href="css/dark-patch.css">';
+    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
+  } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
+  ?>
+
 
 
 <!-- Servertime to the right of the hostname -->
@@ -312,9 +314,6 @@ if ($ENABLED_DARKMODE === True) {
             </span>
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
-            <li>
-              <a href="maintenance.php#tab_Settings" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_UISettings");?> </a>
-            </li>
             <li>
               <a href="maintenance.php#tab_DBTools" onclick="initializeTabs()">  <?= lang("Maintenance_Tools_Tab_Tools");?> </a>
             </li>
