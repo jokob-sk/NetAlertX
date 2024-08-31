@@ -147,8 +147,9 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     # Cleanup New Devices
     if HRS_TO_KEEP_NEWDEV != 0:
         mylog('verbose', [f'[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)'])            
-        cursor.execute (f"""DELETE FROM Devices 
-                                WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '+{str(HRS_TO_KEEP_NEWDEV)} hour')""") 
+        query = f"""DELETE FROM Devices WHERE dev_NewDevice = 1 AND dev_FirstConnection < date('now', '-{str(HRS_TO_KEEP_NEWDEV)} hour')"""
+        mylog('verbose', [f'[{pluginName}] Query: {query} '])            
+        cursor.execute (query) 
 
     # -----------------------------------------------------
     # Cleanup Pholus_Scan

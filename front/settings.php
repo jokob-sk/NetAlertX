@@ -676,17 +676,24 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "array" ) {
-            
-            // make sure to collect all if set as "editable" or selected only otherwise
-            $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected" 
 
-            const temps = [];
-            $(`#${setCodeName} option${additionalSelector}`).each(function() {
-              const vl = $(this).val();
-              if (vl !== '') {
-                temps.push(applyTransformers(vl, transformers));
-              }
-            });
+            let temps = [];
+
+            if(isOrdeable)
+            {
+              temps = $(`#${setCodeName}`).val()
+            } else
+            {            
+              // make sure to collect all if set as "editable" or selected only otherwise
+              $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected"; 
+              
+              $(`#${setCodeName} option${additionalSelector}`).each(function() {
+                const vl = $(this).val();
+                if (vl !== '') {
+                  temps.push(applyTransformers(vl, transformers));
+                }
+              });
+            }
           
             value = JSON.stringify(temps);
             settingsArray.push([prefix, setCodeName, dataType, value]);

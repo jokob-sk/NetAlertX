@@ -1079,6 +1079,23 @@ input[readonly] {
     margin-bottom:20px;
 }
 
+#settingsPage .select2-selection 
+{
+    width: initial;
+    display: inline-block;
+}
+
+#settingsPage  .select2-selection
+{
+    background-color: rgb(96, 96, 96);
+} 
+#settingsPage  .select2-container 
+{
+    width: 100% !important;
+}
+
+
+
 /* ----------------------------------------------------------------- */
 /*                    Devices page                                   */
 /* ----------------------------------------------------------------- */
@@ -1110,18 +1127,18 @@ input[readonly] {
     cursor: -webkit-grab;
 }
 
-.db_info_table_row .select2-container--default .select2-selection--multiple .select2-selection__choice
+.select2-container--default .select2-selection--multiple .select2-selection__choice
 {
-    background-color:#258744;
+    background-color:#258744 !important;
 }
-.db_info_table_row .select2-container--default .select2-selection--multiple
+.select2-container--default .select2-selection--multiple
 {
-    background-color:#606060;
+    background-color:#606060 !important;
 }
 
 .select2-container .select2-dropdown
 {
-    background-color:#606060;
+    background-color:#606060 !important;
 }
 
 .networkPageHelp{

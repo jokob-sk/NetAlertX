@@ -568,6 +568,10 @@ function applyTransformers(val, transformers) {
           val = btoa(val);
         }
         break;
+      case "getString":
+        // no change
+        val = val;        
+        break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);
     }
@@ -589,6 +593,10 @@ function reverseTransformers(val, transformers) {
         if (isBase64(val)) {
           val = atob(val);
         }
+        break;
+      case "getString":
+        // retrieve string
+        val = getString(val);        
         break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);

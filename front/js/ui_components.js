@@ -286,7 +286,7 @@ function initSelect2() {
 // try to initialize select2
 setTimeout(() => {
   initSelect2()
-}, 500);
+}, 1000);
 
 
 console.log("init ui_components.js")
