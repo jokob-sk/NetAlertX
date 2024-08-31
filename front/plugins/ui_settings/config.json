@@ -82,7 +82,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Which columns to show on the Devices page."
+          "string": "Columns and their order that are shown on the Devices page. (work in progress -> use Maintenance -> UI Settings for now)"
         }
       ]
     },

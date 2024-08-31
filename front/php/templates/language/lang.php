@@ -5,7 +5,8 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us","es_es","de_de", "nb_no", "pl_pl", "pt_br", "ru_ru", "fr_fr", "it_it", "zh_cn", "cs_cz"];
+$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz"];
+
 
 global $db;
 

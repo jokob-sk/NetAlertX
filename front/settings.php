@@ -696,6 +696,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             }
           
             value = JSON.stringify(temps);
+
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "json") {
@@ -791,35 +792,34 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         setTimeout("handleLoadingDialog()", 1000);
 
       } else
-      {
-        // check if the app is initialized and hide the spinner
-        if(isAppInitialized())
-        {          
-          // init page
-          getData()
-          
-          // reload page if outdated information might be displayed
-          if(secondsSincePageLoad() > 5)
-          {
-            clearCache()
-          }
-        } 
-        else
-        {
-          console.log("isAppInitialized() returned false, reloading in 3s");
-          // reload the page if not initialized to give time the background tasks to finish 
-          setTimeout(() => {
-
-            window.location.reload()
-            
-          }, 3000);
-        }     
+      {       
+        checkInitialization();
       }
+
 
       document.getElementById('lastImportedTime').innerHTML = humanReadable; 
      })
 
   }
+
+
+  function checkInitialization() {
+    if (isAppInitialized()) {
+        // App is initialized, hide spinner and proceed with initialization
+        console.log("App initialized, proceeding...");
+        getData();
+
+        // Reload page if outdated information might be displayed
+        if (secondsSincePageLoad() > 10) {
+            clearCache();
+        }
+    } else {
+        console.log("App not initialized, checking again in 1s...");
+
+        // Check again after a delay
+        setTimeout(checkInitialization, 1000);
+    }
+}
   
 
   showSpinner()

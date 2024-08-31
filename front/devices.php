@@ -139,134 +139,70 @@
   var deviceStatus    = 'all';
   var parTableRows    = 'Front_Devices_Rows';
   var parTableOrder   = 'Front_Devices_Order';
-  var tableRows       = 10;
-  var tableOrder      = [[3,'desc'], [0,'asc']];
+  var tableRows       = getCookie ("nax_parTableRows") == "" ? 10 : getCookie ("nax_parTableRows") ;
+  var tableOrder       = getCookie ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCookie ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];
   var tableColumnOrder = [];
   var tableColumnVisible = [];
 
-
-
-
   // Read parameters & Initialize components
   callAfterAppInitialized(main)
   showSpinner();
-  
-
 
 // -----------------------------------------------------------------------------
 function main () {
 
-    //initialize the table headers in the correct order
-    var headersDefaultOrder = [ 
-                              getString('Device_TableHead_Name'),
-                              getString('Device_TableHead_Owner'),
-                              getString('Device_TableHead_Type'),   
-                              getString('Device_TableHead_Icon'),
-                              getString('Device_TableHead_Favorite'),
-                              getString('Device_TableHead_Group'),
-                              getString('Device_TableHead_FirstSession'),
-                              getString('Device_TableHead_LastSession'),
-                              getString('Device_TableHead_LastIP'),
-                              getString('Device_TableHead_MAC'),
-                              getString('Device_TableHead_Status'),
-                              getString('Device_TableHead_MAC_full'),
-                              getString('Device_TableHead_LastIPOrder'),
-                              getString('Device_TableHead_Rowid'),
-                              getString('Device_TableHead_Parent_MAC'),
-                              getString('Device_TableHead_Connected_Devices'),
-                              getString('Device_TableHead_Location'),
-                              getString('Device_TableHead_Vendor'),
-                              getString('Device_TableHead_Port'),
-                              getString('Device_TableHead_GUID'),
-                              getString('Device_TableHead_SyncHubNodeName'),
-                              getString('Device_TableHead_NetworkSite'),
-                              getString('Device_TableHead_SSID')
-                            ];
+  //initialize the table headers in the correct order
+  var availableColumns = getSettingOptions("UI_device_columns").split(",");
+  var headersDefaultOrder = availableColumns.map(val => getString(val));
+  var selectedColumns = JSON.parse(getSetting("UI_device_columns").replace(/'/g, '"'));
 
   // generate default order lists of given length
   var columnsStr = JSON.stringify(Array.from({ length: headersDefaultOrder.length }, (_, i) => i));
   tableColumnOrder = Array.from({ length: headersDefaultOrder.length }, (_, i) => i);
-  tableColumnVisible = tableColumnOrder;
+  tableColumnVisible = [];
 
-  handleLoadingDialog()
+  // Initialize tableColumnVisible by including all columns from selectedColumns, preserving their order.
+  tableColumnVisible = selectedColumns.map(column => availableColumns.indexOf(column)).filter(index => index !== -1);
+
+  // Add any columns from availableColumns that are not in selectedColumns to the end.
+  const remainingColumns = availableColumns.map((column, index) => index).filter(index => !tableColumnVisible.includes(index));
+
+  // Combine both arrays.
+  tableColumnOrder = tableColumnVisible.concat(remainingColumns);
+
+  // Generate the full array of numbers from 0 to totalLength - 1 of tableColumnOrder
+  const fullArray = Array.from({ length: tableColumnOrder.length }, (_, i) => i);
+
+  // Filter out the elements already present in inputArray
+  const missingNumbers = fullArray.filter(num => !tableColumnVisible.includes(num));
+
+  // Concatenate the inputArray with the missingNumbers
+  tableColumnOrder = [...tableColumnVisible, ...missingNumbers];
+
+  // render table headers
+  html = '';
+                                  
+  for(index = 0; index < tableColumnOrder.length; index++)
+  {
+    html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
+  }
+
+  $('#tableDevices tr').html(html);  
 
   // Hide UI elements as per settings
   // setTimeout(() => {
     hideUIelements("UI_DEV_SECTIONS")
     
   // }, 10);
+
+  // Initialize components with parameters
+  initializeDatatable(getUrlAnchor('my_devices'));
   
-
-  // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
-  cookieColumnsVisibleStr = decodeURI(getCookie("Front_Devices_Columns_Visible")).replaceAll('%2C',',')  
-
-  defaultValue = cookieColumnsVisibleStr == "" ? columnsStr : cookieColumnsVisibleStr;
-
-  // get visible columns
-  $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Visible&skipcache', function(data) {
-
-    handle_locked_DB(data)
-    
-    // save which columns are in the Devices page visible
-    tableColumnVisible = numberArrayFromString(data);
-
-    // get from cookie if available (need to use decodeURI as saved as part of URI in PHP)
-    cookieColumnsOrderStr = decodeURI(getCookie("Front_Devices_Columns_Order")).replaceAll('%2C',',')
-
-    defaultValue = cookieColumnsOrderStr == "" ? columnsStr : cookieColumnsOrderStr;    
-
-    // get the custom order specified by the user
-    $.get('php/server/parameters.php?action=get&expireMinutes=525600&defaultValue='+defaultValue+'&parameter=Front_Devices_Columns_Order&skipcache', function(data) {
-
-      handle_locked_DB(data)
-    
-      // save the columns order in the Devices page 
-      tableColumnOrder = numberArrayFromString(data);
-
-      html = '';
-                                  
-      for(index = 0; index < tableColumnOrder.length; index++)
-      {
-        html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
-      }
-
-      $('#tableDevices tr').html(html);   
-
-      // get parameter value
-      $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
-        var result = JSON.parse(data);
-
-        result = parseInt(result, 10)
-
-        if (Number.isInteger (result) ) {
-            tableRows = result;  
-        }
-
-        // get parameter value
-        $.get('php/server/parameters.php?action=get&defaultValue=[[3,"desc"],[0,"asc"]]&parameter='+ parTableOrder, function(data) {
-          var result = JSON.parse(data);
-          result = JSON.parse(result);
-
-          
-
-          if (Array.isArray (result) ) {
-            tableOrder = result;
-          }
-
-          // Initialize components with parameters
-
-          initializeDatatable(getUrlAnchor('my_devices'));
-          
-          // check if data outdated and show spinner if so
-          handleLoadingDialog()
-
-
-        });
-      });
-    });
-   });
+  // check if data outdated and show spinner if so
+  handleLoadingDialog()
+  
 }
 
 // -----------------------------------------------------------------------------
@@ -679,11 +615,11 @@ function initializeDatatable (status) {
 
     // Save cookie Rows displayed, and Parameters rows & order
     $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
-      setParameter (parTableRows, len);
+      setCookie ("nax_parTableRows", len);
     } );
       
     $('#tableDevices').on( 'order.dt', function () {
-      setParameter (parTableOrder, JSON.stringify (table.order()) );
+      setCookie ("nax_parTableOrder", JSON.stringify (table.order()) );
       setCache ('devicesList', getDevicesFromTable(table) );
     } );
 

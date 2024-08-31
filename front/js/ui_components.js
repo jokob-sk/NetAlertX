@@ -249,6 +249,7 @@ function initSelect2() {
     
     // --------------------------------------------------------
     //Initialize Select2 Elements and make them sortable
+    
     $(function () {
       // Iterate over each Select2 dropdown
       $('.select2').each(function() {

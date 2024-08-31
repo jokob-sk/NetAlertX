@@ -12,7 +12,7 @@ var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
 var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "zh_cn", "cs_cz"]; // needs to be same as in lang.php
+const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -1201,7 +1201,7 @@ function callAfterAppInitialized(callback) {
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
   //  return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
-  return (parseInt(getCache("completedCallsCount")) ==  completedCallsCount_final);
+  return (parseInt(getCache("completedCallsCount")) >=  completedCallsCount_final);
 }
 
 // Define a function that will execute the code only once

@@ -437,8 +437,6 @@ function filterRows(inputText) {
 }
 
 
-
-
 setTimeout(() => {
   // Event listener for input change
   $("#settingsSearch").on("input", function () {
@@ -711,8 +709,9 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
   resultArray    = []
   selectedArray  = []
   cssClass       = ""
+  
 
-  // determine if options or values are used in teh listing
+  // determine if options or values are used in the listing
   if (valuesArray.length > 0 && options.length > 0){
 
     // multiselect list ->  options only + selected the ones in valuesArray 
@@ -730,20 +729,30 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
     resultArray   = options;
   }
 
+ 
+  // Create a map to track the index of each item in valuesArray
+  const orderMap = new Map(valuesArray.map((item, index) => [item, index]));
+
+  // Sort resultArray based on the order in valuesArray
+  resultArray.sort((a, b) => {
+    const indexA = orderMap.has(a.id) ? orderMap.get(a.id) : valuesArray.length;
+    const indexB = orderMap.has(b.id) ? orderMap.get(b.id) : valuesArray.length;
+    return indexA - indexB;
+  });
+
   resultArray.forEach(function(item) {
+    let labelName = item.name;
 
-    labelName = item.name
-
-    if(labelName != '❌None')
-    {
-      labelName = reverseTransformers(labelName, transformers)
+    if (labelName !== '❌None') {
+      labelName = reverseTransformers(labelName, transformers);
     }
 
-    // needs to happen always if options ued as source
-    let selected = options.length != 0 && valuesArray.includes(item.id) ? 'selected' : '';
+    // Always include selected if options are used as a source
+    let selected = options.length !== 0 && valuesArray.includes(item.id) ? 'selected' : '';
 
     optionsHtml += `<option class="${cssClass}" value="${item.id}" ${selected}>${labelName}</option>`;
   });
+
 
   // Place the resulting HTML into the specified placeholder div
   $("#" + placeholder).replaceWith(optionsHtml);
