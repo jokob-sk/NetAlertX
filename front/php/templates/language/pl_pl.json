@@ -654,6 +654,8 @@
     "UI_PRESENCE_name": "Pokaż w tabeli obecności",
     "UI_REFRESH_description": "Wprowadź liczbę sekund po której UI ma się przeładować. Ustaw na <code>0</code> by wyłączyć.",
     "UI_REFRESH_name": "Automatycznie odświeżaj UI",
+    "VERSION_description": "",
+    "VERSION_name": "",
     "devices_old": "Odświeżanie...",
     "general_event_description": "Wydarzenie które wyzwoliłeś może chwilę zająć dopóki procesy w tle nie zakończą się. Wykonanie zakończy się kiedy kolejka się opróżni (Sprawdź <a  href='/maintenance.php#tab_Logging'>logi błędów</a> jeżeli napotkasz błędy).<br/><br/> Kolejka wykonywania:",
     "general_event_title": "Wykonywanie wydarzeń ad-hoc",

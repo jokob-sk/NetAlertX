@@ -654,6 +654,8 @@
     "UI_PRESENCE_name": "Vis i tilstedeværelse-diagrammet",
     "UI_REFRESH_description": "Skriv inn antall sekunder før UI laster inn på nytt. Sett til <code>0</code> for å deaktivere.",
     "UI_REFRESH_name": "Oppdater UI automatisk",
+    "VERSION_description": "",
+    "VERSION_name": "",
     "devices_old": "Oppdaterer...",
     "general_event_description": "Hendelsen du har utløst kan ta en stund til før bakgrunnsprosesser er ferdig. Utførelsen ble avsluttet når utførelseskøen nedenfor tømmes (sjekk <a  href='/maintenance.php#tab_Logging'>Feillogg</a> Hvis du møter problemer). <br/> <br/> Utførelseskø:",
     "general_event_title": "Utfører en ad-hoc hendelse",

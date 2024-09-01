@@ -11,13 +11,14 @@ import re
 
 
 import conf 
-from const import fullConfPath
-from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type
+from const import fullConfPath, applicationPath
+from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import print_plugin_info, run_plugin_scripts
 from plugin_utils import get_plugins_configs, get_plugin_setting_obj
+from notification import write_notification
 
 #===============================================================================
 # Initialise user defined values
@@ -140,6 +141,7 @@ def importConfigs (db, all_plugins):
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0' , c_d, 'Custom endpoint', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
+    conf.VERSION = ccd('VERSION', '' , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', '[]', 'General')
           
     # UI
@@ -285,8 +287,7 @@ def importConfigs (db, all_plugins):
     for plugin in all_plugins:
         pref = plugin["unique_prefix"]  
         loaded_plugins_prefixes.append(pref)
-
-
+        
     # save the newly discovered plugins as options and default values
     conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', loaded_plugins_prefixes , c_d, 'Loaded plugins', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', str(sorted(all_plugins_prefixes)), 'General')
 
@@ -297,6 +298,15 @@ def importConfigs (db, all_plugins):
     # -----------------
     # Plugins END
   
+    # manage upgrade
+    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
+        buildTimestamp = int(f.read().strip())
+        
+        if conf.VERSION != buildTimestamp:
+            conf.VERSION = ccd('VERSION', buildTimestamp , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
+            
+            write_notification(f'[Upgrade] : App upgarded, please clear cache.', 'interrupt', timeNowTZ())
+
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    

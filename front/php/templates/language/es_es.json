@@ -723,6 +723,8 @@
     "UI_PRESENCE_name": "Mostrar en el gráfico de presencia",
     "UI_REFRESH_description": "Ingrese el número de segundos después de los cuales se recarga la interfaz de usuario. Ajustado a <code> 0 </code> para desactivar.",
     "UI_REFRESH_name": "Actualización automática de la interfaz de usuario",
+    "VERSION_description": "",
+    "VERSION_name": "",
     "WEBHOOK_PAYLOAD_description": "El formato de datos de carga de Webhook para el atributo <code>body</code> > <code>attachments</code> > <code>text</code> en el json de carga. Vea un ejemplo de la carga <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/report_templates/webhook_json_sample.json\">aquí</a>. (por ejemplo: para discord use <code>text</code>)",
     "WEBHOOK_PAYLOAD_name": "Tipo de carga",
     "WEBHOOK_REQUEST_METHOD_description": "El método de solicitud HTTP que se utilizará para la llamada de webhook.",

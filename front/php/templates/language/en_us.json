@@ -654,6 +654,8 @@
     "UI_PRESENCE_name": "Show in presence chart",
     "UI_REFRESH_description": "Enter number of seconds after which the UI reloads. Set to <code>0</code> to disable.",
     "UI_REFRESH_name": "Auto-refresh UI",
+    "VERSION_description": "Version timestamp helper value to check if app was upgarded.",
+    "VERSION_name": "Version timestamp",
     "devices_old": "Refreshing...",
     "general_event_description": "The event you have triggered might take a while until background processes finish. The execution ended once the below execution queue empties (Check the <a href='/maintenance.php#tab_Logging'>error log</a> if you encounter issues). <br/> <br/> Execution queue:",
     "general_event_title": "Executing an ad-hoc event",

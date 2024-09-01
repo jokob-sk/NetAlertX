@@ -654,6 +654,8 @@
     "UI_PRESENCE_name": "Afficher dans le graphique de présence",
     "UI_REFRESH_description": "Renseignez le nombre de secondes après lequel rafraîchir l'interface graphique. Renseignez <code>0</code> pour désactiver.",
     "UI_REFRESH_name": "Rafraîchir automatiquement l'interface graphique",
+    "VERSION_description": "",
+    "VERSION_name": "",
     "devices_old": "Rafraichissement...",
     "general_event_description": "L'événement que vous avez lancé peut prendre du temps avant que les tâches de fond ne soit terminées. La durée d'exécution finira une fois que la file d'exécution ci-dessous sera vide (consulter les <a href='/maintenance.php#tab_Logging'>journaux d'erreur</a> si vous rencontrez des erreurs). <br/> <br/> File d'exécution :",
     "general_event_title": "Lancement d'un événement sur mesure",
