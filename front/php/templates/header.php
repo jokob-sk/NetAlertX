@@ -67,7 +67,7 @@ require dirname(__FILE__).'/security.php';
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
-  <link rel="manifest" href="img/manifest.json">  
+  <link rel="manifest" href="img/manifest.json" crossorigin="use-credentials">  
   <!-- Dark-Mode Patch -->
 
   <?php
