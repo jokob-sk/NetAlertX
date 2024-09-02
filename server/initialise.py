@@ -298,14 +298,17 @@ def importConfigs (db, all_plugins):
     # -----------------
     # Plugins END
   
-    # manage upgrade
+    # Check if app was upgraded
     with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
         buildTimestamp = int(f.read().strip())
         
-        if conf.VERSION != buildTimestamp:
+        if str(conf.VERSION) != str(buildTimestamp):
+            
+            mylog('none', ['[Config] App upgraded 🎉'])           
+            
             conf.VERSION = ccd('VERSION', buildTimestamp , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
             
-            write_notification(f'[Upgrade] : App upgarded, please clear cache.', 'interrupt', timeNowTZ())
+            write_notification(f'[Upgrade] : App upgraded 🎉. Please clear app cache with the 🔄 button in the header and clear the browser cache (shift + browser refresh button).', 'interrupt', timeNowTZ())
 
 
     # Insert settings into the DB    
