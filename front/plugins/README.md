@@ -53,6 +53,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `SMTP`        | ▶️      | Email notifications                       |           |          | Script       | [_publisher_email](/front/plugins/_publisher_email/)              |
 | `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                 |           |          | Script       | [snmp_discovery](/front/plugins/snmp_discovery/)                  |
 | `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄    |          | Script       | [sync](/front/plugins/sync/)                                     |
+| `TELEGRAM`    | ▶️      | Telegram notifications                    |          |          | Script    | [_publisher_telegram](/front/plugins/_publisher_telegram/)             |
 | `UNDIS`       | 🔍/📥   | Create dummy devices                      |           |          | Script       | [undiscoverables](/front/plugins/undiscoverables/)                |
 | `UNFIMP`      | 🔍/📥   | UniFi device import & sync                |  🖧       |          | Script       | [unifi_import](/front/plugins/unifi_import/)                      |
 | `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](/front/plugins/vendor_update/)                    |
