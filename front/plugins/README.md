@@ -11,12 +11,12 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 > You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. Use `Ctrl + Click` to select/deselect. 
 
 1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
-1. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
-1. Setup your [Network topology diagram](/docs/NETWORK_TREE.md)
-1. Fine-tune [Notifications](/docs/NOTIFICATIONS.md)
-1. [Backup your setup](/docs/BACKUPS.md)
-1. Contribute and [Create custom plugins](/docs/PLUGINS_DEV.md)
-1. Consider [donating](https://github.com/jokob-sk/NetAlertX?tab=readme-ov-file#-sponsors) to keep me going
+2. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
+3. Setup your [Network topology diagram](/docs/NETWORK_TREE.md)
+4. Fine-tune [Notifications](/docs/NOTIFICATIONS.md)
+5. [Backup your setup](/docs/BACKUPS.md)
+6. Contribute and [Create custom plugins](/docs/PLUGINS_DEV.md)
+7. Consider [donating](https://github.com/jokob-sk/NetAlertX?tab=readme-ov-file#-sponsors) to keep me going
 
 
 ## 📑 Available Plugins
