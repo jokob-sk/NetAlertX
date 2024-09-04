@@ -274,6 +274,7 @@
     "Gen_AreYouSure": "你确定吗？",
     "Gen_Backup": "运行备份",
     "Gen_Cancel": "取消",
+    "Gen_Change": "",
     "Gen_Copy": "运行",
     "Gen_DataUpdatedUITakesTime": "好的 - 如果扫描正在运行，UI 可能需要一段时间才能更新。",
     "Gen_Delete": "删除",

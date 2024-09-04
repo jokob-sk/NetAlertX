@@ -274,6 +274,7 @@
     "Gen_AreYouSure": "Are you sure?",
     "Gen_Backup": "Run Backup",
     "Gen_Cancel": "Cancel",
+    "Gen_Change": "Change",
     "Gen_Copy": "Run",
     "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is running.",
     "Gen_Delete": "Delete",

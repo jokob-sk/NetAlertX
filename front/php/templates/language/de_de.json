@@ -286,6 +286,7 @@
     "Gen_AreYouSure": "Sind Sie sich sicher?",
     "Gen_Backup": "Sichern",
     "Gen_Cancel": "Abbrechen",
+    "Gen_Change": "",
     "Gen_Copy": "Run",
     "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is runnig",
     "Gen_Delete": "Löschen",

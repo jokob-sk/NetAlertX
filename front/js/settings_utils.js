@@ -305,6 +305,54 @@ function removeAllOptions(element) {
 }
 
 // -------------------------------------------------------------------
+// Add all options
+function selectAll(element) {
+  settingsChanged();
+
+  // Get the <select> element with the class 'deviceSelector'
+  // var selectElement = $('.deviceSelector select');
+  var selectElement = $(`#${$(element).attr("my-input-to")}`);
+  
+  // Iterate over each option within the select element
+  selectElement.find('option').each(function() {
+    // Mark each option as selected
+    $(this).prop('selected', true);
+  });
+
+  // Trigger the 'change' event to notify Bootstrap Select of the changes
+  selectElement.trigger('change');
+}
+
+// -----------------------------------------------------------------------------
+// UN-Select All
+function unselectAll(element) {
+  settingsChanged();
+  // Get the <select> element with the class 'deviceSelector'
+  // var selectElement = $('.deviceSelector select');
+  var selectElement = $(`#${$(element).attr("my-input-to")}`);
+  
+  // Iterate over each option within the select element
+  selectElement.find('option').each(function() {
+    // Unselect each option
+    $(this).prop('selected', false);
+  });
+  
+  // Trigger the 'change' event to notify Bootstrap Select of the changes
+  selectElement.trigger('change');
+}
+
+// -----------------------------------------------------------------------------
+// Trigger change to open up the dropdown filed
+function selectChange(element) {
+  settingsChanged();
+  // Get the <select> element with the class 'deviceSelector'
+  // var selectElement = $('.deviceSelector select');
+  var selectElement = $(`#${$(element).attr("my-input-to")}`);
+  
+  selectElement.parent().find("input").focus().click();
+}
+
+// -------------------------------------------------------------------
 // Function to initialize remove functionality on select options
 
 // Counter to track number of clicks

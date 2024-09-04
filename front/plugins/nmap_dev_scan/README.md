@@ -3,7 +3,7 @@
 NMAP-scan is a command-line tool to discover and fingerprint IP hosts on the local network. The NMAP-scan (and other Network-scan plugin times using the `SCAN_SUBNETS` setting) time depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface. Check the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for help with setting up VLANs, what VLANs are supported, or how to figure out the network mask and your interface. 
 
 > [!NOTE]
-> The `NMAPDEV` plugin is great for detecting the availability of devices, however ARP scan might be better covering multiple VLANS. You can always combine different scan methods. You can find all available network scanning options (marked as `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) readme.  
+> The `NMAPDEV` plugin is great for detecting the availability of devices, however ARP scan might be better covering multiple VLANS and subnets as NMAP can't pickup the MAC address from other subnets (this is an NMAP limitation) which are necessary to identify a device. You can always combine different scan methods. You can find all available network scanning options (marked as `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) readme.  
 
 ### Usage
 

@@ -1094,7 +1094,11 @@ input[readonly] {
     width: 100% !important;
 }
 
-
+#settingsPage  .select2-container  .selection
+{
+    width: 100% !important;
+    display: inline-grid;
+}
 
 /* ----------------------------------------------------------------- */
 /*                    Devices page                                   */

@@ -35,6 +35,39 @@
             "elementType": "select",
             "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
             "transformers": ["getString"]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectAll(this)" },
+              { "getStringKey": "Gen_Add_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "unselectAll(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectChange(this)" },
+              { "getStringKey": "Gen_Change" }
+            ],
+            "transformers": []
           }
         ]
       },
@@ -82,7 +115,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Columns and their order that are shown on the Devices page."
+          "string": "Columns and their order that are shown on the Devices page. Drag and drop the order of columns, click <code>x</code> to remove columns. You can also click into the field to selectivelly add fields."
         }
       ]
     },
