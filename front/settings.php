@@ -552,7 +552,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           });
 
           // EVENTS
-          // process events (e.g. run ascan, or test a notification) if associated with the setting
+          // process events (e.g. run a scan, or test a notification) if associated with the setting
           let eventsHtml = "";          
 
           const eventsList = createArray(set['Events']);      
@@ -591,6 +591,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     }, 50);
     
     setupSmoothScrolling()
+    // try to initialize select2
+    initSelect2()
     hideSpinner()
 
   }

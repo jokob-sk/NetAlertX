@@ -68,38 +68,6 @@ function initDeviceSelectors(devicesListAll_JSON) {
 }
 
 
-
-// -----------------------------------------------------------------------------
-// Hide elements on the page based on the supplied setting
-function hideUIelements(settingKey) {
-
-  hiddenSectionsSetting = getSetting(settingKey)
-  
-  if(hiddenSectionsSetting != "") // handle if settings not yet initialized
-  {
-
-    sectionsArray = createArray(hiddenSectionsSetting)
-
-    // remove spaces to get IDs
-    var newArray = $.map(sectionsArray, function(value) {
-        return value.replace(/\s/g, '');
-    });
-
-    $.each(newArray, function(index, hiddenSection) {
-
-      if($('#' + hiddenSection))
-      {
-        $('#' + hiddenSection).hide()      
-      }    
-      
-    });
-  }
-
-}
-
-
-
-
 // -----------------------------------------------------------------------------
 // Updates the icon preview  
 function updateIconPreview (inputId) {
@@ -284,10 +252,15 @@ function initSelect2() {
   }  
 }
 
-// try to initialize select2
-setTimeout(() => {
-  initSelect2()
-}, 1000);
+// init select2 after dom laoded
+window.addEventListener("load", function() {
+  // try to initialize select2
+  setTimeout(() => {
+    initSelect2()
+  }, 1000);
+});
+
+
 
 
 console.log("init ui_components.js")

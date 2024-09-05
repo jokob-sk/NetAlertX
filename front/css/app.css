@@ -745,6 +745,18 @@ height: 50px;
 .infobox_label {
     font-size: 16px !important;
 }
+
+.deviceSelector 
+{
+    display: block;
+}
+
+.deviceSelector  input
+{
+    width: 100% !important;
+    display: inline-grid;
+}
+
 /* --------------------------------------------------------- */
 /*                         report                            */
 /* --------------------------------------------------------- */

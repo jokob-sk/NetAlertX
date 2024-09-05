@@ -20,7 +20,7 @@
   require 'php/templates/header.php';
 ?>
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div class="content-wrapper" id="maintenancePage">
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
