@@ -75,19 +75,21 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             host_name = lease.get('host-name')
             comment = lease.get('comment')
             last_seen = lease.get('last-seen')
+            status = lease.get('status')
     
-            mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}"])
-            
-            plugin_objects.add_object(
-                primaryId   = mac_address,
-                secondaryId = '',
-                watched1    = address,
-                watched2    = host_name,
-                watched3    = last_seen,
-                watched4    = '',
-                extra       = '',
-                helpVal1    = comment, 
-                foreignKey  = mac_address)
+            mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"])
+
+            if (status == "bound"):
+                plugin_objects.add_object(
+                    primaryId   = mac_address,
+                    secondaryId = '',
+                    watched1    = address,
+                    watched2    = host_name,
+                    watched3    = last_seen,
+                    watched4    = '',
+                    extra       = '',
+                    helpVal1    = comment, 
+                    foreignKey  = mac_address)
 
     except TrapError as e:
         mylog('error', [f"An error occurred: {e}"])
