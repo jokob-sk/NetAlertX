@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# test script by running:
-# tbc
 
 import os
 import pathlib
@@ -40,42 +38,35 @@ pluginName = 'MTSCAN'
 
 def main():
 
-    mylog('verbose', [f'[{pluginName}] In script'])     
+    mylog('verbose', [f'[{pluginName}] In script'])
 
-    mt_host = get_setting_value('MTSCAN_MT_HOST')
-    mt_port = get_setting_value('MTSCAN_MT_PORT')
-    mt_user = get_setting_value('MTSCAN_MT_USER')
-    mt_password = get_setting_value('MTSCAN_MT_PASS')
-
-    #mylog('verbose', [f'[{pluginName}] Router: {mt_host}:{mt_port} user: {mt_user}, pass: {mt_password}'])   
-    # Create a database connection
-    db = DB()  # instance of class DB
-    db.open()
+    # init global variables
+    global MT_HOST, MT_PORT, MT_USER, MT_PASS
 
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Device_obj instance
-    device_handler = Device_obj(db)
+    # Mikrotik settings
+    MT_HOST = get_setting_value('MTSCAN_MT_HOST')
+    MT_PORT = get_setting_value('MTSCAN_MT_PORT')
+    MT_USER = get_setting_value('MTSCAN_MT_USER')
+    MT_PASS = get_setting_value('MTSCAN_MT_PASS')
 
-    # Retrieve devices
-    #unknown_devices = device_handler.getUnknown()
-    #mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
+    plugin_objects = get_entries(plugin_objects)
 
-    all_devices = device_handler.getAll()
+    plugin_objects.write_result_file()
+    
+    mylog('verbose', [f'[{pluginName}] Scan finished, found {len(plugin_objects)} devices'])
 
-    mylog('verbose', [f'[{pluginName}] all devices count: {len(all_devices)}'])   
 
-    device_map = {d['dev_MAC']:d['dev_LastIP'] for d in all_devices}
+def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
     try:
         # connect router
-        api = connect(username=mt_user, password=mt_password, host=mt_host, port=mt_port)
+        api = connect(username=MT_USER, password=MT_PASS, host=MT_HOST, port=MT_PORT)
     
         # get dhcp leases
         leases = api('/ip/dhcp-server/lease/print')
-
-
     
         for lease in leases:
             lease_id = lease.get('.id')
@@ -84,56 +75,31 @@ def main():
             host_name = lease.get('host-name')
             comment = lease.get('comment')
             last_seen = lease.get('last-seen')
+            status = lease.get('status')
     
-            mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}"])
-            if mac_address in device_map.keys():
-                device_name = host_name
-                if comment != '':
-                    device_name = comment
-            
+            mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"])
+
+            if (status == "bound"):
                 plugin_objects.add_object(
-                # "Name-MAC", "LastIP", "IP", "Name","Host","LastSeen","Comment"
                     primaryId   = mac_address,
-                    secondaryId = device_map[mac_address],
+                    secondaryId = '',
                     watched1    = address,
-                    watched2    = device_name,
-                    watched3    = host_name,
-                    watched4    = last_seen,
+                    watched2    = host_name,
+                    watched3    = last_seen,
+                    watched4    = '',
                     extra       = '',
                     helpVal1    = comment, 
                     foreignKey  = mac_address)
-    
-        plugin_objects.write_result_file()
+
     except TrapError as e:
         mylog('error', [f"An error occurred: {e}"])
     except Exception as e:
         mylog('error', [f"Failed to connect to MikroTik API: {e}"])
 
-
-    #for device in unknown_devices:
-    #    domain_name, dns_server = execute_nslookup(device['dev_LastIP'], timeout)
-
-    #    if domain_name != '':
-    #        plugin_objects.add_object(
-    #        # "MAC", "IP", "Server", "Name"
-    #        primaryId   = device['dev_MAC'],
-    #        secondaryId = device['dev_LastIP'],
-    #        watched1    = dns_server,
-    #        watched2    = domain_name,
-    #        watched3    = '',
-    #        watched4    = '',
-    #        extra       = '',
-    #        foreignKey  = device['dev_MAC'])
-
-    #plugin_objects.write_result_file()
-    
-    
     mylog('verbose', [f'[{pluginName}] Script finished'])   
     
-    return 0
+    return plugin_objects
 
-    
-    
 
 #===============================================================================
 # BEGIN

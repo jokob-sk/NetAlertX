@@ -1,8 +1,8 @@
-FROM alpine:3.20 as builder
+FROM alpine:3.20 AS builder
 
 ARG INSTALL_DIR=/app
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # Install build dependencies
 RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev \
@@ -21,7 +21,7 @@ RUN pip install netifaces tplink-omada-client pycryptodome requests paho-mqtt sc
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
 # second stage
-FROM alpine:3.20 as runner
+FROM alpine:3.20 AS runner
 
 ARG INSTALL_DIR=/app
 
