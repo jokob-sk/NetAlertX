@@ -1,7 +1,7 @@
 {
   "code_name": "mikrotik_scan",
   "unique_prefix": "MTSCAN",
-  "plugin_type": "other",
+  "plugin_type": "device_scanner",
   "execution_order" : "Layer_4",
   "enabled": true,
   "data_source": "script",
