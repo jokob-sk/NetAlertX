@@ -137,10 +137,8 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var parTableRows    = 'Front_Devices_Rows';
-  var parTableOrder   = 'Front_Devices_Order';
   var tableRows       = getCookie ("nax_parTableRows") == "" ? 10 : getCookie ("nax_parTableRows") ;
-  var tableOrder       = getCookie ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCookie ("nax_parTableOrder")) ;
+  var tableOrder      = getCookie ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCookie ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];
   var tableColumnOrder = [];
@@ -403,6 +401,11 @@ function initializeDatatable (status) {
   }
 
   $.get('api/table_devices.json?nocache=' + Date.now(), function(result) {      
+
+    //  refresh devices cache 
+    devicesListAll_JSON = result["data"]
+    devicesListAll_JSON_str = JSON.stringify(devicesListAll_JSON)
+    setCache('devicesListAll_JSON', devicesListAll_JSON_str)
     
     // query data
     getDevicesTotals(result.data);      
@@ -451,10 +454,6 @@ function initializeDatatable (status) {
         })
     };
 
-    
-    // TODO displayed columns
-
-
     // Check if the DataTable already exists
     if ($.fn.dataTable.isDataTable('#tableDevices')) {
       // The DataTable exists, so destroy it
@@ -462,12 +461,12 @@ function initializeDatatable (status) {
       table.clear().destroy();
     }
 
-    var table=
+    var table =
     $('#tableDevices').DataTable({
       'data'         : dataArray["data"],
       'paging'       : true,
       'lengthChange' : true,
-      'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
+      'lengthMenu'   : [[10, 25, 50, 100, 500, 100000], [10, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
       'searching'    : true,
 
       'ordering'     : true,
@@ -638,8 +637,6 @@ function initializeDatatable (status) {
       setTimeout(function(){
           // Check if any row is selected
           var anyRowSelected = $('#tableDevices tr.selected').length > 0;
-
-          console.log(anyRowSelected);
 
           // Toggle visibility of element with ID 'multiEdit'
           $('#multiEdit').toggle(anyRowSelected);
