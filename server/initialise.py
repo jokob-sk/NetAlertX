@@ -304,11 +304,11 @@ def importConfigs (db, all_plugins):
         
         if str(conf.VERSION) != str(buildTimestamp):
             
-            mylog('none', ['[Config] App upgraded 🎉'])           
+            mylog('none', ['[Config] App upgraded 🚀'])           
             
             conf.VERSION = ccd('VERSION', buildTimestamp , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
             
-            write_notification(f'[Upgrade] : App upgraded 🎉. Please clear app cache with the 🔄 button in the header and clear the browser cache (shift + browser refresh button).', 'interrupt', timeNowTZ())
+            write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the caches: <ol> <li> Clear app cache with the 🔄 button in the header</li> <li>Clear the browser cache (shift + browser refresh button)</li></ol> Check out new features in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>', 'interrupt', timeNowTZ())
 
 
     # Insert settings into the DB    
