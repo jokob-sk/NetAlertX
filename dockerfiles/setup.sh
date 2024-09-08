@@ -41,6 +41,16 @@ if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   rm -rf "$INSTALL_DIR_OLD/db/"*
 fi
 
+# OVERRIDE settings: Handling APP_CONF_OVERRIDE
+# Check if APP_CONF_OVERRIDE is set
+if [ -z "$APP_CONF_OVERRIDE" ]; then
+  echo "APP_CONF_OVERRIDE is not set. Skipping config file creation."
+else
+  # Save the APP_CONF_OVERRIDE env variable as a JSON file
+  echo "$APP_CONF_OVERRIDE" > "${INSTALL_DIR}/config/app_conf_override.json"
+  echo "Config file saved to ${INSTALL_DIR}/config/app_conf_override.json"
+fi
+
 # 🔻 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2024
 
 # Check if pialert.db exists, then create a symbolic link to app.db

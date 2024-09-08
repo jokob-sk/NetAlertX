@@ -11,8 +11,8 @@ import re
 
 
 import conf 
-from const import fullConfPath, applicationPath
-from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ
+from const import fullConfPath, applicationPath, fullConfFolder
+from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ, get_setting_value
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
@@ -29,7 +29,8 @@ from notification import write_notification
 # Check config dictionary
 
 #-------------------------------------------------------------------------------
-def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None):
+# managing application settings, ensuring SQL safety for user input, and updating internal configuration lists
+def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False):
     if events is None:
         events = []
     if setJsonMetadata is None:
@@ -41,7 +42,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
     result = default
 
     # Use existing value if already supplied, otherwise default value is used
-    if key in config_dir:
+    if forceDefault == False and key in config_dir:
         result = config_dir[key]
 
     # Single quotes might break SQL queries, replacing them
@@ -70,16 +71,20 @@ def update_or_append(settings_list, item_tuple, key):
     if settings_list is None:
         settings_list = []
 
-    # mylog('debug', ['[Import Config] update_or_append debug '])
-    # mylog('debug', ['[Import Config] update_or_append ', settings_list])
-    # mylog('debug', ['[Import Config] update_or_append item_tuple ' , item_tuple])
-
     for index, item in enumerate(settings_list):
         if item[0] == key:
-            settings_list[index] = item_tuple
-            mylog('debug', ['[Import Config] FOUND key : ', key])
-            return settings_list
+            mylog('trace', ['[Import Config] OLD TUPLE  : ', item])
+            # Replace only non-empty values in the tuple
+            updated_tuple = tuple(
+                new_val if new_val != "_KEEP_" else old_val
+                for old_val, new_val in zip(item, item_tuple)
+            )
+            mylog('trace', ['[Import Config] NEW TUPLE  : ', updated_tuple])
+            settings_list[index] = updated_tuple
+            mylog('trace', ['[Import Config] FOUND key : ', key])
+            return settings_list     
     
+
     settings_list.append(item_tuple)
     return settings_list
 
@@ -145,13 +150,7 @@ def importConfigs (db, all_plugins):
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', '[]', 'General')
           
     # UI
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)', 'Czech (cs_cz)' ]", 'UI')
-    conf.UI_NOT_RANDOM_MAC = ccd('UI_NOT_RANDOM_MAC', []   , c_d, 'Exlude from Random Prefix', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', "[]", 'UI')    
-    conf.UI_ICONS = ccd('UI_ICONS', ['PGkgY2xhc3M9J2ZhIGZhLXdpZmknPjwvaT4=', 'PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4', 'PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+', 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==', 'PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4', 'PGkgY2xhc3M9J2ZhIGZhLWdhbWVwYWQnPjwvaT4']  , c_d, 'Icons', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', "[]", 'UI')    
-    conf.UI_REFRESH = ccd('UI_REFRESH', 0 , c_d, 'Refresh interval', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'UI')    
-    conf.UI_DEV_SECTIONS = ccd('UI_DEV_SECTIONS', []   , c_d, 'Show sections', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['Tile Cards', 'Device Presence']", 'UI')    
-    conf.UI_PRESENCE = ccd('UI_PRESENCE', ['online', 'offline', 'archived']   , c_d, 'Include in presence', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['online', 'offline', 'archived']", 'UI') 
-    conf.UI_MY_DEVICES = ccd('UI_MY_DEVICES', ['online', 'offline', 'archived', 'new', 'down']   , c_d, 'Include in My Devices', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}', "['online', 'offline', 'archived', 'new', 'down']", 'UI')    
+    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'French', 'German', 'Norwegian', 'Russian', 'Spanish', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Turkish (tr_tr)', 'Chinese (zh_cn)', 'Czech (cs_cz)' ]", 'UI') 
     
     #  Init timezone in case it changed
     conf.tz = timezone(conf.TIMEZONE) 
@@ -297,18 +296,53 @@ def importConfigs (db, all_plugins):
     conf.plugins_once_run = False
     # -----------------
     # Plugins END
+    
+    # TODO check app_conf_override.json
+    # Assuming fullConfFolder is defined elsewhere
+    app_conf_override_path = fullConfFolder + '/app_conf_override.json'
+
+    if os.path.exists(app_conf_override_path):
+        with open(app_conf_override_path, 'r') as f:
+            try:
+                # Load settings_override from the JSON file
+                settings_override = json.load(f)
+
+                # Loop through settings_override dictionary
+                for setting_name, value in settings_override.items():
+                    # Ensure the value is treated as a string and passed directly
+                    if isinstance(value, str):
+                        # Log the value being passed
+                        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+                        mylog('debug', [f"[Config] Setting override {setting_name} with value: {value}"])
+                        ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
+                    else:
+                        # Convert to string and log
+                        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+                        mylog('debug', [f"[Config] Setting override {setting_name} with value: {str(value)}"])
+                        ccd(setting_name, str(value), c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
+
+            except json.JSONDecodeError:
+                mylog('none', [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"])
+    else:
+        mylog('debug', [f"[Config] File {app_conf_override_path} does not exist."])
   
     # Check if app was upgraded
     with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
-        buildTimestamp = int(f.read().strip())
         
-        if str(conf.VERSION) != str(buildTimestamp):
+        buildTimestamp = int(f.read().strip())
+        cur_version = conf.VERSION 
+        
+        mylog('debug', [f"[Config] buildTimestamp: '{buildTimestamp}'"])
+        mylog('debug', [f"[Config] conf.VERSION  : '{cur_version}'"])
+        
+        if str(cur_version) != str(buildTimestamp):
             
-            mylog('none', ['[Config] App upgraded 🚀'])           
+            mylog('none', ['[Config] App upgraded 🚀'])      
+                 
+            # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+            ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
             
-            conf.VERSION = ccd('VERSION', buildTimestamp , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
-            
-            write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the caches: <ol> <li> Clear app cache with the 🔄 button in the header</li> <li>Clear the browser cache (shift + browser refresh button)</li></ol> Check out new features in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>', 'interrupt', timeNowTZ())
+            write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the 🔄 (reload) button in the header</li></ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
 
     # Insert settings into the DB    

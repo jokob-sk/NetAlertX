@@ -17,7 +17,7 @@
   | Pholus_Scan      | Scan results of the Pholus python network penetration script. | ![Screen8][screen8]  |   
   | Plugins_Events   | For capturing events exposed by a plugin via the `last_result.log` file. If unique then saved into the `Plugins_Objects` table. Entries are deleted once processed and stored in the `Plugins_History` and/or `Plugins_Objects` tables.  | ![Screen10][screen10]  | 
   | Plugins_History  | History of all entries from the `Plugins_Events` table | ![Screen11][screen11]  | 
-  | Plugins_Language_Strings  | Language strings colelcted from the plugin `config.json` files used for string resolution in the frontend. | ![Screen12][screen12]  | 
+  | Plugins_Language_Strings  | Language strings collected from the plugin `config.json` files used for string resolution in the frontend. | ![Screen12][screen12]  | 
   | Plugins_Objects  | Unique objects detected by individual plugins. | ![Screen13][screen13]  | 
   | Sessions  | Used to display sessions in the charts | ![Screen15][screen15]  | 
   | Settings  | Database representation of the sum of all settings from `app.conf` and plugins coming from `config.json` files. | ![Screen16][screen16]  | 

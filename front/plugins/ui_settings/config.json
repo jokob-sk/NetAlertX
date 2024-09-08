@@ -27,6 +27,275 @@
   "params": [],
   "settings": [
     {
+      "function": "NOT_RANDOM_MAC",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this,false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [],
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "ICONS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this,false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "PGkgY2xhc3M9J2ZhIGZhLXdpZmknPjwvaT4=",
+        "PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4",
+        "PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4",
+        "PGkgY2xhc3M9J2ZhIGZhLWdhbWVwYWQnPjwvaT4"
+      ],
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "REFRESH",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 0,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "DEV_SECTIONS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [],
+      "options": ["Tile Cards", "Device Presence"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "PRESENCE",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": ["online", "offline", "archived"],
+      "options": ["online", "offline", "archived"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "MY_DEVICES",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": ["online", "offline", "archived", "new", "down"],
+      "options": ["online", "offline", "archived", "new", "down"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
       "function": "device_columns",
       "type": {
         "dataType": "array",
@@ -83,7 +352,7 @@
       "options": [
         "Device_TableHead_Name",
         "Device_TableHead_Owner",
-        "Device_TableHead_Type",   
+        "Device_TableHead_Type",
         "Device_TableHead_Icon",
         "Device_TableHead_Favorite",
         "Device_TableHead_Group",

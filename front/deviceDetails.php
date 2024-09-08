@@ -693,7 +693,6 @@ if ($ENABLED_DARKMODE === True) {
 
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
-  var parTab              = 'Front_Details_Tab';
   var parSessionsRows     = 'Front_Details_Sessions_Rows';
   var parEventsRows       = 'Front_Details_Events_Rows';
   var parEventsHide       = 'Front_Details_Events_Hide';
@@ -736,7 +735,7 @@ function main () {
   $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
 
   // Initialize components with parameters
-  initializeTabs();
+  initializeTabsNew();
   initializeiCheck();
   initializeCombos();
   initializeDatatables();
@@ -762,17 +761,6 @@ function main () {
        
 }
 
-
-// -----------------------------------------------------------------------------
-function initializeTabs () {
-  // Activate panel
-  $('.nav-tabs a[id='+ tab +']').tab('show');
-
-  // When changed save new current tab
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    setParameter (parTab, $(e.target).attr('id'));
-  });
-}
 
 // -----------------------------------------------------------------------------
 function initializeiCheck () {

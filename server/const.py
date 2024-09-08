@@ -15,6 +15,7 @@ pluginsPath         = applicationPath + '/front/plugins'
 logPath             = applicationPath + '/front/log'
 apiPath             = applicationPath + '/front/api/'
 reportTemplatesPath = applicationPath + '/front/report_templates/'
+fullConfFolder      = applicationPath + '/config'
 fullConfPath        = applicationPath + confPath
 fullDbPath          = applicationPath + dbPath
 vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'

@@ -1,3 +1,4 @@
+version: "3"
 services:
   netalertx:
     privileged: true
@@ -63,7 +64,9 @@ services:
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
       # ---------------------------------------------------------------------------
     environment:
+      # - APP_CONF_OVERRIDE={"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","UI_dark_mode":"True"}
       - TZ=${TZ}
-      - PORT=${PORT}
+      - PORT=${PORT}      
       # ❗ DANGER ZONE BELOW - Setting ALWAYS_FRESH_INSTALL=true will delete the content of the /db & /config folders
       - ALWAYS_FRESH_INSTALL=${ALWAYS_FRESH_INSTALL}
+      
