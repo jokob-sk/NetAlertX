@@ -11,7 +11,7 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Mikrotik (Name discovery)"
+      "string": "Mikrotik (Device discovery)"
     }
   ],
   "icon": [
@@ -23,7 +23,7 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "A plugin to discover device names."
+      "string": "A plugin to discover devices via Mikrotik."
     }
   ],
   "params": [

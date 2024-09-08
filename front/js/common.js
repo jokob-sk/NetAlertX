@@ -212,7 +212,8 @@ function cacheStrings() {
   return new Promise((resolve, reject) => {
     
       // Create a promise for each language
-      const languagePromises = allLanguages.map((language_code) => {
+      languagesToLoad = ['en_us', getLangCode()]
+      const languagePromises = languagesToLoad.map((language_code) => {
         return new Promise((resolveLang, rejectLang) => {
           // Fetch core strings and translations
           
@@ -267,6 +268,29 @@ function cacheStrings() {
 function getString(key) {
 
   function fetchString(key) {
+    
+    lang_code = getLangCode();
+
+    let result = getCache(`pia_lang_${key}_${lang_code}`, true);
+
+    if (isEmpty(result)) {
+      result = getCache(`pia_lang_${key}_en_us`, true);
+    }
+
+    return result;
+  }
+
+  if (isAppInitialized()) {
+    return fetchString(key);
+  } else {
+    callAfterAppInitialized(() => fetchString(key));
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Get current language ISO code
+function getLangCode() {
+
     UI_LANG = getSetting("UI_LANG");
 
     let lang_code = 'en_us';
@@ -310,20 +334,7 @@ function getString(key) {
         break;
     }
 
-    let result = getCache(`pia_lang_${key}_${lang_code}`, true);
-
-    if (isEmpty(result)) {
-      result = getCache(`pia_lang_${key}_en_us`, true);
-    }
-
-    return result;
-  }
-
-  if (isAppInitialized()) {
-    return fetchString(key);
-  } else {
-    callAfterAppInitialized(() => fetchString(key));
-  }
+    return lang_code;
 }
 
 
@@ -1193,7 +1204,7 @@ const sessionStorageKey = "myScriptExecuted_common_js";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
 var completedCallsCount  = 0; 
-var completedCallsCount_final  = allLanguages.length + 2; // number of language files + cacheDevices + cacheSettings
+var completedCallsCount_final;
 
 // -----------------------------------------------------------------------------
 // Clearing all the caches
@@ -1249,6 +1260,10 @@ function callAfterAppInitialized(callback) {
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
   //  return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
+
+  // loading settings + 1 (or 2 language files if not english) + device cache.
+  completedCallsCount_final = getLangCode() == 'en_us' ? 3  : 4 ;
+
   return (parseInt(getCache("completedCallsCount")) >=  completedCallsCount_final);
 }
 
