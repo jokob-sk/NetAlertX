@@ -557,6 +557,7 @@
     "RandomMAC_hover": "Autodetektert - indikerer om enheten randomiserer MAC-adressen sin.",
     "Reports_Sent_Log": "Sendte rapport logger",
     "SCAN_SUBNETS_description": "De fleste skannere på nettet (ARP-Scan, NMAP, NSlookup, Dig, Pholus) er avhengige av å skanne spesifikke nettverksgrensesnitt og undernett. Sjekk <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md\" target=\"_blank\">subnett dokumentasjonen</a> for hjelp på denne innstillingen, spesielt VLAN-er, hvilke VLAN-er som støttes, eller hvordan du kan finne ut nettverksmasken og grensesnittet ditt. <br/> <br/> Et alternativ til skannere på nettet er å aktivere noen andre enhetsskannere/importører som ikke er avhengige av Netalert<sup>X</sup> med tilgang til nettverket (UniFi, DHCP-Leaser, Pihole, osv.). <br/> <br/> Merk: Selve skanningstiden avhenger av antall IP -adresser som skal sjekkes, så sett dette opp nøye med riktig nettverksmaske og grensesnitt.",
+    "SCAN_SUBNETS_name": "",
     "SYSTEM_TITLE": "Systeminformasjon",
     "Setting_Override": "Overstyr verdi",
     "Setting_Override_Description": "Aktivering av dette alternativet vil overstyre en App som leveres standard-verdi med verdien som er spesifisert ovenfor.",

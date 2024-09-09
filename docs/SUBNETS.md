@@ -15,6 +15,7 @@ You need to specify the network interface and the network mask. You can also con
    * One subnet:   `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0']`
    * Two subnets:  `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 -vlan=107']` 
 
+If you get timeout messages, decrease the network mask (e.g.: from a `/16` to `/24`) or increase the `TIMEOUT` setting (e.g.: `ARPSCAN_RUN_TIMEOUT` to `300` (a timeout of 5min)) for the plugin and the interval between scans (e.g.: `ARPSCAN_RUN_SCHD` to `*/10 * * * *` (scans every 10 min)). 
 
 ## Explanation
 

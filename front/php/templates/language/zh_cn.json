@@ -557,6 +557,7 @@
     "RandomMAC_hover": "自动检测 - 表示设备是否随机化其 MAC 地址。",
     "Reports_Sent_Log": "已发送报告日志",
     "SCAN_SUBNETS_description": "大多数网络扫描器（ARP-SCAN、NMAP、NSLOOKUP、DIG、PHOLUS）依赖于扫描特定的网络接口和子网。查看<a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md\" target=\"_blank\">子网文档</a>以获取有关此设置的帮助，尤其是 VLAN、支持哪些 VLAN，或者如何确定网络掩码和接口。<br/> <br/> 网络扫描器的替代方法是启用一些其他不依赖于 NetAlert<sup>X</sup> 访问网络的设备扫描器/导入器（UNIFI、dhcp.leases、PiHole 等）。<br/> <br/> 注意：扫描时间本身取决于要检查的 IP 地址数量，因此请使用适当的网络掩码和接口仔细设置。",
+    "SCAN_SUBNETS_name": "",
     "SYSTEM_TITLE": "系统信息",
     "Setting_Override": "覆盖值",
     "Setting_Override_Description": "启用此选项将用上面指定的值覆盖应用程序提供的默认值。",

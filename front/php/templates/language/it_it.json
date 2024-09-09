@@ -557,6 +557,7 @@
     "RandomMAC_hover": "Rilevato automaticamente: indica se il dispositivo genera il suo indirizzo MAC casualmente.",
     "Reports_Sent_Log": "Log rapporti inviati",
     "SCAN_SUBNETS_description": "La maggior parte degli scanner di rete (ARP-SCAN, NMAP, NSLOOKUP, DIG, PHOLUS) si basano sulla scansione di interfacce di rete e sottoreti specifiche. Consulta la <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md\" target=\"_blank\">documentazione sulle sottoreti</a> per assistenza su questa impostazione, in particolare VLAN, quali VLAN sono supportate o come individuare la maschera di rete e l'interfaccia. <br/> <br/> Un'alternativa agli scanner in rete è abilitare altri scanner/importatori di dispositivi che non si affidano a NetAlert<sup>X</sup> che hanno accesso alla rete (UNIFI, dhcp.leases , PiHole, ecc.). <br/> <br/> Nota: il tempo di scansione stesso dipende dal numero di indirizzi IP da controllare, quindi impostalo attentamente con la maschera di rete e l'interfaccia appropriate.",
+    "SCAN_SUBNETS_name": "",
     "SYSTEM_TITLE": "Informazioni sistema",
     "Setting_Override": "Sovrascrivi valore",
     "Setting_Override_Description": "L'abilitazione di questa opzione sovrascriverà il valore predefinito fornito dall'app con il valore specificato sopra.",

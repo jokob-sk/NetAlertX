@@ -557,6 +557,7 @@
     "RandomMAC_hover": "Auto wykrywanie - oznacza czy urządzenie randomizuje swój adres MAC.",
     "Reports_Sent_Log": "Wyślij zgłoszenie logów",
     "SCAN_SUBNETS_description": "Większość skanerów sieciowych (ARP-SCAN, NMAP, NSLOOKUP, DIG, PHOLUS) opiera się na konkretnych interfejsach sieciowych oraz podsieci. Sprawdź <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md\" target=\"_blank\"> dokumentacji podsieci</a> jeżeli potrzebujesz pomocy w ustawieniach, a szczególnie z VLAN'ami, jakie VLAN'y są wspierane oraz jak rozgryźć maskę podsieci twojego interfejsu.<br/><br/> Alternatywą do skanerów sieciowych jest uruchomienie innego Skanera Urządzeń/Importera który nie polega by NetAlert<sup>X</sup> miał dostęp do sieci (UNIFI, dhcp.leases, PiHole, itp.).<br/><br/> Notatka: Czas skanu zależy od liczby adresów IP do sprawdzenia, więc ustaw go tak by skanował odpowiedni interfejs i maskę sieciową.",
+    "SCAN_SUBNETS_name": "",
     "SYSTEM_TITLE": "Informacje o Systemie",
     "Setting_Override": "Nadpisz wartość",
     "Setting_Override_Description": "Włączanie tej opcji nadpisze podstawową wartość na wartość podaną powyżej.",

@@ -612,6 +612,7 @@
     "RandomMAC_hover": "Autodetected - indicates if the device randomizes it's MAC address.",
     "Reports_Sent_Log": "Protokoll gesendeter Berichte",
     "SCAN_SUBNETS_description": "",
+    "SCAN_SUBNETS_name": "",
     "SMTP_FORCE_SSL_description": "Force SSL when connecting to your SMTP server.",
     "SMTP_FORCE_SSL_name": "Force SSL",
     "SMTP_PASS_description": "The SMTP server password. ",
