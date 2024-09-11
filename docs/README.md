@@ -63,6 +63,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
 - [Reverse proxy (Nginx, Apache, SWAG)](/docs/REVERSE_PROXY.md)
+- [Setting up Authelia](/docs/AUTHELIA.md) (DRAFT)
 
 #### 👩‍💻For Developers👨‍💻
 
