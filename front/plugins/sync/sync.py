@@ -46,6 +46,7 @@ def main():
     hub_url = get_setting_value('SYNC_hub_url')
     node_name = get_setting_value('SYNC_node_name')
     send_devices = get_setting_value('SYNC_devices')
+    pull_nodes = get_setting_value('SYNC_nodes')
 
     # Get all plugin configurations
     all_plugins = get_plugins_configs()
@@ -78,7 +79,9 @@ def main():
             else:
                 mylog('verbose', [f'[{pluginName}] {plugin_folder}/last_result.log not found'])             
 
-    # Devices procesing
+    # DEVICES sync
+    # PUSH/SEND (NODE)
+
     if send_devices:
 
         file_path = f"{INSTALL_PATH}/front/api/table_devices.json"
@@ -93,10 +96,40 @@ def main():
                 mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
                 send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url)
 
-    # process any received data for the Device DB table
-    # Create the file path
+
+    # DEVICES sync
+    # PULL/GET (HUB)
+    
     file_dir = os.path.join(pluginsPath, 'sync')
     file_prefix = 'last_result'
+    
+    # pull data from nodes if specified
+    if len(pull_nodes) > 0:
+        for node_url in pull_nodes:
+            response_json, node_name = get_data(api_token, node_url)
+            
+            # Extract node_name and base64 data
+            node_name = response_json.get('node_name', 'unknown_node')
+            data_base64 = response_json.get('data_base64', '')
+
+            # Decode base64 data
+            decoded_data = base64.b64decode(data_base64)
+            
+            # Create log file name using node name
+            log_file_name = f'{file_prefix}.{node_name}.log'
+
+            # Write decoded data to log file
+            with open(file_path = os.path.join(file_dir, log_file_name), 'wb') as log_file:
+                log_file.write(decoded_data)
+
+            message = f'[{pluginName}] Data for "{plugin_folder}" from node "{node_name}" written to {log_file_name}'
+            mylog('verbose', [message])
+            write_notification(message, 'info', timeNowTZ())           
+        
+
+    # process any received data for the Device DB table
+    # Create the file path
+
 
     # Decode files, rename them, and get the list of files
     files_to_process = decode_and_rename_files(file_dir, file_prefix)
@@ -196,6 +229,7 @@ def main():
     return 0
 
 
+# send data to the HUB
 def send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url):
     # Encrypt the log data using the encryption_key
     encrypted_data = encrypt_data(file_content, encryption_key)
@@ -223,6 +257,36 @@ def send_data(api_token, file_content, encryption_key, plugin_folder, node_name,
         message = f'[{pluginName}] Failed to send data for "{plugin_folder}" (Status code: {response.status_code})'
         mylog('verbose', [message])
         write_notification(message, 'alert', timeNowTZ())
+        
+# get data from the nodes to the HUB
+def get_data(api_token, node_url):
+    mylog('verbose', [f'[{pluginName}] Getting data from node: "{node_url}"'])
+    
+    # Set the authorization header with the API token
+    headers = {'Authorization': f'Bearer {api_token}'}
+    api_endpoint = f"{node_url}/plugins/sync/hub.php"
+    response = requests.get(api_endpoint, headers=headers)
+
+    # mylog('verbose', [f'[{pluginName}] response: "{response}"'])
+
+   if response.status_code == 200:
+        try:
+            # Parse JSON response
+            response_json = response.json()
+            
+            return response_json
+
+        except json.JSONDecodeError:
+            message = f'[{pluginName}] Failed to parse JSON response from "{node_url}"'
+            mylog('verbose', [message])
+            write_notification(message, 'alert', timeNowTZ())
+            return ""
+
+    else:
+        message = f'[{pluginName}] Failed to send data for "{plugin_folder}" (Status code: {response.status_code})'
+        mylog('verbose', [message])
+        write_notification(message, 'alert', timeNowTZ())
+        return ""
 
 
 
