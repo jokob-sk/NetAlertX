@@ -24,14 +24,14 @@ function checkAuthorization($method) {
 
 // ----------------------------------------------
 // Function to return JSON response
-function jsonResponse($status, $data = [], $message = '') {
+function jsonResponse($status, $data = '', $message = '') {
     http_response_code($status);
     header('Content-Type: application/json');
     echo json_encode([
         'node_name' => getSettingValue('SYNC_node_name'),
         'status' => $status,
         'message' => $message,
-        'data' => $data,
+        'data_base64' => $data,
         'timestamp' => date('Y-m-d H:i:s')
     ]);
 }
@@ -50,12 +50,12 @@ if ($method === 'GET') {
     $data = file_get_contents($file_path);   
 
     // Prepare the data to return as a JSON response
-    $response_data = [
-        'data_base64' => base64_encode($data),  
-    ];
+    $response_data = base64_encode($data);
 
     // Return JSON response
     jsonResponse(200, $response_data, 'OK');
+
+    write_notification("[Plugin: SYNC] Data sent", "info");
 
 }
 // receiving data (this is a HUB)

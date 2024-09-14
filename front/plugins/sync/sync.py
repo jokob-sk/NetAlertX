@@ -7,6 +7,7 @@ import hashlib
 import requests
 import json
 import sqlite3
+import base64
 
 
 # Define the installation path and extend the system path for plugin imports
@@ -106,7 +107,7 @@ def main():
     # pull data from nodes if specified
     if len(pull_nodes) > 0:
         for node_url in pull_nodes:
-            response_json, node_name = get_data(api_token, node_url)
+            response_json = get_data(api_token, node_url)
             
             # Extract node_name and base64 data
             node_name = response_json.get('node_name', 'unknown_node')
@@ -119,10 +120,10 @@ def main():
             log_file_name = f'{file_prefix}.{node_name}.log'
 
             # Write decoded data to log file
-            with open(file_path = os.path.join(file_dir, log_file_name), 'wb') as log_file:
+            with open(os.path.join(file_dir, log_file_name), 'wb') as log_file:
                 log_file.write(decoded_data)
 
-            message = f'[{pluginName}] Data for "{plugin_folder}" from node "{node_name}" written to {log_file_name}'
+            message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
             write_notification(message, 'info', timeNowTZ())           
         
@@ -269,7 +270,7 @@ def get_data(api_token, node_url):
 
     # mylog('verbose', [f'[{pluginName}] response: "{response}"'])
 
-   if response.status_code == 200:
+    if response.status_code == 200:
         try:
             # Parse JSON response
             response_json = response.json()
