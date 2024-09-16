@@ -25,28 +25,12 @@
     {
       "language_code": "en_us",
       "string": "<i class=\"fa-solid fa-binoculars\"></i>"
-    },
-    {
-      "language_code": "es_es",
-      "string": "<i class=\"fa-solid fa-binoculars\"></i>"
-    },
-    {
-      "language_code": "de_de",
-      "string": "<i class=\"fa-solid fa-binoculars\"></i>"
     }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "This plugin is to import undiscoverable devices from a file."
-    },
-    {
-      "language_code": "es_es",
-      "string": "Este complemento es para importar dispositivos no detectables desde un archivo."
-    },
-    {
-      "language_code": "de_de",
-      "string": "Ein Plugin zum Importieren von nicht erkennbaren Geräten aus einer Datei."
+      "string": "This plugin is to import undiscoverable devices from a file. Only ASCII characters are supported."
     }
   ],
   "params": [

@@ -1057,7 +1057,7 @@ def main():
         elif values.rdns_scanning:
             file_print_pr("[DEBUG] Timestamp 45: ", timeNow()) 
             dns_query=None
-            ipn = ipaddress.ip_network(values.rdns_scanning)
+            ipn = ipaddress.ip_network(values.rdns_scanning, strict=False)
             for ip in ipn.hosts():
                 the_query = ip.reverse_pointer
                 if not dns_query:
