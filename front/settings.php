@@ -813,7 +813,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
         // Reload page if outdated information might be displayed
         if (secondsSincePageLoad() > 10) {
-            clearCache();
+          console.log("App outdated, reloading...");
+          clearCache();
         }
     } else {
         console.log("App not initialized, checking again in 1s...");

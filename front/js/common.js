@@ -630,17 +630,11 @@ function debugTimer () {
 
 // -----------------------------------------------------------------------------
 function secondsSincePageLoad() {
-  // Get the current time
-  var currentTime = Date.now();
-
-  // Get the time when the page was loaded
-  var pageLoadTime = performance.timeOrigin;
-
-  // Calculate the difference in milliseconds
-  var timeDifference = currentTime - pageLoadTime;
+  // Get the current time since the page was loaded
+  var timeSincePageLoad = performance.now();
 
   // Convert milliseconds to seconds
-  var secondsAgo = Math.floor(timeDifference / 1000);
+  var secondsAgo = Math.floor(timeSincePageLoad / 1000);
 
   return secondsAgo;
 }
