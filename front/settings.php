@@ -640,10 +640,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // console.log(setTypeObject);
 
           const dataType = setTypeObject.dataType;
-          // const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]; //🔽
 
           // get the element with the input value(s)
-          const elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+          let elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+
+          //  if none found, take last
+          if(elementsWithInputValue.length == 0)
+          {
+            elementsWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+          }
 
           const { elementType, elementOptions = [], transformers = [] } = elementsWithInputValue;
           const { 
@@ -666,15 +671,17 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           if (dataType === "string" || 
               (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
-            
+           
             value = $('#' + setCodeName).val();
             value = applyTransformers(value, transformers);
+
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === 'boolean') {
             
             value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
             value = applyTransformers(value, transformers);
+            
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "array" ) {
@@ -724,7 +731,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           console.log(settingsArray);
           console.log( JSON.stringify(settingsArray));
-          // return;
+          return;
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",
