@@ -681,7 +681,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             
             value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
             value = applyTransformers(value, transformers);
-            
+
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "array" ) {
@@ -731,7 +731,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           console.log(settingsArray);
           console.log( JSON.stringify(settingsArray));
-          return;
+          // return;
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",
