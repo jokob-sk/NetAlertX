@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Ripristino eseguito correttamente.",
     "BackDevices_darkmode_disabled": "Modalità scura disabilitata",
     "BackDevices_darkmode_enabled": "Modalità scura abilitata",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Questa è un'impostazione di manutenzione. Specifica il numero di giorni delle voci degli eventi che verranno conservati. Tutti gli eventi più vecchi verranno eliminati periodicamente. Si applica anche alla cronologia degli eventi del plugin (Plugin Events History).",
     "DAYS_TO_KEEP_EVENTS_name": "Elimina eventi più vecchi di",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copia dettagli dal dispositivo",

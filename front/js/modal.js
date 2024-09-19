@@ -295,6 +295,7 @@ function checkNotification() {
                                 console.log(response);
                                 // After marking the notification as read, check for the next one
                                 checkNotification();
+                                hideSpinner();
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error marking notification as read:", status, error);

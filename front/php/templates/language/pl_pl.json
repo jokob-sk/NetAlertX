@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Przywracanie wykonane z sukcesem.",
     "BackDevices_darkmode_disabled": "Tryb ciemny Wyłączony",
     "BackDevices_darkmode_enabled": "Tryb ciemny Włączony",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "To jest ustawienie konserwacji. Określa ile dni mają być utrzymywane wpisy wydarzeń. Wszystkie starsze wpisy wydarzeń zostaną usunięte okresowo. Dotyczy także Historii Wydarzeń Pluginów.",
     "DAYS_TO_KEEP_EVENTS_name": "Usuń wydarzenia starsze niż",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i>Kopiuj opis z urządzenia",

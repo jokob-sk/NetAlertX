@@ -68,6 +68,8 @@
     "BackDevices_Restore_okay": "Die Wiederherstellung wurde erfolgreich ausgeführt.",
     "BackDevices_darkmode_disabled": "Heller Modus aktiviert.",
     "BackDevices_darkmode_enabled": "Dunkler Modus aktiviert.",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Dies ist eine Wartungseinstellung. Spezifiziert wie viele Tage Events gespeichert bleiben. Alle älteren Events werden periodisch gelöscht. Wird auch auf die Plugins History angewendet.",
     "DAYS_TO_KEEP_EVENTS_name": "Lösche Events älter als",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Details von Gerät kopieren",

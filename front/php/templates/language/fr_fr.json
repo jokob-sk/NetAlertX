@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Restauration exécutée avec succès.",
     "BackDevices_darkmode_disabled": "Mode sombre désactivé",
     "BackDevices_darkmode_enabled": "Mode sombre activé",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Il s'agit d'un paramètre de maintenance. Il indique le nombre de jours pendant lesquels les entrées d'événements seront conservées. Tous les événements plus anciens seront supprimés périodiquement. S'applique également à l'historique des événements du plugin.",
     "DAYS_TO_KEEP_EVENTS_name": "Supprimer les événements plus anciens que",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copier les détails de l'appareil",

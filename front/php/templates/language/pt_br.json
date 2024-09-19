@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Restauração executada com sucesso.",
     "BackDevices_darkmode_disabled": "Modo Noturno Desabilitado",
     "BackDevices_darkmode_enabled": "Modo Noturno Habilitado",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Esta é uma definição de manutenção. Especifica o número de dias de entradas de eventos que serão mantidas. Todos os eventos mais antigos serão eliminados periodicamente. Também se aplica ao Histórico de eventos do plug-in.",
     "DAYS_TO_KEEP_EVENTS_name": "Excluir eventos mais antigos que",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalhes do dispositivo",

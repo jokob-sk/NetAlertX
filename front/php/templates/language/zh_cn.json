@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "已成功恢复。",
     "BackDevices_darkmode_disabled": "暗黑模式已禁用",
     "BackDevices_darkmode_enabled": "已启用暗黑模式",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "这是维护设置。它指定将保留的事件条目的天数。所有较旧的事件将被定期删除。也适用于插件事件历史记录。",
     "DAYS_TO_KEEP_EVENTS_name": "删除早于",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> 从设备复制详细信息",

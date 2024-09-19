@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Восстановление выполнено успешно.",
     "BackDevices_darkmode_disabled": "Темный режим отключен",
     "BackDevices_darkmode_enabled": "Темный режим включен",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Это настройка обслуживания. Здесь указывается количество дней, в течение которых будут храниться записи о событиях. Все старые события будут периодически удаляться. Также применимо к истории событий плагина.",
     "DAYS_TO_KEEP_EVENTS_name": "Удалить события старше",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Скопировать данные с устройства",

@@ -56,6 +56,8 @@
     "BackDevices_Restore_okay": "Gjenoppretting utført.",
     "BackDevices_darkmode_disabled": "Mørk modus Deaktivert",
     "BackDevices_darkmode_enabled": "Mørk modus Aktivert",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Dette er en vedlikeholdsinnstilling. Dette spesifiserer antall dager verdt med hendelsesoppføringer som vil beholdes. Alle eldre hendelser vil bli slettet med jevne mellomrom. Gjelder også for plugin-hendelseshistorikk.",
     "DAYS_TO_KEEP_EVENTS_name": "Slett hendelser eldre enn",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Kopier detaljer fra enhet",

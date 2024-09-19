@@ -66,6 +66,8 @@
     "BackDevices_Restore_okay": "Restauración ejecutado con éxito.",
     "BackDevices_darkmode_disabled": "Darkmode Desactivado",
     "BackDevices_darkmode_enabled": "Darkmode Activado",
+    "CLEAR_NEW_FLAG_description": "",
+    "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Esta es una configuración de mantenimiento. Esto especifica el número de días de entradas de eventos que se guardarán. Todos los eventos anteriores se eliminarán periódicamente.",
     "DAYS_TO_KEEP_EVENTS_name": "Eliminar eventos anteriores a",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalles del dispositivo",
