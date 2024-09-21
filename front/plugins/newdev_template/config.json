@@ -198,7 +198,7 @@
             "elementOptions": [
               { "sourceSuffixes": ["_in"] },
               { "separator": "" },
-              { "cssClasses": "col-sm-2" },
+              { "cssClasses": "col-xs-12" },
               { "onClick": "addList(this, false)" },
               { "getStringKey": "Gen_Add" }
             ],
@@ -219,7 +219,7 @@
             "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-3" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeFromList(this)" },
               { "getStringKey": "Gen_Remove_Last" }
             ],
@@ -230,7 +230,7 @@
             "elementOptions": [
               { "sourceSuffixes": [] },
               { "separator": "" },
-              { "cssClasses": "col-sm-3" },
+              { "cssClasses": "col-xs-6" },
               { "onClick": "removeAllOptions(this)" },
               { "getStringKey": "Gen_Remove_All" }
             ],
@@ -977,7 +977,27 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "span",
+            "elementOptions": [
+              { "cssClasses": "input-group-addon iconPreview" },
+              { "getStringKey": "Gen_SelectToPreview" },
+              { "customId": "NEWDEV_dev_Icon_preview" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "cssClasses": "col-xs-12" },
+              {
+                "onChange": "updateIconPreview(this)"
+              },
+              { "customParams": "NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview" }
+            ],
+            "transformers": []
+          }          
         ]
       },
       "default_value": "",

@@ -416,7 +416,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       <div class="table_cell setting_description">
                         ${getString(codeName + '_description', set['Description'])}
                       </div>
-                      <div class="table_cell setting_input input-group col-sm-12">
+                      <div class="table_cell input-group setting_input input-group col-sm-12">
                   `;
 
           // OVERRIDE
@@ -485,7 +485,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               editable,
               valRes,
               getStringKey,
-              onClick
+              onClick,
+              onChange,
+              customParams,
+              customId
             } = handleElementOptions(codeName, elementOptions, transformers, valIn);
 
             // override
@@ -498,7 +501,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 let addCss = isOrdeable ? "select2 select2-hidden-accessible" : "";
 
 
-                inputHtml += `<select onChange="settingsChanged()" my-data-type="${dataType}" my-editable="${editable}" class="form-control ${addCss}" name="${codeName}" id="${codeName}" ${multi}>
+                inputHtml += `<select onChange="settingsChanged();${onChange}" 
+                                      my-data-type="${dataType}" 
+                                      my-editable="${editable}" 
+                                      class="form-control ${addCss}" 
+                                      name="${codeName}" 
+                                      id="${codeName}" 
+                                      my-customparams="${customParams}" 
+                                      my-customid="${customId}" 
+                                      ${multi}>
                                 <option value="" id="${codeName + "_temp_"}"></option>
                               </select>`;
 
@@ -513,8 +524,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 inputHtml += `
                   <input 
                     class="${inputClass} ${cssClasses}" 
-                    onChange="settingsChanged()" 
+                    onChange="settingsChanged();${onChange}" 
                     my-data-type="${dataType}" 
+                    my-customparams="${customParams}" 
+                    my-customid="${customId}" 
                     id="${codeName}${suffix}" 
                     type="${inputType}" 
                     value="${val}" 
@@ -529,6 +542,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 inputHtml += `
                   <button 
                     class="btn btn-primary ${cssClasses}" 
+                    my-customparams="${customParams}" 
+                    my-customid="${customId}" 
                     my-input-from="${sourceIds}" 
                     my-input-to="${codeName}" 
                     onclick="${onClick}">
@@ -539,11 +554,24 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 inputHtml += `
                   <textarea 
                     class="form-control input" 
+                    my-customparams="${customParams}" 
+                    my-customid="${customId}" 
                     my-data-type="${dataType}" 
                     id="${codeName}" 
                     ${readOnly}>
                       ${val}
                     </textarea>`;
+                break;
+              case 'span':                
+                inputHtml += `
+                  <span 
+                    class="${cssClasses}" 
+                    my-data-type="${dataType}" 
+                    my-customparams="${customParams}" 
+                    my-customid="${customId}" 
+                    >
+                    ${getString(getStringKey)}
+                    </span>`;
                 break;
 
               default:
@@ -640,17 +668,21 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // console.log(setTypeObject);
 
           const dataType = setTypeObject.dataType;
+          
 
           // get the element with the input value(s)
-          let elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+          let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
 
           //  if none found, take last
-          if(elementsWithInputValue.length == 0)
+          if(elements.length == 0)
           {
-            elementsWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+            elementWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+          } else
+          {
+            elementWithInputValue = elements[0]
           }
 
-          const { elementType, elementOptions = [], transformers = [] } = elementsWithInputValue;
+          const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
           const { 
             inputType,
             readOnly,
@@ -664,7 +696,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             editable,
             valRes,
             getStringKey,
-            onClick
+            onClick,
+            onChange,
+            customParams,
+            customId
           } = handleElementOptions('none', elementOptions, transformers, val = "");
 
           let value;

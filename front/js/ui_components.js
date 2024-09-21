@@ -68,21 +68,64 @@ function initDeviceSelectors(devicesListAll_JSON) {
 }
 
 
-// -----------------------------------------------------------------------------
+// ----------------------------------------------
 // Updates the icon preview  
-function updateIconPreview (inputId) {
-  // update icon
-  iconInput = $(inputId) 
+function updateIconPreview(elem) {
+  // Retrieve and parse custom parameters from the element
+  let params = $(elem).attr("my-customparams")?.split(',').map(param => param.trim());
 
-  value = iconInput.val()
+  // console.log(params);
 
-  iconInput.on('change input', function() {
-    $('#txtIconFA').html(atob(value))
-  });    
+  if (params && params.length >= 2) {
+    var inputElementID = params[0];
+    var targetElementID = params[1];
+  } else {
+    console.error("Invalid parameters passed to updateIconPreview function");
+    return;
+  }
 
-  $('#txtIconFA').html(atob(value))
-  
+  // Get the input element using the inputElementID
+  let iconInput = $("#" + inputElementID);
+
+  if (iconInput.length === 0) {
+    console.error("Icon input element not found");
+    return;
+  }
+
+  // Get the initial value and update the target element
+  let value = iconInput.val();
+  if (!value) {
+    console.error("Input value is empty or not defined");
+    return;
+  }
+
+  if (!targetElementID) {
+    targetElementID = "txtIcon";
+  }
+
+  // Check if the target element exists, if not find an element with matching custom attribute
+  let targetElement = $('#' + targetElementID);
+  if (targetElement.length === 0) {
+    // Look for an element with my-custom-id attribute equal to targetElementID
+    targetElement = $('[my-customid="' + targetElementID + '"]');
+    if (targetElement.length === 0) {
+      console.error("Neither target element with ID nor element with custom attribute found");
+      return;
+    }
+  }
+
+  // Update the target element with decoded base64 value
+  targetElement.html(atob(value));
+
+  // Add event listener to update the icon on input change
+  iconInput.on('change input', function () {
+    let newValue = $(this).val();
+    $('#' + targetElementID).html(atob(newValue));
+  });
 }
+
+
+
 
 
 // -----------------------------------------------------------------------------

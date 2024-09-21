@@ -197,8 +197,8 @@
                         </label>
                         <div class="col-sm-9">
                           <div class="input-group">
-                            <span class="input-group-addon" id="txtIconFA"></span>
-                            <input class="form-control" id="txtIcon" type="text" value="--" readonly>
+                            <span class="input-group-addon iconPreview" id="txtIconPreview" my-customid="txtIconPreview"></span>
+                            <input class="form-control" id="txtIcon"  my-customid="txtIcon" my-customparams="txtIcon,txtIconPreview" type="text" value="--" readonly>
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_AddIcon_Tooltip');?>'><i class="fa fa-square-plus pointer" onclick="askAddIcon();"></i></span>
                             <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
                             <div class="input-group-btn">
@@ -755,7 +755,7 @@ function main () {
 
     // Show device icon as it changes
   $('#txtIcon').on('change input', function() {
-    updateIconPreview('#txtIcon')
+    updateIconPreview(this)
   });
   
        
@@ -1136,7 +1136,7 @@ function initializeCalendar () {
           showSpinner()
         } else {
           setTimeout(() => {
-            updateIconPreview('#txtIcon')  
+            updateIconPreview($('#txtIcon'))  
           }, 500);
           
           hideSpinner()
@@ -1667,7 +1667,7 @@ function addAsBase64 () {
 
   $('#txtIcon').val(iconHtmlBase64); 
 
-  updateIconPreview('#txtIcon')
+  updateIconPreview($('#txtIcon'))  
 
 }
 

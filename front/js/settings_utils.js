@@ -667,7 +667,11 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
   let valRes = val;
   let sourceIds = [];
   let getStringKey = "";
-  let onClick = "alert('Not implemented');";
+  let onClick = "console.log('onClick - Not implemented');";
+  let onChange = "console.log('onChange - Not implemented');";
+  let customParams = "";
+  let customId = "";
+
 
   elementOptions.forEach((option) => {
     if (option.prefillValue) {
@@ -711,6 +715,15 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
     if (option.onClick) {
       onClick = option.onClick;
     }
+    if (option.onChange) {
+      onChange = option.onChange;
+    }
+    if (option.customParams) {
+      customParams = option.customParams;
+    }
+    if (option.customId) {
+      customId = option.customId;
+    }
   });
 
   if (transformers.includes("sha256")) {
@@ -731,6 +744,9 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
     valRes,
     getStringKey,
     onClick,
+    onChange,
+    customParams,
+    customId
   };
 };
 

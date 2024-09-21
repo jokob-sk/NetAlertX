@@ -101,19 +101,20 @@
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
 
                   const setTypeObject  = JSON.parse(columns[j].Type.replace(/'/g, '"'));         
-                  // console.log(setTypeObject); 🔽        
-                  // const lastElementObj = setTypeObject.elements[setTypeObject.elements.length - 1]
 
                   // get the element with the input value(s)
-                  let elementsWithInputValue = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+                  let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
 
                   //  if none found, take last
-                  if(elementsWithInputValue.length == 0)
+                  if(elements.length == 0)
                   {
-                    elementsWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+                    elementWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+                  } else
+                  {
+                    elementWithInputValue = elements[0]
                   }
 
-                  const { elementType, elementOptions = [], transformers = [] } = elementsWithInputValue;
+                  const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
                   const { 
                     inputType,
                     readOnly,
@@ -127,26 +128,28 @@
                     editable,
                     valRes,
                     getStringKey,
-                    onClick
+                    onClick,
+                    onChange,
+                    customParams,
+                    customId
                   } = handleElementOptions('none', elementOptions, transformers, val = "");
 
-                  // console.log(setTypeObject);
-                  // console.log(inputType);
-
                   //  render based on element type 
-                  if (elementsWithInputValue.elementType === 'select') {
+                  if (elementType === 'select') {
 
                     targetLocation = columns[j].Code_Name + "_generateSetOptions"
 
                     generateOptionsOrSetOptions(columns[j].Code_Name, [], targetLocation, generateOptions)
 
-                    //  Handle Icons as tehy need a preview                 
+                    console.log(columns[j].Code_Name)
+                    //  Handle Icons as they need a preview                 
                     if(columns[j].Code_Name == 'NEWDEV_dev_Icon')
                     {
                       input = `
-                            <span class="input-group-addon" id="txtIconFA"></span>
+                            <span class="input-group-addon iconPreview" my-customid="NEWDEV_dev_Icon_preview"></span>
                             <select  class="form-control"
-                                      onChange="updateIconPreview('#NEWDEV_dev_Icon')"
+                                      onChange="updateIconPreview(this)"
+                                      my-customparams="NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview"
                                       id="${columns[j].Code_Name}"
                                       data-my-column="${columns[j].Code_Name}" 
                                       data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
@@ -164,7 +167,7 @@
                     }
 
 
-                  } else if (elementsWithInputValue.elementType === 'input'){ 
+                  } else if (elementType === 'input'){ 
                     
                     // Add classes specifically for checkboxes
                     inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';
@@ -172,6 +175,7 @@
 
                     input =  `<input  class="${inputClass}" 
                                       id="${columns[j].Code_Name}"  
+                                      my-customid="${columns[j].Code_Name}"  
                                       data-my-column="${columns[j].Code_Name}" 
                                       data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" 
                                       type="${inputType}">`

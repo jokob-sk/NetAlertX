@@ -1116,7 +1116,7 @@ input[readonly] {
 /*                    Devices page                                   */
 /* ----------------------------------------------------------------- */
 
-#txtIconFA {
+.iconPreview {
     min-width: 40px;
 }
 
