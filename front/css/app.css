@@ -1097,6 +1097,11 @@ input[readonly] {
     display: inline-block;
 }
 
+#settingsPage  .form-control
+{
+    min-height: 42px;
+}
+
 #settingsPage  .select2-selection
 {
     background-color: rgb(96, 96, 96);

@@ -1445,10 +1445,10 @@ function setDeviceData (direction='', refreshCallback='') {
 
   // update data to server
   $.get('php/server/devices.php?action=setDeviceData&mac='+ mac
-    + '&name='           + encodeURIComponent($('#txtName').val())
-    + '&owner='          + encodeURIComponent($('#txtOwner').val())
+    + '&name='           + encodeURIComponent($('#txtName').val().replace(/'/g, ""))
+    + '&owner='          + encodeURIComponent($('#txtOwner').val().replace(/'/g, ""))
     + '&type='           + $('#txtDeviceType').val()
-    + '&vendor='         + encodeURIComponent($('#txtVendor').val())
+    + '&vendor='         + encodeURIComponent($('#txtVendor').val().replace(/'/g, ""))
     + '&icon='           + encodeURIComponent($('#txtIcon').val())
     + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
     + '&group='          + encodeURIComponent($('#txtGroup').val())
