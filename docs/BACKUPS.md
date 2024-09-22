@@ -8,7 +8,7 @@ There are 3 artifacts that can be used to backup the application:
 | File                  | Description                   | Limitations                   |
 |-----------------------|-------------------------------|-------------------------------|
 | `/db/app.db`       | Database file(s)  | The database file might be in an uncommitted state or corrupted |
-| `/config/app.conf` | Configuration file |  Can be overriden with the [`APP_CONF_OVERRIDE` env variable](https://github.com/jokob-sk/NetAlertX/tree/main/dockerfiles#docker-environment-variables).  |
+| `/config/app.conf` | Configuration file |  Can be overridden with the [`APP_CONF_OVERRIDE` env variable](https://github.com/jokob-sk/NetAlertX/tree/main/dockerfiles#docker-environment-variables).  |
 | `/config/devices.csv`  | CSV file containing device information |     Doesn't contain historical data        |
 
 ## Data and backup storage

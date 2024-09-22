@@ -783,7 +783,7 @@
       setCache(key, target.replaceAll(":","_")+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
     }
 
-    // get the tab id from the cookie (already overriden by the target)
+    // get the tab id from the cookie (already overridden by the target)
     if(!emptyArr.includes(getCache(key)))
     {
       selectedTab = getCache(key);

@@ -30,7 +30,7 @@ from notification import write_notification
 
 #-------------------------------------------------------------------------------
 # managing application settings, ensuring SQL safety for user input, and updating internal configuration lists
-def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False):
+def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False, overriddenByEnv=0):
     if events is None:
         events = []
     if setJsonMetadata is None:
@@ -50,8 +50,8 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
         result = result.replace('\'', "{s-quote}")
 
     # Create the tuples
-    sql_safe_tuple = (key, name, desc, str(inputtype), options, regex, str(result), group, str(events))
-    settings_tuple = (key, name, desc, inputtype, options, regex, result, group, str(events))
+    sql_safe_tuple = (key, name, desc, str(inputtype), options, regex, str(result), group, str(events), overriddenByEnv)
+    settings_tuple = (key, name, desc, inputtype, options, regex, result, group, str(events), overriddenByEnv)
 
     # Update or append the tuples in the lists
     conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, sql_safe_tuple, key)
@@ -59,7 +59,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
 
     # Save metadata in dummy setting if not a metadata key
     if '__metadata' not in key:
-        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", '{"dataType":"json", "elements": [{"elementType" : "textarea", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]}', '[]', "", json.dumps(setJsonMetadata), group, '[]')
+        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", '{"dataType":"json", "elements": [{"elementType" : "textarea", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]}', '[]', "", json.dumps(setJsonMetadata), group, '[]', overriddenByEnv)
         conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, metadata_tuple, f'{key}__metadata')
         conf.mySettings = update_or_append(conf.mySettings, metadata_tuple, f'{key}__metadata')
 
@@ -298,7 +298,7 @@ def importConfigs (db, all_plugins):
     # -----------------
     # Plugins END
     
-    # TODO check app_conf_override.json
+    # HANDLE APP_CONF_OVERRIDE via app_conf_override.json
     # Assuming fullConfFolder is defined elsewhere
     app_conf_override_path = fullConfFolder + '/app_conf_override.json'
 
@@ -315,12 +315,12 @@ def importConfigs (db, all_plugins):
                         # Log the value being passed
                         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
                         mylog('debug', [f"[Config] Setting override {setting_name} with value: {value}"])
-                        ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
+                        ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
                     else:
                         # Convert to string and log
                         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
                         mylog('debug', [f"[Config] Setting override {setting_name} with value: {str(value)}"])
-                        ccd(setting_name, str(value), c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
+                        ccd(setting_name, str(value), c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
 
             except json.JSONDecodeError:
                 mylog('none', [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"])
@@ -348,8 +348,9 @@ def importConfigs (db, all_plugins):
 
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
+    # mylog('debug', [f"[Config] conf.mySettingsSQLsafe  : '{conf.mySettingsSQLsafe}'"])
     sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group", "Events" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
+         "RegEx", "Value", "Group", "Events", "OverriddenByEnv" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
     
     db.commitDB()
 

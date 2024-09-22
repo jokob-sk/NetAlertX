@@ -319,7 +319,7 @@ def get_setting_value(key):
         set_type  = 'Error: Not handled'
         set_value = 'Error: Not handled'
 
-        set_value = setting["Value"]  # Setting value (Value (upper case) = user overriden default_value)
+        set_value = setting["Value"]  # Setting value (Value (upper case) = user overridden default_value)
         set_type = setting["Type"]  # Setting type  # lower case "type" - default json value vs uppper-case "Type" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
