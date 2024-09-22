@@ -54,7 +54,7 @@
 
 <!-- NetAlertX -->
 <script src="js/handle_version.js"></script>
-<script defer src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+<script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 
 <!-- Select2 JavaScript -->
