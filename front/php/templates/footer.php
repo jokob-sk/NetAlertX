@@ -53,7 +53,7 @@
 <link rel="stylesheet" href="lib/AdminLTE/bower_components/select2/dist/css/select2.min.css">
 
 <!-- NetAlertX -->
-<script src="js/handle_version.js"></script>
+<script defer src="js/handle_version.js"></script>
 <script src="js/ui_components.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 
