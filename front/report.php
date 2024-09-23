@@ -99,7 +99,7 @@
     // Function to update the displayed data and timestamp based on the selected format and index
     function updateData(format, index) {
         // Fetch data from the API endpoint
-        fetch('/api/table_notifications.json?nocache=' + Date.now())
+        fetch('api/table_notifications.json?nocache=' + Date.now())
             .then(response => response.json())
             .then(data => {
                 if (index < 0) {
@@ -163,7 +163,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('guid')) {
         const guid = urlParams.get('guid');
-        fetch('/api/table_notifications.json')
+        fetch('api/table_notifications.json')
             .then(response => response.json())
             .then(data => {
                 const index = findIndexByGUID(data.data, guid);
