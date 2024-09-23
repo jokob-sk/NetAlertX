@@ -60,7 +60,7 @@ require 'php/templates/header.php';
 <script>
   function fetchData(callback) {
     $.ajax({
-      url: '/api/user_notifications.json?nocache=' + Date.now(),
+      url: 'api/user_notifications.json?nocache=' + Date.now(),
       method: 'GET',
       dataType: 'json',
       success: function(response) {
