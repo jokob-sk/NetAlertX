@@ -378,6 +378,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
         const valIn = set['Value'];
         const codeName = set['Code_Name'];
+        const overriddenByEnv = set['OverriddenByEnv'] == 1;
         const setType = set['Type'];
         const isMetadata = codeName.includes('__metadata');
         // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
@@ -416,7 +417,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       <div class="table_cell setting_description">
                         ${getString(codeName + '_description', set['Description'])}
                       </div>
-                      <div class="table_cell input-group setting_input input-group col-sm-12">
+                      <div class="table_cell input-group setting_input ${overriddenByEnv ? "setting_overriden_by_env" : ""} input-group col-sm-12">
                   `;
 
           // OVERRIDE

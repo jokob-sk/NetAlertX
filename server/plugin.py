@@ -248,7 +248,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
             
                 for line in newLines:
                     columns = line.split("|")
-                    # There have to be 9 or 13 columns
+                    # There have to be 9 or 13 columns 
                     if len(columns) not in [9, 13]:
                         mylog('none', [f'[Plugins] Wrong number of input values, must be 9 or 13, got {len(columns)} from: {line}'])
                         continue  # Skip lines with incorrect number of columns
