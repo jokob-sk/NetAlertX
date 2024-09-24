@@ -518,6 +518,60 @@ Required attributes are:
 | (optional) `"override_value"` | Used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (Work in progress) |
 | (optional) `"events"` | Used to trigger the plugin. Usually used on the `RUN` setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the `Parameters` database table to process the front-end event on the next run. |
 
+### UI Component Types Documentation
+
+This section outlines the structure and types of UI components, primarily used to build HTML forms or interactive elements dynamically. Each UI component has a `"type"` which defines its structure, behavior, and rendering options.
+
+#### UI Component JSON Structure
+The UI component is defined as a JSON object containing a list of `elements`. Each element specifies how it should behave, with properties like `elementType`, `elementOptions`, and any associated `transformers` to modify the data. The example below demonstrates how a component with two elements (`span` and `select`) is structured:
+
+```json
+{
+      "function": "dev_Icon",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              { "cssClasses": "input-group-addon iconPreview" },
+              { "getStringKey": "Gen_SelectToPreview" },
+              { "customId": "NEWDEV_dev_Icon_preview" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "cssClasses": "col-xs-12" },
+              {
+                "onChange": "updateIconPreview(this)"
+              },
+              { "customParams": "NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview" }
+            ],
+            "transformers": []
+          }          
+        ]
+      }
+}
+
+```
+
+### Rendering Logic
+
+The code snippet provided demonstrates how the elements are iterated over to generate their corresponding HTML. Depending on the `elementType`, different HTML tags (like `<select>`, `<input>`, `<textarea>`, `<button>`, etc.) are created with the respective attributes such as `onChange`, `my-data-type`, and `class` based on the provided `elementOptions`. Events can also be attached to elements like buttons or select inputs.
+
+### Key Element Types
+
+- **`select`**: Renders a dropdown list. Additional options like `isMultiSelect` and event handlers (e.g., `onChange`) can be attached.
+- **`input`**: Handles various types of input fields, including checkboxes, text, and others, with customizable attributes like `readOnly`, `placeholder`, etc.
+- **`button`**: Generates clickable buttons with custom event handlers (`onClick`), icons, or labels.
+- **`textarea`**: Creates a multi-line input box for text input.
+- **`span`**: Used for inline text or content with customizable classes and data attributes.
+
+Each element may also have associated events (e.g., running a scan or triggering a notification) defined under `Events`.
+
     
 ##### Supported settings `function` values
 
