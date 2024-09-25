@@ -42,7 +42,7 @@ def main():
             fake_mac = string_to_mac_hash(fake_dev)
 
             plugin_objects.add_object(
-                primaryId=fake_dev,    # MAC (Device Name)
+                primaryId=fake_mac,    # MAC (Device Name)
                 secondaryId="0.0.0.0", # IP Address (always 0.0.0.0)
                 watched1=fake_dev,     # Device Name
                 watched2="",
