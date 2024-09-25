@@ -808,8 +808,9 @@ def sanitize_string(input):
 
 #-------------------------------------------------------------------------------
 def sanitize_SQL_input(val):
-    val = val.replace("'", '_')
-    return val
+    if val is None:
+        return ''  
+    return val.replace("'", "_")
 
 
 #-------------------------------------------------------------------------------

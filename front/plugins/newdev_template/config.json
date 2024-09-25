@@ -261,7 +261,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "All the newly discovered device names are clened up by applying the following REGEX expression in this order. All the below are replaced by a blank string."
+          "string": "All the newly discovered device names are cleaned up by applying the following REGEX expression in this order. All the below are replaced by a blank string."
         }
       ]
     },
