@@ -807,6 +807,12 @@ def sanitize_string(input):
 
 
 #-------------------------------------------------------------------------------
+def sanitize_SQL_input(val):
+    val = val.replace("'", '_')
+    return val
+
+
+#-------------------------------------------------------------------------------
 def generate_mac_links (html, deviceUrl):
 
     p = re.compile(r'(?:[0-9a-fA-F]:?){12}')

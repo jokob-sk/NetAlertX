@@ -4,7 +4,7 @@ import subprocess
 import conf
 import os
 import re
-from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nbtlookup, get_device_name_nslookup, check_IP_format
+from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nbtlookup, get_device_name_nslookup, check_IP_format, sanitize_SQL_input
 from logger import mylog, print_log
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 
@@ -192,12 +192,12 @@ def create_new_devices (db):
                         {get_setting_value('NEWDEV_dev_NewDevice')}, 
                         {get_setting_value('NEWDEV_dev_SkipRepeated')}, 
                         {get_setting_value('NEWDEV_dev_ScanCycle')}, 
-                        '{get_setting_value('NEWDEV_dev_Owner')}', 
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_dev_Owner'))}', 
                         {get_setting_value('NEWDEV_dev_Favorite')}, 
-                        '{get_setting_value('NEWDEV_dev_Group')}', 
-                        '{get_setting_value('NEWDEV_dev_Comments')}', 
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_dev_Group'))}', 
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_dev_Comments'))}', 
                         {get_setting_value('NEWDEV_dev_LogEvents')}, 
-                        '{get_setting_value('NEWDEV_dev_Location')}'"""
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_dev_Location'))}'"""
 
     # Fetch data from CurrentScan
     current_scan_data = sql.execute("SELECT cur_MAC, cur_Name, cur_Vendor, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type FROM CurrentScan").fetchall()
@@ -232,19 +232,19 @@ def create_new_devices (db):
                         )
                         VALUES 
                         (
-                            '{cur_MAC}', 
-                            '{cur_Name}',
-                            '{cur_Vendor}', 
-                            '{cur_IP}', 
+                            '{sanitize_SQL_input(cur_MAC)}', 
+                            '{sanitize_SQL_input(cur_Name)}',
+                            '{sanitize_SQL_input(cur_Vendor)}', 
+                            '{sanitize_SQL_input(cur_IP)}', 
                             ?, 
                             ?, 
-                            '{cur_SyncHubNodeName}', 
+                            '{sanitize_SQL_input(cur_SyncHubNodeName)}', 
                             {sql_generateGuid},
-                            '{cur_NetworkNodeMAC}',
-                            '{cur_PORT}',
-                            '{cur_NetworkSite}', 
-                            '{cur_SSID}',
-                            '{cur_Type}', 
+                            '{sanitize_SQL_input(cur_NetworkNodeMAC)}',
+                            '{sanitize_SQL_input(cur_PORT)}',
+                            '{sanitize_SQL_input(cur_NetworkSite)}', 
+                            '{sanitize_SQL_input(cur_SSID)}',
+                            '{sanitize_SQL_input(cur_Type)}', 
                             {newDevDefaults}
                         )"""
 
