@@ -151,10 +151,10 @@ def main():
             write_notification(message, 'info', timeNowTZ())           
         
 
-    # Process any received data for the Device DB table
+    # Process any received data for the Device DB table (ONLY JSON)
     # Create the file path
 
-    # Decode files, rename them, and get the list of files
+    # Get all "last_result" files from the sync folder, decode, rename them, and get the list of files
     files_to_process = decode_and_rename_files(file_dir, file_prefix)
     
     if len(files_to_process) > 0:
@@ -192,6 +192,16 @@ def main():
                             device['dev_SyncHubNodeName'] = tmp_SyncHubNodeName
                             unique_mac_addresses.add(device['dev_MAC'])
                             device_data.append(device)    
+                            
+                # Rename the file to "processed_" + current name
+                new_file_name = f"processed_{file_name}"
+                new_file_path = os.path.join(file_dir, new_file_name)
+
+                # Overwrite if the new file already exists
+                if os.path.exists(new_file_path):
+                    os.remove(new_file_path)
+
+                os.rename(file_path, new_file_path)
 
         if len(device_data) > 0:
             # Retrieve existing dev_MAC values from the Devices table
@@ -243,6 +253,9 @@ def main():
 
                 mylog('verbose', [message])
                 write_notification(message, 'info', timeNowTZ())
+            
+                
+        
 
         # Commit and close the connection
         conn.commit()

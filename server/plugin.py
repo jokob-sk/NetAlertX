@@ -226,12 +226,14 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         file_dir = os.path.join(pluginsPath, plugin["code_name"])
         file_prefix = 'last_result'
 
-        # Decode files, rename them, and get the list of files
+        # Decode files, rename them, and get the list of files, this will return all files starting with the prefix, even if they are not encoded
         files_to_process = decode_and_rename_files(file_dir, file_prefix)
 
         for filename in files_to_process:
 
             full_path = os.path.join(file_dir, filename)
+            
+            mylog('debug', [f'[Plugins] Processing file "{full_path}"'])
 
             # Open the decrypted file and process its contents
             with open(full_path, 'r') as f:
