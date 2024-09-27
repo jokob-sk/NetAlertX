@@ -1,43 +1,7 @@
-# from cryptography.fernet import Fernet
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import base64
 import hashlib
-
-
-# FERET - Requires C compiler-------------------------------------------------------------------------
-
-# def prepare_key(encryption_key):
-#     if(len(encryption_key) < 32):
-#         encryption_key = (int((32 / len(encryption_key)))+1 )*encryption_key
-
-#     key_bytearray  = bytearray(encryption_key[:32], 'ASCII')
-
-#     return base64.urlsafe_b64encode(key_bytearray)    
-    
-
-# def encrypt_data(data, encryption_key):
-    
-#     fernet = Fernet(prepare_key(encryption_key))
-    
-#     # then use the Fernet class instance 
-#     # to encrypt the string string must
-#     # be encoded to byte string before encryption
-#     encrypted_data = fernet.encrypt(data.encode())
-#     return encrypted_data
-
-# def decrypt_data(data, encryption_key):
-    
-    
-#     fernet = Fernet(prepare_key(encryption_key))
-    
-#     # decrypt the encrypted string with the 
-#     # Fernet instance of the key,
-#     # that was used for encrypting the string
-#     # encoded byte string is returned by decrypt method,
-#     # so decode it to string with decode methods
-#     decrypted_data = fernet.decrypt(data).decode()
-#     return decrypted_data
 
 
 # SIMPLE CRYPT - requeres C compiler -------------------------------------------------------------------------
