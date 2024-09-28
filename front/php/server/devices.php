@@ -428,40 +428,38 @@ function ExportCSV() {
   $func_result = $db->query("SELECT * FROM Devices");        
 
   // prepare CSV header row
-  // header array with column names 
   $columns = getDevicesColumns();
 
   // wrap the headers with " (quotes) 
-  $resultCSV = '"'.implode('","', $columns).'"';  
-
-  //and append a new line
-  $resultCSV = $resultCSV."\n";
+  $resultCSV = '"'.implode('","', $columns).'"'."\n";
 
   // retrieve the devices from the DB
-  while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
+  while ($row = $func_result->fetchArray(SQLITE3_ASSOC)) {   
 
     // loop through columns and add values to the string 
     $index = 0;
     foreach ($columns as $columnName) {
+      // Escape special chars (e.g.quotes) inside fields by replacing them with html definitions
+      $fieldValue = encodeSpecialChars($row[$columnName]);
 
       // add quotes around the value to prevent issues with commas in fields
-      $resultCSV = $resultCSV.'"'.$row[$columnName].'"';
+      $resultCSV .= '"'.$fieldValue.'"';
 
       // detect last loop - skip as no comma needed
-      if ($index != count($columns) - 1  )
-      {
-        $resultCSV = $resultCSV.',';
+      if ($index != count($columns) - 1) {
+        $resultCSV .= ',';
       }
       $index++;
     } 
 
-    //$resultCSV = $resultCSV.implode(",", [$row["dev_MAC"], $row["dev_Name"]]);
-    $resultCSV = $resultCSV."\n";
+    // add a new line for the next row
+    $resultCSV .= "\n";
   }
 
   //write the built CSV string
   echo $resultCSV;    
 }
+
 
 //------------------------------------------------------------------------------
 //  Import CSV of devices

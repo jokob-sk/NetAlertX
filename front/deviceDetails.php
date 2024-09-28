@@ -1288,7 +1288,7 @@ function getDeviceData (readAllData=false) {
         if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
         $('#txtGroup').val                           (deviceData['dev_Group']);
         $('#txtLocation').val                        (deviceData['dev_Location']);
-        $('#txtComments').val                        (deviceData['dev_Comments']);        
+        $('#txtComments').val                        (decodeSpecialChars(deviceData['dev_Comments']));        
         $('#txtNetworkNodeMac').val                  ( networkParentMacName) ;
         $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
         $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
@@ -1429,7 +1429,7 @@ function setDeviceData (direction='', refreshCallback='') {
     + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
     + '&group='          + encodeURIComponent($('#txtGroup').val())
     + '&location='       + encodeURIComponent($('#txtLocation').val())
-    + '&comments='       + encodeURIComponent($('#txtComments').val())
+    + '&comments='       + encodeURIComponent(encodeSpecialChars($('#txtComments').val()))
     + '&networknode='    + $('#txtNetworkNodeMac').attr('data-mynodemac')
     + '&networknodeport=' + $('#txtNetworkPort').val()
     + '&ssid='            + $('#txtSSID').val()

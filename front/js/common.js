@@ -383,6 +383,26 @@ function isValidJSON(jsonString) {
   }
 }
 
+// method to sanitize input so that HTML and other things don't break
+function encodeSpecialChars(str) {
+  return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+}
+
+function decodeSpecialChars(str) {
+  return str
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, '\'');
+}
+
+
 // -----------------------------------------------------------------------------
 // General utilities
 // -----------------------------------------------------------------------------
