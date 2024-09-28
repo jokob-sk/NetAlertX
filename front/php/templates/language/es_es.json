@@ -361,6 +361,7 @@
     "Loading": "Cargando...",
     "Login_Box": "Ingrese su contraseña",
     "Login_Default_PWD": "La contraseña por defecto \"123456\" sigue activa.",
+    "Login_Info": "",
     "Login_Psw-box": "Contraseña",
     "Login_Psw_alert": "¡Alerta de Contraseña!",
     "Login_Psw_folder": "en la carpeta config.",

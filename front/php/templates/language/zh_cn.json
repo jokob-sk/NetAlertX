@@ -351,6 +351,7 @@
     "Loading": "加载中...",
     "Login_Box": "输入密码",
     "Login_Default_PWD": "默认密码“123456”仍然有效。",
+    "Login_Info": "",
     "Login_Psw-box": "密码",
     "Login_Psw_alert": "密码警报！",
     "Login_Psw_folder": "在配置文件夹中。",

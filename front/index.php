@@ -40,7 +40,7 @@ if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOK
 }
 
 $login_headline = lang('Login_Toggle_Info_headline');
-$login_info = "";
+$login_info = lang('Login_Info');
 $login_mode = 'danger';
 $login_display_mode = 'display: block;';
 $login_icon = 'fa-info';
@@ -91,6 +91,13 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
   <!-- iCheck -->
   <link rel="stylesheet" href="lib/AdminLTE/plugins/iCheck/square/blue.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/solid.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/brands.css">
+  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/v5-font-face.css">
+  <!-- Favicon -->
+  <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
   <!-- Dark-Mode Patch -->
 <?php
@@ -140,11 +147,9 @@ if ($ENABLED_DARKMODE === True) {
   </div>
   <!-- /.login-box-body -->
 
-
-
   <div id="myDIV" class="box-body" style="margin-top: 50px; <?php echo $login_display_mode;?>">
       <div class="alert alert-<?php echo $login_mode;?> alert-dismissible">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">�</button>
+          <button type="button" class="close" onclick="Passwordhinfo()" aria-hidden="true">X</button>
           <h4><i class="icon fa <?php echo $login_icon;?>"></i><?php echo $login_headline;?></h4>
           <p><?php echo $login_info;?></p>
       </div>

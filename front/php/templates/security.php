@@ -62,7 +62,7 @@ if($Pia_WebProtection == 'true')
     } else 
     {
         // we need to redirect        
-        header('Location: index.php');
+        header('Location: /index.php');
     } 
 
 }

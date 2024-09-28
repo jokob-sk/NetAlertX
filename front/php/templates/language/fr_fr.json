@@ -351,6 +351,7 @@
     "Loading": "Chargement...",
     "Login_Box": "Saisir votre mot de passe",
     "Login_Default_PWD": "Le mot de passe par défaut \"123456\" est encore actif.",
+    "Login_Info": "",
     "Login_Psw-box": "Mot de passe",
     "Login_Psw_alert": "Alerte de mot de passe !",
     "Login_Psw_folder": "dans le dossier de configuration.",

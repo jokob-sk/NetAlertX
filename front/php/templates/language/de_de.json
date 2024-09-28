@@ -363,6 +363,7 @@
     "Loading": "Laden...",
     "Login_Box": "Passwort eingeben",
     "Login_Default_PWD": "Standardpasswort \"123456\" noch immer aktiv.",
+    "Login_Info": "",
     "Login_Psw-box": "Passwort",
     "Login_Psw_alert": "Sicherheitshinweis!",
     "Login_Psw_folder": "im Ordner /app/config",

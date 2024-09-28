@@ -351,6 +351,7 @@
     "Loading": "Loading...",
     "Login_Box": "Enter your password",
     "Login_Default_PWD": "Default password \"123456\" is still active.",
+    "Login_Info": "Passwords are set via the Set Password plugin. Check the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/set_password\">SETPWD docs</a> if you have issues logging in.",
     "Login_Psw-box": "Password",
     "Login_Psw_alert": "Password Alert!",
     "Login_Psw_folder": "in the config folder.",
