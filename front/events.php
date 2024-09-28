@@ -183,43 +183,31 @@
 
 <!-- page script ----------------------------------------------------------- -->
 <script>
-  var parPeriod       = 'Front_Events_Period';
-  var parTableRows    = 'Front_Events_Rows';
+  var parPeriod       = 'nax_parPeriod';
+  var parTableRows    = 'nax_parTableRows';
 
   var eventsType      = 'all';
-  var period          = '';
-  var tableRows       = 10;
+  var period          = '1 day';
+  var tableRows       = 25;
   
   // Read parameters & Initialize components
   main();
 
 
 // -----------------------------------------------------------------------------
-function main () {
-  // get parameter value
-  $.get('php/server/parameters.php?action=get&defaultValue=1 day&parameter='+ parPeriod, function(data) {
-    var result = JSON.parse(data);
-    if (result) {
-      period = result;
-      $('#period').val(period);
-    }
+function main() {
+  // Get parameter value from cookies instead of server
+  period = getCookie(parPeriod) === "" ? "1 day" : getCookie(parPeriod);
+  $('#period').val(period);
 
-    // get parameter value
-    $.get('php/server/parameters.php?action=get&defaultValue=50&parameter='+ parTableRows, function(data) {
-      var result = JSON.parse(data);
-      result = parseInt(result, 10)
-      if (Number.isInteger (result) ) {
-          tableRows = result;
-      }
+  tableRows = getCookie(parTableRows) === "" ? 50 : parseInt(getCookie(parTableRows), 10);
 
-      // Initialize components
-      initializeDatatable();
+  // Initialize components
+  initializeDatatable();
 
-      // query data
-      getEventsTotals();
-      getEvents (eventsType);
-    });
-  });
+  // Query data
+  getEventsTotals();
+  getEvents(eventsType);
 }
 
 
@@ -281,7 +269,7 @@ function initializeDatatable () {
 
   // Save Parameter rows when changed
   $('#tableEvents').on( 'length.dt', function ( e, settings, len ) {
-    setParameter (parTableRows, len);
+    setCookie(parTableRows, len)
   } );
 };
 
@@ -290,7 +278,8 @@ function initializeDatatable () {
 function periodChanged () {
   // Save Parameter Period
   period = $('#period').val();
-  setParameter (parPeriod, period);
+
+  setCookie(parTableRows, period)
 
   // Requery totals and events
   getEventsTotals();

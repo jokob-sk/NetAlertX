@@ -1,4 +1,10 @@
-<?php require 'php/templates/notification.php'; ?>
+<?php 
+
+  require 'php/templates/notification.php'; 
+  //------------------------------------------------------------------------------
+  // check if authenticated
+  require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+?>
 
 <script>
 

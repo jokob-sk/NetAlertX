@@ -2,6 +2,10 @@
 
 require '../server/init.php';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 // Function to render the log area component
 function renderLogArea($params) {
     $fileName = isset($params['fileName']) ? $params['fileName'] : '';

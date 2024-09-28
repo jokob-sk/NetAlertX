@@ -11,6 +11,10 @@
 require dirname(__FILE__).'/../templates/timezone.php';
 require dirname(__FILE__).'/../templates/skinUI.php';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 $FUNCTION = [];
 $SETTINGS = [];
 $ACTION   = "";
@@ -484,7 +488,7 @@ function getDateFromPeriod () {
       $days = "3650"; //10 years
       break;
     default:
-    $days = "1";    
+      $days = "1";    
   }  
 
   $periodDateSQL = "-".$days." day"; 

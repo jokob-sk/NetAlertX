@@ -2,6 +2,10 @@
 
 require 'util.php';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 $PIA_HOST_IP = $_REQUEST['scan'];
 $PIA_SCAN_MODE = $_REQUEST['mode'];
 

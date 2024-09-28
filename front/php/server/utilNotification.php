@@ -1,7 +1,10 @@
 <?php
 
-
 require dirname(__FILE__).'/../templates/timezone.php';
+
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 // ----------------------------------------------------------------------------------------
 // Check if the action parameter is set in the GET request

@@ -28,8 +28,6 @@ switch($result){
 
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = $defaultLang;}
 
-require dirname(__FILE__).'/../skinUI.php';
-
 $result = $db->query("SELECT * FROM Plugins_Language_Strings");
 $strings = array();
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {

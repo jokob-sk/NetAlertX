@@ -3,16 +3,18 @@
 //  NetAlertX
 //  Open Source Network Guard / WIFI & LAN intrusion detector 
 //
-//  parameters.php - Front module. Server side. Manage Parameters
 //------------------------------------------------------------------------------
 #  Puche 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
-  // External files
-  require dirname(__FILE__).'/init.php';
- 
+// External files
+require dirname(__FILE__).'/init.php';
+
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 //------------------------------------------------------------------------------
 //  Action selector

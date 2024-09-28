@@ -502,33 +502,6 @@ setTimeout(() => {
   });
 }, 1000);
 
-// -----------------------------------------------------------------------------
-// handling events on the backend initiated by the front end END
-// -----------------------------------------------------------------------------
-
-// ---------------------------------------------------------
-// UNUSED?
-function getParam(targetId, key, skipCache = false) {
-  skipCacheQuery = "";
-
-  if (skipCache) {
-    skipCacheQuery = "&skipcache";
-  }
-
-  // get parameter value
-  $.get(
-    "php/server/parameters.php?action=get&defaultValue=0&parameter=" +
-      key +
-      skipCacheQuery,
-    function (data) {
-      var result = data;
-
-      result = result.replaceAll('"', "");
-
-      document.getElementById(targetId).innerHTML = result.replaceAll('"', "");
-    }
-  );
-}
 
 // -----------------------------------------------------------------------------
 // Show/hide the metadata settings

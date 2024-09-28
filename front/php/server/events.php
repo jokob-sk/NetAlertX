@@ -8,9 +8,12 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-  // External files
-  require dirname(__FILE__).'/init.php';
+// External files
+require dirname(__FILE__).'/init.php';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 //------------------------------------------------------------------------------
 //  Action selector
@@ -72,7 +75,7 @@ function getEventsTotals() {
     $resultJSON = getCache("getEventsTotals".$days);
   } else
   {
-    // one query to get all numbers, whcih is quicker than multiple queries
+    // one query to get all numbers, which is quicker than multiple queries
     $sql = "select 
               (SELECT Count(*) FROM Events  WHERE eve_DateTime >=  date('now', '".$periodDateSQL."')) as all_events, 
               (SELECT Count(*) FROM Sessions as sessions WHERE (  ses_DateTimeConnection >= date('now', '".$periodDateSQL."') OR ses_DateTimeDisconnection >= date('now', '".$periodDateSQL."') OR ses_StillConnected = 1 ))  as sessions,
@@ -334,24 +337,40 @@ function getEventsCalendar() {
   $endDate    = '"'. $_REQUEST ['end'] .'"';
 
   // SQL 
-  $SQL = 'SELECT ses_MAC, ses_EventTypeConnection, ses_DateTimeConnection,
-                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_IP, ses_AdditionalInfo, ses_StillConnected,
-            
-                 CASE
-                   WHEN ses_EventTypeConnection = "<missing event>" THEN
-                        IFNULL ((SELECT MAX(ses_DateTimeDisconnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection),  DATETIME(ses_DateTimeDisconnection, "-1 hour"))
-                   ELSE ses_DateTimeConnection
-                 END AS ses_DateTimeConnectionCorrected,
+  $SQL = 'SELECT SES1.ses_MAC, SES1.ses_EventTypeConnection, SES1.ses_DateTimeConnection,
+          SES1.ses_EventTypeDisconnection, SES1.ses_DateTimeDisconnection, SES1.ses_IP,
+          SES1.ses_AdditionalInfo, SES1.ses_StillConnected,
+          
+          CASE
+            WHEN SES1.ses_EventTypeConnection = "<missing event>" THEN
+              IFNULL (
+                (SELECT MAX(SES2.ses_DateTimeDisconnection) 
+                  FROM Sessions AS SES2 
+                  WHERE SES2.ses_MAC = SES1.ses_MAC 
+                    AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection
+                    AND SES2.ses_DateTimeDisconnection BETWEEN Date('. $startDate .') AND Date('. $endDate .')
+                ), 
+                DATETIME(SES1.ses_DateTimeDisconnection, "-1 hour")
+              )
+            ELSE SES1.ses_DateTimeConnection
+          END AS ses_DateTimeConnectionCorrected,
 
-                 CASE
-                   WHEN ses_EventTypeDisconnection = "<missing event>" THEN
-                        (SELECT MIN(ses_DateTimeConnection) FROM Sessions AS SES2 WHERE SES2.ses_MAC = SES1.ses_MAC AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection)
-                   ELSE ses_DateTimeDisconnection
-                 END AS ses_DateTimeDisconnectionCorrected
+          CASE
+            WHEN SES1.ses_EventTypeDisconnection = "<missing event>" THEN
+              (SELECT MIN(SES2.ses_DateTimeConnection) 
+                FROM Sessions AS SES2 
+                WHERE SES2.ses_MAC = SES1.ses_MAC 
+                  AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection
+                  AND SES2.ses_DateTimeConnection BETWEEN Date('. $startDate .') AND Date('. $endDate .')
+              )
+            ELSE SES1.ses_DateTimeDisconnection
+          END AS ses_DateTimeDisconnectionCorrected
 
-          FROM Sessions AS SES1 
-          WHERE (     ses_DateTimeConnectionCorrected <= Date('. $endDate .')
-                 AND (ses_DateTimeDisconnectionCorrected >= Date('. $startDate .') OR ses_StillConnected = 1 )) ';
+        FROM Sessions AS SES1 
+        WHERE (SES1.ses_DateTimeConnection BETWEEN Date('. $startDate .') AND Date('. $endDate .'))
+        OR (SES1.ses_DateTimeDisconnection BETWEEN Date('. $startDate .') AND Date('. $endDate .'))
+        OR SES1.ses_StillConnected = 1';
+
   $result = $db->query($SQL);
 
   // arrays of rows

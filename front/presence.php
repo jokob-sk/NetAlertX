@@ -239,7 +239,7 @@ function initializeCalendar () {
       center          : 'title',
       right           : 'timelineYear,timelineMonth,timelineWeek,timelineDay'
     },
-    defaultView       : 'timelineMonth',
+    defaultView       : 'timelineWeek',
     height            : 'auto',
     firstDay          : 1,
     allDaySlot        : false,
@@ -389,6 +389,33 @@ function getDevicesPresence (status) {
     default:           tableTitle = '<?= lang('Presence_Shortcut_Devices');?>';       color = 'gray';    break;
   } 
 
+  period = "7 days"
+
+  // Calculate startDate and endDate based on the period
+  let startDate = "";
+  let endDate = new Date().toISOString().slice(0, 10);  // Today's date in ISO format (YYYY-MM-DD)
+
+  // Calculate startDate based on period
+  switch (period) {
+    case "7 days":
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);  // Subtract 7 days
+      startDate = startDate.toISOString().slice(0, 10);  // Convert to ISO format
+      break;
+    case "1 month":
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 1);  // Subtract 1 month
+      startDate = startDate.toISOString().slice(0, 10);  // Convert to ISO format
+      break;
+    case "1 year":
+      startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);  // Subtract 1 year
+      startDate = startDate.toISOString().slice(0, 10);  // Convert to ISO format
+      break;
+    default:
+      console.error("Invalid period selected");
+  }
+
   // Set title and color
   $('#tableDevicesTitle')[0].className = 'box-title text-'+ color;
   $('#tableDevicesBox')[0].className = 'box box-'+ color;
@@ -399,7 +426,7 @@ function getDevicesPresence (status) {
   $('#calendar').fullCalendar ('refetchResources');
 
   $('#calendar').fullCalendar('removeEventSources');
-  $('#calendar').fullCalendar('addEventSource', { url: 'php/server/events.php?action=getEventsCalendar' });
+  $('#calendar').fullCalendar('addEventSource', { url: `php/server/events.php?period=${period}&start=${startDate}&end=${endDate}&action=getEventsCalendar` });
 };
 
 </script>

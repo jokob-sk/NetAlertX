@@ -10,7 +10,10 @@ if (strpos($url,'index.php') !== false) {
     $isLogonPage = TRUE;
 } 
 
-session_start();
+// start session if not started yet
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if(array_search('action', $_REQUEST) != FALSE)
 {
@@ -24,7 +27,7 @@ if(array_search('action', $_REQUEST) != FALSE)
 // ##################################################
 // ## Login Processing start
 // ##################################################
-$config_file = "../config/app.conf";
+$config_file = $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf";
 $config_file_lines = file($config_file);
 $CookieSaveLoginName = "NetAlertX_SaveLogin";
 

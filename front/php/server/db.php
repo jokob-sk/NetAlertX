@@ -13,6 +13,10 @@
 $DBFILE = dirname(__FILE__).'/../../../db/app.db';
 $DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../front/log/db_is_locked.log';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 $db_locked = false;
 
 //------------------------------------------------------------------------------

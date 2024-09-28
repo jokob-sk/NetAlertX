@@ -423,29 +423,6 @@ function numberArrayFromString(data)
   return data.replace(/\[|\]/g, '').split(',').map(Number);
 }
 
-// -----------------------------------------------------------------------------
-function setParameter (parameter, value) {
-  // Retry
-  $.get('php/server/parameters.php?action=set&parameter=' + parameter +
-    '&value='+ value,
-  function(data) {
-    if (data != "OK") {
-      // Retry
-      sleep (200);
-      $.get('php/server/parameters.php?action=set&parameter=' + parameter +
-        '&value='+ value,
-        function(data) {
-          if (data != "OK") {
-          // alert (data);
-          } else {
-          // alert ("OK. Second attempt");
-          };
-      } );
-    };
-  } );
-}
-
-
 // -----------------------------------------------------------------------------  
 function saveData(functionName, id, value) {
   $.ajax({

@@ -12,6 +12,10 @@
   require dirname(__FILE__).'/init.php';
 
   //------------------------------------------------------------------------------
+  // check if authenticated
+  require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
+  //------------------------------------------------------------------------------
   //  Action selector
   //------------------------------------------------------------------------------
   // Set maximum execution time to 15 seconds

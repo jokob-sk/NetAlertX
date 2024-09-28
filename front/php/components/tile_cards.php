@@ -1,4 +1,9 @@
 <?php
+
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 function renderInfobox($params) {
   $onclickEvent = isset($params['onclickEvent']) ? $params['onclickEvent'] : '';
   $color = isset($params['color']) ? $params['color'] : '';

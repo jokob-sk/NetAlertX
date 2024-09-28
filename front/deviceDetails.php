@@ -790,7 +790,6 @@ function initializeiCheck () {
     // Hide / Show Events
     if (event.currentTarget.id == 'chkHideConnectionEvents') {
       getDeviceEvents();
-      setParameter (parEventsHide, event.currentTarget.checked);
     } else {
       // Activate save & restore
       // activateSaveRestoreData();
@@ -1014,25 +1013,6 @@ function initializeDatatables () {
       "info":           "<?= lang('Events_Table_info');?>",
     }
   });
-
-  // Save Parameters rows & order when changed
-  $('#tableSessions').on( 'length.dt', function ( e, settings, len ) {
-    setParameter (parSessionsRows, len);
-
-    // Sync Rows in both datatables
-    // if ( $('#tableEvents').DataTable().page.len() != len) {
-    //   $('#tableEvents').DataTable().page.len( len ).draw();
-    // }
-  } );
-  
-  $('#tableEvents').on( 'length.dt', function ( e, settings, len ) {
-    setParameter (parEventsRows, len);
-
-    // Sync Rows in both datatables
-    // if ( $('#tableSessions').DataTable().page.len() != len) {
-    //   $('#tableSessions').DataTable().page.len( len ).draw();
-    // }
-  } );
 };
 
 
@@ -1149,10 +1129,6 @@ function initializeCalendar () {
 
 // -----------------------------------------------------------------------------
 function periodChanged () {
-  // Save Parameter Period
-  period = $('#period').val();
-  setParameter (parPeriod, period);
-
   // Requery Device data
   getDeviceData(true);
   getSessionsPresenceEvents();
@@ -1830,12 +1806,6 @@ function initTable(tableId, mac){
   });
 
   $("#"+tableId).attr("data-mac", mac)
-
-  // Save Parameters rows & order when changed
-  $('#'+tableId).on( 'length.dt', function ( e, settings, len ) {
-    setParameter (parSessionsRows, len);
-
-  } );
 
 }
 

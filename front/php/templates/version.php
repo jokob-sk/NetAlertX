@@ -12,6 +12,7 @@
 #---------------------------------------------------------------------------------#
 
 $filename = "/app/.VERSION";
+
 if(file_exists($filename)) {
     $fileContents = file_get_contents($filename);
     if(trim($fileContents) === 'Dev') {
@@ -22,5 +23,6 @@ if(file_exists($filename)) {
 }
 else {
     echo date('H:i:s') . " - N/A";
-}           
+}          
+ 
 ?>

@@ -15,6 +15,10 @@
 // Get init.php 
 require dirname(__FILE__).'/../server/init.php';
 
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
 // Perform a test with the PING command
 $output = shell_exec("curl ipinfo.io");
 
