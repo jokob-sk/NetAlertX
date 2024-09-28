@@ -713,11 +713,16 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (dataType === 'boolean') {
+          } else if (inputType === 'checkbox') {
             
-            value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
-            value = applyTransformers(value, transformers);
+            value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;            
 
+            if(dataType === "boolean")
+            {
+              value = value == 1 ? "True" : "False";
+            }
+
+            value = applyTransformers(value, transformers);
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "array" ) {
@@ -757,6 +762,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             value = $('#' + setCodeName).val();
             value = applyTransformers(value, transformers);
+            console.error(`[saveSettings] Saving value "${value}"`);
             settingsArray.push([prefix, setCodeName, dataType, value]);
           }
         });
