@@ -3,7 +3,9 @@
 
 <?php
 require dirname(__FILE__).'/php/server/init.php';
-require 'php/templates/security.php';
+//------------------------------------------------------------------------------
+// check if authenticated
+require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 $CookieSaveLoginName = 'NetAlertX_SaveLogin';
 

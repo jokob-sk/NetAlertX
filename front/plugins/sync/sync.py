@@ -305,7 +305,7 @@ def get_data(api_token, node_url):
     api_endpoint = f"{node_url}/plugins/sync/hub.php"
     response = requests.get(api_endpoint, headers=headers)
 
-    # mylog('verbose', [f'[{pluginName}] response: "{response}"'])
+    # mylog('verbose', [f'[{pluginName}] response: "{response.text}"'])
 
     if response.status_code == 200:
         try:
