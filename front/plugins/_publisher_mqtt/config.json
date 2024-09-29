@@ -5,6 +5,15 @@
   "enabled": true,
   "data_source": "script",
   "show_ui": true,
+  "data_filters": [
+    {
+      "compare_column": "Watched_Value4",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
   "localized": ["display_name", "description", "icon"],
   "display_name": [
     {

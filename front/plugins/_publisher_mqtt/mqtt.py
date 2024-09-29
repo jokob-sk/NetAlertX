@@ -9,6 +9,7 @@ import sys
 from datetime import datetime
 import time
 import re
+import unicodedata
 import paho.mqtt.client as mqtt
 # from paho.mqtt import client as mqtt_client
 # from paho.mqtt import CallbackAPIVersion as mqtt_CallbackAPIVersion
@@ -26,7 +27,7 @@ from const import apiPath, confFileName
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
-from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string
+from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string, normalize_string
 from notification import Notification_obj
 from database import DB, get_device_stats
 from pytz import timezone
@@ -414,7 +415,8 @@ def mqtt_start(db):
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
-            devDisplayName  = re.sub('[^a-zA-Z0-9-_\\s]', '', device["dev_Name"]) 
+            # Normalize the string and remove unwanted characters
+            devDisplayName = re.sub('[^a-zA-Z0-9-_\\s]', '', normalize_string(device["dev_Name"]))            
 
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
