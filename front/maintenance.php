@@ -39,46 +39,17 @@
 
 // Size and last mod of DB ------------------------------------------------------
 
-$pia_db = str_replace('front', 'db', getcwd()).'/app.db';
-$pia_db_size = number_format((filesize($pia_db) / 1000000),2,",",".") . ' MB';
-$pia_db_mod = date ("F d Y H:i:s", filemtime($pia_db));
+$nax_db = str_replace('front', 'db', getcwd()).'/app.db';
+$nax_db_size = number_format((filesize($nax_db) / 1000000),2,",",".") . ' MB';
+$nax_db_mod = date ("F d Y H:i:s", filemtime($nax_db));
 
-
-// Count and Calc Backups -------------------------------------------------------
-
-$Pia_Archive_Path = str_replace('front', 'db', getcwd()).'/';
-$Pia_Archive_count = 0;
-$Pia_Archive_diskusage = 0;
-$files = glob($Pia_Archive_Path."appdb_*.zip");
-if ($files){
- $Pia_Archive_count = count($files);
-}
-foreach ($files as $result) {
-    $Pia_Archive_diskusage = $Pia_Archive_diskusage + filesize($result);
-}
-$Pia_Archive_diskusage = number_format(($Pia_Archive_diskusage / 1000000),2,",",".") . ' MB';
-
-// Find latest Backup for restore -----------------------------------------------
-
-$latestfiles = glob($Pia_Archive_Path."appdb_*.zip");
-natsort($latestfiles);
-$latestfiles = array_reverse($latestfiles,False);
-
-$latestbackup = 'none';
-$latestbackup_date = 'no backup';
-
-if (count($latestfiles) > 0)
-{
-  $latestbackup = $latestfiles[0];
-  $latestbackup_date = date ("Y-m-d H:i:s", filemtime($latestbackup));
-}
 
 // Table sizes -----------------------------------------------------------------
 
 $tableSizesHTML = "";
                         
 // Open a connection to the SQLite database
-$db = new SQLite3($pia_db);
+$db = new SQLite3($nax_db);
 
 // Retrieve the table names from sqlite_master
 $query = "SELECT name FROM sqlite_master WHERE type='table'";
@@ -133,13 +104,13 @@ $db->close();
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_database_path');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $pia_db;?>
+                            <?php echo $nax_db;?>
                         </div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell"><?= lang('Maintenance_database_size');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $pia_db_size;?>
+                            <?php echo $nax_db_size;?>
                         </div>                        
                     </div>
                     <div class="db_info_table_row">
@@ -151,15 +122,9 @@ $db->close();
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell"><?= lang('Maintenance_database_lastmod');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $pia_db_mod;?>
+                            <?php echo $nax_db_mod;?>
                         </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?= lang('Maintenance_database_backup');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $Pia_Archive_count.' '.lang('Maintenance_database_backup_found').' / '.lang('Maintenance_database_backup_total').': '.$Pia_Archive_diskusage;?>
-                        </div>
-                    </div>                    
+                    </div>           
                 </div>                
               </div>
               <!-- /.box-body -->
@@ -254,25 +219,7 @@ $db->close();
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedCSV" onclick="askImportPastedCSV()"><?= lang('Maintenance_Tool_ImportPastedCSV');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedCSV_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnPiaBackupDBtoArchive" onclick="askPiaBackupDBtoArchive()"><?= lang('Maintenance_Tool_backup');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_backup_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaRestoreDBfromArchive" onclick="askPiaRestoreDBfromArchive()"><?= lang('Maintenance_Tool_restore');?><br><?php echo $latestbackup_date;?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_restore_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnPiaPurgeDBBackups" onclick="askPiaPurgeDBBackups()"><?= lang('Maintenance_Tool_purgebackup');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_purgebackup_text');?></div>
-                    </div>
+                    </div>                    
                  </div>
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
@@ -454,51 +401,6 @@ function deleteActHistory()
 { 
   // Execute
   $.get('php/server/devices.php?action=deleteActHistory', function(msg) {
-    showMessage (msg);
-  });
-}
-
-// -----------------------------------------------------------
-// Backup DB to Archive 
-function askPiaBackupDBtoArchive () {
-  // Ask 
-  showModalWarning('<?= lang('Maintenance_Tool_backup_noti');?>', '<?= lang('Maintenance_Tool_backup_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Backup');?>', 'PiaBackupDBtoArchive');
-}
-function PiaBackupDBtoArchive()
-{ 
-  // Execute
-  $.get('php/server/devices.php?action=PiaBackupDBtoArchive', function(msg) {
-    showMessage (msg);
-  });
-}
-
-// -----------------------------------------------------------
-// Restore DB from Archive 
-function askPiaRestoreDBfromArchive () {
-  // Ask 
-  showModalWarning('<?= lang('Maintenance_Tool_restore_noti');?>', '<?= lang('Maintenance_Tool_restore_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Restore');?>', 'PiaRestoreDBfromArchive');
-}
-function PiaRestoreDBfromArchive()
-{ 
-  // Execute
-  $.get('php/server/devices.php?action=PiaRestoreDBfromArchive', function(msg) {
-    showMessage (msg);
-  });
-}
-
-// -----------------------------------------------------------
-// Purge Backups 
-function askPiaPurgeDBBackups() {
-  // Ask 
-  showModalWarning('<?= lang('Maintenance_Tool_purgebackup_noti');?>', '<?= lang('Maintenance_Tool_purgebackup_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Purge');?>', 'PiaPurgeDBBackups');
-}
-function PiaPurgeDBBackups()
-{ 
-  // Execute
-  $.get('php/server/devices.php?action=PiaPurgeDBBackups', function(msg) {
     showMessage (msg);
   });
 }

@@ -19,9 +19,9 @@ $config_file = "../../../config/app.conf"; // depends on where this file is call
 $config_file_lines = file($config_file);
 $config_file_lines = array_values(preg_grep('/^SETPWD_password.*=/', $config_file_lines));
 $password_line = explode("'", $config_file_lines[0]);
-$Pia_Password = $password_line[1];
+$nax_Password = $password_line[1];
 
-if (isset($_COOKIE[$CookieSaveLoginName]) && $Pia_Password == $_COOKIE[$CookieSaveLoginName]) {
+if (isset($_COOKIE[$CookieSaveLoginName]) && $nax_Password == $_COOKIE[$CookieSaveLoginName]) {
     $isAuthenticated = true;
 }
 
