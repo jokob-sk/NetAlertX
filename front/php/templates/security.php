@@ -1,112 +1,71 @@
 <?php
 
-$url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-$isLogonPage = FALSE;
+// Constants
+define('CONFIG_PATH', $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf");
+define('COOKIE_SAVE_LOGIN_NAME', "NetAlertX_SaveLogin");
 
-$CookieSaveLoginName = "NetAlertX_SaveLogin";
+// Utility Functions
+function getConfigLine($pattern, $config_lines) {
+    $matches = preg_grep($pattern, $config_lines);
+    return !empty($matches) ? explode("=", array_values($matches)[0]) : null;
+}
 
+function getConfigValue($pattern, $config_lines, $delimiter = "'") {
+    $line = preg_grep($pattern, $config_lines);
+    return !empty($line) ? explode($delimiter, array_values($line)[0])[1] : '';
+}
 
-if (strpos($url,'index.php') !== false) {
-    $isLogonPage = TRUE;
-} 
+function redirect($url) {
+    header("Location: $url");
+    exit();
+}
 
-// start session if not started yet
+// Initialization
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$url = $protocol . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$isLogonPage = strpos($url, 'index.php') !== false;
+$authHeader = apache_request_headers()['Authorization'] ?? '';
+$sessionLogin = $_SESSION['login'] ?? 0;
+
+// Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-if(array_search('action', $_REQUEST) != FALSE)
-{
-  if ($_REQUEST['action'] == 'logout') {
+// Handle logout
+if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'logout') {
     session_destroy();
-    setcookie($CookieSaveLoginName, "", time() - 3600);
-    header('Location: index.php');
-    exit(); // ensure script stops after header redirection
-  }    
+    setcookie(COOKIE_SAVE_LOGIN_NAME, "", time() - 3600);
+    redirect('index.php');
 }
 
-// ##################################################
-// ## Login Processing start
-// ##################################################
-$config_file = $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf";
-
-if (file_exists($config_file)) {
-    $config_file_lines = file($config_file);
-} else {
-    // handle missing config file
+// Load configuration
+if (!file_exists(CONFIG_PATH)) {
     die("Configuration file not found.");
 }
+$configLines = file(CONFIG_PATH);
 
-$CookieSaveLoginName = "NetAlertX_SaveLogin";
+// Handle web protection and password
+$nax_WebProtection = strtolower(trim(getConfigLine('/^SETPWD_enable_password.*=/', $configLines)[1] ?? 'false'));
+$nax_Password = getConfigValue('/^SETPWD_password.*=/', $configLines);
+$api_token = getConfigValue('/^SYNC_api_token.*=/', $configLines, "'");
 
-// ###################################
-// ## SETPWD_enable_password FALSE
-// ###################################
+$expectedToken = 'Bearer ' . $api_token;
 
-// Find SETPWD_enable_password line
-$config_file_lines_bypass = array_values(preg_grep('/^SETPWD_enable_password.*=/', $config_file_lines));
-
-if (!empty($config_file_lines_bypass)) {
-    $protection_line = explode("=", $config_file_lines_bypass[0]);
-    $nax_WebProtection = strtolower(trim($protection_line[1]));
-} else {
-    // Default behavior if SETPWD_enable_password is not found
-    $nax_WebProtection = 'false'; // or another default value
-}
-
-// ###################################
-// ## SETPWD_enable_password TRUE
-// ###################################
-
-// Find SETPWD_password line
-$config_file_lines_password = array_values(preg_grep('/^SETPWD_password.*=/', $config_file_lines));
-
-if (!empty($config_file_lines_password)) {
-    $password_line = explode("'", $config_file_lines_password[0]);
-    $nax_Password = $password_line[1];
-} else {
-    // Default behavior if SETPWD_password is not found
-    $nax_Password = ''; // or handle accordingly
-}
-
-// Web protection is enabled, so we need to authenticate the request
+// Authentication Handling
 if ($nax_WebProtection == 'true') {
-    // 2 methods of authentication - bearer in the request or password supplied by the user
-    if (!isset($_SESSION["login"])) {
-        $_SESSION["login"] = 0;
+    if ($authHeader === $expectedToken) {
+        $_SESSION['login'] = 1; // User authenticated with bearer token
+    } elseif (!empty($authHeader)) {
+        echo "[Security] Incorrect Bearer Token";
     }
 
-    // Retrieve the authorization header
-    $headers = apache_request_headers();
-    $auth_header = $headers['Authorization'] ?? '';
-
-    // Find SYNC_api_token line
-    $config_file_lines_token = array_values(preg_grep('/^SYNC_api_token.*=/', $config_file_lines));
-
-    if (!empty($config_file_lines_token)) {
-        $token_line = explode("'", $config_file_lines_token[0]);
-        $api_token = $token_line[1];
-    } else {
-        // Default behavior if SYNC_api_token is not found
-        $api_token = ''; // or handle accordingly
-    }
-
-    $expected_token = 'Bearer ' . $api_token;
-
-    // Verify the authorization token
-    if (!empty($api_token) && $auth_header === $expected_token) {
-        // Valid Bearer token, set session login to 1
-        $_SESSION["login"] = 1;
-    } else if (!empty($auth_header)) {
-       echo "[Security] Incorrect Bearer Token";
-    }
-
-    if ($_SESSION["login"] == 1 || $isLogonPage || (isset($_COOKIE[$CookieSaveLoginName]) && $nax_Password == $_COOKIE[$CookieSaveLoginName])) {
+    // Determine if the user should be redirected
+    if ($_SESSION["login"] == 1 || $isLogonPage || (isset($_COOKIE[COOKIE_SAVE_LOGIN_NAME]) && $nax_Password == $_COOKIE[COOKIE_SAVE_LOGIN_NAME])) {
         // Logged in or stay on this page if we are on the index.php already   
     } else {
         // we need to redirect        
-        header('Location: /index.php');
-        exit(); // ensure script stops after header redirection
+        redirect('/index.php');
     }
 }
 
