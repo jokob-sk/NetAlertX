@@ -476,7 +476,11 @@ function ImportCSV() {
   if(isset ($_POST['content']) && !empty ($_POST['content']))
   {
     // Decode the Base64 string
-    $data = base64_decode($_POST['content']);
+    // $data = base64_decode($_POST['content']);
+    $data = base64_decode($_POST['content'], true);  // The second parameter ensures safe decoding
+
+    // // Ensure the decoded data is treated as UTF-8 text
+    // $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
 
   } else if (file_exists($file)) { // try to get the data form the file
 
@@ -488,6 +492,12 @@ function ImportCSV() {
 
   if($data != "")
   {
+    // data cleanup - new lines breaking the CSV
+    $data = preg_replace_callback('/"([^"]*)"/', function($matches) {
+      // Replace all \n within the quotes with a space
+      return str_replace("\n", " ", $matches[0]); // Replace with a space
+    }, $data);
+
     $lines = explode("\n", $data); 
 
     // Get the column headers from the first line of the CSV

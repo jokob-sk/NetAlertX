@@ -1,4 +1,4 @@
-## Development environemnt set up
+## Development environment set up
 
 >[!NOTE]
 > Replace `/development` with the path where your code files will be stored. The default container name is `netalertx` so there might be a conflict with your running containers.
@@ -52,13 +52,19 @@ A command to stop, remove the container and the image (replace `netalertx` and `
 
 - `sudo docker container stop netalertx ; sudo docker container rm netalertx ; sudo docker image rm netalertx-netalertx`
 
-### Restart hanging python script
+### Restart the server backend
 
-SSH into the container and kill & restart the main script loop 
+Most code changes can be tetsed without rebuilding the container. When working on the python server backend, you only need to restart the server.
+
+1. You can usually restart the backend via Maintenance > Logs > Restart server
+
+![image](/docs/img/DEV_ENV_SETUP/Maintenance_Logs_Restart_server.png)
+
+2. If above doesn't work, SSH into the container and kill & restart the main script loop 
 
 - `sudo docker exec -it netalertx /bin/bash`
 - `pkill -f "python /app/server" && python /app/server & `
 
-
+3. If none of the above work, restart the docker image. This is usually the last resort as sometimes the Docker engine becomes unresponsive and the whole engine needs to be restarted. 
 
 

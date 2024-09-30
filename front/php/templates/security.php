@@ -25,7 +25,7 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https:
 $url = $protocol . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 $isLogonPage = strpos($url, 'index.php') !== false;
 $authHeader = apache_request_headers()['Authorization'] ?? '';
-$sessionLogin = $_SESSION['login'] ?? 0;
+$sessionLogin = isset($_SESSION['login']) ? $_SESSION['login'] : 0;
 
 // Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
