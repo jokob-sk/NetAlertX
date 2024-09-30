@@ -361,7 +361,7 @@
     "Loading": "Cargando...",
     "Login_Box": "Ingrese su contraseña",
     "Login_Default_PWD": "La contraseña por defecto \"123456\" sigue activa.",
-    "Login_Info": "",
+    "Login_Info": "Las contraseñas se establecen a través del plugin Establecer contraseña. Compruebe la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/set_password\">documentación SETPWD</a> si tiene problemas para iniciar sesión.",
     "Login_Psw-box": "Contraseña",
     "Login_Psw_alert": "¡Alerta de Contraseña!",
     "Login_Psw_folder": "en la carpeta config.",
