@@ -2,7 +2,7 @@
 
 You need to specify the network interface and the network mask. You can also configure multiple subnets and specify VLANs (see VLAN exceptions below).
 
-`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. You can verify this by running the following command in the container:
+`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. This means NetAlertX needs to have access to the interface attached to that subnet. You can verify this by running the following command in the container:
 
 `sudo arp-scan --interface=eth0 192.168.1.0/24`
 

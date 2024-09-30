@@ -2,7 +2,7 @@
 
 import conf
 
-from database import insertOnlineHistory
+
 from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan
 from helper import timeNowTZ
 from logger import mylog
@@ -233,3 +233,44 @@ def insert_events (db):
                     WHERE dev_MAC = cur_MAC                        
                       AND dev_LastIP <> cur_IP """ )
     mylog('debug','[Events] - Events end')
+    
+    
+#-------------------------------------------------------------------------------
+def insertOnlineHistory(db):
+    sql = db.sql  # TO-DO: Implement sql object
+
+    scanTimestamp = timeNowTZ()
+
+    # Query to fetch all relevant device counts in one go
+    query = """
+    SELECT
+        COUNT(*) AS allDevics,
+        SUM(CASE WHEN dev_Archived = 1 THEN 1 ELSE 0 END) AS archivedDevices,
+        SUM(CASE WHEN dev_PresentLastScan = 1 THEN 1 ELSE 0 END) AS onlineDevices,
+        SUM(CASE WHEN dev_PresentLastScan = 0 AND dev_AlertDeviceDown = 1 THEN 1 ELSE 0 END) AS downDevices
+    FROM Devices
+    """
+    
+    deviceCounts = db.read(query)[0]  # Assuming db.read returns a list of rows, take the first (and only) row
+
+    allDevics = deviceCounts['allDevics']
+    archivedDevices = deviceCounts['archivedDevices']
+    onlineDevices = deviceCounts['onlineDevices']
+    downDevices = deviceCounts['downDevices']
+    
+    offlineDevices = allDevics - archivedDevices - onlineDevices
+
+    # Prepare the insert query using parameterized inputs
+    insert_query = """
+        INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices, Offline_Devices)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """
+    
+    mylog('debug', f'[Presence graph] Sql query: {insert_query} with values: {scanTimestamp}, {onlineDevices}, {downDevices}, {allDevics}, {archivedDevices}, {offlineDevices}')
+
+    # Insert the gathered data into the history table
+    sql.execute(insert_query, (scanTimestamp, onlineDevices, downDevices, allDevics, archivedDevices, offlineDevices))
+
+    db.commitDB()
+
+

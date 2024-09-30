@@ -129,7 +129,7 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
 
         if shouldRun:            
             # Header
-            updateState(f"Plugins: {prefix}")
+            updateState(f"Plugin: {prefix}")
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])

@@ -1,13 +1,17 @@
-function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_graph_online_history_ondev, pia_js_graph_online_history_dodev, pia_js_graph_online_history_ardev) {
-        var xValues = pia_js_graph_online_history_time;
-
-        // alert("dev presence")
+function presenceOverTime(
+    timeStamp, 
+    onlineCount, 
+    offlineCount, 
+    archivedCount,
+    downCount
+  ) {
+        var xValues = timeStamp;
 
         // Data object for online status
         onlineData = {
           label: 'Online',
-          data: pia_js_graph_online_history_ondev,
-          borderColor: "rgba(0, 166, 89)",
+          data: onlineCount,
+          borderColor: "#00000",
           fill: true,
           backgroundColor: "rgba(0, 166, 89, .6)",
           pointStyle: 'circle',
@@ -15,20 +19,29 @@ function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_
           pointHoverRadius: 3
         };
 
+        // Data object for down status
+        downData = {          
+          label: 'Down',
+          data: downCount,
+          borderColor: "#00000",
+          fill: true,
+          backgroundColor: "#dd4b39",          
+        };
+
         // Data object for offline status
         offlineData = {          
-          label: 'Offline/Down',
-          data: pia_js_graph_online_history_dodev,
-          borderColor: "rgba(222, 74, 56)",
+          label: 'Offline',
+          data: offlineCount,
+          borderColor: "#00000",
           fill: true,
-          backgroundColor: "rgba(222, 74, 56, .6)",          
+          backgroundColor: "#b2b6be",          
         };
 
         // Data object for archived status
         archivedData = {
           label: 'Archived',
-          data: pia_js_graph_online_history_ardev,
-          borderColor: "rgba(220,220,220)",
+          data: archivedCount,
+          borderColor: "#00000",
           fill: true,
           backgroundColor: "rgba(220,220,220, .6)",
         };
@@ -42,22 +55,26 @@ function pia_draw_graph_online_history(pia_js_graph_online_history_time, pia_js_
         // Check if 'online' status should be displayed
         if(showStats.includes("online"))
         {
-          datasets.push(onlineData); // Add onlineData to datasets array
+          datasets.push(onlineData); 
+        }
+
+        // Check if 'down' status should be displayed
+        if(showStats.includes("down"))
+        {
+          datasets.push(downData); 
         }
 
         // Check if 'offline' status should be displayed
         if(showStats.includes("offline"))
         {
-          datasets.push(offlineData); // Add offlineData to datasets array
+          datasets.push(offlineData); 
         }
 
         // Check if 'archived' status should be displayed
         if(showStats.includes("archived"))
         {
-          datasets.push(archivedData); // Add archivedData to datasets array
+          datasets.push(archivedData); 
         }
-
-
 
         new Chart("OnlineChart", {
           type: "bar",

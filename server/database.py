@@ -101,7 +101,7 @@ class DB():
           mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
           self.sql.execute("DROP TABLE Online_History;")
           onlineHistoryAvailable = False
-
+          
         if onlineHistoryAvailable == False :
           self.sql.execute("""
           CREATE TABLE "Online_History" (
@@ -114,6 +114,18 @@ class DB():
             PRIMARY KEY("Index" AUTOINCREMENT)
           );
           """)
+
+        # Offline_Devices column
+        Offline_Devices_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Offline_Devices'
+          """).fetchone()[0] == 0
+
+        if Offline_Devices_missing :
+          mylog('verbose', ["[upgradeDB] Adding Offline_Devices to the Online_History table"])
+          self.sql.execute("""
+            ALTER TABLE "Online_History" ADD "Offline_Devices" INTEGER
+          """)
+
 
         # -------------------------------------------------------------------------
         # Alter Devices table       
@@ -278,8 +290,8 @@ class DB():
                                     Plugin,
                                     Object_PrimaryID,
                                     Object_SecondaryID,
-  									DateTimeCreated,
-									DateTimeChanged,
+                                    DateTimeCreated,
+                                    DateTimeChanged,
                                     Watched_Value1,
                                     Watched_Value2,
                                     Watched_Value3,
@@ -293,8 +305,8 @@ class DB():
                                     'NMAP' AS Plugin,
                                     MAC AS Object_PrimaryID,
                                     Port AS Object_SecondaryID,
-									Time AS DateTimeCreated,
-									DATETIME('now') AS DateTimeChanged,
+                                    Time AS DateTimeCreated,
+                                    DATETIME('now') AS DateTimeChanged,
                                     State AS Watched_Value1,
                                     Service AS Watched_Value2,
                                     '' AS Watched_Value3,
@@ -644,22 +656,3 @@ def get_all_devices(db):
 
 #-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
-def insertOnlineHistory(db):
-    sql = db.sql #TO-DO
-    startTime = timeNowTZ()
-    # Add to History
-
-    History_All = db.read("SELECT * FROM Devices")
-    History_All_Devices  = len(History_All)
-
-    History_Archived = db.read("SELECT * FROM Devices WHERE dev_Archived = 1")
-    History_Archived_Devices  = len(History_Archived)
-
-    History_Online = db.read("SELECT * FROM Devices WHERE dev_PresentLastScan = 1")
-    History_Online_Devices  = len(History_Online)
-    History_Offline_Devices = History_All_Devices - History_Archived_Devices - History_Online_Devices
-
-    sql.execute ("INSERT INTO Online_History (Scan_Date, Online_Devices, Down_Devices, All_Devices, Archived_Devices) "+
-                 "VALUES ( ?, ?, ?, ?, ?)", (startTime, History_Online_Devices, History_Offline_Devices, History_All_Devices, History_Archived_Devices ) )
-    db.commitDB()

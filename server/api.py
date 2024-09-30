@@ -3,7 +3,7 @@ import json
 
 # Register NetAlertX modules 
 import conf  
-from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all)
+from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history)
 from logger import mylog
 from helper import write_file
 
@@ -32,6 +32,7 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
         ["plugins_objects", sql_plugins_objects],
         ["plugins_language_strings", sql_language_strings],
         ["notifications", sql_notifications_all],
+        ["online_history", sql_online_history],
         ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 

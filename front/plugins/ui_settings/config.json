@@ -253,8 +253,8 @@
         ]
       },
       "maxLength": 50,
-      "default_value": ["online", "offline", "archived"],
-      "options": ["online", "offline", "archived"],
+      "default_value": ["online", "down", "offline", "archived"],
+      "options": ["online", "down", "offline", "archived"],
       "localized": [],
       "name": [
         {
