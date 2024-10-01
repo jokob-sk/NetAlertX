@@ -48,7 +48,7 @@ Payload:
 ```json
 {
   "name": "online",
-  "state_topic": "system-sensors/sensor/netalertx/state",
+  "state_topic": "netalertx/sensor/netalertx/state",
   "value_template": "{{value_json.online}}",
   "unique_id": "netalertx_sensor_online",
   "device": {
@@ -75,7 +75,7 @@ Payload:
 ```json
 {
   "name": "all",
-  "state_topic": "system-sensors/sensor/netalertx/state",
+  "state_topic": "netalertx/sensor/netalertx/state",
   "value_template": "{{value_json.all}}",
   "unique_id": "netalertx_sensor_all",
   "device": {
@@ -96,7 +96,7 @@ Payload:
 >[!NOTE]
 > You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting. 
 
-Topic: `system-sensors/sensor/netalertx/state`
+Topic: `netalertx/sensor/netalertx/state`
 
 Payload:
 
@@ -126,7 +126,7 @@ Payload:
 
 {
   "name": "last_ip",
-  "state_topic": "system-sensors/sensor/mac_44_ef_44_ef_44_ef/state",
+  "state_topic": "netalertx/sensor/mac_44_ef_44_ef_44_ef/state",
   "value_template": "{{value_json.last_ip}}",
   "unique_id": "mac_44_ef_44_ef_44_ef_sensor_last_ip",
   "device": {
@@ -144,7 +144,7 @@ Payload:
 
 ### MQTT state data:
 
-Topic: `system-sensors/sensor/mac_44_ef_44_ef_44_ef/state`
+Topic: `netalertx/sensor/mac_44_ef_44_ef_44_ef/state`
 
 Payload:
 
@@ -166,7 +166,7 @@ Payload:
 ```json
 {
   "name": "is_present",
-  "state_topic": "system-sensors/binary_sensor/mac_44_ef_44_ef_44_ef/state",
+  "state_topic": "netalertx/binary_sensor/mac_44_ef_44_ef_44_ef/state",
   "value_template": "{{value_json.is_present}}",
   "unique_id": "mac_44_ef_44_ef_44_ef_sensor_is_present",
   "device": {
@@ -181,7 +181,7 @@ Payload:
 }
 ```
 
-Topic: `system-sensors/binary_sensor/mac_44_ef_44_ef_44_ef/state`
+Topic: `netalertx/binary_sensor/mac_44_ef_44_ef_44_ef/state`
 
 Payload:
 
