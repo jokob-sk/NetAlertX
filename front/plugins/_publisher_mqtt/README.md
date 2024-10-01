@@ -7,6 +7,24 @@
 - Go to settings and fill in relevant details. There are 2 types of "devices" generated and sent to the broker. A generic overview device that contains online/down/archived device stats and then the actual devices detected by the application. 
 
 
+## Forcing an update
+
+In order to speed up the processing, device configs are only pushed to the broker if a change occurs. The plugin compares the previous data with the current device state, and the following fields are checked:
+
+- icon
+- device name
+- mac
+
+You can force an update of all devices by deleting plugin objects of the MQTT plugin. For example, navigate to:
+
+`Device -> Plugins -> MQTT -> Delete all`
+
+Filters will be ignored, and this will delete all objects associated with the plugin. The next time the MQTT plugin is processed, all data is re-sent to the broker.
+
+![image](./Deleting_MQTT_Plugin_Objects.png)
+
+This is not the case for the online/offline state of the device, which is always updated absed on the scan result and if it changed from the previous value. 
+
 
 # Sample Payloads
 
