@@ -92,7 +92,8 @@ class sensor_config:
         self.sensorType      = sensorType
         self.sensorName      = sensorName
         self.icon            = icon 
-        self.mac             = mac 
+        self.mac             = mac
+        self.model           = deviceName        
         self.state_topic     = ''
         self.json_attr_topic = ''
         self.topic           = ''
@@ -142,7 +143,8 @@ class sensor_config:
                                 "device": 
                                         { 
                                             "identifiers" : [self.deviceId+"_sensor", self.unique_id], 
-                                            "manufacturer" : "NetAlertX", 
+                                            "manufacturer" : "NetAlertX",
+                                            "model": self.model if self.model else "Unknown",
                                             "name" : self.deviceName
                                         }, 
                             }
@@ -430,6 +432,7 @@ def mqtt_start(db):
                         "is_new": str(device["dev_NewDevice"]), 
                         "vendor": sanitize_string(device["dev_Vendor"]), 
                         "mac_address": str(device["dev_MAC"]),
+                        "model": devDisplayName,
                         "last_connection": str(device["dev_LastConnection"]),
                         "first_connection": str(device["dev_FirstConnection"])
                     }
