@@ -103,7 +103,7 @@ class sensor_config:
         if self.sensorType == 'binary_sensor' or self.sensorType == 'sensor':   
 
             self.topic          = f'homeassistant/{self.sensorType}/{self.deviceId}/{self.sensorName}/config'
-            self.state_topic    = f'system-sensors/{self.sensorType}/{self.deviceId}/state'
+            self.state_topic    = f'nextalertx/{self.sensorType}/{self.deviceId}/state'
             self.unique_id      = self.deviceId+'_sensor_'+self.sensorName            
 
             self.message = { 
@@ -124,8 +124,8 @@ class sensor_config:
         elif self.sensorType == 'device_tracker':
 
             self.topic           = f'homeassistant/device_tracker/{self.deviceId}/config'
-            self.state_topic     = f'system-sensors/device_tracker/{self.deviceId}/state'
-            self.json_attr_topic = f'system-sensors/device_tracker/{self.deviceId}/attributes'
+            self.state_topic     = f'nextalertx/device_tracker/{self.deviceId}/state'
+            self.json_attr_topic = f'nextalertx/device_tracker/{self.deviceId}/attributes'
             self.unique_id       = f'{self.deviceId}_{self.sensorType}_{self.sensorName}'
 
             payload_home = 'home'
@@ -383,7 +383,7 @@ def mqtt_start(db):
         row = get_device_stats(db)   
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(mqtt_client, f"system-sensors/sensor/{deviceId}/state",              
+        publish_mqtt(mqtt_client, f"nextalertx/sensor/{deviceId}/state",              
                 { 
                     "online": row[0],
                     "down": row[1],
