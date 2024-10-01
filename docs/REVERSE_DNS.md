@@ -27,6 +27,29 @@ If you are running a DNS server, such as **AdGuard**, set up **Private reverse D
 5. Click **Apply** to save your settings.
 
 
+### Specifying the DNS in the container
+
+You can specify the DNS server in the docker-compose to improve name resolution on your network. 
+
+```yaml
+services:
+  netalertx:
+    container_name: netalertx
+    image: "jokobsk/netalertx:latest"
+    restart: unless-stopped
+    volumes:
+      -  /home/netalertx/config:/app/config
+      -  /home/netalertx/db:/app/db
+      -  /home/netalertx/log:/app/front/log
+    environment:
+      - TZ=Europe/Berlin
+      - PORT=20211
+    network_mode: host
+    dns:
+      - 10.8.0.1
+      - 10.8.0.17
+```
+
 ### Using a custom resolv.conf file
 
 You can configure a custom **/etc/resolv.conf** file in **docker-compose.yml** and set the nameserver to your LAN DNS server (e.g.: Pi-Hole). See the relevant [resolv.conf man](https://www.man7.org/linux/man-pages/man5/resolv.conf.5.html) entry for details. 

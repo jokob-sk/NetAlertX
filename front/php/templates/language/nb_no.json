@@ -532,6 +532,7 @@
     "Plugins_DeleteAll": "Slett alle (filtre blir ignorert)",
     "Plugins_Filters_Mac": "Mac filter",
     "Plugins_History": "Hendelses historikk",
+    "Plugins_Obj_DeleteListed": "",
     "Plugins_Objects": "Plugin-objekter",
     "Plugins_Out_of": "ut av",
     "Plugins_Unprocessed_Events": "Uprosesserte hendelser",

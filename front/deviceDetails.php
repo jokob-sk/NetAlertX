@@ -1458,7 +1458,7 @@ function setDeviceData (direction='', refreshCallback='') {
       somethingChanged      = false;
 
       // refresh API
-      updateApi()
+      updateApi("devices,appevents")
 
       hideSpinner()
 
@@ -1678,7 +1678,7 @@ function deleteDevice () {
   $('#panDetails :input').attr('disabled', true);
 
   // refresh API
-  updateApi()
+  updateApi("devices,appevents")
 }
 
 // -----------------------------------------------------------------------------

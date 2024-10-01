@@ -246,9 +246,6 @@ function getData(){
 
                     generateTabs()
 
-                    // hide spinning icon
-                    hideSpinner()
-
                 });
             });
         });
@@ -259,6 +256,8 @@ function getData(){
 // -----------------------------------------------------------------------------
 function generateTabs()
 {
+    showSpinner()
+    
     activetab = 'active'
 
     //  clear previous headers data
@@ -413,6 +412,8 @@ function generateTabs()
                         </table>
                         <div class="plugin-obj-purge">                                 
                             <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_Objects' )"><?= lang('Plugins_DeleteAll');?></button> 
+                            <button class="btn btn-danger " onclick="deleteListed('${prefix}', 'Plugins_Objects' )"><?= lang('Plugins_Obj_DeleteListed');?></button> 
+                            
                         </div> 
                     </div>
                     <div id="eventsTarget_${prefix}" class="tab-pane">
@@ -492,6 +493,9 @@ function initTabs() {
             }
         }
     });
+
+    // hide spinning icon
+    hideSpinner()
 }
 
 
@@ -564,16 +568,19 @@ function purgeAllExecute() {
 }
 
 // --------------------------------------------------------
-function purgeVisible() {
+function deleteListed(plugPrefix, dbTable) {
 
     idArr = $(`#${plugPrefix} table[data-my-dbtable="${dbTable}"] tr[data-my-index]`).map(function(){return $(this).attr("data-my-index");}).get();
+
+    console.log(idArr);
 
     $.ajax({
         method: "POST",
         url: "php/server/dbHelper.php",
         data: { action: "delete", dbtable: dbTable, columnName: 'Index', id:idArr.toString() },
         success: function(data, textStatus) {
-            showModalOk ('Result', data );
+            updateApi("plugins_objects")
+            showModalOk ('Result', data );            
         }
     })
 

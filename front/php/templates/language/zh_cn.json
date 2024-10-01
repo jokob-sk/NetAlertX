@@ -532,6 +532,7 @@
     "Plugins_DeleteAll": "全部删除（忽略过滤器）",
     "Plugins_Filters_Mac": "Mac 过滤器",
     "Plugins_History": "事件历史",
+    "Plugins_Obj_DeleteListed": "",
     "Plugins_Objects": "插件对象",
     "Plugins_Out_of": "",
     "Plugins_Unprocessed_Events": "未处理的事件",

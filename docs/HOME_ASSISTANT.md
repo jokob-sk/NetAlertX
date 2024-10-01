@@ -6,6 +6,7 @@ NetAlertX comes with MQTT support, allowing you to show all detected devices as 
 
 - Please note that discovery takes about ~10s per device.
 - Deleting of devices is not handled automatically. Please use [MQTT Explorer](https://mqtt-explorer.com/) to delete devices in the broker (Home Assistant), if needed. 
+- For optimization reasons, the devices are not always fully synchronized. You can delete Plugin objects as described in the [MQTT plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_mqtt#forcing-an-update) docs to force a full synchronization.
 
 
 ## 🧭 Guide

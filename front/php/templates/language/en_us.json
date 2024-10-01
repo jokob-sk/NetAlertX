@@ -532,6 +532,7 @@
     "Plugins_DeleteAll": "Delete all (filters are ignored)",
     "Plugins_Filters_Mac": "Mac Filter",
     "Plugins_History": "Events History",
+    "Plugins_Obj_DeleteListed": "Delete Listed Objects",
     "Plugins_Objects": "Plugin Objects",
     "Plugins_Out_of": "out of",
     "Plugins_Unprocessed_Events": "Unprocessed Events",

@@ -305,7 +305,7 @@ function executeAction(action, whereColumnName, key, targetColumns, newTargetCol
             window.onbeforeunload = null;
 
             // update API endpoints to refresh the UI
-            updateApi()
+            updateApi("devices,appevents")
 
             write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
 

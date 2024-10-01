@@ -1006,11 +1006,11 @@ function hideSpinner()
 
 // --------------------------------------------------------
 // Calls a backend function to add a front-end event to an execution queue
-function updateApi()
+function updateApi(apiEndpoints)
 {
 
   // value has to be in format event|param. e.g. run|ARPSCAN
-  action = `${getGuid()}|update_api|devices,appevents`
+  action = `${getGuid()}|update_api|${apiEndpoints}`
 
 
   $.ajax({

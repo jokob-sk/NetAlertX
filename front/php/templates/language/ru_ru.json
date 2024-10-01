@@ -532,6 +532,7 @@
     "Plugins_DeleteAll": "Удалить все (фильтры игнорируются)",
     "Plugins_Filters_Mac": "Фильтр MAC-адреса",
     "Plugins_History": "История событий",
+    "Plugins_Obj_DeleteListed": "",
     "Plugins_Objects": "Объекты плагина",
     "Plugins_Out_of": "из",
     "Plugins_Unprocessed_Events": "Необработанные события",
