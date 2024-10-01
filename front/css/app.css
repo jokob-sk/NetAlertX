@@ -261,7 +261,7 @@
     .main-sidebar {
         padding-top: 50px;
     }
-    .content-header {
+    .content-header #pageTitle{
         display: none;
     }
 }
