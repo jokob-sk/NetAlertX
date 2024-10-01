@@ -656,7 +656,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The root path of the stats overview sensor. Inserted into the <code>system-sensors/sensor/{DEVICE_ID}/state</code> topic."
+          "string": "The root path of the stats overview sensor. Inserted into the <code>netalertx/sensor/{DEVICE_ID}/state</code> topic."
         }
       ]
     },
