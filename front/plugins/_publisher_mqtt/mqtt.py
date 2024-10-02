@@ -49,6 +49,7 @@ pluginName = 'MQTT'
 mqtt_sensors                = []
 mqtt_connected_to_broker    = False
 mqtt_client                 = None  # mqtt client
+topic_root                  = get_setting_value('MQTT_topic_root')
 
 def main():
     
@@ -130,7 +131,7 @@ class sensor_config:
         # Handle 'binary_sensor' or 'sensor' types
         if self.sensorType in ['binary_sensor', 'sensor']:
             self.topic          = f'homeassistant/{self.sensorType}/{self.deviceId}/{self.sensorName}/config'
-            self.state_topic    = f'system-sensors/{self.sensorType}/{self.deviceId}/state'
+            self.state_topic    = f'{topic_root}/{self.sensorType}/{self.deviceId}/state'
             self.unique_id      = f'{self.deviceId}_sensor_{self.sensorName}'
 
             # Update the message dictionary, expanding it without overwriting
@@ -151,8 +152,8 @@ class sensor_config:
         # Handle 'device_tracker' sensor type
         elif self.sensorType == 'device_tracker':
             self.topic           = f'homeassistant/device_tracker/{self.deviceId}/config'
-            self.state_topic     = f'system-sensors/device_tracker/{self.deviceId}/state'
-            self.json_attr_topic = f'system-sensors/device_tracker/{self.deviceId}/attributes'
+            self.state_topic     = f'{topic_root}/device_tracker/{self.deviceId}/state'
+            self.json_attr_topic = f'{topic_root}/device_tracker/{self.deviceId}/attributes'
             self.unique_id       = f'{self.deviceId}_{self.sensorType}_{self.sensorName}'
 
             # Construct the message dictionary for device_tracker
@@ -414,7 +415,7 @@ def mqtt_start(db):
         row = get_device_stats(db)   
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(mqtt_client, f"system-sensors/sensor/{deviceId}/state",              
+        publish_mqtt(mqtt_client, f"{topic_root}/sensor/{deviceId}/state",              
                 { 
                     "online": row[0],
                     "down": row[1],
@@ -441,10 +442,10 @@ def mqtt_start(db):
         
         for device in devices:      
 
-            # debug statement START 🔻
-            if 'Moto' not in device["dev_Name"]:
-                continue
-            # debug statement END   🔺
+            # # debug statement START 🔻
+            # if 'Moto' not in device["dev_Name"]:
+            #     continue
+            # # debug statement END   🔺
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()

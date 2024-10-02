@@ -656,7 +656,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The root path of the stats overview sensor. Inserted into the <code>system-sensors/sensor/{DEVICE_ID}/state</code> topic."
+          "string": "The root path of the stats overview sensor. Inserted into the <code>{MQTT_topic_root}/sensor/{MQTT_DEVICE_ID}/state</code> topic."
         }
       ]
     },
@@ -709,6 +709,30 @@
         {
           "language_code": "en_us",
           "string": "Check to send individual devices to the broker with details, such as <code>is_new</code>, <code>is_present</code>, or <code>mac_address</code> of the devices."
+        }
+      ]
+    },
+    {
+      "function": "topic_root",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "system-sensors",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MQTT topic root"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The topic root of the devices sensors. Inserted into the <code>{MQTT_topic_root}/sensor/{DEVICE_ID}/state</code> topic."
         }
       ]
     },
