@@ -60,11 +60,14 @@ if ($nax_WebProtection == 'true') {
         echo "[Security] Incorrect Bearer Token";
     }
 
+    // Safely check if the session login exists before checking its value
+    $isLoggedIn = isset($_SESSION['login']) && $_SESSION['login'] == 1;
+
     // Determine if the user should be redirected
-    if ($_SESSION["login"] == 1 || $isLogonPage || (isset($_COOKIE[COOKIE_SAVE_LOGIN_NAME]) && $nax_Password == $_COOKIE[COOKIE_SAVE_LOGIN_NAME])) {
-        // Logged in or stay on this page if we are on the index.php already   
+    if ($isLoggedIn || $isLogonPage || (isset($_COOKIE[COOKIE_SAVE_LOGIN_NAME]) && $nax_Password == $_COOKIE[COOKIE_SAVE_LOGIN_NAME])) {
+        // Logged in or stay on this page if we are on the index.php already
     } else {
-        // we need to redirect        
+        // We need to redirect
         redirect('/index.php');
     }
 }
