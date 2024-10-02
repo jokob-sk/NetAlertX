@@ -99,7 +99,7 @@ class sensor_config:
         self.message         = ''
         self.unique_id       = ''
 
-        # binary sensor only sensor
+        # handle sensors of type "binary_sensor" or "sensor"
         if self.sensorType == 'binary_sensor' or self.sensorType == 'sensor':   
 
             self.topic          = f'homeassistant/{self.sensorType}/{self.deviceId}/{self.sensorName}/config'
@@ -120,7 +120,7 @@ class sensor_config:
                                 "icon": f'mdi:{self.icon}'
                             }        
             
-
+        # handle sensors of type "device_tracker"
         elif self.sensorType == 'device_tracker':
 
             self.topic           = f'homeassistant/device_tracker/{self.deviceId}/config'
@@ -146,6 +146,10 @@ class sensor_config:
                                             "name" : self.deviceName
                                         }, 
                             }
+        # handle sensors of type "timestamp" 
+        elif self.sensorName in ['last_connection', 'first_connection']:
+            self.message["device_class"] = "timestamp" 
+            
 
         # Define your input string
         input_string = str(self.deviceId) + str(self.deviceName) + str(self.sensorType) + str(self.sensorName) + str(self.icon)
@@ -286,19 +290,19 @@ def mqtt_create_client():
         
         global mqtt_connected_to_broker
 
-        mylog('debug', [f"[{pluginName}]         Connection terminated, reason_code: {rc}"])
+        mylog('verbose', [f"[{pluginName}]         Connection terminated, reason_code: {rc}"])
         reconnect_count, reconnect_delay = 0, FIRST_RECONNECT_DELAY
         while reconnect_count < MAX_RECONNECT_COUNT:
-            mylog('debug', [f"[{pluginName}]         Reconnecting in {reconnect_delay} seconds..."])
+            mylog('verbose', [f"[{pluginName}]         Reconnecting in {reconnect_delay} seconds..."])
             time.sleep(reconnect_delay)
 
             try:
                 mqtt_client.reconnect()
                 mqtt_connected_to_broker = True     # Signal connection 
-                mylog('debug', [f"[{pluginName}]         Reconnected successfully"])
+                mylog('verbose', [f"[{pluginName}]         Reconnected successfully"])
                 return
             except Exception as err:
-                mylog('debug', [f"[{pluginName}]         {err} Reconnect failed. Retrying..."])
+                mylog('verbose', [f"[{pluginName}]         {err} Reconnect failed. Retrying..."])
                 pass
 
             reconnect_delay *= RECONNECT_RATE
@@ -421,17 +425,18 @@ def mqtt_start(db):
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'vendor', 'cog', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'vendor', 'cog', device["dev_MAC"])            
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'first_connection', 'calendar-start', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
+            sensorConfig  = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
+        
 
             devJson = { 
                         "last_ip": device["dev_LastIP"], 
                         "is_new": str(device["dev_NewDevice"]), 
                         "vendor": sanitize_string(device["dev_Vendor"]), 
                         "mac_address": str(device["dev_MAC"]),
-                        "last_connection": str(device["dev_LastConnection"]),
-                        "first_connection": str(device["dev_FirstConnection"])
+                        "last_connection": prepTimeStamp(str(device["dev_LastConnection"])),
+                        "first_connection": prepTimeStamp(str(device["dev_FirstConnection"]))
                     }
         
             # bulk update device sensors in home assistant      
@@ -482,8 +487,19 @@ def to_binary_sensor(input):
             result = "ON"
     return result
 
-
-
+#  -------------------------------------
+# Convert to format that is interpretable by Home Assistant
+def prepTimeStamp(datetime_str):
+  try:
+    # Attempt to parse the input string to ensure it's a valid datetime
+    parsed_datetime = datetime.fromisoformat(datetime_str)
+  except ValueError:
+    mylog('verbose', [f"[{pluginName}]  Timestamp conversion failed of string '{datetime_str}'" ])
+    # Use the current time if the input format is invalid
+    parsed_datetime = timeNowTZ()
+  
+  # Convert to the required format with 'T' between date and time
+  return parsed_datetime.isoformat()
 
 #  -------------INIT---------------------
 if __name__ == '__main__':
