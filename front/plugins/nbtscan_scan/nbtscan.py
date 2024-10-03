@@ -95,6 +95,8 @@ def execute_name_lookup (ip, timeout):
     output = ""
 
     try:
+        mylog('verbose', [f'[{pluginName}] DEBUG CMD :', args])
+        
         # try runnning a subprocess with a forced (timeout)  in case the subprocess hangs
         output = subprocess.check_output (args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeout), text=True)
 
@@ -112,8 +114,10 @@ def execute_name_lookup (ip, timeout):
             if 'Doing NBT name scan' not in line and ip in line:
                 # Split the line and extract the primary NetBIOS name
                 parts = line.split()
-                if parts:
+                if len(parts) > 1:
                     domain_name = parts[1]
+                else:
+                    mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Unexpected output format: {line}'])
       
 
         mylog('verbose', [f'[{pluginName}] Domain Name: {domain_name}'])
@@ -125,9 +129,7 @@ def execute_name_lookup (ip, timeout):
         # if "NXDOMAIN" in e.output:
         #     mylog('verbose', [f'[{pluginName}]', f"No PTR record found for IP: {ip}"])
         # else:
-        mylog('verbose', [f'[{pluginName}]', e.output])
-            # Handle other errors here
-        # mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])            
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
         
     except subprocess.TimeoutExpired as timeErr:
         mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
