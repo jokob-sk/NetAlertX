@@ -56,7 +56,7 @@ def main():
 
     mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
     
-    # TEST
+    # TEST - below is a WINDOWS host IP
     # execute_name_lookup('192.168.1.121', timeout)
 
     for device in unknown_devices:
@@ -86,7 +86,7 @@ def main():
 #===============================================================================
 def execute_name_lookup (ip, timeout):
     """
-    Execute the NBLOOKUP command on IP.
+    Execute the NBTSCAN command on IP.
     """
     
     args = ['nbtscan', ip]

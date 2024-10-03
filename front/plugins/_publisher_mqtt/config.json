@@ -732,7 +732,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The topic root of the devices sensors. Inserted into the <code>{MQTT_topic_root}/sensor/{DEVICE_ID}/state</code> topic."
+          "string": "The topic root of the devices sensors. Inserted into the <code>{MQTT_topic_root}/sensor/{MQTT_DEVICE_ID}/state</code> topic."
         }
       ]
     },

@@ -45,7 +45,7 @@ services:
       - TZ=Europe/Berlin
       - PORT=20211
     network_mode: host
-    dns:
+    dns:           # specifying the DNS servers used for the container
       - 10.8.0.1
       - 10.8.0.17
 ```
