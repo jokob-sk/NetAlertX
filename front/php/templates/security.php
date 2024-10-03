@@ -22,8 +22,15 @@ function redirect($url) {
 
 // Initialization
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-$url = $protocol . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-$isLogonPage = strpos($url, 'index.php') !== false;
+$url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+// Parse the URL and extract the path component
+// error_log("-------------");
+$parsedUrl = parse_url($url, PHP_URL_PATH);
+
+// Normalize the path: treat '/' (root) and '/index.php' as equivalent
+$isLogonPage = ($parsedUrl === '/' || $parsedUrl === '/index.php');
+
 $authHeader = apache_request_headers()['Authorization'] ?? '';
 $sessionLogin = isset($_SESSION['login']) ? $_SESSION['login'] : 0;
 
@@ -69,6 +76,7 @@ if ($nax_WebProtection == 'true') {
     } else {
         // We need to redirect
         redirect('/index.php');
+        exit; // exit is needed to prevent authentication bypass
     }
 }
 
