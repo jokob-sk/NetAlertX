@@ -142,29 +142,22 @@ def execute_name_lookup(ip, timeout):
     return ''   
 
 # Function to ensure Avahi and its dependencies are running
-def ensure_avahi_running():
+def ensure_avahi_running(attempt=1, max_retries=2):
     """
-    Ensure that D-Bus is running and the Avahi daemon is started.
+    Ensure that D-Bus is running and the Avahi daemon is started, with recursive retry logic.
     """
-    mylog('verbose', [f'[{pluginName}] Ensuring D-Bus and Avahi daemon are running...'])
-    
-    # # Install D-Bus if not already installed
-    # try:
-    #     subprocess.run(['apk', 'add', 'dbus'], check=True)
-    # except subprocess.CalledProcessError as e:
-    #     mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to install D-Bus: {e.output}'])
-    #     return
-    
+    mylog('verbose', [f'[{pluginName}] Attempt {attempt} - Ensuring D-Bus and Avahi daemon are running...'])
+
     # Check rc-status
     try:
         subprocess.run(['rc-status'], check=True)
     except subprocess.CalledProcessError as e:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
-        return    
-    
+        return
+
     # Create OpenRC soft level
     subprocess.run(['touch', '/run/openrc/softlevel'], check=True)
-    
+
     # Add Avahi daemon to runlevel
     try:
         subprocess.run(['rc-update', 'add', 'avahi-daemon'], check=True)
@@ -178,19 +171,34 @@ def ensure_avahi_running():
     except subprocess.CalledProcessError as e:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
         return
-    
-    # Check status
+
+    # Check Avahi status
     status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
-    mylog('verbose', [f'[{pluginName}] Avahi Daemon Status: {status_output.stdout.strip()}'])
-    
+    if 'started' in status_output.stdout:
+        mylog('verbose', [f'[{pluginName}] Avahi Daemon is already running.'])
+        return
+
+    mylog('verbose', [f'[{pluginName}] Avahi Daemon is not running, attempting to start... (Attempt {attempt})'])
+
     # Start the Avahi daemon
     try:
         subprocess.run(['rc-service', 'avahi-daemon', 'start'], check=True)
     except subprocess.CalledProcessError as e:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start Avahi daemon: {e.output}'])
+
+    # Check status after starting
+    status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
+    if 'started' in status_output.stdout:
+        mylog('verbose', [f'[{pluginName}] Avahi Daemon successfully started.'])
         return
-    
-    
+
+    # Retry if not started and attempts are left
+    if attempt < max_retries:
+        mylog('verbose', [f'[{pluginName}] Retrying... ({attempt + 1}/{max_retries})'])
+        ensure_avahi_running(attempt + 1, max_retries)
+    else:
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Avahi Daemon failed to start after {max_retries} attempts.'])
+
     # rc-update add avahi-daemon
     # rc-service avahi-daemon status
     # rc-service avahi-daemon start
