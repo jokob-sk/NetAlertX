@@ -41,8 +41,7 @@ def main():
     # timeout = get_setting_value('AVAHI_RUN_TIMEOUT')
     timeout = 20
     
-    # ensure service is running
-    ensure_avahi_running()
+
 
     # Create a database connection
     db = DB()  # instance of class DB
@@ -65,6 +64,10 @@ def main():
     # ]
 
     mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
+    
+    if len(unknown_devices) > 0:
+        # ensure service is running
+        ensure_avahi_running()
 
     for device in unknown_devices:
         domain_name = execute_name_lookup(device['dev_LastIP'], timeout)
@@ -152,15 +155,15 @@ def ensure_avahi_running():
     # except subprocess.CalledProcessError as e:
     #     mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to install D-Bus: {e.output}'])
     #     return
-
-    # Start the D-Bus service
+    
+    # Check rc-status
     try:
-        subprocess.run(['rc-service', 'dbus', 'start'], check=True)
+        subprocess.run(['rc-status'], check=True)
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
-        return
-
-    # Create OpenRC soft level if needed
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
+        return    
+    
+    # Create OpenRC soft level
     subprocess.run(['touch', '/run/openrc/softlevel'], check=True)
     
     # Add Avahi daemon to runlevel
@@ -168,6 +171,13 @@ def ensure_avahi_running():
         subprocess.run(['rc-update', 'add', 'avahi-daemon'], check=True)
     except subprocess.CalledProcessError as e:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to add Avahi to runlevel: {e.output}'])
+        return
+
+    # Start the D-Bus service
+    try:
+        subprocess.run(['rc-service', 'dbus', 'start'], check=True)
+    except subprocess.CalledProcessError as e:
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
         return
     
     # Start the Avahi daemon
@@ -180,6 +190,7 @@ def ensure_avahi_running():
     # Check status
     status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
     mylog('verbose', [f'[{pluginName}] Avahi Daemon Status: {status_output.stdout.strip()}'])
+    
 
 if __name__ == '__main__':
     main()
