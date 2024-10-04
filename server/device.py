@@ -550,7 +550,7 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', [f'[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN/Pholus): {len(recordsToUpdate)} ( {foundmDNSLookup}/{foundDig}/{foundNsLookup}/{foundNbtLookup}/{foundPholus})'] )                 
+    mylog('verbose', [f'[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN/Pholus): {len(recordsToUpdate)} ({foundmDNSLookup}/{foundDig}/{foundNsLookup}/{foundNbtLookup}/{foundPholus})'] )                 
     mylog('verbose', [f'[Update Device Name] Names Not Found         : {notFound}'] )    
      
     # update not found devices with (name not found) 

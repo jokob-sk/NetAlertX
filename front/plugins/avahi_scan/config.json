@@ -86,7 +86,7 @@
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/avahi_scan/nbtscan.py",
+      "default_value": "python3 /app/front/plugins/avahi_scan/avahi_scan.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [
