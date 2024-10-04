@@ -441,7 +441,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
     
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
-        mylog('none', ['[Plugins] No output received from the plugin ', plugin["unique_prefix"], ' - enable LOG_LEVEL=debug and check logs'])
+        mylog('none', [f'[Plugins] No output received from the plugin "{plugin["unique_prefix"]}"'])
         return pluginsState 
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  

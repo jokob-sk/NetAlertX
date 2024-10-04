@@ -41,8 +41,6 @@ def main():
     # timeout = get_setting_value('AVAHI_RUN_TIMEOUT')
     timeout = 20
     
-
-
     # Create a database connection
     db = DB()  # instance of class DB
     db.open()
@@ -56,7 +54,7 @@ def main():
     # Retrieve devices
     unknown_devices = device_handler.getUnknown()
     
-    # # Mock list of devices (replace with actual device_handler.getUnknown() in production)
+    # Mock list of devices (replace with actual device_handler.getUnknown() in production)
     # unknown_devices = [
     #     {'dev_MAC': '00:11:22:33:44:55', 'dev_LastIP': '192.168.1.121'},
     #     {'dev_MAC': '00:11:22:33:44:56', 'dev_LastIP': '192.168.1.9'},
@@ -181,6 +179,10 @@ def ensure_avahi_running():
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
         return
     
+    # Check status
+    status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
+    mylog('verbose', [f'[{pluginName}] Avahi Daemon Status: {status_output.stdout.strip()}'])
+    
     # Start the Avahi daemon
     try:
         subprocess.run(['rc-service', 'avahi-daemon', 'start'], check=True)
@@ -188,10 +190,10 @@ def ensure_avahi_running():
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start Avahi daemon: {e.output}'])
         return
     
-    # Check status
-    status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
-    mylog('verbose', [f'[{pluginName}] Avahi Daemon Status: {status_output.stdout.strip()}'])
     
+    # rc-update add avahi-daemon
+    # rc-service avahi-daemon status
+    # rc-service avahi-daemon start
 
 if __name__ == '__main__':
     main()
