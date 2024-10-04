@@ -72,7 +72,8 @@ def main():
     for device in unknown_devices:
         domain_name = execute_name_lookup(device['dev_LastIP'], timeout)
 
-        if domain_name != '':
+        #  check if found and not a timeout ('to')
+        if domain_name != '' and domain_name != 'to': 
             plugin_objects.add_object(
             # "MAC", "IP", "Server", "Name"
             primaryId   = device['dev_MAC'],
