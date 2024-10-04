@@ -1,6 +1,6 @@
 ## Overview
 
-Plugin for device name discovery via the [nbtscan](https://linuxcommandlibrary.com/man/nbtscan) network utility supporting NetBIOS.
+Plugin for device name discovery via the [avahi](https://wiki.alpinelinux.org/wiki/MDNS) network utility supporting mDNS.
 
 ### Usage
 
