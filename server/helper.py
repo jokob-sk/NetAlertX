@@ -510,7 +510,50 @@ def check_IP_format (pIP):
     # Return IP
     return IP.group(0)
 
+#-------------------------------------------------------------------------------
+def get_device_name_mdns(db, pMAC, pIP):
+    
+    nameNotFound = "(name not found)"
 
+    sql = db.sql
+
+    name = nameNotFound
+    
+    #  get names from the AVAHISCAN plugin entries vased on MAC
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'AVAHISCAN' AND 
+            Object_PrimaryID = '{pMAC}'
+         """
+    )         
+    nameEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], False)
+
+        return name
+
+    #  get names from the AVAHISCAN plugin entries based on IP
+    sql.execute(
+        f"""
+         SELECT Watched_Value2 FROM Plugins_Objects 
+         WHERE 
+            Plugin = 'AVAHISCAN' AND             
+            Object_SecondaryID = '{pIP}'
+         """
+    )         
+    nameEntry = sql.fetchall() 
+    db.commitDB()
+
+    if len(nameEntry) != 0:
+        name = cleanDeviceName(nameEntry[0][0], True)
+
+        return name
+
+    return name
 
 #-------------------------------------------------------------------------------
 def get_device_name_nslookup(db, pMAC, pIP):

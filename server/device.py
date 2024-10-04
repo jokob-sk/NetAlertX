@@ -4,7 +4,7 @@ import subprocess
 import conf
 import os
 import re
-from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nbtlookup, get_device_name_nslookup, check_IP_format, sanitize_SQL_input
+from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, resolve_device_name_pholus, get_device_name_nbtlookup, get_device_name_nslookup, get_device_name_mdns, check_IP_format, sanitize_SQL_input
 from logger import mylog, print_log
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 
@@ -465,6 +465,7 @@ def update_devices_names (db):
     notFound = 0
 
     foundDig = 0
+    foundmDNSLookup = 0
     foundNsLookup = 0
     foundNbtLookup = 0
     foundPholus = 0
@@ -499,6 +500,13 @@ def update_devices_names (db):
         # count
         if newName != nameNotFound:
             foundDig += 1
+            
+        # Resolve device name with AVAHISCAN plugin data
+        if newName == nameNotFound:
+            newName = get_device_name_mdns(db, device['dev_MAC'], device['dev_LastIP'])
+
+            if newName != nameNotFound:
+               foundmDNSLookup += 1
 
         # Resolve device name with NSLOOKUP plugin data
         if newName == nameNotFound:
@@ -542,8 +550,8 @@ def update_devices_names (db):
             recordsToUpdate.append ([newName, device['dev_MAC']])
 
     # Print log            
-    mylog('verbose', ['[Update Device Name] Names Found (DiG/NSLOOKUP/NBTSCAN/Pholus): ', len(recordsToUpdate), " (",foundDig,"/",foundNsLookup,"/",foundNbtLookup,"/", foundPholus ,")"] )                 
-    mylog('verbose', ['[Update Device Name] Names Not Found         : ', notFound] )    
+    mylog('verbose', [f'[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN/Pholus): {len(recordsToUpdate)} ( {foundmDNSLookup}/{foundDig}/{foundNsLookup}/{foundNbtLookup}/{foundPholus})'] )                 
+    mylog('verbose', [f'[Update Device Name] Names Not Found         : {notFound}'] )    
      
     # update not found devices with (name not found) 
     sql.executemany ("UPDATE Devices SET dev_Name = ? WHERE dev_MAC = ? ", recordsNotFound )
