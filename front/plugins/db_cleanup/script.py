@@ -32,17 +32,9 @@ pluginName = 'DBCLNP'
 
 def main():
     
-    parser = argparse.ArgumentParser(description='DB cleanup tasks')
-    parser.add_argument('pluginskeephistory', action="store", help="TBC")
-    parser.add_argument('hourstokeepnewdevice', action="store", help="TBC")
-    parser.add_argument('daystokeepevents', action="store", help="TBC")
-    parser.add_argument('pholuskeepdays', action="store", help="TBC") # unused
-    
-    values = parser.parse_args()
-
-    PLUGINS_KEEP_HIST       = int(values.pluginskeephistory.split('=')[1])
-    HRS_TO_KEEP_NEWDEV      = int(values.hourstokeepnewdevice.split('=')[1])
-    DAYS_TO_KEEP_EVENTS     = int(values.daystokeepevents.split('=')[1])
+    PLUGINS_KEEP_HIST       = int(get_setting_value("PLUGINS_KEEP_HIST"))
+    HRS_TO_KEEP_NEWDEV      = int(get_setting_value("HRS_TO_KEEP_NEWDEV"))
+    DAYS_TO_KEEP_EVENTS     = int(get_setting_value("DAYS_TO_KEEP_EVENTS"))
     PHOLUS_DAYS_DATA        = get_setting_value("PHOLUS_DAYS_DATA")
     CLEAR_NEW_FLAG          = get_setting_value("CLEAR_NEW_FLAG")
 

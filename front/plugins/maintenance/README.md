@@ -2,7 +2,7 @@
 
 A plugin responsible for general maintenance tasks. These currently include:
 
-- app.log cleanup
+- **`MAINT_LOG_LENGTH`**: app.log cleanup. Recommended value: `10000` lines. Increase if debugging an issue.
 
 ### Usage
 

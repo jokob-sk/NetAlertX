@@ -25,24 +25,7 @@
       "string": "A plugin to schedule database cleanup & upkeep tasks."
     }
   ],
-  "params": [
-    {
-      "name": "pluginskeephistory",
-      "type": "setting",
-      "value": "PLUGINS_KEEP_HIST"
-    },
-    {
-      "name": "daystokeepevents",
-      "type": "setting",
-      "value": "DAYS_TO_KEEP_EVENTS"
-    },
-    {
-      "name": "hourstokeepnewdevice",
-      "type": "setting",
-      "value": "HRS_TO_KEEP_NEWDEV"
-    }
-  ],
-
+  "params": [],
   "settings": [
     {
       "function": "RUN",
@@ -89,7 +72,7 @@
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/db_cleanup/script.py pluginskeephistory={pluginskeephistory} hourstokeepnewdevice={hourstokeepnewdevice} daystokeepevents={daystokeepevents} pholuskeepdays={pholuskeepdays}",
+      "default_value": "python3 /app/front/plugins/db_cleanup/script.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -150,14 +133,6 @@
         {
           "language_code": "en_us",
           "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
-        },
-        {
-          "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
-        },
-        {
-          "language_code": "de_de",
-          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#DBCLNP_RUN\"><code>DBCLNP_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
         }
       ]
     },
@@ -194,14 +169,6 @@
         {
           "language_code": "en_us",
           "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
-        },
-        {
-          "language_code": "es_es",
-          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
-        },
-        {
-          "language_code": "de_de",
-          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
         }
       ]
     },
