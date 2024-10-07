@@ -1,6 +1,6 @@
 # Performance tips
 
-The application runs regular maintenance a DB cleanup tasks. If these tasks fail, you might encounter performance issues. 
+The application runs regular maintenance and DB cleanup tasks. If these tasks fail, you might encounter performance issues. 
 
 Most performance issues are caused by a big database or large log files. Enabling unnecessary plugins will also lead to performance degradation. 
 
@@ -9,7 +9,7 @@ You can always check the size of your database and database tables under the Mai
 ![Db size check](/docs/img/PERFORMANCE/db_size_check.png)
 
 > [!NOTE]
-> For around 100 devices the database should be approximately `50MB` and none of the entries (rows) should exceed the value of `10 000` on a healthy system. 
+> For around 100 devices the database should be approximately `50MB` and none of the entries (rows) should exceed the value of `10 000` on a healthy system. These numbers will depend on your network activity and settings. 
 
 ## Maintenance plugins
 

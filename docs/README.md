@@ -43,6 +43,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md)
 - [Troubleshooting Plugins](/docs/DEBUG_PLUGINS.md)
 - [File Permissions](/docs/FILE_PERMISSIONS.md)
+- [Performance tips](/docs/PERFORMANCE.md)
 
 #### 🔝 Popular/Suggested
 
