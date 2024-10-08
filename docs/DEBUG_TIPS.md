@@ -81,3 +81,7 @@ sudo dpkg -i libseccomp2_2.5.3-2_armhf.deb
 ```
 
 The link above will probably break in time too. Go to https://packages.debian.org/sid/armhf/libseccomp2/download to find the new version number and put that in the url.
+
+### Only Router and own device show up
+
+Make sure that the subnet and interface in SCAN_SUBNETS are the correct ones. If your device/NAS has multiple ethernet ports, you probably need to change eth0 to something else!
