@@ -47,8 +47,7 @@
       },
 
       "default_value": "unused",
-      "options": [
-        "disabled",
+      "options": [        
         "unused",
         "once",
         "schedule",
