@@ -5,12 +5,14 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz"];
+$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar"];
 
 
 global $db;
 
 $result = $db->querySingle("SELECT Value FROM Settings WHERE Code_Name = 'UI_LANG'"); 
+
+// below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
 switch($result){    
   case 'Spanish': $pia_lang_selected = 'es_es'; break;
   case 'German': $pia_lang_selected = 'de_de'; break;
@@ -23,6 +25,7 @@ switch($result){
   case 'French': $pia_lang_selected = 'fr_fr'; break;
   case 'Chinese (zh_cn)': $pia_lang_selected = 'zh_cn'; break;
   case 'Czech (cs_cz)': $pia_lang_selected = 'cs_cz'; break;
+  case 'Arabic (ar_ar)': $pia_lang_selected = 'ar_ar'; break;
   default: $pia_lang_selected = 'en_us'; break;
 }
 

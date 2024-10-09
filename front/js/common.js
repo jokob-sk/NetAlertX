@@ -12,7 +12,7 @@ var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
 var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz"]; // needs to be same as in lang.php
+const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -289,6 +289,7 @@ function getString(key) {
 
 // -----------------------------------------------------------------------------
 // Get current language ISO code
+// below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
 function getLangCode() {
 
     UI_LANG = getSetting("UI_LANG");
@@ -331,6 +332,9 @@ function getLangCode() {
         break;
       case 'Czech (cs_cz)':
         lang_code = 'cs_cz';
+        break;
+      case 'Arabic (ar_ar)':
+        lang_code = 'ar_ar';
         break;
     }
 
