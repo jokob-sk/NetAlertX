@@ -8,3 +8,5 @@ You need Telegram bot to send notifications
 ### Usage
 
 - Go to settings and fill in relevant details.
+
+Made by [@doctorixx](https://github.com/doctorixx) 🙏

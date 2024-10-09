@@ -25,6 +25,8 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+pluginName = 'UNDIS'
+
 def main():
 
     # the script expects a parameter in the format of devices=device1,device2,...
@@ -32,7 +34,7 @@ def main():
     parser.add_argument('devices',  action="store",  help="list of device names separated by ','")
     values = parser.parse_args()
 
-    mylog('verbose', ['[UNDIS] In script'])     
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     plugin_objects = Plugin_Objects( RESULT_FILE )
 

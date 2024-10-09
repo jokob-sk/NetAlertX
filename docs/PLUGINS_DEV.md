@@ -83,7 +83,7 @@ The `config.json` file is the manifest of the plugin. It contains mainly setting
 
 ## Execution order
 
-The execution order is used to specify wwhen a plugin is executed. This is useful if a plugin has access and surfaces more information than others. If a device is detected by 2 plugins and inserted into the `CurrentScan` table, the plugin with the higher priority (e.g.: `Level_0` is a higher priority than `Level_1`) will insert it's values first. These values (devices) will be then prioritized over any values inserted later.
+The execution order is used to specify when a plugin is executed. This is useful if a plugin has access and surfaces more information than others. If a device is detected by 2 plugins and inserted into the `CurrentScan` table, the plugin with the higher priority (e.g.: `Level_0` is a higher priority than `Level_1`) will insert it's values first. These values (devices) will be then prioritized over any values inserted later.
 
 ```json
 {
@@ -361,7 +361,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >3.  That's it. The app takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table columns via the `"mapped_to_column"` property in the column definitions.
 
 > [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also menas that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also means that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
 
 
 >🔍 Example:

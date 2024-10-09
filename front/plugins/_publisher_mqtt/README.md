@@ -23,10 +23,14 @@ Filters will be ignored, and this will delete all objects associated with the pl
 
 ![image](./Deleting_MQTT_Plugin_Objects.png)
 
-This is not the case for the online/offline state of the device, which is always updated absed on the scan result and if it changed from the previous value. 
+Please note the online/offline state of the device is always updated based on the scan result and if it changed from the previous value. 
 
 
 # Sample Payloads
+
+
+>[!WARNING]
+> Please check your Home Assistant MQTT broker debug info for the most up-to-date data and format as the below might be outdated.  
 
 ## Overview device
 
@@ -197,8 +201,6 @@ Payload:
 }
 ```
 
->[!WARNING]
-> Please check your Home Assistant MQTT broker debug info for the most up-to-date data nad format as the above might be outdated.  
 
 
 ## Implementation Notes

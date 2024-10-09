@@ -46,9 +46,10 @@
         ]
       },
 
-      "default_value": "disabled",
+      "default_value": "unused",
       "options": [
         "disabled",
+        "unused",
         "once",
         "schedule",
         "always_after_scan",

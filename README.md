@@ -62,6 +62,8 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 ## Installation & Documentation
 <!--- --------------------------------------------------------------------- --->
 
+Supported browsers: Chrome, Firefox
+
 | Docs        | Link    | 
 |-------------|-------------|
 | 📥🐳  | [Docker instructions](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
