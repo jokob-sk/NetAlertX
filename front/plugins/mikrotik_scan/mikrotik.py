@@ -82,7 +82,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             if (status == "bound"):
                 plugin_objects.add_object(
                     primaryId   = mac_address,
-                    secondaryId = '',
+                    secondaryId = address,
                     watched1    = address,
                     watched2    = host_name,
                     watched3    = last_seen,
