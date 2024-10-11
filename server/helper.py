@@ -852,8 +852,11 @@ def sanitize_string(input):
 #-------------------------------------------------------------------------------
 def sanitize_SQL_input(val):
     if val is None:
-        return ''  
-    return val.replace("'", "_")
+        return ''
+    if isinstance(val, str):
+        return val.replace("'", "_")
+    return val  # Return non-string values as they are
+
 
 #-------------------------------------------------------------------------------
 # Function to normalize the string and remove diacritics

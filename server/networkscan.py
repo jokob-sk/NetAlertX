@@ -28,7 +28,7 @@ def process_scan (db):
     mylog('none','[Process Scan] Stats end')
 
     # Create Events    
-    mylog('verbose','[Process Scan] Sessions Events (connect / discconnect)')
+    mylog('verbose','[Process Scan] Sessions Events (connect / disconnect)')
     insert_events(db)
 
     # Create New Devices
