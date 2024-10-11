@@ -21,7 +21,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars, is_typical_router_ip
 from logger import mylog
-from helper import timeNowTZ, get_setting_value 
+from helper import timeNowTZ, get_setting_value, normalize_string 
 import conf
 from pytz import timezone
 
@@ -161,7 +161,7 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
     for device in devices:
         mylog('verbose', [f'{json.dumps(device)}'])
 
-        # try extracting variables from teh json
+        # try extracting variables from the json
         name = get_name(get_unifi_val(device, 'name'), get_unifi_val(device, 'hostname'))
         ipTmp = get_ip(get_unifi_val(device, 'lan_ip'), get_unifi_val(device, 'last_ip'), get_unifi_val(device, 'fixed_ip'), get_unifi_val(device, 'ip'))
         macTmp = device['mac']
@@ -178,7 +178,7 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
             plugin_objects.add_object(
                 primaryId=macTmp,
                 secondaryId=ipTmp,
-                watched1=name,
+                watched1=normalize_string(name),
                 watched2=get_unifi_val(device, 'oui', device_vendor),
                 watched3=deviceType,
                 watched4=status,
