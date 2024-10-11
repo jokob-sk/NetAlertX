@@ -398,26 +398,32 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         {
           // hide metadata by default by assigning it a special class          
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
-          isMetadata ? infoIcon = '' : infoIcon = `<i 
+          isMetadata ? showMetadata = '' : showMetadata = `<i 
                                                       my-to-toggle="row_${codeName}__metadata"
                                                       title="${getString("Settings_Metadata_Toggle")}" 
-                                                      class="fa fa-circle-question pointer" 
+                                                      class="fa fa-circle-question pointer hideOnMobile" 
                                                       onclick="toggleMetadata(this)">
                                                     </i>` ;
 
+          infoIcon = `<i my-to-show="#row_${codeName} .setting_description"
+                        title="${getString("Settings_Show_Description")}" 
+                        class="fa fa-circle-info pointer hideOnBigScreen" 
+                        onclick="showDescription(this)">
+                      </i>` ;
+
           // NAME & DESCRIPTION columns
           setHtml += `
-                    <div class="row table_row ${metadataClass}" id="row_${codeName}">
-                      <div class="table_cell setting_name bold">
+                    <div class="row table_row ${metadataClass} " id="row_${codeName}">
+                      <div class="table_cell setting_name bold col-sm-2">
                         <label>${getString(codeName + '_name', set['Display_Name'])}</label>
                         <div class="small text-overflow-hidden">
-                          <code>${codeName}</code>${infoIcon}
+                          <code>${codeName}</code>${showMetadata}${infoIcon}
                         </div>
                       </div>
-                      <div class="table_cell setting_description">
+                      <div class="table_cell setting_description col-sm-4">
                         ${getString(codeName + '_description', set['Description'])}
                       </div>
-                      <div class="table_cell input-group setting_input ${overriddenByEnv ? "setting_overriden_by_env" : ""} input-group col-sm-12">
+                      <div class="table_cell input-group setting_input ${overriddenByEnv ? "setting_overriden_by_env" : ""} input-group col-xs-12 col-sm-6">
                   `;
 
           // OVERRIDE

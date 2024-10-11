@@ -3,7 +3,7 @@
 import conf
 
 
-from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan
+from device import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, exclude_ignored_devices
 from helper import timeNowTZ
 from logger import mylog
 from reporting import skip_repeated_notifications
@@ -16,7 +16,11 @@ from reporting import skip_repeated_notifications
 
 def process_scan (db):
 
-     # Load current scan data
+    # Apply exclusions
+    mylog('verbose','[Process Scan]  Exclude ignored devices')     
+    exclude_ignored_devices (db)    
+
+    # Load current scan data
     mylog('verbose','[Process Scan]  Processing scan results')     
     save_scanned_devices (db)    
 

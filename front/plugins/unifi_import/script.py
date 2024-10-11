@@ -238,7 +238,7 @@ def get_ip(*ips: str) -> str:
     for ip in ips:
         if ip and ip != 'null':
             return ip
-    return '0:0:0:0'
+    return '0.0.0.0'
 
 
 # -----------------------------------------------------------------------------

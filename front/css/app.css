@@ -124,6 +124,21 @@
     border: none;
 }
 
+@media (min-width: 768px) {
+
+    .hideOnBigScreen{
+        display: none;
+    }
+}
+
+@media (max-width: 767px) { /* on mobile */
+
+    .hideOnMobile{
+        display: none;
+    }
+}
+
+
 /* -----------------------------------------------------------------------------
    Main Sections
 ----------------------------------------------------------------------------- */
@@ -781,20 +796,20 @@ height: 50px;
 /*                          settings                         */
 /* --------------------------------------------------------- */
 
-@media (max-width: 767px) {
+@media (max-width: 767px) { /* on mobile */
     /* hide on mobile */
     .setting_description {
       /* color: red; */
       display: none;
     }
-    .setting_input{
+    /* .setting_input{
         width:70%;
-        /* background-color: red; */
+        
     }
     .setting_name
     {
         width:30%;         
-    }
+    } */
   }
 
 @media (min-width: 768px) {
@@ -802,14 +817,14 @@ height: 50px;
     /* color: green; */
     display: block;
 }
-.setting_input{
+/* .setting_input{
     width:40%;        
-    /* background-color: green; */
+
 }
 .setting_name
 {
     width:19%;         
-}
+} */
 }
 
 .settingswrap
@@ -874,10 +889,10 @@ height: 50px;
 }
 
 
-.table_row {    
+#settingsPage .table_row {    
     padding: 3px;    
-    width:100%;
-    display: flex;
+    /* width:100%; */
+    /* display: flex; */
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-color: #606060;
@@ -897,10 +912,6 @@ height: 50px;
     font-weight: 300;    
 }
 
-.setting_description
-{
-    width:40%;
-}
 
 .myhidden
 {

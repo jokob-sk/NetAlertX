@@ -512,6 +512,17 @@ function toggleMetadata(element) {
   $(`#${id}`).toggle();
 }
 
+// -----------------------------------------------------------------------------
+// Show setting description in a modal on smaller screens
+// -----------------------------------------------------------------------------
+function showDescription(element) {
+  const id = $(element).attr("my-to-show");
+
+  description = $(`${id}`)[0].innerHTML
+  console.log(description);
+  showModalOK(getString("Gen_Description"), description);
+}
+
 // ---------------------------------------------------------
 // Helper methods
 // ---------------------------------------------------------

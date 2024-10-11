@@ -259,9 +259,13 @@
       "function": "CMD",
       "type": {
         "dataType": "string",
-        "element": "input",
-        "elementOptions": ["readonly"],
-        "transformers": []
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
       },
       "default_value": "python3 /app/front/plugins/<plugin folder>/rename_me.py",
       "options": [],

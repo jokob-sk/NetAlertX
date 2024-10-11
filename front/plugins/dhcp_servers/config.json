@@ -2,7 +2,7 @@
   "code_name": "dhcp_servers",
   "unique_prefix": "DHCPSRVS",
   "plugin_type": "other",
-  "execution_order" : "Layer_3",
+  "execution_order": "Layer_3",
   "enabled": true,
   "data_source": "script",
   "show_ui": true,
@@ -349,7 +349,11 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
         ]
       },
       "default_value": "python3 /app/front/plugins/dhcp_servers/script.py",
