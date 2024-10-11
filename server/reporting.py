@@ -61,11 +61,10 @@ def get_notifications (db):
     mylog('verbose', ['[Notification] Included sections: ', sections ])
 
     if 'new_devices' in sections:
-        # Compose New Devices Section
+        # Compose New Devices Section (no empty lines in SQL queries!)
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'New Device' 
-                        {get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")} 
+                        AND eve_EventType = 'New Device' {get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""   
 
         mylog('debug', ['[Notification] new_devices SQL query: ', sqlQuery ])
@@ -133,11 +132,10 @@ def get_notifications (db):
         mylog('debug', ['[Notification] json_down_reconnected: ', json.dumps(json_down_reconnected) ])
 
     if 'events' in sections:
-        # Compose Events Section
+        # Compose Events Section (no empty lines in SQL queries!)
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') 
-                            {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
+                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""      
 
         mylog('debug', ['[Notification] events SQL query: ', sqlQuery ])

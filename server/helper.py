@@ -463,7 +463,7 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
     """
 
     if not values_list:
-        return ""  # Return an empty string if the list is empty to avoid breaking the SQL condition.
+        return " AND 1=1 "  # Return a conditioneitehr way if the list is empty to avoid breaking the SQL condition.
 
     # Replace {s-quote} with single quote in values_list
     values_list = [value.replace("{s-quote}", "'") for value in values_list]
