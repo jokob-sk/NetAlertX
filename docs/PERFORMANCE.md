@@ -22,3 +22,10 @@ The database cleanup plugin. Check details and related setting in the [DB Cleanu
 ### Maintenance (MAINT)
 
 The maintenance plugin. Check details and related setting in the [Maintenance plugin docs](/front/plugins/maintenance/README.md). Make sure the plugin is not failing by checking the logs. Try changing the schedule `MAINT_RUN_SCHD` and the timeout `MAINT_RUN_TIMEOUT` (increase) if the plugin is failing to execute.
+
+## Scan frequency and coverage
+
+The more often you scan the networks the more resources, traffic and DB read/write cycles are executed. Especially on busy networks and lower end hardware, consider increasing scan intervals (`<PLUGIN>_RUN_SCHD`)  and timeouts (`<PLUGIN>_RUN_TIMEOUT`).
+
+Also consider decreasing the scanned subnet, e.g. from `/16` to `/24` if need be.   
+

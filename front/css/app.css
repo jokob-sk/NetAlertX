@@ -1136,7 +1136,6 @@ input[readonly] {
     height: 200px; */
     background-color: #f3f3f3;
     border: 1px solid #ccc;
-    margin: 20px;
     z-index: 10;
   }
 
