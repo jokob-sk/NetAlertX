@@ -127,7 +127,7 @@ require 'php/templates/header.php';
           "render": function(data, type, row) {
               if (data.includes("Report:")) {
                   var guid = data.split(":")[1].trim();
-                  return `<a href="/report.php?guid=${guid}">Go to Report</a>`;
+                  return `<a href="report.php?guid=${guid}">Go to Report</a>`;
                 } else {
                   return data;
                 }
