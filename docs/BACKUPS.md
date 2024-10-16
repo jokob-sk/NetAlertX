@@ -73,7 +73,7 @@ End-result: Partial restore (historical data & configurations from the Maintenan
 
 #### Recovery:
 
-Even with a corrupted database you can recover what I would argue is 99% of the configuration (except of a couple of settings under Maintenance). 
+Even with a corrupted database you can recover what I would argue is 99% of the configuration. 
 
 - map the `/config/app.conf` file as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
 - rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/config` folder

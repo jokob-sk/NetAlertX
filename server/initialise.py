@@ -295,10 +295,10 @@ def importConfigs (db, all_plugins):
     mylog('none', ['[Config] Plugins to load: ', loaded_plugins_prefixes])
 
     conf.plugins_once_run = False
-    # -----------------
-    # Plugins END
     
+    # -----------------
     # HANDLE APP_CONF_OVERRIDE via app_conf_override.json
+    
     # Assuming fullConfFolder is defined elsewhere
     app_conf_override_path = fullConfFolder + '/app_conf_override.json'
 
@@ -327,6 +327,9 @@ def importConfigs (db, all_plugins):
     else:
         mylog('debug', [f"[Config] File {app_conf_override_path} does not exist."])
   
+    # -----------------
+    # HANDLE APP was upgraded message - clear cache
+    
     # Check if app was upgraded
     with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
         
@@ -346,6 +349,9 @@ def importConfigs (db, all_plugins):
             write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the 🔄 (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
 
+    # -----------------
+    # Initialization finished, update DB and API endpoints
+    
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
     # mylog('debug', [f"[Config] conf.mySettingsSQLsafe  : '{conf.mySettingsSQLsafe}'"])
