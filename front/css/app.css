@@ -1319,7 +1319,8 @@ input[readonly] {
     border: solid;
     border-color:cyan;
 }
-#networkTree .netStatus-Off-line i
+#networkTree .netStatus-Off-line i,
+#networkTree .netStatus-Off-line svg
 {
     color: #dd4b39;
 }
