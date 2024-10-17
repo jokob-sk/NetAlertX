@@ -49,6 +49,17 @@ services:
     # Other service configurations...
 ```
 
+## 5. Sharing application state
+
+Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong. 
+
+1. Please set `LOG_LEVEL` to `trace` (Disable it once you have the info as this produces big log files).
+2. Wait for the issue to occur.
+3. Search for `================ DEVICES table content  ================` in your logs.
+4. Search for `================ CurrentScan table content  ================` in your logs.
+5. Open a new issue and post (redacted) output into the issue description (or send to the netalertx@gmail.com email if sensitive data present).
+6. Please set `LOG_LEVEL` to `debug` or lower.
+
 ## 📃Common issues
 
 ### Permissions

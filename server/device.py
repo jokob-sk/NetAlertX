@@ -459,7 +459,7 @@ def update_devices_data_from_scan (db):
     default_icon = get_setting_value('NEWDEV_dev_Icon')
     
     for device in sql.execute (query) :
-        # Conditional logic for dev_Icon guessing        
+        # Conditional logic for dev_Icon guessing       
         dev_Icon = guess_icon(device['dev_Vendor'], device['dev_MAC'], device['dev_LastIP'], device['dev_Name'], default_icon)
 
         recordsToUpdate.append ([dev_Icon, device['dev_MAC']])
@@ -677,7 +677,10 @@ icons = {
 
 #-------------------------------------------------------------------------------
 # Guess device icon
-def guess_icon(vendor, mac, ip, name,  default):
+def guess_icon(vendor, mac, ip, name,  default):    
+            
+    mylog('debug', [f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|{ip}|{name})"])
+    
     result = default
     mac    = mac.upper()
     vendor = vendor.lower() if vendor else "unknown"
@@ -706,7 +709,7 @@ def guess_icon(vendor, mac, ip, name,  default):
         result = icons.get("microchip")
 
     # Guess icon based on MAC address patterns
-    elif mac == "INTERNET":  # Apple
+    elif mac == "INTERNET":  
         result = icons.get("globe")
     elif mac.startswith("00:1A:79"):  # Apple
         result = icons.get("apple")
