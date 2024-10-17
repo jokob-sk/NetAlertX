@@ -46,17 +46,19 @@ def main():
 
 def run_speedtest():
     try:
-        st = speedtest.Speedtest()
+        st = speedtest.Speedtest(secure=True)
         st.get_best_server()
         download_speed = round(st.download() / 10**6, 2)  # Convert to Mbps
         upload_speed = round(st.upload() / 10**6, 2)  # Convert to Mbps
+        
+        mylog('verbose', [f"[INTRSPD] Result (down|up): {str(download_speed)} Mbps|{upload_speed} Mbps"]) 
 
         return {
             'download_speed': download_speed,
             'upload_speed': upload_speed,
         }
     except Exception as e:
-        mylog('verbose', [f"Error running speedtest: {str(e)}"]) 
+        mylog('verbose', [f"[INTRSPD] Error running speedtest: {str(e)}"]) 
         return {
             'download_speed': -1,
             'upload_speed': -1,
