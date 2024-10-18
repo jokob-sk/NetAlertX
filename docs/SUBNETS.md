@@ -110,3 +110,21 @@ Please note the accessibility of macvlans when configured on the same computer. 
 
 - NetAlertX does not detect the macvlan container when it is running on the same computer.
 - NetAlertX recognizes the macvlan container when it is running on a different computer.
+
+
+### Wi-Fi Extenders
+
+A Wi-Fi extender typically works by creating a separate network or subnet, which can cause certain network scanning tools, like `arp-scan`, to be unable to detect devices behind the extender.
+
+This happens because `arp-scan` uses ARP (Address Resolution Protocol) to map IP addresses to MAC addresses on the local network. Since ARP is a Layer 2 (data link layer) protocol, it usually only works within a single broadcast domain, which is typically limited to a single router or network segment.
+
+When you introduce a Wi-Fi extender, it may isolate devices on different segments of the network, meaning ARP packets cannot easily traverse from one segment (your main network) to another (the network behind the extender).
+
+To scan devices behind the extender, you can try:
+
+- Scanning the specific subnet that the extender uses, if it is separate from the main network.
+- Using [supplementing plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) that use alternate methods. Protocols used by the `SNMPDSC` or `DHCPLSS` plugins have good support and usually can be used as a workaround.
+
+Check the [plugins list](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) to find a plugin supported by your router and  your network setup. 
+
+
