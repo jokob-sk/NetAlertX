@@ -27,7 +27,7 @@ def main():
     last_run_logfile.write("")
     
     plugin_objects = Plugin_Objects(RESULT_FILE)
-    timeoutSec = 10
+    timeoutSec = get_setting_value('DHCPSRVS_RUN_TIMEOUT')
 
     nmapArgs = ['sudo', 'nmap', '--script', 'broadcast-dhcp-discover']
 
@@ -42,6 +42,9 @@ def main():
         newEntries = []
 
         for line in newLines:
+            
+            mylog('verbose', [f'[DHCPSRVS] Processing line: {line} '])
+            
             if 'Response ' in line and ' of ' in line:
                 newEntries.append(Plugin_Object())
             elif 'Server Identifier' in line:
@@ -67,6 +70,7 @@ def main():
                     newEntries[-1].extra += ',' + newVal
 
         for e in newEntries:
+            
             plugin_objects.add_object(
                 primaryId=e.primaryId,
                 secondaryId=e.secondaryId,
@@ -80,7 +84,7 @@ def main():
 
         plugin_objects.write_result_file()
     except Exception as e:
-        mylog('none', ['Error in main:', str(e)])
+        mylog('verbose', ['[DHCPSRVS] Error in main:', str(e)])
 
 if __name__ == '__main__':
     main()
