@@ -64,7 +64,7 @@ The plugin operates in three different modes based on the configuration settings
 
 ### Example use case: Network Setup with Multiple VLANs and VM Scanning
 
-> Thank you to @richtj999 for the use case 🙏
+> Thank you to [@richtj999](https://github.com/richtj999) for the use case 🙏
 
 I have 6 VLANs, all isolated by a firewall, except for one VLAN that has access to all the others.
 
@@ -74,12 +74,12 @@ Initially, I had one virtual machine (VM) with 6 network cards, one for each VLA
 - One VM acts as the "server," and the other 5 as "clients."
 - The server has access to all VLANs (via firewall rules) and collects data from the client VMs, which each scan their own VLAN.
 
-### Summary
+#### Summary
 
 - **Single VM on six VLANs**: Slower because one VM scans all networks.
 - **Six VMs on six VLANs**: Faster because each VM scans its own network, sending the results to the server.
 
-### Example Setup
+#### Example Setup
 
 - **VM1 ("Server")**: Network 1 (can access all networks) - IP: `10.10.10.106`  
   Receives data from all NetAlertX clients and scans network 1.
@@ -101,9 +101,9 @@ Initially, I had one virtual machine (VM) with 6 network cards, one for each VLA
 
 ---
 
-## How to Set It Up
+#### How to Set It Up
 
-### Server (VM1)
+##### Server (VM1)
 
 1. Go to **Settings > System > Sync Hub**.
 2. Set the schedule (5 minutes works for me).
@@ -113,7 +113,7 @@ Initially, I had one virtual machine (VM) with 6 network cards, one for each VLA
 6. **Node Name**: Leave blank.
 7. Check **Sync Devices**.
 
-### Clients (VM2, VM3, VM4, VM5, VM6)
+##### Clients (VM2, VM3, VM4, VM5, VM6)
 
 1. Go to **Settings > System > Sync Hub**.
 2. Set **When to run** to "Always after scan."
