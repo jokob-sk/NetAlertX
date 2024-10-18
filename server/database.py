@@ -566,9 +566,38 @@ class DB():
                                 WHERE e.row_num = 1;
                             """)
 
-        self.commitDB()       
+        # handling the Convert_Events_to_Sessions / Sessions screens         
+        self.sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
+        self.sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
+                                      EVE1.eve_IP,
+                                      EVE1.eve_EventType AS eve_EventTypeConnection,
+                                      EVE1.eve_DateTime AS eve_DateTimeConnection,
+                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') OR
+                                                EVE2.eve_EventType IS NULL THEN EVE2.eve_EventType ELSE '<missing event>' END AS eve_EventTypeDisconnection,
+                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') THEN EVE2.eve_DateTime ELSE NULL END AS eve_DateTimeDisconnection,
+                                      CASE WHEN EVE2.eve_EventType IS NULL THEN 1 ELSE 0 END AS eve_StillConnected,
+                                      EVE1.eve_AdditionalInfo
+                                  FROM Events AS EVE1
+                                      LEFT JOIN
+                                      Events AS EVE2 ON EVE1.eve_PairEventRowID = EVE2.RowID
+                                WHERE EVE1.eve_EventType IN ('New Device', 'Connected','Down Reconnected')
+                            UNION
+                                SELECT eve_MAC,
+                                      eve_IP,
+                                      '<missing event>' AS eve_EventTypeConnection,
+                                      NULL AS eve_DateTimeConnection,
+                                      eve_EventType AS eve_EventTypeDisconnection,
+                                      eve_DateTime AS eve_DateTimeDisconnection,
+                                      0 AS eve_StillConnected,
+                                      eve_AdditionalInfo
+                                  FROM Events AS EVE1
+                                WHERE (eve_EventType = 'Device Down' OR
+                                        eve_EventType = 'Disconnected') AND
+                                      EVE1.eve_PairEventRowID IS NULL;
+                          """)
 
-
+        self.commitDB()     
+        
         # Init the AppEvent database table
         AppEvent_obj(self)
 
