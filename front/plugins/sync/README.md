@@ -61,3 +61,66 @@ The plugin operates in three different modes based on the configuration settings
 - It is recommended to use Device synchronization primarily. Plugin data synchronization is more suitable for specific use cases.
 
 ![Sync Hub Setup Diagram](/front/plugins/sync/sync_hub.png)
+
+### Example use case: Network Setup with Multiple VLANs and VM Scanning
+
+> Thank you to @richtj999 for the use case 🙏
+
+I have 6 VLANs, all isolated by a firewall, except for one VLAN that has access to all the others.
+
+Initially, I had one virtual machine (VM) with 6 network cards, one for each VLAN. While this setup worked, it introduced delays due to other concurrent scans. To optimize this, I switched to a multi-VM setup:
+
+- I created 6 VMs, each attached to a single VLAN. 
+- One VM acts as the "server," and the other 5 as "clients."
+- The server has access to all VLANs (via firewall rules) and collects data from the client VMs, which each scan their own VLAN.
+
+### Summary
+
+- **Single VM on six VLANs**: Slower because one VM scans all networks.
+- **Six VMs on six VLANs**: Faster because each VM scans its own network, sending the results to the server.
+
+### Example Setup
+
+- **VM1 ("Server")**: Network 1 (can access all networks) - IP: `10.10.10.106`  
+  Receives data from all NetAlertX clients and scans network 1.
+
+- **VM2 ("Client")**: Network 2 (can access only network 2) - IP: `192.168.x.x`  
+  Scans network 2; VM1 retrieves this data.
+
+- **VM3 ("Client")**: Network 3 (can access only network 3) - IP: `192.168.x.x`  
+  Scans network 3; VM1 retrieves this data.
+
+- **VM4 ("Client")**: Network 4 (can access only network 4) - IP: `192.168.x.x`  
+  Scans network 4; VM1 retrieves this data.
+
+- **VM5 ("Client")**: Network 5 (can access only network 5) - IP: `192.168.x.x`  
+  Scans network 5; VM1 retrieves this data.
+
+- **VM6 ("Client")**: Network 6 (can access only network 6) - IP: `192.168.x.x`  
+  Scans network 6; VM1 retrieves this data.
+
+---
+
+## How to Set It Up
+
+### Server (VM1)
+
+1. Go to **Settings > System > Sync Hub**.
+2. Set the schedule (5 minutes works for me).
+3. **API Token**: Use any string, but it must match the clients (e.g., `abc123`).
+4. **Encryption Key**: Use any string, but it must match the clients (e.g., `abc123`).
+5. Under **Nodes**, add the full URL for each client, e.g., `http://192.168.1.20.20211/`.
+6. **Node Name**: Leave blank.
+7. Check **Sync Devices**.
+
+### Clients (VM2, VM3, VM4, VM5, VM6)
+
+1. Go to **Settings > System > Sync Hub**.
+2. Set **When to run** to "Always after scan."
+3. **API Token**: Use the same token as the server (e.g., `abc123`).
+4. **Encryption Key**: Use the same key as the server (e.g., `abc123`).
+5. Leave **Nodes** blank.
+6. Set **Node Name** to a unique, memorable name for each client.
+7. Check **Sync Devices**.
+
+
