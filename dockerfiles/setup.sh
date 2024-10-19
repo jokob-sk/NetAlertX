@@ -43,6 +43,10 @@ fi
 
 # OVERRIDE settings: Handling APP_CONF_OVERRIDE
 # Check if APP_CONF_OVERRIDE is set
+
+# remove old
+rm "${INSTALL_DIR}/config/app_conf_override.json"
+
 if [ -z "$APP_CONF_OVERRIDE" ]; then
   echo "APP_CONF_OVERRIDE is not set. Skipping config file creation."
 else

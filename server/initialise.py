@@ -48,6 +48,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
     # Single quotes might break SQL queries, replacing them
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
+       
 
     # Create the tuples
     sql_safe_tuple = (key, name, desc, str(inputtype), options, regex, str(result), group, str(events), overriddenByEnv)
@@ -310,17 +311,15 @@ def importConfigs (db, all_plugins):
 
                 # Loop through settings_override dictionary
                 for setting_name, value in settings_override.items():
+                    
                     # Ensure the value is treated as a string and passed directly
-                    if isinstance(value, str):
-                        # Log the value being passed
-                        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-                        mylog('debug', [f"[Config] Setting override {setting_name} with value: {value}"])
-                        ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
-                    else:
-                        # Convert to string and log
-                        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-                        mylog('debug', [f"[Config] Setting override {setting_name} with value: {str(value)}"])
-                        ccd(setting_name, str(value), c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
+                    if isinstance(value, str) == False:
+                        value = str(value)
+                        
+                    # Log the value being passed
+                    # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+                    mylog('debug', [f"[Config] Setting override {setting_name} with value: {value}"])
+                    ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
 
             except json.JSONDecodeError:
                 mylog('none', [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"])
