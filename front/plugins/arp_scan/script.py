@@ -28,6 +28,7 @@ CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
 LOG_FILE = os.path.join(CUR_PATH, 'script.log')
 RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
 
+pluginName = 'ARPSCAN'
 
 def main():
    
@@ -58,7 +59,7 @@ def main():
     userSubnetsParam = base64.b64decode(userSubnetsParamBase64).decode('ascii')
 
     # Print the decoded subnet information.
-    mylog('verbose', ['[ARP Scan] userSubnetsParam: ', userSubnetsParam]) 
+    mylog('verbose', [f'[{pluginName}] userSubnetsParam: ', userSubnetsParam]) 
 
     # Check if the decoded subnet information contains multiple subnets separated by commas.
     # If it does, split the string into a list of individual subnets.
@@ -86,7 +87,7 @@ def main():
             watched2    = handleEmpty(device.get('hw', '')),  # Vendor (assuming it's in the 'hw' field)
             watched3    = handleEmpty(device.get('interface', '')),  # Add the interface             
             watched4    = '',
-            extra       = 'arp-scan', 
+            extra       = pluginName, 
             foreignKey  = "")
 
     plugin_objects.write_result_file()
@@ -105,7 +106,7 @@ def execute_arpscan(userSubnets):
 
         arpscan_output = execute_arpscan_on_interface (interface)        
 
-        mylog('verbose', ['[ARP Scan] arpscan_output: ', arpscan_output])         
+        mylog('verbose', [f'[{pluginName}] arpscan_output: ', arpscan_output])         
     
         # Search IP + MAC + Vendor as regular expresion
         re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
@@ -132,10 +133,10 @@ def execute_arpscan(userSubnets):
             unique_devices.append(device)    
 
     # return list
-    mylog('verbose', ['[ARP Scan] Found: Devices without duplicates ', len(unique_devices)  ]) 
+    mylog('verbose', [f'[{pluginName}] Found: Devices without duplicates ', len(unique_devices)  ]) 
 
-    mylog('verbose', ["Devices List len:", len(devices_list)])    # Add this line to print devices_list
-    mylog('verbose',["Devices List:", devices_list])              # Add this line to print devices_list
+    mylog('verbose', [f'[{pluginName}] Devices List len:', len(devices_list)])    
+    mylog('verbose', [f'[{pluginName}] Devices List:', devices_list])              
 
     return devices_list
 
