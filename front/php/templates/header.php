@@ -73,10 +73,14 @@
   <!-- Dark-Mode Patch -->
 
   <?php
-  if ($ENABLED_DARKMODE === True) {
-    echo '<link rel="stylesheet" href="css/dark-patch.css">';
-    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
-  } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
+  switch ($UI_THEME) {
+    case "Dark":
+      echo '<link rel="stylesheet" href="css/dark-patch.css">';
+      break;
+    case "System":
+      echo '<link rel="stylesheet" href="css/system-dark-patch.css">';
+      break;
+  }
   ?>
 
 
@@ -114,7 +118,7 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
-<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

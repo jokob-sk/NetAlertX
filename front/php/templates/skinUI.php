@@ -4,12 +4,12 @@
 // ## GUI settings processing start
 // ###################################
 
-if( isset($_COOKIE['UI_dark_mode']))
+if( isset($_COOKIE['UI_theme']))
 {
-    $ENABLED_DARKMODE = $_COOKIE['UI_dark_mode'] == "True";
+    $UI_THEME = $_COOKIE['UI_theme'];
 }else
 {
-    $ENABLED_DARKMODE = False;
+    $UI_THEME = "Light";
 }
 
 $pia_skin_selected = 'skin-blue';
