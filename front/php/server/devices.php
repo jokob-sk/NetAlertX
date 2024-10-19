@@ -620,7 +620,8 @@ function getDevicesList() {
     array("dev_GUID", 19, 19),           
     array("dev_SyncHubNodeName", 20, 20),           
     array("dev_NetworkSite", 21, 21),           
-    array("dev_SSID", 22, 22)           
+    array("dev_SSID", 22, 22),           
+    array("dev_SourcePlugin", 23, 23)           
   );
 
   if($forceDefaultOrder == FALSE) 
@@ -693,7 +694,8 @@ function getDevicesList() {
                             handleNull($row['dev_GUID']),                            
                             handleNull($row['dev_SyncHubNodeName']),                            
                             handleNull($row['dev_NetworkSite']),                            
-                            handleNull($row['dev_SSID'])                            
+                            handleNull($row['dev_SSID']),                            
+                            handleNull($row['dev_SourcePlugin'])                            
                           );
 
     $newOrder = array();

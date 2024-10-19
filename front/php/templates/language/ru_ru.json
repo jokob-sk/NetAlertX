@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "ID строки",
     "Device_TableHead_Rowid": "ID строки",
     "Device_TableHead_SSID": "SSID",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "Статус",
     "Device_TableHead_SyncHubNodeName": "Узел синхронизации",
     "Device_TableHead_Type": "Тип",

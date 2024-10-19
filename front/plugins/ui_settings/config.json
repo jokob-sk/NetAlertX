@@ -346,7 +346,8 @@
         "Device_TableHead_Type",
         "Device_TableHead_LastIP",
         "Device_TableHead_Status",
-        "Device_TableHead_MAC_full"
+        "Device_TableHead_MAC_full",
+        "Device_TableHead_SourcePlugin"
       ],
       "options": [
         "Device_TableHead_Name",
@@ -371,7 +372,8 @@
         "Device_TableHead_GUID",
         "Device_TableHead_SyncHubNodeName",
         "Device_TableHead_NetworkSite",
-        "Device_TableHead_SSID"
+        "Device_TableHead_SSID",
+        "Device_TableHead_SourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

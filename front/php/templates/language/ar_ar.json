@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "",
     "Device_TableHead_Rowid": "",
     "Device_TableHead_SSID": "",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "",
     "Device_TableHead_SyncHubNodeName": "",
     "Device_TableHead_Type": "",

@@ -229,7 +229,7 @@ def create_new_devices (db):
                         '{sanitize_SQL_input(get_setting_value('NEWDEV_dev_Location'))}'"""
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
-    query = f"""SELECT cur_MAC, cur_Name, cur_Vendor, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type 
+    query = f"""SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type 
                 FROM CurrentScan """ 
 
     
@@ -237,7 +237,7 @@ def create_new_devices (db):
     current_scan_data = sql.execute(query).fetchall()
 
     for row in current_scan_data:
-        cur_MAC, cur_Name, cur_Vendor, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
+        cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
 
         # Handle NoneType
         cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
@@ -262,6 +262,7 @@ def create_new_devices (db):
                             dev_NetworkSite, 
                             dev_SSID,
                             dev_DeviceType,                          
+                            dev_SourcePlugin,                          
                             {newDevColumns}
                         )
                         VALUES 
@@ -279,6 +280,7 @@ def create_new_devices (db):
                             '{sanitize_SQL_input(cur_NetworkSite)}', 
                             '{sanitize_SQL_input(cur_SSID)}',
                             '{sanitize_SQL_input(cur_Type)}', 
+                            '{sanitize_SQL_input(cur_ScanMethod)}', 
                             {newDevDefaults}
                         )"""
 

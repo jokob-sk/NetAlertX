@@ -576,7 +576,8 @@ function getDevicesColumns(){
               "dev_GUID",
               "dev_SyncHubNodeName",
               "dev_NetworkSite",
-              "dev_SSID"
+              "dev_SSID",
+              "dev_SourcePlugin"
             ]; 
               
   return $columns;

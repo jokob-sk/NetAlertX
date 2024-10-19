@@ -213,6 +213,17 @@ class DB():
           self.sql.execute("""
             ALTER TABLE "Devices" ADD "dev_SyncHubNodeName" TEXT
           """)
+          
+        # dev_SourcePlugin column
+        dev_SourcePlugin_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SourcePlugin'
+          """).fetchone()[0] == 0
+
+        if dev_SourcePlugin_missing :
+          mylog('verbose', ["[upgradeDB] Adding dev_SourcePlugin to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "dev_SourcePlugin" TEXT
+          """)
 
         # -------------------------------------------------------------------------
         # Settings table setup

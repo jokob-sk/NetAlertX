@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "Rad ID",
     "Device_TableHead_Rowid": "Rad ID",
     "Device_TableHead_SSID": "",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "Status",
     "Device_TableHead_SyncHubNodeName": "Synkroniser Node",
     "Device_TableHead_Type": "Type",

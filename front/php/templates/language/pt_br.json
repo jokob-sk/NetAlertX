@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "ID da linha",
     "Device_TableHead_Rowid": "ID da linha",
     "Device_TableHead_SSID": "SSID",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "Status",
     "Device_TableHead_SyncHubNodeName": "Nó de sincronização",
     "Device_TableHead_Type": "Tipo",

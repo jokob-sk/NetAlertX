@@ -456,7 +456,8 @@ function initializeDatatable (status) {
                 item.dev_GUID || "",
                 item.dev_SyncHubNodeName || "",
                 item.dev_NetworkSite || "",
-                item.dev_SSID || ""
+                item.dev_SSID || "",
+                item.dev_SourcePlugin || ""
             ];
 
             var newRow = [];

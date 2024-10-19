@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "ID riga",
     "Device_TableHead_Rowid": "ID riga",
     "Device_TableHead_SSID": "SSID",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "Stato",
     "Device_TableHead_SyncHubNodeName": "Sincronizza nodo",
     "Device_TableHead_Type": "Tipo",

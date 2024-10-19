@@ -217,6 +217,7 @@
     "Device_TableHead_RowID": "排行",
     "Device_TableHead_Rowid": "排行",
     "Device_TableHead_SSID": "SSID",
+    "Device_TableHead_SourcePlugin": "",
     "Device_TableHead_Status": "状态",
     "Device_TableHead_SyncHubNodeName": "同步节点",
     "Device_TableHead_Type": "类型",
