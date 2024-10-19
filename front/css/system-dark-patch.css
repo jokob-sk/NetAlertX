@@ -19,6 +19,10 @@
     background-color: #353c42;
   }
 
+  body {
+    background-image: url('img/boxed-bg-dark.png') !important;
+  }
+
   body, .bg-yellow, .callout.callout-warning, .alert-warning, .label-warning, .modal-warning .modal-body {
 
     background-color: #353c42 !important;

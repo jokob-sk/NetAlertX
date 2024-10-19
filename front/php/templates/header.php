@@ -75,8 +75,7 @@
   <?php
   if ($ENABLED_DARKMODE === True) {
     echo '<link rel="stylesheet" href="css/dark-patch.css">';
-    $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
-  } else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
+  }
   ?>
 
 
@@ -114,7 +113,7 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
-<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" <?php echo $BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="show_pia_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

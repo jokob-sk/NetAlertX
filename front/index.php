@@ -105,8 +105,7 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
 <?php
 if ($ENABLED_DARKMODE === True) {
    echo '<link rel="stylesheet" href="css/dark-patch.css">';
-   $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/boxed-bg-dark.png\');"';
-} else { $BACKGROUND_IMAGE_PATCH='style="background-image: url(\'img/background.png\');"';}
+}
 ?>
   <link rel="stylesheet" href="/css/offline-font.css">
 </head>

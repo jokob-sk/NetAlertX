@@ -1195,11 +1195,9 @@ $(document).ready(function() {
     setCookie("UI_dark_mode", "True")
     $('head').append('<link rel="stylesheet" href="css/dark-patch.css">');
     // Set the background image for dark mode
-    $('body').attr('style', 'background-image: url(\'img/boxed-bg-dark.png\');');
   } else {
     setCookie("UI_dark_mode", "False")
     // Set the background image for light mode
-    $('body').attr('style', 'background-image: url(\'img/background.png\');');
   }
 });
 
