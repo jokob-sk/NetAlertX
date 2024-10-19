@@ -223,7 +223,6 @@ switch ($UI_THEME) {
   case "System":
     echo '<link rel="stylesheet" href="css/system-dark-patch-cal.css">';
     break;
-
 }
 ?>
 
