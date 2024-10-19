@@ -284,6 +284,7 @@
     "Gen_Description": "",
     "Gen_Error": "错误",
     "Gen_Filter": "筛选",
+    "Gen_Generate": "",
     "Gen_LockedDB": "错误 - DB 可能被锁定 - 检查 F12 开发工具 -> 控制台或稍后重试。",
     "Gen_Offline": "离线",
     "Gen_Okay": "Ok",

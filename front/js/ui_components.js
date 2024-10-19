@@ -67,6 +67,35 @@ function initDeviceSelectors(devicesListAll_JSON) {
     }, 10);
 }
 
+// -------------------------------------------------------------------
+// Utility function to generate a random API token in the format t_<random string of specified length>
+function generateApiToken(elem, length) {
+  // Retrieve and parse custom parameters from the element
+  let params = $(elem).attr("my-customparams")?.split(',').map(param => param.trim());
+  if (params && params.length >= 1) {
+    var targetElementID = params[0];  // Get the target element's ID
+  }
+
+  let targetElement = $('#' + targetElementID);
+
+  // Function to generate a random string of a specified length
+  function generateRandomString(len) {
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < len; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  // Generate the token in the format t_<random string of length>
+  let randomToken = 't_' + generateRandomString(length);
+
+  // Set the generated token as the value of the target element
+  if (targetElement.length) {
+    targetElement.val(randomToken);
+  }
+}
 
 // ----------------------------------------------
 // Updates the icon preview  

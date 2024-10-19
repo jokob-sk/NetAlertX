@@ -47,7 +47,7 @@
       },
 
       "default_value": "unused",
-      "options": [        
+      "options": [
         "unused",
         "once",
         "schedule",
@@ -115,7 +115,21 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementOptions": [{ "cssClasses": "col-xs-12" }],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "getStringKey": "Gen_Generate" },
+              { "customParams": "SYNC_api_token" },
+              { "onClick": "generateApiToken(this, 20)" },
+              { "cssClasses": "col-xs-12" }
+            ],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 50,
@@ -131,7 +145,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "API token to secure communication. It's sent in the request header. The API token needs to be the same on the hub and on the nodes."
+          "string": "API token to secure communication, you can generate one or enter any value. It's sent in the request header. The API token needs to be the same on the hub and on the nodes."
         }
       ]
     },
@@ -140,7 +154,21 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementOptions": [{ "cssClasses": "col-xs-12" }],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "getStringKey": "Gen_Generate" },
+              { "customParams": "SYNC_encryption_key" },
+              { "onClick": "generateApiToken(this, 30)" },
+              { "cssClasses": "col-xs-12" }
+            ],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 50,
@@ -159,7 +187,8 @@
           "string": "Encryption key used to encrypt the data before sending and for decryption on the hub. The key needs to be the same on the hub and on the nodes."
         }
       ]
-    },{
+    },
+    {
       "function": "nodes",
       "type": {
         "dataType": "array",

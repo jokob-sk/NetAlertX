@@ -284,6 +284,7 @@
     "Gen_Description": "",
     "Gen_Error": "Błąd",
     "Gen_Filter": "Filtr",
+    "Gen_Generate": "",
     "Gen_LockedDB": "BŁĄD - BAZA DANYCH może być zablokowana - Sprawdź F12 narzędzia dewelopera -> Konsola lub spróbuj ponownie później.",
     "Gen_Offline": "Wyłączone",
     "Gen_Okay": "Ok",

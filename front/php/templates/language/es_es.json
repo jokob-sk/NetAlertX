@@ -294,6 +294,7 @@
     "Gen_Description": "Descripción",
     "Gen_Error": "Error",
     "Gen_Filter": "Filtro",
+    "Gen_Generate": "",
     "Gen_LockedDB": "Fallo - La base de datos puede estar bloqueada - Pulsa F1 -> Ajustes de desarrolladores -> Consola o prueba más tarde.",
     "Gen_Offline": "Desconectado",
     "Gen_Okay": "Aceptar",
