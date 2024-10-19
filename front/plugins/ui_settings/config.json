@@ -461,30 +461,30 @@
       ]
     },
     {
-      "function": "dark_mode",
+      "function": "theme",
       "type": {
-        "dataType": "boolean",
+        "dataType": "array",
         "elements": [
           {
-            "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "false", "orderable": "false" }],
             "transformers": []
           }
         ]
       },
-      "default_value": false,
-      "options": [],
+      "default_value": "Light",
+      "options": ["Light","Dark","System"],
       "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
-          "string": "Dark mode"
+          "string": "Theme"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enable dark mode."
+          "string": "UI theme to use. System will auto switch between Light and Dark."
         }
       ]
     }

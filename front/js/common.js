@@ -1186,18 +1186,24 @@ function hideUIelements(settingKey) {
 
 
 // -----------------------------------------------------------------------------
-// apply dark mode
+// apply theme
 
 $(document).ready(function() {
-  // Assume getSetting is a function that returns true or false for dark mode
-  if (getSetting("UI_dark_mode") === "True") {
-    // Add the dark mode stylesheet
-    setCookie("UI_dark_mode", "True")
-    $('head').append('<link rel="stylesheet" href="css/dark-patch.css">');
-    // Set the background image for dark mode
+  let theme = getSetting("UI_theme");
+  if (theme) {
+    theme = theme.replace("['","").replace("']","");
+    // Add the theme stylesheet
+    setCookie("UI_theme", theme);
+    switch(theme) {
+      case "Dark":
+	$('head').append('<link rel="stylesheet" href="css/dark-patch.css">');
+	break;
+      case "System":
+	$('head').append('<link rel="stylesheet" href="css/system-dark-patch.css">');
+	break
+    }
   } else {
-    setCookie("UI_dark_mode", "False")
-    // Set the background image for light mode
+    setCookie("UI_theme", "Light");
   }
 });
 

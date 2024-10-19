@@ -103,8 +103,13 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
 
   <!-- Dark-Mode Patch -->
 <?php
-if ($ENABLED_DARKMODE === True) {
-   echo '<link rel="stylesheet" href="css/dark-patch.css">';
+switch ($UI_THEME) {
+  case "Dark":
+    echo '<link rel="stylesheet" href="css/dark-patch.css">';
+    break;
+  case "System":
+    echo '<link rel="stylesheet" href="css/system-dark-patch.css">';
+    break;
 }
 ?>
   <link rel="stylesheet" href="/css/offline-font.css">
