@@ -117,6 +117,7 @@
         "elements": [
           {
             "elementType": "input",
+            "elementHasInputValue": 1,
             "elementOptions": [{ "cssClasses": "col-xs-12" }],
             "transformers": []
           },
@@ -156,6 +157,7 @@
         "elements": [
           {
             "elementType": "input",
+            "elementHasInputValue": 1,
             "elementOptions": [{ "cssClasses": "col-xs-12" }],
             "transformers": []
           },

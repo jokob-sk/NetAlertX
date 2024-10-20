@@ -188,7 +188,7 @@
           "hexColor": "#7D862D"
         },
         {
-          "maximum": 100,
+          "maximum": 1000000,
           "hexColor": "#82a39d"
         }
       ],
@@ -224,7 +224,7 @@
           "hexColor": "#7D862D"
         },
         {
-          "maximum": 100,
+          "maximum": 1000000,
           "hexColor": "#82a39d"
         }
       ],
