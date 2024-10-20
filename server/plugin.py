@@ -747,7 +747,7 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             sqlParams.append(tuple(tmpList))
 
         # Generate the SQL INSERT query using the collected information.
-        q = f'INSERT into {dbTable} ({columnsStr}) VALUES ({valuesStr})'
+        q = f'INSERT OR IGNORE INTO {dbTable} ({columnsStr}) VALUES ({valuesStr})'
 
         # Log a debug message showing the generated SQL query for mapping.
         mylog('debug', ['[Plugins] SQL query for mapping: ', q])

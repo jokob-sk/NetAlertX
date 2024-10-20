@@ -93,10 +93,7 @@ def save_scanned_devices (db):
 
     # Proceed if variable contains valid MAC
     if check_mac_or_internet(local_mac):
-        # Check if local mac has been detected with other methods
-        sql.execute (f"SELECT COUNT(*) FROM CurrentScan WHERE cur_MAC = '{local_mac}'")
-        if sql.fetchone()[0] == 0 :
-            sql.execute (f"""INSERT INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
+        sql.execute (f"""INSERT OR IGNORE INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( '{local_mac}', '{local_ip}', Null, 'local_MAC') """)
 
 #-------------------------------------------------------------------------------
 def print_scan_stats(db):

@@ -207,9 +207,8 @@ def insert_events (db):
                                         '',
                                         1
                         FROM CurrentScan AS c 
-                        LEFT JOIN LatestEventsPerMAC AS d ON d.dev_MAC = c.cur_MAC
-                        LEFT JOIN LatestEventsPerMAC AS last_event ON d.dev_MAC = last_event.eve_MAC 
-                        WHERE d.dev_PresentLastScan = 0 OR d.dev_MAC IS NULL
+                        LEFT JOIN LatestEventsPerMAC AS last_event ON c.cur_MAC = last_event.eve_MAC 
+                        WHERE last_event.dev_PresentLastScan = 0 OR last_event.eve_MAC IS NULL
                         """)
 
     # Check disconnections

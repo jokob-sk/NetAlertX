@@ -549,7 +549,8 @@ class DB():
                                 cur_SSID STRING(250),
                                 cur_NetworkNodeMAC STRING(250),
                                 cur_PORT STRING(250),
-                                cur_Type STRING(250)
+                                cur_Type STRING(250),
+                                UNIQUE(cur_MAC)
                             );
                         """)
 
