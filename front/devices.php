@@ -545,15 +545,33 @@ function initializeDatatable (status) {
             }
         } },
         
-        // IP address      
+        // IP address     
+        {targets: [mapIndx(8)],
+          'createdCell': function (td, cellData, rowData, row, col) {
+              if (!emptyArr.includes(cellData)){
+                $(td).html (`<span class="anonymizeIp">
+                              <a href="http://${cellData}" target="_blank">
+                                  ${cellData}
+                              </a>
+                              <a href="https://${cellData}" target="_blank">
+                                  <i class="fa fa-lock "></i>
+                              </a>
+                            <span>`);
+              } else {
+                $(td).html ('');
+              }
+          } 
+        },
+        // IP address (ordeable)     
         {targets: [mapIndx(12)],
           'createdCell': function (td, cellData, rowData, row, col) {
-            if (!emptyArr.includes(cellData)){
-              $(td).html ('<span class="anonymizeIp">'+cellData+'</span>');
-            } else {
-              $(td).html ('');
-            }
-        } },
+              if (!emptyArr.includes(cellData)){
+                $(td).html (`<span class="anonymizeIp">${cellData}<span>`);
+              } else {
+                $(td).html ('');
+              }
+          } 
+        },
         
         // Favorite      
         {targets: [mapIndx(4)],
