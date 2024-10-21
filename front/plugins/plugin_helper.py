@@ -80,7 +80,14 @@ def is_typical_router_ip(ip_address):
 # -------------------------------------------------------------------
 # Check if a valid MAC address
 def is_mac(input):
-    return re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", input.lower())
+    input_str = str(input).lower()  # Convert to string and lowercase so non-string values won't raise errors
+    
+    isMac = bool(re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", input_str))
+    
+    if not isMac:  # If it's not a MAC address, log the input
+        mylog('verbose', [f'[is_mac] not a MAC: {input_str}'])
+    
+    return isMac
 
 # -------------------------------------------------------------------
 def decodeBase64(inputParamBase64):

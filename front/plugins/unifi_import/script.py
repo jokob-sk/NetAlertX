@@ -19,7 +19,7 @@ from pyunifi.controller import Controller
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars, is_typical_router_ip
+from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars, is_typical_router_ip, is_mac
 from logger import mylog
 from helper import timeNowTZ, get_setting_value, normalize_string 
 import conf
@@ -165,31 +165,37 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
         name = get_name(get_unifi_val(device, 'name'), get_unifi_val(device, 'hostname'))
         ipTmp = get_ip(get_unifi_val(device, 'lan_ip'), get_unifi_val(device, 'last_ip'), get_unifi_val(device, 'fixed_ip'), get_unifi_val(device, 'ip'))
         macTmp = device['mac']
-        status = 1 if macTmp in online_macs else device.get('state', 0)
-        deviceType = device_type.get(device.get('type'), '')
-        parentMac = get_parent_mac(get_unifi_val(device, 'uplink_mac'), get_unifi_val(device, 'ap_mac'), get_unifi_val(device, 'sw_mac'))
         
-        # override parent MAC if this is a router
-        if parentMac == 'null' and is_typical_router_ip(ipTmp):
-            parentMac = 'Internet'            
+        # continue only if valid MAC address
+        if is_mac(macTmp):
+            status = 1 if macTmp in online_macs else device.get('state', 0)
+            deviceType = device_type.get(device.get('type'), '')
+            parentMac = get_parent_mac(get_unifi_val(device, 'uplink_mac'), get_unifi_val(device, 'ap_mac'), get_unifi_val(device, 'sw_mac'))
+            
+            # override parent MAC if this is a router
+            if parentMac == 'null' and is_typical_router_ip(ipTmp):
+                parentMac = 'Internet'            
 
-        # Add object only if not processed
-        if macTmp not in processed_macs and ( status == 1 or force_import is True ):
-            plugin_objects.add_object(
-                primaryId=macTmp,
-                secondaryId=ipTmp,
-                watched1=normalize_string(name),
-                watched2=get_unifi_val(device, 'oui', device_vendor),
-                watched3=deviceType,
-                watched4=status,
-                extra=get_unifi_val(device, 'connection_network_name', ''),
-                foreignKey="",
-                helpVal1=parentMac,
-                helpVal2=get_port(get_unifi_val(device, 'sw_port'), get_unifi_val(device, 'uplink_remote_port')),
-                helpVal3=device_label,
-                helpVal4="",
-            )
-            processed_macs.append(macTmp)
+            # Add object only if not processed
+            if macTmp not in processed_macs and ( status == 1 or force_import is True ):
+                plugin_objects.add_object(
+                    primaryId=macTmp,
+                    secondaryId=ipTmp,
+                    watched1=normalize_string(name),
+                    watched2=get_unifi_val(device, 'oui', device_vendor),
+                    watched3=deviceType,
+                    watched4=status,
+                    extra=get_unifi_val(device, 'connection_network_name', ''),
+                    foreignKey="",
+                    helpVal1=parentMac,
+                    helpVal2=get_port(get_unifi_val(device, 'sw_port'), get_unifi_val(device, 'uplink_remote_port')),
+                    helpVal3=device_label,
+                    helpVal4="",
+                )
+                processed_macs.append(macTmp)
+        else:
+            mylog('verbose', [f'[{pluginName}] Skipping, not a valid MAC address: {macTmp}'])
+            
 # -----------------------------------------------------------------------------
 def get_unifi_val(obj, key, default='null'):
     if isinstance(obj, dict):
