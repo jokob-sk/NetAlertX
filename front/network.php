@@ -525,52 +525,56 @@
   
 
   // ---------------------------------------------------------------------------
-  function getChildren(node, list, path)
+  // Recursively get children nodes and build a tree
+  function getChildren(node, list, path, visited = [])
   {
-    var children = [];
+      var children = [];
 
-    // loop thru all items and find childern...
-    for(var i in list)
-    {
-      //... of the current node
-      
-      if(list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac))
-      {   
-
-        visibleNodesCount++
-
-        // and process them 
-        children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, hiddenMacs))
-
+      // Check for infinite recursion by seeing if the node has been visited before
+      if (visited.includes(node.mac.toLowerCase())) {
+          console.error("Infinite recursion detected at node:", node.mac);
+          write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
+          return { error: "Infinite recursion detected", node: node.mac };
       }
-    }
 
-    // note the total number of leaf nodes to calculate the font scaling
-    if(children.length == 0) 
-    { 
-      leafNodesCount++ 
-    } else
-    {
-      parentNodesCount++
-    }  
-    
-    return { 
-      name: node.name,      
-      path: path,
-      mac: node.mac,
-      port: node.port,
-      id: node.mac,
-      parentMac: node.parentMac,
-      icon: node.icon,
-      type: node.type,
-      status: node.status,
-      hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
-      hiddenChildren: hiddenMacs.includes(node.mac),
-      qty: children.length,
-      children:  children
-    };
-        
+      // Add current node to visited list
+      visited.push(node.mac.toLowerCase());
+
+      // Loop through all items to find children of the current node
+      for (var i in list) {
+          if (list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac)) {   
+
+              visibleNodesCount++;
+
+              // Process children recursively, passing a copy of the visited list
+              children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, visited));
+          }
+      }
+
+      // Track leaf and parent node counts
+      if (children.length == 0) {
+          leafNodesCount++;
+      } else {
+          parentNodesCount++;
+      }
+
+      return { 
+          name: node.name,
+          path: path,
+          mac: node.mac,
+          port: node.port,
+          id: node.mac,
+          parentMac: node.parentMac,
+          icon: node.icon,
+          type: node.type,
+          status: node.status,
+          hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
+          hiddenChildren: hiddenMacs.includes(node.mac),
+          qty: children.length,
+          children: children
+      };
   }
+
 
   // ---------------------------------------------------------------------------
   

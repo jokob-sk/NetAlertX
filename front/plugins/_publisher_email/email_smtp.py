@@ -111,7 +111,7 @@ def send(pHTML, pText):
     mylog('debug', [f'[{pluginName}] SMTP_REPORT_TO: {hide_email(str(get_setting_value("SMTP_REPORT_TO")))} SMTP_USER: {hide_email(str(get_setting_value("SMTP_USER")))}'])
 
 
-    subject, from_email, to_email, message_html, message_text = sanitize_email_content('Net AlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
+    subject, from_email, to_email, message_html, message_text = sanitize_email_content('NetAlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
 
     # Compose email
     msg             = MIMEMultipart('alternative')

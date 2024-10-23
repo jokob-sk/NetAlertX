@@ -550,10 +550,10 @@ function initializeDatatable (status) {
           'createdCell': function (td, cellData, rowData, row, col) {
               if (!emptyArr.includes(cellData)){
                 $(td).html (`<span class="anonymizeIp">
-                              <a href="http://${cellData}" target="_blank">
+                              <a href="http://${cellData}" class="pointer" target="_blank">
                                   ${cellData}
                               </a>
-                              <a href="https://${cellData}" target="_blank">
+                              <a href="https://${cellData}" class="pointer" target="_blank">
                                   <i class="fa fa-lock "></i>
                               </a>
                             <span>`);
