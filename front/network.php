@@ -481,21 +481,31 @@
       return;
     }
 
-    devicesListnew = rawData["data"].map(item =>  { return {
-                                                            "name":item[0], 
-                                                            "type":item[2], 
-                                                            "icon":item[3], 
-                                                            "mac":item[11], 
-                                                            "parentMac":item[14], 
-                                                            "rowid":item[13], 
-                                                            "status":item[10],
-                                                            "childrenQty":item[15],
-                                                            "port":item[18]                                                              
-                                                            }})
+    devicesListnew = rawData["data"].map(item =>  { 
+      return {
+          "name": item[0], 
+          "type": item[2], 
+          "icon": item[3], 
+          "mac": item[11], 
+          "parentMac": item[14], 
+          "rowid": item[13], 
+          "status": item[10],
+          "childrenQty": item[15],
+          "port": item[18]
+        };
+    }).sort((a, b) => {
+        // First sort by name alphabetically
+        const nameCompare = a.name.localeCompare(b.name);
+        if (nameCompare !== 0) {
+            return nameCompare;
+        }
+        // If names are the same, sort by port numerically
+        return a.port - b.port;
+    });
 
-    setCache('devicesListNew', JSON.stringify(devicesListnew))
+    setCache('devicesListNew', JSON.stringify(devicesListnew));
 
-    // init global variable
+    // Init global variable
     deviceListGlobal = devicesListnew;
 
     
