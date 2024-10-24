@@ -323,6 +323,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Dies ist eine Wartungseinstellung <b>DELETING devices</b>. Wenn aktiviert (<code>0</code> bedeutet deaktiviert), werden als <b>\"Neues Gerät\"</b> markierte Geräte gelöscht, wenn ihre <b>erste Sitzung</b> länger her ist als in dieser Einstellung angegeben. Verwenden Sie diese Einstellung, wenn Sie <b>Neue Geräte</b> nach <code>X</code> Stunden automatisch löschen wollen.",
     "HRS_TO_KEEP_NEWDEV_name": "Neue Geräte löschen nach",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Detailansicht",
     "HelpFAQ_Cat_Detail_300_head": "Was bedeutet ",
     "HelpFAQ_Cat_Detail_300_text_a": "meint ein Netzwerkgerät (ein Gerät vom Typ AP, Gateway, Firewall, Hypervisor, Powerline, Switch, WLAN, PLC, Router, USB-LAN-Adapter oder Internet). Benutzerdefinierte Typen können über die <code>NETWORK_DEVICE_TYPES</code> Einstellung hinzugefügt werden.",

@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Paramètre de maintenance. S'il est activé (<code>0</code> s'il est désactivé), les appareils marqués comme <b>Nouvel appareil</b> seront supprimés si leur durée depuis la <b>première session</b> est plus ancienne que le nombre d'heures paramétré. Utilisez ce paramétrage si vous voulez supprimer automatiquement les <b>Nouveaux appareils</b> après <code>X</code> heures.",
     "HRS_TO_KEEP_NEWDEV_name": "Supprimer les nouveaux appareils après",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Détails",
     "HelpFAQ_Cat_Detail_300_head": "Que signifie ",
     "HelpFAQ_Cat_Detail_300_text_a": "signifie que cela représente un équipement réseau (Access Point, Gateway, Firewall, Hyperviseur, Powerline, Switch, WLAN, CPL, adaptateur Ethernet USB, adaptateur Wifi USB, Internet). Les types d'appareils personnalisés peuvent être ajoutés via le paramètre <code>NETWORK_DEVICE_TYPES</code>.",

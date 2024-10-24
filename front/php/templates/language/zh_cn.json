@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "这是一项维护设置。如果启用（<code>0</code> 为禁用），则标记为<b>新设备</b>的设备（如果其<b>首次会话</b>时间早于此设置中指定的小时数）将被删除。如果您想在 <code>X</code> 小时后自动删除<b>新设备</b>，请使用此设置。",
     "HRS_TO_KEEP_NEWDEV_name": "保留新设备",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "详细",
     "HelpFAQ_Cat_Detail_300_head": "含义 ",
     "HelpFAQ_Cat_Detail_300_text_a": "表示网络设备（AP、网关、防火墙、虚拟机管理程序、电力线、交换机、WLAN、PLC、路由器、USB LAN 适配器、USB WIFI 适配器或 Internet 类型的设备）。可以通过 <code>NETWORK_DEVICE_TYPES</code> 设置添加自定义类型。",

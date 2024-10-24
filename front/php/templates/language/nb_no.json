@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Dette er en vedlikeholdsinnstilling. Hvis aktivert (<code>0</code> er deaktivert), vil enheter merket som <b>Ny Enhet</b> bli slettet hvis tiden deres for <b>Første økt</b> var eldre enn de angitte timene i denne innstilling. Bruk denne innstillingen hvis du vil automatisk slette <b>Nye Enheter</b> etter <code>X</code> timer.",
     "HRS_TO_KEEP_NEWDEV_name": "Behold nye enheter for",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Detaljer",
     "HelpFAQ_Cat_Detail_300_head": "Hva betyr ",
     "HelpFAQ_Cat_Detail_300_text_a": "betyr en nettverksenhet (en enhet av typen AP, Gateway, Brannmur, Hypervisor, Powerline, Switch, WLAN, PLS, ruter, USB LAN-adapter, USB WIFI-adapter eller Internett). Egendefinerte typer kan legges til via <code>NETWORK_DEVICE_TYPES</code>-innstillingen.",

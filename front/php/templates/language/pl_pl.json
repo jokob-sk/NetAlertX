@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "To jest ustawienie konserwacyjne. Jeżeli uruchomione (<code>0</code> jest wyłączone), urządzenie oznaczone jako <b>Nowe Urządzenie</b> zostanie usunięte jeżeli czas <b>Pierwszej Sesji</b> jest starszy niż godzina podana w tym ustawieniu. Uzyj tego ustawienia jeżeli chcesz automatycznie usuwać <b>Nowe Urządzenia</b> po <code>X</code> godzinach.",
     "HRS_TO_KEEP_NEWDEV_name": "Trzymaj nowe urządzenia przez",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Szczegóły",
     "HelpFAQ_Cat_Detail_300_head": "Co oznacza ",
     "HelpFAQ_Cat_Detail_300_text_a": "oznacza urządzenie sieciowe (urządzenie typu AP, Gateway, Zapora sieciowa, Hypervisor, Powerline, Switch, WLAN, PLC, Ruter, Adapter USB LAN, Adapter USB WIFI, oraz Internet). Własny typ może zostać dodany poprzez ustawienie <code>NETWORK_DEVICE_TYPE</code>.",

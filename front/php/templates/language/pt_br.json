@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Esta é uma configuração de manutenção. Se habilitada (<code>0</code> is disabled), dispositivos marcados como <b>Novo Dispositivo</b> serão excluídos se o tempo de <b>Primeira Sessão</b> for mais antigo que as horas especificadas nesta configuração. Use esta configuração se quiser excluir automaticamente <b>Novos Dispositivos</b> após <code>X</code> horas.",
     "HRS_TO_KEEP_NEWDEV_name": "Manter novos dispositivos por",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Detalhes",
     "HelpFAQ_Cat_Detail_300_head": "O que significa ",
     "HelpFAQ_Cat_Detail_300_text_a": "Significa um dispositivo de rede (um dispositivo do tipo AP, Gateway, Firewall, Hypervisor, Powerline, Switch, WLAN, PLC, Roteador, Adaptador LAN USB, Adaptador Wi-Fi USB ou Internet). Tipos personalizados podem ser adicionados através da configuração <code>NETWORK_DEVICE_TYPES</code>.",

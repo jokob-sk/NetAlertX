@@ -311,6 +311,8 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Questa è un'impostazione di manutenzione <b>ELIMINAZIONE dispositivi</b>. Se abilitata (<code>0</code> è disabilitata), tutti i dispositivi marcati con <b>Nuovo dispositivo</b> verranno eliminati se l'orario della <b>Prima sessione</b> è precedente all'orario di questa impostazione. Usa questa impostazione se vuoi eliminare automaticamente i <b>Nuovi dispositivi</b> dopo <code>X</code> ore.",
     "HRS_TO_KEEP_NEWDEV_name": "Elimina nuovi dispositivi dopo",
+    "HRS_TO_KEEP_OFFDEV_description": "",
+    "HRS_TO_KEEP_OFFDEV_name": "",
     "HelpFAQ_Cat_Detail": "Dettagli",
     "HelpFAQ_Cat_Detail_300_head": "Cosa significa ",
     "HelpFAQ_Cat_Detail_300_text_a": "indica un dispositivo di rete (un dispositivo di tipo AP, Gateway, Firewall, Hypervisor, Powerline, Switch, WLAN, PLC, Router, USB LAN Adapter, USB WIFI Adapter, o Internet). Tipi personalizzati possono essere aggiunti attraverso l'impostazione <code>NETWORK_DEVICE_TYPES</code>.",
