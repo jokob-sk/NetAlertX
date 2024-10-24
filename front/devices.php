@@ -167,6 +167,8 @@
 // -----------------------------------------------------------------------------
 function main () {
 
+  showSpinner();
+
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
   var headersDefaultOrder = availableColumns.map(val => getString(val));

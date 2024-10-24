@@ -66,23 +66,15 @@
     {
       "column": "Index",
       "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
+      "show": true,
+      "type": "none",
       "default_value": "",
       "options": [],
       "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
-          "string": "N/A"
-        },
-        {
-          "language_code": "es_es",
-          "string": "N/A"
-        },
-        {
-          "language_code": "de_de",
-          "string": "N/A"
+          "string": "Index"
         }
       ]
     },

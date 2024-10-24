@@ -33,19 +33,15 @@
     {
       "column": "Index",
       "css_classes": "col-sm-2",
-      "show": false,
-      "type": "label",
+      "show": true,
+      "type": "none",
       "default_value": "",
       "options": [],
       "localized": ["name"],
       "name": [
         {
           "language_code": "en_us",
-          "string": "N/A"
-        },
-        {
-          "language_code": "es_es",
-          "string": "N/A"
+          "string": "Index"
         }
       ]
     },
@@ -104,7 +100,7 @@
     },
     {
       "column": "DateTimeCreated",
-      "css_classes": "col-sm-2",
+      "css_classes": "col-sm-3",
       "show": true,
       "type": "label",
       "default_value": "",
@@ -145,7 +141,7 @@
       "options": [
         {
           "type": "eval",
-          "param": "`<a href='/report.php?guid=${value}'>${value}</a>`"
+          "param": "`<a href='/report.php?guid=${value}'>Link</a>`"
         }
       ],
       "localized": ["name"],

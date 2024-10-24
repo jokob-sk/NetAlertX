@@ -448,6 +448,21 @@
   ],
   "database_column_definitions": [
     {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
       "column": "Object_PrimaryID",
       "mapped_to_column": "cur_MAC",
       "css_classes": "col-sm-2",

@@ -19,7 +19,7 @@
   <?php require 'php/templates/notification.php'; ?>
     <h1 id="pageTitle">
       <i class="fa fa-network-wired"></i> <?= lang('Network_Title');?>
-      <span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span>
+      <span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span>
     </h1>    
   </section>
 

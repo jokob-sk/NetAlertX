@@ -325,7 +325,7 @@
                       </div>
 
                       <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="networkPageHelp"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
+                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
                       <div class="form-group" title="<?= lang('DevDetail_Network_Node_hover');?>">
                         <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
                         <div class="col-sm-9">  
@@ -370,7 +370,8 @@
 
     <!-- column 3 -->
                   <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_EveandAl_Title');?></h4>
+                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_EveandAl_Title');?>
+                    <span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md"><i class="fa fa-circle-question"></i></a><span></h4>
                     <div class="box-body form-horizontal">
 
                       <!-- Scan Cycle -->
@@ -455,7 +456,8 @@
                             <i style="font-size: 24px;" class="text-yellow glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
 
                           <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/RANDOM_MAC.md" target="_blank" style="color: #777;"> 
-                            <i class="fa fa-info-circle"></i> </a>
+                            <i class="fa fa-info-circle"></i> 
+                          </a>
                         </div>
                       </div>
                     </div>

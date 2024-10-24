@@ -1208,7 +1208,7 @@ input[readonly] {
     background-color:#606060 !important;
 }
 
-.networkPageHelp{
+.helpIconSmallTopRight{
     position: absolute;
     font-size: x-small;
     margin-bottom: 6px;
@@ -1407,7 +1407,7 @@ input[readonly] {
 .plugin-content #tabs-content-location
 {    
     margin: 0px;
-
+    padding-top: 0;
 }
 
 .plugins-description
@@ -1461,6 +1461,33 @@ input[readonly] {
     color: white;
 }
   
+
+.textOverflow
+{
+    white-space: nowrap;        /* Prevent text from wrapping to a new line */
+    overflow: hidden;           /* Hide the overflowed text */
+    text-overflow: ellipsis;    /* Show ellipsis (...) */
+}
+
+.table-stretched
+{
+    min-width: -moz-available;
+    min-width: -webkit-fill-available;
+}
+
+.pluginBadge
+{
+    float: right;
+}
+
+.pluginBadgeWrap
+{
+    float: right;
+    display: ruby;
+    z-index: 1;
+    position: sticky;
+    margin-top: 1px;
+}
 
 /* -----------------------------------------------------------------------------
    Spin
