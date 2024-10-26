@@ -170,6 +170,17 @@
             <!-- box-header -->
             <div class="box-header">
               <h3 id="tableDevicesTitle" class="box-title text-gray">Devices</h3>
+              <div class="presencenceKey">
+                <span class="question" title="<?= lang('Presence_Key_OnlineNow_desc');?>">
+                  <div class="presenceOnlineNow presenceKeyBoxes"></div> <?= lang('Presence_Key_OnlineNow');?>
+                </span>
+                <span class="question" title="<?= lang('Presence_Key_OnlinePast_desc');?>">
+                  <div class="presenceOnlinePast presenceKeyBoxes"></div> <?= lang('Presence_Key_OnlinePast');?>
+                </span>
+                <span class="question" title="<?= lang('Presence_Key_OnlinePastMiss_desc');?>">
+                  <div class="presenceOnlinePastMiss presenceKeyBoxes"></div> <?= lang('Presence_Key_OnlinePastMiss');?>
+                </span>
+              </div>
             </div>
 
             <!-- box-body -->

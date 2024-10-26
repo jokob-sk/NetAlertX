@@ -12,9 +12,24 @@
 ----------------------------------------------------------------------------- */
 :root {
     --color-aqua: #00c0ef;
+    --color-blue: #0060df;
     --color-green: #00a65a;
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
+}
+
+/* -----------------------------------------------------------------------------
+   Helper Classes
+----------------------------------------------------------------------------- */
+
+.pointer
+{
+    cursor: pointer;
+}
+
+.question
+{
+    cursor: help;
 }
 
 /* -----------------------------------------------------------------------------
@@ -779,6 +794,35 @@ height: 50px;
 }
 
 /* --------------------------------------------------------- */
+/*                         Presence                          */
+/* --------------------------------------------------------- */
+.presencenceKey
+{
+    float: right;
+}
+
+.presenceOnlineNow{
+    background-color: var(--color-green);
+}
+
+.presenceOnlinePast{
+    background-color: var(--color-blue);
+}
+
+.presenceOnlinePastMiss{
+    background-color: var(--color-yellow);
+}
+
+.presenceKeyBoxes
+{
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    /* background: #fff; */
+    opacity: .75; 
+}
+
+/* --------------------------------------------------------- */
 /*                         report                            */
 /* --------------------------------------------------------- */
 
@@ -1179,11 +1223,6 @@ input[readonly] {
     z-index: 1;
     left: 0px;
     font-size: large;
-}
-
-.pointer
-{
-    cursor: pointer;
 }
 
 .drag
