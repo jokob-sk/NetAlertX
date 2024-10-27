@@ -1,6 +1,6 @@
 # 🔌 Plugins
 
-NetAlertX supports additional plugins to extend its functionality, each with its own settings and options. Plugins can be loaded via the General -> `LOADED_PLUGINS` setting by using Ctrl + Click. For custom plugin development, refer to the [Plugin development guide](/docs/PLUGINS_DEV.md).   
+NetAlertX supports additional plugins to extend its functionality, each with its own settings and options. Plugins can be loaded via the General -> `LOADED_PLUGINS` setting. For custom plugin development, refer to the [Plugin development guide](/docs/PLUGINS_DEV.md).   
 
 >[!NOTE]
 > Please check this [Plugins debugging guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
@@ -16,7 +16,6 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 4. Fine-tune [Notifications](/docs/NOTIFICATIONS.md)
 5. [Backup your setup](/docs/BACKUPS.md)
 6. Contribute and [Create custom plugins](/docs/PLUGINS_DEV.md)
-7. Consider [donating](https://github.com/jokob-sk/NetAlertX?tab=readme-ov-file#-sponsors) to keep me going
 
 
 ## 📑 Available Plugins

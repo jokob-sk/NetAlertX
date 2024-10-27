@@ -863,7 +863,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Location as id, dev_Location as name FROM (SELECT dev_Location FROM Devices where dev_Location not in (null, 'null', '') UNION SELECT 'Bathroom' UNION SELECT 'Bedroom' UNION SELECT 'Dining room' UNION SELECT 'Hall' UNION SELECT 'Kitchen' UNION SELECT 'Laundry' UNION SELECT 'Living room' UNION SELECT 'Study' UNION SELECT 'Attic' UNION SELECT 'Basement' UNION SELECT 'Garage' UNION SELECT 'Back yard' UNION SELECT 'Garden' UNION SELECT 'Terrace') AS all_devices ORDER BY id; "
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT dev_Location AS id, dev_Location AS name FROM Devices WHERE dev_Location NOT IN ('', 'null') AND dev_Location IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
         }
       ],
       "localized": ["name", "description"],

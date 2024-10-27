@@ -370,8 +370,12 @@ def importConfigs (db, all_plugins):
     conf.lastImportedConfFile = os.path.getmtime(config_file)   
 
     updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False)   
-
-    mylog('minimal', '[Config] Imported new config')
+    
+    msg = '[Config] Imported new settings config'
+    mylog('minimal', msg)
+    
+    # front end app log loggging
+    write_notification(msg, 'info', timeNowTZ())    
 
     return all_plugins
 

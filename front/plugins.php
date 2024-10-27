@@ -5,7 +5,7 @@
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div class="content-wrapper integrations-plugins">
 
 <!-- Content header--------------------------------------------------------- -->
 <section class="content-header">

@@ -800,6 +800,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 // Reloads the current page
                 // setTimeout("clearCache()", 5000);    
 
+                write_notification(`[Settings] Settings saved by the user`, 'info')
+
                 clearCache()
               } else{
                 // something went wrong                
