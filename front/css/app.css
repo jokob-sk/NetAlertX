@@ -1102,7 +1102,11 @@ input[readonly] {
 
 .settingsSearchWrap
 {
-    padding:10px;
+    /* padding:10px; */
+    /* display: flex; */
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+    /* height: 60px;             */
 }
 
 .settings-sticky-bottom-section {
@@ -1112,11 +1116,12 @@ input[readonly] {
     /* opacity: 0.8; */
     bottom: 30px;
     border-radius: 5px;
-    margin:1px;
+    /* margin:1px; */
     border-width: 1px;
     border-style: solid;
     border-color: inherit;
     /* width: 87%; */
+    padding: 10px;
   }
 
   .settings-sticky-bottom-section:hover {
@@ -1135,7 +1140,7 @@ input[readonly] {
     width: 14px;
     position: absolute;
     right: -6px;
-    top: 6px;
+    top: 13px;
 
 }
 
@@ -1147,9 +1152,9 @@ input[readonly] {
 .saveSettingsWrapper button
 {
     width:70%;
-    margin-top:20px;
+    /* margin-top:20px; */
     margin-left:15%;
-    margin-bottom:20px;
+    /* margin-bottom:20px; */
 }
 
 #settingsPage .select2-selection 

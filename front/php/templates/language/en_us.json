@@ -62,7 +62,7 @@
     "DAYS_TO_KEEP_EVENTS_name": "Delete events older than",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copy details from device",
     "DevDetail_Copy_Device_Tooltip": "Copy details from device from the dropdown list. Everything on this page will be overwritten",
-    "DevDetail_EveandAl_AlertAllEvents": "Alert All Events",
+    "DevDetail_EveandAl_AlertAllEvents": "Alert Events",
     "DevDetail_EveandAl_AlertDown": "Alert Down",
     "DevDetail_EveandAl_Archived": "Archived",
     "DevDetail_EveandAl_NewDevice": "New Device",

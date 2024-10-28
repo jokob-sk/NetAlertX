@@ -666,7 +666,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert All Events</code> checkbox."
+          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert Events</code> checkbox. Down and New Device notifications are always sent unless unselected in <code>NTFPRCS_INCLUDED_SECTIONS</code>."
         }
       ]
     },

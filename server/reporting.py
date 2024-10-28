@@ -46,7 +46,7 @@ def get_notifications (db):
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
-                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType not in ('Device Down', 'Down Reconnected') AND eve_MAC IN
+                    WHERE eve_PendingAlertEmail = 1 AND eve_EventType not in ('Device Down', 'Down Reconnected', 'New Device' ) AND eve_MAC IN
                         (
                             SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
 						)""")

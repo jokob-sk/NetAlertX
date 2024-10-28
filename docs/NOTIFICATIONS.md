@@ -11,16 +11,15 @@ There are 4 ways how to influence notifications:
 > It's recommended to use the same schedule interval for all plugins responsible for scanning devices, otherwise false positives might be reported if different devices are discovered by different plugins. Check the **Settings** > **Enabled settings** section for a warning:
 > ![Schedules out-of-sync](/docs/img/NOTIFICATIONS/Schedules_out-of-sync.png)
 
-
 ## Device settings 💻
 
 ![Device notification settings](/docs/img/NOTIFICATIONS/Device-notification-settings.png)
 
 There are 4 settings on the device for influencing notifications. You can:
 
-1. **Scan device** - Completely disable the scanning of the device
-2. **Alert all events** - Enables extensive alerts of connections, disconnections, IP changes (noisy, usually not recommended)
-3. **Alert down** - Alerts when a device goes down. This setting overrides disabled Alert All Events, so you will get a notification of a device going down even if you don't have **Alert All Events** ticked.
+1. **Scan Device** - Completely disable the scanning of the device.
+2. **Alert Events** - Enables alerts of connections, disconnections, IP changes.
+3. **Alert Down** - Alerts when a device goes down. This setting overrides a disabled **Alert Events** setting, so you will get a notification of a device going down even if you don't have **Alert Events** ticked.
 4. **Skip repeated notifications**, if for example you know there is a temporary issue and want to pause the same notification for this device for a given time.
 
 ## Plugin settings 🔌
@@ -40,7 +39,7 @@ Click the **Read more in the docs.** Link at the top of each plugin to get more 
 
 In Notification Processing settings, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
 
-1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `events` set. Setting `plugin` might be too noisy for most setups. More info in the [NTFPRCS plugin](/front/plugins/notification_processing/README.md)
+1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `down_reconnected` set. Including `plugin` (dependenton the Plugin `<plugin>_WATCH` and `<plugin>_REPORT_ON` settings) and `events` (dependent on the on-device **Alert Events** setting) might be too noisy for most setups. More info in the [NTFPRCS plugin](/front/plugins/notification_processing/README.md)
 2. Alert down after (`NTFPRCS_alert_down_time`) is useful if you want to wait for some time before the system sends out a down notification for a device. This is related to the on-device **Alert down** setting and only devices with this checked will trigger a down notification.
 3. A filter to allow you to set device-specific exceptions to New devices being added to the app.
 4. A filter to allow you to set device-specific exceptions to generated Events.
