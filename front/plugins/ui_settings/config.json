@@ -458,7 +458,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Hide Device tiles with zero results."
+          "string": "Hide Tiles in the Devices pages with zero results."
         }
       ]
     },
