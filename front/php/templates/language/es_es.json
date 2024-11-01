@@ -72,7 +72,7 @@
     "DAYS_TO_KEEP_EVENTS_name": "Eliminar eventos anteriores a",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalles del dispositivo",
     "DevDetail_Copy_Device_Tooltip": "Copiar detalles del dispositivo de la lista desplegable. Todo en esta página se sobrescribirá",
-    "DevDetail_EveandAl_AlertAllEvents": "Alerta a todos los eventos",
+    "DevDetail_EveandAl_AlertAllEvents": "Notificaciones de eventos",
     "DevDetail_EveandAl_AlertDown": "Alerta de caída",
     "DevDetail_EveandAl_Archived": "Archivada",
     "DevDetail_EveandAl_NewDevice": "Nuevo dispositivo",
