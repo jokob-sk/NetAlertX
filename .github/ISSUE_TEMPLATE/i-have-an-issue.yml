@@ -9,6 +9,16 @@ body:
     options:
     - label: I have searched the existing open and closed issues and I checked the docs https://github.com/jokob-sk/NetAlertX/tree/main/docs
       required: true
+- type: checkboxes
+  attributes:
+    label: The issue occurs in the following browsers. Select at least 2.
+    description: This step
+    options:
+    - label: "Firefox"
+    - label: "Chrome"
+    - label: "Edge"
+    - label: "Safari (unsupported) - PRs welcome"
+    - label: "N/A - This is an issue with the backend"
 - type: textarea
   attributes:
     label: Current Behavior
