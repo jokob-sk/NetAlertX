@@ -311,7 +311,7 @@
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "This is a maintenance setting <b>DELETING devices</b>. If enabled (<code>0</code> is disabled), devices marked as <b>New Device</b> will be deleted if their <b>First Session</b> time was older than the specified hours in this setting. Use this setting if you want to auto-delete <b>New Devices</b> after <code>X</code> hours.",
     "HRS_TO_KEEP_NEWDEV_name": "Delete new devices after",
-    "HRS_TO_KEEP_OFFDEV_description": "This is a maintenance setting <b>DELETING devices</b>. If enabled (<code>0</code> is disabled), devices that are <b>Offline</b> and their <b>Last Offline</b> date time is older than the specified hours in this setting. Use this setting if you want to auto-delete <b>Offline Devices</b> after <code>X</code> hours being offline.",
+    "HRS_TO_KEEP_OFFDEV_description": "This is a maintenance setting <b>DELETING devices</b>. If enabled (<code>0</code> is disabled), devices that are <b>Offline</b> and their <b>Last Offline</b> date time is older than the specified hours in this setting, will be deleted. Use this setting if you want to auto-delete <b>Offline Devices</b> after <code>X</code> hours being offline.",
     "HRS_TO_KEEP_OFFDEV_name": "Delete offline devices after",
     "HelpFAQ_Cat_Detail": "Details",
     "HelpFAQ_Cat_Detail_300_head": "What means ",
