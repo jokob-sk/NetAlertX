@@ -79,7 +79,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>on_new_device</code> or a daily <code>schedule</code> is recommended.<br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
+          "string": "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>before_name_updates</code> is recommended.<br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
         }
       ]
     },
