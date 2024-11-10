@@ -48,12 +48,12 @@ def get_notifications (db):
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType not in ('Device Down', 'Down Reconnected', 'New Device' ) AND eve_MAC IN
                         (
-                            SELECT dev_MAC FROM Devices WHERE dev_AlertEvents = 0
+                            SELECT devMac FROM Devices WHERE devAlertEvents = 0
 						)""")
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType in ('Device Down', 'Down Reconnected') AND eve_MAC IN
                         (
-                            SELECT dev_MAC FROM Devices WHERE dev_AlertDeviceDown = 0
+                            SELECT devMac FROM Devices WHERE devAlertDown = 0
 						)""")
     
     sections = get_setting_value('NTFPRCS_INCLUDED_SECTIONS')
@@ -62,7 +62,7 @@ def get_notifications (db):
 
     if 'new_devices' in sections:
         # Compose New Devices Section (no empty lines in SQL queries!)
-        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device' {get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""   
@@ -83,7 +83,7 @@ def get_notifications (db):
         # Compose Devices Down Section 
         # - select only Down Alerts with pending email of devices that didn't reconnect within the specified time window
         sqlQuery = f"""
-                    SELECT dev_Name, eve_MAC, dev_Vendor, eve_IP, eve_DateTime, eve_EventType  
+                    SELECT devName, eve_MAC, devVendor, eve_IP, eve_DateTime, eve_EventType  
                         FROM Events_Devices AS down_events
                         WHERE eve_PendingAlertEmail = 1 
                         AND down_events.eve_EventType = 'Device Down' 
@@ -113,7 +113,7 @@ def get_notifications (db):
         # Compose Reconnected Down Section 
         # - select only Devices, that were previously down and now are Connected        
         sqlQuery = f"""
-                        SELECT dev_Name, eve_MAC, dev_Vendor, eve_IP, eve_DateTime, eve_EventType
+                        SELECT devName, eve_MAC, devVendor, eve_IP, eve_DateTime, eve_EventType
                         FROM Events_Devices AS reconnected_devices
                             WHERE reconnected_devices.eve_EventType = 'Down Reconnected'
                             AND reconnected_devices.eve_PendingAlertEmail = 1
@@ -133,7 +133,7 @@ def get_notifications (db):
 
     if 'events' in sections:
         # Compose Events Section (no empty lines in SQL queries!)
-        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, dev_LastIP as IP, eve_EventType as "Event Type", dev_Name as "Device name", dev_Comments as Comments  FROM Events_Devices
+        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
                         ORDER BY eve_DateTime"""      
@@ -190,11 +190,11 @@ def skip_repeated_notifications (db):
     db.sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_MAC IN
                         (
-                        SELECT dev_MAC FROM Devices
-                        WHERE dev_LastNotification IS NOT NULL
-                          AND dev_LastNotification <>""
-                          AND (strftime("%s", dev_LastNotification)/60 +
-                                dev_SkipRepeated * 60) >
+                        SELECT devMac FROM Devices
+                        WHERE devLastNotification IS NOT NULL
+                          AND devLastNotification <>""
+                          AND (strftime("%s", devLastNotification)/60 +
+                                devSkipRepeated * 60) >
                               (strftime('%s','now','localtime')/60 )
                         )
                  """ )

@@ -81,149 +81,306 @@ class DB():
         """
         Check the current tables in the DB and upgrade them if neccessary
         """
-        
-        # indicates, if Online_History table is available
-        onlineHistoryAvailable = self.sql.execute("""
-            SELECT name FROM sqlite_master WHERE type='table'
-                AND name='Online_History';
-        """).fetchall() != []
-
-        # Check if it is incompatible (Check if table has all required columns)
-        isIncompatible = False
-
-        if onlineHistoryAvailable :
-          isIncompatible = self.sql.execute ("""
-                SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Archived_Devices'
-            """).fetchone()[0] == 0
-
-        # Drop table if available, but incompatible
-        if onlineHistoryAvailable and isIncompatible:
-          mylog('none','[upgradeDB] Table is incompatible, Dropping the Online_History table')
-          self.sql.execute("DROP TABLE Online_History;")
-          onlineHistoryAvailable = False
-          
-        if onlineHistoryAvailable == False :
-          self.sql.execute("""
-          CREATE TABLE "Online_History" (
+  
+        self.sql.execute("""
+          CREATE TABLE IF NOT EXISTS "Online_History" (
             "Index"	INTEGER,
             "Scan_Date"	TEXT,
             "Online_Devices"	INTEGER,
             "Down_Devices"	INTEGER,
             "All_Devices"	INTEGER,
             "Archived_Devices" INTEGER,
+            "Offline_Devices" INTEGER,
             PRIMARY KEY("Index" AUTOINCREMENT)
           );
           """)
 
-        # Offline_Devices column
-        Offline_Devices_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Online_History') WHERE name='Offline_Devices'
+        # -------------------------------------------------------------------  
+        # DevicesNew - cleanup after 6/6/2025
+        
+        # check if migration already done based on devMac
+        devMac_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='devMac'
           """).fetchone()[0] == 0
+        
+        if devMac_missing:
+        
+          # SQL to create Devices table with indexes
+          sql_create_devices_new_tmp = """
+          CREATE TABLE IF NOT EXISTS Devices_tmp (
+              devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
+              devName STRING (50) NOT NULL DEFAULT "(unknown)",
+              devOwner STRING (30) DEFAULT "(unknown)" NOT NULL,
+              devType STRING (30),
+              devVendor STRING (250),
+              devFavorite BOOLEAN CHECK (devFavorite IN (0, 1)) DEFAULT (0) NOT NULL,
+              devGroup STRING (10),
+              devComments TEXT,
+              devFirstConnection DATETIME NOT NULL,
+              devLastConnection DATETIME NOT NULL,
+              devLastIP STRING (50) NOT NULL COLLATE NOCASE,
+              devStaticIP BOOLEAN DEFAULT (0) NOT NULL CHECK (devStaticIP IN (0, 1)),
+              devScan INTEGER DEFAULT (1) NOT NULL,
+              devLogEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devLogEvents IN (0, 1)),
+              devAlertEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devAlertEvents IN (0, 1)),
+              devAlertDown BOOLEAN NOT NULL DEFAULT (0) CHECK (devAlertDown IN (0, 1)),
+              devSkipRepeated INTEGER DEFAULT 0 NOT NULL,
+              devLastNotification DATETIME,
+              devPresentLastScan BOOLEAN NOT NULL DEFAULT (0) CHECK (devPresentLastScan IN (0, 1)),
+              devIsNew BOOLEAN NOT NULL DEFAULT (1) CHECK (devIsNew IN (0, 1)),
+              devLocation STRING (250) COLLATE NOCASE,
+              devIsArchived BOOLEAN NOT NULL DEFAULT (0) CHECK (devIsArchived IN (0, 1)),
+              devParentMAC TEXT,
+              devParentPort INTEGER,
+              devIcon TEXT,
+              devGUID TEXT,
+              devSite TEXT,
+              devSSID TEXT,
+              devSyncHubNode TEXT,
+              devSourcePlugin TEXT
+          );
 
-        if Offline_Devices_missing :
-          mylog('verbose', ["[upgradeDB] Adding Offline_Devices to the Online_History table"])
-          self.sql.execute("""
-            ALTER TABLE "Online_History" ADD "Offline_Devices" INTEGER
-          """)
+          CREATE INDEX IF NOT EXISTS IDX_dev_PresentLastScan ON Devices_tmp (devPresentLastScan);
+          CREATE INDEX IF NOT EXISTS IDX_dev_FirstConnection ON Devices_tmp (devFirstConnection);
+          CREATE INDEX IF NOT EXISTS IDX_dev_AlertDeviceDown ON Devices_tmp (devAlertDown);
+          CREATE INDEX IF NOT EXISTS IDX_dev_StaticIP ON Devices_tmp (devStaticIP);
+          CREATE INDEX IF NOT EXISTS IDX_dev_ScanCycle ON Devices_tmp (devScan);
+          CREATE INDEX IF NOT EXISTS IDX_dev_Favorite ON Devices_tmp (devFavorite);
+          CREATE INDEX IF NOT EXISTS IDX_dev_LastIP ON Devices_tmp (devLastIP);
+          CREATE INDEX IF NOT EXISTS IDX_dev_NewDevice ON Devices_tmp (devIsNew);
+          CREATE INDEX IF NOT EXISTS IDX_dev_Archived ON Devices_tmp (devIsArchived);
+          """
 
-
-        # -------------------------------------------------------------------------
-        # Alter Devices table       
-        # -------------------------------------------------------------------------
-        # dev_Network_Node_MAC_ADDR column
-        dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
-          """).fetchone()[0] == 0
-
-        if dev_Network_Node_MAC_ADDR_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
-          """)
-
-        # dev_Network_Node_port column
-        dev_Network_Node_port_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
-          """).fetchone()[0] == 0
-
-        if dev_Network_Node_port_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
-          """)
-
-        # dev_Icon column
-        dev_Icon_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
-          """).fetchone()[0] == 0
-
-        if dev_Icon_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_Icon" TEXT
-          """)
-
-        # dev_GUID column
-        dev_GUID_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_GUID'
-          """).fetchone()[0] == 0
-
-        if dev_GUID_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_GUID to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_GUID" TEXT
-          """)
-
-        # dev_NetworkSite column
-        dev_NetworkSite_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_NetworkSite'
-          """).fetchone()[0] == 0
-
-        if dev_NetworkSite_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_NetworkSite to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_NetworkSite" TEXT
-          """)
-
-        # dev_SSID column
-        dev_SSID_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SSID'
-          """).fetchone()[0] == 0
-
-        if dev_SSID_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_SSID to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_SSID" TEXT
-          """)
-
-        # SQL query to update missing dev_GUID
-        self.sql.execute(f'''
-            UPDATE Devices
-            SET dev_GUID = {sql_generateGuid}
-            WHERE dev_GUID IS NULL
-        ''')
-
-        # dev_SyncHubNodeName column
-        dev_SyncHubNodeName_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SyncHubNodeName'
-          """).fetchone()[0] == 0
-
-        if dev_SyncHubNodeName_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_SyncHubNodeName to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_SyncHubNodeName" TEXT
-          """)
+          # Execute the creation of the Devices table and indexes
+          self.sql.executescript(sql_create_devices_new_tmp)
           
-        # dev_SourcePlugin column
-        dev_SourcePlugin_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SourcePlugin'
-          """).fetchone()[0] == 0
+          
+          # copy over data
+          sql_copy_from_devices = """
+            INSERT OR IGNORE INTO Devices_tmp (
+                devMac,
+                devName,
+                devOwner,
+                devType,
+                devVendor,
+                devFavorite,
+                devGroup,
+                devComments,
+                devFirstConnection,
+                devLastConnection,
+                devLastIP,
+                devStaticIP,
+                devScan,
+                devLogEvents,
+                devAlertEvents,
+                devAlertDown,
+                devSkipRepeated,
+                devLastNotification,
+                devPresentLastScan,
+                devIsNew,
+                devLocation,
+                devIsArchived,
+                devParentMAC,
+                devParentPort,
+                devIcon,
+                devGUID,
+                devSite,
+                devSSID,
+                devSyncHubNode,
+                devSourcePlugin
+            )
+            SELECT
+                dev_MAC AS devMac,
+                dev_Name AS devName,
+                dev_Owner AS devOwner,
+                dev_DeviceType AS devType,
+                dev_Vendor AS devVendor,
+                dev_Favorite AS devFavorite,
+                dev_Group AS devGroup,
+                dev_Comments AS devComments,
+                dev_FirstConnection AS devFirstConnection,
+                dev_LastConnection AS devLastConnection,
+                dev_LastIP AS devLastIP,
+                dev_StaticIP AS devStaticIP,
+                dev_ScanCycle AS devScan,
+                dev_LogEvents AS devLogEvents,
+                dev_AlertEvents AS devAlertEvents,
+                dev_AlertDeviceDown AS devAlertDown,
+                dev_SkipRepeated AS devSkipRepeated,
+                dev_LastNotification AS devLastNotification,
+                dev_PresentLastScan AS devPresentLastScan,
+                dev_NewDevice AS devIsNew,
+                dev_Location AS devLocation,
+                dev_Archived AS devIsArchived,
+                dev_Network_Node_MAC_ADDR AS devParentMAC,
+                dev_Network_Node_port AS devParentPort,
+                dev_Icon AS devIcon,
+                dev_GUID AS devGUID,
+                dev_NetworkSite AS devSite,
+                dev_SSID AS devSSID,
+                dev_SyncHubNodeName AS devSyncHubNode,
+                dev_SourcePlugin AS devSourcePlugin
+            FROM Devices;
+          """
+          
+          self.sql.execute(sql_copy_from_devices)
+          
+          
+          self.sql.execute(""" DROP TABLE Devices;""")
+          # SQL to create Devices table with indexes
+          sql_create_devices_new = """
+          CREATE TABLE IF NOT EXISTS Devices (
+              devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
+              devName STRING (50) NOT NULL DEFAULT "(unknown)",
+              devOwner STRING (30) DEFAULT "(unknown)" NOT NULL,
+              devType STRING (30),
+              devVendor STRING (250),
+              devFavorite BOOLEAN CHECK (devFavorite IN (0, 1)) DEFAULT (0) NOT NULL,
+              devGroup STRING (10),
+              devComments TEXT,
+              devFirstConnection DATETIME NOT NULL,
+              devLastConnection DATETIME NOT NULL,
+              devLastIP STRING (50) NOT NULL COLLATE NOCASE,
+              devStaticIP BOOLEAN DEFAULT (0) NOT NULL CHECK (devStaticIP IN (0, 1)),
+              devScan INTEGER DEFAULT (1) NOT NULL,
+              devLogEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devLogEvents IN (0, 1)),
+              devAlertEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devAlertEvents IN (0, 1)),
+              devAlertDown BOOLEAN NOT NULL DEFAULT (0) CHECK (devAlertDown IN (0, 1)),
+              devSkipRepeated INTEGER DEFAULT 0 NOT NULL,
+              devLastNotification DATETIME,
+              devPresentLastScan BOOLEAN NOT NULL DEFAULT (0) CHECK (devPresentLastScan IN (0, 1)),
+              devIsNew BOOLEAN NOT NULL DEFAULT (1) CHECK (devIsNew IN (0, 1)),
+              devLocation STRING (250) COLLATE NOCASE,
+              devIsArchived BOOLEAN NOT NULL DEFAULT (0) CHECK (devIsArchived IN (0, 1)),
+              devParentMAC TEXT,
+              devParentPort INTEGER,
+              devIcon TEXT,
+              devGUID TEXT,
+              devSite TEXT,
+              devSSID TEXT,
+              devSyncHubNode TEXT,
+              devSourcePlugin TEXT
+          );
 
-        if dev_SourcePlugin_missing :
-          mylog('verbose', ["[upgradeDB] Adding dev_SourcePlugin to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "dev_SourcePlugin" TEXT
-          """)
+          CREATE INDEX IF NOT EXISTS IDX_dev_PresentLastScan ON Devices (devPresentLastScan);
+          CREATE INDEX IF NOT EXISTS IDX_dev_FirstConnection ON Devices (devFirstConnection);
+          CREATE INDEX IF NOT EXISTS IDX_dev_AlertDeviceDown ON Devices (devAlertDown);
+          CREATE INDEX IF NOT EXISTS IDX_dev_StaticIP ON Devices (devStaticIP);
+          CREATE INDEX IF NOT EXISTS IDX_dev_ScanCycle ON Devices (devScan);
+          CREATE INDEX IF NOT EXISTS IDX_dev_Favorite ON Devices (devFavorite);
+          CREATE INDEX IF NOT EXISTS IDX_dev_LastIP ON Devices (devLastIP);
+          CREATE INDEX IF NOT EXISTS IDX_dev_NewDevice ON Devices (devIsNew);
+          CREATE INDEX IF NOT EXISTS IDX_dev_Archived ON Devices (devIsArchived);
+          """
+
+          # Execute the creation of the Devices table and indexes
+          self.sql.executescript(sql_create_devices_new)
+          
+          # copy over data
+          sql_copy_from_devices_tmp = """
+            INSERT OR IGNORE INTO Devices (
+                devMac,
+                devName,
+                devOwner,
+                devType,
+                devVendor,
+                devFavorite,
+                devGroup,
+                devComments,
+                devFirstConnection,
+                devLastConnection,
+                devLastIP,
+                devStaticIP,
+                devScan,
+                devLogEvents,
+                devAlertEvents,
+                devAlertDown,
+                devSkipRepeated,
+                devLastNotification,
+                devPresentLastScan,
+                devIsNew,
+                devLocation,
+                devIsArchived,
+                devParentMAC,
+                devParentPort,
+                devIcon,
+                devGUID,
+                devSite,
+                devSSID,
+                devSyncHubNode,
+                devSourcePlugin
+            )
+            SELECT
+                devMac,
+                devName,
+                devOwner,
+                devType,
+                devVendor,
+                devFavorite,
+                devGroup,
+                devComments,
+                devFirstConnection,
+                devLastConnection,
+                devLastIP,
+                devStaticIP,
+                devScan,
+                devLogEvents,
+                devAlertEvents,
+                devAlertDown,
+                devSkipRepeated,
+                devLastNotification,
+                devPresentLastScan,
+                devIsNew,
+                devLocation,
+                devIsArchived,
+                devParentMAC,
+                devParentPort,
+                devIcon,
+                devGUID,
+                devSite,
+                devSSID,
+                devSyncHubNode,
+                devSourcePlugin
+            FROM Devices_tmp;
+          """
+          
+          self.sql.execute(sql_copy_from_devices_tmp)
+          self.sql.execute(""" DROP TABLE Devices_tmp;""")
+        
+        
+        # VIEWS
+        
+        self.sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
+        self.sql.execute(""" CREATE VIEW Events_Devices AS 
+                            SELECT * 
+                            FROM Events 
+                            LEFT JOIN Devices ON eve_MAC = devMac;
+                          """)
+        
+        
+        self.sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
+        self.sql.execute("""CREATE VIEW LatestEventsPerMAC AS
+                                WITH RankedEvents AS (
+                                    SELECT 
+                                        e.*,
+                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
+                                    FROM Events AS e
+                                )
+                                SELECT 
+                                    e.*, 
+                                    d.*, 
+                                    c.*
+                                FROM RankedEvents AS e
+                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
+                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
+                                WHERE e.row_num = 1;""")
+        
+        self.sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
+        self.sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
+        
+        
+        
+
 
         # -------------------------------------------------------------------------
         # Settings table setup
@@ -284,96 +441,7 @@ class DB():
             "par_Value"	TEXT
           );
           """)        
-
-        # -------------------------------------------------------------------------
-        # Nmap_Scan table setup DEPRECATED after 9/9/2024
-        # -------------------------------------------------------------------------
-
-        # indicates, if Nmap_Scan table is available
-        nmapScanMissing = self.sql.execute("""
-        SELECT name FROM sqlite_master WHERE type='table'
-        AND name='Nmap_Scan';
-        """).fetchone() == None
-
-        if nmapScanMissing == False:
-            # move data into the PLugins_Objects table
-            self.sql.execute("""INSERT INTO Plugins_Objects (
-                                    Plugin,
-                                    Object_PrimaryID,
-                                    Object_SecondaryID,
-                                    DateTimeCreated,
-                                    DateTimeChanged,
-                                    Watched_Value1,
-                                    Watched_Value2,
-                                    Watched_Value3,
-                                    Watched_Value4,
-                                    Status,
-                                    Extra,
-                                    UserData,
-                                    ForeignKey
-                                )
-                                SELECT
-                                    'NMAP' AS Plugin,
-                                    MAC AS Object_PrimaryID,
-                                    Port AS Object_SecondaryID,
-                                    Time AS DateTimeCreated,
-                                    DATETIME('now') AS DateTimeChanged,
-                                    State AS Watched_Value1,
-                                    Service AS Watched_Value2,
-                                    '' AS Watched_Value3,
-                                    '' AS Watched_Value4,
-                                    'watched-not-changed' AS Status,
-                                    Extra AS Extra,
-                                    Extra AS UserData,
-                                    MAC AS ForeignKey
-                                FROM Nmap_Scan;""")
-
-            # Delete the Nmap_Scan table
-            self.sql.execute("DROP TABLE Nmap_Scan;")
-            nmapScanMissing = True
-
-        # -------------------------------------------------------------------------
-        # Nmap_Scan table setup DEPRECATED after 9/9/2024 cleanup above
-        # -------------------------------------------------------------------------
-
-        # -------------------------------------------------------------------------
-        # Icon format migration table setup DEPRECATED after 9/9/2024 cleanup below
-        # -------------------------------------------------------------------------
-
-        sql_Icons = """ UPDATE Devices SET dev_Icon = '<i class="fa fa-' || dev_Icon || '"></i>'
-                WHERE dev_Icon NOT LIKE '<i class="fa fa-%'
-                AND dev_Icon NOT LIKE '<svg%' 
-                AND dev_Icon NOT LIKE 'PGkg%' 
-                AND dev_Icon NOT LIKE 'PHN%' 
-                AND dev_Icon NOT IN ('', 'null')
-                 """
-        self.sql.execute(sql_Icons)
-        self.commitDB()      
-
-        # Base64 conversion
-
-        self.sql.execute("SELECT dev_MAC, dev_Icon FROM Devices WHERE dev_Icon like '<%' ")
-        icons = self.sql.fetchall()
-
-
-        # Loop through the icons, encode them, and update the database
-        for icon_tuple in icons:
-            icon = icon_tuple[1]
-            
-            # Encode the icon as base64
-            encoded_icon = base64.b64encode(icon.encode('utf-8')).decode('ascii')
-            # Update the database with the encoded icon
-            sql_update = f"""
-                UPDATE Devices
-                SET dev_Icon = '{encoded_icon}'
-                WHERE dev_MAC = '{icon_tuple[0]}'
-            """
-
-            self.sql.execute(sql_update)
-
-        # -------------------------------------------------------------------------
-        # Icon format migration table setup DEPRECATED after 9/9/2024 cleanup above
-        # -------------------------------------------------------------------------
+       
 
         # -------------------------------------------------------------------------
         # Plugins tables setup
@@ -395,10 +463,18 @@ class DB():
                                     Extra TEXT NOT NULL,
                                     UserData TEXT NOT NULL,
                                     ForeignKey TEXT NOT NULL,
+                                    SyncHubNodeName TEXT,
+                                    "HelpVal1" TEXT,
+                                    "HelpVal2" TEXT,
+                                    "HelpVal3" TEXT,
+                                    "HelpVal4" TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_Objects)
 
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - START
+        # -----------------------------------------
         # syncHubNodeName column
         plug_SyncHubNodeName_missing = self.sql.execute ("""
             SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='SyncHubNodeName'
@@ -421,6 +497,10 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal2" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal4" TEXT')
+          
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - END
+        # -----------------------------------------
 
         # Plugin execution results
         sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
@@ -438,10 +518,19 @@ class DB():
                                     Extra TEXT NOT NULL,
                                     UserData TEXT NOT NULL,
                                     ForeignKey TEXT NOT NULL,
+                                    SyncHubNodeName TEXT,
+                                    "HelpVal1" TEXT,
+                                    "HelpVal2" TEXT,
+                                    "HelpVal3" TEXT,
+                                    "HelpVal4" TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_Events)
 
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - START
+        # -----------------------------------------
+        
         # syncHubNodeName column
         plug_SyncHubNodeName_missing = self.sql.execute ("""
             SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='SyncHubNodeName'
@@ -464,6 +553,10 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal2" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal4" TEXT')
+          
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - END
+        # -----------------------------------------
 
 
         # Plugin execution history
@@ -482,9 +575,18 @@ class DB():
                                     Extra TEXT NOT NULL,
                                     UserData TEXT NOT NULL,
                                     ForeignKey TEXT NOT NULL,
+                                    SyncHubNodeName TEXT,
+                                    "HelpVal1" TEXT,
+                                    "HelpVal2" TEXT,
+                                    "HelpVal3" TEXT,
+                                    "HelpVal4" TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_History)
+        
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - START
+        # -----------------------------------------
 
         # syncHubNodeName column
         plug_SyncHubNodeName_missing = self.sql.execute ("""
@@ -509,6 +611,9 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal4" TEXT')
 
+        # -----------------------------------------
+        # REMOVE after 6/6/2025 - END
+        # -----------------------------------------
 
         # -------------------------------------------------------------------------
         # Plugins_Language_Strings table setup
@@ -573,7 +678,7 @@ class DB():
                                     d.*, 
                                     c.*
                                 FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.dev_MAC
+                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
                                 INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
                                 WHERE e.row_num = 1;
                             """)

@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Puede especificar una consulta SQL personalizada que generará un archivo JSON y luego lo expondrá a través del <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">archivo <code>table_custom_endpoint.json</code ></a>.",
     "API_CUSTOM_SQL_name": "Endpoint personalizado",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "APPRISE_HOST_description": "URL del host de Apprise que comienza con <code>http://</code> o <code>https://</code>. (no olvide incluir <code>/notify</code> al final)",
@@ -280,6 +282,8 @@
     "Events_Tablelenght": "Mostrando entradas del MENÚ",
     "Events_Tablelenght_all": "Todos",
     "Events_Title": "Eventos",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Acción",
     "Gen_Add": "Añadir",
     "Gen_Add_All": "Añadir todo",

@@ -49,7 +49,7 @@
     {
       "name": "prev_ip",
       "type": "sql",
-      "value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' "
+      "value": "SELECT devLastIP FROM Devices WHERE devMac = 'Internet' "
     },
     {
       "name": "DDNS_UPDATE_URL",

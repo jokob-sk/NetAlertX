@@ -42,7 +42,7 @@ def main():
 
     # Retrieve configuration settings
     plugins_to_sync = get_setting_value('SYNC_plugins')
-    api_token = get_setting_value('SYNC_api_token')  
+    api_token = get_setting_value('API_TOKEN')  
     encryption_key = get_setting_value('SYNC_encryption_key')
     hub_url = get_setting_value('SYNC_hub_url')
     node_name = get_setting_value('SYNC_node_name')
@@ -165,7 +165,7 @@ def main():
         conn    = sqlite3.connect(fullDbPath)
         cursor  = conn.cursor()
 
-        # Collect all unique dev_MAC values from the JSON files
+        # Collect all unique devMac values from the JSON files
         unique_mac_addresses = set()
         device_data = []
 
@@ -188,9 +188,9 @@ def main():
                 with open(file_path, 'r') as f:
                     data = json.load(f)
                     for device in data['data']:
-                        if device['dev_MAC'] not in unique_mac_addresses:
-                            device['dev_SyncHubNodeName'] = tmp_SyncHubNodeName
-                            unique_mac_addresses.add(device['dev_MAC'])
+                        if device['devMac'] not in unique_mac_addresses:
+                            device['devSyncHubNode'] = tmp_SyncHubNodeName
+                            unique_mac_addresses.add(device['devMac'])
                             device_data.append(device)    
                             
                 # Rename the file to "processed_" + current name
@@ -204,27 +204,27 @@ def main():
                 os.rename(file_path, new_file_path)
 
         if len(device_data) > 0:
-            # Retrieve existing dev_MAC values from the Devices table
+            # Retrieve existing devMac values from the Devices table
             placeholders = ', '.join('?' for _ in unique_mac_addresses)
-            cursor.execute(f'SELECT dev_MAC FROM Devices WHERE dev_MAC IN ({placeholders})', tuple(unique_mac_addresses))
+            cursor.execute(f'SELECT devMac FROM Devices WHERE devMac IN ({placeholders})', tuple(unique_mac_addresses))
             existing_mac_addresses = set(row[0] for row in cursor.fetchall())
             
 
             # insert devices into the lats_result.log to manage state
             for device in device_data:
-                if device['dev_PresentLastScan'] == 1:
+                if device['devPresentLastScan'] == 1:
                     plugin_objects.add_object(
-                        primaryId   = device['dev_MAC'],
-                        secondaryId = device['dev_LastIP'],
-                        watched1    = device['dev_Name'],
-                        watched2    = device['dev_Vendor'],
-                        watched3    = device['dev_SyncHubNodeName'],
-                        watched4    = device['dev_GUID'],
+                        primaryId   = device['devMac'],
+                        secondaryId = device['devLastIP'],
+                        watched1    = device['devName'],
+                        watched2    = device['devVendor'],
+                        watched3    = device['devSyncHubNode'],
+                        watched4    = device['devGUID'],
                         extra       = '',
-                        foreignKey  = device['dev_GUID'])
+                        foreignKey  = device['devGUID'])
 
             # Filter out existing devices
-            new_devices = [device for device in device_data if device['dev_MAC'] not in existing_mac_addresses]
+            new_devices = [device for device in device_data if device['devMac'] not in existing_mac_addresses]
 
             #  Remove 'rowid' key if it exists 
             for device in new_devices:

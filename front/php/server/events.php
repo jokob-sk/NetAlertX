@@ -108,12 +108,12 @@ function getEvents() {
   $periodDate = getDateFromPeriod();
 
   // SQL 
-  $SQL1 = 'SELECT eve_DateTime AS eve_DateTimeOrder, dev_name, dev_owner, eve_DateTime, eve_EventType, NULL, NULL, NULL, NULL, eve_IP, NULL, eve_AdditionalInfo, NULL, Dev_MAC, eve_PendingAlertEmail
+  $SQL1 = 'SELECT eve_DateTime AS eve_DateTimeOrder, devName, devOwner, eve_DateTime, eve_EventType, NULL, NULL, NULL, NULL, eve_IP, NULL, eve_AdditionalInfo, NULL, devMac, eve_PendingAlertEmail
            FROM Events_Devices 
            WHERE eve_DateTime >= '. $periodDate;
  
   $SQL2 = 'SELECT IFNULL (ses_DateTimeConnection, ses_DateTimeDisconnection) ses_DateTimeOrder,
-                  dev_name, dev_owner, Null, Null, ses_DateTimeConnection, ses_DateTimeDisconnection, NULL, NULL, ses_IP, NULL,  ses_AdditionalInfo, ses_StillConnected, Dev_MAC
+                  devName, devOwner, Null, Null, ses_DateTimeConnection, ses_DateTimeDisconnection, NULL, NULL, ses_IP, NULL,  ses_AdditionalInfo, ses_StillConnected, devMac
            FROM Sessions_Devices ';
 
   // SQL Variations for status

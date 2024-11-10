@@ -207,11 +207,7 @@ function main () {
 
   $('#tableDevices tr').html(html);  
 
-  // Hide UI elements as per settings
-  // setTimeout(() => {
-    hideUIelements("UI_DEV_SECTIONS")
-    
-  // }, 10);
+  hideUIelements("UI_DEV_SECTIONS")
 
   // Initialize components with parameters
   initializeDatatable(getUrlAnchor('my_devices'));
@@ -320,31 +316,31 @@ function filterDataByStatus(data, status) {
         
         let result = true;
 
-        if (!to_display.includes('down') && item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown !== 0) {
+        if (!to_display.includes('down') && item.devPresentLastScan === 0 && item.devAlertDown !== 0) {
             result = false;
-        } else if (!to_display.includes('new') && item.dev_NewDevice === 1) {
+        } else if (!to_display.includes('new') && item.devIsNew === 1) {
             result = false;
-        } else if (!to_display.includes('archived') && item.dev_Archived === 1) {
+        } else if (!to_display.includes('archived') && item.devIsArchived === 1) {
             result = false;
-        } else if (!to_display.includes('offline') && item.dev_PresentLastScan === 0) {
+        } else if (!to_display.includes('offline') && item.devPresentLastScan === 0) {
             result = false;
-        } else if (!to_display.includes('online') && item.dev_PresentLastScan === 1) {
+        } else if (!to_display.includes('online') && item.devPresentLastScan === 1) {
             result = false;
         }  
 
         return result; // Include all items for 'my_devices' status
       case 'connected':
-        return item.dev_PresentLastScan === 1;
+        return item.devPresentLastScan === 1;
       case 'favorites':
-        return item.dev_Favorite === 1;
+        return item.devFavorite === 1;
       case 'new':
-        return item.dev_NewDevice === 1;
+        return item.devIsNew === 1;
       case 'offline':
-        return item.dev_PresentLastScan === 0;
+        return item.devPresentLastScan === 0;
       case 'down':
-        return (item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0);
+        return (item.devPresentLastScan === 0 && item.devAlertDown  !== 0);
       case 'archived':
-        return item.dev_Archived === 1;
+        return item.devIsArchived === 1;
       default:
         return true; // Include all items for unknown statuses
     }
@@ -355,23 +351,23 @@ function filterDataByStatus(data, status) {
 function getDeviceStatus(item)
 {
   
-  if(item.dev_NewDevice === 1)
+  if(item.devIsNew === 1)
   {
     return 'New';
   } 
-  else if(item.dev_PresentLastScan === 1)
+  else if(item.devPresentLastScan === 1)
   {
     return 'On-line';
   }
-  else if(item.dev_PresentLastScan === 0 && item.dev_AlertDeviceDown  !== 0)
+  else if(item.devPresentLastScan === 0 && item.devAlertDown  !== 0)
   {
     return 'Down';
   }
-  else if(item.dev_Archived === 1)
+  else if(item.devIsArchived === 1)
   {
     return 'Archived';
   }
-  else if(item.dev_PresentLastScan === 0)
+  else if(item.devPresentLastScan === 0)
   {
     return 'Off-line';
   }
@@ -380,6 +376,164 @@ function getDeviceStatus(item)
 }
 
 // -----------------------------------------------------------------------------
+function initializeDatatable_new (status) {
+
+// Build GraphQL query dynamically based on tableColumnVisible
+let columnsToFetch = [
+    'devMac', 'devName', 'devLastConnection', 'devIsArchived', 'devOwner', 'devType', 
+    'devIcon', 'devFavorite', 'devGroup', 'devFirstConnection', 'devLastIP', 'devNetworkNodeMAC', 
+    'devLocation', 'devVendor', 'devNetworkNodePort', 'devGUID', 'devSyncHubNodeName', 
+    'devNetworkSite', 'devSSID', 'devSourcePlugin'
+];
+
+let selectedColumns = columnsToFetch.filter(col => tableColumnVisible.includes(col));
+
+// Construct the GraphQL query
+let graphqlQuery = `
+    query {
+        devices {
+            ${selectedColumns.join('\n')}
+        }
+    }
+`;
+
+console.log(graphqlQuery);
+
+
+$.ajax({
+    url: 'php/server/query_graphql.php',  // PHP endpoint that proxies to the GraphQL server
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+        query: graphqlQuery,
+        variables: {}  // Optional: pass variables if needed
+    }),
+    success: function(response) {
+        console.log('GraphQL Response:', response);
+        
+        // Handle the GraphQL response
+        let devicesListAll_JSON = response.data.devices;
+        let devicesListAll_JSON_str = JSON.stringify(devicesListAll_JSON);
+        setCache('devicesListAll_JSON', devicesListAll_JSON_str);
+        
+        // Query data
+        getDevicesTotals(devicesListAll_JSON);
+        
+        // Filter the data based on deviceStatus
+        var filteredData = filterDataByStatus(devicesListAll_JSON, deviceStatus);
+
+        // Convert JSON data into the desired format
+        var dataArray = {
+            data: filteredData.map(function(item) {
+                var originalRow = selectedColumns.map(function(column) {
+                    return item[column] || "";
+                });
+
+                var newRow = [];
+
+                // Reorder data based on user-defined columns order
+                for (index = 0; index < tableColumnOrder.length; index++) {
+                    newRow.push(originalRow[tableColumnOrder[index]]);
+                }
+
+                return newRow;
+            })
+        };
+
+        // Initialize DataTable
+        if ($.fn.dataTable.isDataTable('#tableDevices')) {
+            var table = $('#tableDevices').DataTable();
+            table.clear().destroy();
+        }
+
+        var table = $('#tableDevices').DataTable({
+            'data': dataArray["data"],
+            'paging': true,
+            'lengthChange': true,
+            'lengthMenu': [[10, 25, 50, 100, 500, 100000], [10, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false,
+            'pageLength': tableRows,
+            'order': tableOrder,
+            'select': true,
+            'columnDefs': [
+                { visible: false, targets: tableColumnHide },
+                { className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },
+                { width: '80px', targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },
+                { width: '30px', targets: [mapIndx(10), mapIndx(13), mapIndx(18)] },
+                { orderData: [mapIndx(12)], targets: mapIndx(8) },
+
+                // Device Name
+                { targets: [mapIndx(0)], 'createdCell': function (td, cellData, rowData) {
+                    $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+                }},
+                
+                // Handle other column customizations (similar to the original code)
+                // Example for IP address formatting:
+                { targets: [mapIndx(8)], 'createdCell': function (td, cellData) {
+                    if (!emptyArr.includes(cellData)) {
+                        $(td).html (`<span class="anonymizeIp">
+                                        <a href="http://${cellData}" class="pointer" target="_blank">${cellData}</a>
+                                        <a href="https://${cellData}" class="pointer" target="_blank"><i class="fa fa-lock "></i></a>
+                                      </span>`);
+                    } else {
+                        $(td).html('');
+                    }
+                }},
+                
+                // Other columns (Status, MAC, Date, etc.) can be similarly customized.
+            ],
+            'processing': true,
+            'language': {
+                processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
+                emptyTable: 'No data',
+                "lengthMenu": "<?= lang('Device_Tablelenght');?>",
+                "search": "<?= lang('Device_Searchbox');?>: ",
+                "paginate": {
+                    "next": "<?= lang('Device_Table_nav_next');?>",
+                    "previous": "<?= lang('Device_Table_nav_prev');?>"
+                },
+                "info": "<?= lang('Device_Table_info');?>",
+            }
+        });
+
+        // Event listeners for row selection and saving parameters (same as the original code)
+        $('#tableDevices').on('length.dt', function (e, settings, len) {
+            setCookie ("nax_parTableRows", len, 129600); // save for 90 days
+        });
+
+        $('#tableDevices').on('order.dt', function () {
+            setCookie ("nax_parTableOrder", JSON.stringify(table.order()), 129600); // save for 90 days
+        });
+
+        // Add multi-edit button and row selection functionality
+        $('#multiEditPlc').append(
+            `<button type="submit" id="multiEdit" class="btn btn-primary" style="display:none" onclick="multiEditDevices();">
+                <i class="fa fa-pencil pointer"></i> ${getString("Device_MultiEdit")}
+            </button>`
+        );
+
+        $('#tableDevices').on('click', 'tr', function () {
+            setTimeout(function(){
+                var anyRowSelected = $('#tableDevices tr.selected').length > 0;
+                $('#multiEdit').toggle(anyRowSelected);
+            }, 200);
+        });
+
+        hideSpinner();  // Hide the loading spinner
+    },
+    error: function(xhr, status, error) {
+        console.error('AJAX Error:', error);
+    }
+});
+
+
+}
+
+
+
 function initializeDatatable (status) {
 
   if(!status)
@@ -435,31 +589,31 @@ function initializeDatatable (status) {
     var dataArray = {
         data: filteredData.map(function(item) {
             var originalRow = [
-                item.dev_Name || "",
-                item.dev_Owner || "",
-                item.dev_DeviceType || "",
-                item.dev_Icon || "",
-                item.dev_Favorite || "",
-                item.dev_Group || "",
+                item.devName || "",
+                item.devOwner || "",
+                item.devType || "",
+                item.devIcon || "",
+                item.devFavorite || "",
+                item.devGroup || "",
                 // ---
-                item.dev_FirstConnection || "",
-                item.dev_LastConnection || "",
-                item.dev_LastIP || "",
-                (isRandomMAC(item.dev_MAC)) || "", // Check if randomized MAC
+                item.devFirstConnection || "",
+                item.devLastConnection || "",
+                item.devLastIP || "",
+                (isRandomMAC(item.devMac)) || "", // Check if randomized MAC
                 getDeviceStatus(item) || "",
-                item.dev_MAC || "", // hidden
-                formatIPlong(item.dev_LastIP) || "", // IP orderable
+                item.devMac || "", // hidden
+                formatIPlong(item.devLastIP) || "", // IP orderable
                 item.rowid || "",
-                item.dev_Network_Node_MAC_ADDR || "",
-                getNumberOfChildren(item.dev_MAC, result.data) || 0,
-                item.dev_Location || "",
-                item.dev_Vendor || "",
-                item.dev_Network_Node_port || 0,
-                item.dev_GUID || "",
-                item.dev_SyncHubNodeName || "",
-                item.dev_NetworkSite || "",
-                item.dev_SSID || "",
-                item.dev_SourcePlugin || ""
+                item.devParentMAC || "",
+                getNumberOfChildren(item.devMac, result.data) || 0,
+                item.devLocation || "",
+                item.devVendor || "",
+                item.devParentPort || 0,
+                item.devGUID || "",
+                item.devSyncHubNode || "",
+                item.devSite || "",
+                item.devSSID || "",
+                item.devSourcePlugin || ""
             ];
 
             var newRow = [];
@@ -612,15 +766,15 @@ function initializeDatatable (status) {
 
             devData = getDeviceDataByMac(rowData[mapIndx(11)])
 
-            if (devData.dev_PresentLastScan == 1)
+            if (devData.devPresentLastScan == 1)
             {
               css = "green text-white statusOnline"
               icon = '<i class="fa-solid fa-plug"></i>'
-            } else if (devData.dev_PresentLastScan != 1 && devData.dev_AlertDeviceDown == 1)
+            } else if (devData.devPresentLastScan != 1 && devData.devAlertDown == 1)
             {
               css = "red text-white statusDown"
               icon = '<i class="fa-solid fa-triangle-exclamation"></i>'
-            } else if(devData.dev_PresentLastScan != 1)
+            } else if(devData.devPresentLastScan != 1)
             {
               css = "gray text-white statusOffline"
               icon = '<i class="fa-solid fa-xmark"></i>'
@@ -656,11 +810,6 @@ function initializeDatatable (status) {
       
     $('#tableDevices').on( 'order.dt', function () {
       setCookie ("nax_parTableOrder", JSON.stringify (table.order()), 129600); // save for 90 days
-      setCache ('devicesList', getDevicesFromTable(table) );
-    } );
-
-    $('#tableDevices').on( 'search.dt', function () {
-      setCache ('devicesList', getDevicesFromTable(table) ); 
     } );
 
     // add multi-edit button
@@ -679,7 +828,6 @@ function initializeDatatable (status) {
           $('#multiEdit').toggle(anyRowSelected);
       }, 200);
 
-
       
     });
 
@@ -690,42 +838,13 @@ function initializeDatatable (status) {
 
 
 // -----------------------------------------------------------------------------
-// Gets a JSON list of rowID and mac from the displayed table in the UI
-function getDevicesFromTable(table)
-{  
-  rowIDs = table.column(mapIndx(13), { 'search': 'applied' }).data().toArray()  //   
-  rowMACs = table.column(mapIndx(11), { 'search': 'applied' }).data().toArray() // 
-  rowNames = table.column(mapIndx(0), { 'search': 'applied' }).data().toArray() // 
-  rowTypes = table.column(mapIndx(2), { 'search': 'applied' }).data().toArray() // 
-  rowIcons = table.column(mapIndx(3), { 'search': 'applied' }).data().toArray() // 
-  rowParentMAC = table.column(mapIndx(14), { 'search': 'applied' }).data().toArray() // 
-  rowStatus = table.column(mapIndx(10), { 'search': 'applied' }).data().toArray() // 
-
-  result = []
-
-  rowIDs.map(function(rowID, index){
-    result.push({
-                  "rowid": rowID, 
-                  "mac"  : rowMACs[index], 
-                  "name" : rowNames[index],
-                  "type" : rowTypes[index],
-                  "icon" : rowIcons[index],
-                  "parentMac" : rowParentMAC[index],
-                  "status" : rowStatus[index] })
-  })
-
-  return JSON.stringify (result)
-}
-
-
-// -----------------------------------------------------------------------------
 function getNumberOfChildren(mac, devices)
 {
   childrenCount = 0;
 
   $.each(devices, function(index, dev) {
 
-    if(dev.dev_Network_Node_MAC_ADDR != null && dev.dev_Network_Node_MAC_ADDR.trim() == mac.trim())
+    if(dev.devParentMAC != null && dev.devParentMAC.trim() == mac.trim())
     {
       childrenCount++;        
     }    

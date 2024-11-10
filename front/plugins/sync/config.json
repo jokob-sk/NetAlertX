@@ -111,46 +111,6 @@
       ]
     },
     {
-      "function": "api_token",
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementHasInputValue": 1,
-            "elementOptions": [{ "cssClasses": "col-xs-12" }],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "getStringKey": "Gen_Generate" },
-              { "customParams": "SYNC_api_token" },
-              { "onClick": "generateApiToken(this, 20)" },
-              { "cssClasses": "col-xs-12" }
-            ],
-            "transformers": []
-          }
-        ]
-      },
-      "maxLength": 50,
-      "default_value": "",
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "API token [n,h]"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "API token to secure communication, you can generate one or enter any value. It's sent in the request header. The API token needs to be the same on the hub and on the nodes."
-        }
-      ]
-    },
-    {
       "function": "encryption_key",
       "type": {
         "dataType": "string",

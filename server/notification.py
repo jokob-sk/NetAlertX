@@ -246,8 +246,8 @@ class Notification_obj:
     def clearPendingEmailFlag(self):
 
         # Clean Pending Alert Events
-        self.db.sql.execute ("""UPDATE Devices SET dev_LastNotification = ?
-                            WHERE dev_MAC IN (
+        self.db.sql.execute ("""UPDATE Devices SET devLastNotification = ?
+                            WHERE devMac IN (
                                 SELECT eve_MAC FROM Events
                                     WHERE eve_PendingAlertEmail = 1
                             )

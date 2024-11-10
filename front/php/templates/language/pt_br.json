@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Você pode especificar uma consulta SQL personalizada que irá gerar um arquivo JSON e, em seguida, expô-lo por meio do <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> endpoint do arquivo</a>.",
     "API_CUSTOM_SQL_name": "Endpoint customizado",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Desenvolvido por:",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Mostrar entradas do _MENU_",
     "Events_Tablelenght_all": "Todos",
     "Events_Title": "Eventos",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Ação",
     "Gen_Add": "Adicionar",
     "Gen_Add_All": "Adicionar todos",

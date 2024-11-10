@@ -44,6 +44,8 @@ docker run -d --rm --network=host \
 |`APP_CONF_OVERRIDE` | JSON override for settings, e.g. `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","UI_theme":"Dark"}` (Experimental 🧪)  |  `N/A` |
 |`ALWAYS_FRESH_INSTALL` | If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `N/A` |
 
+> You can override the default GraphQL port setting `GRAPHQL_PORT` (set to `20212`) by using the `APP_CONF_OVERRIDE` env variable. 
+
 ### Docker paths
 
 > [!NOTE]

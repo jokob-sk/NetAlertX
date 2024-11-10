@@ -162,14 +162,14 @@
         }
 
         // Get all leafs connected to a node based on the node_mac        
-        $func_sql = 'SELECT dev_Network_Node_port as port,
-                            dev_MAC as mac,  
-                            dev_PresentLastScan as online, 
-                            dev_Name as name,
-                            dev_DeviceType as type, 
-                            dev_LastIP as last_ip,
-                            (select dev_DeviceType from Devices a where dev_MAC = "'.$node_mac.'") as node_type
-                        FROM Devices WHERE dev_Network_Node_MAC_ADDR = "'.$node_mac.'" order by port, name asc';
+        $func_sql = 'SELECT devParentPort as port,
+                            devMac as mac,  
+                            devPresentLastScan as online, 
+                            devName as name,
+                            devType as type, 
+                            devLastIP as last_ip,
+                            (select devType from Devices a where devMac = "'.$node_mac.'") as node_type
+                        FROM Devices WHERE devParentMAC = "'.$node_mac.'" order by port, name asc';
         
         global $db;
         $func_result = $db->query($func_sql);  
@@ -278,21 +278,21 @@
     $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
             FROM 
             (
-                  SELECT  a.dev_Name as  node_name,        
-                        a.dev_MAC as node_mac,
-                        a.dev_PresentLastScan as online,
-                        a.dev_DeviceType as node_type,
-                        a.dev_Network_Node_MAC_ADDR as parent_mac,
-                        a.dev_Icon as node_icon
+                  SELECT  a.devName as  node_name,        
+                        a.devMac as node_mac,
+                        a.devPresentLastScan as online,
+                        a.devType as node_type,
+                        a.devParentMAC as parent_mac,
+                        a.devIcon as node_icon
                   FROM Devices a 
-                  WHERE a.dev_DeviceType in (".$networkDeviceTypes.")					
+                  WHERE a.devType in (".$networkDeviceTypes.")					
             ) t1
             LEFT JOIN
             (
-                  SELECT  b.dev_Network_Node_MAC_ADDR as node_mac_2,
+                  SELECT  b.devParentMAC as node_mac_2,
                         count() as node_ports_count 
                   FROM Devices b 
-                  WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+                  WHERE b.devParentMAC NOT NULL group by b.devParentMAC
             ) t2
             ON (t1.node_mac = t2.node_mac_2);
           ";
@@ -360,15 +360,15 @@
 
     // Get all Unassigned / unconnected nodes 
     $func_sql = 'SELECT 
-                  dev_MAC AS mac,
-                  dev_PresentLastScan AS online,
-                  dev_Name AS name,
-                  dev_LastIP AS last_ip,
-                  dev_Network_Node_MAC_ADDR
+                  devMac AS mac,
+                  devPresentLastScan AS online,
+                  devName AS name,
+                  devLastIP AS last_ip,
+                  devParentMAC
                 FROM Devices
-                WHERE dev_Network_Node_MAC_ADDR IS NULL 
-                  OR dev_Network_Node_MAC_ADDR IN ("", " ", "undefined", "null")
-                  AND dev_MAC NOT LIKE "%internet%"
+                WHERE devParentMAC IS NULL 
+                  OR devParentMAC IN ("", " ", "undefined", "null")
+                  AND devMac NOT LIKE "%internet%"
                 ORDER BY name ASC;'; 
 
     global $db;

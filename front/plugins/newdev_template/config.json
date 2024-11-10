@@ -266,7 +266,7 @@
       ]
     },
     {
-      "function": "dev_MAC",
+      "function": "devMac",
       "type": {
         "dataType": "string",
         "elements": [
@@ -295,7 +295,7 @@
       ]
     },
     {
-      "function": "dev_Name",
+      "function": "devName",
       "type": {
         "dataType": "string",
         "elements": [
@@ -324,7 +324,7 @@
       ]
     },
     {
-      "function": "dev_Owner",
+      "function": "devOwner",
       "type": {
         "dataType": "string",
         "elements": [
@@ -338,7 +338,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Owner as id, dev_Owner as name FROM (SELECT dev_Owner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devOwner as id, devOwner as name FROM (SELECT devOwner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
         }
       ],
       "localized": ["name", "description"],
@@ -356,7 +356,7 @@
       ]
     },
     {
-      "function": "dev_DeviceType",
+      "function": "devType",
       "type": {
         "dataType": "string",
         "elements": [
@@ -370,7 +370,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT 9 as ord, dev_DeviceType as id, dev_DeviceType as name FROM Devices WHERE dev_DeviceType NOT IN ('', 'Smartphone', 'Tablet', 'Laptop', 'Mini PC', 'PC', 'Printer', 'Server', 'Singleboard Computer (SBC)', 'NAS', 'Domotic', 'IP Camera', 'Game Console', 'SmartTV', 'TV Decoder', 'Virtual Assistance', 'Clock', 'House Appliance', 'Phone', 'Radio', 'AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router', 'USB LAN Adapter', 'USB WIFI Adapter') UNION SELECT 0 as ord, '', '❌None' UNION SELECT 1 as ord, '-----', '-- 📱Handhelds --' UNION SELECT 1 as ord, 'Smartphone', 'Smartphone' UNION SELECT 1 as ord, 'Tablet', 'Tablet' UNION SELECT 2 as ord, '-----', '-- 💻Computers --' UNION SELECT 2 as ord, 'Laptop', 'Laptop' UNION SELECT 2 as ord, 'Mini PC', 'Mini PC' UNION SELECT 2 as ord, 'PC', 'PC' UNION SELECT 2 as ord, 'Printer', 'Printer' UNION SELECT 2 as ord, 'Server', 'Server' UNION SELECT 2 as ord, 'Singleboard Computer (SBC)', 'Singleboard Computer (SBC)' UNION SELECT 2 as ord, 'NAS', 'NAS' UNION SELECT 3 as ord, '-----', '-- 🏠Smart home --' UNION SELECT 3 as ord, 'Domotic', 'Domotic' UNION SELECT 3 as ord, 'IP Camera', 'IP Camera' UNION SELECT 3 as ord, 'Game Console', 'Game Console' UNION SELECT 3 as ord, 'SmartTV', 'SmartTV' UNION SELECT 3 as ord, 'TV Decoder', 'TV Decoder' UNION SELECT 3 as ord, 'Virtual Assistance', 'Virtual Assistance' UNION SELECT 4 as ord, '-----', '-- Wired --' UNION SELECT 4 as ord, 'Clock', 'Clock' UNION SELECT 4 as ord, 'House Appliance', 'House Appliance' UNION SELECT 4 as ord, 'Phone', 'Phone' UNION SELECT 4 as ord, 'Radio', 'Radio' UNION SELECT 5 as ord, '-----', '-- 📡Network nodes --' UNION SELECT 5 as ord, 'AP', 'AP' UNION SELECT 5 as ord, 'Gateway', 'Gateway' UNION SELECT 5 as ord, 'Firewall', 'Firewall' UNION SELECT 5 as ord, 'Hypervisor', 'Hypervisor' UNION SELECT 5 as ord, 'Powerline', 'Powerline' UNION SELECT 5 as ord, 'Switch', 'Switch' UNION SELECT 5 as ord, 'WLAN', 'WLAN' UNION SELECT 5 as ord, 'PLC', 'PLC' UNION SELECT 5 as ord, 'Router', 'Router' UNION SELECT 5 as ord, 'USB LAN Adapter', 'USB LAN Adapter' UNION SELECT 5 as ord, 'USB WIFI Adapter', 'USB WIFI Adapter' UNION SELECT 9 as ord, '-----', '-- ⚙Custom --' UNION SELECT 10 as ord, '-----', '-----' UNION SELECT 10 as ord, 'Other', 'Other' ORDER BY 1,2;"
+          "value": "SELECT DISTINCT 9 as ord, devType as id, devType as name FROM Devices WHERE devType NOT IN ('', 'Smartphone', 'Tablet', 'Laptop', 'Mini PC', 'PC', 'Printer', 'Server', 'Singleboard Computer (SBC)', 'NAS', 'Domotic', 'IP Camera', 'Game Console', 'SmartTV', 'TV Decoder', 'Virtual Assistance', 'Clock', 'House Appliance', 'Phone', 'Radio', 'AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router', 'USB LAN Adapter', 'USB WIFI Adapter') UNION SELECT 0 as ord, '', '❌None' UNION SELECT 1 as ord, '-----', '-- 📱Handhelds --' UNION SELECT 1 as ord, 'Smartphone', 'Smartphone' UNION SELECT 1 as ord, 'Tablet', 'Tablet' UNION SELECT 2 as ord, '-----', '-- 💻Computers --' UNION SELECT 2 as ord, 'Laptop', 'Laptop' UNION SELECT 2 as ord, 'Mini PC', 'Mini PC' UNION SELECT 2 as ord, 'PC', 'PC' UNION SELECT 2 as ord, 'Printer', 'Printer' UNION SELECT 2 as ord, 'Server', 'Server' UNION SELECT 2 as ord, 'Singleboard Computer (SBC)', 'Singleboard Computer (SBC)' UNION SELECT 2 as ord, 'NAS', 'NAS' UNION SELECT 3 as ord, '-----', '-- 🏠Smart home --' UNION SELECT 3 as ord, 'Domotic', 'Domotic' UNION SELECT 3 as ord, 'IP Camera', 'IP Camera' UNION SELECT 3 as ord, 'Game Console', 'Game Console' UNION SELECT 3 as ord, 'SmartTV', 'SmartTV' UNION SELECT 3 as ord, 'TV Decoder', 'TV Decoder' UNION SELECT 3 as ord, 'Virtual Assistance', 'Virtual Assistance' UNION SELECT 4 as ord, '-----', '-- Wired --' UNION SELECT 4 as ord, 'Clock', 'Clock' UNION SELECT 4 as ord, 'House Appliance', 'House Appliance' UNION SELECT 4 as ord, 'Phone', 'Phone' UNION SELECT 4 as ord, 'Radio', 'Radio' UNION SELECT 5 as ord, '-----', '-- 📡Network nodes --' UNION SELECT 5 as ord, 'AP', 'AP' UNION SELECT 5 as ord, 'Gateway', 'Gateway' UNION SELECT 5 as ord, 'Firewall', 'Firewall' UNION SELECT 5 as ord, 'Hypervisor', 'Hypervisor' UNION SELECT 5 as ord, 'Powerline', 'Powerline' UNION SELECT 5 as ord, 'Switch', 'Switch' UNION SELECT 5 as ord, 'WLAN', 'WLAN' UNION SELECT 5 as ord, 'PLC', 'PLC' UNION SELECT 5 as ord, 'Router', 'Router' UNION SELECT 5 as ord, 'USB LAN Adapter', 'USB LAN Adapter' UNION SELECT 5 as ord, 'USB WIFI Adapter', 'USB WIFI Adapter' UNION SELECT 9 as ord, '-----', '-- ⚙Custom --' UNION SELECT 10 as ord, '-----', '-----' UNION SELECT 10 as ord, 'Other', 'Other' ORDER BY 1,2;"
         },
         {
           "name": "uilang",
@@ -393,7 +393,7 @@
       ]
     },
     {
-      "function": "dev_Vendor",
+      "function": "devVendor",
       "type": {
         "dataType": "string",
         "elements": [
@@ -422,7 +422,7 @@
       ]
     },
     {
-      "function": "dev_Favorite",
+      "function": "devFavorite",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -450,7 +450,7 @@
       ]
     },
     {
-      "function": "dev_Group",
+      "function": "devGroup",
       "type": {
         "dataType": "string",
         "elements": [
@@ -464,7 +464,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT dev_Group as id, dev_Group as name FROM (SELECT dev_Group FROM Devices WHERE dev_Group <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devGroup as id, devGroup as name FROM (SELECT devGroup FROM Devices WHERE devGroup <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
         }
       ],
       "localized": ["name", "description"],
@@ -482,7 +482,7 @@
       ]
     },
     {
-      "function": "dev_Comments",
+      "function": "devComments",
       "type": {
         "dataType": "string",
         "elements": [
@@ -506,7 +506,7 @@
       ]
     },
     {
-      "function": "dev_FirstConnection",
+      "function": "devFirstConnection",
       "type": {
         "dataType": "string",
         "elements": [
@@ -535,7 +535,7 @@
       ]
     },
     {
-      "function": "dev_LastConnection",
+      "function": "devLastConnection",
       "type": {
         "dataType": "string",
         "elements": [
@@ -564,7 +564,7 @@
       ]
     },
     {
-      "function": "dev_LastIP",
+      "function": "devLastIP",
       "type": {
         "dataType": "string",
         "elements": [
@@ -593,7 +593,7 @@
       ]
     },
     {
-      "function": "dev_StaticIP",
+      "function": "devStaticIP",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -621,7 +621,7 @@
       ]
     },
     {
-      "function": "dev_ScanCycle",
+      "function": "devScan",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -649,7 +649,7 @@
       ]
     },
     {
-      "function": "dev_LogEvents",
+      "function": "devLogEvents",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -677,7 +677,7 @@
       ]
     },
     {
-      "function": "dev_AlertEvents",
+      "function": "devAlertEvents",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -705,7 +705,7 @@
       ]
     },
     {
-      "function": "dev_AlertDeviceDown",
+      "function": "devAlertDown",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -733,7 +733,7 @@
       ]
     },
     {
-      "function": "dev_SkipRepeated",
+      "function": "devSkipRepeated",
       "type": {
         "dataType": "string",
         "elements": [
@@ -764,7 +764,7 @@
       ]
     },
     {
-      "function": "dev_LastNotification",
+      "function": "devLastNotification",
       "type": {
         "dataType": "string",
         "elements": [
@@ -793,7 +793,7 @@
       ]
     },
     {
-      "function": "dev_PresentLastScan",
+      "function": "devPresentLastScan",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -821,7 +821,7 @@
       ]
     },
     {
-      "function": "dev_NewDevice",
+      "function": "devIsNew",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -849,7 +849,7 @@
       ]
     },
     {
-      "function": "dev_Location",
+      "function": "devLocation",
       "type": {
         "dataType": "string",
         "elements": [
@@ -863,7 +863,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT dev_Location AS id, dev_Location AS name FROM Devices WHERE dev_Location NOT IN ('', 'null') AND dev_Location IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
         }
       ],
       "localized": ["name", "description"],
@@ -881,7 +881,7 @@
       ]
     },
     {
-      "function": "dev_Archived",
+      "function": "devIsArchived",
       "type": {
         "dataType": "integer",
         "elements": [
@@ -909,7 +909,7 @@
       ]
     },
     {
-      "function": "dev_Network_Node_MAC_ADDR",
+      "function": "devParentMAC",
       "type": {
         "dataType": "string",
         "elements": [
@@ -922,7 +922,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT '❌None' as name, '' as id UNION SELECT Dev_Name as name, dev_MAC as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(dev_DeviceType) || '%' AND dev_DeviceType <> '')"
+          "value": "SELECT '❌None' as name, '' as id UNION SELECT devName as name, devMac as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE Code_Name = 'NETWORK_DEVICE_TYPES' AND LOWER(value) LIKE '%' || LOWER(devType) || '%' AND devType <> '')"
         },
         {
           "name": "target_macs",
@@ -945,7 +945,7 @@
       ]
     },
     {
-      "function": "dev_Network_Node_port",
+      "function": "devParentPort",
       "type": {
         "dataType": "string",
         "elements": [
@@ -973,7 +973,7 @@
       ]
     },
     {
-      "function": "dev_Icon",
+      "function": "devIcon",
       "type": {
         "dataType": "string",
         "elements": [
@@ -982,7 +982,7 @@
             "elementOptions": [
               { "cssClasses": "input-group-addon iconPreview" },
               { "getStringKey": "Gen_SelectToPreview" },
-              { "customId": "NEWDEV_dev_Icon_preview" }
+              { "customId": "NEWDEV_devIcon_preview" }
             ],
             "transformers": []
           },
@@ -994,7 +994,7 @@
               {
                 "onChange": "updateIconPreview(this)"
               },
-              { "customParams": "NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview" }
+              { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
             ],
             "transformers": []
           }          
@@ -1006,7 +1006,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(Value, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE Code_Name = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT Dev_Icon AS name, Dev_Icon AS id FROM Devices WHERE Dev_Icon <> '') AS combined_results;"
+          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(Value, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE Code_Name = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT devIcon AS name, devIcon AS id FROM Devices WHERE devIcon <> '') AS combined_results;"
         }
       ],
       "localized": ["name", "description"],
@@ -1025,27 +1025,6 @@
     }
   ],
   "required": [
-    "dev_MAC",
-    "dev_Name",
-    "dev_Owner",
-    "dev_FirstConnection",
-    "dev_LastConnection",
-    "dev_LastIP",
-    "dev_StaticIP",
-    "dev_ScanCycle",
-    "dev_LogEvents",
-    "dev_AlertEvents",
-    "dev_AlertDeviceDown",
-    "dev_SkipRepeated",
-    "dev_LastNotification",
-    "dev_PresentLastScan",
-    "dev_NewDevice",
-    "dev_Location",
-    "dev_Archived",
-    "dev_Network_Node_MAC_ADDR",
-    "dev_Network_Node_port",
-    "dev_Icon",
-    "LESS_NAME_CLEANUP"
   ],
   "additionalProperties": false
 }

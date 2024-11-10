@@ -15,6 +15,8 @@ from pathlib import Path
 import requests
 import base64
 import hashlib
+import random
+import string
 
 
 import conf
@@ -903,6 +905,11 @@ def extract_ip_addresses(text):
     ip_pattern = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
     ip_addresses = re.findall(ip_pattern, text)
     return ip_addresses
+
+
+def generate_random_string(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 #-------------------------------------------------------------------------------
 # JSON methods

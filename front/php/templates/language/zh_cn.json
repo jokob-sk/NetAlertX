@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "您可以指定一个自定义 SQL 查询，它将生成一个 JSON 文件，然后通过 <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> 文件端点</a> 公开它。",
     "API_CUSTOM_SQL_name": "自定义终点",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "设计用于：",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "",
     "Events_Tablelenght_all": "全部",
     "Events_Title": "事件",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "动作",
     "Gen_Add": "增加",
     "Gen_Add_All": "全部添加",

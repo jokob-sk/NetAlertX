@@ -443,49 +443,49 @@ def mqtt_start(db):
         for device in devices:      
 
             # # debug statement START 🔻
-            # if 'Moto' not in device["dev_Name"]:
+            # if 'Moto' not in device["devName"]:
             #     continue
             # # debug statement END   🔺
             
             # Create devices in Home Assistant - send config messages
-            deviceId        = 'mac_' + device["dev_MAC"].replace(" ", "").replace(":", "_").lower()
+            deviceId        = 'mac_' + device["devMac"].replace(" ", "").replace(":", "_").lower()
             # Normalize the string and remove unwanted characters
-            devDisplayName = re.sub('[^a-zA-Z0-9-_\\s]', '', normalize_string(device["dev_Name"]))            
+            devDisplayName = re.sub('[^a-zA-Z0-9-_\\s]', '', normalize_string(device["devName"]))            
 
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'is_new', 'bell-alert-outline', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'vendor', 'cog', device["dev_MAC"])            
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'first_connection', 'calendar-start', device["dev_MAC"])
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_ip', 'ip-network', device["devMac"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'mac_address', 'folder-key-network', device["devMac"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'is_new', 'bell-alert-outline', device["devMac"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'vendor', 'cog', device["devMac"])            
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'first_connection', 'calendar-start', device["devMac"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["devMac"])
         
 
             devJson = { 
-                        "last_ip": device["dev_LastIP"], 
-                        "is_new": str(device["dev_NewDevice"]), 
-                        "vendor": sanitize_string(device["dev_Vendor"]), 
-                        "mac_address": str(device["dev_MAC"]),
+                        "last_ip": device["devLastIP"], 
+                        "is_new": str(device["devIsNew"]), 
+                        "vendor": sanitize_string(device["devVendor"]), 
+                        "mac_address": str(device["devMac"]),
                         "model": devDisplayName,
-                        "last_connection": prepTimeStamp(str(device["dev_LastConnection"])),
-                        "first_connection": prepTimeStamp(str(device["dev_FirstConnection"]))                    }
+                        "last_connection": prepTimeStamp(str(device["devLastConnection"])),
+                        "first_connection": prepTimeStamp(str(device["devFirstConnection"]))                    }
         
             # bulk update device sensors in home assistant      
             publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson) 
 
             #  create and update is_present sensor
-            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["dev_MAC"])
+            sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["devMac"])
             publish_mqtt(mqtt_client, sensorConfig.state_topic, 
                 { 
-                    "is_present": to_binary_sensor(str(device["dev_PresentLastScan"]))
+                    "is_present": to_binary_sensor(str(device["devPresentLastScan"]))
                 }
             ) 
 
             # handle device_tracker
-            sensorConfig  = create_sensor(mqtt_client, deviceId, devDisplayName, 'device_tracker', 'is_home', 'home', device["dev_MAC"])
+            sensorConfig  = create_sensor(mqtt_client, deviceId, devDisplayName, 'device_tracker', 'is_home', 'home', device["devMac"])
 
             # <away|home> are only valid states
             state = 'away'
-            if to_binary_sensor(str(device["dev_PresentLastScan"])) == "ON":
+            if to_binary_sensor(str(device["devPresentLastScan"])) == "ON":
                 state = 'home'
 
             publish_mqtt(mqtt_client, sensorConfig.state_topic, state) 

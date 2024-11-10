@@ -43,4 +43,4 @@ REPORT_DASHBOARD_URL    = 'http://netalertx/'
 # -------------------------------------------
 
 # API     
-API_CUSTOM_SQL  = 'SELECT * FROM Devices WHERE dev_PresentLastScan = 0'
+API_CUSTOM_SQL  = 'SELECT * FROM Devices WHERE devPresentLastScan = 0'

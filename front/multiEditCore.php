@@ -77,11 +77,11 @@
         
         settingsData = res["data"];
 
-        excludedColumns = ["NEWDEV_dev_MAC", "NEWDEV_dev_FirstConnection", "NEWDEV_dev_LastConnection", "NEWDEV_dev_LastNotification", "NEWDEV_dev_LastIP", "NEWDEV_dev_StaticIP", "NEWDEV_dev_ScanCycle", "NEWDEV_dev_PresentLastScan" ]
+        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devLastIP", "NEWDEV_devStaticIP", "NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
         
         const relevantColumns = settingsData.filter(set =>
             set.Group === "NEWDEV" &&
-            set.Code_Name.includes("_dev_") &&
+            set.Code_Name.includes("_dev") &&
             !excludedColumns.includes(set.Code_Name) &&
             !set.Code_Name.includes("__metadata")
         );
@@ -143,13 +143,13 @@
 
                     console.log(columns[j].Code_Name)
                     //  Handle Icons as they need a preview                 
-                    if(columns[j].Code_Name == 'NEWDEV_dev_Icon')
+                    if(columns[j].Code_Name == 'NEWDEV_devIcon')
                     {
                       input = `
-                            <span class="input-group-addon iconPreview" my-customid="NEWDEV_dev_Icon_preview"></span>
+                            <span class="input-group-addon iconPreview" my-customid="NEWDEV_devIcon_preview"></span>
                             <select  class="form-control"
                                       onChange="updateIconPreview(this)"
-                                      my-customparams="NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview"
+                                      my-customparams="NEWDEV_devIcon,NEWDEV_devIcon_preview"
                                       id="${columns[j].Code_Name}"
                                       data-my-column="${columns[j].Code_Name}" 
                                       data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
@@ -283,7 +283,7 @@
     console.log(columnValue);
 
     // update selected
-    executeAction('update', 'dev_MAC', selectorMacs(), targetColumns, columnValue )
+    executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
 
     
 }
@@ -333,7 +333,7 @@ function askDeleteSelectedDevices () {
 function deleteSelectedDevices()
 { 
   macs_tmp = selectorMacs()
-  executeAction('delete', 'dev_MAC', macs_tmp )
+  executeAction('delete', 'devMac', macs_tmp )
   write_notification('[Multi edit] Manually deleted devices with MACs:' + macs_tmp, 'info')
 }
 

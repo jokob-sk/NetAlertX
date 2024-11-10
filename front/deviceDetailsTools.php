@@ -77,16 +77,16 @@
         <?= lang("DevDetail_Nmap_Scans_desc") ?>
     </div>
 
-    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'dev_LastIP'), 'fast')">
+    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'fast')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'dev_LastIP'), 'normal')">
+    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'normal')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'dev_LastIP'), 'detail')">
+    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'detail')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'dev_LastIP'), 'skipdiscovery')">
+    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'skipdiscovery')">
         <?= lang("DevDetail_Loading") ?>
     </button>
 
@@ -155,7 +155,7 @@
             $( "#tracerouteoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/traceroute.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'dev_LastIP') + "",
+                    url: "./php/server/traceroute.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'devLastIP') + "",
                     beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
@@ -170,7 +170,7 @@
             $( "#nslookupoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/nslookup.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'dev_LastIP') + "",
+                    url: "./php/server/nslookup.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'devLastIP') + "",
                     beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {

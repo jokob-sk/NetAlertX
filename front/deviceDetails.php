@@ -681,7 +681,7 @@ switch ($UI_THEME) {
       // Iterate through the data and filter only visible devices
       $.each(devicesList, function(index, item) {
         // Check if the current item's MAC exists in visibleDevicesMACs
-        if (visibleDevicesMACs.includes(item.dev_MAC)) {
+        if (visibleDevicesMACs.includes(item.devMac)) {
           devicesList_tmp.push(item);
         }
       });
@@ -827,12 +827,12 @@ function initializeCombos () {
   //                      nameTransformer)   // callback to transform name
 
 
-  generateOptionsOrSetOptions("NEWDEV_dev_Icon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', ["base64"])
-  generateOptionsOrSetOptions("NEWDEV_dev_DeviceType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
-  generateOptionsOrSetOptions("NEWDEV_dev_Owner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
-  generateOptionsOrSetOptions("NEWDEV_dev_Group", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
-  generateOptionsOrSetOptions("NEWDEV_dev_Location", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
-  generateOptionsOrSetOptions("NEWDEV_dev_Network_Node_MAC_ADDR", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
+  generateOptionsOrSetOptions("NEWDEV_devIcon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', ["base64"])
+  generateOptionsOrSetOptions("NEWDEV_devType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
+  generateOptionsOrSetOptions("NEWDEV_devOwner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
+  generateOptionsOrSetOptions("NEWDEV_devGroup", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
+  generateOptionsOrSetOptions("NEWDEV_devLocation", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
+  generateOptionsOrSetOptions("NEWDEV_devParentMAC", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
 
   // Initialize static combos
   initializeComboSkipRepeated ();
@@ -1171,7 +1171,7 @@ function getDeviceData (readAllData=false) {
     var deviceData = JSON.parse(data);
 
     // check device exists
-    if (deviceData['dev_MAC'] == null) {
+    if (deviceData['devMac'] == null) {
       // Status
       $('#deviceStatus').html ('--');
       $('#deviceStatus')[0].className = 'text-gray';
@@ -1227,16 +1227,16 @@ function getDeviceData (readAllData=false) {
     } else {
 
       // Name
-      if (deviceData['dev_Owner'] == null || deviceData['dev_Owner'] == '' ||
-      (deviceData['dev_Name'].toString()).indexOf (deviceData['dev_Owner']) != -1 )  {
-        $('#pageTitle').html (deviceData['dev_Name']);
+      if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
+      (deviceData['devName'].toString()).indexOf (deviceData['devOwner']) != -1 )  {
+        $('#pageTitle').html (deviceData['devName']);
       } else {
-        $('#pageTitle').html (deviceData['dev_Name'] + ' ('+ deviceData['dev_Owner'] +')');
+        $('#pageTitle').html (deviceData['devName'] + ' ('+ deviceData['devOwner'] +')');
       }
 
       // Status
-      $('#deviceStatus').html (deviceData['dev_Status'].replace('-', ''));
-      switch (deviceData['dev_Status']) {
+      $('#deviceStatus').html (deviceData['devStatus'].replace('-', ''));
+      switch (deviceData['devStatus']) {
         case 'On-line':   icon='fa fa-check';    color='text-green';   break;
         case 'Off-line':  icon='fa fa-close';    color='text-gray';    break;
         case 'Down':      icon='fa fa-warning';  color='text-red';     break;
@@ -1247,16 +1247,16 @@ function getDeviceData (readAllData=false) {
       $('#deviceStatusIcon')[0].className = icon +' '+ color;
   
       // Totals
-      $('#deviceSessions').html   (deviceData['dev_Sessions'].toLocaleString());
-      $('#deviceDownAlerts').html (deviceData['dev_DownAlerts'].toLocaleString());
+      $('#deviceSessions').html   (deviceData['devSessions'].toLocaleString());
+      $('#deviceDownAlerts').html (deviceData['devDownAlerts'].toLocaleString());
   
       // Presence
       $('#deviceEventsTitle').html ('Presence');
       $('#deviceEventsIcon').html  ('<i class="fa fa-calendar">');
-      if (deviceData['dev_PresenceHours'] == null || deviceData['dev_PresenceHours'] < 0) {
+      if (deviceData['devPresenceHours'] == null || deviceData['devPresenceHours'] < 0) {
         $('#deviceEvents').html ('0 h.');
       } else {
-        $('#deviceEvents').html (deviceData['dev_PresenceHours'].toLocaleString() +' h.');
+        $('#deviceEvents').html (deviceData['devPresenceHours'].toLocaleString() +' h.');
       }
   
       // Device info
@@ -1264,7 +1264,7 @@ function getDeviceData (readAllData=false) {
         // Activate controls
         $('#panDetails :input').attr('disabled', false);
 
-        mac                                          = deviceData['dev_MAC'];
+        mac                                          = deviceData['devMac'];
 
         // update the mac parameter in the URL, this makes the selected device persistent when the page is reloaded
         var searchParams = new URLSearchParams(window.location.search);
@@ -1275,51 +1275,51 @@ function getDeviceData (readAllData=false) {
         
         devicesList = getDevicesList();        
 
-        // handle empty dev_Network_Node_MAC_ADDR
-        networkParentMac = deviceData['dev_Network_Node_MAC_ADDR']
+        // handle empty devParentMAC
+        networkParentMac = deviceData['devParentMAC']
         if(networkParentMac)
         {
-          networkParentMacName = getDeviceDataByMac(deviceData['dev_Network_Node_MAC_ADDR'], "dev_Name")
+          networkParentMacName = getDeviceDataByMac(deviceData['devParentMAC'], "devName")
         } else
         {
           networkParentMacName = '--'
         }
 
-        $('#txtMAC').val                             (deviceData['dev_MAC']);
-        $('#txtName').val                            (deviceData['dev_Name']);
-        $('#txtOwner').val                           (deviceData['dev_Owner']);
-        $('#txtDeviceType').val                      (deviceData['dev_DeviceType']);
-        $('#txtVendor').val                          (deviceData['dev_Vendor']);
-        $('#txtIcon').val                            (initDefault(deviceData['dev_Icon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==')); // base64 laptop icon
+        $('#txtMAC').val                             (deviceData['devMac']);
+        $('#txtName').val                            (deviceData['devName']);
+        $('#txtOwner').val                           (deviceData['devOwner']);
+        $('#txtDeviceType').val                      (deviceData['devType']);
+        $('#txtVendor').val                          (deviceData['devVendor']);
+        $('#txtIcon').val                            (initDefault(deviceData['devIcon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==')); // base64 laptop icon
         $('#txtIcon').trigger('change')
   
-        if (deviceData['dev_Favorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
-        $('#txtGroup').val                           (deviceData['dev_Group']);
-        $('#txtLocation').val                        (deviceData['dev_Location']);
-        $('#txtComments').val                        (decodeSpecialChars(deviceData['dev_Comments']));        
+        if (deviceData['devFavorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
+        $('#txtGroup').val                           (deviceData['devGroup']);
+        $('#txtLocation').val                        (deviceData['devLocation']);
+        $('#txtComments').val                        (decodeSpecialChars(deviceData['devComments']));        
         $('#txtNetworkNodeMac').val                  ( networkParentMacName) ;
-        $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['dev_Network_Node_MAC_ADDR']);        
-        $('#txtNetworkPort').val                     (deviceData['dev_Network_Node_port']);
-        $('#txtNetworkSite').val                     (deviceData['dev_NetworkSite']);
-        $('#txtSSID').val                            (deviceData['dev_SSID']);
+        $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['devParentMAC']);        
+        $('#txtNetworkPort').val                     (deviceData['devParentPort']);
+        $('#txtNetworkSite').val                     (deviceData['devSite']);
+        $('#txtSSID').val                            (deviceData['devSSID']);
         // disabling network node configuration if root Internet node
         toggleNetworkConfiguration(mac == 'Internet')         
         
   
-        $('#txtFirstConnection').val                 (deviceData['dev_FirstConnection']);
-        $('#txtLastConnection').val                  (deviceData['dev_LastConnection']);
-        $('#txtLastIP').val                          (deviceData['dev_LastIP']);
-        $('#txtStatus').val                          (deviceData['dev_Status'].replace('-', ''));
-        if (deviceData['dev_StaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
+        $('#txtFirstConnection').val                 (deviceData['devFirstConnection']);
+        $('#txtLastConnection').val                  (deviceData['devLastConnection']);
+        $('#txtLastIP').val                          (deviceData['devLastIP']);
+        $('#txtStatus').val                          (deviceData['devStatus'].replace('-', ''));
+        if (deviceData['devStaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
     
-        $('#txtScanCycle').val                       (deviceData['dev_ScanCycle'] == "1" ? "yes" : "no");
-        if (deviceData['dev_AlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} else {$('#chkAlertEvents').iCheck('uncheck');}
-        if (deviceData['dev_AlertDeviceDown'] == 1)  {$('#chkAlertDown').iCheck('check');}   else {$('#chkAlertDown').iCheck('uncheck');}
-        $('#txtSkipRepeated').val                    (findSkipRepeated (deviceData['dev_SkipRepeated']));
-        if (deviceData['dev_NewDevice'] == 1)        {$('#chkNewDevice').iCheck('check');}   else {$('#chkNewDevice').iCheck('uncheck');}
-        if (deviceData['dev_Archived'] == 1)         {$('#chkArchived').iCheck('check');}    else {$('#chkArchived').iCheck('uncheck');}
+        $('#txtScanCycle').val                       (deviceData['devScan'] == "1" ? "yes" : "no");
+        if (deviceData['devAlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} else {$('#chkAlertEvents').iCheck('uncheck');}
+        if (deviceData['devAlertDown'] == 1)  {$('#chkAlertDown').iCheck('check');}   else {$('#chkAlertDown').iCheck('uncheck');}
+        $('#txtSkipRepeated').val                    (findSkipRepeated (deviceData['devSkipRepeated']));
+        if (deviceData['devIsNew'] == 1)        {$('#chkNewDevice').iCheck('check');}   else {$('#chkNewDevice').iCheck('uncheck');}
+        if (deviceData['devIsArchived'] == 1)         {$('#chkArchived').iCheck('check');}    else {$('#chkArchived').iCheck('uncheck');}
 
-        if (deviceData['dev_RandomMAC'] == 1)        {$('#iconRandomMACactive').removeClass   ('hidden');
+        if (deviceData['devRandomMAC'] == 1)        {$('#iconRandomMACactive').removeClass   ('hidden');
                                                       $('#iconRandomMACinactive').addClass    ('hidden'); }
         else                                         {$('#iconRandomMACactive').addClass      ('hidden');
                                                       $('#iconRandomMACinactive').removeClass ('hidden'); };        
@@ -1329,7 +1329,7 @@ function getDeviceData (readAllData=false) {
       pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);          
       
       if (pos == -1) {
-        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['dev_MAC'], "name": deviceData['dev_Name'], "type": deviceData['dev_DeviceType']});
+        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['devMac'], "name": deviceData['devName'], "type": deviceData['devType']});
         pos=0;
       }
     }
@@ -1401,7 +1401,7 @@ function performSwitch(direction)
   // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
   // mac = params.mac;
   
-  mac = devicesList[pos].dev_MAC.toString();
+  mac = devicesList[pos].devMac.toString();
 
   setCache("piaDeviceDetailsMac", mac);
     
@@ -1728,7 +1728,7 @@ function setTextValue (textElement, textValue) {
   if(textElement == "txtNetworkNodeMac")
   {
     $('#'+textElement).attr ('data-mynodemac', textValue);
-    $('#'+textElement).val (getDeviceDataByMac(textValue, "dev_Name")); 
+    $('#'+textElement).val (getDeviceDataByMac(textValue, "devName")); 
   } else
   {
     $('#'+textElement).attr ('data-myvalue', textValue);

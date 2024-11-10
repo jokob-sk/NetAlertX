@@ -11,7 +11,7 @@ function checkAuthorization($method) {
     // Retrieve the authorization header
     $headers = apache_request_headers();
     $auth_header = $headers['Authorization'] ?? '';
-    $expected_token = 'Bearer ' . getSettingValue('SYNC_api_token');
+    $expected_token = 'Bearer ' . getSettingValue('API_TOKEN');
 
     // Verify the authorization token
     if ($auth_header !== $expected_token) {

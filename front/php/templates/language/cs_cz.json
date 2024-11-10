@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "",
     "API_CUSTOM_SQL_name": "",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "",
     "API_icon": "",
     "About_Design": "",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "",
     "Events_Tablelenght_all": "",
     "Events_Title": "",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "",
     "Gen_Add": "",
     "Gen_Add_All": "",

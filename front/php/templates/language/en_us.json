@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
     "API_CUSTOM_SQL_name": "Custom endpoint",
+    "API_TOKEN_description": "API token to secure communication, you can generate one or enter any value. It's sent in the request header. Used in the <code>SYNC</code> plugin, GraphQL server.",
+    "API_TOKEN_name": "API token",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Designed for:",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Show _MENU_ entries",
     "Events_Tablelenght_all": "All",
     "Events_Title": "Events",
+    "GRAPHQL_PORT_description": "The port number of the GraphQL server.",
+    "GRAPHQL_PORT_name": "GraphQL port",
     "Gen_Action": "Action",
     "Gen_Add": "Add",
     "Gen_Add_All": "Add all",

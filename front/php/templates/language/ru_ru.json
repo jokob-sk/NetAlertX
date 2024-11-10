@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Вы можете указать собственный SQL-запрос, который будет генерировать файл JSON, а затем предоставлять его через конечную точку файла <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code></a>.",
     "API_CUSTOM_SQL_name": "Пользовательская конечная точка",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Разработан:",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Показать _MENU_ записей",
     "Events_Tablelenght_all": "Все",
     "Events_Title": "События",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Действия",
     "Gen_Add": "Добавить",
     "Gen_Add_All": "Добавить все",

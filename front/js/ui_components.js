@@ -23,7 +23,7 @@ function initDeviceSelectors(devicesListAll_JSON) {
       // Loop through the devices list
       devicesList.forEach(function(device) {         
 
-          selectorFieldsHTML += `<option value="${device.dev_MAC}">${device.dev_Name}</option>`;
+          selectorFieldsHTML += `<option value="${device.devMac}">${device.devName}</option>`;
       });
 
       selector = `<div class="db_info_table_row  col-sm-12" > 

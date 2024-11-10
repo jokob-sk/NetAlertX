@@ -82,13 +82,13 @@ class AppEvent_obj:
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
-                    NEW.dev_MAC,
-                    NEW.dev_LastIP,
-                    CASE WHEN NEW.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'dev_PresentLastScan',
-                    NEW.dev_NewDevice,
-                    NEW.dev_Archived,
-                    NEW.dev_MAC,
+                    NEW.devMac,
+                    NEW.devLastIP,
+                    CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'devPresentLastScan',
+                    NEW.devIsNew,
+                    NEW.devIsArchived,
+                    NEW.devMac,
                     'create'
                 );
             END;
@@ -112,13 +112,13 @@ class AppEvent_obj:
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
-                    NEW.dev_MAC,
-                    NEW.dev_LastIP,
-                    CASE WHEN NEW.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'dev_PresentLastScan',
-                    NEW.dev_NewDevice,
-                    NEW.dev_Archived,
-                    NEW.dev_MAC,
+                    NEW.devMac,
+                    NEW.devLastIP,
+                    CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'devPresentLastScan',
+                    NEW.devIsNew,
+                    NEW.devIsArchived,
+                    NEW.devMac,
                     'update'
                 );
             END;
@@ -136,13 +136,13 @@ class AppEvent_obj:
                     {sql_generateGuid},
                     DATETIME('now'),
                     'Devices',
-                    OLD.dev_MAC,
-                    OLD.dev_LastIP,
-                    CASE WHEN OLD.dev_PresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'dev_PresentLastScan',
-                    OLD.dev_NewDevice,
-                    OLD.dev_Archived,
-                    OLD.dev_MAC,
+                    OLD.devMac,
+                    OLD.devLastIP,
+                    CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
+                    'devPresentLastScan',
+                    OLD.devIsNew,
+                    OLD.devIsArchived,
+                    OLD.devMac,
                     'delete'
                 );
             END;

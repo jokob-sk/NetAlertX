@@ -85,7 +85,7 @@ def void_ghost_disconnections (db):
                             AND eve_MAC IN (
                                 SELECT Events.eve_MAC
                                 FROM CurrentScan, Devices, Events 
-                                WHERE dev_MAC = cur_MAC
+                                WHERE devMac = cur_MAC
                                     AND eve_MAC = cur_MAC
                                     AND eve_EventType = 'Disconnected'
                                     AND eve_DateTime >= DATETIME(?, '-3 minutes')
@@ -99,7 +99,7 @@ def void_ghost_disconnections (db):
                             AND eve_PairEventRowid IN (
                                 SELECT Events.RowID
                                 FROM CurrentScan, Devices, Events 
-                                WHERE dev_MAC = cur_MAC
+                                WHERE devMac = cur_MAC
                                     AND eve_MAC = cur_MAC
                                     AND eve_EventType = 'Disconnected'
                                     AND eve_DateTime >= DATETIME(?, '-3 minutes')
@@ -114,7 +114,7 @@ def void_ghost_disconnections (db):
                         AND ROWID IN (
                             SELECT Events.RowID
                             FROM CurrentScan, Devices, Events 
-                            WHERE dev_MAC = cur_MAC
+                            WHERE devMac = cur_MAC
                                 AND eve_MAC = cur_MAC
                                 AND eve_EventType = 'Disconnected'
                                 AND eve_DateTime >= DATETIME(?, '-3 minutes')
@@ -186,12 +186,12 @@ def insert_events (db):
     sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT dev_MAC, dev_LastIP, '{startTime}', 'Device Down', '', 1
+                    SELECT devMac, devLastIP, '{startTime}', 'Device Down', '', 1
                     FROM Devices 
-                    WHERE dev_AlertDeviceDown != 0
-                      AND dev_PresentLastScan = 1                      
+                    WHERE devAlertDown != 0
+                      AND devPresentLastScan = 1                      
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC
+                                      WHERE devMac = cur_MAC
                                          ) """)
 
     # Check new Connections or Down Reconnections
@@ -208,7 +208,7 @@ def insert_events (db):
                                         1
                         FROM CurrentScan AS c 
                         LEFT JOIN LatestEventsPerMAC AS last_event ON c.cur_MAC = last_event.eve_MAC 
-                        WHERE last_event.dev_PresentLastScan = 0 OR last_event.eve_MAC IS NULL
+                        WHERE last_event.devPresentLastScan = 0 OR last_event.eve_MAC IS NULL
                         """)
 
     # Check disconnections
@@ -216,13 +216,13 @@ def insert_events (db):
     sql.execute (f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT dev_MAC, dev_LastIP, '{startTime}', 'Disconnected', '',
-                        dev_AlertEvents
+                    SELECT devMac, devLastIP, '{startTime}', 'Disconnected', '',
+                        devAlertEvents
                     FROM Devices
-                    WHERE dev_AlertDeviceDown = 0
-                      AND dev_PresentLastScan = 1
+                    WHERE devAlertDown = 0
+                      AND devPresentLastScan = 1
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
-                                      WHERE dev_MAC = cur_MAC
+                                      WHERE devMac = cur_MAC
                                          ) """)
 
     # Check IP Changed
@@ -231,10 +231,10 @@ def insert_events (db):
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
                     SELECT cur_MAC, cur_IP, '{startTime}', 'IP Changed',
-                        'Previous IP: '|| dev_LastIP, dev_AlertEvents
+                        'Previous IP: '|| devLastIP, devAlertEvents
                     FROM Devices, CurrentScan
-                    WHERE dev_MAC = cur_MAC                        
-                      AND dev_LastIP <> cur_IP """ )
+                    WHERE devMac = cur_MAC                        
+                      AND devLastIP <> cur_IP """ )
     mylog('debug','[Events] - Events end')
     
     
@@ -248,9 +248,9 @@ def insertOnlineHistory(db):
     query = """
     SELECT
         COUNT(*) AS allDevics,
-        SUM(CASE WHEN dev_Archived = 1 THEN 1 ELSE 0 END) AS archivedDevices,
-        SUM(CASE WHEN dev_PresentLastScan = 1 THEN 1 ELSE 0 END) AS onlineDevices,
-        SUM(CASE WHEN dev_PresentLastScan = 0 AND dev_AlertDeviceDown = 1 THEN 1 ELSE 0 END) AS downDevices
+        SUM(CASE WHEN devIsArchived = 1 THEN 1 ELSE 0 END) AS archivedDevices,
+        SUM(CASE WHEN devPresentLastScan = 1 THEN 1 ELSE 0 END) AS onlineDevices,
+        SUM(CASE WHEN devPresentLastScan = 0 AND devAlertDown = 1 THEN 1 ELSE 0 END) AS downDevices
     FROM Devices
     """
     

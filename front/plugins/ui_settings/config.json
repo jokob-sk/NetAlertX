@@ -385,7 +385,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Columns and their order that are shown on the Devices page. Drag and drop the order of columns, click <code>x</code> to remove columns. You can also click into the field to selectivelly add fields."
+          "string": "Columns and their order that are shown on the Devices page. Drag and drop the order of columns, click <code>x</code> to remove columns. You can also click into the field to selectivelly add fields. The <code>Name</code> and <code>Status</code> fields are required."
         }
       ]
     },

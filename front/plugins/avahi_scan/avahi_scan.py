@@ -56,9 +56,9 @@ def main():
     
     # Mock list of devices (replace with actual device_handler.getUnknown() in production)
     # unknown_devices = [
-    #     {'dev_MAC': '00:11:22:33:44:55', 'dev_LastIP': '192.168.1.121'},
-    #     {'dev_MAC': '00:11:22:33:44:56', 'dev_LastIP': '192.168.1.9'},
-    #     {'dev_MAC': '00:11:22:33:44:57', 'dev_LastIP': '192.168.1.82'},
+    #     {'devMac': '00:11:22:33:44:55', 'devLastIP': '192.168.1.121'},
+    #     {'devMac': '00:11:22:33:44:56', 'devLastIP': '192.168.1.9'},
+    #     {'devMac': '00:11:22:33:44:57', 'devLastIP': '192.168.1.82'},
     # ]
 
     mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
@@ -68,20 +68,20 @@ def main():
         ensure_avahi_running()
 
     for device in unknown_devices:
-        domain_name = execute_name_lookup(device['dev_LastIP'], timeout)
+        domain_name = execute_name_lookup(device['devLastIP'], timeout)
 
         #  check if found and not a timeout ('to')
         if domain_name != '' and domain_name != 'to': 
             plugin_objects.add_object(
             # "MAC", "IP", "Server", "Name"
-            primaryId   = device['dev_MAC'],
-            secondaryId = device['dev_LastIP'],
+            primaryId   = device['devMac'],
+            secondaryId = device['devLastIP'],
             watched1    = '',  # You can add any relevant info here if needed
             watched2    = domain_name,
             watched3    = '',
             watched4    = '',
             extra       = '',
-            foreignKey  = device['dev_MAC'])
+            foreignKey  = device['devMac'])
 
     plugin_objects.write_result_file()
     

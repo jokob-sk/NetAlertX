@@ -85,14 +85,14 @@ def update_vendors (dbPath, plugin_objects):
 
     # Get devices without a vendor
     sql.execute  ("""SELECT 
-                            dev_MAC, 
-                            dev_LastIP, 
-                            dev_Name, 
-                            dev_Vendor 
+                            devMac, 
+                            devLastIP, 
+                            devName, 
+                            devVendor 
                             FROM Devices
-                            WHERE   dev_Vendor      = '(unknown)' 
-                                    OR dev_Vendor   = ''
-                                    OR dev_Vendor   IS NULL
+                            WHERE   devVendor      = '(unknown)' 
+                                    OR devVendor   = ''
+                                    OR devVendor   IS NULL
                         """)
     devices = sql.fetchall() 
     conn.commit()    

@@ -60,19 +60,19 @@ def main():
     # execute_name_lookup('192.168.1.121', timeout)
 
     for device in unknown_devices:
-        domain_name, dns_server = execute_name_lookup(device['dev_LastIP'], timeout)
+        domain_name, dns_server = execute_name_lookup(device['devLastIP'], timeout)
 
         if domain_name != '':
             plugin_objects.add_object(
             # "MAC", "IP", "Server", "Name"
-            primaryId   = device['dev_MAC'],
-            secondaryId = device['dev_LastIP'],
+            primaryId   = device['devMac'],
+            secondaryId = device['devLastIP'],
             watched1    = dns_server,
             watched2    = domain_name,
             watched3    = '',
             watched4    = '',
             extra       = '',
-            foreignKey  = device['dev_MAC'])
+            foreignKey  = device['devMac'])
 
     plugin_objects.write_result_file()
     

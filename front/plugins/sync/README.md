@@ -31,9 +31,10 @@ The plugin operates in three different modes based on the configuration settings
 
 #### Node (Source) Settings `[n]`
 
+- **API Token** `[n,h]`: `API_TOKEN` (has to be same across all nodes)
+
 - **When to Run** `[n,h]`: `SYNC_RUN`
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
-- **API Token** `[n,h]`: `SYNC_api_token`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
 - **Node Name** `[n]`: `SYNC_node_name`
 - **Hub URL** `[n]`: `SYNC_hub_url`
@@ -42,9 +43,10 @@ The plugin operates in three different modes based on the configuration settings
 
 #### Hub (Target) Settings `[h]`
 
+- **API Token** `[n,h]`: `API_TOKEN` (has to be same across all nodes)
+
 - **When to Run** `[n,h]`: `SYNC_RUN`
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
-- **API Token** `[n,h]`: `SYNC_api_token`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
 - **Nodes to Pull From** `[h]`: `SYNC_nodes`
 

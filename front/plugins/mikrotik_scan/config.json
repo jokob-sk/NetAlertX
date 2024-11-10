@@ -30,7 +30,7 @@
     {
       "name": "ips",
       "type": "sql",
-      "value": "SELECT dev_LastIP from DEVICES order by dev_MAC",
+      "value": "SELECT devLastIP from DEVICES order by devMac",
       "timeoutMultiplier": true
     },
     {

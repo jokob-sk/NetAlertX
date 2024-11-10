@@ -51,7 +51,7 @@
     {
       "name": "prev_ip",
       "type": "sql",
-      "value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet' "
+      "value": "SELECT devLastIP FROM Devices WHERE devMac = 'Internet' "
     },
     {
       "name": "INTRNT_DIG_GET_IP_ARG",

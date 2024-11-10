@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Vous pouvez spécifier votre propre requête SQL qui retournera un fichier JSON et l'exposer via <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> le point de terminaison de fichier</a>.",
     "API_CUSTOM_SQL_name": "Point de terminaison personnalisé",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Conçu pour :",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Afficher _MENU_ entrées",
     "Events_Tablelenght_all": "Tous",
     "Events_Title": "Évènements",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Action",
     "Gen_Add": "Ajouter",
     "Gen_Add_All": "Ajouter tous",

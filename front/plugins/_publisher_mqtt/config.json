@@ -41,7 +41,7 @@
     {
       "name": "devices",
       "type": "sql",
-      "value": "SELECT dev_LastIP from DEVICES",
+      "value": "SELECT devLastIP from DEVICES",
       "timeoutMultiplier": true
     }
   ],
@@ -740,7 +740,7 @@
           { "elementType": "input", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": "select rowid, * from Devices where dev_Name not in ({s-quote}null{s-quote}, {s-quote}(name not found){s-quote}, {s-quote}(unknown){s-quote})",
+      "default_value": "select rowid, * from Devices where devName not in ({s-quote}null{s-quote}, {s-quote}(name not found){s-quote}, {s-quote}(unknown){s-quote})",
       "options": [],
       "localized": ["name", "description"],
       "name": [

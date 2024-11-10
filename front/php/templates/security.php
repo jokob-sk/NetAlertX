@@ -55,7 +55,7 @@ $configLines = file(CONFIG_PATH);
 // Handle web protection and password
 $nax_WebProtection = strtolower(trim(getConfigLine('/^SETPWD_enable_password.*=/', $configLines)[1] ?? 'false'));
 $nax_Password = getConfigValue('/^SETPWD_password.*=/', $configLines);
-$api_token = getConfigValue('/^SYNC_api_token.*=/', $configLines, "'");
+$api_token = getConfigValue('/^API_TOKEN.*=/', $configLines, "'");
 
 $expectedToken = 'Bearer ' . $api_token;
 

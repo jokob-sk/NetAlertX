@@ -7,6 +7,9 @@ from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_a
 from logger import mylog
 from helper import write_file
 
+# Import the start_server function
+from graphql_server.graphql_server_start import start_server 
+
 apiEndpoints = []
 
 #===============================================================================
@@ -42,6 +45,9 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
         if updateOnlyDataSources == [] or dsSQL[0] in updateOnlyDataSources:
 
             api_endpoint_class(db, dsSQL[1], folder + 'table_' + dsSQL[0] + '.json')
+            
+    # Start the GraphQL server
+    start_server()
 
 
 #-------------------------------------------------------------------------------

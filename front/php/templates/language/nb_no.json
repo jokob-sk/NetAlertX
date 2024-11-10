@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Du kan spesifisere en egendefinert SQL-Spørring som vil generere en JSON-fil og deretter eksponere den via <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
     "API_CUSTOM_SQL_name": "Egendefinert endepunkt",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Designet for:",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Show _MENU_ entries",
     "Events_Tablelenght_all": "Alle",
     "Events_Title": "Hendelser",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Handling",
     "Gen_Add": "Legg til",
     "Gen_Add_All": "Legg til alle",

@@ -73,22 +73,22 @@ function getDeviceData() {
 
   // Device Data
   $sql = 'SELECT rowid, *,
-            CASE WHEN dev_AlertDeviceDown !=0 AND dev_PresentLastScan=0 THEN "Down"
-                 WHEN dev_PresentLastScan=1 THEN "On-line"
-                 ELSE "Off-line" END as dev_Status
+            CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
+                 WHEN devPresentLastScan=1 THEN "On-line"
+                 ELSE "Off-line" END as devStatus
           FROM Devices
-          WHERE dev_MAC="'. $mac .'" or cast(rowid as text)="'. $mac. '"';
+          WHERE devMac="'. $mac .'" or cast(rowid as text)="'. $mac. '"';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_ASSOC);
   $deviceData = $row;
-  $mac = $deviceData['dev_MAC'];
+  $mac = $deviceData['devMac'];
 
-  $deviceData['dev_Network_Node_MAC_ADDR'] = $row['dev_Network_Node_MAC_ADDR'];
-  $deviceData['dev_Network_Node_port'] = $row['dev_Network_Node_port'];
-  $deviceData['dev_FirstConnection'] = formatDate ($row['dev_FirstConnection']); // Date formated
-  $deviceData['dev_LastConnection'] =  formatDate ($row['dev_LastConnection']);  // Date formated
+  $deviceData['devParentMAC'] = $row['devParentMAC'];
+  $deviceData['devParentPort'] = $row['devParentPort'];
+  $deviceData['devFirstConnection'] = formatDate ($row['devFirstConnection']); // Date formated
+  $deviceData['devLastConnection'] =  formatDate ($row['devLastConnection']);  // Date formated
 
-  $deviceData['dev_RandomMAC'] = isRandomMAC($mac);
+  $deviceData['devRandomMAC'] = isRandomMAC($mac);
 
   // Count Totals
   $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
@@ -101,19 +101,19 @@ function getDeviceData() {
                OR ses_StillConnected = 1 )';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['dev_Sessions'] = $row[0];
+  $deviceData['devSessions'] = $row[0];
   
   // Events
   $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" ';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['dev_Events'] = $row[0];
+  $deviceData['devEvents'] = $row[0];
 
   // Down Alerts
   $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType = "Device Down"';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['dev_DownAlerts'] = $row[0];
+  $deviceData['devDownAlerts'] = $row[0];
 
   // Get current date using php, sql datetime does not return time respective to timezone.
   $currentdate = date("Y-m-d H:i:s");
@@ -130,7 +130,7 @@ function getDeviceData() {
                  OR ses_StillConnected = 1 )';
   $result = $db->query($sql);
   $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['dev_PresenceHours'] = round ($row[0]);
+  $deviceData['devPresenceHours'] = round ($row[0]);
 
   // Return json
   echo (json_encode ($deviceData));
@@ -145,27 +145,27 @@ function setDeviceData() {
 
   // sql
   $sql = 'UPDATE Devices SET
-                 dev_Name                   = "'. quotes($_REQUEST['name'])         .'",
-                 dev_Owner                  = "'. quotes($_REQUEST['owner'])        .'",
-                 dev_DeviceType             = "'. quotes($_REQUEST['type'])         .'",
-                 dev_Vendor                 = "'. quotes($_REQUEST['vendor'])       .'",
-                 dev_Icon                   = "'. quotes($_REQUEST['icon'])         .'",
-                 dev_Favorite               = "'. quotes($_REQUEST['favorite'])     .'",
-                 dev_Group                  = "'. quotes($_REQUEST['group'])        .'",
-                 dev_Location               = "'. quotes($_REQUEST['location'])     .'",
-                 dev_Comments               = "'. quotes($_REQUEST['comments'])     .'",
-                 dev_Network_Node_MAC_ADDR  = "'. quotes($_REQUEST['networknode']).'",
-                 dev_Network_Node_port      = "'. quotes($_REQUEST['networknodeport']).'",
-                 dev_SSID                   = "'. quotes($_REQUEST['ssid']).'",
-                 dev_NetworkSite            = "'. quotes($_REQUEST['networksite']).'",
-                 dev_StaticIP               = "'. quotes($_REQUEST['staticIP'])     .'",
-                 dev_ScanCycle              = "'. quotes($_REQUEST['scancycle'])    .'",
-                 dev_AlertEvents            = "'. quotes($_REQUEST['alertevents'])  .'",
-                 dev_AlertDeviceDown        = "'. quotes($_REQUEST['alertdown'])    .'",
-                 dev_SkipRepeated           = "'. quotes($_REQUEST['skiprepeated']) .'",
-                 dev_NewDevice              = "'. quotes($_REQUEST['newdevice'])    .'",
-                 dev_Archived               = "'. quotes($_REQUEST['archived'])     .'"
-          WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
+                 devName                   = "'. quotes($_REQUEST['name'])         .'",
+                 devOwner                  = "'. quotes($_REQUEST['owner'])        .'",
+                 devType             = "'. quotes($_REQUEST['type'])         .'",
+                 devVendor                 = "'. quotes($_REQUEST['vendor'])       .'",
+                 devIcon                   = "'. quotes($_REQUEST['icon'])         .'",
+                 devFavorite               = "'. quotes($_REQUEST['favorite'])     .'",
+                 devGroup                  = "'. quotes($_REQUEST['group'])        .'",
+                 devLocation               = "'. quotes($_REQUEST['location'])     .'",
+                 devComments               = "'. quotes($_REQUEST['comments'])     .'",
+                 devParentMAC  = "'. quotes($_REQUEST['networknode']).'",
+                 devParentPort      = "'. quotes($_REQUEST['networknodeport']).'",
+                 devSSID                   = "'. quotes($_REQUEST['ssid']).'",
+                 devSite            = "'. quotes($_REQUEST['networksite']).'",
+                 devStaticIP               = "'. quotes($_REQUEST['staticIP'])     .'",
+                 devScan              = "'. quotes($_REQUEST['scancycle'])    .'",
+                 devAlertEvents            = "'. quotes($_REQUEST['alertevents'])  .'",
+                 devAlertDown        = "'. quotes($_REQUEST['alertdown'])    .'",
+                 devSkipRepeated           = "'. quotes($_REQUEST['skiprepeated']) .'",
+                 devIsNew              = "'. quotes($_REQUEST['newdevice'])    .'",
+                 devIsArchived               = "'. quotes($_REQUEST['archived'])     .'"
+          WHERE devMac="' . $_REQUEST['mac'] .'"';
   // update Data
   $result = $db->query($sql);
 
@@ -185,7 +185,7 @@ function deleteDevice() {
   global $db;
 
   // sql
-  $sql = 'DELETE FROM Devices WHERE dev_MAC="' . $_REQUEST['mac'] .'"';
+  $sql = 'DELETE FROM Devices WHERE devMac="' . $_REQUEST['mac'] .'"';
   // execute sql
   $result = $db->query($sql);
 
@@ -204,7 +204,7 @@ function deleteAllWithEmptyMACs() {
   global $db;  
 
   // sql
-  $sql = 'DELETE FROM Devices WHERE dev_MAC=""';
+  $sql = 'DELETE FROM Devices WHERE devMac=""';
   // execute sql
   $result = $db->query($sql);
 
@@ -223,7 +223,7 @@ function deleteUnknownDevices() {
   global $db;  
 
   // sql
-  $sql = 'DELETE FROM Devices WHERE dev_Name="(unknown)" OR dev_Name="(name not found)"';
+  $sql = 'DELETE FROM Devices WHERE devName="(unknown)" OR devName="(name not found)"';
   // execute sql
   $result = $db->query($sql);
 
@@ -598,30 +598,30 @@ function getDevicesList() {
 
   // This object is used to map from the old order ( second parameter, first number) to the new mapping, that is represented by the 3rd parameter (Second number)
   $columnOrderMapping = array(
-    array("dev_Name", 0, 0),               
-    array("dev_Owner", 1, 1),              
-    array("dev_DeviceType", 2, 2),         
-    array("dev_Icon", 3, 3),               
-    array("dev_Favorite", 4, 4),           
-    array("dev_Group", 5, 5),              
-    array("dev_FirstConnection", 6, 6),    
-    array("dev_LastConnection", 7, 7),     
-    array("dev_LastIP", 8, 8),             
-    array("dev_MAC", 9, 9),                
-    array("dev_Status", 10, 10),            
-    array("dev_MAC_full", 11, 11),          
-    array("dev_LastIP_orderable", 12, 12),  
+    array("devName", 0, 0),               
+    array("devOwner", 1, 1),              
+    array("devType", 2, 2),         
+    array("devIcon", 3, 3),               
+    array("devFavorite", 4, 4),           
+    array("devGroup", 5, 5),              
+    array("devFirstConnection", 6, 6),    
+    array("devLastConnection", 7, 7),     
+    array("devLastIP", 8, 8),             
+    array("devMac", 9, 9),                
+    array("devStatus", 10, 10),            
+    array("devMac_full", 11, 11),          
+    array("devLastIP_orderable", 12, 12),  
     array("rowid", 13, 13),            
-    array("dev_Network_Node_MAC_ADDR", 14, 14),
+    array("devParentMAC", 14, 14),
     array("connected_devices", 15, 15),
-    array("dev_Location", 16, 16),
-    array("dev_Vendor", 17, 17),           
-    array("dev_Network_Node_port", 18, 18),           
-    array("dev_GUID", 19, 19),           
-    array("dev_SyncHubNodeName", 20, 20),           
-    array("dev_NetworkSite", 21, 21),           
-    array("dev_SSID", 22, 22),           
-    array("dev_SourcePlugin", 23, 23)           
+    array("devLocation", 16, 16),
+    array("devVendor", 17, 17),           
+    array("devParentPort", 18, 18),           
+    array("devGUID", 19, 19),           
+    array("devSyncHubNode", 20, 20),           
+    array("devSite", 21, 21),           
+    array("devSSID", 22, 22),           
+    array("devSourcePlugin", 23, 23)           
   );
 
   if($forceDefaultOrder == FALSE) 
@@ -650,19 +650,19 @@ function getDevicesList() {
 
   $sql = 'SELECT * FROM (
               SELECT rowid, *, CASE
-                      WHEN t1.dev_AlertDeviceDown !=0 AND t1.dev_PresentLastScan=0 THEN "Down"
-                      WHEN t1.dev_NewDevice=1 THEN "New"
-                      WHEN t1.dev_PresentLastScan=1 THEN "On-line"
-                      ELSE "Off-line"  END AS dev_Status
+                      WHEN t1.devAlertDown !=0 AND t1.devPresentLastScan=0 THEN "Down"
+                      WHEN t1.devIsNew=1 THEN "New"
+                      WHEN t1.devPresentLastScan=1 THEN "On-line"
+                      ELSE "Off-line"  END AS devStatus
                       FROM Devices t1 '.$condition.') t3  
                     LEFT JOIN
                               (
-                                    SELECT dev_Network_Node_MAC_ADDR as dev_Network_Node_MAC_ADDR_t2, dev_MAC as dev_MAC_t2,
+                                    SELECT devParentMAC as devParentMAC_t2, devMac as devMac_t2,
                                           count() as connected_devices 
                                     FROM Devices b 
-                                    WHERE b.dev_Network_Node_MAC_ADDR NOT NULL group by b.dev_Network_Node_MAC_ADDR
+                                    WHERE b.devParentMAC NOT NULL group by b.devParentMAC
                               ) t2
-                              ON (t3.dev_MAC = t2.dev_Network_Node_MAC_ADDR_t2);';
+                              ON (t3.devMac = t2.devParentMAC_t2);';
 
   $result = $db->query($sql);
   
@@ -671,31 +671,31 @@ function getDevicesList() {
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
 
     $defaultOrder = array (
-                            $row['dev_Name'],
-                            $row['dev_Owner'],
-                            handleNull($row['dev_DeviceType']),
-                            handleNull($row['dev_Icon'], "PGkgY2xhc3M9J2ZhIGZhLWxhcHRvcCc+PC9pPg=="), // laptop icon
-                            $row['dev_Favorite'],
-                            $row['dev_Group'],
+                            $row['devName'],
+                            $row['devOwner'],
+                            handleNull($row['devType']),
+                            handleNull($row['devIcon'], "PGkgY2xhc3M9J2ZhIGZhLWxhcHRvcCc+PC9pPg=="), // laptop icon
+                            $row['devFavorite'],
+                            $row['devGroup'],
                             // ----
-                            formatDate ($row['dev_FirstConnection']),
-                            formatDate ($row['dev_LastConnection']),
-                            $row['dev_LastIP'],
-                            ( isRandomMAC($row['dev_MAC']) ),
-                            $row['dev_Status'],
-                            $row['dev_MAC'], // MAC (hidden)
-                            formatIPlong ($row['dev_LastIP']), // IP orderable
+                            formatDate ($row['devFirstConnection']),
+                            formatDate ($row['devLastConnection']),
+                            $row['devLastIP'],
+                            ( isRandomMAC($row['devMac']) ),
+                            $row['devStatus'],
+                            $row['devMac'], // MAC (hidden)
+                            formatIPlong ($row['devLastIP']), // IP orderable
                             $row['rowid'], // Rowid (hidden)      
-                            handleNull($row['dev_Network_Node_MAC_ADDR']),
+                            handleNull($row['devParentMAC']),
                             handleNull($row['connected_devices']),
-                            handleNull($row['dev_Location']), 
-                            handleNull($row['dev_Vendor']),                            
-                            handleNull($row['dev_Network_Node_port']),                            
-                            handleNull($row['dev_GUID']),                            
-                            handleNull($row['dev_SyncHubNodeName']),                            
-                            handleNull($row['dev_NetworkSite']),                            
-                            handleNull($row['dev_SSID']),                            
-                            handleNull($row['dev_SourcePlugin'])                            
+                            handleNull($row['devLocation']), 
+                            handleNull($row['devVendor']),                            
+                            handleNull($row['devParentPort']),                            
+                            handleNull($row['devGUID']),                            
+                            handleNull($row['devSyncHubNode']),                            
+                            handleNull($row['devSite']),                            
+                            handleNull($row['devSSID']),                            
+                            handleNull($row['devSourcePlugin'])                            
                           );
 
     $newOrder = array();
@@ -758,13 +758,13 @@ function getDevicesListCalendar() {
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-    if ($row['dev_Favorite'] == 1) {
-      $row['dev_Name'] = '<span class="text-yellow">&#9733</span>&nbsp'. $row['dev_Name'];
+    if ($row['devFavorite'] == 1) {
+      $row['devName'] = '<span class="text-yellow">&#9733</span>&nbsp'. $row['devName'];
     }
 
-    $tableData[] = array ('id'       => $row['dev_MAC'],
-                          'title'    => $row['dev_Name'],
-                          'favorite' => $row['dev_Favorite']);
+    $tableData[] = array ('id'       => $row['devMac'],
+                          'title'    => $row['devName'],
+                          'favorite' => $row['devFavorite']);
   }
 
   // Return json
@@ -781,14 +781,14 @@ function getIcons() {
   global $db;
 
   // Device Data
-  $sql = 'select dev_Icon from Devices group by dev_Icon';
+  $sql = 'select devIcon from Devices group by devIcon';
 
   $result = $db->query($sql);
 
   // arrays of rows
   $tableData = array();
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $icon = handleNull($row['dev_Icon'], "<i class='fa fa-laptop'></i>"); 
+    $icon = handleNull($row['devIcon'], "<i class='fa fa-laptop'></i>"); 
     // Push row data
     $tableData[] = array('id'    => $icon, 
                          'name'  => $icon );                          
@@ -821,7 +821,7 @@ function getDevices() {
   global $db;
 
   // Device Data
-  $sql = 'select dev_MAC, dev_Name from Devices';
+  $sql = 'select devMac, devName from Devices';
 
   $result = $db->query($sql);
 
@@ -829,8 +829,8 @@ function getDevices() {
   $tableData = array();
 
   while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $name = handleNull($row['dev_Name'], "(unknown)"); 
-    $mac = handleNull($row['dev_MAC'], "(unknown)"); 
+    $name = handleNull($row['devName'], "(unknown)"); 
+    $mac = handleNull($row['devMac'], "(unknown)"); 
     // Push row data
     $tableData[] = array('id'    => $mac, 
                          'name'  => $name  );                          
@@ -858,7 +858,7 @@ function updateNetworkLeaf()
   {
     global $db;
     // sql
-    $sql = 'UPDATE Devices SET "dev_Network_Node_MAC_ADDR" = "'. $nodeMac .'" WHERE "dev_MAC"="' . $leafMac.'"' ;
+    $sql = 'UPDATE Devices SET "devParentMAC" = "'. $nodeMac .'" WHERE "devMac"="' . $leafMac.'"' ;
     // update Data
     $result = $db->query($sql);
 
@@ -885,7 +885,7 @@ function overwriteIconType()
   {
     global $db;
     // sql    
-    $sql = 'UPDATE Devices SET "dev_Icon" = "'. $icon .'" where dev_DeviceType in (select dev_DeviceType from Devices where dev_MAC = "' . $mac.'")' ;
+    $sql = 'UPDATE Devices SET "devIcon" = "'. $icon .'" where devType in (select devType from Devices where devMac = "' . $mac.'")' ;
     // update Data
     $result = $db->query($sql);
 
@@ -935,19 +935,19 @@ function copyFromDevice() {
   $result = $db->query($sql);
 
   // create temporary table with the source data
-  $sql = "CREATE  TABLE temp_devices AS SELECT * FROM Devices WHERE dev_MAC = '". $MAC_FROM . "';";
+  $sql = "CREATE  TABLE temp_devices AS SELECT * FROM Devices WHERE devMac = '". $MAC_FROM . "';";
   $result = $db->query($sql);
 
   // update temporary table with the correct target MAC
-  $sql = "UPDATE temp_devices SET dev_MAC = '". $MAC_TO . "';";
+  $sql = "UPDATE temp_devices SET devMac = '". $MAC_TO . "';";
   $result = $db->query($sql);
   
   // delete previous entry
-  $sql = "DELETE FROM Devices WHERE dev_MAC = '". $MAC_TO . "';";
+  $sql = "DELETE FROM Devices WHERE devMac = '". $MAC_TO . "';";
   $result = $db->query($sql);
 
   // insert new entry with the correct target MAC from the temporary table
-  $sql = "INSERT INTO Devices SELECT * FROM temp_devices WHERE dev_MAC = '".$MAC_TO."'";
+  $sql = "INSERT INTO Devices SELECT * FROM temp_devices WHERE devMac = '".$MAC_TO."'";
   $result = $db->query($sql);
 
   // clean-up temporary table
@@ -968,13 +968,13 @@ function copyFromDevice() {
 //------------------------------------------------------------------------------
 function getDeviceCondition ($deviceStatus) {
   switch ($deviceStatus) {
-    case 'all':        return 'WHERE dev_Archived=0';                                                        break;
-    case 'my':         return 'WHERE dev_Archived=0';                                                        break;
-    case 'connected':  return 'WHERE dev_Archived=0 AND dev_PresentLastScan=1';                              break;
-    case 'favorites':  return 'WHERE dev_Archived=0 AND dev_Favorite=1';                                     break;
-    case 'new':        return 'WHERE dev_Archived=0 AND dev_NewDevice=1';                                    break;
-    case 'down':       return 'WHERE dev_Archived=0 AND dev_AlertDeviceDown !=0 AND dev_PresentLastScan=0';  break;
-    case 'archived':   return 'WHERE dev_Archived=1';                                                        break;
+    case 'all':        return 'WHERE devIsArchived=0';                                                        break;
+    case 'my':         return 'WHERE devIsArchived=0';                                                        break;
+    case 'connected':  return 'WHERE devIsArchived=0 AND devPresentLastScan=1';                              break;
+    case 'favorites':  return 'WHERE devIsArchived=0 AND devFavorite=1';                                     break;
+    case 'new':        return 'WHERE devIsArchived=0 AND devIsNew=1';                                    break;
+    case 'down':       return 'WHERE devIsArchived=0 AND devAlertDown !=0 AND devPresentLastScan=0';  break;
+    case 'archived':   return 'WHERE devIsArchived=1';                                                        break;
     default:           return 'WHERE 1=0';                                                                   break;
   }  
 }

@@ -64,9 +64,9 @@
             },
             "down_reconnected": [
               {
-                "dev_Name": "Phone - Pixel",
+                "devName": "Phone - Pixel",
                 "eve_MAC": "74:ac:74:ac:74:ac",
-                "dev_Vendor": "Google",
+                "devVendor": "Google",
                 "eve_IP": "192.168.1.167",
                 "DownTime": "2024-05-26 09:06:56+10:00",
                 "ConnectedTime": "2024-05-26 09:13:24+10:00"
@@ -75,9 +75,9 @@
             "down_reconnected_meta": {
               "title": "🔁 Reconnected down devices",
               "columnNames": [
-                "dev_Name",
+                "devName",
                 "eve_MAC",
-                "dev_Vendor",
+                "devVendor",
                 "eve_IP",
                 "DownTime",
                 "ConnectedTime"

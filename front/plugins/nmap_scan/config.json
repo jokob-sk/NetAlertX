@@ -50,13 +50,13 @@
     {
       "name": "ips",
       "type": "sql",
-      "value": "SELECT dev_LastIP from DEVICES order by dev_MAC",
+      "value": "SELECT devLastIP from DEVICES order by devMac",
       "timeoutMultiplier": true
     },
     {
       "name": "macs",
       "type": "sql",
-      "value": "SELECT dev_MAC from DEVICES order by dev_MAC"
+      "value": "SELECT devMac from DEVICES order by devMac"
     },
     {
       "name": "timeout",

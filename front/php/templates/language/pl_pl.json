@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Możesz określić własne zapytanie SQL które będzie generowało plik JSON i udostępnić je poprzez plik typu endpoint <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> </a>.",
     "API_CUSTOM_SQL_name": "Własny endpoint",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "About_Design": "Zaprojektowany dla:",
@@ -270,6 +272,8 @@
     "Events_Tablelenght": "Pokaż_wpisy_MENU",
     "Events_Tablelenght_all": "Wszystkie",
     "Events_Title": "Wydarzenia",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Akcja",
     "Gen_Add": "Dodaj",
     "Gen_Add_All": "Dodaj wszystko",

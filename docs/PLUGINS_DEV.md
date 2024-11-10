@@ -170,20 +170,20 @@ This SQL query is executed on the `app.db` SQLite database file.
 > SQL query example:
 > 
 > ```SQL
-> SELECT  dv.dev_Name as Object_PrimaryID, 
->     cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
+> SELECT  dv.devName as Object_PrimaryID, 
+>     cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
 >     datetime() as DateTime,  
 >     ns.Service as Watched_Value1,        
 >     ns.State as Watched_Value2,
 >     'null' as Watched_Value3,
 >     'null' as Watched_Value4,
 >     ns.Extra as Extra,
->     dv.dev_MAC as ForeignKey 
+>     dv.devMac as ForeignKey 
 > FROM 
 >     (SELECT * FROM Nmap_Scan) ns 
 > LEFT JOIN 
->     (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv 
-> ON ns.MAC = dv.dev_MAC
+>     (SELECT devName, devMac, devLastIP FROM Devices) dv 
+> ON ns.MAC = dv.devMac
 > ```
 > 
 > Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
@@ -192,7 +192,7 @@ This SQL query is executed on the `app.db` SQLite database file.
 > {
 >             "function": "CMD",
 >            "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
->            "default_value":"SELECT  dv.dev_Name as Object_PrimaryID, cast(dv.dev_LastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT dev_Name, dev_MAC, dev_LastIP FROM Devices) dv   ON ns.MAC = dv.dev_MAC",
+>            "default_value":"SELECT  dv.devName as Object_PrimaryID, cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT devName, devMac, devLastIP FROM Devices) dv   ON ns.MAC = dv.devMac",
 >            "options": [],
 >            "localized": ["name", "description"],
 >            "name" : [{
@@ -460,7 +460,7 @@ Below are some general additional notes, when defining `params`:
 
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
-  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT dev_MAC from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
+  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT devMac from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
   - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `PIHOLE_RUN`. 
 - `"value": "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
 - `"timeoutMultiplier" : true` - used to indicate if the value should multiply the max timeout for the whole script run by the number of values in the given parameter.
@@ -474,13 +474,13 @@ Below are some general additional notes, when defining `params`:
 >     "params" : [{
 >            "name"              : "ips",
 >            "type"              : "sql",
->            "value"             : "SELECT dev_LastIP from DEVICES",
+>            "value"             : "SELECT devLastIP from DEVICES",
 >            "timeoutMultiplier" : true
 >        },
 >        {
 >            "name"              : "macs",
 >            "type"              : "sql",
->            "value"             : "SELECT dev_MAC from DEVICES"            
+>            "value"             : "SELECT devMac from DEVICES"            
 >        },
 >        {
 >            "name"              : "timeout",
@@ -527,7 +527,7 @@ The UI component is defined as a JSON object containing a list of `elements`. Ea
 
 ```json
 {
-      "function": "dev_Icon",
+      "function": "devIcon",
       "type": {
         "dataType": "string",
         "elements": [
@@ -536,7 +536,7 @@ The UI component is defined as a JSON object containing a list of `elements`. Ea
             "elementOptions": [
               { "cssClasses": "input-group-addon iconPreview" },
               { "getStringKey": "Gen_SelectToPreview" },
-              { "customId": "NEWDEV_dev_Icon_preview" }
+              { "customId": "NEWDEV_devIcon_preview" }
             ],
             "transformers": []
           },
@@ -548,7 +548,7 @@ The UI component is defined as a JSON object containing a list of `elements`. Ea
               {
                 "onChange": "updateIconPreview(this)"
               },
-              { "customParams": "NEWDEV_dev_Icon,NEWDEV_dev_Icon_preview" }
+              { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
             ],
             "transformers": []
           }          
@@ -649,7 +649,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | See below for information on `threshold`, `replace`. | |
 |  |  |
 | `options` Property | Used in conjunction with types like `threshold`, `replace`, `regex`. |
-| `options_params` Property | Used in conjunction with a `"options": "[{value}]"` template and `text.select`/`list.select`. Can specify SQL query (needs to return 2 columns `SELECT dev_Name as name, dev_Mac as id`) or Setting (not tested) to populate the dropdown. Check example below or have a look at the `NEWDEV` plugin `config.json` file. |
+| `options_params` Property | Used in conjunction with a `"options": "[{value}]"` template and `text.select`/`list.select`. Can specify SQL query (needs to return 2 columns `SELECT devName as name, devMac as id`) or Setting (not tested) to populate the dropdown. Check example below or have a look at the `NEWDEV` plugin `config.json` file. |
 | `threshold` | The `options` array contains objects ordered from the lowest `maximum` to the highest. The corresponding `hexColor` is used for the value background color if it's less than the specified `maximum` but more than the previous one in the `options` array. |
 | `replace` | The `options` array contains objects with an `equals` property, which is compared to the "value." If the values are the same, the string in `replacement` is displayed in the UI instead of the actual "value". |
 | `regex` | Applies a regex to the value.  The `options` array contains objects with an `type` (must be set to `regex`) and `param` (must contain the regex itself) property. |
@@ -669,7 +669,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 
 
 ```json
-        "function": "dev_DeviceType",
+        "function": "devType",
         "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
         "maxLength": 30,
         "default_value": "",
@@ -678,7 +678,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
             {
                 "name"  : "value",
                 "type"  : "sql",
-                "value" : "SELECT '' as id, '' as name UNION SELECT dev_DeviceType as id, dev_DeviceType as name FROM (SELECT dev_DeviceType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;"
+                "value" : "SELECT '' as id, '' as name UNION SELECT devType as id, devType as name FROM (SELECT devType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;"
             },
             {
                 "name"  : "uilang",

@@ -40,17 +40,12 @@
     {
       "name": "macs",
       "type": "sql",
-      "value": "SELECT dev_MAC from DEVICES"
+      "value": "SELECT devMac from DEVICES"
     },
     {
       "name": "urls",
       "type": "setting",
       "value": "WEBMON_urls_to_check"
-    },
-    {
-      "name": "internet_ip",
-      "type": "setting",
-      "value": "WEBMON_SQL_internet_ip"
     }
   ],
   "database_column_definitions": [
@@ -675,42 +670,6 @@
         {
           "language_code": "es_es",
           "string": "Servicios para ver. Ingrese la URL completa, por ejemplo, <code>https://google.com</code>. Los valores de esta configuración se usarán para reemplazar el comodín <code>{urls}</code> en la configuración < code>WEBMON_CMD</code>."
-        }
-      ]
-    },
-    {
-      "function": "SQL_internet_ip",
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": "SELECT dev_LastIP FROM Devices WHERE dev_MAC = 'Internet'",
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Helper variable"
-        },
-        {
-          "language_code": "es_es",
-          "string": "Variable de ayuda"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Unused setting - for demonstration only. Getting the IP address of the Router / Internet."
-        },
-        {
-          "language_code": "es_es",
-          "string": "Configuración no utilizada: solo para demostración. Obtener la dirección IP del enrutador / Internet."
         }
       ]
     }

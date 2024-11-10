@@ -252,7 +252,7 @@ def main():
     # log result
     plugin_objects.write_result_file()
     
-    #mylog(OMDLOGLEVEL, [f'[{pluginName}] TEST name from MAC: {device_handler.getValueWithMac('dev_Name','00:e2:59:00:a0:8e')}'])  
+    #mylog(OMDLOGLEVEL, [f'[{pluginName}] TEST name from MAC: {device_handler.getValueWithMac('devName','00:e2:59:00:a0:8e')}'])  
     #mylog(OMDLOGLEVEL, [f'[{pluginName}] TEST MAC from IP: {get_mac_from_IP('192.168.0.1')} also {ietf2ieee_mac_formater(get_mac_from_IP('192.168.0.1'))}'])  
     end_time = time.time()
     mylog('verbose', [f'[{pluginName}] execution completed in {end_time - start_time:.2f} seconds'])
@@ -423,7 +423,7 @@ def get_device_data(omada_clients_output,switches_and_aps,device_handler):
         odevice_data_reordered = [ MAC, IP, NAME, SWITCH_AP, PORT_SSID, TYPE]
         odevice_data_reordered[MAC]=odevice_data[cMAC]
         odevice_data_reordered[IP]=odevice_data[cIP]
-        real_naxname = device_handler.getValueWithMac('dev_Name',ieee2ietf_mac_formater(odevice_data[cMAC]))
+        real_naxname = device_handler.getValueWithMac('devName',ieee2ietf_mac_formater(odevice_data[cMAC]))
 
         #
         # if the name stored in Nax for a device is empty or the MAC addres or has some parenthhesis or is the same as in omada

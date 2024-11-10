@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "Benutzerdefinierte SQL-Abfrage, welche eine JSON-Datei generiert und diese mit dem <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">Dateiendpunkt <code>table_custom_endpoint.json</code></a> zur Verfügung stellt.",
     "API_CUSTOM_SQL_name": "Benutzerdefinierte SQL-Abfrage",
+    "API_TOKEN_description": "",
+    "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
     "APPRISE_HOST_description": "Apprise host URL starting with <code>http://</code> or <code>https://</code>. (do not forget to include <code>/notify</code> at the end)",
@@ -282,6 +284,8 @@
     "Events_Tablelenght": "Zeige _MENU_ Einträge",
     "Events_Tablelenght_all": "Alle",
     "Events_Title": "Ereignisse",
+    "GRAPHQL_PORT_description": "",
+    "GRAPHQL_PORT_name": "",
     "Gen_Action": "Action",
     "Gen_Add": "Hinzufügen",
     "Gen_Add_All": "Alle hinzufügen",
