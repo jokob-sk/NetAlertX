@@ -75,7 +75,7 @@ def update_or_append(settings_list, item_tuple, key):
     for index, item in enumerate(settings_list):
         if item[0] == key:
             mylog('trace', ['[Import Config] OLD TUPLE  : ', item])
-            # Keep values marked as "_KEEP_"
+            # Keep values marked as "_KEEP_" in existing entries
             updated_tuple = tuple(
                 new_val if new_val != "_KEEP_" else old_val
                 for old_val, new_val in zip(item, item_tuple)
@@ -84,12 +84,15 @@ def update_or_append(settings_list, item_tuple, key):
             settings_list[index] = updated_tuple
             mylog('trace', ['[Import Config] FOUND key : ', key])
             return settings_list     
-    
 
-    settings_list.append(item_tuple)
+    # Append the item only if no values are "_KEEP_"
+    if "_KEEP_" not in item_tuple:
+        settings_list.append(item_tuple)
+        mylog('trace', ['[Import Config] ADDED key : ', key])
+    else:
+        mylog('none', ['[Import Config] Skipped saving _KEEP_ for key : ', key])
+        
     return settings_list
-
-
     
 #-------------------------------------------------------------------------------
 

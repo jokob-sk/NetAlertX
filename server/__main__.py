@@ -78,11 +78,6 @@ def main ():
     #===============================================================================
     # This is the main loop of NetAlertX 
     #===============================================================================
-    
-    mylog('debug', '[MAIN] Starting GraphQL server')
-
-    # Path to your `graphql_server.py` file
-    flask_app_path = applicationPath + '/server/graphql_server.py'
 
     mylog('debug', '[MAIN] Starting loop')
 

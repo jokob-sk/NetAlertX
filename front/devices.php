@@ -378,6 +378,9 @@ function getDeviceStatus(item)
 // -----------------------------------------------------------------------------
 function initializeDatatable_new (status) {
 
+ console.log(tableColumnVisible);
+  
+
 // Build GraphQL query dynamically based on tableColumnVisible
 let columnsToFetch = [
     'devMac', 'devName', 'devLastConnection', 'devIsArchived', 'devOwner', 'devType', 
@@ -481,7 +484,7 @@ $.ajax({
                     } else {
                         $(td).html('');
                     }
-                }},
+                }}
                 
                 // Other columns (Status, MAC, Date, etc.) can be similarly customized.
             ],

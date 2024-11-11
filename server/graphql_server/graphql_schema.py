@@ -14,12 +14,6 @@ from const import apiPath
 # Define a base URL with the user's home directory
 folder = apiPath 
 
-# Load your JSON data
-with open(folder + 'table_devices.json', 'r') as f:
-    devices_data = json.load(f)["data"]
-    
-    # mylog('none', [f'[graphql_schema] devices_data {devices_data}'])
-
 # Device ObjectType
 class Device(ObjectType):
     rowid = Int()
@@ -55,49 +49,20 @@ class Device(ObjectType):
     devSourcePlugin = String()  # This should match devSourcePlugin, not devSourcePlugin
 
 
-# Query ObjectType
 class Query(ObjectType):
     devices = List(Device)
 
     def resolve_devices(self, info):
-        # Map the data to match the GraphQL schema's camelCase
-        mapped_devices = []
-        for device in devices_data:
-            mapped_device = {
-                'rowid': device['rowid'],
-                'devMac': device['devMac'],  # Mapping from snake_case to camelCase
-                'devName': device['devName'],
-                'devOwner': device['devOwner'],
-                'devType': device['devType'],
-                'devVendor': device['devVendor'],
-                'devFavorite': device['devFavorite'],
-                'devGroup': device['devGroup'],
-                'devComments': device['devComments'],
-                'devFirstConnection': device['devFirstConnection'],
-                'devLastConnection': device['devLastConnection'],
-                'devLastIP': device['devLastIP'],
-                'devStaticIP': device['devStaticIP'],
-                'devScan': device['devScan'],
-                'devLogEvents': device['devLogEvents'],
-                'devAlertEvents': device['devAlertEvents'],
-                'devAlertDown': device['devAlertDown'],
-                'devSkipRepeated': device['devSkipRepeated'],
-                'devLastNotification': device['devLastNotification'],
-                'devPresentLastScan': device['devPresentLastScan'],
-                'devIsNew': device['devIsNew'],
-                'devLocation': device['devLocation'],
-                'devIsArchived': device['devIsArchived'],
-                'devParentMAC': device['devParentMAC'],
-                'devParentPort': device['devParentPort'],
-                'devIcon': device['devIcon'],
-                'devGUID': device['devGUID'],
-                'devSite': device['devSite'],
-                'devSSID': device['devSSID'],
-                'devSyncHubNode': device['devSyncHubNode'],
-                'devSourcePlugin': device['devSourcePlugin']
-            }
-            mapped_devices.append(mapped_device)
-        return mapped_devices
+        # Load JSON data only when the query executes
+        try:
+            with open(folder + 'table_devices.json', 'r') as f:
+                devices_data = json.load(f)["data"]
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            mylog('error', f'[graphql_schema] Error loading devices data: {e}')
+            return []
+
+        return devices_data  # Directly return the data without mapping
+
 
 
 # Schema Definition

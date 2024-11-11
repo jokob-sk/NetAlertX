@@ -464,10 +464,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           
           // INPUT
 
-          // console.log(codeName);
-          
           // Parse the setType JSON string into an object
           let inputHtml = '';
+
+          console.log(codeName);
           console.log(setType);
           
           const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));
