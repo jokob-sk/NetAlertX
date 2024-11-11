@@ -17,36 +17,36 @@ folder = apiPath
 # Device ObjectType
 class Device(ObjectType):
     rowid = Int()
-    devMac = String()  # This should match devMac, not devMac
-    devName = String()  # This should match devName, not devName
-    devOwner = String()  # This should match devOwner, not devOwner
-    devType = String()  # This should match devType, not devType
-    devVendor = String()  # This should match devVendor, not devVendor
-    devFavorite = Int()  # This should match devFavorite, not devFavorite
-    devGroup = String()  # This should match devGroup, not devGroup
-    devComments = String()  # This should match devComments, not devComments
-    devFirstConnection = String()  # This should match devFirstConnection, not devFirstConnection
-    devLastConnection = String()  # This should match devLastConnection, not devLastConnection
-    devLastIP = String()  # This should match devLastIP, not devLastIP
-    devStaticIP = Int()  # This should match devStaticIP, not devStaticIP
-    devScan = Int()  # This should match devScan, not devScan
-    devLogEvents = Int()  # This should match devLogEvents, not devLogEvents
-    devAlertEvents = Int()  # This should match devAlertEvents, not devAlertEvents
-    devAlertDeviceDown = Int()  # This should match devAlertDeviceDown, not devAlertDown
-    devSkipRepeated = Int()  # This should match devSkipRepeated, not devSkipRepeated
-    devLastNotification = String()  # This should match devLastNotification, not devLastNotification
-    devPresentLastScan = Int()  # This should match devPresentLastScan, not devPresentLastScan
-    devNewDevice = Int()  # This should match devNewDevice, not devIsNew
-    devLocation = String()  # This should match devLocation, not devLocation
-    devArchived = Int()  # This should match devArchived, not devIsArchived
-    devNetworkNodeMACADDR = String()  # This should match devNetworkNodeMACADDR, not devParentMAC
-    devNetworkNodePort = String()  # This should match devNetworkNodePort, not devParentPort
-    devIcon = String()  # This should match devIcon, not devIcon
-    devGUID = String()  # This should match devGUID, not devGUID
-    devNetworkSite = String()  # This should match devNetworkSite, not devSite
-    devSSID = String()  # This should match devSSID, not devSSID
-    devSyncHubNodeName = String()  # This should match devSyncHubNodeName, not devSyncHubNode
-    devSourcePlugin = String()  # This should match devSourcePlugin, not devSourcePlugin
+    devMac = String()  
+    devName = String()  
+    devOwner = String() 
+    devType = String()  
+    devVendor = String()  
+    devFavorite = Int()  
+    devGroup = String()  
+    devComments = String() 
+    devFirstConnection = String() 
+    devLastConnection = String() 
+    devLastIP = String() 
+    devStaticIP = Int()  
+    devScan = Int()  
+    devLogEvents = Int() 
+    devAlertEvents = Int() 
+    devAlertDown = Int()  
+    devSkipRepeated = Int() 
+    devLastNotification = String() 
+    devPresentLastScan = Int() 
+    devIsNew = Int()  
+    devLocation = String() 
+    devIsArchived = Int() 
+    devParentMAC = String()  
+    devParentPort = String()  
+    devIcon = String() 
+    devGUID = String() 
+    devSite = String() 
+    devSSID = String() 
+    devSyncHubNode = String() 
+    devSourcePlugin = String()
 
 
 class Query(ObjectType):
@@ -68,7 +68,7 @@ class Query(ObjectType):
 # Schema Definition
 devicesSchema = graphene.Schema(query=Query)
 
-
+# # Sample query
 # $.ajax({
 #     url: 'php/server/query_graphql.php', // The PHP endpoint that proxies to the GraphQL server
 #     type: 'POST',
