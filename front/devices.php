@@ -711,7 +711,7 @@ function initializeDatatable (status) {
       },
       "info":           "<?= lang('Device_Table_info');?>",
     },
-    initComplete: function (settings, JSON) {
+    initComplete: function (settings, devices) {
       // Handle any additional interactions or event listeners as required
       // Save cookie Rows displayed, and Parameters rows & order
       $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
