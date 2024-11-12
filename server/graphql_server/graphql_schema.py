@@ -1,8 +1,7 @@
 import graphene
-from graphene import ObjectType, String, Int, Boolean, Field, List
+from graphene import ObjectType, String, Int, Boolean, List, Field, InputObjectType
 import json
 import sys
-
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
@@ -13,6 +12,17 @@ from const import apiPath
 
 # Define a base URL with the user's home directory
 folder = apiPath 
+
+# Pagination and Sorting Input Types
+class SortOptionsInput(InputObjectType):
+    field = String()
+    order = String()
+
+class PageQueryOptionsInput(InputObjectType):
+    page = Int()
+    limit = Int()
+    sort = List(SortOptionsInput)
+    search = String()
 
 # Device ObjectType
 class Device(ObjectType):
@@ -48,50 +58,49 @@ class Device(ObjectType):
     devSyncHubNode = String() 
     devSourcePlugin = String()
 
-
-class Query(ObjectType):
+class DeviceResult(ObjectType):
     devices = List(Device)
+    count = Int()
 
-    def resolve_devices(self, info):
-        # Load JSON data only when the query executes
+# Define Query Type with Pagination Support
+class Query(ObjectType):
+    devices = Field(DeviceResult, options=PageQueryOptionsInput())
+
+    def resolve_devices(self, info, options=None):
         try:
             with open(folder + 'table_devices.json', 'r') as f:
                 devices_data = json.load(f)["data"]
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            mylog('error', f'[graphql_schema] Error loading devices data: {e}')
-            return []
+            mylog('none', f'[graphql_schema] Error loading devices data: {e}')
+            return DeviceResult(devices=[], count=0)
 
-        return devices_data  # Directly return the data without mapping
+        total_count = len(devices_data)
 
+        # Apply pagination and sorting if options are provided
+        if options:
+            # Implement pagination and sorting here
+            if options.page and options.limit:
+                start = (options.page - 1) * options.limit
+                end = start + options.limit
+                devices_data = devices_data[start:end]
+
+            if options.sort:
+                for sort_option in options.sort:
+                    devices_data = sorted(
+                        devices_data,
+                        key=lambda x: x.get(sort_option.field),
+                        reverse=(sort_option.order.lower() == "desc")
+                    )
+                
+            # Filter data if a search term is provided
+            if options.search:
+                devices_data = [
+                    device for device in devices_data
+                    if options.search.lower() in device.get("devName", "").lower()
+                ]
+
+        return DeviceResult(devices=devices_data, count=total_count)
 
 
 # Schema Definition
 devicesSchema = graphene.Schema(query=Query)
-
-# # Sample query
-# $.ajax({
-#     url: 'php/server/query_graphql.php', // The PHP endpoint that proxies to the GraphQL server
-#     type: 'POST',
-#     contentType: 'application/json', // Send the data as JSON
-#     data: JSON.stringify({
-#         query: `
-#             query {
-#               devices {
-#                 devMac
-#                 devName
-#                 devLastConnection
-#                 devArchived
-#               }
-#             }
-#         `, // GraphQL query for plugins
-#         variables: {} // Optional, pass variables if needed
-#     }),
-#     success: function(response) {
-#         console.log('GraphQL Response:', response);
-#         // Handle the GraphQL response here
-#     },
-#     error: function(xhr, status, error) {
-#         console.error('AJAX Error:', error);
-#         // Handle errors here
-#     }
-# });

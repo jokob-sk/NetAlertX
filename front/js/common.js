@@ -970,6 +970,19 @@ function getGuid() {
 // -----------------------------------------------------------------------------
 //  Loading Spinner overlay
 // -----------------------------------------------------------------------------
+spinnerHtml = `
+    <!-- spinner -->
+    <div id="loadingSpinner" style="display: block">
+      <div class="pa_semitransparent-panel"></div>
+      <div class="panel panel-default pa_spinner">
+        <table>
+          <td width="130px" align="middle">_text_</td>
+          <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
+        </table>
+      </div>
+    </div>
+    `
+
 function showSpinner(stringKey='Loading')
 {
 
@@ -988,20 +1001,7 @@ function showSpinner(stringKey='Loading')
     $("#loadingSpinner").show();
   }
   else{    
-    html =  `
-    <!-- spinner -->
-    <div id="loadingSpinner" style="display: block">
-      <div class="pa_semitransparent-panel"></div>
-      <div class="panel panel-default pa_spinner">
-        <table>
-          <td width="130px" align="middle">${text}</td>
-          <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
-        </table>
-      </div>
-    </div>
-    `
-
-    $(".wrapper").append(html)
+    $(".wrapper").append(spinnerHtml.replace('_text_',text))
   }
 }
 // -----------------------------------------------------------------------------
