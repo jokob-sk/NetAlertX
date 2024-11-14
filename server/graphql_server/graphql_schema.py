@@ -9,6 +9,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from const import apiPath
+from helper import is_random_mac, get_number_of_children, format_ip_long
 
 # Define a base URL with the user's home directory
 folder = apiPath 
@@ -57,6 +58,11 @@ class Device(ObjectType):
     devSSID = String() 
     devSyncHubNode = String() 
     devSourcePlugin = String()
+    devStatus = String()
+    devIsRandomMac = Int()  
+    devParentChildrenCount = Int() 
+    devIpLong = Int() 
+
 
 class DeviceResult(ObjectType):
     devices = List(Device)
@@ -67,6 +73,7 @@ class Query(ObjectType):
     devices = Field(DeviceResult, options=PageQueryOptionsInput())
 
     def resolve_devices(self, info, options=None):
+        mylog('none', f'[graphql_schema] resolve_devices: {self}')
         try:
             with open(folder + 'table_devices.json', 'r') as f:
                 devices_data = json.load(f)["data"]
@@ -74,16 +81,19 @@ class Query(ObjectType):
             mylog('none', f'[graphql_schema] Error loading devices data: {e}')
             return DeviceResult(devices=[], count=0)
 
+
+        # Add dynamic fields to each device
+        for device in devices_data:
+            device["devIsRandomMac"] = 1 if is_random_mac(device["devMac"]) else 0
+            device["devParentChildrenCount"] = get_number_of_children(device["devMac"], devices_data)
+            device["devIpLong"] = format_ip_long(device.get("devLastIP", ""))
+
         total_count = len(devices_data)
 
-        # Apply pagination and sorting if options are provided
-        if options:
-            # Implement pagination and sorting here
-            if options.page and options.limit:
-                start = (options.page - 1) * options.limit
-                end = start + options.limit
-                devices_data = devices_data[start:end]
+        mylog('none', f'[graphql_schema] devices_data: {devices_data}')
 
+        # Apply sorting if options are provided
+        if options:
             if options.sort:
                 for sort_option in options.sort:
                     devices_data = sorted(
@@ -91,7 +101,7 @@ class Query(ObjectType):
                         key=lambda x: x.get(sort_option.field),
                         reverse=(sort_option.order.lower() == "desc")
                     )
-                
+
             # Filter data if a search term is provided
             if options.search:
                 devices_data = [
@@ -99,7 +109,17 @@ class Query(ObjectType):
                     if options.search.lower() in device.get("devName", "").lower()
                 ]
 
-        return DeviceResult(devices=devices_data, count=total_count)
+            # Then apply pagination
+            if options.page and options.limit:
+                start = (options.page - 1) * options.limit
+                end = start + options.limit
+                devices_data = devices_data[start:end]
+
+        # Convert dict objects to Device instances to enable field resolution
+        devices = [Device(**device) for device in devices_data]
+
+        return DeviceResult(devices=devices, count=total_count)
+
 
 
 # Schema Definition

@@ -160,6 +160,7 @@
   var tableColumnOrder = [];
   var tableColumnVisible = [];
   headersDefaultOrder = [];
+  missingNumbers = [];
 
   // Read parameters & Initialize components
   callAfterAppInitialized(main)
@@ -193,7 +194,7 @@ function main () {
   const fullArray = Array.from({ length: tableColumnOrder.length }, (_, i) => i);
 
   // Filter out the elements already present in inputArray
-  const missingNumbers = fullArray.filter(num => !tableColumnVisible.includes(num));
+  missingNumbers = fullArray.filter(num => !tableColumnVisible.includes(num));
 
   // Concatenate the inputArray with the missingNumbers
   tableColumnOrder = [...tableColumnVisible, ...missingNumbers];
@@ -336,47 +337,43 @@ function filterDataByStatus(data, status) {
   });
 }
 
-// -----------------------------------------------------------------------------
-function getDeviceStatus(item)
-{
-  
-  if(item.devIsNew === 1)
-  {
-    return 'New';
-  } 
-  else if(item.devPresentLastScan === 1)
-  {
-    return 'On-line';
-  }
-  else if(item.devPresentLastScan === 0 && item.devAlertDown  !== 0)
-  {
-    return 'Down';
-  }
-  else if(item.devIsArchived === 1)
-  {
-    return 'Archived';
-  }
-  else if(item.devPresentLastScan === 0)
-  {
-    return 'Off-line';
-  }
-
-  return "Unknown status"
-}
 
 // Map column index to column name for GraphQL query
-function mapColumnIndexToFieldName(index) {
+function mapColumnIndexToFieldName(index, tableColumnVisible) {
   const columnNames = [
-    "rowid", "devMac", "devName", "devOwner", "devType", "devVendor",
-    "devFavorite", "devGroup", "devComments", "devFirstConnection",
-    "devLastConnection", "devLastIP", "devStaticIP", "devScan", "devLogEvents",
-    "devAlertEvents", "devAlertDown", "devSkipRepeated", "devLastNotification",
-    "devPresentLastScan", "devIsNew", "devLocation", "devIsArchived",
-    "devParentMAC", "devParentPort", "devIcon", "devGUID", "devSite", "devSSID",
-    "devSyncHubNode", "devSourcePlugin"
+    "devName", 
+    "devOwner", 
+    "devType", 
+    "devIcon", 
+    "devFavorite", 
+    "devGroup", 
+    "devFirstConnection", 
+    "devLastConnection", 
+    "devLastIP", 
+    "devIsRandomMac",   // resolved on the fly
+    "devStatus", // resolved on the fly
+    "devMac", 
+    "devIpLong", //formatIPlong(device.devLastIP) || "",  // IP orderable
+    "rowid", 
+    "devParentMAC", 
+    "devParentChildrenCount",  // resolved on the fly
+    "devLocation",
+    "devVendor", 
+    "devParentPort", 
+    "devGUID", 
+    "devSyncHubNode", 
+    "devSite", 
+    "devSSID", 
+    "devSourcePlugin"
   ];
 
-  return columnNames[index] || null;
+  console.log(index);
+  console.log(tableColumnVisible);
+  console.log(tableColumnOrder); // this
+  console.log(missingNumbers);
+  console.log(columnNames[tableColumnOrder[index]]);
+
+  return columnNames[tableColumnOrder[index]] || null;
 }
 
 
@@ -465,6 +462,7 @@ function initializeDatatable (status) {
                 devLastNotification
                 devPresentLastScan
                 devIsNew
+                devIsRandomMac
                 devLocation
                 devIsArchived
                 devParentMAC
@@ -475,6 +473,9 @@ function initializeDatatable (status) {
                 devSSID
                 devSyncHubNode
                 devSourcePlugin
+                devStatus
+                devParentChildrenCount
+                devIpLong
               }
               count
             }
@@ -493,7 +494,7 @@ function initializeDatatable (status) {
               "page": Math.floor(d.start / d.length) + 1,  // Page number (1-based)
               "limit": parseInt(d.length, 10),  // Page size (ensure it's an integer)
               "sort": d.order && d.order[0] ? [{
-                "field": mapColumnIndexToFieldName(d.order[0].column),  // Sort field from DataTable column
+                "field": mapColumnIndexToFieldName(d.order[0].column, tableColumnVisible),  // Sort field from DataTable column
                 "order": d.order[0].dir.toUpperCase()  // Sort direction (ASC/DESC)
               }] : [],  // Default to an empty array if no sorting is defined
               "search": d.search.value  // Search query
@@ -518,13 +519,13 @@ function initializeDatatable (status) {
                 device.devFirstConnection || "",
                 device.devLastConnection || "",
                 device.devLastIP || "",
-                (isRandomMAC(device.devMac)) || "",  // Custom logic for randomized MAC
-                getDeviceStatus(device) || "",
+                device.devIsRandomMac || "",  // Custom logic for randomized MAC
+                device.devStatus || "",
                 device.devMac || "",  // hidden
-                formatIPlong(device.devLastIP) || "",  // IP orderable
+                device.devIpLong || "",  // IP orderable
                 device.rowid || "",
                 device.devParentMAC || "",
-                getNumberOfChildren(device.devMac, json.devices.devices) || 0,
+                device.devParentChildrenCount || 0,
                 device.devLocation || "",
                 device.devVendor || "",
                 device.devParentPort || 0,
@@ -750,26 +751,6 @@ function initializeDatatable (status) {
   
 }
 
-
-
-
-
-// -----------------------------------------------------------------------------
-function getNumberOfChildren(mac, devices)
-{
-  childrenCount = 0;
-
-  $.each(devices, function(index, dev) {
-
-    if(dev.devParentMAC != null && dev.devParentMAC.trim() == mac.trim())
-    {
-      childrenCount++;        
-    }    
-    
-  });
-
-  return childrenCount;
-}
 
 // -----------------------------------------------------------------------------
 function handleLoadingDialog(needsReload = false)

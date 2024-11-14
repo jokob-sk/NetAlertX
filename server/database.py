@@ -28,7 +28,7 @@ class DB():
             mylog('debug','openDB: database already open')
             return
 
-        mylog('none', '[Database] Opening DB' )
+        mylog('verbose', '[Database] Opening DB' )
         # Open DB and Cursor
         try:
             self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
@@ -37,7 +37,7 @@ class DB():
             self.sql_connection.row_factory = sqlite3.Row
             self.sql = self.sql_connection.cursor()
         except sqlite3.Error as e:
-            mylog('none',[ '[Database] - Open DB Error: ', e])
+            mylog('verbose',[ '[Database] - Open DB Error: ', e])
 
 
     #-------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ class DB():
           """)
 
         # -------------------------------------------------------------------  
-        # DevicesNew - cleanup after 6/6/2025
+        # DevicesNew - cleanup after 6/6/2025 - need to update also DB in the source code!
         
         # check if migration already done based on devMac
         devMac_missing = self.sql.execute ("""
@@ -104,6 +104,104 @@ class DB():
           """).fetchone()[0] == 0
         
         if devMac_missing:
+
+          # -------------------------------------------------------------------------
+          # Alter Devices table       
+          # -------------------------------------------------------------------------
+          # dev_Network_Node_MAC_ADDR column
+          dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
+            """).fetchone()[0] == 0
+
+          if dev_Network_Node_MAC_ADDR_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
+            """)
+
+          # dev_Network_Node_port column
+          dev_Network_Node_port_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
+            """).fetchone()[0] == 0
+
+          if dev_Network_Node_port_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
+            """)
+
+          # dev_Icon column
+          dev_Icon_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
+            """).fetchone()[0] == 0
+
+          if dev_Icon_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_Icon" TEXT
+            """)
+
+          # dev_GUID column
+          dev_GUID_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_GUID'
+            """).fetchone()[0] == 0
+
+          if dev_GUID_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_GUID to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_GUID" TEXT
+            """)
+
+          # dev_NetworkSite column
+          dev_NetworkSite_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_NetworkSite'
+            """).fetchone()[0] == 0
+
+          if dev_NetworkSite_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_NetworkSite to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_NetworkSite" TEXT
+            """)
+
+          # dev_SSID column
+          dev_SSID_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SSID'
+            """).fetchone()[0] == 0
+
+          if dev_SSID_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_SSID to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_SSID" TEXT
+            """)
+
+          # SQL query to update missing dev_GUID
+          self.sql.execute(f'''
+              UPDATE Devices
+              SET dev_GUID = {sql_generateGuid}
+              WHERE dev_GUID IS NULL
+          ''')
+
+          # dev_SyncHubNodeName column
+          dev_SyncHubNodeName_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SyncHubNodeName'
+            """).fetchone()[0] == 0
+
+          if dev_SyncHubNodeName_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_SyncHubNodeName to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_SyncHubNodeName" TEXT
+            """)
+            
+          # dev_SourcePlugin column
+          dev_SourcePlugin_missing = self.sql.execute ("""
+              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SourcePlugin'
+            """).fetchone()[0] == 0
+
+          if dev_SourcePlugin_missing :
+            mylog('verbose', ["[upgradeDB] Adding dev_SourcePlugin to the Devices table"])
+            self.sql.execute("""
+              ALTER TABLE "Devices" ADD "dev_SourcePlugin" TEXT
+            """)
         
           # SQL to create Devices table with indexes
           sql_create_devices_new_tmp = """
@@ -743,7 +841,7 @@ class DB():
             columnNames = list(map(lambda x: x[0], self.sql.description))
             rows = self.sql.fetchall()
         except sqlite3.Error as e:
-            mylog('none',[ '[Database] - SQL ERROR: ', e])
+            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
             return json_obj({}, []) # return empty object
 
         result = {"data":[]}
@@ -768,9 +866,9 @@ class DB():
             rows = self.sql.fetchall()
             return rows
         except AssertionError:
-            mylog('none',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+            mylog('verbose',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
         except sqlite3.Error as e:
-            mylog('none',[ '[Database] - SQL ERROR: ', e])
+            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
         return None
 
     def read_one(self, query, *args):
@@ -785,7 +883,7 @@ class DB():
             return rows[0]
                 
         if len(rows) > 1: 
-            mylog('none',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
+            mylog('verbose',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
             return rows[0]
         # empty result set
         return None

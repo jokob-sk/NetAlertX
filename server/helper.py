@@ -17,6 +17,7 @@ import base64
 import hashlib
 import random
 import string
+import ipaddress
 
 
 import conf
@@ -910,6 +911,42 @@ def extract_ip_addresses(text):
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
+
+
+# Helper function to determine if a MAC address is random
+def is_random_mac(mac):
+    # Check if second character matches "2", "6", "A", "E" (case insensitive)
+    is_random = mac[1].upper() in ["2", "6", "A", "E"]
+
+    # Check against user-defined non-random MAC prefixes
+    if is_random:
+        not_random_prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
+        for prefix in not_random_prefixes:
+            if mac.startswith(prefix):
+                is_random = False
+                break
+    return is_random
+
+# Helper function to calculate number of children
+def get_number_of_children(mac, devices):
+    # Count children by checking devParentMAC for each device
+    return sum(1 for dev in devices if dev.get("devParentMAC", "").strip() == mac.strip())
+
+
+
+# Function to convert IP to a long integer
+def format_ip_long(ip_address):
+    try:
+        # Check if it's an IPv6 address
+        if ':' in ip_address:
+            ip = ipaddress.IPv6Address(ip_address)
+        else:
+            # Assume it's an IPv4 address
+            ip = ipaddress.IPv4Address(ip_address)
+        return int(ip)
+    except ValueError:
+        # Return a default error value if IP is invalid
+        return -1
 
 #-------------------------------------------------------------------------------
 # JSON methods

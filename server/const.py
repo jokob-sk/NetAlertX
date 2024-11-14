@@ -27,7 +27,20 @@ vendorsPathNewest   = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
 #===============================================================================
 # SQL queries
 #===============================================================================
-sql_devices_all = """select rowid, * from Devices"""
+sql_devices_all = """
+                    SELECT 
+                        rowid, 
+                        *,
+                        CASE 
+                            WHEN devIsNew = 1 THEN 'New'
+                            WHEN devPresentLastScan = 1 THEN 'On-line'
+                            WHEN devPresentLastScan = 0 AND devAlertDown != 0 THEN 'Down'
+                            WHEN devIsArchived = 1 THEN 'Archived'
+                            WHEN devPresentLastScan = 0 THEN 'Off-line'
+                            ELSE 'Unknown status'
+                        END AS devStatus
+                    FROM Devices
+                    """
 sql_appevents = """select * from AppEvents"""
 sql_devices_stats =  """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
                         (select count(*) from Devices a where devIsNew = 1 ) as new, 

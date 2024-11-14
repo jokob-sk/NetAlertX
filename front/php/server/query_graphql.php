@@ -12,7 +12,6 @@ require dirname(__FILE__).'/../server/init.php';
 // Helper function to get GraphQL URL (you can replace this with environment variables)
 function getGraphQLUrl() {
     $port = getSettingValue("GRAPHQL_PORT");  // Port for the GraphQL server
-    // return "$url:$port/graphql";  // Full URL to the GraphQL endpoint
     return "0.0.0.0:$port/graphql";  // Full URL to the GraphQL endpoint
 }
 
