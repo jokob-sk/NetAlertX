@@ -374,7 +374,12 @@ def importConfigs (db, all_plugins):
     # Used to determine the next import
     conf.lastImportedConfFile = os.path.getmtime(config_file)   
 
-    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False)   
+    # updateState(newState (text), 
+    #             settingsSaved = None (timestamp), 
+    #             settingsImported = None (timestamp), 
+    #             showSpinner = False (1/0), 
+    #             graphQLServerStarted = 1 (1/0))
+    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1)   
     
     msg = '[Config] Imported new settings config'
     mylog('minimal', msg)

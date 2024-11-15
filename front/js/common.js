@@ -1260,39 +1260,70 @@ async function handleFirstLoad(callback) {
 }
 
 // -----------------------------------------------------------------------------
-// Execute callback once app initialized
-function callAfterAppInitialized(callback) {
-  if (!isAppInitialized()) {
+// Execute callback once the app is initialized and GraphQL server is running
+async function callAfterAppInitialized(callback) {
+  if (!isAppInitialized() || !(await isGraphQLServerRunning())) {
     setTimeout(() => {
-      callAfterAppInitialized(callback)
+      callAfterAppInitialized(callback);
     }, 500);
-  } else
-  {
+  } else {
     callback();
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Polling function to repeatedly check if the server is running
+async function waitForGraphQLServer() {
+  const pollInterval = 2000; // 2 seconds between each check
+  let serverRunning = false;
+
+  while (!serverRunning) {
+    serverRunning = await isGraphQLServerRunning();
+    if (!serverRunning) {
+      console.log("GraphQL server not running, retrying in 2 seconds...");
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
+  }
+
+  console.log("GraphQL server is now running.");
+}
+
+// -----------------------------------------------------------------------------
+// Returns 1 if running, 0 otherwise
+async function isGraphQLServerRunning() {
+  try {
+    const response = await $.get('api/app_state.json?nocache=' + Date.now());
+    console.log("graphQLServerStarted: " + response["graphQLServerStarted"]);
+    setCache("graphQLServerStarted", response["graphQLServerStarted"]);
+    return response["graphQLServerStarted"];
+  } catch (error) {
+    console.error("Failed to check GraphQL server status:", error);
+    return false;
   }
 }
 
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
-  //  return arraysContainSameValues(getCache("completedCalls").split(',').filter(Boolean), completedCalls_final);
-
-  // loading settings + 1 (or 2 language files if not english) + device cache.
-  completedCallsCount_final = getLangCode() == 'en_us' ? 3  : 4 ;
-
-  return (parseInt(getCache("completedCallsCount")) >=  completedCallsCount_final);
+  const completedCallsCount_final = getLangCode() == 'en_us' ? 3 : 4;
+  return (
+    parseInt(getCache("completedCallsCount")) >= completedCallsCount_final
+  );
 }
 
-// Define a function that will execute the code only once
+// -----------------------------------------------------------------------------
+// Main execution logic
 async function executeOnce() {
   showSpinner();
 
   if (!isAppInitialized()) {
     try {
+      await waitForGraphQLServer(); // Wait for the server to start
+
       await cacheDevices();
       await cacheSettings();
-      await cacheStrings();     
-      
+      await cacheStrings();
+
       console.log("✅ All AJAX callbacks have completed");
       onAllCallsComplete();
     } catch (error) {
@@ -1300,6 +1331,7 @@ async function executeOnce() {
     }
   }
 }
+
 
 // -----------------------------------------------------------------------------
 // Function to handle successful completion of an AJAX call

@@ -66,6 +66,9 @@ def main ():
     # check file permissions and fix if required
     filePermissions()
 
+    # Header + init app state
+    updateState("Initializing", None, None, None, 0)    
+
     # Open DB once and keep open
     # Opening / closing DB frequently actually casues more issues
     db = DB()  # instance of class DB
@@ -81,8 +84,7 @@ def main ():
 
     mylog('debug', '[MAIN] Starting loop')
 
-    # Header + init app state
-    updateState("Initializing")    
+
 
     all_plugins = None
 
@@ -106,7 +108,7 @@ def main ():
 
         # Update API endpoints              
         update_api(db, all_plugins)
-        
+
         # proceed if 1 minute passed
         if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time :
 

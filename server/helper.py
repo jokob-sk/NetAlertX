@@ -57,8 +57,9 @@ def get_timezone_offset():
 # App state
 #-------------------------------------------------------------------------------
 # A class to manage the application state and to provide a frontend accessible API point
+# To keep an existing value pass None
 class app_state_class:
-    def __init__(self, currentState, settingsSaved=None, settingsImported=None, showSpinner=False):
+    def __init__(self, currentState, settingsSaved=None, settingsImported=None, showSpinner=False, graphQLServerStarted=0):
         # json file containing the state to communicate with the frontend
         stateFile = apiPath + '/app_state.json'
         previousState = ""
@@ -78,19 +79,21 @@ class app_state_class:
                 mylog('none', [f'[app_state_class] Failed to handle app_state.json: {e}'])
                  
 
-        # Check if the file exists and init values
+        # Check if the file exists and recover previous values
         if previousState != "":            
             self.settingsSaved          = previousState.get("settingsSaved", 0)
             self.settingsImported       = previousState.get("settingsImported", 0)
             self.showSpinner            = previousState.get("showSpinner", False)
             self.isNewVersion           = previousState.get("isNewVersion", False)
             self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
-        else:
+            self.graphQLServerStarted   = previousState.get("graphQLServerStarted", 0)
+        else: # init first time values
             self.settingsSaved          = 0
             self.settingsImported       = 0
             self.showSpinner            = False
             self.isNewVersion           = checkNewVersion()
             self.isNewVersionChecked    = int(timeNow().timestamp())
+            self.graphQLServerStarted   = 0
 
         # Overwrite with provided parameters if supplied
         if settingsSaved is not None:
@@ -99,6 +102,8 @@ class app_state_class:
             self.settingsImported = settingsImported
         if showSpinner is not None:
             self.showSpinner = showSpinner
+        if graphQLServerStarted is not None:
+            self.graphQLServerStarted = graphQLServerStarted
 
         # check for new version every hour and if currently not running new version
         if self.isNewVersion is False and self.isNewVersionChecked + 3600 < int(timeNow().timestamp()):
@@ -115,7 +120,7 @@ class app_state_class:
             with open(stateFile, 'w') as json_file:
                 json_file.write(json_data)
         except (TypeError, ValueError) as e:
-            mylog('none', [f'[app_state_class] Failed to serialize object to JSON: {e}'])
+            mylog('none', [f'[app_state_class] Failed to serialize object to JSON: {e}'])        
 
 
          
@@ -131,9 +136,9 @@ class app_state_class:
 
 #-------------------------------------------------------------------------------
 # method to update the state
-def updateState(newState, settingsSaved = None, settingsImported = None, showSpinner = False):
+def updateState(newState, settingsSaved = None, settingsImported = None, showSpinner = False, graphQLServerStarted = None):
 
-    state = app_state_class(newState, settingsSaved, settingsImported, showSpinner)
+    return app_state_class(newState, settingsSaved, settingsImported, showSpinner, graphQLServerStarted)
 
 
 #-------------------------------------------------------------------------------
