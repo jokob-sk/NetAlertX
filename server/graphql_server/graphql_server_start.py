@@ -41,11 +41,12 @@ def graphql_endpoint():
 
 def start_server():
     """Function to start the GraphQL server in a background thread."""
-    mylog('verbose', [f'[graphql_server] Starting on port: {GRAPHQL_PORT}'])
 
     state = updateState("GraphQL: Starting", None, None, None, None) 
 
     if state.graphQLServerStarted == 0:
+
+        mylog('verbose', [f'[graphql_server] Starting on port: {GRAPHQL_PORT}'])
 
         # Start the Flask app in a separate thread
         thread = threading.Thread(target=lambda: app.run(host="0.0.0.0", port=GRAPHQL_PORT, debug=True, use_reloader=False))

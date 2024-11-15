@@ -4,6 +4,7 @@ import json
 import subprocess
 import datetime
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from collections import namedtuple
 
@@ -145,6 +146,18 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
 
 
 
+# Function to run a plugin command
+def run_plugin(command, set_RUN_TIMEOUT):
+    try:
+        return subprocess.check_output(command, universal_newlines=True, stderr=subprocess.STDOUT, timeout=set_RUN_TIMEOUT)
+    except subprocess.CalledProcessError as e:
+        mylog('none', [e.output])
+        mylog('none', ['[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs'])
+        return None
+    except subprocess.TimeoutExpired as timeErr:
+        mylog('none', [f'[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin["unique_prefix"]} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval.'])
+        return None
+
 
 #-------------------------------------------------------------------------------
 # Executes the plugin command specified in the setting with the function specified as CMD 
@@ -209,15 +222,14 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         mylog('verbose', ['[Plugins] Executing: ', set_CMD])
         mylog('debug',   ['[Plugins] Resolved : ', command])        
 
-        try:
-            # try running a subprocess with a forced timeout in case the subprocess hangs
-            output = subprocess.check_output(command, universal_newlines=True, stderr=subprocess.STDOUT, timeout=(set_RUN_TIMEOUT))
-        except subprocess.CalledProcessError as e:
-            # An error occurred, handle it
-            mylog('none', [e.output])
-            mylog('none', ['[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs'])            
-        except subprocess.TimeoutExpired as timeErr:
-            mylog('none', [f'[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin["unique_prefix"]} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval.']) 
+        # Using ThreadPoolExecutor to handle concurrent subprocesses
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(run_plugin, command, set_RUN_TIMEOUT)]  # Submit the command as a future
+
+            for future in as_completed(futures):
+                output = future.result()  # Get the output or error
+                if output is not None:
+                    mylog('verbose', [f'[Plugins] Output: {output}'])
 
         # Initialize newLines
         newLines = []
