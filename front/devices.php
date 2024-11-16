@@ -367,12 +367,6 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devSourcePlugin"
   ];
 
-  console.log(index);
-  console.log(tableColumnVisible);
-  console.log(tableColumnOrder); // this
-  console.log(missingNumbers);
-  console.log(columnNames[tableColumnOrder[index]]);
-
   return columnNames[tableColumnOrder[index]] || null;
 }
 

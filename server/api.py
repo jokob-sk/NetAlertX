@@ -48,15 +48,17 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
             
     # Start the GraphQL server
     graphql_port_value = get_setting_value("GRAPHQL_PORT")
+    api_token_value = get_setting_value("API_TOKEN")
 
-    if graphql_port_value is not None:
+    # Validate and start the server if settings are available
+    if graphql_port_value is not None and api_token_value is not None:
         try:
-            graphql_port_value = int(graphql_port_value)
-            start_server(graphql_port=graphql_port_value)  # Pass the port if the server accepts it
+            graphql_port_value = int(graphql_port_value)  # Ensure port is an integer
+            start_server(graphql_port=graphql_port_value)  # Start the server
         except ValueError:
             mylog('none', [f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"])
     else:
-        mylog('none', [f"[API] GRAPHQL_PORT is not set, will try later."])
+        mylog('none', [f"[API] GRAPHQL_PORT or API_TOKEN is not set, will try later."])
 
 
 #-------------------------------------------------------------------------------
