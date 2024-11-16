@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import parseaddr
+from email.utils import formatdate
 import smtplib
 import socket
 import ssl
@@ -118,6 +119,8 @@ def send(pHTML, pText):
     msg['Subject']  = subject
     msg['From']     = from_email
     msg['To']       = to_email
+    msg['Date']     = formatdate(localtime=True) 
+
     msg.attach (MIMEText (message_text, 'plain'))
     msg.attach (MIMEText (message_html, 'html'))
 
