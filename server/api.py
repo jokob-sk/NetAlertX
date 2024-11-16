@@ -5,7 +5,7 @@ import json
 import conf  
 from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history)
 from logger import mylog
-from helper import write_file
+from helper import write_file, get_setting_value
 
 # Import the start_server function
 from graphql_server.graphql_server_start import start_server 
@@ -47,7 +47,16 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
             api_endpoint_class(db, dsSQL[1], folder + 'table_' + dsSQL[0] + '.json')
             
     # Start the GraphQL server
-    start_server()
+    graphql_port_value = get_setting_value("GRAPHQL_PORT")
+
+    if graphql_port_value is not None:
+        try:
+            graphql_port_value = int(graphql_port_value)
+            start_server(graphql_port=graphql_port_value)  # Pass the port if the server accepts it
+        except ValueError:
+            mylog('none', [f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"])
+    else:
+        mylog('none', [f"[API] GRAPHQL_PORT is not set, will try later."])
 
 
 #-------------------------------------------------------------------------------
