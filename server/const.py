@@ -50,7 +50,6 @@ sql_devices_all = """
                         IFNULL(devLastNotification, '') AS devLastNotification,
                         IFNULL(devPresentLastScan, '') AS devPresentLastScan,
                         IFNULL(devIsNew, '') AS devIsNew,
-                        IFNULL(devIsRandomMac, '') AS devIsRandomMac,
                         IFNULL(devLocation, '') AS devLocation,
                         IFNULL(devIsArchived, '') AS devIsArchived,
                         IFNULL(devParentMAC, '') AS devParentMAC,
@@ -61,8 +60,6 @@ sql_devices_all = """
                         IFNULL(devSSID, '') AS devSSID,
                         IFNULL(devSyncHubNode, '') AS devSyncHubNode,
                         IFNULL(devSourcePlugin, '') AS devSourcePlugin,
-                        IFNULL(devParentChildrenCount, '') AS devParentChildrenCount,
-                        IFNULL(devIpLong, '') AS devIpLong,
                         CASE 
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
