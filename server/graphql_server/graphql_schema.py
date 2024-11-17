@@ -62,6 +62,7 @@ class Device(ObjectType):
     devIsRandomMac = Int()  
     devParentChildrenCount = Int() 
     devIpLong = Int() 
+    devFilterStatus = String() 
 
 
 class DeviceResult(ObjectType):
@@ -92,6 +93,13 @@ class Query(ObjectType):
 
         mylog('none', f'[graphql_schema] devices_data: {devices_data}')
 
+        # Define static list of searchable fields
+        searchable_fields = [
+            "devName", "devMac", "devOwner", "devType", "devVendor", 
+            "devGroup", "devComments", "devLocation", "devStatus",
+            "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode"
+        ]
+
         # Apply sorting if options are provided
         if options:
             if options.sort:
@@ -104,9 +112,14 @@ class Query(ObjectType):
 
             # Filter data if a search term is provided
             if options.search:
+                search_term = options.search.lower()
+
                 devices_data = [
                     device for device in devices_data
-                    if options.search.lower() in device.get("devName", "").lower()
+                    if any(
+                        search_term in str(device.get(field, "")).lower()
+                        for field in searchable_fields  # Search only predefined fields
+                    )
                 ]
 
             # Then apply pagination

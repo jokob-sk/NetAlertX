@@ -3,9 +3,9 @@ import json
 
 # Register NetAlertX modules 
 import conf  
-from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history)
+from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history, sql_devices_tiles)
 from logger import mylog
-from helper import write_file, get_setting_value
+from helper import write_file, get_setting_value, updateState
 
 # Import the start_server function
 from graphql_server.graphql_server_start import start_server 
@@ -17,8 +17,10 @@ apiEndpoints = []
 #===============================================================================
 def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = []):
     mylog('debug', ['[API] Update API starting'])
-    # return
 
+    # update app_state.json and retrieve app_state to chjeck if GraphQL server is running
+    app_state = updateState("Update: API", None, None, None, None)
+    
     folder = apiPath 
 
     # Save plugins    
@@ -36,6 +38,7 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
         ["plugins_language_strings", sql_language_strings],
         ["notifications", sql_notifications_all],
         ["online_history", sql_online_history],
+        ["devices_tiles", sql_devices_tiles],
         ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 
@@ -50,15 +53,17 @@ def update_api(db, all_plugins, isNotification = False, updateOnlyDataSources = 
     graphql_port_value = get_setting_value("GRAPHQL_PORT")
     api_token_value = get_setting_value("API_TOKEN")
 
-    # Validate and start the server if settings are available
-    if graphql_port_value is not None and api_token_value is not None:
-        try:
-            graphql_port_value = int(graphql_port_value)  # Ensure port is an integer
-            start_server(graphql_port=graphql_port_value)  # Start the server
-        except ValueError:
-            mylog('none', [f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"])
-    else:
-        mylog('none', [f"[API] GRAPHQL_PORT or API_TOKEN is not set, will try later."])
+    # start GraphQL server if not yet running
+    if app_state.graphQLServerStarted == 0:
+        # Validate if settings are available
+        if graphql_port_value is not None and len(api_token_value) > 1:
+            try:
+                graphql_port_value = int(graphql_port_value)  # Ensure port is an integer
+                start_server(graphql_port_value, app_state)  # Start the server
+            except ValueError:
+                mylog('none', [f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"])
+        else:
+            mylog('none', [f"[API] GRAPHQL_PORT or API_TOKEN is not set, will try later."])
 
 
 #-------------------------------------------------------------------------------

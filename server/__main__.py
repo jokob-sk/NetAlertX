@@ -185,12 +185,12 @@ def main ():
             db.commitDB()          
             
             # Footer
-            updateState("Process: Wait")
+            
             mylog('verbose', ['[MAIN] Process: Wait'])            
         else:
             # do something  
             # mylog('verbose', ['[MAIN] Waiting to start next loop'])
-            dummyVariable = 1          
+            updateState("Process: Wait")  
             
 
         #loop     

@@ -171,6 +171,9 @@ function main () {
 
   showSpinner();
 
+  // render tiles
+  getDevicesTotals();
+
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
   headersDefaultOrder = availableColumns.map(val => getString(val));
@@ -223,60 +226,77 @@ function mapIndx(oldIndex)
 //------------------------------------------------------------------------------
 //  Query total numbers of Devices by status
 //------------------------------------------------------------------------------
-function getDevicesTotals(devicesData) {
+function getDevicesTotals() {
+  // Check cache first
+  let resultJSON = getCache("getDevicesTotals");
 
-  let resultJSON = "";
-
-  if (getCache("getDevicesTotals") !== "") {
-    resultJSON = getCache("getDevicesTotals");
+  if (resultJSON !== "") {
+    resultJSON = JSON.parse(resultJSON);
+    processDeviceTotals(resultJSON);
   } else {
+    // Fetch data via AJAX
+    $.ajax({
+      url: "/api/table_devices_tiles.json",
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+        if (response && response.data) {
+          resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
+          
+          // Save the result to cache
+          setCache("getDevicesTotals", JSON.stringify(resultJSON));
 
-    // Define filter conditions and corresponding objects
-    const filters = [
-      { status: 'my_devices', color: 'bg-aqua',   label: getString('Device_Shortcut_AllDevices'), icon: 'fa-laptop' },
-      { status: 'all',        color: 'bg-aqua',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
-      { status: 'connected',  color: 'bg-green',  label: getString('Device_Shortcut_Connected'),  icon: 'fa-plug' },
-      { status: 'favorites',  color: 'bg-yellow', label: getString('Device_Shortcut_Favorites'),  icon: 'fa-star' },
-      { status: 'new',        color: 'bg-yellow', label: getString('Device_Shortcut_NewDevices'), icon: 'fa-plus' },
-      { status: 'down',       color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
-      { status: 'archived',   color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
-      { status: 'offline',    color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' }
-    ];
-
-    // Initialize an empty array to store the final objects
-    let dataArray = [];
-
-    // Loop through each filter condition
-    filters.forEach(filter => {
-      // Calculate count dynamically based on filter condition
-      let count = filterDataByStatus(devicesData, filter.status).length;
-
-      // Check any condition to skip adding the object to dataArray
-      if (
-        (['', 'False'].includes(getSetting('UI_hide_empty')) || (getSetting('UI_hide_empty') == "True" && count > 0)) &&
-        (getSetting('UI_shown_cards') == "" || getSetting('UI_shown_cards').includes(filter.status))
-      ) {
-        dataArray.push({
-          onclickEvent: `initializeDatatable('${filter.status}')`,
-          color: filter.color,
-          title: count,
-          label: filter.label,
-          icon: filter.icon
-        });
+          // Process the fetched data
+          processDeviceTotals(resultJSON);
+        } else {
+          console.error("Invalid response format from API");
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("Failed to fetch devices data:", error);
       }
-
     });
+  }
+}
 
-    // render info boxes/tile cards
-    renderInfoboxes(
-      dataArray
-    )
+function processDeviceTotals(devicesData) {
+  // Define filter conditions and corresponding objects
+  const filters = [
+    { status: 'my_devices', color: 'bg-aqua',   label: getString('Device_Shortcut_AllDevices'), icon: 'fa-laptop' },
+    { status: 'all',        color: 'bg-aqua',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
+    { status: 'connected',  color: 'bg-green',  label: getString('Device_Shortcut_Connected'),  icon: 'fa-plug' },
+    { status: 'favorites',  color: 'bg-yellow', label: getString('Device_Shortcut_Favorites'),  icon: 'fa-star' },
+    { status: 'new',        color: 'bg-yellow', label: getString('Device_Shortcut_NewDevices'), icon: 'fa-plus' },
+    { status: 'down',       color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
+    { status: 'archived',   color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
+    { status: 'offline',    color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' }
+  ];
 
-    // save to cache
-    setCache("getDevicesTotals", resultJSON);
-  }  
+  // Initialize an empty array to store the final objects
+  let dataArray = [];
 
-  // console.log(resultJSON);
+  // Loop through each filter condition
+  filters.forEach(filter => {
+    // Get count directly from API response data
+    let count = devicesData[filter.status] || 0;
+
+    // Check any condition to skip adding the object to dataArray
+    if (
+      (['', 'False'].includes(getSetting('UI_hide_empty')) || (getSetting('UI_hide_empty') == "True" && count > 0)) &&
+      (getSetting('UI_shown_cards') == "" || getSetting('UI_shown_cards').includes(filter.status))
+    ) {
+      dataArray.push({
+        onclickEvent: `initializeDatatable('${filter.status}')`,
+        color: filter.color,
+        title: count,
+        label: filter.label,
+        icon: filter.icon
+      });
+    }
+  });
+
+  // Render info boxes/tile cards
+  renderInfoboxes(dataArray);
 }
 
 //------------------------------------------------------------------------------
@@ -340,6 +360,7 @@ function filterDataByStatus(data, status) {
 
 // Map column index to column name for GraphQL query
 function mapColumnIndexToFieldName(index, tableColumnVisible) {
+  // the order is important, don't change it!
   const columnNames = [
     "devName", 
     "devOwner", 
@@ -366,6 +387,8 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devSSID", 
     "devSourcePlugin"
   ];
+
+  console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
 
   return columnNames[tableColumnOrder[index]] || null;
 }
@@ -522,7 +545,7 @@ function initializeDatatable (status) {
                 device.devParentChildrenCount || 0,
                 device.devLocation || "",
                 device.devVendor || "",
-                device.devParentPort || 0,
+                device.devParentPort || "",
                 device.devGUID || "",
                 device.devSyncHubNode || "",
                 device.devSite || "",
@@ -708,6 +731,7 @@ function initializeDatatable (status) {
     },
     initComplete: function (settings, devices) {
       // Handle any additional interactions or event listeners as required
+
       // Save cookie Rows displayed, and Parameters rows & order
       $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
             setCookie ("nax_parTableRows", len, 129600); // save for 90 days
