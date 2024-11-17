@@ -530,9 +530,13 @@ function initializeDatatable (status) {
       "dataSrc": function (json) {
         console.log(json);
 
+        // Set the total number of records for pagination
+        json.recordsTotal = json.devices.count || 0;
+        json.recordsFiltered = json.devices.count || 0;
+
         return json.devices.devices.map(device => {
             // Convert each device record into the required DataTable row format
-            // Order has to be teh same as in the UI_device_columns setting options
+            // Order has to be the same as in the UI_device_columns setting options
             const originalRow = [
                 device.devName || "",
                 device.devOwner || "",
