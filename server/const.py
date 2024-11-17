@@ -29,8 +29,40 @@ vendorsPathNewest   = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
 #===============================================================================
 sql_devices_all = """
                     SELECT 
-                        rowid, 
-                        *,
+                        rowid,
+                        IFNULL(devMac, '') AS devMac,
+                        IFNULL(devName, '') AS devName,
+                        IFNULL(devOwner, '') AS devOwner,
+                        IFNULL(devType, '') AS devType,
+                        IFNULL(devVendor, '') AS devVendor,
+                        IFNULL(devFavorite, '') AS devFavorite,
+                        IFNULL(devGroup, '') AS devGroup,
+                        IFNULL(devComments, '') AS devComments,
+                        IFNULL(devFirstConnection, '') AS devFirstConnection,
+                        IFNULL(devLastConnection, '') AS devLastConnection,
+                        IFNULL(devLastIP, '') AS devLastIP,
+                        IFNULL(devStaticIP, '') AS devStaticIP,
+                        IFNULL(devScan, '') AS devScan,
+                        IFNULL(devLogEvents, '') AS devLogEvents,
+                        IFNULL(devAlertEvents, '') AS devAlertEvents,
+                        IFNULL(devAlertDown, '') AS devAlertDown,
+                        IFNULL(devSkipRepeated, '') AS devSkipRepeated,
+                        IFNULL(devLastNotification, '') AS devLastNotification,
+                        IFNULL(devPresentLastScan, '') AS devPresentLastScan,
+                        IFNULL(devIsNew, '') AS devIsNew,
+                        IFNULL(devIsRandomMac, '') AS devIsRandomMac,
+                        IFNULL(devLocation, '') AS devLocation,
+                        IFNULL(devIsArchived, '') AS devIsArchived,
+                        IFNULL(devParentMAC, '') AS devParentMAC,
+                        IFNULL(devParentPort, '') AS devParentPort,
+                        IFNULL(devIcon, '') AS devIcon,
+                        IFNULL(devGUID, '') AS devGUID,
+                        IFNULL(devSite, '') AS devSite,
+                        IFNULL(devSSID, '') AS devSSID,
+                        IFNULL(devSyncHubNode, '') AS devSyncHubNode,
+                        IFNULL(devSourcePlugin, '') AS devSourcePlugin,
+                        IFNULL(devParentChildrenCount, '') AS devParentChildrenCount,
+                        IFNULL(devIpLong, '') AS devIpLong,
                         CASE 
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
@@ -41,6 +73,7 @@ sql_devices_all = """
                         END AS devStatus
                     FROM Devices
                     """
+
 sql_appevents = """select * from AppEvents"""
 # The below query calculates counts of devices in various categories: 
 #  (connected/online, offline, down, new, archived), 
