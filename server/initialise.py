@@ -324,7 +324,7 @@ def importConfigs (db, all_plugins):
                         
                     # Log the value being passed
                     # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-                    mylog('debug', [f"[Config] Setting override {setting_name} with value: {value}"])
+                    mylog('verbose', [f"[Config] Setting override {setting_name} with value: {value}"])
                     ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
 
             except json.JSONDecodeError:

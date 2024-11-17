@@ -385,10 +385,12 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devSyncHubNode", 
     "devSite", 
     "devSSID", 
-    "devSourcePlugin"
+    "devSourcePlugin",
+    "devPresentLastScan",
+    "devAlertDown"
   ];
 
-  console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
+  // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
 
   return columnNames[tableColumnOrder[index]] || null;
 }
@@ -530,6 +532,7 @@ function initializeDatatable (status) {
 
         return json.devices.devices.map(device => {
             // Convert each device record into the required DataTable row format
+            // Order has to be teh same as in the UI_device_columns setting options
             const originalRow = [
                 device.devName || "",
                 device.devOwner || "",
@@ -554,7 +557,9 @@ function initializeDatatable (status) {
                 device.devSyncHubNode || "",
                 device.devSite || "",
                 device.devSSID || "",
-                device.devSourcePlugin || ""
+                device.devSourcePlugin || "",
+                device.devPresentLastScan || "",
+                device.devAlertDown || ""
             ];
 
             const newRow = [];
@@ -696,18 +701,19 @@ function initializeDatatable (status) {
       // Status color      
       {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {
+          
+          tmp_devPresentLastScan = rowData[mapIndx(24)]
+          tmp_devAlertDown = rowData[mapIndx(25)]
 
-          devData = getDeviceDataByMac(rowData[mapIndx(11)])
-
-          if (devData.devPresentLastScan == 1)
+          if (tmp_devPresentLastScan == 1)
           {
             css = "green text-white statusOnline"
             icon = '<i class="fa-solid fa-plug"></i>'
-          } else if (devData.devPresentLastScan != 1 && devData.devAlertDown == 1)
+          } else if (tmp_devPresentLastScan != 1 && tmp_devAlertDown == 1)
           {
             css = "red text-white statusDown"
             icon = '<i class="fa-solid fa-triangle-exclamation"></i>'
-          } else if(devData.devPresentLastScan != 1)
+          } else if(tmp_devPresentLastScan != 1)
           {
             css = "gray text-white statusOffline"
             icon = '<i class="fa-solid fa-xmark"></i>'

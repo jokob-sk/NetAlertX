@@ -99,7 +99,6 @@ class Query(ObjectType):
         # Apply sorting if options are provided
         if options:
 
-
             # Define status-specific filtering
             if options.status:
                 status = options.status
@@ -142,7 +141,7 @@ class Query(ObjectType):
                 for sort_option in options.sort:
                     devices_data = sorted(
                         devices_data,
-                        key=lambda x: x.get(sort_option.field),
+                        key=lambda x: mixed_type_sort_key(x.get(sort_option.field)),
                         reverse=(sort_option.order.lower() == "desc")
                     )
 
@@ -176,7 +175,14 @@ class Query(ObjectType):
 
         return DeviceResult(devices=devices, count=total_count)
 
-
+# helps sorting inconsistent dataset mixed integers and strings
+def mixed_type_sort_key(value):
+    if value is None or value == "":
+        return (2, '')  # Place None or empty strings last
+    try:
+        return (0, int(value))  # Integers get priority
+    except (ValueError, TypeError):
+        return (1, str(value))  # Strings come next
 
 # Schema Definition
 devicesSchema = graphene.Schema(query=Query)
