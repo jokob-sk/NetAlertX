@@ -112,7 +112,7 @@ def execute_arpscan(userSubnets):
         re_ip = r'(?P<ip>((2[0-5]|1[0-9]|[0-9])?[0-9]\.){3}((2[0-5]|1[0-9]|[0-9])?[0-9]))'
         re_mac = r'(?P<mac>([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2}))'
         re_hw = r'(?P<hw>.*)'
-        re_pattern = re.compile (re_ip + '\s+' + re_mac + '\s' + re_hw)
+        re_pattern = re.compile(rf"{re_ip}\s+{re_mac}\s{re_hw}")
 
         devices_list_tmp = [
             {**device.groupdict(), "interface": interface}

@@ -286,7 +286,7 @@ function processDeviceTotals(devicesData) {
       (getSetting('UI_shown_cards') == "" || getSetting('UI_shown_cards').includes(filter.status))
     ) {
       dataArray.push({
-        onclickEvent: `initializeDatatable('${filter.status}')`,
+        onclickEvent: `forceLoadUrl('/devices.php#${filter.status}')`,
         color: filter.color,
         title: count,
         label: filter.label,
@@ -444,6 +444,8 @@ function initializeDatatable (status) {
     }    
   }
 
+  // todo: dynamically filter based on status
+
 
   var table = $('#tableDevices').DataTable({
     "serverSide": true,
@@ -514,8 +516,10 @@ function initializeDatatable (status) {
                 "field": mapColumnIndexToFieldName(d.order[0].column, tableColumnVisible),  // Sort field from DataTable column
                 "order": d.order[0].dir.toUpperCase()  // Sort direction (ASC/DESC)
               }] : [],  // Default to an empty array if no sorting is defined
-              "search": d.search.value  // Search query
+              "search": d.search.value,  // Search query
+              "status": deviceStatus
             }
+            
           }
         };
 

@@ -9,7 +9,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from const import apiPath
-from helper import is_random_mac, get_number_of_children, format_ip_long
+from helper import is_random_mac, get_number_of_children, format_ip_long, get_setting_value
 
 # Define a base URL with the user's home directory
 folder = apiPath 
@@ -24,6 +24,7 @@ class PageQueryOptionsInput(InputObjectType):
     limit = Int()
     sort = List(SortOptionsInput)
     search = String()
+    status = String()
 
 # Device ObjectType
 class Device(ObjectType):
@@ -74,7 +75,7 @@ class Query(ObjectType):
     devices = Field(DeviceResult, options=PageQueryOptionsInput())
 
     def resolve_devices(self, info, options=None):
-        mylog('none', f'[graphql_schema] resolve_devices: {self}')
+        # mylog('none', f'[graphql_schema] resolve_devices: {self}')
         try:
             with open(folder + 'table_devices.json', 'r') as f:
                 devices_data = json.load(f)["data"]
@@ -93,15 +94,50 @@ class Query(ObjectType):
 
         mylog('none', f'[graphql_schema] devices_data: {devices_data}')
 
-        # Define static list of searchable fields
-        searchable_fields = [
-            "devName", "devMac", "devOwner", "devType", "devVendor", 
-            "devGroup", "devComments", "devLocation", "devStatus",
-            "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode"
-        ]
+
 
         # Apply sorting if options are provided
         if options:
+
+
+            # Define status-specific filtering
+            if options.status:
+                status = options.status
+                mylog('none', f'[graphql_schema] Applying status filter: {status}')
+
+                # Example filtering based on the "status"
+                if status == "my_devices":
+                    # Include devices matching criteria in UI_MY_DEVICES
+                    allowed_statuses = get_setting_value("UI_MY_DEVICES")  
+
+                    mylog('none', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
+
+                    devices_data = [
+                        device for device in devices_data
+                        if (
+                            (device["devPresentLastScan"] == 1 and 'online' in allowed_statuses) or
+                            (device["devIsNew"] == 1 and 'new' in allowed_statuses) or
+                            (device["devPresentLastScan"] == 0 and device["devAlertDown"] and 'down' in allowed_statuses) or
+                            (device["devPresentLastScan"] == 0 and 'offline' in allowed_statuses)
+                        )
+                    ]
+                elif status == "connected":
+                    devices_data = [device for device in devices_data if device["devPresentLastScan"] == 1]
+                elif status == "favorites":
+                    devices_data = [device for device in devices_data if device["devFavorite"] == 1]
+                elif status == "new":
+                    devices_data = [device for device in devices_data if device["devIsNew"] == 1]
+                elif status == "down":
+                    devices_data = [
+                        device for device in devices_data 
+                        if device["devPresentLastScan"] == 0 and device["devAlertDown"]
+                    ]
+                elif status == "archived":
+                    devices_data = [device for device in devices_data if device["devIsArchived"] == 1]
+                elif status == "offline":
+                    devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
+
+            # sorting
             if options.sort:
                 for sort_option in options.sort:
                     devices_data = sorted(
@@ -112,6 +148,13 @@ class Query(ObjectType):
 
             # Filter data if a search term is provided
             if options.search:
+                # Define static list of searchable fields
+                searchable_fields = [
+                    "devName", "devMac", "devOwner", "devType", "devVendor", 
+                    "devGroup", "devComments", "devLocation", "devStatus",
+                    "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode"
+                ]
+
                 search_term = options.search.lower()
 
                 devices_data = [

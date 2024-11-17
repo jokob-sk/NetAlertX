@@ -255,28 +255,28 @@
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
-              <a href="devices.php#my" onclick="initializeDatatable('my')" >  <?= lang("Device_Shortcut_AllDevices");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#my_devices')" >  <?= lang("Device_Shortcut_AllDevices");?> </a>
             </li>
             <li>
-              <a href="devices.php#connected" onclick="initializeDatatable('connected')" >  <?= lang("Device_Shortcut_Connected");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#connected')" >  <?= lang("Device_Shortcut_Connected");?> </a>
             </li>
             <li>
-              <a href="devices.php#favorites" onclick="initializeDatatable('favorites')" > <?= lang("Device_Shortcut_Favorites");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#favorites')" > <?= lang("Device_Shortcut_Favorites");?> </a>
             </li>
             <li>
-              <a href="devices.php#new" onclick="initializeDatatable('new')"  >  <?= lang("Device_Shortcut_NewDevices");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#new')" >  <?= lang("Device_Shortcut_NewDevices");?> </a>
             </li>
             <li>
-              <a href="devices.php#down" onclick="initializeDatatable('down')" >  <?= lang("Device_Shortcut_DownOnly");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#down')" >  <?= lang("Device_Shortcut_DownOnly");?> </a>
             </li>
             <li>
-              <a href="devices.php#offline" onclick="initializeDatatable('offline')" > <?= lang("Gen_Offline");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#offline')" > <?= lang("Gen_Offline");?> </a>
             </li>
             <li>
-              <a href="devices.php#archived" onclick="initializeDatatable('archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
+              <a href="#" onclick="forceLoadUrl('/devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
-            
           </ul>
+
         </li>
 
         <!-- Monitoring menu item -->

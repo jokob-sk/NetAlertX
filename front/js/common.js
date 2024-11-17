@@ -689,6 +689,13 @@ function openUrl(urls) {
   }
 }
 
+// -----------------------------------------------------------------------------
+// force laod URL in current window with specific anchor
+function forceLoadUrl(relativeUrl) {
+  window.location.replace(relativeUrl);
+  window.location.reload()
+}
+
 
 // -----------------------------------------------------------------------------
 function navigateToDeviceWithIp (ip) {
