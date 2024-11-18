@@ -410,7 +410,7 @@ def read_config_file(filename):
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bSYNC_api_token\b': 'API_TOKEN',
-    r'\bAPI_TOKEN=\'\'\b': f'API_TOKEN=\'t_{generate_random_string(20)}',
+    r'\bAPI_TOKEN=\'\'': f'API_TOKEN=\'t_{generate_random_string(20)}\'',
     r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
     r'\bPIALERT_WEB_PROTECTION\b': 'SETPWD_enable_password',
     r'\bPIALERT_WEB_PASSWORD\b': 'SETPWD_password',
