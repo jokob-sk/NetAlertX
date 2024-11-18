@@ -17,14 +17,16 @@ app = Flask(__name__)
 
 # Retrieve API token and port
 graphql_port_value = get_setting_value("GRAPHQL_PORT")
-api_token_value = get_setting_value("API_TOKEN")
+
 
 # Endpoint for GraphQL queries
 @app.route("/graphql", methods=["POST"])
 def graphql_endpoint():
     # Check for API token in headers
-    token = request.headers.get("Authorization")
-    if token != f"Bearer {api_token_value}":
+    incoming_header_token = request.headers.get("Authorization")            
+    api_token_value = get_setting_value("API_TOKEN")
+
+    if incoming_header_token != f"Bearer {api_token_value}":
         mylog('verbose', [f'[graphql_server] Unauthorized access attempt'])
         return jsonify({"error": "Unauthorized"}), 401
 

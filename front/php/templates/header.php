@@ -255,25 +255,25 @@
           </a>
           <ul class="treeview-menu" style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#my_devices')" >  <?= lang("Device_Shortcut_AllDevices");?> </a>
+              <a href="/devices.php#my_devices" onclick="forceLoadUrl('/devices.php#my_devices')" >  <?= lang("Device_Shortcut_AllDevices");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#connected')" >  <?= lang("Device_Shortcut_Connected");?> </a>
+              <a href="/devices.php#connected" onclick="forceLoadUrl('/devices.php#connected')" >  <?= lang("Device_Shortcut_Connected");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#favorites')" > <?= lang("Device_Shortcut_Favorites");?> </a>
+              <a href="/devices.php#favorites" onclick="forceLoadUrl('/devices.php#favorites')" > <?= lang("Device_Shortcut_Favorites");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#new')" >  <?= lang("Device_Shortcut_NewDevices");?> </a>
+              <a href="/devices.php#new" onclick="forceLoadUrl('/devices.php#new')" >  <?= lang("Device_Shortcut_NewDevices");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#down')" >  <?= lang("Device_Shortcut_DownOnly");?> </a>
+              <a href="/devices.php#down" onclick="forceLoadUrl('/devices.php#down')" >  <?= lang("Device_Shortcut_DownOnly");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#offline')" > <?= lang("Gen_Offline");?> </a>
+              <a href="/devices.php#offline" onclick="forceLoadUrl('/devices.php#offline')" > <?= lang("Gen_Offline");?> </a>
             </li>
             <li>
-              <a href="#" onclick="forceLoadUrl('/devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
+              <a href="/devices.php#archived" onclick="forceLoadUrl('/devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
           </ul>
 
