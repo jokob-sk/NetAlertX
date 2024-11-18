@@ -27,6 +27,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 📥 Initial Setup
 
+- [Synology Guide](/docs/SYNOLOGY_GUIDE.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
 - [SMTP server config](/docs/SMTP.md)
 - [Custom Icon configuration and support](/docs/ICONS.md)
@@ -64,6 +65,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Version history (legacy)](/docs/VERSIONS_HISTORY.md)
 - [Reverse proxy (Nginx, Apache, SWAG)](/docs/REVERSE_PROXY.md)
+- [Installing Updates](/docs/UPDATES.md)
 - [Setting up Authelia](/docs/AUTHELIA.md) (DRAFT)
 
 #### 👩‍💻For Developers👨‍💻
