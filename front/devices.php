@@ -286,7 +286,7 @@ function processDeviceTotals(devicesData) {
       (getSetting('UI_shown_cards') == "" || getSetting('UI_shown_cards').includes(filter.status))
     ) {
       dataArray.push({
-        onclickEvent: `forceLoadUrl('/devices.php#${filter.status}')`,
+        onclickEvent: `forceLoadUrl('devices.php#${filter.status}')`,
         color: filter.color,
         title: count,
         label: filter.label,
