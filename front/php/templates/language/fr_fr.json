@@ -711,6 +711,7 @@
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_info": "Charger plus de passerelles de publication avec le paramètre <a href=\"/settings.php#LOADED_PLUGINS\">LOADED_PLUGINS</a>",
     "settings_publishers_label": "Passerelles de publication",
+    "settings_readonly": "",
     "settings_saved": "<br/>Paramètres enregistrés. <br/> Rechargement... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Système",

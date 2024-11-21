@@ -711,6 +711,7 @@
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_info": "",
     "settings_publishers_label": "Utgivere",
+    "settings_readonly": "",
     "settings_saved": "<br/>Innstillinger lagret. <br/> Laster inn på nytt... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i><br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "System",

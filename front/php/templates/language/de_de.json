@@ -792,6 +792,7 @@
     "settings_publishers_icon": "",
     "settings_publishers_info": "Lade mehr Veröffentlicher mit den <a href=\"/settings.php#LOADED_PLUGINS\">geladene Plugins</a>-Einstellungen",
     "settings_publishers_label": "Veröffentlicher",
+    "settings_readonly": "",
     "settings_saved": "<br/>Einstellungen gespeichert. <br/> Wird geladen... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "",
     "settings_system_label": "System",

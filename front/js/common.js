@@ -1312,9 +1312,12 @@ async function isGraphQLServerRunning() {
 // -----------------------------------------------------------------------------
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
-  const completedCallsCount_final = getLangCode() == 'en_us' ? 3 : 4;
+
+  completedCalls = parseInt(getCache("completedCallsCount"));
+  shouldBeCompletedCalls = getLangCode() == 'en_us' ? 3 : 4;
+
   return (
-    parseInt(getCache("completedCallsCount")) >= completedCallsCount_final
+    completedCalls >= shouldBeCompletedCalls
   );
 }
 
@@ -1325,6 +1328,8 @@ async function executeOnce() {
 
   if (!isAppInitialized()) {
     try {
+      console.log("HERE");
+      
       await waitForGraphQLServer(); // Wait for the server to start
 
       await cacheDevices();

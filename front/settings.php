@@ -176,6 +176,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   // Get plugin and settings data from API endpoints
   function getData(){
 
+    console.log("in getData");
+
     $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
         
         settingsData = res["data"];   
@@ -819,8 +821,6 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     }
   }
 
-
-
 </script>
 
 
@@ -829,41 +829,46 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
   function handleLoadingDialog()
   {
+    // Check if app config is read only
+    const canReadAndWriteConfig = <?php echo (is_readable($confPath) && is_writable($confPath)) ? 'true' : 'false'; ?>;
 
-    // check if config file has been updated
-    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+    if(!canReadAndWriteConfig)
+    {
+      showMessage (getString("settings_readonly"), 10000, "modal_red");
+      console.log(`app.conf seems to be read only (canRWConfig: ${canReadAndWriteConfig}`);
+    } else
+    {
+      // check if config file has been updated
+      $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+        
+        fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
 
-      fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
+        // console.log(appState["settingsImported"]*1000)
+        importedMiliseconds = parseInt((appState["settingsImported"]*1000));
+        humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
 
-      // console.log(appState["settingsImported"]*1000)
-      importedMiliseconds = parseInt((appState["settingsImported"]*1000));
+        // check if displayed settings are outdated
+        if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
+        {     
+          showSpinner("settings_old")
 
-      humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+          setTimeout("handleLoadingDialog()", 1000);
 
-      // console.log(humanReadable.replaceAll('"', ''))
+        } else
+        {       
+          checkInitialization();
+        }
 
-      // check if displayed settings are outdated
-      
-      if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
-      { 
-  
-        showSpinner("settings_old")
+        document.getElementById('lastImportedTime').innerHTML = humanReadable; 
+      })
 
-        setTimeout("handleLoadingDialog()", 1000);
-
-      } else
-      {       
-        checkInitialization();
-      }
-
-
-      document.getElementById('lastImportedTime').innerHTML = humanReadable; 
-     })
+    }
 
   }
 
 
   function checkInitialization() {
+
     if (isAppInitialized()) {
         // App is initialized, hide spinner and proceed with initialization
         console.log("App initialized, proceeding...");
@@ -880,7 +885,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // Check again after a delay
         setTimeout(checkInitialization, 1000);
     }
-}
+  }
   
 
   showSpinner()

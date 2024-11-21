@@ -91,6 +91,7 @@ def update_vendors (dbPath, plugin_objects):
                             devVendor 
                             FROM Devices
                             WHERE   devVendor      = '(unknown)' 
+                                    OR devVendor   = '(Unknown)' 
                                     OR devVendor   = ''
                                     OR devVendor   IS NULL
                         """)

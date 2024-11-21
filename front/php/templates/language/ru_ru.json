@@ -711,6 +711,7 @@
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_info": "Загрузите больше нотификаторов с помощью настройки <a href=\"/settings.php#LOADED_PLUGINS\">LOADED_PLUGINS</a>",
     "settings_publishers_label": "Уведомления",
+    "settings_readonly": "",
     "settings_saved": "<br/>Настройки сохранены. <br/> Перезагрузка... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Система",

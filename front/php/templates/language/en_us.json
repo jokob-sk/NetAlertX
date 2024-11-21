@@ -711,6 +711,7 @@
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_info": "Load more Publishers with the <a href=\"/settings.php#LOADED_PLUGINS\">LOADED_PLUGINS</a> setting",
     "settings_publishers_label": "Publishers",
+    "settings_readonly": "Can't READ or WRITE <code>app.conf</code>. Try restarting the container and read the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/FILE_PERMISSIONS.md\" target=\"_blank\">file permissions documentation</a>",
     "settings_saved": "<br/>Settings saved. <br/> Reloading... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "System",
