@@ -634,7 +634,7 @@ def query_MAC_vendor (pMAC):
             for line in f:
                 line_lower = line.lower()  # Convert line to lowercase for case-insensitive matching
                 if line_lower.startswith(mac_start_string6):                 
-                    parts = line.split(' ', 1)
+                    parts = line.split('\t', 1)
                     if len(parts) > 1:
                         vendor = parts[1].strip()
                         mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"])

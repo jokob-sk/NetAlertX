@@ -30,13 +30,12 @@ IEEE_OUI_URL="http://standards-oui.ieee.org/oui/oui.txt"
 # Download the file using wget
 wget "$IEEE_OUI_URL" -O ieee-oui_dl.txt
 
-# Filter lines containing "(base 16)" and remove the "(base 16)" string
-grep "(base 16)" ieee-oui_dl.txt | sed 's/ *(base 16)//' > ieee-oui_new.txt
+# Filter lines containing "(base 16)" and format them with a tab between MAC and vendor
+grep "(base 16)" ieee-oui_dl.txt | sed -E 's/ *\(base 16\)//' | awk -F' ' '{printf "%s\t%s\n", $1, substr($0, index($0, $2))}' > ieee-oui_new.txt
 
-# Combine ieee-oui_new.txt and ieee-oui.txt, and extract unique MAC start values along with vendor names
-
+# Combine, sort, and remove duplicates, ensuring tab-separated output
 cat ieee-oui.txt ieee-oui_new.txt >> ieee-oui_all.txt
-sort ieee-oui_all.txt > ieee-oui_all_sort.txt
-awk '{$1=$1; print}' ieee-oui_all_sort.txt | sort -u > ieee-oui_all_filtered.txt
+sort ieee-oui_all.txt | awk '{$1=$1; print}' | sort -u | awk -F' ' '{printf "%s\t%s\n", $1, substr($0, index($0, $2))}' > ieee-oui_all_filtered.txt
+
 
 
