@@ -53,7 +53,7 @@
               </div>
               <div class="box-body">
                 <div class="chart">
-                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+                  <script src="lib/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
                   <!-- presence chart -->
                   <?php  
                       require 'php/components/graph_online_history.php';
@@ -112,11 +112,11 @@
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Datatable -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net/css/select.dataTables.min.css">
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="lib/datatables.net/css/select.dataTables.min.css">
+  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
 
 <!-- page script ----------------------------------------------------------- -->
 <script>

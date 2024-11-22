@@ -1,11 +1,11 @@
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- Datatable -->
-<link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net/css/select.dataTables.min.css">
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/dataTables.select.min.js"></script>
+<link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="lib/datatables.net/css/select.dataTables.min.css">
+  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
 
 
 <!-- Main content ---------------------------------------------------------- -->

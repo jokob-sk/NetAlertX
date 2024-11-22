@@ -30,7 +30,7 @@
   <!-- ----------------------------------------------------------------------- -->
   <!-- REQUIRED JS SCRIPTS -->
   <!-- jQuery 3 -->
-  <script src="lib/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="lib/jquery/jquery.min.js"></script>
 
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
@@ -39,17 +39,17 @@
   <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
   <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
   
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/solid.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/brands.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/font-awesome/solid.css">
+  <link rel="stylesheet" href="lib/font-awesome/brands.css">
+  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
 
   <!-- Ionicons -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="lib/Ionicons/ionicons.min.css">
 
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">

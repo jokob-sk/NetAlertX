@@ -48,16 +48,16 @@
 <!-- ./wrapper -->
         
 <!-- Bootstrap 3.3.7 -->
-<script src="lib/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/bootstrap/bootstrap.min.js"></script>
 
 <!-- jQuery UI -->
-<script src="lib/AdminLTE/bower_components/jquery-ui/jquery-ui.min.js"></script>
+<script src="lib/jquery-ui/jquery-ui.min.js"></script>
 
 <!-- AdminLTE App -->
 <script src="lib/AdminLTE/dist/js/adminlte.min.js"></script>
 
 <!-- Select2 CSS -->
-<link rel="stylesheet" href="lib/AdminLTE/bower_components/select2/dist/css/select2.min.css">
+<link rel="stylesheet" href="lib/select2/select2.min.css">
 
 <!-- NetAlertX -->
 <script defer src="js/handle_version.js"></script>
@@ -65,7 +65,7 @@
 
 
 <!-- Select2 JavaScript -->
-<script src="lib/AdminLTE/bower_components/select2/dist/js/select2.full.min.js" defer></script>
+<script src="lib/select2/select2.full.min.js" defer></script>
 
 
   <?php

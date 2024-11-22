@@ -115,7 +115,7 @@
               </div>
               <div class="box-body">
                 <div class="chart">
-                  <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
+                  <script src="lib/chart.js/Chart.js"></script>
                   <!-- presence chart -->
                   <?php  
                       require 'php/components/graph_online_history.php';
@@ -179,11 +179,11 @@
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- fullCalendar -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
-  <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
-  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
+  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.min.css">
+  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.print.min.css" media="print">
+  <script src="lib/moment/moment.js"></script>
+  <script src="lib/fullcalendar/fullcalendar.min.js"></script>
+  <script src="lib/fullcalendar/locale-all.js"></script>
 
 <!-- fullCalendar Scheduler -->
   <link href="lib/fullcalendar-scheduler/scheduler.min.css" rel="stylesheet">

@@ -622,20 +622,20 @@
 
 <!-- ----------------------------------------------------------------------- -->
 <!-- iCkeck -->
-  <link rel="stylesheet" href="lib/AdminLTE/plugins/iCheck/all.css">
-  <script src="lib/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+  <link rel="stylesheet" href="lib/iCheck/all.css">
+  <script src="lib/iCheck/icheck.min.js"></script>
 
 <!-- Datatable -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <script src="lib/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
 <!-- fullCalendar -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
-  <script src="lib/AdminLTE/bower_components/moment/moment.js"></script>
-  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="lib/AdminLTE/bower_components/fullcalendar/dist/locale-all.js"></script>
+  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.min.css">
+  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.print.min.css" media="print">
+  <script src="lib/moment/moment.js"></script>
+  <script src="lib/fullcalendar/fullcalendar.min.js"></script>
+  <script src="lib/fullcalendar/locale-all.js"></script>
   <!-- ----------------------------------------------------------------------- -->
 
   

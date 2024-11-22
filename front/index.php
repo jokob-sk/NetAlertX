@@ -84,20 +84,18 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/Ionicons/css/ionicons.min.css">
+  <link rel="stylesheet" href="lib/Ionicons/ionicons.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
   <!-- iCheck -->
-  <link rel="stylesheet" href="lib/AdminLTE/plugins/iCheck/square/blue.css">
+  <link rel="stylesheet" href="lib/iCheck/square/blue.css">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/solid.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/brands.css">
-  <link rel="stylesheet" href="lib/AdminLTE/bower_components/font-awesome/css/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
+  <link rel="stylesheet" href="lib/font-awesome/solid.css">
+  <link rel="stylesheet" href="lib/font-awesome/brands.css">
+  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
   <!-- Favicon -->
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
@@ -167,11 +165,11 @@ switch ($UI_THEME) {
 
 
 <!-- jQuery 3 -->
-<script src="lib/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="js/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="lib/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/bootstrap/bootstrap.min.js"></script>
 <!-- iCheck -->
-<script src="lib/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="lib/iCheck/icheck.min.js"></script>
 <script>
   $(function () {
     $('input').iCheck({
