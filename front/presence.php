@@ -14,7 +14,6 @@
 
 <?php
   require 'php/templates/header.php';
-  require 'php/components/graph_online_history.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -117,8 +116,10 @@
               <div class="box-body">
                 <div class="chart">
                   <script src="lib/AdminLTE/bower_components/chart.js/Chart.js"></script>
-                  <!-- <canvas id="clientsChart" width="800" height="140" class="extratooltipcanvas no-user-select"></canvas> -->
-                  <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
+                  <!-- presence chart -->
+                  <?php  
+                      require 'php/components/graph_online_history.php';
+                  ?>                  
                 </div>
               </div>
               <!-- /.box-body -->

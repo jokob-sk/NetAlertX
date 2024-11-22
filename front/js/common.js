@@ -124,19 +124,19 @@ function cacheSettings()
 
           settingsData.forEach((set) => {  
 
-            resolvedOptions = createArray(set.Options)
+            resolvedOptions = createArray(set.setOptions)
             resolvedOptionsOld = resolvedOptions
             setPlugObj     = {};
             options_params = [];
             resolved = ""
           
             // proceed only if first option item contains something to resolve
-            if( !set.Code_Name.includes("__metadata") && 
+            if( !set.setKey.includes("__metadata") && 
                 resolvedOptions.length != 0 && 
                 resolvedOptions[0].includes("{value}"))
             {
               // get setting definition from the plugin config if available
-              setPlugObj = getPluginSettingObject(pluginsData, set.Code_Name)
+              setPlugObj = getPluginSettingObject(pluginsData, set.setKey)
 
               // check if options contains parameters and resolve 
               if(setPlugObj != {} && setPlugObj["options_params"])
@@ -161,8 +161,8 @@ function cacheSettings()
               }    
             }
 
-            setCache(`pia_set_${set.Code_Name}`, set.Value)             
-            setCache(`pia_set_opt_${set.Code_Name}`, resolvedOptions) 
+            setCache(`pia_set_${set.setKey}`, set.setValue)             
+            setCache(`pia_set_opt_${set.setKey}`, resolvedOptions) 
           });
         }).then(() => handleSuccess('cacheSettings', resolve())).catch(() => handleFailure('cacheSettings', reject("cacheSettings already completed")));    // handle AJAX synchronization
       })
@@ -1167,9 +1167,9 @@ function arraysContainSameValues(arr1, arr2) {
 
 // -----------------------------------------------------------------------------
 // Hide elements on the page based on the supplied setting
-function hideUIelements(settingKey) {
+function hideUIelements(setKey) {
 
-  hiddenSectionsSetting = getSetting(settingKey)
+  hiddenSectionsSetting = getSetting(setKey)
   
   if(hiddenSectionsSetting != "") // handle if settings not yet initialized
   {

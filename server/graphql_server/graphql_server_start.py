@@ -18,6 +18,11 @@ app = Flask(__name__)
 # Retrieve API token and port
 graphql_port_value = get_setting_value("GRAPHQL_PORT")
 
+# Endpoint used when accessed via browser
+@app.route("/graphql", methods=["GET"])
+def graphql_debug():
+    # Handles GET requests
+    return "NetAlertX GraphQL server running."
 
 # Endpoint for GraphQL queries
 @app.route("/graphql", methods=["POST"])

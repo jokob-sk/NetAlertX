@@ -40,3 +40,5 @@ $.get('api/table_online_history.json?nocache=' + Date.now(), function(res) {
         console.error('Error fetching online history data.');
     });
 </script>
+<!-- <canvas id="clientsChart" width="800" height="140" class="extratooltipcanvas no-user-select"></canvas> -->
+<canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>

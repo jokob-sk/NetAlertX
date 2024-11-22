@@ -31,8 +31,8 @@ class plugin_param:
             inputValue = get_setting(param["value"])
 
             if inputValue != None:
-                setVal = inputValue["Value"] # setting value
-                setTyp = inputValue["Type"]  # setting type
+                setVal = inputValue["setValue"] # setting value
+                setTyp = inputValue["setType"]  # setting type
 
                 setTypJSN = json.loads(setTyp.replace('"','\"').replace("'",'"'))
 

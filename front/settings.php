@@ -33,15 +33,14 @@ $result = $db->query("SELECT * FROM Settings");
 $settings = array();
 while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
   // Push row data      
-  $settings[] = array(  'Code_Name'    => $row['Code_Name'],
-                        'Display_Name' => $row['Display_Name'],
-                        'Description'  => $row['Description'],
-                        'Type'         => $row['Type'],
-                        'Options'      => $row['Options'],
-                        'RegEx'        => $row['RegEx'],
-                        'Value'        => $row['Value'],
-                        'Group'        => $row['Group'],
-                        'Events'       => $row['Events']
+  $settings[] = array(  'setKey'          => $row['setKey'],
+                        'setName'         => $row['setName'],
+                        'setDescription'  => $row['setDescription'],
+                        'setType'         => $row['setType'],
+                        'setOptions'      => $row['setOptions'],
+                        'setValue'        => $row['setValue'],
+                        'setGroup'        => $row['setGroup'],
+                        'setEvents'       => $row['setEvents']
                       ); 
 }
 
@@ -195,12 +194,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             pluginsData = res["data"];  
 
-            // Sort settingsData alphabetically based on the "Group" property
+            // Sort settingsData alphabetically based on the "setGroup" property
             settingsData.sort((a, b) => {
-                if (a["Group"] < b["Group"]) {
+                if (a["setGroup"] < b["setGroup"]) {
                     return -1;
                 }
-                if (a["Group"] > b["Group"]) {
+                if (a["setGroup"] > b["setGroup"]) {
                     return 1;
                 }
                 return 0;
@@ -214,15 +213,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             // let's use that to verify settings were initialized correctly
             settingsData.forEach((set) => {
 
-              codeName = set['Code_Name']
+              setKey = set['setKey']
 
               try {                
-                const isMetadata = codeName.includes('__metadata');
+                const isMetadata = setKey.includes('__metadata');
                 // if this isn't a metadata entry, get corresponding metadata object from the dummy setting
-                const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
+                const setObj = isMetadata ? {} : JSON.parse(getSetting(`${setKey}__metadata`));
                 
               } catch (error) {
-                console.error(`Error getting setting for ${codeName}:`, error);
+                console.error(`Error getting setting for ${setKey}:`, error);
                 showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");  
 
                 setTimeout(() => {
@@ -260,8 +259,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     settingsData.forEach((set) => {
       // settingPluginPrefixes
-      if (!settingPluginPrefixes.includes(set.Group)) {
-        settingPluginPrefixes.push(set.Group); // = Unique plugin prefix
+      if (!settingPluginPrefixes.includes(set.setGroup)) {
+        settingPluginPrefixes.push(set.setGroup); // = Unique plugin prefix
       }      
     });    
 
@@ -375,36 +374,36 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       // go thru all settings and collect settings per settings prefix 
       settingsData.forEach((set) => {
 
-        const valIn = set['Value'];
-        const codeName = set['Code_Name'];
-        const overriddenByEnv = set['OverriddenByEnv'] == 1;
-        const setType = set['Type'];
-        const isMetadata = codeName.includes('__metadata');
+        const valIn = set['setValue'];
+        const setKey = set['setKey'];
+        const overriddenByEnv = set['setOverriddenByEnv'] == 1;
+        const setType = set['setType'];
+        const isMetadata = setKey.includes('__metadata');
         // is this isn't a metadata entry, get corresponding metadata object from the dummy setting
-        const setObj = isMetadata ? {} : JSON.parse(getSetting(`${codeName}__metadata`));
+        const setObj = isMetadata ? {} : JSON.parse(getSetting(`${setKey}__metadata`));
 
         // not initialized properly, reload
         if(isMetadata && valIn == "" )
         {
-          console.warn(`Metadata setting value is empty: ${codeName}`);
+          console.warn(`Metadata setting value is empty: ${setKey}`);
           clearCache();
         }
 
         // constructing final HTML for the setting
         setHtml = ""
 
-        if(set["Group"] == prefix)
+        if(set["setGroup"] == prefix)
         {
           // hide metadata by default by assigning it a special class          
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
           isMetadata ? showMetadata = '' : showMetadata = `<i 
-                                                      my-to-toggle="row_${codeName}__metadata"
+                                                      my-to-toggle="row_${setKey}__metadata"
                                                       title="${getString("Settings_Metadata_Toggle")}" 
                                                       class="fa fa-circle-question pointer hideOnMobile" 
                                                       onclick="toggleMetadata(this)">
                                                     </i>` ;
 
-          infoIcon = `<i my-to-show="#row_${codeName} .setting_description"
+          infoIcon = `<i my-to-show="#row_${setKey} .setting_description"
                         title="${getString("Settings_Show_Description")}" 
                         class="fa fa-circle-info pointer hideOnBigScreen" 
                         onclick="showDescription(this)">
@@ -412,15 +411,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           // NAME & DESCRIPTION columns
           setHtml += `
-                    <div class="row table_row ${metadataClass} " id="row_${codeName}">
+                    <div class="row table_row ${metadataClass} " id="row_${setKey}">
                       <div class="table_cell setting_name bold col-sm-2">
-                        <label>${getString(codeName + '_name', set['Display_Name'])}</label>
+                        <label>${getString(setKey + '_name', set['setName'])}</label>
                         <div class="small text-overflow-hidden">
-                          <code>${codeName}</code>${showMetadata}${infoIcon}
+                          <code>${setKey}</code>${showMetadata}${infoIcon}
                         </div>
                       </div>
                       <div class="table_cell setting_description col-sm-4">
-                        ${getString(codeName + '_description', set['Description'])}
+                        ${getString(setKey + '_description', set['setDescription'])}
                       </div>
                       <div class="table_cell input-group setting_input ${overriddenByEnv ? "setting_overriden_by_env" : ""} input-group col-xs-12 col-sm-6">
                   `;
@@ -455,7 +454,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
             overrideHtml = `<div class="override col-xs-12">
                               <div class="override-check col-xs-1">
-                                <input onChange="overrideToggle(this)" my-data-type="${setType}" my-input-toggle-readonly="${codeName}" class="checkbox" id="${codeName}_override" type="checkbox" ${checked} />
+                                <input onChange="overrideToggle(this)" my-data-type="${setType}" my-input-toggle-readonly="${setKey}" class="checkbox" id="${setKey}_override" type="checkbox" ${checked} />
                               </div>
                               <div class="override-text col-xs-11" title="${getString("Setting_Override_Description")}">
                                 ${getString("Setting_Override")}
@@ -469,7 +468,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // Parse the setType JSON string into an object
           let inputHtml = '';
 
-          console.log(codeName);
+          console.log(setKey);
           console.log(setType);
           
           const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));
@@ -497,7 +496,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               onChange,
               customParams,
               customId
-            } = handleElementOptions(codeName, elementOptions, transformers, valIn);
+            } = handleElementOptions(setKey, elementOptions, transformers, valIn);
 
             // override
             val = valRes;
@@ -513,15 +512,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                                       my-data-type="${dataType}" 
                                       my-editable="${editable}" 
                                       class="form-control ${addCss}" 
-                                      name="${codeName}" 
-                                      id="${codeName}" 
+                                      name="${setKey}" 
+                                      id="${setKey}" 
                                       my-customparams="${customParams}" 
                                       my-customid="${customId}" 
                                       ${multi}>
-                                <option value="" id="${codeName + "_temp_"}"></option>
+                                <option value="" id="${setKey + "_temp_"}"></option>
                               </select>`;
 
-                generateOptionsOrSetOptions(codeName, createArray(val), `${codeName}_temp_`, generateOptions, targetField = null, transformers);
+                generateOptionsOrSetOptions(setKey, createArray(val), `${setKey}_temp_`, generateOptions, targetField = null, transformers);
 
                 break;
 
@@ -536,7 +535,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                     my-data-type="${dataType}" 
                     my-customparams="${customParams}" 
                     my-customid="${customId}" 
-                    id="${codeName}${suffix}" 
+                    id="${setKey}${suffix}" 
                     type="${inputType}" 
                     value="${val}" 
                     ${readOnly}
@@ -553,7 +552,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                     my-customparams="${customParams}" 
                     my-customid="${customId}" 
                     my-input-from="${sourceIds}" 
-                    my-input-to="${codeName}" 
+                    my-input-to="${setKey}" 
                     onclick="${onClick}">
                     ${getString(getStringKey)}
                   </button>`;
@@ -565,7 +564,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                     my-customparams="${customParams}" 
                     my-customid="${customId}" 
                     my-data-type="${dataType}" 
-                    id="${codeName}" 
+                    id="${setKey}" 
                     ${readOnly}>
                       ${val}
                     </textarea>`;
@@ -591,13 +590,13 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // process events (e.g. run a scan, or test a notification) if associated with the setting
           let eventsHtml = "";          
 
-          const eventsList = createArray(set['Events']);      
+          const eventsList = createArray(set['setEvents']);      
 
           if (eventsList.length > 0) {
             // console.log(eventsList)
             eventsList.forEach(event => {
               eventsHtml += `<span class="input-group-addon pointer"
-                data-myparam="${codeName}"
+                data-myparam="${setKey}"
                 data-myparam-plugin="${prefix}"
                 data-myevent="${event}"
                 onclick="addToExecutionQueue_settingEvent(this)"
@@ -666,9 +665,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // loop through the settings definitions from the json
         res["data"].forEach(set => {
 
-          prefix      = set["Group"]
-          setType     = set["Type"]
-          setCodeName = set["Code_Name"]
+          prefix      = set["setGroup"]
+          setType     = set["setType"]
+          setCodeName = set["setKey"]
 
           console.log(prefix);
 

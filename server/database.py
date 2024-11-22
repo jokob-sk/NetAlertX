@@ -487,16 +487,15 @@ class DB():
         self.sql.execute(""" DROP TABLE IF EXISTS Settings;""")
         self.sql.execute("""
             CREATE TABLE "Settings" (
-            "Code_Name"	      TEXT,
-            "Display_Name"	  TEXT,
-            "Description"	    TEXT,
-            "Type"            TEXT,
-            "Options"         TEXT,
-            "RegEx"           TEXT,
-            "Group"	          TEXT,
-            "Value"	          TEXT,
-            "Events"	        TEXT,
-            "OverriddenByEnv" INTEGER
+            "setKey"	        TEXT,
+            "setName"	        TEXT,
+            "setDescription"	TEXT,
+            "setType"         TEXT,
+            "setOptions"      TEXT,
+            "setGroup"	          TEXT,
+            "setValue"	      TEXT,
+            "setEvents"	        TEXT,
+            "setOverriddenByEnv" INTEGER
             );
             """)
 

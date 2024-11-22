@@ -80,10 +80,10 @@
         excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devLastIP", "NEWDEV_devStaticIP", "NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
         
         const relevantColumns = settingsData.filter(set =>
-            set.Group === "NEWDEV" &&
-            set.Code_Name.includes("_dev") &&
-            !excludedColumns.includes(set.Code_Name) &&
-            !set.Code_Name.includes("__metadata")
+            set.setGroup === "NEWDEV" &&
+            set.setKey.includes("_dev") &&
+            !excludedColumns.includes(set.setKey) &&
+            !set.setKey.includes("__metadata")
         );
 
         const generateSimpleForm = columns => {
@@ -100,7 +100,7 @@
                 // Append form groups to the column
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
 
-                  const setTypeObject  = JSON.parse(columns[j].Type.replace(/'/g, '"'));         
+                  const setTypeObject  = JSON.parse(columns[j].setType.replace(/'/g, '"'));         
 
                   // get the element with the input value(s)
                   let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
@@ -137,31 +137,31 @@
                   //  render based on element type 
                   if (elementType === 'select') {
 
-                    targetLocation = columns[j].Code_Name + "_generateSetOptions"
+                    targetLocation = columns[j].setKey + "_generateSetOptions"
 
-                    generateOptionsOrSetOptions(columns[j].Code_Name, [], targetLocation, generateOptions)
+                    generateOptionsOrSetOptions(columns[j].setKey, [], targetLocation, generateOptions)
 
-                    console.log(columns[j].Code_Name)
+                    console.log(columns[j].setKey)
                     //  Handle Icons as they need a preview                 
-                    if(columns[j].Code_Name == 'NEWDEV_devIcon')
+                    if(columns[j].setKey == 'NEWDEV_devIcon')
                     {
                       input = `
                             <span class="input-group-addon iconPreview" my-customid="NEWDEV_devIcon_preview"></span>
                             <select  class="form-control"
                                       onChange="updateIconPreview(this)"
                                       my-customparams="NEWDEV_devIcon,NEWDEV_devIcon_preview"
-                                      id="${columns[j].Code_Name}"
-                                      data-my-column="${columns[j].Code_Name}" 
-                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
+                                      id="${columns[j].setKey}"
+                                      data-my-column="${columns[j].setKey}" 
+                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                       
                     } else{                      
 
                       input = `<select  class="form-control"
-                                      id="${columns[j].Code_Name}"
-                                      data-my-column="${columns[j].Code_Name}" 
-                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" >
+                                      id="${columns[j].setKey}"
+                                      data-my-column="${columns[j].setKey}" 
+                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                     }
@@ -174,20 +174,20 @@
                     
 
                     input =  `<input  class="${inputClass}" 
-                                      id="${columns[j].Code_Name}"  
-                                      my-customid="${columns[j].Code_Name}"  
-                                      data-my-column="${columns[j].Code_Name}" 
-                                      data-my-targetColumns="${columns[j].Code_Name.replace('NEWDEV_','')}" 
+                                      id="${columns[j].setKey}"  
+                                      my-customid="${columns[j].setKey}"  
+                                      data-my-column="${columns[j].setKey}" 
+                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" 
                                       type="${inputType}">`
                   }
 
           
                   const inputEntry  = `<div class="form-group col-sm-12" >
-                                          <label class="col-sm-3 control-label">${columns[j].Display_Name}</label>
+                                          <label class="col-sm-3 control-label">${columns[j].setName}</label>
                                           <div class="col-sm-9">
                                             <div class="input-group red-hover-border">
                                               ${input}
-                                              <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].Code_Name}');" title="${getString('Device_MultiEdit_Tooltip')}">
+                                              <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].setKey}');" title="${getString('Device_MultiEdit_Tooltip')}">
                                                 <i class="fa fa-save"></i>
                                               </span>
                                             </div>

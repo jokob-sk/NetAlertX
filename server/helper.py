@@ -292,7 +292,7 @@ def get_setting(key):
             data = json.load(json_file)
 
             for item in data.get("data",[]):
-                if item.get("Code_Name") == key:
+                if item.get("setKey") == key:
                     return item
 
             mylog('debug', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
@@ -327,8 +327,8 @@ def get_setting_value(key):
         set_type  = 'Error: Not handled'
         set_value = 'Error: Not handled'
 
-        set_value = setting["Value"]  # Setting value (Value (upper case) = user overridden default_value)
-        set_type = setting["Type"]  # Setting type  # lower case "type" - default json value vs uppper-case "Type" (= from user defined settings)
+        set_value = setting["setValue"]  # Setting value (Value (upper case) = user overridden default_value)
+        set_type = setting["setType"]  # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
 

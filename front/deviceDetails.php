@@ -819,7 +819,7 @@ function initializeCombos () {
   initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
 
   // Initiate dropdown
-  //  generateSetOptions(settingKey,       // Identifier for the setting
+  //  generateSetOptions(setKey,       // Identifier for the setting
   //                      valuesArray,       // Array of values to be pre-selected in the dropdown
   //                      targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
   //                      callbackToGenerateEntries,  // Callback function to generate entries based on options

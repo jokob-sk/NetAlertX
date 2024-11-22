@@ -10,7 +10,7 @@ $allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", 
 
 global $db;
 
-$result = $db->querySingle("SELECT Value FROM Settings WHERE Code_Name = 'UI_LANG'"); 
+$result = $db->querySingle("SELECT setValue FROM Settings WHERE setKey = 'UI_LANG'"); 
 
 // below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
 switch($result){    

@@ -215,14 +215,14 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
     }
   });
 
-  const settingsCodeNames = settingsJSON_DB.map((setting) => setting.Code_Name);
+  const settingsCodeNames = settingsJSON_DB.map((setting) => setting.setKey);
   const detailedCodeNames = settingsArray.map((item) => item[1]);
 
   const missingCodeNamesOnPage = detailedCodeNames.filter(
-    (codeName) => !settingsCodeNames.includes(codeName)
+    (setKey) => !settingsCodeNames.includes(setKey)
   );
   const missingCodeNamesInDB = settingsCodeNames.filter(
-    (codeName) => !detailedCodeNames.includes(codeName)
+    (setKey) => !detailedCodeNames.includes(setKey)
   );
 
   // check if the number of settings on the page and in the DB are the same
@@ -453,11 +453,11 @@ function filterRows(inputText) {
         }
   
         var description = $row.find(".setting_description").text().toLowerCase();
-        var codeName = $row.find(".setting_name code").text().toLowerCase();
+        var setKey = $row.find(".setting_name code").text().toLowerCase();
   
         if (
           description.includes(inputText.toLowerCase()) ||
-          codeName.includes(inputText.toLowerCase())
+          setKey.includes(inputText.toLowerCase())
         ) {
           $row.show();
           anyVisible = true; // Set the flag to true if at least one row is visible
@@ -554,7 +554,7 @@ function overrideToggle(element) {
 
 // Generate options or set options based on the provided parameters
 function generateOptionsOrSetOptions(
-  codeName,
+  setKey,
   valuesArray, // Array of values to be pre-selected in the dropdown
   placeholder, // ID of the HTML element where dropdown should be rendered (will be replaced)
   processDataCallback, // Callback function to generate entries based on options
@@ -562,10 +562,10 @@ function generateOptionsOrSetOptions(
   transformers = [] // Transformers to be applied to the values
 ) {
 
-  // console.log(codeName);
+  // console.log(setKey);
 
   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
-  options = arrayToObject(createArray(getSettingOptions(codeName)))
+  options = arrayToObject(createArray(getSettingOptions(setKey)))
 
   // Call to render lists
   renderList(
@@ -638,7 +638,7 @@ function reverseTransformers(val, transformers) {
 
 // ------------------------------------------------------------
 // Function to initialize relevant variables based on HTML element
-const handleElementOptions = (codeName, elementOptions, transformers, val) => {
+const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let inputType = "text";
   let readOnly = "";
   let isMultiSelect = false;
@@ -687,7 +687,7 @@ const handleElementOptions = (codeName, elementOptions, transformers, val) => {
     }
     if (option.sourceSuffixes) {
       $.each(option.sourceSuffixes, function (index, suf) {
-        sourceIds.push(codeName + suf);
+        sourceIds.push(setKey + suf);
       });
     }
     if (option.separator) {

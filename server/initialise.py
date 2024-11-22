@@ -12,7 +12,7 @@ import re
 
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder
-from helper import collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
+from helper import fixPermissions, collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
@@ -30,7 +30,7 @@ from notification import write_notification
 
 #-------------------------------------------------------------------------------
 # managing application settings, ensuring SQL safety for user input, and updating internal configuration lists
-def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False, overriddenByEnv=0):
+def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False, overriddenByEnv=0):
     if events is None:
         events = []
     if setJsonMetadata is None:
@@ -51,8 +51,8 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
        
 
     # Create the tuples
-    sql_safe_tuple = (key, name, desc, str(inputtype), options, regex, str(result), group, str(events), overriddenByEnv)
-    settings_tuple = (key, name, desc, inputtype, options, regex, result, group, str(events), overriddenByEnv)
+    sql_safe_tuple = (key, name, desc, str(inputtype), options, str(result), group, str(events), overriddenByEnv)
+    settings_tuple = (key, name, desc, inputtype, options, result, group, str(events), overriddenByEnv)
 
     # Update or append the tuples in the lists
     conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, sql_safe_tuple, key)
@@ -60,7 +60,7 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
 
     # Save metadata in dummy setting if not a metadata key
     if '__metadata' not in key:
-        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", '{"dataType":"json", "elements": [{"elementType" : "textarea", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]}', '[]', "", json.dumps(setJsonMetadata), group, '[]', overriddenByEnv)
+        metadata_tuple = (f'{key}__metadata', "metadata name", "metadata desc", '{"dataType":"json", "elements": [{"elementType" : "textarea", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]}', '[]', json.dumps(setJsonMetadata), group, '[]', overriddenByEnv)
         conf.mySettingsSQLsafe = update_or_append(conf.mySettingsSQLsafe, metadata_tuple, f'{key}__metadata')
         conf.mySettings = update_or_append(conf.mySettings, metadata_tuple, f'{key}__metadata')
 
@@ -123,7 +123,7 @@ def importConfigs (db, all_plugins):
     # Header
     updateState("Import config", showSpinner = True)  
 
-    # remove all plugin langauge strings
+    # remove all plugin language strings
     sql.execute("DELETE FROM Plugins_Language_Strings;")
     db.commitDB()
     
@@ -216,7 +216,7 @@ def importConfigs (db, all_plugins):
         setting_obj = get_plugin_setting_obj(plugin, "RUN")
 
         if setting_obj is not None:
-            set_type = setting_obj.get('type')              # lower case "type" - default json value vs uppper-case "Type" (= from user defined settings)
+            set_type = setting_obj.get('type')              # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
             set_value = setting_obj.get('default_value')
 
             plugin_run = setting_value_to_python_type(set_type, set_value)
@@ -239,7 +239,7 @@ def importConfigs (db, all_plugins):
                 key = pref + "_" + setFunction 
 
                 # set.get() - returns None if not found, set["options"] raises error
-                #  ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}):
+                #  ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", setJsonMetadata = {}):
                 v = ccd(key, 
                         set["default_value"], 
                         c_d, 
@@ -249,7 +249,6 @@ def importConfigs (db, all_plugins):
                         group = pref, 
                         events = set.get("events"), 
                         desc = set["description"][0]["string"], 
-                        regex = "", 
                         setJsonMetadata = set)                   
 
                 # Save the user defined value into the object
@@ -323,9 +322,9 @@ def importConfigs (db, all_plugins):
                         value = str(value)
                         
                     # Log the value being passed
-                    # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+                    # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
                     mylog('verbose', [f"[Config] Setting override {setting_name} with value: {value}"])
-                    ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True, 1)
+                    ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True, 1)
 
             except json.JSONDecodeError:
                 mylog('none', [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"])
@@ -348,8 +347,8 @@ def importConfigs (db, all_plugins):
             
             mylog('none', ['[Config] App upgraded 🚀'])      
                  
-            # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", regex="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-            ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", "", None, None, True)
+            # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+            ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
             
             write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the 🔄 (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
@@ -360,8 +359,8 @@ def importConfigs (db, all_plugins):
     # Insert settings into the DB    
     sql.execute ("DELETE FROM Settings")    
     # mylog('debug', [f"[Config] conf.mySettingsSQLsafe  : '{conf.mySettingsSQLsafe}'"])
-    sql.executemany ("""INSERT INTO Settings ("Code_Name", "Display_Name", "Description", "Type", "Options",
-         "RegEx", "Value", "Group", "Events", "OverriddenByEnv" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
+    sql.executemany ("""INSERT INTO Settings ("setKey", "setName", "setDescription", "setType", "setOptions",
+          "setValue", "setGroup", "setEvents", "setOverriddenByEnv" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", conf.mySettingsSQLsafe)
     
     db.commitDB()
 
@@ -420,7 +419,7 @@ replacements = {
     r'REPORT_WEBHOOK=True': "WEBHOOK_RUN='on_notification'",
     r'REPORT_PUSHSAFER=True': "PUSHSAFER_RUN='on_notification'",
     r'REPORT_MQTT=True': "MQTT_RUN='on_notification'",
-    r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
+    # r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
     r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS',
     r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG',
     r'dev_MAC': 'devMac',
@@ -463,6 +462,7 @@ def renameSettings(config_file):
         for line in original_file:
             # Use regular expressions with word boundaries to check for the old setting code names
             if any(re.search(key, line) for key in replacements.keys()):
+                mylog('debug', f'[Config] Old setting names found in line: ({line})')
                 contains_old_settings = True
                 break  # Exit the loop if any old setting is found
 
@@ -492,6 +492,9 @@ def renameSettings(config_file):
 
         # Replace the original config_file with the temporary file
         shutil.move(str(config_file) + "_temp", str(config_file))  # Convert config_file to a string
+
+        # ensure correct ownership
+        fixPermissions()
     else:
         mylog('debug', '[Config] No old setting names found in the file. No changes made.')
 

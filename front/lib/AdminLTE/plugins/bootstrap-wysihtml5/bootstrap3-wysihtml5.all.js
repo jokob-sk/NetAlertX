@@ -923,10 +923,10 @@ var wysihtml5 = {
             }
         };
 
-        function DOMException(codeName) {
-            this.code = this[codeName];
-            this.codeName = codeName;
-            this.message = "DOMException: " + this.codeName;
+        function DOMException(settingKey) {
+            this.code = this[settingKey];
+            this.settingKey = settingKey;
+            this.message = "DOMException: " + this.settingKey;
         }
 
         DOMException.prototype = {
@@ -1343,9 +1343,9 @@ var wysihtml5 = {
             }
         }
 
-        function assertNode(node, codeName) {
+        function assertNode(node, settingKey) {
             if (!node) {
-                throw new DOMException(codeName);
+                throw new DOMException(settingKey);
             }
         }
 

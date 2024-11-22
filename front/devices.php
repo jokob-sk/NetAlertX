@@ -15,8 +15,6 @@
 <?php
 
   require 'php/templates/header.php';
-  require 'php/components/graph_online_history.php';
-
   // check permissions
   $dbPath = "../db/app.db";
   $confPath = "../config/app.conf";
@@ -56,8 +54,10 @@
               <div class="box-body">
                 <div class="chart">
                   <script src="lib/AdminLTE/bower_components/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
-                  <!-- The online history chart is rendered here -->
-                  <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
+                  <!-- presence chart -->
+                  <?php  
+                      require 'php/components/graph_online_history.php';
+                  ?>     
                 </div>
               </div>
               <!-- /.box-body -->
@@ -195,36 +195,30 @@ function mapIndx(oldIndex)
 //  Query total numbers of Devices by status
 //------------------------------------------------------------------------------
 function getDevicesTotals() {
-  // Check cache first
-  let resultJSON = getCache("getDevicesTotals");
 
-  if (resultJSON !== "") {
-    resultJSON = JSON.parse(resultJSON);
-    processDeviceTotals(resultJSON);
-  } else {
-    // Fetch data via AJAX
-    $.ajax({
-      url: "/api/table_devices_tiles.json",
-      type: "GET",
-      dataType: "json",
-      success: function(response) {
-        if (response && response.data) {
-          resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
-          
-          // Save the result to cache
-          setCache("getDevicesTotals", JSON.stringify(resultJSON));
+  // Fetch data via AJAX
+  $.ajax({
+    url: '/api/table_devices_tiles.json?nocache=' + Date.now(),
+    type: "GET",
+    dataType: "json",
+    success: function(response) {
+      if (response && response.data) {
+        resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
+        
+        // Save the result to cache
+        setCache("getDevicesTotals", JSON.stringify(resultJSON));
 
-          // Process the fetched data
-          processDeviceTotals(resultJSON);
-        } else {
-          console.error("Invalid response format from API");
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error("Failed to fetch devices data:", error);
+        // Process the fetched data
+        processDeviceTotals(resultJSON);
+      } else {
+        console.error("Invalid response format from API");
       }
-    });
-  }
+    },
+    error: function(xhr, status, error) {
+      console.error("Failed to fetch devices data:", error);
+    }
+  });
+  
 }
 
 function processDeviceTotals(devicesData) {

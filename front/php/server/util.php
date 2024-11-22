@@ -161,6 +161,11 @@ function checkPermissions($files)
 {
   foreach ($files as $file)
   {
+
+    // // make sure the file ownership is correct
+    // chown($file, 'nginx');
+    // chgrp($file, 'www-data');
+
     // check access to database
     if(file_exists($file) != 1)
     {
@@ -331,7 +336,7 @@ function saveSettings()
 
     foreach ($decodedSettings as $setting) {
       $settingGroup = $setting[0];
-      $settingKey   = $setting[1];
+      $setKey   = $setting[1];
       $dataType     = $setting[2]; 
       $settingValue = $setting[3];
   
@@ -339,7 +344,7 @@ function saveSettings()
       // $settingType = json_decode($settingTypeJson, true);
   
       // Sanity check
-      if($settingKey == "UI_LANG" && $settingValue == "") {
+      if($setKey == "UI_LANG" && $settingValue == "") {
           echo "🔴 Error: important settings missing. Refresh the page with 🔃 on the top and try again.";
           return;
       }
@@ -348,14 +353,14 @@ function saveSettings()
   
           if ($dataType == 'string' ) {
               $val = encode_single_quotes($settingValue);
-              $txt .= $settingKey . "='" . $val . "'\n";
+              $txt .= $setKey . "='" . $val . "'\n";
           } elseif ($dataType == 'integer') {
-              $txt .= $settingKey . "=" . $settingValue . "\n";
+              $txt .= $setKey . "=" . $settingValue . "\n";
           } elseif ($dataType == 'json') {
-              $txt .= $settingKey . "=" . $settingValue . "\n";
+              $txt .= $setKey . "=" . $settingValue . "\n";
           } elseif ($dataType == 'boolean') {
               $val = ($settingValue === true || $settingValue === 1 || strtolower($settingValue) === 'true') ? "True" : "False";
-              $txt .= $settingKey . "=" . $val . "\n";
+              $txt .= $setKey . "=" . $val . "\n";
           } elseif ($dataType == 'array' ) {
               $temp = '';
               
@@ -373,17 +378,15 @@ function saveSettings()
               }
 
               $temp = '['.$temp.']'; // wrap brackets
-              $txt .= $settingKey . "=" . $temp . "\n";
+              $txt .= $setKey . "=" . $temp . "\n";
  
           } else  {
-              $txt .= $settingKey . "='⭕Not handled⭕'\n";
+              $txt .= $setKey . "='⭕Not handled⭕'\n";
           }
       }
   }
   
   }
-
-
 
   $txt = $txt."\n\n";
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
@@ -395,13 +398,15 @@ function saveSettings()
   // Create a temporary file
   $tempConfPath = $fullConfPath . ".tmp";
 
-  // Write your changes to the temporary file
-  $tempConfig = fopen($tempConfPath, "w") or die("Unable to open file!");
-  fwrite($tempConfig, $txt);
-  fclose($tempConfig);
+  // Backup the original file
+  if (file_exists($fullConfPath)) {
+    copy($fullConfPath, $fullConfPath . ".bak");
+  }
 
-  // Replace the original file with the temporary file
-  rename($tempConfPath, $fullConfPath);
+  // Open the file for writing without changing permissions
+  $file = fopen($fullConfPath, "w") or die("Unable to open file!");
+  fwrite($file, $txt);
+  fclose($file);
 
   // displayMessage(lang('settings_saved'), 
   //   FALSE, TRUE, TRUE, TRUE);    
@@ -411,9 +416,9 @@ function saveSettings()
 }
 
 // -------------------------------------------------------------------------------------------
-function getString ($codeName, $default) {
+function getString ($setKey, $default) {
 
-  $result = lang($codeName);
+  $result = lang($setKey);
 
   if ($result )
   {
@@ -423,7 +428,7 @@ function getString ($codeName, $default) {
   return $default;
 }
 // -------------------------------------------------------------------------------------------
-function getSettingValue($codeName) {
+function getSettingValue($setKey) {
   // Define the JSON endpoint URL  
   $url = dirname(__FILE__).'/../../../front/api/table_settings.json';  
 
@@ -443,16 +448,16 @@ function getSettingValue($codeName) {
     return 'Could not decode json data';
   }
 
-  // Search for the setting by Code_Name
+  // Search for the setting by setKey
   foreach ($data['data'] as $setting) {
-      if ($setting['Code_Name'] === $codeName) {
-          return $setting['Value'];
-          // echo $setting['Value'];
+      if ($setting['setKey'] === $setKey) {
+          return $setting['setValue'];
+          // echo $setting['setValue'];
       }
   }
 
   // Return false if the setting was not found
-  return 'Could not find setting '.$codeName;
+  return 'Could not find setting '.$setKey;
 }
 
 // -------------------------------------------------------------------------------------------
