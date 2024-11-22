@@ -317,7 +317,7 @@ def update_devices_data_from_scan (db):
                     WHERE EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE devMac = cur_MAC) """)
 
-    # Update only devices with empty or NULL vendors
+    # Update only devices with empty, NULL or (u(U)nknown) vendors
     mylog('debug', '[Update Devices] - cur_Vendor -> (if empty) devVendor')
     sql.execute("""UPDATE Devices
                     SET devVendor = (
@@ -326,7 +326,7 @@ def update_devices_data_from_scan (db):
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
                     WHERE 
-                        (devVendor IS NULL OR devVendor IN ("", "null"))
+                        (devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)"))
                         AND EXISTS (
                             SELECT 1
                             FROM CurrentScan
