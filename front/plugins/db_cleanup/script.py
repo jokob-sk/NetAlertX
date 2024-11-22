@@ -60,7 +60,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     mylog('verbose', [f'[{pluginName}] Upkeep Database:' ])
 
     # Connect to the App database
-    conn    = sqlite3.connect(dbPath)
+    conn    = sqlite3.connect(dbPath, timeout=30)
     cursor  = conn.cursor()
 
     # -----------------------------------------------------
@@ -149,7 +149,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
     # Cleanup Offline Devices
     if HRS_TO_KEEP_OFFDEV != 0:
         mylog('verbose', [f'[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_OFFDEV)} hours (HRS_TO_KEEP_OFFDEV setting)'])            
-        query = f"""DELETE FROM Devices WHERE devPresentLastScan = 0 AND devLastConnection < date('now', '-{str(HRS_TO_KEEP_OFFDEV)} hour'))"""
+        query = f"""DELETE FROM Devices WHERE devPresentLastScan = 0 AND devLastConnection < date('now', '-{str(HRS_TO_KEEP_OFFDEV)} hour')"""
         mylog('verbose', [f'[{pluginName}] Query: {query} '])            
         cursor.execute (query) 
 

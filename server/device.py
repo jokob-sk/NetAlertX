@@ -439,8 +439,8 @@ def update_devices_data_from_scan (db):
     # Update VENDORS
     recordsToUpdate = []
     query = """SELECT * FROM Devices
-               WHERE devVendor = '(unknown)' OR devVendor =''
-                  OR devVendor IS NULL"""
+               WHERE devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)")
+            """
 
     for device in sql.execute (query) :
         vendor = query_MAC_vendor (device['devMac'])
@@ -469,8 +469,8 @@ def update_devices_data_from_scan (db):
     # Guess Type
     recordsToUpdate = []
     query = """SELECT * FROM Devices
-               WHERE devType in ('', 'null')
-                  OR devType IS NULL"""
+                    WHERE devType in ('', 'null')
+                OR devType IS NULL"""
     default_type = get_setting_value('NEWDEV_devType')
     
     for device in sql.execute (query) :
