@@ -44,7 +44,7 @@ def handleEmpty(input):
         return 'null'
     else:
         # Validate and sanitize message content
-        # Remove potentially problematic characters if string
+        # Remove potentially problematic characters in string
         if isinstance(input, str):
             input = re.sub(r'[^\x00-\x7F]+', ' ', input)
             input = input.replace('\n', '')  # Removing new lines

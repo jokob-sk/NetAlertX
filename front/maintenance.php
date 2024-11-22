@@ -40,7 +40,9 @@
 // Size and last mod of DB ------------------------------------------------------
 
 $nax_db = str_replace('front', 'db', getcwd()).'/app.db';
+$nax_wal = str_replace('front', 'db', getcwd()).'/app.db-wal';
 $nax_db_size = number_format((filesize($nax_db) / 1000000),2,",",".") . ' MB';
+$nax_wal_size = number_format((filesize($nax_wal) / 1000000),2,",",".") . ' MB';
 $nax_db_mod = date ("F d Y H:i:s", filemtime($nax_db));
 
 
@@ -104,13 +106,13 @@ $db->close();
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_database_path');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $nax_db;?>
+                            <?php echo $nax_db;?> 
                         </div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell"><?= lang('Maintenance_database_size');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo $nax_db_size;?>
+                            <?php echo $nax_db_size;?> (wal: <?php echo $nax_wal_size;?>)
                         </div>                        
                     </div>
                     <div class="db_info_table_row">

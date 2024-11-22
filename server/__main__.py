@@ -182,7 +182,7 @@ def main ():
                 mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL
-            db.commitDB()          
+            db.commitDB()        
             
             # Footer
             
@@ -195,11 +195,6 @@ def main ():
 
         #loop     
         time.sleep(5) # wait for N seconds      
-
-
-
-
-
 
 
 

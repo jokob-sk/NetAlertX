@@ -204,13 +204,18 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
 
     conn.commit()
 
+    # Check WAL file size
+    cursor.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+    cursor.execute("PRAGMA wal_checkpoint(FULL);")
+
+    mylog('verbose', [f'[{pluginName}] WAL checkpoint executed to truncate file.'])
+
     # Shrink DB
     mylog('verbose', [f'[{pluginName}] Shrink Database'])
     cursor.execute ("VACUUM;")
 
     # Close the database connection
-    conn.close()
-    
+    conn.close()    
     
 
 #===============================================================================
