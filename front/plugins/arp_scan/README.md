@@ -1,6 +1,6 @@
 ## Overview
 
-Most on-network scanners (ARP-SCAN, NMAP, NSLOOKUP, DIG, PHOLUS) rely on scanning specific network interfaces and subnets. Check the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for help on this setting, especially VLANs, what VLANs are supported, or how to figure out the network mask and your interface. 
+Most on-network scanners (ARP-SCAN, NMAP, NSLOOKUP, DIG) rely on scanning specific network interfaces and subnets. Check the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for help on this setting, especially VLANs, what VLANs are supported, or how to figure out the network mask and your interface. 
 
 An alternative to on-network scanners is to enable some other Device scanners/importers that don't rely on NetAlert<sup>X</sup> having access to the network (UNIFI, dhcp.leases, PiHole, etc.).
 

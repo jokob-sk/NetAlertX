@@ -258,7 +258,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', "pholus_lastrun.log", 'app.php_errors.log', 'execution_queue.log'];
+  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log'];
   
   if(in_array($logFile, $allowedFiles))
   {

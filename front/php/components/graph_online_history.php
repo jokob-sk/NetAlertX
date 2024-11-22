@@ -1,0 +1,42 @@
+<?php
+
+    //------------------------------------------------------------------------------
+    // check if authenticated
+    require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
+?>
+
+<script src="js/graph_online_history.js"></script>
+<script>
+$.get('api/table_online_history.json?nocache=' + Date.now(), function(res) {
+        // Extracting data from the JSON response
+        var timeStamps = [];
+        var onlineCounts = [];
+        var downCounts = [];
+        var offlineCounts = [];
+        var archivedCounts = [];
+
+        res.data.forEach(function(entry) {
+            var dateObj = new Date(entry.Scan_Date);
+            var formattedTime = dateObj.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false});
+
+            timeStamps.push(formattedTime);
+            onlineCounts.push(entry.Online_Devices);
+            downCounts.push(entry.Down_Devices);
+            offlineCounts.push(entry.Offline_Devices);
+            archivedCounts.push(entry.Archived_Devices);
+        });
+
+        // Call your presenceOverTime function after data is ready
+        presenceOverTime(
+            timeStamps,
+            onlineCounts,
+            offlineCounts,
+            archivedCounts,
+            downCounts
+        );
+    }).fail(function() {
+        // Handle any errors in fetching the data
+        console.error('Error fetching online history data.');
+    });
+</script>

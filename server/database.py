@@ -476,10 +476,6 @@ class DB():
         self.sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
         self.sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
         
-        
-        
-
-
         # -------------------------------------------------------------------------
         # Settings table setup
         # -------------------------------------------------------------------------
@@ -505,24 +501,9 @@ class DB():
             """)
 
 
-        # -------------------------------------------------------------------------
-        # Pholus_Scan table setup
-        # -------------------------------------------------------------------------
-
         # Create Pholus_Scan table if missing
-        mylog('verbose', ["[upgradeDB] Re-creating Pholus_Scan table"])
-        self.sql.execute("""CREATE TABLE IF NOT EXISTS "Pholus_Scan" (
-            "Index"	          INTEGER,
-            "Info"	          TEXT,
-            "Time"	          TEXT,
-            "MAC"	          TEXT,
-            "IP_v4_or_v6"	  TEXT,
-            "Record_Type"	  TEXT,
-            "Value"           TEXT,
-            "Extra"           TEXT,
-            PRIMARY KEY("Index" AUTOINCREMENT)
-        );
-        """)
+        mylog('verbose', ["[upgradeDB] Removing Pholus_Scan table"])
+        self.sql.execute("""DROP TABLE IF EXISTS Pholus_Scan""")
 
 
         # -------------------------------------------------------------------------

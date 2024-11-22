@@ -36,14 +36,13 @@ def main():
     HRS_TO_KEEP_NEWDEV      = int(get_setting_value("HRS_TO_KEEP_NEWDEV"))
     HRS_TO_KEEP_OFFDEV      = int(get_setting_value("HRS_TO_KEEP_OFFDEV"))
     DAYS_TO_KEEP_EVENTS     = int(get_setting_value("DAYS_TO_KEEP_EVENTS"))
-    PHOLUS_DAYS_DATA        = get_setting_value("PHOLUS_DAYS_DATA")
     CLEAR_NEW_FLAG          = get_setting_value("CLEAR_NEW_FLAG")
 
     mylog('verbose', [f'[{pluginName}] In script'])     
 
 
     # Execute cleanup/upkeep    
-    cleanup_database(fullDbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, HRS_TO_KEEP_OFFDEV, PLUGINS_KEEP_HIST, CLEAR_NEW_FLAG)
+    cleanup_database(fullDbPath, DAYS_TO_KEEP_EVENTS, HRS_TO_KEEP_NEWDEV, HRS_TO_KEEP_OFFDEV, PLUGINS_KEEP_HIST, CLEAR_NEW_FLAG)
     
     mylog('verbose', [f'[{pluginName}] Cleanup complete'])   
     
@@ -52,7 +51,7 @@ def main():
 #===============================================================================
 # Cleanup / upkeep database
 #===============================================================================
-def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP_NEWDEV, HRS_TO_KEEP_OFFDEV, PLUGINS_KEEP_HIST, CLEAR_NEW_FLAG):
+def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, HRS_TO_KEEP_NEWDEV, HRS_TO_KEEP_OFFDEV, PLUGINS_KEEP_HIST, CLEAR_NEW_FLAG):
     """
     Cleaning out old records from the tables that don't need to keep all data.
     """
@@ -161,29 +160,6 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, PHOLUS_DAYS_DATA, HRS_TO_KEEP
         #  select * from Devices where devIsNew = 1 AND date(devFirstConnection, '+3 hour' ) < date('now') 
         mylog('verbose', [f'[{pluginName}] Query: {query} '])            
         cursor.execute(query)
-
-
-
-    # -----------------------------------------------------
-    # Cleanup Pholus_Scan
-    if PHOLUS_DAYS_DATA != "" and PHOLUS_DAYS_DATA != 0:
-        mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all older than ' + str(PHOLUS_DAYS_DATA) + ' days (PHOLUS_DAYS_DATA setting)'])
-        # todo: improvement possibility: keep at least N per mac
-        cursor.execute (f"""DELETE FROM Pholus_Scan 
-                                WHERE Time <= date('now', '-{str(PHOLUS_DAYS_DATA)} day')""") 
-
-    
-    
-    # -----------------------------------------------------
-    # De-Dupe (de-duplicate - remove duplicate entries) from the Pholus_Scan table
-    mylog('verbose', [f'[{pluginName}] Pholus_Scan: Delete all duplicates'])
-    cursor.execute ("""DELETE  FROM Pholus_Scan
-                    WHERE rowid > (
-                    SELECT MIN(rowid) FROM Pholus_Scan p2
-                    WHERE Pholus_Scan.MAC = p2.MAC
-                    AND Pholus_Scan.Value = p2.Value
-                    AND Pholus_Scan.Record_Type = p2.Record_Type
-                    );""")
 
 
     # -----------------------------------------------------

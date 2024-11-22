@@ -835,7 +835,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     if(!canReadAndWriteConfig)
     {
       showMessage (getString("settings_readonly"), 10000, "modal_red");
-      console.log(`app.conf seems to be read only (canRWConfig: ${canReadAndWriteConfig}`);
+      console.log(`app.conf seems to be read only (canRWConfig: ${canReadAndWriteConfig})`);
     } else
     {
       // check if config file has been updated

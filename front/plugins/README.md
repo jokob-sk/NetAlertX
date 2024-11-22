@@ -45,7 +45,6 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `NTFPRCS`     | ⚙       | Notification processing                   |           |  Yes     | Template     | [notification_processing](/front/plugins/notification_processing/)|
 | `NTFY`        | ▶️      | NTFY notifications                        |           |          | Script       | [_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
 | `OMDSDN`      | 📥      | OMADA TP-Link import                      |   🖧 🔄   |          | Script       | [omada_sdn_imp](/front/plugins/omada_sdn_imp/)                    |
-| `PHOLUS`      | ♻       | Pholus name resolution                    |           |          | Script       | [pholus_scan](/front/plugins/pholus_scan/)                        |
 | `PIHOLE`      | 🔍/📥   | Pi-hole device import & sync              |           |          | SQLite DB    | [pihole_scan](/front/plugins/pihole_scan/)                        |
 | `PUSHSAFER`   | ▶️      | Pushsafer notifications                   |           |          | Script       | [_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
 | `PUSHOVER`    | ▶️      | Pushover notifications                    |           |          | Script       | [_publisher_pushover](/front/plugins/_publisher_pushover/)        |

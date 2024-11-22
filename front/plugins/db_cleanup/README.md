@@ -13,8 +13,6 @@ The database cleanup plugin (DBCLNP) helps maintain the system by removing outda
 - **`DAYS_TO_KEEP_EVENTS`**:  
   Specifies the number of days to retain event logs. Event entries older than the given number of days will be automatically deleted during cleanup. Recommended value: `30` days.
 
-- **`PHOLUS_DAYS_DATA`**:  
-  Deletes all data older than specified number of days for teh Pholus plugin used for name discovery. Recommended value: `30` days.
 
 By fine-tuning these settings, you ensure that the database remains optimized, preventing performance degradation in the NetAlertX system.
 
