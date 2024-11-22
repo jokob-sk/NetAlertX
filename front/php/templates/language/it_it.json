@@ -711,7 +711,7 @@
     "settings_publishers_icon": "fa-solid fa-paper-plane",
     "settings_publishers_info": "Carica più editori con l'impostazione <a href=\"/settings.php#LOADED_PLUGINS\">LOADED_PLUGINS</a>",
     "settings_publishers_label": "Editori",
-    "settings_readonly": "",
+    "settings_readonly": "Impossibile LEGGERE o SCRIVERE <code>app.conf</code>. Prova a riavviare il contenitore e leggi la <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/FILE_PERMISSIONS.md\" target=\"_blank\">documentazione sulle autorizzazioni dei file</a>",
     "settings_saved": "<br/>Impostazioni salvate. <br/> Aggiornamento in corso... <br/> <i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Sistema",
