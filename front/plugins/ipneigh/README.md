@@ -19,4 +19,4 @@ To set up the plugin correctly, make sure to add in the plugin settings the name
 ### Notes
 
 - `ARPSCAN` does a better job at discovering IPv4 devices because it explicitly sends arp requests
-- IPv6 devices can
+- IPv6 devices will often have multiple addresses, but the ping answer will contain only one. This means that in general this plugin will not discover every address but only those who answer
