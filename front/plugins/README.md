@@ -58,6 +58,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](/front/plugins/vendor_update/)                    |
 | `WEBHOOK`     | ▶️      | Webhook notifications                     |           |          | Script       | [_publisher_webhook](/front/plugins/_publisher_webhook/)          |
 | `WEBMON`      | ♻       | Website down monitoring                   |           |          | Script       | [website_monitor](/front/plugins/website_monitor/)                |
+| `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables   |           |          | Script       | [ipneigh](/front/plugins/ipneigh/)                |
   
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
