@@ -47,27 +47,20 @@ def main():
     raw_neighbors = get_neighbors(interfaces)
     
     neighbors = parse_neighbors(raw_neighbors)
-    
-    #mylog('verbose', [f'[{pluginName}] Found neighbors: {neighbors}'])
 
     #  Process the data into native application tables
     if len(neighbors) > 0:
 
-        # insert devices into the lats_result.log 
-        # make sure the below mapping is mapped in config.json, for example: 
-        #"database_column_definitions": [
-        # {
-        #   "column": "Object_PrimaryID",                 <--------- the value I save into primaryId
-        #   "mapped_to_column": "cur_MAC",                <--------- gets inserted into the CurrentScan DB table column cur_MAC
-        # 
         for device in neighbors:
                 plugin_objects.add_object(
                     primaryId   = device['mac'],
                     secondaryId = device['ip'],
-                    watched1    = handleEmpty(device['hostname']), # empty
-                    watched2    = handleEmpty(device['vendor']), # empty
-                    watched3    = handleEmpty(device['device_type']), # empty
-                    watched4    = handleEmpty(device['last_seen']), # sometime empty
+                    watched4    = device['last_seen'],
+
+                    # The following are always unknown
+                    watched1    = device['hostname'],    # don't use these --> handleEmpty(device['hostname']),
+                    watched2    = device['vendor'],      #                     handleEmpty(device['vendor']),
+                    watched3    = device['device_type'], #                     handleEmpty(device['device_type']),
                     extra       = '',
                     foreignKey  = "" #device['mac']
                     # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app 
@@ -86,7 +79,7 @@ def main():
 def parse_neighbors(raw_neighbors: list[str]):
     neighbors = []
     for line in raw_neighbors:
-        if "lladdr" in line:
+        if "lladdr" in line and "REACHABLE" in line:
             # Known data
             fields = line.split()
             
@@ -95,18 +88,12 @@ def parse_neighbors(raw_neighbors: list[str]):
                 neighbor = {}
                 neighbor['ip'] = fields[0]
                 neighbor['mac'] = fields[2]
-                neighbor['reachability'] = fields[3]
+                neighbor['last_seen'] = datetime.now()
 
                 # Unknown data
                 neighbor['hostname'] = '(unknown)'
                 neighbor['vendor'] = '(unknown)'
                 neighbor['device_type'] = '(unknown)'
-
-                # Last seen now if reachable
-                if neighbor['reachability'] == "REACHABLE":
-                    neighbor['last_seen'] = datetime.now()
-                else:
-                    neighbor['last_seen'] = ""
                 
                 neighbors.append(neighbor)
     

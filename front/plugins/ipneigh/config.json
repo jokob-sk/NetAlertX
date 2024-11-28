@@ -126,7 +126,7 @@
         ]
       },
       "maxLength": 150,
-      "default_value": "",
+      "default_value": "eth0",
       "options": [],
       "localized": [
         "name",

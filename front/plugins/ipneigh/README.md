@@ -14,7 +14,7 @@ To set up the plugin correctly, make sure to add in the plugin settings the name
 ### Usage
 
 - Head to **Settings** > **IP Neigh** to add the interfaces you want to scan to the `IPNEIGH_interfaces` option
-- The interface list must be formatted without whitespaces and comma separated
+- The interface list must be formatted without whitespaces and comma separated e.g. `eth0,wl1,tap0`
 
 ### Notes
 
