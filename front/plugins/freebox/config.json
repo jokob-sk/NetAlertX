@@ -211,7 +211,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Port for remote HTTP(S) access. This will be different for your device."
+          "string": "Port for HTTP(S) access. This might be different for your device, more info in the plugin documentation."
         }
       ]
     },
