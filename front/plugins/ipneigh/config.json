@@ -114,38 +114,6 @@
       ]
     },
     {
-      "function": "interfaces",
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [],
-            "transformers": []
-          }
-        ]
-      },
-      "maxLength": 150,
-      "default_value": "eth0",
-      "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Interfaces to scan"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "The plugin will scan these comma separated interfaces"
-        }
-      ]
-    },
-    {
       "function": "CMD",
       "type": {
         "dataType": "string",
@@ -161,7 +129,7 @@
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/ipneigh/ipneigh.py ipneigh_interfaces={IPNEIGH_interfaces}",
+      "default_value": "python3 /app/front/plugins/ipneigh/ipneigh.py",
       "options": [],
       "localized": [
         "name",

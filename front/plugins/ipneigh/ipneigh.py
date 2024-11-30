@@ -39,9 +39,16 @@ def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
 
     # Retrieve configuration settings
-    interfaces = get_setting_value('IPNEIGH_interfaces')
+    SCAN_SUBNETS = get_setting_value('SCAN_SUBNETS')
 
-    mylog('verbose', [f'[{pluginName}] Interfaces value: {interfaces}'])
+    mylog('verbose', [f'[{pluginName}] SCAN_SUBNETS value: {SCAN_SUBNETS}'])
+
+    # Extract interfaces from SCAN_SUBNETS
+    interfaces = ','.join(
+        entry.split('--interface=')[-1].strip() for entry in SCAN_SUBNETS if '--interface=' in entry
+    )
+
+    mylog('verbose', [f'[{pluginName}] Interfaces value: "{interfaces}"'])    
 
     # retrieve data
     raw_neighbors = get_neighbors(interfaces)
