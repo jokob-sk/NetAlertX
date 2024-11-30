@@ -17,10 +17,9 @@ There are 4 ways how to influence notifications:
 
 There are 4 settings on the device for influencing notifications. You can:
 
-1. **Scan Device** - Completely disable the scanning of the device.
-2. **Alert Events** - Enables alerts of connections, disconnections, IP changes.
-3. **Alert Down** - Alerts when a device goes down. This setting overrides a disabled **Alert Events** setting, so you will get a notification of a device going down even if you don't have **Alert Events** ticked.
-4. **Skip repeated notifications**, if for example you know there is a temporary issue and want to pause the same notification for this device for a given time.
+1. **Alert Events** - Enables alerts of connections, disconnections, IP changes.
+2. **Alert Down** - Alerts when a device goes down. This setting overrides a disabled **Alert Events** setting, so you will get a notification of a device going down even if you don't have **Alert Events** ticked.
+3. **Skip repeated notifications**, if for example you know there is a temporary issue and want to pause the same notification for this device for a given time.
 
 ## Plugin settings 🔌
 

@@ -18,6 +18,16 @@
     --color-red: #dd4b39;
 }
 
+.input-group .checkbox
+{
+    margin-left: 5px;
+}
+
+h5
+{
+    font-size: medium;
+}
+
 /* -----------------------------------------------------------------------------
    Helper Classes
 ----------------------------------------------------------------------------- */
@@ -1256,6 +1266,7 @@ input[readonly] {
     position: absolute;
     font-size: x-small;
     margin-bottom: 6px;
+    margin-left: 3px;
 }
 
 .pageHelp{
@@ -1281,6 +1292,10 @@ input[readonly] {
 #tableDevices .badge i
 {
     height: 1em !important;
+}
+
+#panDetails .control-label{
+    text-align: left;
 }
 
 /* ----------------------------------------------------------------- */

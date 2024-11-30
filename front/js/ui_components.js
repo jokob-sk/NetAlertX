@@ -97,64 +97,66 @@ function generateApiToken(elem, length) {
   }
 }
 
+
 // ----------------------------------------------
 // Updates the icon preview  
 function updateIconPreview(elem) {
-  // Retrieve and parse custom parameters from the element
-  let params = $(elem).attr("my-customparams")?.split(',').map(param => param.trim());
+  const targetElement = $('[my-customid="NEWDEV_devIcon_preview"]');
+  const iconInput = $("#NEWDEV_devIcon");
 
-  // console.log(params);
+  let attempts = 0;
 
-  if (params && params.length >= 2) {
-    var inputElementID = params[0];
-    var targetElementID = params[1];
-  } else {
-    console.error("Invalid parameters passed to updateIconPreview function");
-    return;
-  }
+  function tryUpdateIcon() {
+    let value = iconInput.val();
 
-  // Get the input element using the inputElementID
-  let iconInput = $("#" + inputElementID);
+    if (value) {
+      targetElement.html(atob(value));
+      iconInput.off('change input').on('change input', function () {
+        let newValue = $(this).val();
+        targetElement.html(atob(newValue));
+      });
+      return; // Stop retrying if successful
+    } 
 
-  if (iconInput.length === 0) {
-    console.error("Icon input element not found");
-    return;
-  }
-
-  // Get the initial value and update the target element
-  let value = iconInput.val();
-  if (!value) {
-    console.error("Input value is empty or not defined");
-    return;
-  }
-
-  if (!targetElementID) {
-    targetElementID = "txtIcon";
-  }
-
-  // Check if the target element exists, if not find an element with matching custom attribute
-  let targetElement = $('#' + targetElementID);
-  if (targetElement.length === 0) {
-    // Look for an element with my-custom-id attribute equal to targetElementID
-    targetElement = $('[my-customid="' + targetElementID + '"]');
-    if (targetElement.length === 0) {
-      console.error("Neither target element with ID nor element with custom attribute found");
-      return;
+    attempts++;
+    if (attempts < 10) {
+      setTimeout(tryUpdateIcon, 1000); // Retry after 1 second
+    } else {
+      console.error("Input value is empty after 10 attempts");
     }
   }
 
-  // Update the target element with decoded base64 value
-  targetElement.html(atob(value));
-
-  // Add event listener to update the icon on input change
-  iconInput.on('change input', function () {
-    let newValue = $(this).val();
-    $('#' + targetElementID).html(atob(newValue));
-  });
+  tryUpdateIcon();
 }
 
 
 
+// -----------------------------------------------------------------------------
+// Nice checkboxes with iCheck
+function initializeiCheck () {
+  // Blue
+  $('input[type="checkbox"].blue').iCheck({
+    checkboxClass: 'icheckbox_flat-blue',
+    radioClass:    'iradio_flat-blue',
+    increaseArea:  '20%'
+  });
+
+ // Orange
+ $('input[type="checkbox"].orange').iCheck({
+   checkboxClass: 'icheckbox_flat-orange',
+   radioClass:    'iradio_flat-orange',
+   increaseArea:  '20%'
+ });
+
+ // Red
+ $('input[type="checkbox"].red').iCheck({
+   checkboxClass: 'icheckbox_flat-red',
+   radioClass:    'iradio_flat-red',
+   increaseArea:  '20%'
+ });
+
+ 
+}
 
 
 // -----------------------------------------------------------------------------
@@ -219,19 +221,24 @@ function getCellValue(row, index) {
   return $(row).children('td').eq(index).text();
 }
 
- // ----------------------------------------------------------------------------- 
-  // handling events on the backend initiated by the front end START
-  // ----------------------------------------------------------------------------- 
+// ----------------------------------------------------------------------------- 
+// handling events 
+// ----------------------------------------------------------------------------- 
 
-  modalEventStatusId = 'modal-message-front-event'
+modalEventStatusId = 'modal-message-front-event'
 
-  // --------------------------------------------------------
-  // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
-  function addToExecutionQueue_settingEvent(element)
-  {
+function execute_settingEvent(element) {
 
+  feEvent     = $(element).attr('data-myevent');
+  fePlugin    = $(element).attr('data-myparam-plugin');
+  feSetKey    = $(element).attr('data-myparam-setkey');
+  feParam     = $(element).attr('data-myparam');
+  feSourceId  = $(element).attr('id');
+
+  if (["test", "run"].includes(feEvent)) {
+    // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
     // value has to be in format event|param. e.g. run|ARPSCAN
-    action = `${getGuid()}|${$(element).attr('data-myevent')}|${$(element).attr('data-myparam-plugin')}`
+    action = `${getGuid()}|${feEvent}|${fePlugin}`
 
     $.ajax({
       method: "POST",
@@ -246,29 +253,138 @@ function getCellValue(row, index) {
           updateModalState()
       }
     })
-  }
+    
+  } else if (["add_option"].includes(feEvent)) {
+    showModalFieldInput (
+      '<i class="fa fa-square-plus pointer"></i> ' + getString('Gen_Add'),
+      getString('Gen_Add'),
+      getString('Gen_Cancel'), 
+      getString('Gen_Okay'), 
+      '', // curValue
+      'addOptionFromModalInput',
+      feSourceId // triggered by id
+    );
+  } else if (["add_icon"].includes(feEvent)) {
 
-  // --------------------------------------------------------
-  // Updating the execution queue in in modal pop-up
-  function updateModalState() {
-    setTimeout(function() {
-        // Fetch the content from the log file using an AJAX request
-        $.ajax({
-            url: '/log/execution_queue.log',
-            type: 'GET',
-            success: function(data) {
-                // Update the content of the HTML element (e.g., a div with id 'logContent')
-                $('#'+modalEventStatusId).html(data);
+      // Add new icon as base64 string 
+    showModalInput (
+      '<i class="fa fa-square-plus pointer"></i> ' + getString('DevDetail_button_AddIcon'),
+      getString('DevDetail_button_AddIcon_Help'),
+      getString('Gen_Cancel'), 
+      getString('Gen_Okay'), 
+      () => addIconAsBase64(element), // Wrap in an arrow function
+      feSourceId // triggered by id
+    );
+  } else if (["copy_icons"].includes(feEvent)) {
 
-                updateModalState();
-            },
-            error: function() {
-                // Handle error, such as the file not being found
-                $('#logContent').html('Error: Log file not found.');
-            }
-        });
-    }, 2000);
+
+    // Ask overwrite icon types 
+    showModalWarning (
+      getString('DevDetail_button_OverwriteIcons'), 
+      getString('DevDetail_button_OverwriteIcons_Warning'),
+      getString('Gen_Cancel'), 
+      getString('Gen_Okay'), 
+      'overwriteIconType'
+    );
+  } else if (["go_to_node"].includes(feEvent)) {
+
+    goToNetworkNode('NEWDEV_devParentMAC');
+
+  } else {
+    console.warn(`🔺Not implemented: ${feEvent}`)
   }
+  
+  
+}
+
+
+// -----------------------------------------------------------------------------
+// Go to the correct network node in the Network section
+function goToNetworkNode(dropdownId)
+{  
+  setCache('activeNetworkTab', $('#'+dropdownId).val().replaceAll(":","_")+'_id');
+  window.location.href = './network.php';
+  
+}
+  
+
+// --------------------------------------------------------
+// Updating the execution queue in in modal pop-up
+function updateModalState() {
+  setTimeout(function() {
+      // Fetch the content from the log file using an AJAX request
+      $.ajax({
+          url: '/log/execution_queue.log',
+          type: 'GET',
+          success: function(data) {
+              // Update the content of the HTML element (e.g., a div with id 'logContent')
+              $('#'+modalEventStatusId).html(data);
+
+              updateModalState();
+          },
+          error: function() {
+              // Handle error, such as the file not being found
+              $('#logContent').html('Error: Log file not found.');
+          }
+      });
+  }, 2000);
+}
+
+// --------------------------------------------------------
+// A method to add option to select and make it selected
+function addOptionFromModalInput() {
+  var inputVal = $(`#modal-field-input-field`).val();
+  console.log($('#modal-field-input-field'));
+  
+  var triggeredBy = $('#modal-field-input').attr("data-myparam-triggered-by");
+  var targetId = $('#' + triggeredBy).attr("data-myparam-setkey");
+
+  // Add new option and set it as selected
+  $('#' + targetId).append(new Option(inputVal, inputVal)).val(inputVal);
+}
+
+
+// --------------------------------------------------------
+// Generate a random MAC address starting 00:1A
+function generate_NEWDEV_devMac() {
+  const randomHexPair = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
+  $('#NEWDEV_devMac').val(`00:1A:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}`.toLowerCase());
+}
+
+
+// --------------------------------------------------------
+// Generate a random IP address starting 192.
+function generate_NEWDEV_devLastIP() {
+  const randomByte = () => Math.floor(Math.random() * 256);
+  $('#NEWDEV_devLastIP').val(`192.${randomByte()}.${randomByte()}.${Math.floor(Math.random() * 254) + 1}`);
+}
+
+// -----------------------------------------------------------------------------
+// A method to add an Icon as an option to select and make it selected
+function addIconAsBase64 (el) {
+
+  var iconHtml = $('#modal-input-textarea').val();
+
+  console.log(iconHtml);
+
+  iconHtmlBase64 = btoa(iconHtml.replace(/"/g, "'"));
+
+  console.log(iconHtmlBase64);
+
+
+  console.log($('#modal-field-input-field'));
+  
+  var triggeredBy = $('#modal-input').attr("data-myparam-triggered-by");
+  var targetId = $('#' + triggeredBy).attr("data-myparam-setkey");
+
+  // $('#'+targetId).val(iconHtmlBase64); 
+
+  // Add new option and set it as selected
+  $('#' + targetId).append(new Option(iconHtmlBase64, iconHtmlBase64)).val(iconHtmlBase64);
+
+  updateIconPreview(el)  
+
+}
 
 
 // -----------------------------------------------------------------------------
@@ -324,15 +440,14 @@ function initSelect2() {
   }  
 }
 
-// init select2 after dom laoded
+// init functions after dom loaded
 window.addEventListener("load", function() {
-  // try to initialize select2
+  // try to initialize 
   setTimeout(() => {
     initSelect2()
+    initializeiCheck();
   }, 1000);
 });
-
-
 
 
 console.log("init ui_components.js")

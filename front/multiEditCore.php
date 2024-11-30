@@ -1,4 +1,8 @@
-
+<?php
+  //------------------------------------------------------------------------------
+  // check if authenticated
+  require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+?>
 
 <div class="col-md-12">
     <div class="callout callout-warning">

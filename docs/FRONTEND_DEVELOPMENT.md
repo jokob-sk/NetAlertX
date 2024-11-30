@@ -38,7 +38,7 @@ Some examples how to apply the above:
 
 Some useful frontend JavaScript functions:
 
-- `getDeviceDataByMac(macAddress, devicesColumn)` - method to retrieve any device data (database column) based on MAC address in the frontend 
+- `getDevDataByMac(macAddress, devicesColumn)` - method to retrieve any device data (database column) based on MAC address in the frontend 
 - `getString(string stringKey)` - method to retrieve translated strings in the frontend 
 - `getSetting(string stringKey)` - method to retrieve settings in the frontend 
 

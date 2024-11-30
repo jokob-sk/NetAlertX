@@ -87,7 +87,8 @@ function showModalInput(
     message,
     btnCancel = getString("Gen_Cancel"),
     btnOK = getString("Gen_Okay"),
-    callbackFunction = null
+    callbackFunction = null,
+    triggeredBy = null    
 ) {
     prefix = "modal-input";
 
@@ -99,6 +100,10 @@ function showModalInput(
 
     if (callbackFunction != null) {
         modalCallbackFunction = callbackFunction;
+    }
+
+    if (triggeredBy != null) {
+        $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
     }
 
     // Show modal
@@ -117,7 +122,8 @@ function showModalFieldInput(
     btnCancel = getString("Gen_Cancel"),
     btnOK = getString("Gen_Okay"),
     curValue = "",
-    callbackFunction = null
+    callbackFunction = null,
+    triggeredBy = null
 ) {
     // set captions
     prefix = "modal-field-input";
@@ -128,7 +134,12 @@ function showModalFieldInput(
     $(`#${prefix}-OK`).html(btnOK);
 
     if (callbackFunction != null) {
+        
         modalCallbackFunction = callbackFunction;
+    }
+
+    if (triggeredBy != null) {
+        $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
     }
 
     $(`#${prefix}-field`).val(curValue);
@@ -148,7 +159,13 @@ function modalDefaultOK() {
 
     // timer to execute function
     window.setTimeout(function () {
-        window[modalCallbackFunction]();
+        if (typeof modalCallbackFunction === "function") {
+            modalCallbackFunction(); // Direct call
+        } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
+            window[modalCallbackFunction](); // Call via window
+        } else {
+            console.error("Invalid callback function");
+        }
     }, 100);
 }
 
@@ -159,7 +176,13 @@ function modalDefaultInput() {
 
     // timer to execute function
     window.setTimeout(function () {
-        window[modalCallbackFunction]();
+        if (typeof modalCallbackFunction === "function") {
+            modalCallbackFunction(); // Direct call
+        } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
+            window[modalCallbackFunction](); // Call via window
+        } else {
+            console.error("Invalid callback function");
+        }
     }, 100);
 }
 
@@ -170,7 +193,13 @@ function modalDefaultFieldInput() {
 
     // timer to execute function
     window.setTimeout(function () {
-        modalCallbackFunction();
+        if (typeof modalCallbackFunction === "function") {
+            modalCallbackFunction(); // Direct call
+        } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
+            window[modalCallbackFunction](); // Call via window
+        } else {
+            console.error("Invalid callback function");
+        }
     }, 100);
 }
 
@@ -181,7 +210,13 @@ function modalWarningOK() {
 
     // timer to execute function
     window.setTimeout(function () {
-        window[modalCallbackFunction]();
+        if (typeof modalCallbackFunction === "function") {
+            modalCallbackFunction(); // Direct call
+        } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
+            window[modalCallbackFunction](); // Call via window
+        } else {
+            console.error("Invalid callback function");
+        }
     }, 100);
 }
 

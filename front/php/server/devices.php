@@ -26,7 +26,7 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'getDeviceData':           getDeviceData();                         break;
+      case 'getServerDeviceData':           getServerDeviceData();                         break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
@@ -64,12 +64,58 @@
 //------------------------------------------------------------------------------
 //  Query Device Data
 //------------------------------------------------------------------------------
-function getDeviceData() {
+function getServerDeviceData() {
   global $db;
 
   // Request Parameters
   $periodDate = getDateFromPeriod();
   $mac = $_REQUEST['mac'];
+
+  // Check for "new" MAC case
+  if ($mac === "new") {
+    $now = date('Y-m-d   H:i');
+    $deviceData = [
+      "devMac" => "",
+      "devName" => "",
+      "devOwner" => "",
+      "devType" => "",
+      "devVendor" => "",
+      "devFavorite" => 0,
+      "devGroup" => "",
+      "devComments" => "",
+      "devFirstConnection" => $now,
+      "devLastConnection" => $now,
+      "devLastIP" => "",
+      "devStaticIP" => 0,
+      "devScan" => 0,
+      "devLogEvents" => 0,
+      "devAlertEvents" => 0,
+      "devAlertDown" => 0,
+      "devSkipRepeated" => 0,
+      "devLastNotification" => "",
+      "devPresentLastScan" => 0,
+      "devIsNew" => 1,
+      "devLocation" => "",
+      "devIsArchived" => 0,
+      "devParentMAC" => "",
+      "devParentPort" => "",
+      "devIcon" => "",
+      "devGUID" => "",
+      "devSite" => "",
+      "devSSID" => "",
+      "devSyncHubNode" => "",
+      "devSourcePlugin" => "",
+      "devStatus" => "Unknown",
+      "devRandomMAC" => false,
+      "devSessions" => 0,
+      "devEvents" => 0,
+      "devDownAlerts" => 0,
+      "devPresenceHours" => 0
+    ];
+    echo json_encode($deviceData);
+    return;
+  }
+
 
   // Device Data
   $sql = 'SELECT rowid, *,
@@ -143,29 +189,118 @@ function getDeviceData() {
 function setDeviceData() {
   global $db;
 
-  // sql
-  $sql = 'UPDATE Devices SET
-                 devName                   = "'. quotes($_REQUEST['name'])         .'",
-                 devOwner                  = "'. quotes($_REQUEST['owner'])        .'",
-                 devType             = "'. quotes($_REQUEST['type'])         .'",
-                 devVendor                 = "'. quotes($_REQUEST['vendor'])       .'",
-                 devIcon                   = "'. quotes($_REQUEST['icon'])         .'",
-                 devFavorite               = "'. quotes($_REQUEST['favorite'])     .'",
-                 devGroup                  = "'. quotes($_REQUEST['group'])        .'",
-                 devLocation               = "'. quotes($_REQUEST['location'])     .'",
-                 devComments               = "'. quotes($_REQUEST['comments'])     .'",
-                 devParentMAC  = "'. quotes($_REQUEST['networknode']).'",
-                 devParentPort      = "'. quotes($_REQUEST['networknodeport']).'",
-                 devSSID                   = "'. quotes($_REQUEST['ssid']).'",
-                 devSite            = "'. quotes($_REQUEST['networksite']).'",
-                 devStaticIP               = "'. quotes($_REQUEST['staticIP'])     .'",
-                 devScan              = "'. quotes($_REQUEST['scancycle'])    .'",
-                 devAlertEvents            = "'. quotes($_REQUEST['alertevents'])  .'",
-                 devAlertDown        = "'. quotes($_REQUEST['alertdown'])    .'",
-                 devSkipRepeated           = "'. quotes($_REQUEST['skiprepeated']) .'",
-                 devIsNew              = "'. quotes($_REQUEST['newdevice'])    .'",
-                 devIsArchived               = "'. quotes($_REQUEST['archived'])     .'"
-          WHERE devMac="' . $_REQUEST['mac'] .'"';
+  // Sanitize input
+  $mac = quotes($_REQUEST['mac']);
+  $name = quotes($_REQUEST['name']);
+  $owner = quotes($_REQUEST['owner']);
+  $type = quotes($_REQUEST['type']);
+  $vendor = quotes($_REQUEST['vendor']);
+  $icon = quotes($_REQUEST['icon']);
+  $favorite = quotes($_REQUEST['favorite']);
+  $group = quotes($_REQUEST['group']);
+  $location = quotes($_REQUEST['location']);
+  $comments = quotes($_REQUEST['comments']);
+  $parentMac = quotes($_REQUEST['networknode']);
+  $parentPort = quotes($_REQUEST['networknodeport']);
+  $ssid = quotes($_REQUEST['ssid']);
+  $site = quotes($_REQUEST['networksite']);
+  $staticIP = quotes($_REQUEST['staticIP']);
+  $scancycle = quotes($_REQUEST['scancycle']);
+  $alertevents = quotes($_REQUEST['alertevents']);
+  $alertdown = quotes($_REQUEST['alertdown']);
+  $skiprepeated = quotes($_REQUEST['skiprepeated']);
+  $newdevice = quotes($_REQUEST['newdevice']);
+  $archived = quotes($_REQUEST['archived']);
+  $devFirstConnection = quotes($_REQUEST['devFirstConnection']);
+  $devLastConnection = quotes($_REQUEST['devLastConnection']);
+  $ip = quotes($_REQUEST['ip']);
+  $createNew = quotes($_REQUEST['createNew']);
+  $devNewGuid = generateGUID();
+
+  // an update
+  if ($_REQUEST['createNew'] == 0) 
+  { 
+    // UPDATE SQL query
+    $sql = "UPDATE Devices SET
+                      devName = '$name',
+                      devOwner = '$owner',
+                      devType = '$type',
+                      devVendor = '$vendor',
+                      devIcon = '$icon',
+                      devFavorite = '$favorite',
+                      devGroup = '$group',
+                      devLocation = '$location',
+                      devComments = '$comments',
+                      devParentMAC = '$parentMac',
+                      devParentPort = '$parentPort',
+                      devSSID = '$ssid',
+                      devSite = '$site',
+                      devStaticIP = '$staticIP',
+                      devScan = '$scancycle',
+                      devAlertEvents = '$alertevents',
+                      devAlertDown = '$alertdown',
+                      devSkipRepeated = '$skiprepeated',
+                      devIsNew = '$newdevice',
+                      devIsArchived = '$archived'
+    WHERE devMac = '$mac'";
+  } else // an INSERT
+  {
+    $sql = "INSERT INTO Devices (
+                          devMac, 
+                          devName, 
+                          devOwner, 
+                          devType, 
+                          devVendor, 
+                          devIcon, 
+                          devFavorite, 
+                          devGroup, 
+                          devLocation, 
+                          devComments, 
+                          devParentMAC, 
+                          devParentPort, 
+                          devSSID, 
+                          devSite, 
+                          devStaticIP, 
+                          devScan, 
+                          devAlertEvents, 
+                          devAlertDown, 
+                          devSkipRepeated, 
+                          devIsNew, 
+                          devIsArchived, 
+                          devLastConnection, 
+                          devFirstConnection, 
+                          devLastIP,
+                          devGUID
+                      ) VALUES (
+                        '$mac',
+                        '$name',
+                        '$owner',
+                        '$type',
+                        '$vendor',
+                        '$icon',
+                        '$favorite',
+                        '$group',
+                        '$location',
+                        '$comments',
+                        '$parentMac',
+                        '$parentPort',
+                        '$ssid',
+                        '$site',
+                        '$staticIP',
+                        '$scancycle',
+                        '$alertevents',
+                        '$alertdown',
+                        '$skiprepeated',
+                        '$newdevice',
+                        '$archived',
+                        '$devLastConnection',
+                        '$devFirstConnection',
+                        '$ip',
+                        '$devNewGuid'
+                      )
+            ";
+  }
+
   // update Data
   $result = $db->query($sql);
 

@@ -42,6 +42,7 @@ services:
       - ${DEV_LOCATION}/front/api:/app/front/api
       - ${DEV_LOCATION}/front/php:/app/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
+      - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php
       - ${DEV_LOCATION}/front/userNotifications.php:/app/front/userNotifications.php
       - ${DEV_LOCATION}/front/deviceDetailsTools.php:/app/front/deviceDetailsTools.php
       - ${DEV_LOCATION}/front/devices.php:/app/front/devices.php
