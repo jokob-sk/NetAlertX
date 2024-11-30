@@ -23,42 +23,42 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
 
 
-| ID            | Type    | Description                                | Features | Required | Data source  | Detailed docs                                                       |
-|---------------|---------|--------------------------------------------|----------|----------|--------------------|---------------------------------------------------------------|
-| `APPRISE`     | ▶️      | Apprise notification proxy                |           |          | Script       | [_publisher_apprise](/front/plugins/_publisher_apprise/)          |
-| `ARPSCAN`     | 🔍      | ARP-scan on current network               |           |          | Script       | [arp_scan](/front/plugins/arp_scan/)                              |
-| `AVAHISCAN`   | ♻       | Avahi (mDNS-based) name resolution        |           |          | Script       | [avahi_scan](/front/plugins/avahi_scan/)                          |
-| `CSVBCKP`     | ⚙       | CSV devices backup                        |           |          | Script       | [csv_backup](/front/plugins/csv_backup/)                          |
-| `DBCLNP`      | ⚙       | Database cleanup                          |           |  Yes*    | Script       | [db_cleanup](/front/plugins/db_cleanup/)                          |
-| `DDNS`        | ⚙       | DDNS update                               |           |          | Script       | [ddns_update](/front/plugins/ddns_update/)                        |
-| `DHCPLSS`     | 🔍/📥   | Import devices from DHCP leases           |           |          | Script       | [dhcp_leases](/front/plugins/dhcp_leases/)                        |
-| `DHCPSRVS`    | ♻       | DHCP servers                              |           |          | Script       | [dhcp_servers](/front/plugins/dhcp_servers/)                      |
-| `INTRNT`      | 🔍      | Internet IP scanner                       |           |          | Script       | [internet_ip](/front/plugins/internet_ip/)                        |
-| `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](/front/plugins/internet_speedtest/)          |
-| `MAINT`       | ⚙       | Maintenance of logs, etc.                 |           |          | Script       | [maintenance](/front/plugins/maintenance/)                        |
-| `MQTT`        | ▶️      | MQTT for synching to Home Assistant       |           |          | Script       | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
-| `NBTSCAN`     | ♻       | Nbtscan (NetBIOS-based) name resolution   |           |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |
-| `NEWDEV`      | ⚙       | New device template                       |           |  Yes     | Template     | [newdev_template](/front/plugins/newdev_template/)                |
-| `NMAP`        | ♻       | Nmap port scanning & discovery            |           |          | Script       | [nmap_scan](/front/plugins/nmap_scan/)                            |
-| `NMAPDEV`     | 🔍      | Nmap dev scan on current network          |           |          | Script       | [nmap_dev_scan](/front/plugins/nmap_dev_scan/)                    |
-| `NSLOOKUP`    | ♻       | NSLookup (DNS-based) name resolution      |           |          | Script       | [nslookup_scan](/front/plugins/nslookup_scan/)                    |
-| `NTFPRCS`     | ⚙       | Notification processing                   |           |  Yes     | Template     | [notification_processing](/front/plugins/notification_processing/)|
-| `NTFY`        | ▶️      | NTFY notifications                        |           |          | Script       | [_publisher_ntfy](/front/plugins/_publisher_ntfy/)                |
-| `OMDSDN`      | 📥      | OMADA TP-Link import                      |   🖧 🔄   |          | Script       | [omada_sdn_imp](/front/plugins/omada_sdn_imp/)                    |
-| `PIHOLE`      | 🔍/📥   | Pi-hole device import & sync              |           |          | SQLite DB    | [pihole_scan](/front/plugins/pihole_scan/)                        |
-| `PUSHSAFER`   | ▶️      | Pushsafer notifications                   |           |          | Script       | [_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)      |
-| `PUSHOVER`    | ▶️      | Pushover notifications                    |           |          | Script       | [_publisher_pushover](/front/plugins/_publisher_pushover/)        |
-| `SETPWD`      | ⚙       | Set password                              |           |  Yes     | Template     | [set_password](/front/plugins/set_password/)                      |
-| `SMTP`        | ▶️      | Email notifications                       |           |          | Script       | [_publisher_email](/front/plugins/_publisher_email/)              |
-| `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                 |           |          | Script       | [snmp_discovery](/front/plugins/snmp_discovery/)                  |
-| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄    |          | Script       | [sync](/front/plugins/sync/)                                     |
-| `TELEGRAM`    | ▶️      | Telegram notifications                    |          |          | Script    | [_publisher_telegram](/front/plugins/_publisher_telegram/)             |
-| `UNDIS`       | 🔍/📥   | Create dummy devices                      |           |          | Script       | [undiscoverables](/front/plugins/undiscoverables/)                |
-| `UNFIMP`      | 🔍/📥   | UniFi device import & sync                |  🖧       |          | Script       | [unifi_import](/front/plugins/unifi_import/)                      |
-| `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](/front/plugins/vendor_update/)                    |
-| `WEBHOOK`     | ▶️      | Webhook notifications                     |           |          | Script       | [_publisher_webhook](/front/plugins/_publisher_webhook/)          |
-| `WEBMON`      | ♻       | Website down monitoring                   |           |          | Script       | [website_monitor](/front/plugins/website_monitor/)                |
-  
+| ID          | Type  | Description                                | Features | Required | Data source | Detailed docs                                                      |
+| ----------- | ----- | ------------------------------------------ | -------- | -------- | ----------- | ------------------------------------------------------------------ |
+| `APPRISE`   | ▶️     | Apprise notification proxy                 |          |          | Script      | [_publisher_apprise](/front/plugins/_publisher_apprise/)           |
+| `ARPSCAN`   | 🔍     | ARP-scan on current network                |          |          | Script      | [arp_scan](/front/plugins/arp_scan/)                               |
+| `AVAHISCAN` | ♻     | Avahi (mDNS-based) name resolution         |          |          | Script      | [avahi_scan](/front/plugins/avahi_scan/)                           |
+| `CSVBCKP`   | ⚙     | CSV devices backup                         |          |          | Script      | [csv_backup](/front/plugins/csv_backup/)                           |
+| `DBCLNP`    | ⚙     | Database cleanup                           |          | Yes*     | Script      | [db_cleanup](/front/plugins/db_cleanup/)                           |
+| `DDNS`      | ⚙     | DDNS update                                |          |          | Script      | [ddns_update](/front/plugins/ddns_update/)                         |
+| `DHCPLSS`   | 🔍/📥   | Import devices from DHCP leases            |          |          | Script      | [dhcp_leases](/front/plugins/dhcp_leases/)                         |
+| `DHCPSRVS`  | ♻     | DHCP servers                               |          |          | Script      | [dhcp_servers](/front/plugins/dhcp_servers/)                       |
+| `INTRNT`    | 🔍     | Internet IP scanner                        |          |          | Script      | [internet_ip](/front/plugins/internet_ip/)                         |
+| `INTRSPD`   | ♻     | Internet speed test                        |          |          | Script      | [internet_speedtest](/front/plugins/internet_speedtest/)           |
+| `MAINT`     | ⚙     | Maintenance of logs, etc.                  |          |          | Script      | [maintenance](/front/plugins/maintenance/)                         |
+| `MQTT`      | ▶️     | MQTT for synching to Home Assistant        |          |          | Script      | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                 |
+| `NBTSCAN`   | ♻     | Nbtscan (NetBIOS-based) name resolution    |          |          | Script      | [nbtscan_scan](/front/plugins/nbtscan_scan/)                       |
+| `NEWDEV`    | ⚙     | New device template                        |          | Yes      | Template    | [newdev_template](/front/plugins/newdev_template/)                 |
+| `NMAP`      | ♻     | Nmap port scanning & discovery             |          |          | Script      | [nmap_scan](/front/plugins/nmap_scan/)                             |
+| `NMAPDEV`   | 🔍     | Nmap dev scan on current network           |          |          | Script      | [nmap_dev_scan](/front/plugins/nmap_dev_scan/)                     |
+| `NSLOOKUP`  | ♻     | NSLookup (DNS-based) name resolution       |          |          | Script      | [nslookup_scan](/front/plugins/nslookup_scan/)                     |
+| `NTFPRCS`   | ⚙     | Notification processing                    |          | Yes      | Template    | [notification_processing](/front/plugins/notification_processing/) |
+| `NTFY`      | ▶️     | NTFY notifications                         |          |          | Script      | [_publisher_ntfy](/front/plugins/_publisher_ntfy/)                 |
+| `OMDSDN`    | 📥     | OMADA TP-Link import                       | 🖧 🔄      |          | Script      | [omada_sdn_imp](/front/plugins/omada_sdn_imp/)                     |
+| `PIHOLE`    | 🔍/📥   | Pi-hole device import & sync               |          |          | SQLite DB   | [pihole_scan](/front/plugins/pihole_scan/)                         |
+| `PUSHSAFER` | ▶️     | Pushsafer notifications                    |          |          | Script      | [_publisher_pushsafer](/front/plugins/_publisher_pushsafer/)       |
+| `PUSHOVER`  | ▶️     | Pushover notifications                     |          |          | Script      | [_publisher_pushover](/front/plugins/_publisher_pushover/)         |
+| `SETPWD`    | ⚙     | Set password                               |          | Yes      | Template    | [set_password](/front/plugins/set_password/)                       |
+| `SMTP`      | ▶️     | Email notifications                        |          |          | Script      | [_publisher_email](/front/plugins/_publisher_email/)               |
+| `SNMPDSC`   | 🔍/📥   | SNMP device import & sync                  |          |          | Script      | [snmp_discovery](/front/plugins/snmp_discovery/)                   |
+| `SYNC`      | 🔍/⚙/📥 | Sync & import from NetAlertX instances     | 🖧 🔄      |          | Script      | [sync](/front/plugins/sync/)                                       |
+| `TELEGRAM`  | ▶️     | Telegram notifications                     |          |          | Script      | [_publisher_telegram](/front/plugins/_publisher_telegram/)         |
+| `UNDIS`     | 🔍/📥   | Create dummy devices                       |          |          | Script      | [undiscoverables](/front/plugins/undiscoverables/)                 |
+| `UNFIMP`    | 🔍/📥   | UniFi device import & sync                 | 🖧        |          | Script      | [unifi_import](/front/plugins/unifi_import/)                       |
+| `VNDRPDT`   | ⚙     | Vendor database update                     |          |          | Script      | [vendor_update](/front/plugins/vendor_update/)                     |
+| `WEBHOOK`   | ▶️     | Webhook notifications                      |          |          | Script      | [_publisher_webhook](/front/plugins/_publisher_webhook/)           |
+| `WEBMON`    | ♻     | Website down monitoring                    |          |          | Script      | [website_monitor](/front/plugins/website_monitor/)                 |
+| `FREEBOX`   | 🔍/♻   | Pull data and names from a Freebox gateway |          |          | Script      | [freebox](/front/plugins/freebox/)                                 |
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
 >
@@ -69,20 +69,20 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 ## Plugin types
 
 
-| Plugin type   | Icon  | Description                                                   |  When to run         | Required | Data source [?](/docs/PLUGINS_DEV.md) |
-|---------------|------|----------------------------------------------------------------|--------------------------|----|---------|
-|  publisher    | ▶️ | Sending notifications to services.                               | `on_notification`       |  ✖ | Script | 
-|  dev scanner  | 🔍 | Create devices in the app, manages online/offline device status. | `schedule`             |  ✖ | Script / SQLite DB  | 
-|  importer     | 📥 | Importing devices from another service.                          | `schedule`             |  ✖ | Script / SQLite DB  | 
-|  system       | ⚙  | Providing core system functionality.                             | `schedule` / always on  |  ✖/✔ | Script / Template | 
-|  other        | ♻  | Other scanners, e.g. for name resolution                         | misc                    |  ✖ | Script / Template | 
+| Plugin type | Icon | Description                                                      | When to run            | Required | Data source [?](/docs/PLUGINS_DEV.md) |
+| ----------- | ---- | ---------------------------------------------------------------- | ---------------------- | -------- | ------------------------------------- |
+| publisher   | ▶️    | Sending notifications to services.                               | `on_notification`      | ✖        | Script                                |
+| dev scanner | 🔍    | Create devices in the app, manages online/offline device status. | `schedule`             | ✖        | Script / SQLite DB                    |
+| importer    | 📥    | Importing devices from another service.                          | `schedule`             | ✖        | Script / SQLite DB                    |
+| system      | ⚙    | Providing core system functionality.                             | `schedule` / always on | ✖/✔      | Script / Template                     |
+| other       | ♻    | Other scanners, e.g. for name resolution                         | misc                   | ✖        | Script / Template                     |
 
 ## Features
 
-| Icon  | Description                                                  | 
-|------|---------------------------------------------------------------|
-| 🖧    | Auto-imports the network topology diagram                     |
-| 🔄   | Has the option to sync some data back into the plugin source  |
+| Icon | Description                                                  |
+| ---- | ------------------------------------------------------------ |
+| 🖧    | Auto-imports the network topology diagram                    |
+| 🔄    | Has the option to sync some data back into the plugin source |
 
 
 ## ✅Enabling plugins
