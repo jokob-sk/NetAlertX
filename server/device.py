@@ -452,11 +452,18 @@ def update_devices_data_from_scan (db):
     
     # Guess ICONS
     recordsToUpdate = []
-    query = """SELECT * FROM Devices
-               WHERE devIcon in ('', 'null')
-                  OR devIcon IS NULL"""
+
     default_icon = get_setting_value('NEWDEV_devIcon')
-    
+ 
+    if get_setting_value('NEWDEV_replace_preset_icon'):
+        query = f"""SELECT * FROM Devices
+                    WHERE devIcon in ('', 'null', '{default_icon}')
+                        OR devIcon IS NULL"""
+    else:
+        query = """SELECT * FROM Devices
+                    WHERE devIcon in ('', 'null')
+                        OR devIcon IS NULL"""
+            
     for device in sql.execute (query) :
         # Conditional logic for devIcon guessing       
         devIcon = guess_icon(device['devVendor'], device['devMac'], device['devLastIP'], device['devName'], default_icon)

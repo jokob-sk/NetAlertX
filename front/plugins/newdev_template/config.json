@@ -266,6 +266,34 @@
       ]
     },
     {
+      "function": "replace_preset_icon",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Overwrite Preset Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If checked, the application replaces the preset icon in <code>NEWDEV_devIcon</code> with a pre-assigned vendor or device icon if found. If this is checked, avoid manually assigning this icon to devices, as it may be replaced."
+        }
+      ]
+    },
+    {
       "function": "devMac",
       "type": {
         "dataType": "string",
