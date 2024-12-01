@@ -1,11 +1,11 @@
 {
-  "code_name": "ipneigh",
-  "unique_prefix": "IPNEIGH",
-  "plugin_type": "device_scanner",
-  "execution_order": "Layer_0",
+  "code_name": "icmp_scan",
+  "unique_prefix": "ICMP",
+  "plugin_type": "other",
+  "execution_order" : "Layer_4",
   "enabled": true,
   "data_source": "script",
-  "mapped_to_table": "CurrentScan",
+  "show_ui": true,
   "data_filters": [
     {
       "compare_column": "Object_PrimaryID",
@@ -15,60 +15,52 @@
       "compare_use_quotes": true
     }
   ],
-  "show_ui": true,
-  "localized": [
-    "display_name",
-    "description",
-    "icon"
-  ],
+  "localized": ["display_name", "description", "icon"],
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "IP Neigh"
-    }
-  ],
-  "description": [
-    {
-      "language_code": "en_us",
-      "string": "Plugin to scan the ip tables"
+      "string": "ICMP (Status check)"
     }
   ],
   "icon": [
     {
       "language_code": "en_us",
-      "string": "<i class=\"fa fa-search\"></i>"
+      "string": "<i class=\"fa-solid fa-search\"></i>"
     }
   ],
-  "params": [],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to check the status of the device."
+    }
+  ],
+  "params": [
+    {
+      "name": "ips",
+      "type": "sql",
+      "value": "SELECT devLastIP from DEVICES order by devMac",
+      "timeoutMultiplier": true
+    }
+  ],
   "settings": [
     {
       "function": "RUN",
-      "events": [
-        "run"
-      ],
+      "events": ["run"],
       "type": {
         "dataType": "string",
         "elements": [
-          {
-            "elementType": "select",
-            "elementOptions": [],
-            "transformers": []
-          }
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
         ]
       },
       "default_value": "disabled",
       "options": [
         "disabled",
+        "on_new_device",
         "once",
         "schedule",
-        "always_after_scan",
-        "on_new_device",
-        "on_notification"
+        "always_after_scan"
       ],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -78,38 +70,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When the plugin should run. Good options are <code>always_after_scan</code>, <code>on_new_device</code>, <code>on_notification</code>"
-        }
-      ]
-    },
-    {
-      "function": "RUN_SCHD",
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": "*/5 * * * *",
-      "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Schedule"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+          "string": "Enable a regular scan of your devices with PING to determine their status. If you select <code>schedule</code> the interval from below is applied, for which the recommendation is to <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md\" target=\"_blank\">align all scan schedules</a> otherwise false down reports will be generated."
         }
       ]
     },
@@ -120,21 +81,14 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [
-              {
-                "readonly": "true"
-              }
-            ],
+            "elementOptions": [{ "readonly": "true" }],
             "transformers": []
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/ipneigh/ipneigh.py",
+      "default_value": "python3 /app/front/plugins/icmp_scan/icmp.py",
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -149,27 +103,72 @@
       ]
     },
     {
+      "function": "ARGS",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "-i 0.5 -c 3 -W 4 -w 5",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command arguments"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Arguments passed to the <code>ping</code> command. Please be careful modifying these."
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#ICMP_RUN\"><code>ICMP_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
       "function": "RUN_TIMEOUT",
       "type": {
         "dataType": "integer",
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [
-              {
-                "type": "number"
-              }
-            ],
+            "elementOptions": [{ "type": "number" }],
             "transformers": []
           }
         ]
       },
-      "default_value": 30,
+      "default_value": 10,
       "options": [],
-      "localized": [
-        "name",
-        "description"
-      ],
+      "localized": ["name", "description"],
       "name": [
         {
           "language_code": "en_us",
@@ -258,7 +257,6 @@
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_Vendor",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -270,15 +268,14 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Vendor"
+          "string": "Output"
         }
       ]
     },
     {
       "column": "Watched_Value3",
-      "mapped_to_column": "cur_Type",
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],
@@ -288,7 +285,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Type"
+          "string": "N/A"
         }
       ]
     },
@@ -313,7 +310,7 @@
       "column": "Dummy",
       "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "IPNEIGH"
+        "value": "ICMP"
       },
       "css_classes": "col-sm-2",
       "show": true,

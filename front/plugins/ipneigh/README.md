@@ -13,7 +13,7 @@ To set up the plugin correctly, make sure to add in the plugin settings the name
 
 ### Usage
 
-- Head to **Settings** > **IP Neigh** to adjust teh settings 
+- Head to **Settings** > **IP Neigh** to adjust the settings 
 - Interfaces are extracted from the `SCAN_SUBNETS` setting (make sure you add interfaces in the prescribed format, e.g. `192.168.1.0/24 --interface=eth1`) 
 
 ### Notes
