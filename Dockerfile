@@ -5,9 +5,8 @@ ARG INSTALL_DIR=/app
 ENV PYTHONUNBUFFERED=1
 
 # Install build dependencies
-RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev \
+RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev git\
     && python -m venv /opt/venv
-    
 
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -57,6 +56,6 @@ COPY install/crontab /etc/crontabs/root
 RUN ${INSTALL_DIR}/dockerfiles/pre-setup.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \
-  CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json
+    CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json
 
 ENTRYPOINT ["/init"]
