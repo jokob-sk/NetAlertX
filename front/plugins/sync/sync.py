@@ -236,8 +236,9 @@ def main():
             # Prepare the insert statement
             if new_devices:
 
-                columns = ', '.join(k for k in new_devices[0].keys() if k != 'rowid')
-                placeholders = ', '.join('?' for k in new_devices[0] if k != 'rowid')
+                # creating insert statement, removing 'rowid', 'devStatus' as handled on the target and devStatus is resolved on the fly
+                columns = ', '.join(k for k in new_devices[0].keys() if k not in ['rowid', 'devStatus'])
+                placeholders = ', '.join('?' for k in new_devices[0] if k not in ['rowid', 'devStatus'])
                 sql = f'INSERT INTO Devices ({columns}) VALUES ({placeholders})'
 
                 # Extract values for the new devices
@@ -254,8 +255,6 @@ def main():
                 mylog('verbose', [message])
                 write_notification(message, 'info', timeNowTZ())
             
-                
-        
 
         # Commit and close the connection
         conn.commit()

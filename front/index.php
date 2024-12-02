@@ -165,7 +165,7 @@ switch ($UI_THEME) {
 
 
 <!-- jQuery 3 -->
-<script src="js/jquery/jquery.min.js"></script>
+<script src="lib/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="lib/bootstrap/bootstrap.min.js"></script>
 <!-- iCheck -->

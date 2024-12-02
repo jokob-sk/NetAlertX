@@ -1,0 +1,43 @@
+[
+    {
+      "onclickEvent": "$('#tabDetails').trigger('click')",
+      "color": "bg-aqua",
+      "headerId": "deviceStatus",
+      "headerStyle": "margin-left: 0em",
+      "labelLang": "DevDetail_Shortcut_CurrentStatus",
+      "iconId": "deviceStatusIcon",
+      "iconClass": "",
+      "dataValue": "--"
+    },
+    {
+      "onclickEvent": "$('#tabSessions').trigger('click');",
+      "color": "bg-green",
+      "headerId": "deviceSessions",
+      "headerStyle": "",
+      "labelLang": "DevDetail_Shortcut_Sessions",
+      "iconId": "",
+      "iconClass": "fa fa-plug",
+      "dataValue": "--"
+    },
+    {
+      "onclickEvent": "$('#tabPresence').trigger('click')",
+      "color": "bg-yellow",
+      "headerId": "deviceEvents",
+      "headerStyle": "margin-left: 0em",
+      "labelLang": "DevDetail_Shortcut_Presence",
+      "iconId": "deviceEventsIcon",
+      "iconClass": "fa fa-calendar",
+      "dataValue": "--"
+    },
+    {
+      "onclickEvent": "$('#tabEvents').trigger('click');",
+      "color": "bg-red",
+      "headerId": "deviceDownAlerts",
+      "headerStyle": "",
+      "labelLang": "DevDetail_Shortcut_DownAlerts",
+      "iconId": "",
+      "iconClass": "fa fa-warning",
+      "dataValue": "--"
+    }
+  ]
+  

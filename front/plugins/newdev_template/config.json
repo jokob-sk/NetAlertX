@@ -266,6 +266,34 @@
       ]
     },
     {
+      "function": "replace_preset_icon",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Overwrite Preset Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If checked, the application replaces the preset icon in <code>NEWDEV_devIcon</code> with a pre-assigned vendor or device icon if found. If this is checked, avoid manually assigning this icon to devices, as it may be replaced."
+        }
+      ]
+    },
+    {
       "function": "devMac",
       "type": {
         "dataType": "string",
@@ -284,7 +312,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device MAC"
+          "string": "MAC"
         }
       ],
       "description": [
@@ -313,18 +341,19 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Name"
+          "string": "Name"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The name of the device. Uneditable as internal functionality is dependent on specific new device names."
+          "string": "The name of the device. If the value is set to <code>(unknown)</code> or <code>(name not found)</code> the application will try to discover the name of the device."
         }
       ]
     },
     {
       "function": "devOwner",
+      "events": ["add_option"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -345,7 +374,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Owner"
+          "string": "Owner"
         }
       ],
       "description": [
@@ -357,6 +386,7 @@
     },
     {
       "function": "devType",
+      "events": ["add_option"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -382,7 +412,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Type"
+          "string": "Type"
         }
       ],
       "description": [
@@ -399,7 +429,7 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [],
             "transformers": []
           }
         ]
@@ -411,13 +441,13 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Vendor"
+          "string": "Vendor"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The vendor of the device. Uneditable - Autodetected."
+          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> teh app will try to auto-detect it."
         }
       ]
     },
@@ -451,6 +481,7 @@
     },
     {
       "function": "devGroup",
+      "events": ["add_option"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -471,7 +502,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Group"
+          "string": "Group"
         }
       ],
       "description": [
@@ -486,7 +517,7 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          { "elementType": "textarea", "elementOptions": [], "transformers": [] }
         ]
       },
       "default_value": "",
@@ -495,7 +526,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Comments"
+          "string": "Comments"
         }
       ],
       "description": [
@@ -570,7 +601,7 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [],
             "transformers": []
           }
         ]
@@ -638,13 +669,13 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Scan Cycle"
+          "string": "Scan device"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The default value of the <code>Scan device</code> dropdown. Enable if newly discovered devices should be scanned."
+          "string": "Select if the device should be scanned."
         }
       ]
     },
@@ -722,13 +753,13 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Alert Device Down"
+          "string": "Alert Down"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether an alert should be triggered when the device goes down. The default value of the <code>Alert Down</code> checkbox."
+          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longet than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
         }
       ]
     },
@@ -759,7 +790,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The default value of the <code>Skip repeated notifications for</code> dropdown. Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you enter <code>0</code> then you get notified on all events."
+          "string": "Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you select <code>0</code> then you get notified on all events."
         }
       ]
     },
@@ -850,6 +881,7 @@
     },
     {
       "function": "devLocation",
+      "events": ["add_option"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -870,7 +902,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Location"
+          "string": "Location"
         }
       ],
       "description": [
@@ -910,6 +942,7 @@
     },
     {
       "function": "devParentMAC",
+      "events": ["go_to_node"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -934,7 +967,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Network Node MAC Address"
+          "string": "Network Node"
         }
       ],
       "description": [
@@ -951,7 +984,7 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [],
             "transformers": []
           }
         ]
@@ -968,12 +1001,69 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The port number of the network node. Uneditable."
+          "string": "The port number of the network node."
+        }
+      ]
+    },
+    {
+      "function": "devSSID",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "SSID"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The network SSID."
+        }
+      ]
+    },
+    {
+      "function": "devSite",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Network Site"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The network site."
         }
       ]
     },
     {
       "function": "devIcon",
+      "events": ["copy_icons", "add_icon"],
       "type": {
         "dataType": "string",
         "elements": [
@@ -1013,7 +1103,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Device Icon"
+          "string": "Icon"
         }
       ],
       "description": [

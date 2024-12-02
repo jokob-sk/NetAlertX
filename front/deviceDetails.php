@@ -42,58 +42,7 @@
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 
-<!-- top small box 1 ------------------------------------------------------- -->
-      <div class="row">
-
-        <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: $('#tabDetails').trigger('click')">
-            <div class="small-box bg-aqua">
-              <div class="inner"> <h3 id="deviceStatus" style="margin-left: 0em"> -- </h3>
-                <p class="infobox_label"><?= lang('DevDetail_Shortcut_CurrentStatus');?></p>
-              </div>
-              <div class="icon"> <i id="deviceStatusIcon" class=""></i></div>
-            </div>
-          </a>
-        </div>
-
-<!-- top small box 2 ------------------------------------------------------- -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: $('#tabSessions').trigger('click');">
-            <div class="small-box bg-green">
-              <div class="inner"> <h3 id="deviceSessions"> -- </h3>
-                <p class="infobox_label"><?= lang('DevDetail_Shortcut_Sessions');?></p>
-              </div>
-              <div class="icon"> <i class="fa fa-plug"></i> </div>
-            </div>
-          </a>
-        </div>
-
-<!-- top small box 3 ------------------------------------------------------- -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: $('#tabPresence').trigger('click')">
-            <div  class="small-box bg-yellow">
-              <div class="inner"> <h3 id="deviceEvents" style="margin-left: 0em"> -- </h3>
-                <p class="infobox_label"><?= lang('DevDetail_Shortcut_Presence');?></p>
-              </div>
-              <div id="deviceEventsIcon" class="icon"> <i class="fa fa-calendar"></i> </div>
-            </div>
-          </a>
-        </div>
-
-<!--  top small box 4 ------------------------------------------------------ -->
-        <div class="col-lg-3 col-sm-6 col-xs-6">
-          <a href="#" onclick="javascript: $('#tabEvents').trigger('click');">
-            <div  class="small-box bg-red">
-              <div class="inner"> <h3 id="deviceDownAlerts"> -- </h3>
-                <p class="infobox_label"><?= lang('DevDetail_Shortcut_DownAlerts');?></p>
-              </div>
-              <div class="icon"> <i class="fa fa-warning"></i> </div>
-            </div>
-          </a>
-        </div>
-
-      </div>
-      <!-- /.row -->
+      <div id="TopSmallBoxes"></div>
 
 <!-- tab control------------------------------------------------------------ -->
       <div class="row">
@@ -128,400 +77,10 @@
 -->
               <div class="tab-pane fade" id="panDetails">
 
-                <div class="row">
-    <!-- column 1 -->
-                  <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Title');?></h4>
-                    <div class="box-body form-horizontal">
-
-                      <!-- MAC -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_mac');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtMAC" type="text" readonly value="--">
-                        </div>
-                      </div>
-      
-                      <!-- Name -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Name');?></label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtName" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtName');"></i></span>
-                          </div>                          
-                        </div>
-                      </div>
-
-                      <!-- Owner -->
-                      <div class="form-group" title="<?= lang('DevDetail_Owner_hover');?>">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Owner');?></label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtOwner" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtOwner');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-caret-down "></span></button>                                
-                              <ul id="dropdownOwner" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownOwner_tmp"></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Type -->
-                      <div class="form-group" title="<?= lang('DevDetail_Type_hover');?>">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Type');?></label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtDeviceType" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtDeviceType');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
-                                <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownDeviceType" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownDeviceType_tmp"></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Icon -->
-                      <div class="form-group" >
-                        <label class="col-sm-3 control-label">
-                          <?= lang('DevDetail_Icon');?> 
-                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
-                        </label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <span class="input-group-addon iconPreview" id="txtIconPreview" my-customid="txtIconPreview"></span>
-                            <input class="form-control" id="txtIcon"  my-customid="txtIcon" my-customparams="txtIcon,txtIconPreview" type="text" value="--" readonly>
-                            <span class="input-group-addon" title='<?= lang('DevDetail_button_AddIcon_Tooltip');?>'><i class="fa fa-square-plus pointer" onclick="askAddIcon();"></i></span>
-                            <span class="input-group-addon" title='<?= lang('DevDetail_button_OverwriteIcons_Tooltip');?>'><i class="fa fa-copy pointer" onclick="askOverwriteIconType();"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" >
-                                <span class="fa fa-caret-down"></span>
-                              </button>
-                              <ul id="dropdownIcon" class="dropdown-menu dropdown-menu-right" >
-                                <li id="dropdownIcon_tmp"></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Vendor -->
-                      <div class="form-group" title="<?= lang('DevDetail_Vendor_hover');?>">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Vendor');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtVendor" type="text" value="--">
-                        </div>
-                      </div>
-
-                      <!-- Favorite -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Favorite');?></label>
-                        <div class="col-sm-9" style="padding-top:6px;">
-                          <input class="checkbox blue hidden" id="chkFavorite" type="checkbox">
-                        </div>
-                      </div>
-
-                      <!-- Group -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Group');?></label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtGroup" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtGroup');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-caret-down"></span>
-                              </button>
-                              <ul id="dropdownGroup" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownGroup_tmp"></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Location -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Location');?></label>
-                        <div class="col-sm-9">
-                          <div class="input-group">
-                            <input class="form-control" id="txtLocation" type="text" value="--">
-                            <span class="input-group-addon"><i class="fa fa-pencil pointer" onclick="editDrp('txtLocation');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownLocation" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownLocation_tmp"></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Comments -->
-                      <div class="form-group">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Comments');?></label>
-                        <div class="col-sm-9">
-                          <textarea class="form-control" rows="3" id="txtComments"></textarea>
-                        </div>
-                      </div>
-                      
-
-
-                    </div>          
-                  </div>          
-
-    <!-- column 2 -->
-                  <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_SessionInfo_Title');?></h4>
-                    <div class="box-body form-horizontal">
-
-                      <!-- Status -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_Status');?></label>
-                        <div class="col-sm-7">
-                          <input class="form-control" id="txtStatus" type="text" readonly value="--">
-                        </div>
-                      </div>
-      
-                      <!-- First Session -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_FirstSession');?></label>
-                        <div class="col-sm-7">
-                          <input class="form-control" id="txtFirstConnection" type="text" readonly value="--">
-                        </div>
-                      </div>
-      
-                      <!-- Last Session -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_LastSession');?></label>
-                        <div class="col-sm-7">
-                          <input class="form-control" id="txtLastConnection" type="text" readonly value="--">
-                        </div>
-                      </div>
-      
-                      <!-- Last IP -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_LastIP');?></label>
-                        <div class="col-sm-7">
-                          <input class="form-control" id="txtLastIP" type="text" readonly value="--">
-                        </div>
-                      </div>
-
-                      <!-- Static IP -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_SessionInfo_StaticIP');?></label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox blue hidden" id="chkStaticIP" type="checkbox">
-                        </div>
-                      </div>
-
-                      <!-- Network -->
-                      <h4 class="bottom-border-aqua"><?= lang('DevDetail_MainInfo_Network_Title');?><span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span></h4>                    
-                      <div class="form-group" title="<?= lang('DevDetail_Network_Node_hover');?>">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network');?></label>
-                        <div class="col-sm-9">  
-                          <div class="input-group parentNetworkNode"> 
-
-                            <input class="form-control" id="txtNetworkNodeMac" type="text" value="--">
-                            <span class="input-group-addon"><i title="<?= lang('DevDetail_GoToNetworkNode');?>" class="fa fa-square-up-right pointer" onclick="goToNetworkNode('txtNetworkNodeMac');"></i></span>
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-mynodemac="" data-toggle="dropdown" aria-expanded="false" id="buttonNetworkNodeMac">
-                                    <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownNetworkNodeMac" class="dropdown-menu dropdown-menu-right">
-                                <li id="dropdownNetworkNodeMac_tmp"></li>
-                              </ul>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group" title="<?= lang('DevDetail_Network_Port_hover');?>">
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network_Port');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtNetworkPort" type="text" value="--">
-                        </div>
-                      </div>
-                      <div class="form-group" >
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_SSID');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtSSID" type="text" value="--">
-                        </div>
-                      </div>
-                      <div class="form-group" >
-                        <label class="col-sm-3 control-label"><?= lang('DevDetail_MainInfo_Network_Site');?></label>
-                        <div class="col-sm-9">
-                          <input class="form-control" id="txtNetworkSite" type="text" value="--">
-                        </div>
-                      </div>
-
-                      
-      
-                    </div>
-                  </div>
-
-    <!-- column 3 -->
-                  <div class="col-lg-4 col-sm-6 col-xs-12">
-                    <h4 class="bottom-border-aqua"><?= lang('DevDetail_EveandAl_Title');?>
-                    <span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md"><i class="fa fa-circle-question"></i></a><span></h4>
-                    <div class="box-body form-horizontal">
-
-                      <!-- Scan Cycle -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_ScanCycle');?></label>
-                        <div class="col-sm-7">
-                          <div class="input-group">
-                            <input class="form-control" id="txtScanCycle" type="text" value="--" readonly >
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonScanCycle">
-                                <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownScanCycle" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','yes')"><?= lang('DevDetail_EveandAl_ScanCycle_a');?></a></li>                                
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtScanCycle','no');"><?= lang('DevDetail_EveandAl_ScanCycle_z');?></a></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Alert events -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_AlertAllEvents');?></label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox blue hidden" id="chkAlertEvents" type="checkbox">
-                        </div>
-                      </div>
-      
-                      <!-- Alert Down -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_AlertDown');?></label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox red hidden" id="chkAlertDown" type="checkbox">
-                        </div>
-                      </div>
-
-                      <!-- Skip Notifications -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label" style="padding-top: 0px; padding-left: 0px;"><?= lang('DevDetail_EveandAl_Skip');?></label>
-                        <div class="col-sm-7">
-                          <div class="input-group">
-                            <input class="form-control" id="txtSkipRepeated" type="text" value="--" readonly >
-                            <div class="input-group-btn">
-                              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonSkipRepeated">
-                                <span class="fa fa-caret-down"></span></button>
-                              <ul id="dropdownSkipRepeated" class="dropdown-menu dropdown-menu-right">
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtSkipRepeated','0 h (notify all events)');"> 0 h (notify all events)</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtSkipRepeated','1 h');">                     1 h</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtSkipRepeated','8 h');">                     8 h</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtSkipRepeated','24 h');">                    24 h</a></li>
-                                <li><a href="javascript:void(0)" onclick="setTextValue('txtSkipRepeated','168 h (one week)');">        168 h (one week)</a></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- New Device -->
-                      <div class="form-group" title="<?= lang('DevDetail_EveandAl_NewDevice_Tooltip');?>">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_NewDevice');?>:</label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox orange hidden" id="chkNewDevice"  type="checkbox">
-                        </div>
-                      </div>
-
-                      <!-- Archived -->
-                      <div class="form-group">
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_Archived');?>:</label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <input class="checkbox blue hidden" id="chkArchived" type="checkbox">
-                        </div>
-                      </div>
-
-                      <!-- Randomized MAC -->
-                      <div class="form-group" title="<?= lang('RandomMAC_hover');?>" >
-                        <label class="col-sm-5 control-label"><?= lang('DevDetail_EveandAl_RandomMAC');?>:</label>
-                        <div class="col-sm-7" style="padding-top:6px;">
-                          <span id="iconRandomMACinactive" data-toggle="tooltip" data-placement="right" title="Random MAC is Inactive">
-                            <i style="font-size: 24px;" class="text-gray glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
-
-                          <span id="iconRandomMACactive"   data-toggle="tooltip" data-placement="right" title="Random MAC is Active" class="hidden">
-                            <i style="font-size: 24px;" class="text-yellow glyphicon glyphicon-random"></i> &nbsp &nbsp </span>
-
-                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/RANDOM_MAC.md" target="_blank" style="color: #777;"> 
-                            <i class="fa fa-info-circle"></i> 
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-sm-6 col-xs-12">
-                  <h4 class="bottom-border-aqua"><?= lang('DevDetail_Run_Actions_Title');?></h4>
-                  <div class="box-body form-horizontal">
-                  <label class="col-sm-3 control-label">
-                    <?= lang('Gen_Action');?>                   
-                  </label>
-                  <div class="col-sm-9">
-                    <div class="input-group">
-                      <input class="form-control" title="<?= lang('DevDetail_Run_Actions_Tooltip');?>" id="txtAction" type="text" value="--">
-                      <span class="input-group-addon" title='<?= lang('Gen_Run');?>'><i class="fa fa-play pointer" onclick="askRunAction();"></i></span>
-                      
-                      <div class="input-group-btn">
-                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                          <span class="fa fa-caret-down"></span>
-                        </button>
-                        <ul id="dropdownAction" class="dropdown-menu dropdown-menu-right">
-                        </ul>
-                      </div>
-                    </div>
-                  </div> 
-                  </div>
-
-                  <h4 class="bottom-border-aqua"><?= lang('DevDetail_Copy_Device_Title');?></h4>
-                      <div class="box-body form-horizontal">
-                      <label class="col-sm-3 control-label">
-                        <?= lang('Navigation_Devices');?>                   
-                      </label>
-                      <div class="col-sm-9">
-                        <div class="input-group">
-                          <input class="form-control" title="<?= lang('DevDetail_Copy_Device_Tooltip');?>" id="txtFromDevice" type="text" value="--">
-                          <span class="input-group-addon" title='<?= lang('Gen_Copy');?>'><i class="fa fa-copy pointer" onclick="askCopyFromDevice();"></i></span>
-                          
-                          <div class="input-group-btn">
-                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                              <span class="fa fa-caret-down"></span>
-                            </button>
-                            <ul id="dropdownDevices" class="dropdown-menu dropdown-menu-right">
-                            </ul>
-                          </div>
-                        </div>
-                      </div> 
-                      </div> 
-
-                  
-                </div>
-
+                <?php  
+                  require 'deviceDetailsEdit.php';
+                ?>
                 
-
-                  <!-- Buttons -->
-                  <div class="col-xs-12">
-                    <div class="pull-right">
-                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;" id="btnDeleteEvents"   onclick="askDeleteDeviceEvents()">   <?= lang('DevDetail_button_DeleteEvents');?> </button>
-                        <button type="button" class="btn btn-default pa-btn pa-btn-delete"  style="margin-left:0px;"  id="btnDelete"   onclick="askDeleteDevice()">   <?= lang('DevDetail_button_Delete');?> </button>
-                        <!-- <button type="button" class="btn btn-default pa-btn" style="margin-left:6px;" id="btnRestore"  onclick="getDeviceData(true)"> <?= lang('DevDetail_button_Reset');?> </button> -->
-                        <button type="button" disabled class="btn btn-primary pa-btn" style="margin-left:6px; "  id="btnSave"     onclick="setDeviceData()" >     <?= lang('DevDetail_button_Save');?> </button>
-                    </div>
-                  </div>
-
-                </div>
               </div>                                                                         
 
 <!-- tab page 2 ------------------------------------------------------------ -->
@@ -657,41 +216,7 @@ switch ($UI_THEME) {
 <!-- page script ----------------------------------------------------------- -->
 <script defer>
 
-
-  // ------------------------------------------------------------
-  function getDevicesList()
-  {
-    // Read cache (skip cookie expiry check)
-    devicesList = getCache('devicesListAll_JSON', true);
-    
-    if (devicesList != '') {
-        devicesList = JSON.parse (devicesList);
-    } else {
-        devicesList = [];
-    }
-
-    // only loop thru the filtered down list
-    visibleDevices = getCache("ntx_visible_macs")
-
-    if(visibleDevices != "") {
-      visibleDevicesMACs = visibleDevices.split(',');
-
-      devicesList_tmp = [];
-
-      // Iterate through the data and filter only visible devices
-      $.each(devicesList, function(index, item) {
-        // Check if the current item's MAC exists in visibleDevicesMACs
-        if (visibleDevicesMACs.includes(item.devMac)) {
-          devicesList_tmp.push(item);
-        }
-      });
-
-      // Update devicesList with the filtered items
-      devicesList = devicesList_tmp;
-    }
-
-    return devicesList;
-  }
+ 
 
   // ------------------------------------------------------------
 
@@ -722,7 +247,7 @@ function main () {
   var urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has ('mac') == true) {
     mac = urlParams.get ('mac');
-    setCache("piaDeviceDetailsMac", mac); // set cookie
+    setCache("naxDeviceDetailsMac", mac); // set cookie
   } else {
     $('#pageTitle').html ('Device not found');
   }
@@ -743,14 +268,12 @@ function main () {
   $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
 
   // Initialize components with parameters
-  initializeTabsNew();
-  initializeiCheck();
-  initializeCombos();
+  initializeTabs();
   initializeDatatables();
   initializeCalendar();    
 
   // query data
-  getDeviceData(true);
+
   getSessionsPresenceEvents();
 
   // Force re-render calendar on tab change
@@ -761,39 +284,8 @@ function main () {
     }
   });
 
-    // Show device icon as it changes
-  $('#txtIcon').on('change input', function() {
-    updateIconPreview(this)
-  });
-  
-       
-}
 
-
-// -----------------------------------------------------------------------------
-function initializeiCheck () {
-   // Blue
-   $('input[type="checkbox"].blue').iCheck({
-     checkboxClass: 'icheckbox_flat-blue',
-     radioClass:    'iradio_flat-blue',
-     increaseArea:  '20%'
-   });
-
-  // Orange
-  $('input[type="checkbox"].orange').iCheck({
-    checkboxClass: 'icheckbox_flat-orange',
-    radioClass:    'iradio_flat-orange',
-    increaseArea:  '20%'
-  });
-
-  // Red
-  $('input[type="checkbox"].red').iCheck({
-    checkboxClass: 'icheckbox_flat-red',
-    radioClass:    'iradio_flat-red',
-    increaseArea:  '20%'
-  });
- 
-  // When toggle iCheck
+  // Events tab toggle conenction events
   $('input').on('ifToggled', function(event){
     // Hide / Show Events
     if (event.currentTarget.id == 'chkHideConnectionEvents') {
@@ -808,136 +300,9 @@ function initializeiCheck () {
       // }
     }
   });
+       
 }
 
-
-// -----------------------------------------------------------------------------
-function initializeCombos () {
-  // Initialize combos with queries
-
-  initializeCombo ( '#dropdownAction',         'getActions',      'txtAction', false);  
-  initializeCombo ( '#dropdownDevices',        'getDevices',      'txtFromDevice', false);  
-
-  // Initiate dropdown
-  //  generateSetOptions(setKey,       // Identifier for the setting
-  //                      valuesArray,       // Array of values to be pre-selected in the dropdown
-  //                      targetLocation,    // ID of the HTML element where dropdown should be rendered (will be replaced)
-  //                      callbackToGenerateEntries,  // Callback function to generate entries based on options
-  //                      targetField,       // Target field or element where selected value should be applied or updated
-  //                      nameTransformer)   // callback to transform name
-
-
-  generateOptionsOrSetOptions("NEWDEV_devIcon", [], "dropdownIcon_tmp", genListWithInputSet, 'txtIcon', ["base64"])
-  generateOptionsOrSetOptions("NEWDEV_devType", [], "dropdownDeviceType_tmp", genListWithInputSet, 'txtDeviceType' )
-  generateOptionsOrSetOptions("NEWDEV_devOwner", [], "dropdownOwner_tmp", genListWithInputSet, 'txtOwner' )
-  generateOptionsOrSetOptions("NEWDEV_devGroup", [], "dropdownGroup_tmp", genListWithInputSet, 'txtGroup' )
-  generateOptionsOrSetOptions("NEWDEV_devLocation", [], "dropdownLocation_tmp", genListWithInputSet, 'txtLocation' )
-  generateOptionsOrSetOptions("NEWDEV_devParentMAC", [], "dropdownNetworkNodeMac_tmp", genListWithInputSet, 'txtNetworkNodeMac' )
-
-  // Initialize static combos
-  initializeComboSkipRepeated ();
-}
-// -----------------------------------------------------------------------------
-function initializeCombo (dropdownId, queryAction, txtDataField, useCache) {
-
-  // check if we have the value cached already
-  var dropdownHtmlContent = useCache ? getCache(dropdownId) : ""; 
-
-  if(dropdownHtmlContent == "")
-  {
-    // get data from server
-    $.get('php/server/devices.php?action='+queryAction, function(data) {
-
-      // console.log(data)
-      var listData = JSON.parse(data);
-      var order = 1;
-      
-
-      // for each item
-      listData.forEach(function (item, index) {
-        // insert line divisor
-        if (order != item['order']) {
-          dropdownHtmlContent += '<li class="divider"></li>';
-          order = item['order'];
-        }
-
-        id = item['name'];
-        // use explicitly specified id (value) if avaliable
-        if(item['id'])
-        {
-          id = item['id'];
-        }
-
-        // add dropdown item
-        dropdownHtmlContent +=
-          '<li><a href="javascript:void(0)" onclick="setTextValue(\''+
-          txtDataField +'\',\''+ id +'\')">'+ item['name'] + '</a></li>'
-      });
-
-      writeDropdownHtml(dropdownId, dropdownHtmlContent)
-    });
-  } else
-  {
-    writeDropdownHtml(dropdownId, dropdownHtmlContent)
-  }
-}
-// -----------------------------------------------------------------------------
-// Edit dropdown value
-function editDrp(dropdownId)
-{
-  $('#'+dropdownId).focus();
-}
-
-// -----------------------------------------------------------------------------
-// Go to the correct network node in the Network section
-function goToNetworkNode(dropdownId)
-{  
-  setCache('activeNetworkTab', $('#'+dropdownId).attr('data-mynodemac').replaceAll(":","_")+'_id');
-  window.location.href = './network.php';
-  
-}
-
-// -----------------------------------------------------------------------------
-// write out the HTML for the dropdown
-function writeDropdownHtml(dropdownId, dropdownHtmlContent)
-{
-  // cache
-  setCache(dropdownId, dropdownHtmlContent);
-
-  // write HTML for the dropdown
-  var HTMLelement = $(dropdownId)[0];
-  HTMLelement.innerHTML = ''
-  HTMLelement.innerHTML += dropdownHtmlContent;
-}
-
-// -----------------------------------------------------------------------------
-function initializeComboSkipRepeated () {
-  // find dropdown menu element
-  HTMLelement = $('#dropdownSkipRepeated')[0];
-  HTMLelement.innerHTML = ''
-
-  // for each item
-  skipRepeatedItems.forEach(function (item, index) {
-    // add dropdown item
-    HTMLelement.innerHTML += ' <li><a href="javascript:void(0)" ' +
-      'onclick="setTextValue(\'txtSkipRepeated\',\'' + item + '\');">'+
-      item +'</a></li>';
-  });
-}
-
-// -----------------------------------------------------------------------------
-
-function findSkipRepeated (value='0') {
-  var itemSelected = skipRepeatedItems[0];
-
-  // for each item
-  skipRepeatedItems.forEach(function (item, index) {
-    if (item.split(' ')[0] == value) {
-      itemSelected = item;
-    }
-  });
-  return itemSelected;
-}
 
 
 // -----------------------------------------------------------------------------
@@ -1123,9 +488,9 @@ function initializeCalendar () {
         if (isLoading) {
           showSpinner()
         } else {
-          setTimeout(() => {
-            updateIconPreview($('#txtIcon'))  
-          }, 500);
+          // setTimeout(() => {
+          //   updateIconPreview($('#txtIcon'))  
+          // }, 500);
           
           hideSpinner()
         }
@@ -1137,229 +502,7 @@ function initializeCalendar () {
 
 // -----------------------------------------------------------------------------
 function periodChanged () {
-  // Requery Device data
-  getDeviceData(true);
   getSessionsPresenceEvents();
-}
-
-
-// -----------------------------------------------------------------------------
-function getDeviceData (readAllData=false) {
-  // stop timer
-  stopTimerRefreshData();
-
-  // console.log("getDeviceData mac: ", mac)
-
-  // Check MAC
-  if (mac == '') {
-    // console.log("getDeviceData mac AA: ", mac)
-    return;
-  }
-
-  // Deactivate next previous buttons
-  if (readAllData) {
-    $('#btnPrevious').attr        ('disabled','');
-    $('#btnPrevious').addClass    ('text-gray50');
-    $('#btnNext').attr            ('disabled','');
-    $('#btnNext').addClass        ('text-gray50');
-    $("body").css                 ("cursor", "progress");
-  }
-
-  // get data from server 
-  $.get('php/server/devices.php?action=getDeviceData&mac='+ mac + '&period='+ period, function(data) {
-
-    var deviceData = JSON.parse(data);
-
-    // check device exists
-    if (deviceData['devMac'] == null) {
-      // Status
-      $('#deviceStatus').html ('--');
-      $('#deviceStatus')[0].className = 'text-gray';
-      $('#deviceStatusIcon')[0].className = '';
-  
-      $('#deviceSessions').html        ('--');
-      $('#deviceDownAlerts').html      ('--');
-      $('#deviceEvents').html          ('--');
- 
-      $('#txtMAC').val                 ('--');
-      $('#txtName').val                ('--');
-      $('#txtOwner').val               ('--');
-      $('#txtDeviceType').val          ('--');
-      $('#txtVendor').val              ('--');
-      $('#txtIcon').val                ('--');
-
-      $('#chkFavorite').iCheck         ('uncheck'); 
-      $('#txtGroup').val               ('--');
-      $('#txtLocation').val            ('--');
-      $('#txtComments').val            ('--');
-      $('#txtNetworkNodeMac').val      ('--');
-      $('#txtNetworkPort').val         ('--');
-      $('#txtNetworkSite').val         ('--');
-      $('#txtSSID').val                ('--');
-
-      $('#txtFirstConnection').val     ('--');
-      $('#txtLastConnection').val      ('--');
-      $('#txtLastIP').val              ('--');
-      $('#txtStatus').val              ('--');
-      $('#chkStaticIP').iCheck         ('uncheck'); 
-  
-      $('#txtScanCycle').val           ('--');
-      $('#chkAlertEvents').iCheck      ('uncheck') 
-      $('#chkAlertDown').iCheck        ('uncheck') 
-      $('#txtSkipRepeated').val        ('--');
-      $('#chkNewDevice').iCheck        ('uncheck'); 
-      $('#chkArchived').iCheck         ('uncheck'); 
-
-      $('#iconRandomMACactive').addClass ('hidden');
-      $('#iconRandomMACinactive').removeClass ('hidden');
-
-      // Deactivate controls
-      $('#panDetails :input').attr('disabled', true);
-
-      // Check if device is deleted or don't exist in this session
-      if (pos == -1) {
-        devicesList = [];
-        $('#pageTitle').html ('Device not found: <small>'+ mac +'</small>');
-      } else {
-        $('#pageTitle').html ('Device deleted');
-      }
-
-    } else {
-
-      // Name
-      if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
-      (deviceData['devName'].toString()).indexOf (deviceData['devOwner']) != -1 )  {
-        $('#pageTitle').html (deviceData['devName']);
-      } else {
-        $('#pageTitle').html (deviceData['devName'] + ' ('+ deviceData['devOwner'] +')');
-      }
-
-      // Status
-      $('#deviceStatus').html (deviceData['devStatus'].replace('-', ''));
-      switch (deviceData['devStatus']) {
-        case 'On-line':   icon='fa fa-check';    color='text-green';   break;
-        case 'Off-line':  icon='fa fa-close';    color='text-gray';    break;
-        case 'Down':      icon='fa fa-warning';  color='text-red';     break;
-        case null:        icon='fa fa-warning';  color='text-red';     $('#deviceStatus').html ('???');  break;
-        default:          icon='';               color='';             break;
-      };
-      $('#deviceStatus')[0].className = color;
-      $('#deviceStatusIcon')[0].className = icon +' '+ color;
-  
-      // Totals
-      $('#deviceSessions').html   (deviceData['devSessions'].toLocaleString());
-      $('#deviceDownAlerts').html (deviceData['devDownAlerts'].toLocaleString());
-  
-      // Presence
-      $('#deviceEventsTitle').html ('Presence');
-      $('#deviceEventsIcon').html  ('<i class="fa fa-calendar">');
-      if (deviceData['devPresenceHours'] == null || deviceData['devPresenceHours'] < 0) {
-        $('#deviceEvents').html ('0 h.');
-      } else {
-        $('#deviceEvents').html (deviceData['devPresenceHours'].toLocaleString() +' h.');
-      }
-  
-      // Device info
-      if (readAllData) {
-        // Activate controls
-        $('#panDetails :input').attr('disabled', false);
-
-        mac                                          = deviceData['devMac'];
-
-        // update the mac parameter in the URL, this makes the selected device persistent when the page is reloaded
-        var searchParams = new URLSearchParams(window.location.search);
-        searchParams.set("mac", mac);
-        var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
-        history.pushState(null, '', newRelativePathQuery);
-        getSessionsPresenceEvents();
-        
-        devicesList = getDevicesList();        
-
-        // handle empty devParentMAC
-        networkParentMac = deviceData['devParentMAC']
-        if(networkParentMac)
-        {
-          networkParentMacName = getDeviceDataByMac(deviceData['devParentMAC'], "devName")
-        } else
-        {
-          networkParentMacName = '--'
-        }
-
-        $('#txtMAC').val                             (deviceData['devMac']);
-        $('#txtName').val                            (deviceData['devName']);
-        $('#txtOwner').val                           (deviceData['devOwner']);
-        $('#txtDeviceType').val                      (deviceData['devType']);
-        $('#txtVendor').val                          (deviceData['devVendor']);
-        $('#txtIcon').val                            (initDefault(deviceData['devIcon'], 'PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==')); // base64 laptop icon
-        $('#txtIcon').trigger('change')
-  
-        if (deviceData['devFavorite'] == 1)         {$('#chkFavorite').iCheck('check');}    else {$('#chkFavorite').iCheck('uncheck');}
-        $('#txtGroup').val                           (deviceData['devGroup']);
-        $('#txtLocation').val                        (deviceData['devLocation']);
-        $('#txtComments').val                        (decodeSpecialChars(deviceData['devComments']));        
-        $('#txtNetworkNodeMac').val                  ( networkParentMacName) ;
-        $('#txtNetworkNodeMac').attr                 ('data-mynodemac', deviceData['devParentMAC']);        
-        $('#txtNetworkPort').val                     (deviceData['devParentPort']);
-        $('#txtNetworkSite').val                     (deviceData['devSite']);
-        $('#txtSSID').val                            (deviceData['devSSID']);
-        // disabling network node configuration if root Internet node
-        toggleNetworkConfiguration(mac == 'Internet')         
-        
-  
-        $('#txtFirstConnection').val                 (deviceData['devFirstConnection']);
-        $('#txtLastConnection').val                  (deviceData['devLastConnection']);
-        $('#txtLastIP').val                          (deviceData['devLastIP']);
-        $('#txtStatus').val                          (deviceData['devStatus'].replace('-', ''));
-        if (deviceData['devStaticIP'] == 1)         {$('#chkStaticIP').iCheck('check');}    else {$('#chkStaticIP').iCheck('uncheck');}
-    
-        $('#txtScanCycle').val                       (deviceData['devScan'] == "1" ? "yes" : "no");
-        if (deviceData['devAlertEvents'] == 1)      {$('#chkAlertEvents').iCheck('check');} else {$('#chkAlertEvents').iCheck('uncheck');}
-        if (deviceData['devAlertDown'] == 1)  {$('#chkAlertDown').iCheck('check');}   else {$('#chkAlertDown').iCheck('uncheck');}
-        $('#txtSkipRepeated').val                    (findSkipRepeated (deviceData['devSkipRepeated']));
-        if (deviceData['devIsNew'] == 1)        {$('#chkNewDevice').iCheck('check');}   else {$('#chkNewDevice').iCheck('uncheck');}
-        if (deviceData['devIsArchived'] == 1)         {$('#chkArchived').iCheck('check');}    else {$('#chkArchived').iCheck('uncheck');}
-
-        if (deviceData['devRandomMAC'] == 1)        {$('#iconRandomMACactive').removeClass   ('hidden');
-                                                      $('#iconRandomMACinactive').addClass    ('hidden'); }
-        else                                         {$('#iconRandomMACactive').addClass      ('hidden');
-                                                      $('#iconRandomMACinactive').removeClass ('hidden'); };        
-      }
-
-      // Check if device is part of the devicesList      
-      pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);          
-      
-      if (pos == -1) {
-        devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['devMac'], "name": deviceData['devName'], "type": deviceData['devType']});
-        pos=0;
-      }
-    }
-
-    // Record number
-    $('#txtRecord').html (pos+1 +' / '+ devicesList.length);
-
-    // Deactivate previous button
-    if (pos <= 0) {
-      $('#btnPrevious').attr        ('disabled','');
-      $('#btnPrevious').addClass    ('text-gray50');
-    } else {
-      $('#btnPrevious').removeAttr  ('disabled');
-      $('#btnPrevious').removeClass ('text-gray50');
-    }
-  
-    // Deactivate next button
-    if (pos >= (devicesList.length-1)) {
-      $('#btnNext').attr        ('disabled','');
-      $('#btnNext').addClass    ('text-gray50');
-    } else {
-      $('#btnNext').removeAttr  ('disabled');
-      $('#btnNext').removeClass ('text-gray50');
-    }
-    
-    // Timer for refresh data
-    $("body").css("cursor", "default");
-    newTimerRefreshData (getDeviceData);
-  });
-
 }
 
 
@@ -1383,311 +526,31 @@ function recordSwitch(direction) {
 function performSwitch(direction)
 {
   somethingChanged = false;
-  
-  // update the global position in the devices list variable 'pos'
-  if(direction == "next")
-  {
-    // Next Record
-    if (pos < (devicesList.length-1) ) {
+
+  // Update the global position in the devices list variable 'pos'
+  if (direction === "next") {
+    if (pos < devicesList.length - 1) {
       pos++;
     }
-  }else if (direction == "prev")
-  {
+  } else if (direction === "prev") {
     if (pos > 0) {
       pos--;
     }
   }
 
-  // get new mac from the devicesList. Don't change to the commented out line below, the mac query string in the URL isn't updated yet!
-  // mac = params.mac;
-  
+  // Get the new MAC address from devicesList
   mac = devicesList[pos].devMac.toString();
 
-  setCache("piaDeviceDetailsMac", mac);
-    
-  getDeviceData (true); 
+  console.log(mac);
+
+  setCache("naxDeviceDetailsMac", mac);
+
+  // Update the query string with the new MAC and refresh the page
+  const baseUrl = window.location.href.split('?')[0];
+  window.location.href = `${baseUrl}?mac=${encodeURIComponent(mac)}`;
 
 }
 
-// -----------------------------------------------------------------------------
-function initDefault (value, defaultVal) {
-  if (emptyArr.includes(value))
-  {
-    return defaultVal;
-  }
-
-  return value;
-}
-// -----------------------------------------------------------------------------
-function setDeviceData (direction='', refreshCallback='') {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  showSpinner()
-
-  // update data to server
-  $.get('php/server/devices.php?action=setDeviceData&mac='+ mac
-    + '&name='           + encodeURIComponent($('#txtName').val().replace(/'/g, ""))
-    + '&owner='          + encodeURIComponent($('#txtOwner').val().replace(/'/g, ""))
-    + '&type='           + $('#txtDeviceType').val()
-    + '&vendor='         + encodeURIComponent($('#txtVendor').val().replace(/'/g, ""))
-    + '&icon='           + encodeURIComponent($('#txtIcon').val())
-    + '&favorite='       + ($('#chkFavorite')[0].checked * 1)
-    + '&group='          + encodeURIComponent($('#txtGroup').val())
-    + '&location='       + encodeURIComponent($('#txtLocation').val())
-    + '&comments='       + encodeURIComponent(encodeSpecialChars($('#txtComments').val()))
-    + '&networknode='    + $('#txtNetworkNodeMac').attr('data-mynodemac')
-    + '&networknodeport=' + $('#txtNetworkPort').val()
-    + '&ssid='            + $('#txtSSID').val()
-    + '&networksite='     + $('#txtNetworkSite').val()
-    + '&staticIP='       + ($('#chkStaticIP')[0].checked * 1)
-    + '&scancycle='      + ($('#txtScanCycle').val() == "yes" ? "1" : "0")
-    + '&alertevents='    + ($('#chkAlertEvents')[0].checked * 1)
-    + '&alertdown='      + ($('#chkAlertDown')[0].checked * 1)
-    + '&skiprepeated='   + $('#txtSkipRepeated').val().split(' ')[0]
-    + '&newdevice='      + ($('#chkNewDevice')[0].checked * 1)
-    + '&archived='       + ($('#chkArchived')[0].checked * 1)
-    , function(msg) {
-    
-      showMessage (msg);
-      
-
-      // clear session storage 
-      setCache("#dropdownOwner","");
-      setCache("#dropdownDeviceType","");
-      setCache("#dropdownGroup","");
-      setCache("#dropdownLocation","");
-      setCache("#dropdownNetworkNodeMac","");
-
-      // Remove navigation prompt "Are you sure you want to leave..."
-      window.onbeforeunload = null;
-      somethingChanged      = false;
-
-      // refresh API
-      updateApi("devices,appevents")
-
-      hideSpinner()
-
-      // Callback fuction
-      if (typeof refreshCallback == 'function') {
-        refreshCallback(direction);
-      }
-  });
-}
-
-
-
-
-
-
-// -----------------------------------------------------------------------------
-function askSkipNotifications () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // When Archived
-  if ($('#chkArchived')[0].checked && $('#txtScanCycle').val() != "no") {
-    // Ask skip notifications
-    showModalDefault ('Device Archived', 'Do you want to skip all notifications for this device?',
-      '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'skipNotifications');
-  }
-}
-
-// -----------------------------------------------------------------------------
-function skipNotifications () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Set cycle 0
-  $('#txtScanCycle').val ('no');  
-}
-// -----------------------------------------------------------------------------
-function askDeleteDeviceEvents () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Ask delete device Events 
-  showModalWarning ('<?= lang('DevDetail_button_DeleteEvents');?>', '<?= lang('DevDetail_button_DeleteEvents_Warning');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDeviceEvents');
-}
-
-function deleteDeviceEvents () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Delete device events
-  $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
-    showMessage (msg);
-  });
-
-  // Deactivate controls
-  $('#panDetails :input').attr('disabled', true);
-}
-
-// -----------------------------------------------------------------------------
-function askCopyFromDevice() {
-    // Ask 
-    showModalWarning('<?= lang('BackDevDetail_Copy_Title');?>', '<?= lang('BackDevDetail_Copy_Ask');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Run');?>', 'copyFromDevice');
-}
-
-function copyFromDevice() {
-
-  // Execute
-  $.get('php/server/devices.php?action=copyFromDevice&'
-    + '&macTo='         + $('#txtMAC').val()
-    + '&macFrom='          + $('#txtFromDevice').val()
-    , function(msg) {
-    showMessage (msg);
-
-    setTimeout(function() {
-      window.location.reload();
-    }, 2000);
-  });
-
-}
-
-// -----------------------------------------------------------------------------
-function askRunAction() {
-    // Ask 
-    showModalWarning('<?= lang('BackDevDetail_Actions_Title_Run');?>', '<?= lang('BackDevDetail_Actions_Ask_Run');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Run');?>', 'runAction');
-}
-
-function runAction() {
-
-  action = $('#txtAction').val();
-
-  switch(action)
-  {
-    case 'wake-on-lan': 
-      wakeonlan();
-      break;
-    default: 
-      showMessage (`<?= lang('BackDevDetail_Actions_Not_Registered');?> ${action} `);
-      break;
-  }
-
-}
-
-function wakeonlan() {
-  // Execute
-  $.get('php/server/devices.php?action=wakeonlan&'
-    + '&mac='         + $('#txtMAC').val()
-    + '&ip='          + $('#txtLastIP').val()
-    , function(msg) {
-    showMessage (msg);
-  });
-}
-
-// -----------------------------------------------------------------------------
-// Overwrite all devices of the same type with the currently selected icon
-function askOverwriteIconType () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Ask overwrite icon types 
-  showModalWarning ('<?= lang('DevDetail_button_OverwriteIcons');?>', '<?= lang('DevDetail_button_OverwriteIcons_Warning');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'overwriteIconType');
-}
-
-// -----------------------------------------------------------------------------
-function overwriteIconType () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  var icon = encodeURIComponent($('#txtIcon').val());
-
-  // Mass update icons
-  $.get('php/server/devices.php?action=overwriteIconType&mac='+ mac + '&icon=' + icon, function(msg) {
-    showMessage (msg);
-  });
-
-  // Deactivate controls
-  $('#panDetails :input').attr('disabled', true);
-}
-
-// -----------------------------------------------------------------------------
-// Add a new Icon
-function askAddIcon () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Add new icon as base64 string 
-  showModalInput ('<i class="fa fa-square-plus pointer"></i> <?= lang('DevDetail_button_AddIcon');?>', '<?= lang('DevDetail_button_AddIcon_Help');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'addAsBase64');
-}
-
-// -----------------------------------------------------------------------------
-function addAsBase64 () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  var iconHtml = $('#modal-input-textarea').val();
-
-  console.log(iconHtml);
-
-  iconHtmlBase64 = btoa(iconHtml.replace(/"/g, "'"));
-
-  console.log(iconHtmlBase64);
-
-  $('#txtIcon').val(iconHtmlBase64); 
-
-  updateIconPreview($('#txtIcon'))  
-
-}
-
-
-
-// -----------------------------------------------------------------------------
-function askDeleteDevice () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Ask delete device
-  showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDevice');
-}
-
-
-// -----------------------------------------------------------------------------
-function deleteDevice () {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
-
-  // Delete device
-  $.get('php/server/devices.php?action=deleteDevice&mac='+ mac, function(msg) {
-    showMessage (msg);
-  });
-
-  // Deactivate controls
-  $('#panDetails :input').attr('disabled', true);
-
-  // refresh API
-  updateApi("devices,appevents")
-}
 
 // -----------------------------------------------------------------------------
 function getSessionsPresenceEvents () {
@@ -1722,24 +585,11 @@ $(document).on('input', 'input:text', function() {
   settingsChanged();
 });
 
-// -----------------------------------------------------------------------------
-// Initialize a text input with the correct value
-function setTextValue (textElement, textValue) {
-  if(textElement == "txtNetworkNodeMac")
-  {
-    $('#'+textElement).attr ('data-mynodemac', textValue);
-    $('#'+textElement).val (getDeviceDataByMac(textValue, "devName")); 
-  } else
-  {
-    $('#'+textElement).attr ('data-myvalue', textValue);
-    $('#'+textElement).val (textValue);  
-  }
-  $('#'+textElement).trigger('change')
-}
+
 
 // -----------------------------------------------------------------------------
 
-function initializeTabsNew () {  
+function initializeTabs () {  
 
   key ="activeDevicesTab"
 
@@ -1817,33 +667,91 @@ function initTable(tableId, mac){
 
 }
 
+
+//------------------------------------------------------------------------------
+//  Render the small boxes on top
+function renderSmallBoxes(customData) {
+    $.ajax({
+        url: 'php/components/device_cards.php', // PHP script URL
+        type: 'POST', // Use POST method to send data
+        dataType: 'html', // Expect HTML response
+        data: { items: JSON.stringify(customData) }, // Send customData as JSON
+        success: function(response) {
+            $('#TopSmallBoxes').html(response); // Replace container content with fetched HTML
+            hideSpinner()
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching small boxes:', error);
+        }
+    });
+}
+
 //-----------------------------------------------------------------------------------
 
 window.onload = function async()
 {
-  initializeTabsNew();
+  initializeTabs();
 
-  
+
+   // get data from server 
+   $.get('php/server/devices.php?action=getServerDeviceData&mac='+ mac + '&period='+ period, function(data) {
+
+    // show loading dialog
+    showSpinner()
+
+    var deviceData = JSON.parse(data);
+
+    console.log(deviceData);
+    
+
+    const customData = [
+      {
+          "onclickEvent": "$('#tabDetails').trigger('click')",
+          "color": "bg-aqua",
+          "headerId": "deviceStatus",
+          "headerStyle": "margin-left: 0em",
+          "labelLang": "DevDetail_Shortcut_CurrentStatus",
+          "iconId": "deviceStatusIcon",
+          "iconClass": deviceData.devPresentLastScan == 1 ? "fa fa-check text-green" : "fa fa-xmark text-red",
+          "dataValue": deviceData.devPresentLastScan == 1 ? getString("Gen_Online") : getString("Gen_Offline")
+      },
+      {
+          "onclickEvent": "$('#tabSessions').trigger('click');",
+          "color": "bg-green",
+          "headerId": "deviceSessions",
+          "headerStyle": "",
+          "labelLang": "DevDetail_Shortcut_Sessions",
+          "iconId": "",
+          "iconClass": "fa fa-plug",
+          "dataValue": deviceData.devSessions
+      },
+      {
+          "onclickEvent": "$('#tabPresence').trigger('click')",
+          "color": "bg-yellow",
+          "headerId": "deviceEvents",
+          "headerStyle": "margin-left: 0em",
+          "labelLang": "DevDetail_Shortcut_Presence",
+          "iconId": "deviceEventsIcon",
+          "iconClass": "fa fa-calendar",
+          "dataValue": deviceData.devPresenceHours + 'h'
+      },
+      {
+          "onclickEvent": "$('#tabEvents').trigger('click');",
+          "color": "bg-red",
+          "headerId": "deviceDownAlerts",
+          "headerStyle": "",
+          "labelLang": "DevDetail_Shortcut_DownAlerts",
+          "iconId": "",
+          "iconClass": "fa fa-warning",
+          "dataValue": deviceData.devDownAlerts
+      }
+    ];
+
+    renderSmallBoxes(customData);
+
+  });
+
 }
 
-//-----------------------------------------------------------------------------------
-// Disables network configuration for the root node
-function toggleNetworkConfiguration(disable)
-{
-  $('#txtNetworkNodeMac').prop('readonly', true ); // disable direct input as should only be selected via the dropdown
-
-  if(disable)
-  {       
-  //   $('#txtNetworkNodeMac').val(getString('Network_Root_Unconfigurable'));   
-  //   $('#txtNetworkPort').val(getString('Network_Root_Unconfigurable'));     
-    $('#txtNetworkPort').prop('readonly', true );
-    $('.parentNetworkNode .input-group-btn').hide();
-  }
-  else
-  {    
-    $('#txtNetworkPort').prop('readonly', false );
-    $('.parentNetworkNode .input-group-btn').show();
-  }
-}
 
 </script>

@@ -1,74 +1,125 @@
+<?php
+  //------------------------------------------------------------------------------
+  // check if authenticated
+  require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+?>
 
-
+<!-- INTERNET INFO -->
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
     
-<h4 class=""><i class="fa-solid fa-globe"></i>
-    <?= lang("DevDetail_Tab_Tools_Internet_Info_Title") ?>
-</h4>
-<h5 class="">
-    <?= lang("DevDetail_Tab_Tools_Internet_Info_Description") ?>
-</h5>
-<br>
-<div style="width:100%; text-align: center; margin-bottom: 50px;">
-    <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()">
-        <?= lang("DevDetail_Tab_Tools_Internet_Info_Start") ?></button>
+    <h4 class=""><i class="fa-solid fa-globe"></i>
+        <?= lang("DevDetail_Tab_Tools_Internet_Info_Title") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Tab_Tools_Internet_Info_Description") ?>
+    </h5>
     <br>
-    <div id="internetinfooutput" style="margin-top: 10px;"></div>
-</div>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()">
+            <?= lang("DevDetail_Tab_Tools_Internet_Info_Start") ?></button>
+        <br>
+        <div id="internetinfooutput" style="margin-top: 10px;"></div>
+    </div>
 
 <?php } ?>
 
+<!-- COPY FROM DEVICE -->
+<?php if ($_REQUEST["mac"] != "Internet") { ?>
+    
+    <h4 class=""><i class="fa-solid fa-copy"></i>
+        <?= lang("DevDetail_Copy_Device_Title") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Copy_Device_Tooltip") ?>
+    </h5>
+    <br>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <select class="form-control" 
+                title="<?= lang('DevDetail_Copy_Device_Tooltip');?>" 
+                id="txtCopyFromDevice" >
+                <option value="lemp_loading" id="lemp_loading">Loading</option>
+        </select>
+        <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="()">
+            <?= lang("BackDevDetail_Copy_Title") ?></button>
+        <br>
+    </div>
+
+<?php } ?>
+
+<!-- WAKE ON LAN - WOL -->
+<?php if ($_REQUEST["mac"] != "Internet") { ?>
+    
+    <h4 class=""><i class="fa-solid fa-bell"></i>
+        <?= lang("DevDetail_Tools_WOL_noti") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Tools_WOL_noti_text") ?>
+    </h5>
+    <br>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wakeonlan()">
+            <?= lang("DevDetail_Tools_WOL_noti") ?></button>
+        <br>
+        <div id="wol_output" style="margin-top: 10px;"></div>
+    </div>
+
+<?php } ?>
+
+<!-- SPEEDTEST -->
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
-<h4 class=""><i class="fa-solid fa-gauge-high"></i>
-    <?= lang("DevDetail_Tab_Tools_Speedtest_Title") ?>
-</h4>
-<h5 class="">
-    <?= lang("DevDetail_Tab_Tools_Speedtest_Description") ?>
-</h5>
-<br>
-<div style="width:100%; text-align: center; margin-bottom: 50px;">
-    <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">
-        <?= lang("DevDetail_Tab_Tools_Speedtest_Start") ?></button>
+    <h4 class=""><i class="fa-solid fa-gauge-high"></i>
+        <?= lang("DevDetail_Tab_Tools_Speedtest_Title") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Tab_Tools_Speedtest_Description") ?>
+    </h5>
     <br>
-    <div id="speedtestoutput" style="margin-top: 10px;"></div>
-</div>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">
+            <?= lang("DevDetail_Tab_Tools_Speedtest_Start") ?></button>
+        <br>
+        <div id="speedtestoutput" style="margin-top: 10px;"></div>
+    </div>
 
 <?php } ?>
 
+<!-- TRACEROUTE -->
 <?php if ($_REQUEST["mac"] != "Internet") { ?>
-<h4 class=""><i class="fa-solid fa-route"></i>
-    <?= lang("DevDetail_Tab_Tools_Traceroute_Title") ?>
-</h4>
-<h5 class="">
-    <?= lang("DevDetail_Tab_Tools_Traceroute_Description") ?>
-</h5>
-<div style="width:100%; text-align: center; margin-bottom: 50px;">
-    <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()">
-        <?= lang("DevDetail_Tab_Tools_Traceroute_Start") ?>
-    </button>
-    <br>
-    <div id="tracerouteoutput" style="margin-top: 10px;"></div>
-</div>
+    <h4 class=""><i class="fa-solid fa-route"></i>
+        <?= lang("DevDetail_Tab_Tools_Traceroute_Title") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Tab_Tools_Traceroute_Description") ?>
+    </h5>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()">
+            <?= lang("DevDetail_Tab_Tools_Traceroute_Start") ?>
+        </button>
+        <br>
+        <div id="tracerouteoutput" style="margin-top: 10px;"></div>
+    </div>
 
 <?php } ?>
 
+<!-- NSLOOKUP -->
 <?php if ($_REQUEST["mac"] != "Internet") { ?>
-<h4 class=""><i class="fa-solid fa-magnifying-glass"></i>
-    <?= lang("DevDetail_Tab_Tools_Nslookup_Title") ?>
-</h4>
-<h5 class="">
-    <?= lang("DevDetail_Tab_Tools_Nslookup_Description") ?>
-</h5>
-<div style="width:100%; text-align: center; margin-bottom: 50px;">
-    <button type="button" id="nslookup" class="btn btn-primary pa-btn" style="margin: auto;" onclick="nslookup()">
-        <?= lang("DevDetail_Tab_Tools_Nslookup_Start") ?>
-    </button>
-    <br>
-    <div id="nslookupoutput" style="margin-top: 10px;"></div>
-</div>
+    <h4 class=""><i class="fa-solid fa-magnifying-glass"></i>
+        <?= lang("DevDetail_Tab_Tools_Nslookup_Title") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_Tab_Tools_Nslookup_Description") ?>
+    </h5>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" id="nslookup" class="btn btn-primary pa-btn" style="margin: auto;" onclick="nslookup()">
+            <?= lang("DevDetail_Tab_Tools_Nslookup_Start") ?>
+        </button>
+        <br>
+        <div id="nslookupoutput" style="margin-top: 10px;"></div>
+    </div>
 
 <?php } ?>                                             
 
+<!-- NMAP SCANS -->
 <h4 class=""><i class="fa-solid fa-ethernet"></i>
     <?= lang("DevDetail_Nmap_Scans") ?>    
 </h4>
@@ -77,16 +128,16 @@
         <?= lang("DevDetail_Nmap_Scans_desc") ?>
     </div>
 
-    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'fast')">
+    <button type="button" id="piamanualnmap_fast" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDevDataByMac(getMac(), 'devLastIP'), 'fast')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'normal')">
+    <button type="button" id="piamanualnmap_normal" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDevDataByMac(getMac(), 'devLastIP'), 'normal')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'detail')">
+    <button type="button" id="piamanualnmap_detail" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDevDataByMac(getMac(), 'devLastIP'), 'detail')">
         <?= lang("DevDetail_Loading") ?>
     </button>
-    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDeviceDataByMac(getMac(), 'devLastIP'), 'skipdiscovery')">
+    <button type="button" id="piamanualnmap_skipdiscovery" class="btn btn-primary pa-btn" style="margin-bottom: 20px; margin-left: 10px; margin-right: 10px;" onclick="manualnmapscan(getDevDataByMac(getMac(), 'devLastIP'), 'skipdiscovery')">
         <?= lang("DevDetail_Loading") ?>
     </button>
 
@@ -155,7 +206,7 @@
             $( "#tracerouteoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/traceroute.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'devLastIP') + "",
+                    url: "./php/server/traceroute.php?action=get&ip=" + getDevDataByMac(getMac(), 'devLastIP') + "",
                     beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
@@ -170,7 +221,7 @@
             $( "#nslookupoutput" ).empty();
                 $.ajax({
                     method: "GET",
-                    url: "./php/server/nslookup.php?action=get&ip=" + getDeviceDataByMac(getMac(), 'devLastIP') + "",
+                    url: "./php/server/nslookup.php?action=get&ip=" + getDevDataByMac(getMac(), 'devLastIP') + "",
                     beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
                     complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
                     success: function(data, textStatus) {
@@ -181,22 +232,109 @@
 
         // ----------------------------------------------------------------
         function initNmapButtons() {
-                        setTimeout(function(){
-                                    document.getElementById('piamanualnmap_fast').innerHTML=getString(
-                                        "DevDetail_Nmap_buttonFast"
-                                    ) ;
-                                    document.getElementById('piamanualnmap_normal').innerHTML=getString(
-                                        "DevDetail_Nmap_buttonDefault"
-                                    ) ;
-                                    document.getElementById('piamanualnmap_detail').innerHTML=getString(
-                                        "DevDetail_Nmap_buttonDetail"
-                                    ) ;
-                                    document.getElementById('piamanualnmap_skipdiscovery').innerHTML=getString(
-                                        "DevDetail_Nmap_buttonSkipDiscovery"
-                                    ) ;
-                                    }, 500);
-                }
+                setTimeout(function(){
+                            document.getElementById('piamanualnmap_fast').innerHTML=getString(
+                                "DevDetail_Nmap_buttonFast"
+                            ) ;
+                            document.getElementById('piamanualnmap_normal').innerHTML=getString(
+                                "DevDetail_Nmap_buttonDefault"
+                            ) ;
+                            document.getElementById('piamanualnmap_detail').innerHTML=getString(
+                                "DevDetail_Nmap_buttonDetail"
+                            ) ;
+                            document.getElementById('piamanualnmap_skipdiscovery').innerHTML=getString(
+                                "DevDetail_Nmap_buttonSkipDiscovery"
+                            ) ;
+                            }, 500);
+        }
 
+
+        // ----------------------------------------------------------------
+        function initCopyFromDevice() {
+
+            const devices = getVisibleDevicesList()
+            console.log(devices);
+
+            const $select = $('#txtCopyFromDevice');
+            $select.empty(); // Clear existing options
+
+            devices.forEach(device => {
+                const option = $('<option></option>')
+                    .val(device.devMac)
+                    .text(device.devName);
+                $select.append(option);
+            });
+            
+            
+        }
+
+        // ----------------------------------------------------------------
+        function wakeonlan() {
+
+            macAddress = getMac();
+
+            // Execute
+            $.get('php/server/devices.php?action=wakeonlan&'
+                + '&mac='         + macAddress
+                + '&ip='          + getDevDataByMac(macAddress, "devLastIP")
+                , function(msg) {
+                showMessage (msg);
+            });
+        }
+
+        // ------------------------------------------------------------
+        function copyFromDevice() {
+
+            macAddress = getMac();
+
+            // Execute
+            $.get('php/server/devices.php?action=copyFromDevice&'
+                + '&macTo='         + macAddress
+                + '&macFrom='          + $('#txtCopyFromDevice').val()
+                , function(msg) {
+                    showMessage (msg);
+
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+            });
+
+        }
+
+        // ------------------------------------------------------------
+        function getVisibleDevicesList()
+        {
+            // Read cache (skip cookie expiry check)
+            devicesList = getCache('devicesListAll_JSON', true);
+            
+            if (devicesList != '') {
+                devicesList = JSON.parse (devicesList);
+            } else {
+                devicesList = [];
+            }
+
+            // only loop thru the filtered down list
+            visibleDevices = getCache("ntx_visible_macs")
+
+            if(visibleDevices != "") {
+            visibleDevicesMACs = visibleDevices.split(',');
+
+            devicesList_tmp = [];
+
+            // Iterate through the data and filter only visible devices
+            $.each(devicesList, function(index, item) {
+                // Check if the current item's MAC exists in visibleDevicesMACs
+                if (visibleDevicesMACs.includes(item.devMac)) {
+                devicesList_tmp.push(item);
+                }
+            });
+
+            // Update devicesList with the filtered items
+            devicesList = devicesList_tmp;
+            }
+
+            return devicesList;
+        }
 
         // ----------------------------------------------------------------
         function internetinfo() {
@@ -210,8 +348,9 @@
                         $("#internetinfooutput").html(data);    
                     }
                 })
-                }
+        }
 
         // init first time
         initNmapButtons();
+        initCopyFromDevice();
 </script>

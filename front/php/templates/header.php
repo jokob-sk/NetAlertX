@@ -41,6 +41,8 @@
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
   
+  <!-- iCheck -->
+  <script src="lib/iCheck/icheck.min.js"></script>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">

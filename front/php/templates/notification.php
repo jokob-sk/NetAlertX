@@ -95,7 +95,7 @@
 </div>
 
 <!-- Modal textarea input -->
-<div class="modal modal-warning fade" id="modal-input" style="display: none;">
+<div class="modal modal-warning fade" id="modal-input" data-myparam-triggered-by="" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -119,7 +119,7 @@
 
 
 <!-- Modal field input -->
-<div class="modal modal-warning fade" id="modal-field-input" style="display: none;">
+<div class="modal modal-warning fade" id="modal-field-input" data-myparam-triggered-by="" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 

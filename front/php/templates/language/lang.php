@@ -12,7 +12,7 @@ global $db;
 
 $result = $db->querySingle("SELECT setValue FROM Settings WHERE setKey = 'UI_LANG'"); 
 
-// below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
+// below has to match exactly the values in /front/php/templates/language/lang.php & /front/js/common.js
 switch($result){    
   case 'Spanish': $pia_lang_selected = 'es_es'; break;
   case 'German': $pia_lang_selected = 'de_de'; break;

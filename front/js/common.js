@@ -161,8 +161,8 @@ function cacheSettings()
               }    
             }
 
-            setCache(`pia_set_${set.setKey}`, set.setValue)             
-            setCache(`pia_set_opt_${set.setKey}`, resolvedOptions) 
+            setCache(`nax_set_${set.setKey}`, set.setValue)             
+            setCache(`nax_set_opt_${set.setKey}`, resolvedOptions) 
           });
         }).then(() => handleSuccess('cacheSettings', resolve())).catch(() => handleFailure('cacheSettings', reject("cacheSettings already completed")));    // handle AJAX synchronization
       })
@@ -177,7 +177,7 @@ function getSettingOptions (key) {
   // handle initial load to make sure everything is set-up and cached
   // handleFirstLoad()
  
-  result = getCache(`pia_set_opt_${key}`, true);
+  result = getCache(`nax_set_opt_${key}`, true);
 
   if (result == "")
   {
@@ -195,7 +195,7 @@ function getSetting (key) {
   // handle initial load to make sure everything is set-up and cached
   // handleFirstLoad()
  
-  result = getCache(`pia_set_${key}`, true);
+  result = getCache(`nax_set_${key}`, true);
 
   if (result == "")
   {
@@ -690,10 +690,12 @@ function openUrl(urls) {
 }
 
 // -----------------------------------------------------------------------------
-// force laod URL in current window with specific anchor
+// force load URL in current window with specific anchor
 function forceLoadUrl(relativeUrl) {
+
   window.location.replace(relativeUrl);
-  window.location.reload()
+  window.location.reload()  
+  
 }
 
 
@@ -721,7 +723,7 @@ function navigateToDeviceWithIp (ip) {
 
 // -----------------------------------------------------------------------------
 function getNameByMacAddress(macAddress) {
-  return getDeviceDataByMac(macAddress, "devName")
+  return getDevDataByMac(macAddress, "devName")
 }
 
 // -----------------------------------------------------------------------------
@@ -757,6 +759,12 @@ function isValidIPv6(ipAddress) {
 
   return ipv6Regex.test(ipAddress);
 }
+
+function isValidIPv4(ip) {
+  const ipv4Regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  return ipv4Regex.test(ip);
+}
+
 
 function formatIPlong(ipAddress) {
   if (ipAddress.includes(':') && isValidIPv6(ipAddress)) {
@@ -822,7 +830,11 @@ function isRandomMAC(mac)
     // Empty array
     if (input === '[]' || input === '') {
       return [];
-    } 
+    }
+    // handle integer 
+    if (typeof input === 'number') {
+      input = input.toString();
+    }
   
     // Regex pattern for brackets
     const patternBrackets = /(^\s*\[)|(\]\s*$)/g;
@@ -874,7 +886,7 @@ function isRandomMAC(mac)
 // -----------------------------------------------------------------------------
 // A function to get a device property using the mac address as key and DB column nakme as parameter
 //  for the value to be returned
-function getDeviceDataByMac(macAddress, dbColumn) {
+function getDevDataByMac(macAddress, dbColumn) {
 
   const sessionDataKey = 'devicesListAll_JSON';  
   const devicesCache = getCache(sessionDataKey);
@@ -1193,6 +1205,40 @@ function hideUIelements(setKey) {
 
 }
 
+// ------------------------------------------------------------
+function getDevicesList()
+{
+  // Read cache (skip cookie expiry check)
+  devicesList = getCache('devicesListAll_JSON', true);
+  
+  if (devicesList != '') {
+      devicesList = JSON.parse (devicesList);
+  } else {
+      devicesList = [];
+  }
+
+  // only loop thru the filtered down list
+  visibleDevices = getCache("ntx_visible_macs")
+
+  if(visibleDevices != "") {
+    visibleDevicesMACs = visibleDevices.split(',');
+
+    devicesList_tmp = [];
+
+    // Iterate through the data and filter only visible devices
+    $.each(devicesList, function(index, item) {
+      // Check if the current item's MAC exists in visibleDevicesMACs
+      if (visibleDevicesMACs.includes(item.devMac)) {
+        devicesList_tmp.push(item);
+      }
+    });
+
+    // Update devicesList with the filtered items
+    devicesList = devicesList_tmp;
+  }
+
+  return devicesList;
+}
 
 
 // -----------------------------------------------------------------------------

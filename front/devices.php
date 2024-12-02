@@ -75,6 +75,7 @@
               <div class=" col-md-10 ">
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
+              <div  class=" col-md-2 "><a href="deviceDetails.php?mac=new"><i title="Add new dummy device" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a></div>
             </div>
 
             <!-- table -->
@@ -258,6 +259,12 @@ function processDeviceTotals(devicesData) {
   });
 
   // Render info boxes/tile cards
+  console.log(getSetting('UI_hide_empty'));
+  
+  console.log(dataArray);
+  console.log(devicesData);
+  
+  
   renderInfoboxes(dataArray);
 }
 
@@ -658,7 +665,7 @@ function initializeDatatable (status) {
         'createdCell': function (td, cellData, rowData, row, col) {
           // console.log(cellData)
           if (cellData == 1){
-            $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" style="font-size: 16px;" class="text-yellow glyphicon glyphicon-random"></i>');
+            $(td).html ('<i data-toggle="tooltip" data-placement="right" title="Random MAC" class="fa-solid fa-shuffle"></i>');
           } else {
             $(td).html ('');
           }
@@ -831,20 +838,22 @@ function getMacsOfShownDevices() {
 
   var selectedDevices = [];
 
-  for (var i = 0; i < rows.length; i++) {
+  // first row is the heading, skip
+  for (var i = 1; i < rows.length; i++) {
     selectedDevices.push(devicesDataTableData[rows[i]._DT_RowIndex]);    
-  }
+  }  
 
-  for (var i = 1; i < selectedDevices.length; i++) {
-    macs.push(selectedDevices[i][mapIndx(11)]);  // mapIndx(11) == MAC    
+  for (var j = 0; j < selectedDevices.length; j++) {
+    macs.push(selectedDevices[j][mapIndx(11)]);  // mapIndx(11) == MAC    
   }
 
   return macs;
   
 }
 
+
 // -----------------------------------------------------------------------------
-// Update cahce with shown devices before navigating away    
+// Update cache with shown devices before navigating away    
 window.addEventListener('beforeunload', function(event) {
     // Call your function here
     macs = getMacsOfShownDevices();
