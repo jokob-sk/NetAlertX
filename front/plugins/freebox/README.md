@@ -48,3 +48,9 @@ If the Freebox is not your gateway, configure a NAT and follow the [offline setu
 If the Freebox is your gateway you need to find its HTTPS (or HTTP if you prefer) public port. This can be found either in the Freeboxe's web interface and by navigating to `settings>access management`, or (just for the HTTPS port) by visiting http://mafreebox.freebox.fr:80/api_version from the local network (you can use the local ip as well). This is the port you need to access your Freebox through the internet
 
 As address, you can either use the public IP of the Freebox, or the unique domain name you found on http://mafreebox.freebox.fr:80/api_version listed as `api_domain`.
+
+
+### Other info
+
+- Author : [KayJay7](https://github.com/KayJay7) & [Lucide](https://github.com/Lucide)
+- Date : 2-Dec-2024 - version 1.0
