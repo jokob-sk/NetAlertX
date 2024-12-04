@@ -64,4 +64,4 @@ def start_server(graphql_port, app_state):
         thread.start()
 
         # Update the state to indicate the server has started
-        app_state = updateState("Process: Wait", None, None, None, 1)
+        app_state = updateState("Process: Idle", None, None, None, 1)

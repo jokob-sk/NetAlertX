@@ -186,11 +186,11 @@ def main ():
             
             # Footer
             
-            mylog('verbose', ['[MAIN] Process: Wait'])            
+            mylog('verbose', ['[MAIN] Process: Idle'])            
         else:
             # do something  
             # mylog('verbose', ['[MAIN] Waiting to start next loop'])
-            updateState("Process: Wait")  
+            updateState("Process: Idle")  
             
 
         #loop     

@@ -16,6 +16,7 @@
   require 'php/templates/header.php';
 ?>
 
+
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
@@ -214,9 +215,7 @@ switch ($UI_THEME) {
 ?>
 
 <!-- page script ----------------------------------------------------------- -->
-<script defer>
-
- 
+<script >
 
   // ------------------------------------------------------------
 
@@ -238,11 +237,16 @@ switch ($UI_THEME) {
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
 
-  main();
 
+// Call renderSmallBoxes, then main
+(async () => {
+    await renderSmallBoxes();
+    main();
+})();
 
 // -----------------------------------------------------------------------------
 function main () {
+
   // Initialize MAC
   var urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has ('mac') == true) {
@@ -670,21 +674,91 @@ function initTable(tableId, mac){
 
 //------------------------------------------------------------------------------
 //  Render the small boxes on top
-function renderSmallBoxes(customData) {
-    $.ajax({
-        url: 'php/components/device_cards.php', // PHP script URL
-        type: 'POST', // Use POST method to send data
-        dataType: 'html', // Expect HTML response
-        data: { items: JSON.stringify(customData) }, // Send customData as JSON
-        success: function(response) {
-            $('#TopSmallBoxes').html(response); // Replace container content with fetched HTML
-            hideSpinner()
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching small boxes:', error);
+async function renderSmallBoxes() {
+  
+  
+    try {
+        // Show loading dialog
+        showSpinner();
+
+        // Get data from the server
+        const response = await fetch(`php/server/devices.php?action=getServerDeviceData&mac=${getMac()}&period=${period}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching device data: ${response.statusText}`);
         }
-    });
+
+        const deviceData = await response.json();
+        console.log(deviceData);
+
+        // Prepare custom data
+        const customData = [
+            {
+                "onclickEvent": "$('#tabDetails').trigger('click')",
+                "color": "bg-aqua",
+                "headerId": "deviceStatus",
+                "headerStyle": "margin-left: 0em",
+                "labelLang": "DevDetail_Shortcut_CurrentStatus",
+                "iconId": "deviceStatusIcon",
+                "iconClass": deviceData.devPresentLastScan == 1 ? "fa fa-check text-green" : "fa fa-xmark text-red",
+                "dataValue": deviceData.devPresentLastScan == 1 ? getString("Gen_Online") : getString("Gen_Offline")
+            },
+            {
+                "onclickEvent": "$('#tabSessions').trigger('click');",
+                "color": "bg-green",
+                "headerId": "deviceSessions",
+                "headerStyle": "",
+                "labelLang": "DevDetail_Shortcut_Sessions",
+                "iconId": "",
+                "iconClass": "fa fa-plug",
+                "dataValue": deviceData.devSessions
+            },
+            {
+                "onclickEvent": "$('#tabPresence').trigger('click')",
+                "color": "bg-yellow",
+                "headerId": "deviceEvents",
+                "headerStyle": "margin-left: 0em",
+                "labelLang": "DevDetail_Shortcut_Presence",
+                "iconId": "deviceEventsIcon",
+                "iconClass": "fa fa-calendar",
+                "dataValue": `${deviceData.devPresenceHours}h`
+            },
+            {
+                "onclickEvent": "$('#tabEvents').trigger('click');",
+                "color": "bg-red",
+                "headerId": "deviceDownAlerts",
+                "headerStyle": "",
+                "labelLang": "DevDetail_Shortcut_DownAlerts",
+                "iconId": "",
+                "iconClass": "fa fa-warning",
+                "dataValue": deviceData.devDownAlerts
+            }
+        ];
+
+        // Send data to render small boxes
+        const cardResponse = await fetch('php/components/device_cards.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ items: customData })
+        });
+
+        if (!cardResponse.ok) {
+            throw new Error(`Error rendering small boxes: ${cardResponse.statusText}`);
+        }
+
+        const html = await cardResponse.text();
+
+        $('#TopSmallBoxes').html(html);
+
+    } catch (error) {
+        console.error('Error in renderSmallBoxes:', error);
+    } finally {
+        // Hide loading dialog
+        hideSpinner();
+    }
 }
+
 
 //-----------------------------------------------------------------------------------
 
@@ -692,66 +766,11 @@ window.onload = function async()
 {
   initializeTabs();
 
-
-   // get data from server 
-   $.get('php/server/devices.php?action=getServerDeviceData&mac='+ mac + '&period='+ period, function(data) {
-
-    // show loading dialog
-    showSpinner()
-
-    var deviceData = JSON.parse(data);
-
-    console.log(deviceData);
-    
-
-    const customData = [
-      {
-          "onclickEvent": "$('#tabDetails').trigger('click')",
-          "color": "bg-aqua",
-          "headerId": "deviceStatus",
-          "headerStyle": "margin-left: 0em",
-          "labelLang": "DevDetail_Shortcut_CurrentStatus",
-          "iconId": "deviceStatusIcon",
-          "iconClass": deviceData.devPresentLastScan == 1 ? "fa fa-check text-green" : "fa fa-xmark text-red",
-          "dataValue": deviceData.devPresentLastScan == 1 ? getString("Gen_Online") : getString("Gen_Offline")
-      },
-      {
-          "onclickEvent": "$('#tabSessions').trigger('click');",
-          "color": "bg-green",
-          "headerId": "deviceSessions",
-          "headerStyle": "",
-          "labelLang": "DevDetail_Shortcut_Sessions",
-          "iconId": "",
-          "iconClass": "fa fa-plug",
-          "dataValue": deviceData.devSessions
-      },
-      {
-          "onclickEvent": "$('#tabPresence').trigger('click')",
-          "color": "bg-yellow",
-          "headerId": "deviceEvents",
-          "headerStyle": "margin-left: 0em",
-          "labelLang": "DevDetail_Shortcut_Presence",
-          "iconId": "deviceEventsIcon",
-          "iconClass": "fa fa-calendar",
-          "dataValue": deviceData.devPresenceHours + 'h'
-      },
-      {
-          "onclickEvent": "$('#tabEvents').trigger('click');",
-          "color": "bg-red",
-          "headerId": "deviceDownAlerts",
-          "headerStyle": "",
-          "labelLang": "DevDetail_Shortcut_DownAlerts",
-          "iconId": "",
-          "iconClass": "fa fa-warning",
-          "dataValue": deviceData.devDownAlerts
-      }
-    ];
-
-    renderSmallBoxes(customData);
-
-  });
-
 }
 
 
+
+
 </script>
+
+

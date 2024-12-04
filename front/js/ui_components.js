@@ -387,6 +387,89 @@ function addIconAsBase64 (el) {
 }
 
 
+
+function showIconSelection() {
+  const selectElement = document.getElementById('NEWDEV_devIcon');
+  const modalId = 'dynamicIconModal';
+
+  // Create modal HTML dynamically
+  const modalHTML = `
+    <div id="${modalId}" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">${getString("Gen_Select")}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="iconList" class="row"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Append the modal to the body
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  const iconList = document.getElementById('iconList');
+
+  // Populate the icon list
+  Array.from(selectElement.options).forEach(option => {
+    if (option.value != "") {
+        
+      
+      const value = option.value;
+
+      // Decode the base64 value
+      let decodedValue;
+      try {
+        decodedValue = atob(value);
+      } catch (e) {
+        console.warn(`Skipping invalid base64 value: ${value}`);
+        return;
+      }
+
+      // Create an icon container
+      const iconDiv = document.createElement('div');
+      iconDiv.classList.add('iconPreviewSelector','col-md-2' , 'col-sm-3', 'col-xs-4');
+      iconDiv.style.cursor = 'pointer';
+
+      // Render the SVG or HTML content
+      const iconContainer = document.createElement('div');
+      iconContainer.innerHTML = decodedValue;
+
+      // Append the icon to the div
+      iconDiv.appendChild(iconContainer);
+      iconList.appendChild(iconDiv);
+
+      // Add click event to select icon
+      iconDiv.addEventListener('click', () => {
+        selectElement.value = value; // Update the select element value
+        $(`#${modalId}`).modal('hide'); // Hide the modal
+        updateIconPreview();
+      });
+    }
+  });
+
+  // Show the modal using AJAX
+  $(`#${modalId}`).modal('show');
+
+  // Remove modal from DOM after it's hidden
+  $(`#${modalId}`).on('hidden.bs.modal', function () {
+    document.getElementById(modalId).remove();
+  });
+
+  //
+  
+}
+
+
+
+
+
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------

@@ -180,6 +180,15 @@
                                               <i class="fa-solid fa-dice" ></i>
                                           </span>`;
                     }
+
+                    // handle generate IP for new device
+                    if (setting.setKey == "NEWDEV_devIcon") {
+                      inlineControl += `<span class="input-group-addon pointer"
+                                              onclick="showIconSelection()"
+                                              title="${getString("Gen_Select")}">
+                                              <i class="fa-solid fa-chevron-down" ></i>
+                                          </span>`;
+                    }
                     
 
                     // Generate the input field HTML
@@ -412,14 +421,6 @@
       , function(msg) {
       
         showMessage (msg);
-        
-
-        // clear session storage 
-        setCache("#dropdownOwner","");
-        setCache("#dropdownDeviceType","");
-        setCache("#dropdownGroup","");
-        setCache("#dropdownLocation","");
-        setCache("#dropdownNetworkNodeMac","");
 
         // Remove navigation prompt "Are you sure you want to leave..."
         window.onbeforeunload = null;
@@ -436,15 +437,6 @@
       // everything loaded 
       hideSpinner();
     });
-  }
-
-  // Helper function to clear dropdown cache
-  function clearDropdownCache() {
-    setCache("#dropdownOwner", "");
-    setCache("#dropdownDeviceType", "");
-    setCache("#dropdownGroup", "");
-    setCache("#dropdownLocation", "");
-    setCache("#dropdownNetworkNodeMac", "");
   }
 
   //-----------------------------------------------------------------------------------

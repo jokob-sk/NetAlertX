@@ -1226,6 +1226,52 @@ input[readonly] {
 /*                    Devices page                                   */
 /* ----------------------------------------------------------------- */
 
+.modal-header .close
+{
+    display: flex;
+}
+
+.modal-title
+{
+    display: inline;
+}
+
+#iconList
+{
+    padding: 10px;
+    padding-bottom:30px;
+}
+
+.iconPreviewSelector:hover
+{
+    backdrop-filter: brightness(50%);
+}
+
+.iconPreviewSelector 
+{
+    text-align: center;
+    padding: 15px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+.iconList
+{
+    display: flex;
+}
+
+.iconPreviewSelector svg
+{
+    width:40px;
+    height: 40px;
+}
+
+.iconPreviewSelector i
+{
+    font-size: 30px;
+    height: 40px;
+}
+
 .iconPreview {
     min-width: 40px;
 }
