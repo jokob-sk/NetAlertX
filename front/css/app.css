@@ -1260,6 +1260,11 @@ input[readonly] {
     display: flex;
 }
 
+.iconColumn
+{
+    max-height: 25px;
+}
+
 .iconPreviewSelector svg
 {
     width:40px;
@@ -1276,6 +1281,21 @@ input[readonly] {
     min-width: 40px;
 }
 
+
+#tableDevices .fab
+{
+    font-size: 1.5em;
+}
+
+#tableDevices .fa
+{
+    font-size: 1.0em;
+}
+
+#tableDevices tbody tr
+{
+    height: 1.5em;
+}
 
 .info-icon-nav
 {   

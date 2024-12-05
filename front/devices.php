@@ -561,9 +561,10 @@ function initializeDatatable (status) {
 
     'columnDefs'   : [
       {visible:   false,         targets: tableColumnHide },      
-      {className: 'text-center', targets: [mapIndx(3), mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
+      {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
+      {className: 'iconColumn text-center',  targets: [mapIndx(3)]},      
       {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
-      {width:     '30px',        targets: [mapIndx(10), mapIndx(13), mapIndx(18)] },      
+      {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
       // Device Name

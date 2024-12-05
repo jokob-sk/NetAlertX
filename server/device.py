@@ -454,6 +454,8 @@ def update_devices_data_from_scan (db):
     recordsToUpdate = []
 
     default_icon = get_setting_value('NEWDEV_devIcon')
+
+    
  
     if get_setting_value('NEWDEV_replace_preset_icon'):
         query = f"""SELECT * FROM Devices
@@ -469,6 +471,9 @@ def update_devices_data_from_scan (db):
         devIcon = guess_icon(device['devVendor'], device['devMac'], device['devLastIP'], device['devName'], default_icon)
 
         recordsToUpdate.append ([devIcon, device['devMac']])
+
+
+    mylog('debug',f'[Update Devices] recordsToUpdate: {recordsToUpdate}')
     
     if len(recordsToUpdate) > 0:        
         sql.executemany ("UPDATE Devices SET devIcon = ? WHERE devMac = ? ", recordsToUpdate )
@@ -708,6 +713,8 @@ def guess_icon(vendor, mac, ip, name,  default):
         result = icons.get("google")
     elif 'desktop' in name:
         result = icons.get("desktop")
+    elif 'raspberry' in name:
+        result = icons.get("raspberry")
     
     # Guess icon based on IP address ranges
     elif ip.startswith("192.168.1."):
