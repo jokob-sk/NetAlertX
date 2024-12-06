@@ -531,6 +531,8 @@ function performSwitch(direction)
 {
   somethingChanged = false;
 
+  devicesList = getDevicesList()
+
   // Update the global position in the devices list variable 'pos'
   if (direction === "next") {
     if (pos < devicesList.length - 1) {
@@ -544,8 +546,6 @@ function performSwitch(direction)
 
   // Get the new MAC address from devicesList
   mac = devicesList[pos].devMac.toString();
-
-  console.log(mac);
 
   setCache("naxDeviceDetailsMac", mac);
 

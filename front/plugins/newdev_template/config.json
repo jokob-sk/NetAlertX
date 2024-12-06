@@ -323,6 +323,35 @@
       ]
     },
     {
+      "function": "devLastIP",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The last known IP address of the device. Uneditable - Autodetected."
+        }
+      ]
+    },
+    {
       "function": "devName",
       "type": {
         "dataType": "string",
@@ -348,6 +377,58 @@
         {
           "language_code": "en_us",
           "string": "The name of the device. If the value is set to <code>(unknown)</code> or <code>(name not found)</code> the application will try to discover the name of the device."
+        }
+      ]
+    },
+    {
+      "function": "devIcon",
+      "events": ["copy_icons", "add_icon"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              { "cssClasses": "input-group-addon iconPreview" },
+              { "getStringKey": "Gen_SelectToPreview" },
+              { "customId": "NEWDEV_devIcon_preview" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "cssClasses": "col-xs-12" },
+              {
+                "onChange": "updateIconPreview(this)"
+              },
+              { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
+            ],
+            "transformers": []
+          }          
+        ]
+      },
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(setValue, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE setKey = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT devIcon AS name, devIcon AS id FROM Devices WHERE devIcon <> '') AS combined_results;"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
         }
       ]
     },
@@ -513,6 +594,39 @@
       ]
     },
     {
+      "function": "devLocation",
+      "events": ["add_option"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "maxLength": 250,
+      "default_value": "",
+      "options": ["{value}"],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
+        }
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Location"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The location of the device."
+        }
+      ]
+    },
+    {
       "function": "devComments",
       "type": {
         "dataType": "string",
@@ -591,35 +705,6 @@
         {
           "language_code": "en_us",
           "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
-        }
-      ]
-    },
-    {
-      "function": "devLastIP",
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [],
-            "transformers": []
-          }
-        ]
-      },
-      "maxLength": 50,
-      "default_value": "",
-      "options": [],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Last IP"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "The last known IP address of the device. Uneditable - Autodetected."
         }
       ]
     },
@@ -784,7 +869,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Skip Repeated (h)"
+          "string": "Skip Repeated"
         }
       ],
       "description": [
@@ -876,39 +961,6 @@
         {
           "language_code": "en_us",
           "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications."
-        }
-      ]
-    },
-    {
-      "function": "devLocation",
-      "events": ["add_option"],
-      "type": {
-        "dataType": "string",
-        "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
-        ]
-      },
-      "maxLength": 250,
-      "default_value": "",
-      "options": ["{value}"],
-      "options_params": [
-        {
-          "name": "value",
-          "type": "sql",
-          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
-        }
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Location"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "The location of the device."
         }
       ]
     },
@@ -1060,59 +1112,7 @@
           "string": "The network site."
         }
       ]
-    },
-    {
-      "function": "devIcon",
-      "events": ["copy_icons", "add_icon"],
-      "type": {
-        "dataType": "string",
-        "elements": [
-          {
-            "elementType": "span",
-            "elementOptions": [
-              { "cssClasses": "input-group-addon iconPreview" },
-              { "getStringKey": "Gen_SelectToPreview" },
-              { "customId": "NEWDEV_devIcon_preview" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementHasInputValue": 1,
-            "elementOptions": [
-              { "cssClasses": "col-xs-12" },
-              {
-                "onChange": "updateIconPreview(this)"
-              },
-              { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
-            ],
-            "transformers": []
-          }          
-        ]
-      },
-      "default_value": "",
-      "options": ["{value}"],
-      "options_params": [
-        {
-          "name": "value",
-          "type": "sql",
-          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(setValue, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE setKey = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT devIcon AS name, devIcon AS id FROM Devices WHERE devIcon <> '') AS combined_results;"
-        }
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Icon"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
-        }
-      ]
-    }
+    }   
   ],
   "required": [
   ],

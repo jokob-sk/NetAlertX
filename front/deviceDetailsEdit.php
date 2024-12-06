@@ -82,13 +82,13 @@
             // Group for device main information
             DevDetail_MainInfo_Title: {
                 data: ["devMac", "devLastIP", "devName", "devOwner", "devType", "devVendor", "devGroup", "devIcon", "devLocation", "devComments"], 
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md",
                 iconClass: "fa fa-pencil"
             },
             // Group for session information
             DevDetail_SessionInfo_Title: {
                 data: ["devStatus", "devLastConnection", "devFirstConnection"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
                 iconClass: "fa fa-calendar"
             },
              // Group for event and alert settings
@@ -106,7 +106,7 @@
             // Group for other fields like static IP, archived status, etc.
             DevDetail_DisplayFields_Title: {
                 data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_DISPLAY_SETTINGS.md",
                 iconClass: "fa fa-list-check"
 
             }
@@ -156,7 +156,7 @@
                     // Additional form elements like the random MAC address button for devMac
                     let inlineControl = "";
                     // handle rendom mac
-                    if (setting.setKey == "NEWDEV_devMac" && deviceData["devRandomMAC"] == true) {
+                    if (setting.setKey == "NEWDEV_devMac" && deviceData["devIsRandomMAC"] == true) {
                       inlineControl += `<span class="input-group-addon pointer"
                                               title="${getString("RandomMAC_hover")}">
                                               <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/RANDOM_MAC.md" target="_blank">     
@@ -222,7 +222,7 @@
 
             // Page title - Name
             if (mac == "new") {
-                $('#pageTitle').html(getString("Gen_AddDevice"));
+                $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
             } else if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
                 (deviceData['devName'].toString()).indexOf(deviceData['devOwner']) != -1) {
                 $('#pageTitle').html(deviceData['devName']);

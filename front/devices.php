@@ -72,10 +72,10 @@
 
             <!-- box-header -->
             <div class="box-header">
-              <div class=" col-md-10 ">
+              <div class=" col-md-9 ">
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
-              <div  class=" col-md-2 "><a href="deviceDetails.php?mac=new"><i title="Add new dummy device" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a></div>
+              <div  class=" col-md-3 "><a href="deviceDetails.php?mac=new"><i title="<?= lang('Gen_create_new_device');?>" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a></div>
             </div>
 
             <!-- table -->
@@ -564,6 +564,7 @@ function initializeDatatable (status) {
       {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
       {className: 'iconColumn text-center',  targets: [mapIndx(3)]},      
       {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
+      {width:     '85px',        targets: [mapIndx(9)] },      
       {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
@@ -741,6 +742,19 @@ function initializeDatatable (status) {
                 $('#multiEdit').toggle(anyRowSelected);
             }, 100);
             
+          });
+
+          // search only after idle
+          var typingTimer;  // Timer identifier
+          var debounceTime = 500;  // Delay in milliseconds
+
+          $('input[aria-controls="tableDevices"]').off().on('keyup', function () {
+              clearTimeout(typingTimer);  // Clear the previous timer
+              var searchValue = this.value;
+
+              typingTimer = setTimeout(function () {
+                  $('#tableDevices').DataTable().search(searchValue).draw();  // Trigger the search after delay
+              }, debounceTime);
           });
 
           

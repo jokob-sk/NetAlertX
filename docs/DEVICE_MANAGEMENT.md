@@ -1,107 +1,46 @@
 # NetAlertX - Device Management
-<!--- --------------------------------------------------------------------- --->
-To edit device information:
-  - Select "Devices" in the menu on the left of the screen
-  - Find the device you want to edit in the central table
-  - Go to the device page by clicking on the device name or status
-  - Press "Details" tab of the device
-  - Edit the device data
-  - Press the "Save" button
+
+The Main Info section is where most of the device identifyiable information is stored and edited. Some of the information is autodetected via various plugins. Initial values for most of the fields can be specified in the `NEWDEV` plugin.
 
 
 > [!NOTE] 
 >
-> [Bulk-edit devices](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section.
+> You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export fucntionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
 
 
-![Device Details][screen1]
+ ![Main Info](/docs/img/DEVICE_MANAGEMENT/DeviceManagement_MainInfo.png)
 
 
 ## Main Info
-  - **MAC**: MAC addres of the device. Not editable.
-  - **Name**: Friendly device name
-  - **Owner**: Device owner (The list is self-populated with existing owners)
-  - **Type**: Select a device type from the dropdown list (Smartphone, Table,
-      Laptop, TV, router, ....) or type a new device type
-  - **Vendor**: Automatically updated by NetAlertX when empty or unknown
-  - **Favorite**: Mark the device as favorite and then it will appears at the
-      begining of the device list
-  - **Group**: Select a grouper ('Always on', 'Personal', Friends') or type
-      your own Group name
-  - **Comments**: Type any comments for the device
 
-## Session Info
-  - **Status**: Show device status : On-line / Off-Line
-  - **First Session**: Date and time of the first connection
-  - **Last Offline**: Date and time of the last last time the device was offline
-  - **Last IP**: Last known IP used during the last connection
-  - **Static IP**: Check this box to identify devices that always use the
-      same IP
+  - **MAC**: MAC addres of the device. Not editable, unless creating a new dummy device.
+  - **Last IP**: IP addres of the device. Not editable, unless creating a new dummy device.
+  - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).
+  - **Icon**: Partially autodetected. Select an existing or [add a custom icon](https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md). You can also auto-apply the same icon on all devices of the same type. 
+  - **Owner**: Device owner (The list is self-populated with existing owners and you can add custom values).
+  - **Type**: Select a device type from the dropdown list (`Smartphone`, `Tablet`,
+      `Laptop`, `TV`, `router`, etc.) or add a new device type. If you want the device to act as a **Network device** (and be able to be a network node in the Network view), select a type under Network Devices or add a new Network Device type in Settings. More information can be found in the [Network Setup docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md). 
+  - **Vendor**: The manufacturing vendor. Automatically updated by NetAlertX when empty or unknown, can be edited.
+  - **Group**: Select a group (`Always on`, `Personal`, `Friends`, etc.) or type
+      your own Group name.
+  - **Location**: Select the location, usually a room, where the device is located (`Kitchen`, `Attic`, `Living room`, etc.) or add a custom Location.  
+  - **Comments**: Add any comments for the device, such as a serial number, or maintenance information.
 
-## Events & Alerts config
-  - **Scan Cycle**: Select the scan cycle: 0, 1', 15'
-    - Some devices do not respond to all ARP packets, for this cases is better
-      to use a 15' cycle.
-    - **For Apple devices I recommend using 15' cycle**
-  - **Alert All Events**: Send a notification in each event (connection,
-      disconnection, IP Changed, ...)
-  - **Alert Down**: Send a notification when the device is down
-    - *(Userful with "always connected" devices: Camera, Alexa,...)*
-  - **Skip repeated notifications during**: Do not send more than one
-      notification to this device for X hours
-    - *(Useful to avoid notification saturation on devices that frequently
-      connects and disconnects)*
+> [!NOTE] 
+>
+> Please note the above usage of the fields are only suggestions. You can use most of these fields for other purposes, such as storing the network interface, company owning a device, or similar. 
 
-# Privacy & Random MAC's
-<!--- --------------------------------------------------------------------- --->
+## Dummy devices
 
-The latest versions of some operating systems (IOS and Android) incorporate a
-new & interesting functionality to improve privacy: **Random MACs**.
+You can create dummy devices from the Devices listing screen. The **MAC** field and the **Last IP** field will then become editable.
 
-This functionality allows you to **hide the true MAC** of the device and
-**assign a random MAC** when we connect to WIFI networks.
+![Create Dummy Device](/docs/img/DEVICE_MANAGEMENT/Devices_CreateDummyDevice.png)
+![Save Dummy Device](/docs/img/DEVICE_MANAGEMENT/DeviceEdit_SaveDummyDevice.png)
 
-This behavior is especially useful when connecting to WIFI's that we do not
-know, but it **is totally useless when connecting to our own WIFI's** or known
-networks.
+You can couple this with the `ICMP` plugin which can be used to monitor the status of these devices, if they are actual devices reachable with the ping command.
 
-**I recommend disabling this operation when connecting our devices to our own
-WIFI's**, in this way, NetAlertX will be able to identify the device, and it
-will not identify it as a new device every so often (every time IOS or Android
-decides to change the MAC).
+## Copying data from an existing device. 
 
-### IOS
-![ios][ios]
+To speed up device population you can also copy data from an existing device. This can be done from the **Tools** tab on the Device details. 
 
-  - [Use private Wi-Fi addresses in iOS 14](https://support.apple.com/en-us/HT211227)
-
-### Android
-![Android][Android]
-
-  - [How to Disable MAC Randomization in Android 10](https://support.boingo.com/s/article/How-to-Disable-MAC-Randomization-in-Android-10-Android-Q)
-  - [How do I disable random Wi-Fi MAC address on Android 10](https://support.plume.com/hc/en-gb/articles/360052070714-How-do-I-disable-random-Wi-Fi-MAC-address-on-Android-10-)
-  
-### License
-  GPL 3.0
-  [Read more here](../LICENSE.txt)
-
-### Contact 
-
-  Always use the Issue tracker for the correct fork, for example: 
-  
-  [jokob-sk/NetAlertX](https://github.com/jokob-sk/NetAlertX/issues). Please also follow the guidelines on:
-
-  - ➕ [Pull Request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs) 
-  - 🙏 [Feature request guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-feature-requests) 
-  - 🐛 [Issue guidelines](https://github.com/jokob-sk/NetAlertX/tree/main/docs#-submitting-an-issue-or-bug)
-
-    
-  ***Suggestions and comments are welcome***
-
-
-<!--- --------------------------------------------------------------------- --->
-[main]:    ./img/1_devices.jpg           "Main screen"
-[screen1]: ./img/2_1_device_details.jpg  "Screen 1"
-[ios]:     https://9to5mac.com/wp-content/uploads/sites/6/2020/08/how-to-use-private-wifi-mac-address-iphone-ipad.png?resize=2048,1009 "ios"
-[Android]: ./img/android_random_mac.jpg  "Android"
 
