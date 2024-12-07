@@ -2,7 +2,7 @@
 
 Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node) set to a network device type (e.g.: **Type**:`Router`).
 
-> 💡 Tip: You can add dummy devices via the [Undiscoverables plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/undiscoverables/README.md)
+> 💡 Tip: You can add dummy devices via the [Create dummy device](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md#dummy-devices) button in the Devices listing page.
 
 > 💡 Tip: Export your configuration of the Network and Devices once in a while via the Export CSV feature under **Maintenance** -> **Backup/Restore** -> **CSV Export**.   
 

@@ -5,7 +5,7 @@ The Main Info section is where most of the device identifyiable information is s
 
 > [!NOTE] 
 >
-> You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export fucntionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
+> You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export functionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
 
 
  ![Main Info](/docs/img/DEVICE_MANAGEMENT/DeviceManagement_MainInfo.png)
@@ -32,12 +32,18 @@ The Main Info section is where most of the device identifyiable information is s
 
 ## Dummy devices
 
-You can create dummy devices from the Devices listing screen. The **MAC** field and the **Last IP** field will then become editable.
+You can create dummy devices from the Devices listing screen. 
 
 ![Create Dummy Device](/docs/img/DEVICE_MANAGEMENT/Devices_CreateDummyDevice.png)
+
+The **MAC** field and the **Last IP** field will then become editable.
+
 ![Save Dummy Device](/docs/img/DEVICE_MANAGEMENT/DeviceEdit_SaveDummyDevice.png)
 
-You can couple this with the `ICMP` plugin which can be used to monitor the status of these devices, if they are actual devices reachable with the ping command.
+
+> [!NOTE] 
+>
+> You can couple this with the `ICMP` plugin which can be used to monitor the status of these devices, if they are actual devices reachable with the `ping` command. If not, you can use a loopback IP address so they appear online, such as `0.0.0.0` or `127.0.0.1`.
 
 ## Copying data from an existing device. 
 

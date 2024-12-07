@@ -177,69 +177,105 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     console.log("in getData");
 
-    $.get('api/table_settings.json?nocache=' + Date.now(), function(res) {    
-        
-        settingsData = res["data"];   
-        
-        // Wrong number of settings processing
-        if(settingsNumberDB != settingsData.length) 
-        {
-          showModalOk('WARNING', "<?= lang("settings_old")?>");    
-          setTimeout(() => {
-                  clearCache()
-                }, 3000);
-        } else
-        {
-          $.get('api/plugins.json?nocache=' + Date.now(), function(res) {  
-
-            pluginsData = res["data"];  
-
-            // Sort settingsData alphabetically based on the "setGroup" property
-            settingsData.sort((a, b) => {
-                if (a["setGroup"] < b["setGroup"]) {
-                    return -1;
-                }
-                if (a["setGroup"] > b["setGroup"]) {
-                    return 1;
-                }
-                return 0;
-            });
-
-            exception_occurred = false;
-
-            // check if cache needs to be refreshed
-            // the getSetting method returns an empty string even if a setting is not found
-            // however, __metadata needs to be always a JSON object
-            // let's use that to verify settings were initialized correctly
-            settingsData.forEach((set) => {
-
-              setKey = set['setKey']
-
-              try {                
-                const isMetadata = setKey.includes('__metadata');
-                // if this isn't a metadata entry, get corresponding metadata object from the dummy setting
-                const setObj = isMetadata ? {} : JSON.parse(getSetting(`${setKey}__metadata`));
-                
-              } catch (error) {
-                console.error(`Error getting setting for ${setKey}:`, error);
-                showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");  
-
-                setTimeout(() => {
-                  clearCache()
-                }, 3000);
-
-                exception_occurred = true;                
+    // get settings from the secured graphql endpoint
+    $.ajax({
+      url: "/php/server/query_graphql.php", // Replace with your GraphQL endpoint
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+          query: `
+              query {
+                  settings {
+                      settings {
+                          setKey
+                          setName
+                          setDescription
+                          setOptions
+                          setGroup
+                          setType
+                          setValue
+                          setEvents
+                          setOverriddenByEnv
+                      }
+                      count
+                  }
               }
-            });
-  
-            // only proceed if everything was loaded correctly
-            if(!exception_occurred)
-            {
-              initSettingsPage(settingsData, pluginsData);
+          `
+      }),
+      success: function (response) {
+          console.log("Response:", response);
+
+          // Handle the successful response
+          if (response && response.settings) {
+              const settingsData = response.settings.settings;
+              console.log("Settings:", settingsData);
+
+              // Wrong number of settings processing
+              if(settingsNumberDB != settingsData.length) 
+              {
+                showModalOk('WARNING', "<?= lang("settings_old")?>");    
+                setTimeout(() => {
+                        clearCache()
+                      }, 3000);
+              } else
+              {
+                $.get('api/plugins.json?nocache=' + Date.now(), function(res) {  
+
+                  pluginsData = res["data"];  
+
+                  // Sort settingsData alphabetically based on the "setGroup" property
+                  settingsData.sort((a, b) => {
+                      if (a["setGroup"] < b["setGroup"]) {
+                          return -1;
+                      }
+                      if (a["setGroup"] > b["setGroup"]) {
+                          return 1;
+                      }
+                      return 0;
+                  });
+
+                  exception_occurred = false;
+
+                  // check if cache needs to be refreshed
+                  // the getSetting method returns an empty string even if a setting is not found
+                  // however, __metadata needs to be always a JSON object
+                  // let's use that to verify settings were initialized correctly
+                  settingsData.forEach((set) => {
+
+                    setKey = set['setKey']
+
+                    try {                
+                      const isMetadata = setKey.includes('__metadata');
+                      // if this isn't a metadata entry, get corresponding metadata object from the dummy setting
+                      const setObj = isMetadata ? {} : JSON.parse(getSetting(`${setKey}__metadata`));
+                      
+                    } catch (error) {
+                      console.error(`Error getting setting for ${setKey}:`, error);
+                      showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");  
+
+                      setTimeout(() => {
+                        clearCache()
+                      }, 3000);
+
+                      exception_occurred = true;                
+                    }
+                  });
+        
+                  // only proceed if everything was loaded correctly
+                  if(!exception_occurred)
+                  {
+                    initSettingsPage(settingsData, pluginsData);
+                  }
+                })
+              } 
+              
             }
-          })
-        }        
-    })
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            // Handle any errors
+        }
+    });
   }
 
   // -------------------------------------------------------------------
