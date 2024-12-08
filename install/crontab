@@ -2,4 +2,4 @@
 
 # Schedule cron jobs
 * * * * * /app/back/cron_script.sh
-#* * * * * echo "$(date +'%Y-%m-%d %H:%M:%S') - Cron job ran" >> /app/front/log/cron_timestamp.log
+#* * * * * echo "$(date +'%Y-%m-%d %H:%M:%S') - Cron job ran" >> /app/log/cron_timestamp.log

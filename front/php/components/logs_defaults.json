@@ -11,7 +11,7 @@
             }
         ],
         "fileName": "app.log",
-        "filePath": "/app/front/log/app.log",
+        "filePath": "/app/log/app.log",
         "textAreaCssClass": "logs"
 
     },
@@ -23,7 +23,7 @@
             }
         ],
         "fileName": "app_front.log",
-        "filePath": "/app/front/log/app_front.log",
+        "filePath": "/app/log/app_front.log",
         "textAreaCssClass": "logs logs-small"
     },
     {
@@ -34,7 +34,7 @@
             }
         ],
         "fileName": "app.php_errors.log",
-        "filePath": "/app/front/log/app.php_errors.log",
+        "filePath": "/app/log/app.php_errors.log",
         "textAreaCssClass": "logs logs-small"
     },
     {
@@ -45,7 +45,7 @@
             }
         ],
         "fileName": "execution_queue.log",
-        "filePath": "/app/front/log/execution_queue.log",
+        "filePath": "/app/log/execution_queue.log",
         "textAreaCssClass": "logs logs-small"
     },
     {
@@ -59,22 +59,11 @@
         "buttons": [
             {
                 "labelStringCode": "Maint_PurgeLog",
-                "event": "logManage('app_front.log', 'cleanLog')"
-            }
-        ],
-        "fileName": "app_front.log",
-        "filePath": "/app/front/log/app_front.log",
-        "textAreaCssClass": "logs logs-small"
-    },
-    {
-        "buttons": [
-            {
-                "labelStringCode": "Maint_PurgeLog",
                 "event": "logManage('db_is_locked.log', 'cleanLog')"
             }
         ],
         "fileName": "db_is_locked.log",
-        "filePath": "/app/front/log/db_is_locked.log",
+        "filePath": "/app/log/db_is_locked.log",
         "textAreaCssClass": "logs logs-small"
     },
     {
@@ -85,7 +74,7 @@
             }
         ],
         "fileName": "stdout.log",
-        "filePath": "/app/front/log/stdout.log",
+        "filePath": "/app/log/stdout.log",
         "textAreaCssClass": "logs logs-small"
     },
     {
@@ -96,7 +85,7 @@
             }
         ],
         "fileName": "stderr.log",
-        "filePath": "/app/front/log/stderr.log",
+        "filePath": "/app/log/stderr.log",
         "textAreaCssClass": "logs logs-small"
     }
 ]

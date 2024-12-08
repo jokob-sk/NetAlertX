@@ -85,7 +85,7 @@ function renderList(
 // Check if database is locked
 function checkDbLock() {
   $.ajax({
-    url: "log/db_is_locked.log", // Replace with the actual path to your PHP file
+    url: "/php/server/query_logs.php?file=db_is_locked.log", 
     type: "GET",
 
     success: function (response) {

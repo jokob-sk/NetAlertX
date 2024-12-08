@@ -7,13 +7,11 @@ applicationPath = '/app'
 dbFileName      = 'app.db'
 confFileName    = 'app.conf'
 confPath        = "/config/" + confFileName
-
 dbPath          = '/db/' + dbFileName
 
 
 pluginsPath         = applicationPath + '/front/plugins'
-logPath             = applicationPath + '/front/log'
-# apiPath             = applicationPath + '/api/'
+logPath             = applicationPath + '/log'
 apiPath             = applicationPath + '/api/'
 reportTemplatesPath = applicationPath + '/front/report_templates/'
 fullConfFolder      = applicationPath + '/config'

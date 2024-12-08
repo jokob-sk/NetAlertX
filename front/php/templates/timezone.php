@@ -6,7 +6,7 @@
 
 $configFolderPath = dirname(__FILE__)."/../../../config/";
 $config_file = "app.conf";
-$logFolderPath = dirname(__FILE__)."/../../log/";
+$logFolderPath = "/app/log/";
 $log_file = "app_front.log";
 
 

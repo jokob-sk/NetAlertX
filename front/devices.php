@@ -780,7 +780,7 @@ function handleLoadingDialog(needsReload = false)
   // console.log('needsReload:');
   // console.log(needsReload); 
 
-  $.get('log/execution_queue.log?nocache=' + Date.now(), function(data) {     
+  $.get('/php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {     
 
     if(data.includes("update_api|devices"))
     {       

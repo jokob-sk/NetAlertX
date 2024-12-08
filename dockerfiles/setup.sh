@@ -106,15 +106,15 @@ fi
 
 # Create an empty log files
 # Create the execution_queue.log and app_front.log files if they don't exist
-touch "${INSTALL_DIR}"/front/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
-chown -R nginx:www-data "${INSTALL_DIR}"/{config,front/log,db,api}
+chown -R nginx:www-data "${INSTALL_DIR}"/{config,log,db,api}
 chown -R nginx:www-data "${INSTALL_DIR}"/api/user_notifications.json
 
-chmod 750 "${INSTALL_DIR}"/{config,front/log,db}
-find "${INSTALL_DIR}"/{config,front/log,db} -type f -exec chmod 640 {} \;
+chmod 750 "${INSTALL_DIR}"/{config,log,db}
+find "${INSTALL_DIR}"/{config,log,db} -type f -exec chmod 640 {} \;
 
 # Check if buildtimestamp.txt doesn't exist
 if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then

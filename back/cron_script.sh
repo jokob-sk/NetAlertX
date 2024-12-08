@@ -1,7 +1,7 @@
 #!/bin/bash
 export INSTALL_DIR=/app
 
-LOG_FILE="${INSTALL_DIR}/front/log/execution_queue.log"
+LOG_FILE="${INSTALL_DIR}/log/execution_queue.log"
 
 # Check if there are any entries with cron_restart_backend
 if grep -q "cron_restart_backend" "$LOG_FILE"; then

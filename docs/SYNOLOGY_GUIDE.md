@@ -43,7 +43,7 @@ services:
       - local/path/config:/app/config
       - local/path/db:/app/db      
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/front/log
+      - local/path/logs:/app/log
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -60,7 +60,7 @@ services:
       - /volume1/app_storage/netalertx/config:/app/config
       - /volume1/app_storage/netalertx/db:/app/db      
       # (optional) useful for debugging if you have issues setting up the container
-      # - local/path/logs:/app/front/log <- commented out with # ⚠
+      # - local/path/logs:/app/log <- commented out with # ⚠
 ```
 
 ![Adjusting docker-compose](/docs/img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)

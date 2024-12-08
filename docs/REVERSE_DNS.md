@@ -40,7 +40,7 @@ services:
     volumes:
       -  /home/netalertx/config:/app/config
       -  /home/netalertx/db:/app/db
-      -  /home/netalertx/log:/app/front/log
+      -  /home/netalertx/log:/app/log
     environment:
       - TZ=Europe/Berlin
       - PORT=20211
@@ -66,7 +66,7 @@ services:
     volumes:
       - ./config/app.conf:/app/config/app.conf
       - ./db:/app/db
-      - ./log:/app/front/log
+      - ./log:/app/log
       - ./config/resolv.conf:/etc/resolv.conf                          # Mapping the /resolv.conf file for better name resolution
     environment:
       - TZ=Europe/Berlin

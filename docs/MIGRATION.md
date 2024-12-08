@@ -85,7 +85,7 @@ services:
       - local/path/config:/app/config         # ⚠  This has changed (🔺required) 
       - local/path/db:/app/db                 # ⚠  This has changed (🔺required) 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/front/log        # ⚠  This has changed (🟡optional) 
+      - local/path/logs:/app/log        # ⚠  This has changed (🟡optional) 
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -135,7 +135,7 @@ services:
       - local/path/config/app.conf:/app/config/app.conf # ⚠  This has changed (🔺required) 
       - local/path/db/app.db:/app/db/app.db             # ⚠  This has changed (🔺required) 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/front/log                  # ⚠  This has changed (🟡optional) 
+      - local/path/logs:/app/log                  # ⚠  This has changed (🟡optional) 
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211

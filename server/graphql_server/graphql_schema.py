@@ -115,8 +115,7 @@ class Query(ObjectType):
             device["devParentChildrenCount"] = get_number_of_children(device["devMac"], devices_data)
             device["devIpLong"] = format_ip_long(device.get("devLastIP", ""))
 
-        total_count = len(devices_data)
-
+        
         mylog('none', f'[graphql_schema] devices_data: {devices_data}')
 
 
@@ -161,14 +160,7 @@ class Query(ObjectType):
                 elif status == "offline":
                     devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
 
-            # sorting
-            if options.sort:
-                for sort_option in options.sort:
-                    devices_data = sorted(
-                        devices_data,
-                        key=lambda x: mixed_type_sort_key(x.get(sort_option.field)),
-                        reverse=(sort_option.order.lower() == "desc")
-                    )
+            
 
             # Filter data if a search term is provided
             if options.search:
@@ -188,6 +180,18 @@ class Query(ObjectType):
                         for field in searchable_fields  # Search only predefined fields
                     )
                 ]
+
+            # sorting
+            if options.sort:
+                for sort_option in options.sort:
+                    devices_data = sorted(
+                        devices_data,
+                        key=lambda x: mixed_type_sort_key(x.get(sort_option.field)),
+                        reverse=(sort_option.order.lower() == "desc")
+                    )
+
+            # capture total count after all the filtering and searching 
+            total_count = len(devices_data)
 
             # Then apply pagination
             if options.page and options.limit:

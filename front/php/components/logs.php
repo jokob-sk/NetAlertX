@@ -20,12 +20,12 @@ function renderLogArea($params) {
         $content = file_get_contents($filePath);
     }
 
-    // Prepare the download button HTML if filePath starts with /app/front
+    // Prepare the download button HTML if filePath starts with /app
     $downloadButtonHtml = '';
-    if (strpos($filePath, '/app/front') === 0) {
+    if (strpos($filePath, '/app') === 0) {
         $downloadButtonHtml = '
             <span class="span-padding">
-                <a href="' . htmlspecialchars(str_replace('/app/front', '', $filePath)) . '" target="_blank">
+                <a href="' . htmlspecialchars(str_replace('/app/log/', '/php/server/query_logs.php?file=', $filePath)) . '" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>
             </span>';

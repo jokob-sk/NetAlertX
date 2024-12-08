@@ -99,7 +99,7 @@ fi
 # Create an empty log files
 
 # Create the execution_queue.log file if it doesn't exist
-touch "${INSTALL_DIR}"/front/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/{user_notifications.json}
 
 
@@ -112,7 +112,7 @@ chmod -R a+rwx $WEB_UI_DIR
 
 echo "[INSTALL] Fixing INSTALL_DIR: ${INSTALL_DIR}"
 
-chmod -R a+rw $INSTALL_PATH/front/log
+chmod -R a+rw $INSTALL_PATH/log
 chmod -R a+rwx $INSTALL_DIR
 
 echo "[INSTALL] Copy starter $DB_FILE and $CONF_FILE if they don't exist"

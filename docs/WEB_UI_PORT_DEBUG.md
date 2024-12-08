@@ -41,7 +41,7 @@ In the container execute:
 
 `cat /var/log/nginx/error.log`
 
-`cat /app/front/log/app.php_errors.log`
+`cat /app/log/app.php_errors.log`
 
 ## 8. Make sure permissions are correct
 

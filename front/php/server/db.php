@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 // DB File Path
 $DBFILE = dirname(__FILE__).'/../../../db/app.db';
-$DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../front/log/db_is_locked.log';
+$DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../log/db_is_locked.log';
 
 //------------------------------------------------------------------------------
 // check if authenticated
