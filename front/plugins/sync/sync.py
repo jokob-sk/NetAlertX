@@ -104,7 +104,7 @@ def main():
         # PUSHING/SENDING devices
         if send_devices:
 
-            file_path = f"{INSTALL_PATH}/front/api/table_devices.json"
+            file_path = f"{INSTALL_PATH}/api/table_devices.json"
             plugin_folder = 'sync'
             pref = 'SYNC'
 

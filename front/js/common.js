@@ -115,10 +115,10 @@ function cacheSettings()
   return new Promise((resolve, reject) => {
     if(!getCache('completedCalls').includes('cacheSettings'))
     {  
-      $.get('api/table_settings.json?nocache=' + Date.now(), function(resSet) { 
+      $.get('/php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(resSet) { 
 
-        $.get('api/plugins.json?nocache=' + Date.now(), function(resPlug) {        
-
+        $.get('/php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(resPlug) {
+       
           pluginsData = resPlug["data"]; 
           settingsData = resSet["data"];  
 
@@ -225,7 +225,7 @@ function cacheStrings() {
               });
 
               // Fetch strings and translations from plugins
-              $.get(`api/table_plugins_language_strings.json?nocache=${Date.now()}`)
+              $.get('/php/server/query_json.php', { file: 'table_plugins_language_strings.json', nocache: Date.now() })
                 .done((pluginRes) => {
                   const data = pluginRes["data"];
                   
@@ -702,7 +702,7 @@ function forceLoadUrl(relativeUrl) {
 // -----------------------------------------------------------------------------
 function navigateToDeviceWithIp (ip) {
 
-  $.get('api/table_devices.json?nocache=' + Date.now(), function(res) {    
+  $.get('/php/server/query_json.php', { file: 'table_devices.json', nocache: Date.now() }, function(res) {    
         
     devices = res["data"];
 
@@ -924,7 +924,7 @@ function cacheDevices()
 
     // if(!getCache('completedCalls').includes('cacheDevices'))
     // {
-      $.get('api/table_devices.json?nocache=' + Date.now(), function(data) {    
+    $.get('/php/server/query_json.php', { file: 'table_devices.json', nocache: Date.now() }, function(data) {    
         
         // console.log(data)
 
@@ -1290,7 +1290,7 @@ function clearCache() {
 // -----------------------------------------------------------------------------
 // Function to check if cache needs to be refreshed because of setting changes
 function checkSettingChanges() {
-  $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {   
+  $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
     const importedMilliseconds = parseInt(appState["settingsImported"] * 1000);
     const lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
 
@@ -1345,7 +1345,7 @@ async function waitForGraphQLServer() {
 // Returns 1 if running, 0 otherwise
 async function isGraphQLServerRunning() {
   try {
-    const response = await $.get('api/app_state.json?nocache=' + Date.now());
+    const response = await $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now()});
     console.log("graphQLServerStarted: " + response["graphQLServerStarted"]);
     setCache("graphQLServerStarted", response["graphQLServerStarted"]);
     return response["graphQLServerStarted"];

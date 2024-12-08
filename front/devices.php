@@ -199,26 +199,31 @@ function getDevicesTotals() {
 
   // Fetch data via AJAX
   $.ajax({
-    url: '/api/table_devices_tiles.json?nocache=' + Date.now(),
-    type: "GET",
-    dataType: "json",
-    success: function(response) {
-      if (response && response.data) {
-        resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
-        
-        // Save the result to cache
-        setCache("getDevicesTotals", JSON.stringify(resultJSON));
+      url: '/php/server/query_json.php',
+      type: "GET",
+      dataType: "json",
+      data: {
+          file: 'table_devices_tiles.json', // Pass the file parameter
+          nocache: Date.now() // Prevent caching with a timestamp
+      },
+      success: function(response) {
+          if (response && response.data) {
+              resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
+              
+              // Save the result to cache
+              setCache("getDevicesTotals", JSON.stringify(resultJSON));
 
-        // Process the fetched data
-        processDeviceTotals(resultJSON);
-      } else {
-        console.error("Invalid response format from API");
+              // Process the fetched data
+              processDeviceTotals(resultJSON);
+          } else {
+              console.error("Invalid response format from API");
+          }
+      },
+      error: function(xhr, status, error) {
+          console.error("Failed to fetch devices data:", error);
       }
-    },
-    error: function(xhr, status, error) {
-      console.error("Failed to fetch devices data:", error);
-    }
   });
+
   
 }
 

@@ -8,6 +8,7 @@ db/pialert.db
 db/app.db
 front/log/*
 front/api/*
+/api/*
 **/plugins/**/*.log
 **/%40eaDir/
 **/@eaDir/

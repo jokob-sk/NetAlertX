@@ -45,7 +45,7 @@ function jsonResponse($status, $data = '', $message = '') {
 if ($method === 'GET') {
     checkAuthorization($method);
 
-    $file_path = "/app/front/api/table_devices.json";
+    $file_path = "/app/api/table_devices.json";
 
     $data = file_get_contents($file_path);   
 

@@ -72,6 +72,6 @@ COPY install/crontab /etc/crontabs/root
 RUN ${INSTALL_DIR}/dockerfiles/pre-setup.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \
-    CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/api/app_state.json
+    CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/php/server/query_json.php?file=app_state.json
 
 ENTRYPOINT ["/init"]

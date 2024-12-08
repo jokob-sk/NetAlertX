@@ -100,7 +100,7 @@ class api_endpoint_class:
         # check if API endpoints have changed or if it's a new one
         if not found or changed:
 
-            mylog('verbose', [f'[API] Updating {self.fileName} file in /front/api'])
+            mylog('verbose', [f'[API] Updating {self.fileName} file in /api'])
 
             write_file(self.path, json.dumps(self.jsonData)) 
             

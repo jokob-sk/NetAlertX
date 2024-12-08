@@ -246,19 +246,19 @@ function getData(){
   // Show the loading spinner while generating 
   showSpinner();
 
-  $.get('api/plugins.json', function(res) {  
+  $.get('php/server/query_json.php?file=plugins.json', function(res) {  
     
     pluginDefinitions = res["data"];
 
-    $.get('api/table_plugins_events.json', function(res) {
+    $.get('php/server/query_json.php?file=table_plugins_events.json', function(res) {
 
       pluginUnprocessedEvents = res["data"];
 
-      $.get('api/table_plugins_objects.json', function(res) {
+      $.get('php/server/query_json.php?file=table_plugins_objects.json', function(res) {
 
         pluginObjects = res["data"];
         
-        $.get('api/table_plugins_history.json', function(res) {        
+        $.get('php/server/query_json.php?file=table_plugins_history.json', function(res) {        
 
           pluginHistory = res["data"];
 

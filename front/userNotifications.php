@@ -59,28 +59,23 @@ require 'php/templates/header.php';
 
 <script>
   function fetchData(callback) {
-    $.ajax({
-      url: 'api/user_notifications.json?nocache=' + Date.now(),
-      method: 'GET',
-      dataType: 'json',
-      success: function(response) {
-        console.log(response);
+    $.get('/php/server/query_json.php', { file: 'user_notifications.json', nocache: Date.now() })
+    .done(function(response) {
         if (response == "[]" || response == "") {
-          callback([]);
+            callback([]);
         } else if (response.error) {
-          alert("Error: " + response.error);
-          callback([]);
+            alert("Error: " + response.error);
+            callback([]);
         } else if (!Array.isArray(response)) {
-          alert("Unexpected response format");
-          callback([]);
+            alert("Unexpected response format");
+            callback([]);
         } else {
-          callback(response);
+            callback(response);
         }
-      },
-      error: function(xhr, status, error) {
-        console.log("An error occurred while fetching data: " + error);
+    })
+    .fail(function(xhr, status, error) {
+        console.error("An error occurred while fetching data:", error);
         callback([]);
-      }
     });
   }
 

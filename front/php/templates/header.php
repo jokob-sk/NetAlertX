@@ -91,7 +91,7 @@
 <script>
 
   function updateState(){
-    $.get('api/app_state.json?nocache=' + Date.now(), function(appState) {    
+    $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {    
 
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
 

@@ -430,7 +430,7 @@ function getString ($setKey, $default) {
 // -------------------------------------------------------------------------------------------
 function getSettingValue($setKey) {
   // Define the JSON endpoint URL  
-  $url = dirname(__FILE__).'/../../../front/api/table_settings.json';  
+  $url = dirname(__FILE__).'/../../../api/table_settings.json';  
 
   // Fetch the JSON data
   $json = file_get_contents($url);

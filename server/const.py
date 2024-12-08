@@ -13,7 +13,8 @@ dbPath          = '/db/' + dbFileName
 
 pluginsPath         = applicationPath + '/front/plugins'
 logPath             = applicationPath + '/front/log'
-apiPath             = applicationPath + '/front/api/'
+# apiPath             = applicationPath + '/api/'
+apiPath             = applicationPath + '/api/'
 reportTemplatesPath = applicationPath + '/front/report_templates/'
 fullConfFolder      = applicationPath + '/config'
 fullConfPath        = applicationPath + confPath

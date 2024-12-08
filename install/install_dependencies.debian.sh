@@ -16,7 +16,7 @@ fi
 apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl php-openssl sqlite3 dnsutils net-tools \
-    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan avahi avahi-tools openrc dbus build-essential
+    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan avahi avahi-tools openrc dbus build-essential git
 
 # alternate dependencies
 sudo apt-get install nginx nginx-core mtr php-fpm php8.2-fpm php-cli php8.2 php8.2-sqlite3 -y
@@ -30,5 +30,5 @@ source myenv/bin/activate
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 #  install packages thru pip3
-pip3 install graphene flask netifaces tplink-omada-client pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros  
+pip3 install graphene flask netifaces tplink-omada-client pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros git+https://github.com/foreign-sub/aiofreepybox.git 
 
