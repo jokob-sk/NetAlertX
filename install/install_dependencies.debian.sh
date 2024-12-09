@@ -15,8 +15,8 @@ fi
 # Install dependencies
 apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl php-openssl sqlite3 dnsutils net-tools \
-    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan avahi avahi-tools openrc dbus build-essential git
+    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
+    python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan avahi-daemon avahi-utils openrc build-essential git
 
 # alternate dependencies
 sudo apt-get install nginx nginx-core mtr php-fpm php8.2-fpm php-cli php8.2 php8.2-sqlite3 -y
