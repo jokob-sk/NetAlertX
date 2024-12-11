@@ -64,7 +64,7 @@ fi
 
 # create symbolic link to the  install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
-# create symbolic link to NGINX configuaration coming with NetAlertX
+# create symbolic link to NGINX configuration coming with NetAlertX
 sudo ln -s "${INSTALL_PATH}/install/netalertx.debian.conf" /etc/nginx/conf.d/$NGINX_CONF_FILE
 
 # Use user-supplied port if set
