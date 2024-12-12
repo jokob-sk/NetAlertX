@@ -21,8 +21,10 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+pluginName = "SNMPDSC"
+
+LOG_PATH = logPath + '/plugins'
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 # Workflow
 

@@ -46,7 +46,7 @@ Please read the below carefully if you'd like to contribute with a plugin yourse
   |----------------------|----------------------|----------------------| 
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
   | `script.py` |  no | The Python script itself. You may call any valid linux command.  |
-  | `last_result.log` | no | The file used to interface between NetAlertX and the plugin. Required for a script plugin if you want to feed data into the app. |
+  | `last_result.<prefix>.log` | no | The file used to interface between NetAlertX and the plugin. Required for a script plugin if you want to feed data into the app. Stored in the `/api/log/plugins/` |
   | `script.log` | no | Logging output (recommended) |
   | `README.md` | yes | Any setup considerations or overview  |
 
@@ -103,7 +103,7 @@ Currently, these data sources are supported (valid `data_source` value).
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
 | Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). | 
 
-> * "Needs to return a "table" means that the application expects a `last_result.log` file with some results. It's not a blocker, however warnings in the `app.log` might be logged.
+> * "Needs to return a "table" means that the application expects a `last_result.<prefix>.log` file with some results. It's not a blocker, however warnings in the `app.log` might be logged.
 
 > 🔎Example
 >```json
@@ -120,21 +120,21 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
 
 ### "data_source":  "script"
 
- If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.log` file (not required if you don't import any data into the app). The `last_result.log` file needs to be saved in the same folder as the plugin. 
+ If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.<prefix>.log` file (not required if you don't import any data into the app). The `last_result.<prefix>.log` file needs to be saved in `/api/log/plugins`. 
 
 > [!IMPORTANT]
-> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
+> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.<prefix>.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
  
- The content of the `last_result.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
+ The content of the `last_result.<prefix>.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
-- The format of the `last_result.log` is a `csv`-like file with the pipe `|` as a separator. 
+- The format of the `last_result.<prefix>.log` is a `csv`-like file with the pipe `|` as a separator. 
 - 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.  
 - Don't render "headers" for these "columns".
 Every scan result/event entry needs to be on a new line.
 - You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
 - The order of these "columns" can't be changed.
 
-#### 🔎 last_result.log examples
+#### 🔎 last_result.prefix.log examples
 
 Valid CSV:
 

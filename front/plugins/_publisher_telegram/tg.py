@@ -13,7 +13,7 @@ INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 import conf
-from const import confFileName
+from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value
@@ -24,10 +24,12 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
-
 pluginName = 'TELEGRAM'
+
+LOG_PATH = logPath + '/plugins'
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
+
 
 
 def main():
@@ -52,7 +54,7 @@ def main():
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
-    # Process the new notifications (see the Notifications DB table for structure or check the /api/table_notifications.json endpoint)
+    # Process the new notifications (see the Notifications DB table for structure or check the /php/server/query_json.php?file=table_notifications.json endpoint)
     for notification in new_notifications:
         # Send notification
         result = send(notification["Text"])

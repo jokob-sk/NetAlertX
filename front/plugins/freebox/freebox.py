@@ -23,7 +23,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs
 from logger import mylog
-from const import pluginsPath, fullDbPath
+from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value
 from notification import write_notification
 import conf
@@ -31,15 +31,15 @@ import conf
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))
 
+pluginName = 'FREEBOX'
+
 # Define the current path and log file paths
-CUR_PATH = str(Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, "script.log")
-RESULT_FILE = os.path.join(CUR_PATH, "last_result.log")
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
-
-pluginName = "FREEBOX"
 
 device_type_map = {
     "workstation": "PC",

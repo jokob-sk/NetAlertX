@@ -147,7 +147,7 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
 
 
 # Function to run a plugin command
-def run_plugin(command, set_RUN_TIMEOUT):
+def run_plugin(command, set_RUN_TIMEOUT, plugin):
     try:
         return subprocess.check_output(command, universal_newlines=True, stderr=subprocess.STDOUT, timeout=set_RUN_TIMEOUT)
     except subprocess.CalledProcessError as e:
@@ -224,7 +224,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
 
         # Using ThreadPoolExecutor to handle concurrent subprocesses
         with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(run_plugin, command, set_RUN_TIMEOUT)]  # Submit the command as a future
+            futures = [executor.submit(run_plugin, command, set_RUN_TIMEOUT, plugin)]  # Submit the command as a future
 
             for future in as_completed(futures):
                 output = future.result()  # Get the output or error
@@ -235,8 +235,8 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         newLines = []
 
         # Create the file path
-        file_dir = os.path.join(pluginsPath, plugin["code_name"])
-        file_prefix = 'last_result'
+        file_dir = logPath + '/plugins'
+        file_prefix = f'last_result.{plugin["unique_prefix"]}'
 
         # Decode files, rename them, and get the list of files, this will return all files starting with the prefix, even if they are not encoded
         files_to_process = decode_and_rename_files(file_dir, file_prefix)
@@ -255,7 +255,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                 # cleanup - select only lines containing a separator to filter out unnecessary data
                 newLines = list(filter(lambda x: '|' in x, newLines))    
 
-                # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
+                # Store e.g. Node_1 from last_result.<prefix>.encoded.Node_1.1.log
                 tmp_SyncHubNodeName = ''
                 if len(filename.split('.')) > 3:
                     tmp_SyncHubNodeName = filename.split('.')[2]   

@@ -16,12 +16,15 @@ from logger import mylog, append_line_to_file
 from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
+from const import logPath
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+pluginName = 'INTRSPD'
+
+LOG_PATH = logPath + '/plugins'
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 def main():
     

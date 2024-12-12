@@ -17,17 +17,20 @@ from logger import mylog
 from dhcp_leases import DhcpLeases
 from helper import timeNowTZ, get_setting_value 
 import conf
+from const import logPath
 from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
-
-
 pluginName= 'DHCPLSS'
+
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
+
+
 
 # -------------------------------------------------------------
 def main():    

@@ -75,7 +75,11 @@
               <div class=" col-md-9 ">
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
-              <div  class=" col-md-3 "><a href="deviceDetails.php?mac=new"><i title="<?= lang('Gen_create_new_device');?>" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a></div>
+              <div  class="dummyDevice col-md-3 ">
+                <span>
+                  <a href="deviceDetails.php?mac=new"><i title="<?= lang('Gen_create_new_device');?>" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a>
+                </span>
+              </div>
             </div>
 
             <!-- table -->

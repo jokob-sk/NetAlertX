@@ -24,19 +24,22 @@ from logger import mylog
 from helper import timeNowTZ, get_setting_value, normalize_string 
 import conf
 from pytz import timezone
+from const import logPath
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
-LOCK_FILE = os.path.join(CUR_PATH, 'full_run.lock')
+pluginName = 'UNFIMP'
+
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+LOCK_FILE = os.path.join(LOG_PATH, f'full_run.{pluginName}.lock')
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-pluginName = 'UNFIMP'
+
 
 # Workflow
 

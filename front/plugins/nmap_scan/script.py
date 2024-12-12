@@ -23,9 +23,11 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+pluginName = 'NMAP'
+
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 #-------------------------------------------------------------------------------
 def main():
@@ -41,21 +43,21 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    mylog('debug', ['[NMAP Scan] In script ']) 
+    mylog('debug', [f'[{pluginName}] In script ']) 
 
     # Printing the params list to check its content.
-    mylog('debug', ['[NMAP Scan] values.ips: ', values.ips]) 
-    mylog('debug', ['[NMAP Scan] values.macs: ', values.macs]) 
-    mylog('debug', ['[NMAP Scan] values.timeout: ', values.timeout]) 
-    mylog('debug', ['[NMAP Scan] values.args: ', values.args]) 
+    mylog('debug', [f'[{pluginName}] values.ips: ', values.ips]) 
+    mylog('debug', [f'[{pluginName}] values.macs: ', values.macs]) 
+    mylog('debug', [f'[{pluginName}] values.timeout: ', values.timeout]) 
+    mylog('debug', [f'[{pluginName}] values.args: ', values.args]) 
 
     argsDecoded = decodeBase64(values.args[0].split('=b')[1]) 
 
-    mylog('debug', ['[NMAP Scan] argsDecoded: ', argsDecoded]) 
+    mylog('debug', [f'[{pluginName}] argsDecoded: ', argsDecoded]) 
 
     entries = performNmapScan(values.ips[0].split('=')[1].split(','), values.macs[0].split('=')[1].split(',') , values.timeout[0].split('=')[1], argsDecoded)
 
-    mylog('verbose', ['[NMAP Scan] Total number of ports found by NMAP: ', len(entries)])
+    mylog('verbose', [f'[{pluginName}] Total number of ports found by NMAP: ', len(entries)])
 
     for entry in entries:        
 
@@ -104,7 +106,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
         devTotal = len(deviceIPs)
         
 
-        mylog('verbose', ['[NMAP Scan] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
+        mylog('verbose', [f'[{pluginName}] Scan: Nmap for max ', str(timeoutSec), 's ('+ str(round(int(timeoutSec) / 60, 1)) +'min) per device'])  
         mylog('verbose', ["[NMAP Scan] Estimated max delay: ", (devTotal * int(timeoutSec)), 's ', '(', round((devTotal * int(timeoutSec))/60,1) , 'min)' ])
 
 
@@ -125,12 +127,12 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 mylog('none', ["[NMAP Scan] " ,e.output])
                 mylog('none', ["[NMAP Scan] ⚠ ERROR - Nmap Scan - check logs", progress])            
             except subprocess.TimeoutExpired as timeErr:
-                mylog('verbose', ['[NMAP Scan] Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', ip, progress]) 
+                mylog('verbose', [f'[{pluginName}] Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', ip, progress]) 
 
             if output == "": # check if the subprocess failed                    
-                mylog('minimal', ['[NMAP Scan] Nmap FAIL for ', ip, progress ,' check logs for details']) 
+                mylog('minimal', [f'[{pluginName}] Nmap FAIL for ', ip, progress ,' check logs for details']) 
             else: 
-                mylog('verbose', ['[NMAP Scan] Nmap SUCCESS for ', ip, progress])
+                mylog('verbose', [f'[{pluginName}] Nmap SUCCESS for ', ip, progress])
 
             
             
@@ -160,7 +162,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             
-            mylog('verbose', [f'[NMAP Scan] {newPortsPerDevice} ports found on {deviceMACs[devIndex]}'])
+            mylog('verbose', [ff'[{pluginName}] {newPortsPerDevice} ports found on {deviceMACs[devIndex]}'])
 
             index += 1
             devIndex += 1

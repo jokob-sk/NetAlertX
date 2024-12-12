@@ -17,7 +17,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog
-from const import pluginsPath, fullDbPath
+from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from crypto_utils import encrypt_data
 from notification import write_notification
@@ -27,15 +27,16 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
+pluginName = 'SYNC'
+
 # Define the current path and log file paths
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
-pluginName = 'SYNC'
 
 def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
@@ -84,8 +85,7 @@ def main():
                 mylog('verbose', [f'[{pluginName}] synching "{pref}" ({index}/{len(plugins_to_sync)})'])
 
                 # Construct the file path for the plugin's last_result.log file
-                plugin_folder = plugin["code_name"]
-                file_path = f"{INSTALL_PATH}/front/plugins/{plugin_folder}/last_result.log"
+                file_path = f"{LOG_PATH}/last_result.{pref}.log"
 
                 if os.path.exists(file_path):
                     # Read the content of the log file
@@ -95,17 +95,16 @@ def main():
                         mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
 
                         # encrypt and send data to the hub
-                        send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url)
+                        send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url)
 
                 else:
-                    mylog('verbose', [f'[{pluginName}] {plugin_folder}/last_result.log not found'])  
+                    mylog('verbose', [f'[{pluginName}] {file_path} not found'])  
                     
                     
         # PUSHING/SENDING devices
         if send_devices:
 
             file_path = f"{INSTALL_PATH}/api/table_devices.json"
-            plugin_folder = 'sync'
             pref = 'SYNC'
 
             if os.path.exists(file_path):
@@ -114,7 +113,7 @@ def main():
                     file_content = f.read()
 
                     mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
-                    send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url)
+                    send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url)
         else:
             mylog('verbose', [f'[{pluginName}] SYNC_hub_url not defined, skipping posting "Devices" data']) 
     else:
@@ -267,7 +266,7 @@ def main():
 
 
 # send data to the HUB
-def send_data(api_token, file_content, encryption_key, plugin_folder, node_name, pref, hub_url):
+def send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url):
     # Encrypt the log data using the encryption_key
     encrypted_data = encrypt_data(file_content, encryption_key)
 
@@ -276,7 +275,8 @@ def send_data(api_token, file_content, encryption_key, plugin_folder, node_name,
     # Prepare the data payload for the POST request
     data = {
         'data': encrypted_data,
-        'plugin_folder': plugin_folder,
+        'file_path': file_path,
+        'plugin': pref,
         'node_name': node_name
     }
     # Set the authorization header with the API token
@@ -287,11 +287,11 @@ def send_data(api_token, file_content, encryption_key, plugin_folder, node_name,
     mylog('verbose', [f'[{pluginName}] response: "{response}"'])
 
     if response.status_code == 200:
-        message = f'[{pluginName}] Data for "{plugin_folder}" sent successfully'
+        message = f'[{pluginName}] Data for "{file_path}" sent successfully'
         mylog('verbose', [message])
         write_notification(message, 'info', timeNowTZ())
     else:
-        message = f'[{pluginName}] Failed to send data for "{plugin_folder}" (Status code: {response.status_code})'
+        message = f'[{pluginName}] Failed to send data for "{file_path}" (Status code: {response.status_code})'
         mylog('verbose', [message])
         write_notification(message, 'alert', timeNowTZ())
         

@@ -1,6 +1,6 @@
 # NetAlertX - Device Management
 
-The Main Info section is where most of the device identifyiable information is stored and edited. Some of the information is autodetected via various plugins. Initial values for most of the fields can be specified in the `NEWDEV` plugin.
+The Main Info section is where most of the device identifiable information is stored and edited. Some of the information is autodetected via various plugins. Initial values for most of the fields can be specified in the `NEWDEV` plugin.
 
 
 > [!NOTE] 

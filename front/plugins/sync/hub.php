@@ -64,33 +64,34 @@ else if ($method === 'POST') {
 
     // Retrieve and decode the data from the POST request
     $data = $_POST['data'] ?? '';
-    $plugin_folder = $_POST['plugin_folder'] ?? '';
+    $file_path = $_POST['file_path'] ?? '';
     $node_name = $_POST['node_name'] ?? '';
+    $plugin = $_POST['plugin'] ?? '';
 
-    $storage_path = "/app/front/plugins/{$plugin_folder}";
+    $storage_path = "/app/log/plugins/";
 
-    // Create the storage directory if it doesn't exist
-    if (!is_dir($storage_path)) {
-        echo "Could not open folder: {$storage_path}";
-        write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert"); 
-        http_response_code(500);
-        exit;
-    }
+    // // check location
+    // if (!is_dir($storage_path)) {
+    //     echo "Could not open folder: {$storage_path}";
+    //     write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert"); 
+    //     http_response_code(500);
+    //     exit;
+    // }
 
     // Generate a unique file path to avoid overwriting existing files
-    $encoded_files = glob("{$storage_path}/last_result.encoded.{$node_name}.*.log");
-    $decoded_files = glob("{$storage_path}/last_result.decoded.{$node_name}.*.log");
+    $encoded_files = glob("{$storage_path}/last_result.{$plugin}.encoded.{$node_name}.*.log");
+    $decoded_files = glob("{$storage_path}/last_result.{$plugin}.decoded.{$node_name}.*.log");
 
     $files = array_merge($encoded_files, $decoded_files);
     $file_count = count($files) + 1;
 
-    $file_path = "{$storage_path}/last_result.encoded.{$node_name}.{$file_count}.log";
+    $file_path_new = "{$storage_path}/last_result.{$plugin}.encoded.{$node_name}.{$file_count}.log";
 
     // Save the decoded data to the file
-    file_put_contents($file_path, $data);
+    file_put_contents($file_path_new, $data);
     http_response_code(200);
     echo 'Data received and stored successfully';
-    write_notification("[Plugin: SYNC] Data received ({$plugin_folder})", "info");
+    write_notification("[Plugin: SYNC] Data received ({$file_path_new})", "info");
 
 } else {
     http_response_code(405);

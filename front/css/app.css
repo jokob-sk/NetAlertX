@@ -1282,6 +1282,11 @@ input[readonly] {
 }
 
 
+.dummyDevice 
+{
+    text-align: end;
+}
+
 #tableDevices .fab
 {
     font-size: 1.5em;

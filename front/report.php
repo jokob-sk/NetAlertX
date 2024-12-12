@@ -163,7 +163,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('guid')) {
         const guid = urlParams.get('guid');
-        fetch('api/table_notifications.json')
+        fetch('php/server/query_json.php?file=table_notifications.json')
             .then(response => response.json())
             .then(data => {
                 const index = findIndexByGUID(data.data, guid);

@@ -15,16 +15,18 @@ from helper import timeNowTZ, get_setting_value, hide_string  # noqa: E402
 from notification import Notification_obj  # noqa: E402
 from database import DB  # noqa: E402
 import conf
-from const import confFileName
+from const import confFileName, logPath
 from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-RESULT_FILE = os.path.join(CUR_PATH, "last_result.log")
-
 pluginName = "PUSHOVER"
+
+LOG_PATH = logPath + '/plugins'
+RESULT_FILE = os.path.join(LOG_PATH, "last_result.log")
+
+
 
 
 def main():

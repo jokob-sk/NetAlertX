@@ -45,7 +45,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs
 from logger import mylog
-from const import pluginsPath, fullDbPath
+from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value
 from notification import write_notification
 from pytz import timezone
@@ -54,11 +54,14 @@ import conf
 conf.tz = timezone(get_setting_value("TIMEZONE"))
 PARALLELISM = 4
 
+pluginName = "OMDSDN"
+
 # Define the current path and log file paths
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, "script.log")
-RESULT_FILE = os.path.join(CUR_PATH, "last_result.log")
-OMADA_API_RETURN_FILE = os.path.join(CUR_PATH, "omada_api_return")
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
+OMADA_API_RETURN_FILE = os.path.join(LOG_PATH, "omada_api_return")
 
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
@@ -86,7 +89,7 @@ dMAC, dIP, dTYPE, dSTATUS, dNAME, dMODEL = range(6)
 cMAC, cIP, cNAME, cSWITCH_AP, cPORT_SSID = range(5)
 
 OMDLOGLEVEL = "debug"
-pluginName = "OMDSDN"
+
 
 
 #

@@ -23,7 +23,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
 import conf
-from const import apiPath, confFileName
+from const import apiPath, confFileName, logPath
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, append_line_to_file
@@ -35,15 +35,17 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
+pluginName = 'MQTT'
+
+LOG_PATH = logPath + '/plugins'
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
 # Create an MD5 hash object
 md5_hash = hashlib.md5()
 
-pluginName = 'MQTT'
+
 
 # globals
 mqtt_sensors                = []

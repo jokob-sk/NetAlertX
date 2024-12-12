@@ -28,12 +28,13 @@ from pytz import timezone
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
-
-CUR_PATH = str(pathlib.Path(__file__).parent.resolve())
-LOG_FILE = os.path.join(CUR_PATH, 'script.log')
-RESULT_FILE = os.path.join(CUR_PATH, 'last_result.log')
-
 pluginName = 'INTRNT'
+
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
+
 
 no_internet_ip = '0.0.0.0'
 
