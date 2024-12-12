@@ -64,7 +64,7 @@ fi
 
 # create symbolic link to the  install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
-# create symbolic link to NGINX configuaration coming with NetAlertX
+# create symbolic link to NGINX configuration coming with NetAlertX
 sudo ln -s "${INSTALL_PATH}/install/netalertx.debian.conf" /etc/nginx/conf.d/$NGINX_CONF_FILE
 
 # Use user-supplied port if set
@@ -100,11 +100,11 @@ fi
 
 # Create the execution_queue.log file if it doesn't exist
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
-touch "${INSTALL_DIR}"/api/{user_notifications.json}
-
+touch "${INSTALL_DIR}"/api/user_notifications.json
 
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
+chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
 
 echo "[INSTALL] Fixing WEB_UI_DIR: ${WEB_UI_DIR}"
 
