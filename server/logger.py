@@ -40,26 +40,36 @@ def mylog(requestedDebugLevel, n):
 
 #-------------------------------------------------------------------------------
 # Queue for log messages
-log_queue = queue.Queue()
+log_queue = queue.Queue(maxsize=1000)  # Increase size to handle spikes
 
 # Dedicated thread for writing logs
 log_thread = None  # Will hold the thread reference
 
 def log_writer():
+    buffer = []
     while True:
-        log_entry = log_queue.get()
-        if log_entry is None:  # Graceful exit signal
-            break
-        with open(logPath + "/app.log", 'a') as log_file:
-            log_file.write(log_entry + '\n')
+        try:
+            log_entry = log_queue.get(timeout=1)  # Wait for 1 second for logs
+            if log_entry is None:  # Graceful exit signal
+                break
+            buffer.append(log_entry)
+            if len(buffer) >= 10:  # Write in batches of 10
+                with open(logPath + "/app.log", 'a') as log_file:
+                    log_file.write('\n'.join(buffer) + '\n')
+                buffer.clear()
+        except queue.Empty:
+            # Flush buffer periodically if no new logs
+            if buffer:
+                with open(logPath + "/app.log", 'a') as log_file:
+                    log_file.write('\n'.join(buffer) + '\n')
+                buffer.clear()
 
 #-------------------------------------------------------------------------------
 # Function to start the log writer thread if it doesn't exist
 def start_log_writer_thread():
     global log_thread
     if log_thread is None or not log_thread.is_alive():
-        print("Starting log writer thread...")
-        log_thread = threading.Thread(target=log_writer, args=(), daemon=True)
+        log_thread = threading.Thread(target=log_writer, daemon=True)
         log_thread.start()
 
 #-------------------------------------------------------------------------------
@@ -80,9 +90,9 @@ def file_print(*args):
 # Function to append to the file with a timeout
 def append_to_file_with_timeout(data, timeout):
     try:
-        log_queue.put(data, timeout=timeout)
+        log_queue.put_nowait(data)
     except queue.Full:
-        print("Appending to file timed out")
+        print("Log queue is full, dropping log entry:" + data)
 
 #-------------------------------------------------------------------------------
 def print_log(pText):
