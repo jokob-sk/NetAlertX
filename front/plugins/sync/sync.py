@@ -228,6 +228,7 @@ def main():
             #  Remove 'rowid' key if it exists 
             for device in new_devices:
                 device.pop('rowid', None)
+                device.pop('devStatus', None)
 
             mylog('verbose', [f'[{pluginName}] All devices: "{len(device_data)}"'])
             mylog('verbose', [f'[{pluginName}] New devices: "{len(new_devices)}"'])
