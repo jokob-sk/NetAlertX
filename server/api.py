@@ -9,6 +9,7 @@ from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_a
 from logger import mylog
 from helper import write_file, get_setting_value, updateState, timeNowTZ
 from execution_log import ExecutionLog
+from notification import write_notification
 
 # Import the start_server function
 from graphql_server.graphql_server_start import start_server 
@@ -127,6 +128,7 @@ class api_endpoint_class:
         # Needs to be called for initial updates
         self.try_write()
 
+    #----------------------------------------
     def try_write(self):
         current_time = timeNowTZ()
 
@@ -144,7 +146,7 @@ class api_endpoint_class:
             if self.is_ad_hoc_user_event:
                 execution_log = ExecutionLog()
                 execution_log.finalize_event("update_api")
-                write_notification(f"[Ad-hoc events] Events executed: update_api", "interrupt", timeNowTZ())
+                self.is_ad_hoc_user_event = False
 
         else:
             # Debugging if write is skipped

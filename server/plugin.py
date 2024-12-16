@@ -861,26 +861,23 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         event, param = "", ""
         if len(columns) == 2:
             event, param = columns
-
-        try:
-            # Process each event type
-            if event == 'test':
-                pluginsState = handle_test(param, db, all_plugins, pluginsState)
-                executed_events.append(f"test with param {param}")
-                execution_log.finalize_event("test")
-            elif event == 'run':
-                pluginsState = handle_run(param, db, all_plugins, pluginsState)
-                executed_events.append(f"run with param {param}")
-                execution_log.finalize_event("run")               
-            elif event == 'update_api':
-                # async handling
-                update_api(db, all_plugins, False, param.split(','), True)
-                
-            else:
-                mylog('minimal', ['[check_and_run_user_event] WARNING: Unhandled event in execution queue: ', event, ' | ', param])
-                execution_log.finalize_event(event)  # Finalize unknown events to remove them
-        except Exception as e:
-            mylog('none', ['[check_and_run_user_event] ERROR: Error processing event "', event, '" with param "', param, '": ', str(e)])
+        
+        # Process each event type
+        if event == 'test':
+            pluginsState = handle_test(param, db, all_plugins, pluginsState)
+            executed_events.append(f"test with param {param}")
+            execution_log.finalize_event("test")
+        elif event == 'run':
+            pluginsState = handle_run(param, db, all_plugins, pluginsState)
+            executed_events.append(f"run with param {param}")
+            execution_log.finalize_event("run")               
+        elif event == 'update_api':
+            # async handling
+            update_api(db, all_plugins, False, param.split(','), True)
+            
+        else:
+            mylog('minimal', ['[check_and_run_user_event] WARNING: Unhandled event in execution queue: ', event, ' | ', param])
+            execution_log.finalize_event(event)  # Finalize unknown events to remove them       
 
     # Notify user about executed events (if applicable)
     if len(executed_events) > 0 and executed_events:

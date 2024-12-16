@@ -7,8 +7,18 @@
 ?>
 
 <script src="js/graph_online_history.js"></script>
-<script>
-$.get('/php/server/query_json.php', { file: 'table_online_history.json', nocache: Date.now() }, function(res) {
+<script >
+
+
+  if (isAppInitialized()) {
+    initOnlineHistoryGraph();
+  } else {
+    callAfterAppInitialized(() => initOnlineHistoryGraph());
+  }
+
+
+function initOnlineHistoryGraph() {
+    $.get('/php/server/query_json.php', { file: 'table_online_history.json', nocache: Date.now() }, function(res) {
         // Extracting data from the JSON response
         var timeStamps = [];
         var onlineCounts = [];
@@ -39,6 +49,8 @@ $.get('/php/server/query_json.php', { file: 'table_online_history.json', nocache
         // Handle any errors in fetching the data
         console.error('Error fetching online history data.');
     });
+}
+
 </script>
 <!-- <canvas id="clientsChart" width="800" height="140" class="extratooltipcanvas no-user-select"></canvas> -->
 <canvas id="OnlineChart" style="width:100%; height: 150px;  margin-bottom: 15px;"></canvas>
