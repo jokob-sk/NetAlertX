@@ -17,7 +17,7 @@ from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import print_plugin_info, run_plugin_scripts
-from plugin_utils import get_plugins_configs, get_plugin_setting_obj
+from plugin_utils import get_plugins_configs, get_plugin_setting_obj, get_set_value_for_init
 from notification import write_notification
 
 #===============================================================================
@@ -212,21 +212,10 @@ def importConfigs (db, all_plugins):
         # ...or based on if is already enabled, or if the default configuration loads the plugin (RUN function != disabled )   
 
         # get default plugin run value
-        plugin_run = ''
-        setting_obj = get_plugin_setting_obj(plugin, "RUN")
-
-        if setting_obj is not None:
-            set_type = setting_obj.get('type')              # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
-            set_value = setting_obj.get('default_value')
-
-            plugin_run = setting_value_to_python_type(set_type, set_value)
-
-        #  get user-defined run value if available
-        if pref + "_RUN" in c_d:
-            plugin_run =  c_d[pref + "_RUN" ]
+        plugin_run = get_set_value_for_init(plugin, c_d, "RUN")
 
         # only include loaded plugins, and the ones that are enabled        
-        if pref in conf.LOADED_PLUGINS or plugin_run != 'disabled' or setting_obj is None or plugin_run is None:
+        if pref in conf.LOADED_PLUGINS or plugin_run != 'disabled' or plugin_run is None:
 
             stringSqlParams = []
             
@@ -327,20 +316,10 @@ def importConfigs (db, all_plugins):
         mylog('debug', [f"[Config] File {app_conf_override_path} does not exist."])
   
     # setup execution schedules AFTER OVERRIDE handling
-    index = 0
-    for plugin in all_plugins:
-
-        pref = plugin["unique_prefix"]  
-
-        plugin_run = ''
-
-        #  get user-defined run value if available
-        if pref + "_RUN" in c_d:
-            plugin_run =  c_d[pref + "_RUN" ] 
-        
+    for plugin in all_plugins:        
         # Setup schedules
-        if plugin_run == 'schedule':
-            newSchedule = Cron(c_d[pref + "_RUN_SCHD" ]).schedule(start_date=datetime.datetime.now(conf.tz))
+        if get_set_value_for_init(plugin, c_d, "RUN") == 'schedule':
+            newSchedule = Cron(get_set_value_for_init(plugin, c_d, "RUN_SCHD")).schedule(start_date=datetime.datetime.now(conf.tz))
             conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
 

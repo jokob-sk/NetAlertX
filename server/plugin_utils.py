@@ -4,7 +4,7 @@ import json
 import conf 
 from logger import mylog
 from const import pluginsPath, logPath, apiPath
-from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
+from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value, setting_value_to_python_type
 from crypto_utils import decrypt_data
 
 module_name = 'Plugin utils'
@@ -306,3 +306,44 @@ def decode_and_rename_files(file_dir, file_prefix):
             mylog('debug', [f'[Plugins] The file {file_path} does not exist'])
 
     return files_to_process
+
+
+# ------------------------------------------------------------------
+# Retrieve the value for a plugin's setting, prioritizing user-defined values over defaults.
+def get_set_value_for_init(plugin, c_d, setting_key):
+    """
+    Retrieve the value for a plugin's setting, prioritizing user-defined values over defaults.
+
+    Args:
+        plugin (str): The name or identifier of the plugin.
+        pref (str): Prefix for user-defined settings (e.g., plugin identifier prefix).
+        c_d (dict): Dictionary containing user-defined settings.
+        setting_key (str): The key for the setting to fetch (default is 'RUN').
+
+    Returns:
+        Any: The value for the specified setting, converted to an appropriate Python type.
+    """
+
+    pref = plugin["unique_prefix"]  
+
+    # Step 1: Initialize the setting value as an empty string
+    setting_value = ''
+    
+    # Step 2: Get the default setting object for the plugin's specified key
+    setting_obj = get_plugin_setting_obj(plugin, setting_key)
+
+    if setting_obj is not None:
+        # Retrieve the type and default value from the setting object
+        set_type = setting_obj.get('type')  # Lowercase 'type'
+        set_value = setting_obj.get('default_value')
+
+        # Convert the value to the appropriate Python type
+        setting_value = setting_value_to_python_type(set_type, set_value)
+
+    # Step 3: Check for user-defined setting value in the dictionary
+    user_key = f"{pref}_{setting_key}"
+    if user_key in c_d:
+        setting_value = c_d[user_key]
+
+    # Return the final setting value
+    return setting_value
