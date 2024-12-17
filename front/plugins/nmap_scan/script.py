@@ -162,7 +162,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            
             
-            mylog('verbose', [ff'[{pluginName}] {newPortsPerDevice} ports found on {deviceMACs[devIndex]}'])
+            mylog('verbose', [f'[{pluginName}] {newPortsPerDevice} ports found on {deviceMACs[devIndex]}'])
 
             index += 1
             devIndex += 1

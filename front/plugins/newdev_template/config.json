@@ -390,7 +390,7 @@
             "elementType": "span",
             "elementOptions": [
               { "cssClasses": "input-group-addon iconPreview" },
-              { "getStringKey": "Gen_SelectToPreview" },
+              { "getStringKey": "Gen_SelectIcon" },
               { "customId": "NEWDEV_devIcon_preview" }
             ],
             "transformers": []

@@ -309,6 +309,7 @@
     "Gen_Saved": "Saved",
     "Gen_Search": "Search",
     "Gen_Select": "Select",
+    "Gen_SelectIcon": "<i class=\"fa-solid fa-chevron-down fa-fade\"></i>",
     "Gen_SelectToPreview": "Select to preview",
     "Gen_Selected_Devices": "Selected Devices:",
     "Gen_Switch": "Switch",

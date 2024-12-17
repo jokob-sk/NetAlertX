@@ -192,7 +192,7 @@ def importConfigs (db, all_plugins):
 
     plugin_indexes_to_remove = []
     all_plugins_prefixes     = [] # to init the LOADED_PLUGINS setting with correct options
-    loaded_plugins_prefixes  = [] # to init the LOADED_PLUGINS setting with correct initially seelcted values
+    loaded_plugins_prefixes  = [] # to init the LOADED_PLUGINS setting with correct initially selected values
 
     #  handle plugins
     index = 0
@@ -253,11 +253,6 @@ def importConfigs (db, all_plugins):
 
                 # Save the user defined value into the object
                 set["value"] = v
-
-                # Setup schedules
-                if setFunction == 'RUN_SCHD':
-                    newSchedule = Cron(v).schedule(start_date=datetime.datetime.now(conf.tz))
-                    conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
 
                 # Collect settings related language strings
                 # Creates an entry with key, for example ARPSCAN_CMD_name
@@ -331,6 +326,24 @@ def importConfigs (db, all_plugins):
     else:
         mylog('debug', [f"[Config] File {app_conf_override_path} does not exist."])
   
+    # setup execution schedules AFTER OVERRIDE handling
+    index = 0
+    for plugin in all_plugins:
+
+        pref = plugin["unique_prefix"]  
+
+        plugin_run = ''
+
+        #  get user-defined run value if available
+        if pref + "_RUN" in c_d:
+            plugin_run =  c_d[pref + "_RUN" ] 
+        
+        # Setup schedules
+        if plugin_run == 'schedule':
+            newSchedule = Cron(c_d[pref + "_RUN_SCHD" ]).schedule(start_date=datetime.datetime.now(conf.tz))
+            conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+
+
     # -----------------
     # HANDLE APP was upgraded message - clear cache
     
@@ -352,6 +365,7 @@ def importConfigs (db, all_plugins):
             
             write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the 🔄 (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
+    
 
     # -----------------
     # Initialization finished, update DB and API endpoints
