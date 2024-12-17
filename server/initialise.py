@@ -48,7 +48,10 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
     # Single quotes might break SQL queries, replacing them
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
-       
+
+    # Add to config_dir if overridden by environment
+    if overriddenByEnv == 1:
+        config_dir[key] = result       
 
     # Create the tuples
     sql_safe_tuple = (key, name, desc, str(inputtype), options, str(result), group, str(events), overriddenByEnv)
@@ -315,13 +318,17 @@ def importConfigs (db, all_plugins):
     else:
         mylog('debug', [f"[Config] File {app_conf_override_path} does not exist."])
   
+    
     # setup execution schedules AFTER OVERRIDE handling
+
+    mylog('verbose', [f"[Config] c_d {c_d}"])
+
     for plugin in all_plugins:        
         # Setup schedules
         run_val = get_set_value_for_init(plugin, c_d, "RUN")
         run_sch = get_set_value_for_init(plugin, c_d, "RUN_SCHD")
 
-        mylog('verbose', [f"[Config] pref {plugin["unique_prefix"]} run_val {run_val} run_sch {run_sch} "])
+        # mylog('verbose', [f"[Config] pref {plugin["unique_prefix"]} run_val {run_val} run_sch {run_sch} "])
 
         if run_val == 'schedule':
             newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
