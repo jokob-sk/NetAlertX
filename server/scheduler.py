@@ -27,11 +27,11 @@ class schedule_class:
         # Run the schedule if the current time is past the schedule time we saved last time and 
         #               (maybe the following check is unnecessary)                
         if nowTime > self.last_next_schedule:
-            mylog('debug',f'[Scheduler] - Scheduler run for {self.service}: YES')
+            mylog('debug',f'[Scheduler] run for {self.service}: YES')
             self.was_last_schedule_used = True
             result = True
         else:
-            mylog('debug',f'[Scheduler] - Scheduler run for {self.service}: NO')
+            mylog('debug',f'[Scheduler] run for {self.service}: NO')
             # mylog('debug',f'[Scheduler] - nowTime {nowTime}')
             # mylog('debug',f'[Scheduler] - self.last_next_schedule {self.last_next_schedule}')
             # mylog('debug',f'[Scheduler] - self.last_run {self.last_run}')

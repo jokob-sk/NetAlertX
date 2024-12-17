@@ -631,9 +631,11 @@ function initializeDatatable (status) {
                             <a href="http://${cellData}" class="pointer" target="_blank">
                                 ${cellData}
                             </a>
-                            <a href="https://${cellData}" class="pointer" target="_blank">
+                            <span class="alignRight">
+                              <a href="https://${cellData}" class="pointer" target="_blank">
                                 <i class="fa fa-lock "></i>
-                            </a>
+                              </a>
+                            <span>
                           <span>`);
             } else {
               $(td).html ('');

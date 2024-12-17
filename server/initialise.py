@@ -318,9 +318,14 @@ def importConfigs (db, all_plugins):
     # setup execution schedules AFTER OVERRIDE handling
     for plugin in all_plugins:        
         # Setup schedules
-        if get_set_value_for_init(plugin, c_d, "RUN") == 'schedule':
-            newSchedule = Cron(get_set_value_for_init(plugin, c_d, "RUN_SCHD")).schedule(start_date=datetime.datetime.now(conf.tz))
-            conf.mySchedules.append(schedule_class(pref, newSchedule, newSchedule.next(), False))
+        run_val = get_set_value_for_init(plugin, c_d, "RUN")
+        run_sch = get_set_value_for_init(plugin, c_d, "RUN_SCHD")
+
+        mylog('verbose', [f"[Config] pref {plugin["unique_prefix"]} run_val {run_val} run_sch {run_sch} "])
+
+        if run_val == 'schedule':
+            newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
+            conf.mySchedules.append(schedule_class(plugin["unique_prefix"], newSchedule, newSchedule.next(), False))
 
 
     # -----------------
