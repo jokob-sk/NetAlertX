@@ -5,7 +5,7 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca"];
+$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca", "uk_ua"];
 
 
 global $db;
@@ -27,6 +27,7 @@ switch($result){
   case 'Czech (cs_cz)': $pia_lang_selected = 'cs_cz'; break;
   case 'Arabic (ar_ar)': $pia_lang_selected = 'ar_ar'; break;
   case 'Catalan (ca_ca)': $pia_lang_selected = 'ca_ca'; break;
+  case 'Ukrainian (uk_ua)': $pia_lang_selected = 'uk_ua'; break;
   default: $pia_lang_selected = 'en_us'; break;
 }
 

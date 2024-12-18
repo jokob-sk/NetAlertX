@@ -12,7 +12,7 @@ var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
 var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca"]; // needs to be same as in lang.php
+const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca", "uk_ua"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -338,6 +338,9 @@ function getLangCode() {
         break;
       case 'Catalan (ca_ca)':
         lang_code = 'ca_ca';
+        break;
+      case 'Ukrainian (uk_uk)':
+        lang_code = 'uk_ua';
         break;
     }
 
