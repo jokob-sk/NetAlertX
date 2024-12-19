@@ -24,7 +24,7 @@ stop_event = threading.Event()  # Event to signal thread termination
 #===============================================================================
 # API
 #===============================================================================
-def update_api(db, all_plugins, isNotification=False, updateOnlyDataSources=[], is_ad_hoc_user_event=False):
+def update_api(db, all_plugins, updateOnlyDataSources=[], is_ad_hoc_user_event=False):
     mylog('debug', ['[API] Update API starting'])
 
     # Start periodic write if not running
@@ -88,13 +88,13 @@ class api_endpoint_class:
         self.fileName = path.split('/')[-1]
         self.hash = hash(json.dumps(self.jsonData))
         self.debounce_interval = 5  # Time to wait before writing
-        self.last_update_time = current_time - datetime.timedelta(minutes=1)  # Last time data was updated
+        self.changeDetectedWhen  = None
+        # self.last_update_time = current_time - datetime.timedelta(minutes=1)  # Last time data was updated
         self.is_ad_hoc_user_event = is_ad_hoc_user_event
+        self.needsUpdate = False
 
         # Check if the endpoint needs to be updated
-        found = False
-        changed = False
-        changedIndex = -1
+        found = False        
         index = 0
         
         # Search previous endpoint states to check if API needs updating
@@ -102,28 +102,27 @@ class api_endpoint_class:
             # Match SQL and API endpoint path 
             if endpoint.query == self.query and endpoint.path == self.path:
                 found = True 
+                mylog('trace', [f'[API] api_endpoint_class: Hashes  (file|old|new): ({self.fileName}|{endpoint.hash}|{self.hash})'])
                 if endpoint.hash != self.hash:                    
-                    changed = True
-                    changedIndex = index
+                    self.needsUpdate = True
+                    # Only update changeDetectedWhen if it hasn't been set recently
+                    if not self.changeDetectedWhen or current_time > (self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)): 
+                        self.changeDetectedWhen = current_time  # Set timestamp for change detection
+                    if index < len(apiEndpoints):
+                        apiEndpoints[index] = self
+                    # check end of bounds and replace
+                    if index < len(apiEndpoints):
+                        apiEndpoints[index] = self
 
             index = index + 1
-        
-        # Check if API endpoints have changed or if it's a new one
-        if not found or changed:
 
-            mylog('trace', [f'[API] api_endpoint_class: Updating {self.fileName}'])
-
-            if not found:                
-                apiEndpoints.append(self)
-
-            elif changed and changedIndex != -1 and changedIndex < len(apiEndpoints):
-                # Update hash and data
-                apiEndpoints[changedIndex].hash = self.hash
-                apiEndpoints[changedIndex].jsonData = self.jsonData
-
-                mylog('trace', [f'[API] api_endpoint_class: Updating hash {self.hash}'])
-            else:
-                mylog('none', [f'[API] ⚠ ERROR Updating {self.fileName}'])
+        # needs also an update if new endpoint
+        if not found:
+            self.needsUpdate = True
+            # Only update changeDetectedWhen if it hasn't been set recently
+            if not self.changeDetectedWhen or current_time > (self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)):
+                self.changeDetectedWhen = current_time  # Initialize timestamp for new endpoint
+            apiEndpoints.append(self)
 
         # Needs to be called for initial updates
         self.try_write()
@@ -133,12 +132,16 @@ class api_endpoint_class:
         current_time = timeNowTZ()
 
         # Debugging info to understand the issue 
-        # mylog('verbose', [f'[API] api_endpoint_class: {self.fileName} is_ad_hoc_user_event {self.is_ad_hoc_user_event} last_update_time={self.last_update_time}, debounce time={self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)}.'])
+        # mylog('debug', [f'[API] api_endpoint_class: {self.fileName} is_ad_hoc_user_event {self.is_ad_hoc_user_event} last_update_time={self.last_update_time}, debounce time={self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)}.'])
 
         # Only attempt to write if the debounce time has passed
-        if current_time > (self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)):
+        if self.needsUpdate and (self.changeDetectedWhen is None or current_time > (self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval))):
+
+            mylog('debug', [f'[API] api_endpoint_class: Writing {self.fileName} after debounce.'])
+
             write_file(self.path, json.dumps(self.jsonData))
-            # mylog('verbose', [f'[API] api_endpoint_class: Writing {self.fileName} after debounce.'])
+
+            self.needsUpdate = False            
             self.last_update_time = timeNowTZ()  # Reset last_update_time after writing
 
             # Update user event execution log

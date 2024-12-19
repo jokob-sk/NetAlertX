@@ -84,8 +84,6 @@ def main ():
 
     mylog('debug', '[MAIN] Starting loop')
 
-
-
     all_plugins = None
 
     while True:

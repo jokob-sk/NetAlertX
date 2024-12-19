@@ -514,10 +514,10 @@ def update_devices_names (db):
     foundNsLookup = 0
     foundNbtLookup = 0
 
-    # Gen unknown devices
-    sql.execute ("SELECT * FROM Devices WHERE devName IN ('(unknown)','', '(name not found)') AND devLastIP <> '-'")
-    unknownDevices = sql.fetchall() 
-    db.commitDB()
+    # Gen unknown devices    
+    device_handler = Device_obj(db)
+    # Retrieve devices
+    unknownDevices = device_handler.getUnknown()
 
     # skip checks if no unknown devices
     if len(unknownDevices) == 0:

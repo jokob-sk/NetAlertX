@@ -166,7 +166,7 @@ class Query(ObjectType):
             if options.search:
                 # Define static list of searchable fields
                 searchable_fields = [
-                    "devName", "devMac", "devOwner", "devType", "devVendor", "devLastIP"
+                    "devName", "devMac", "devOwner", "devType", "devVendor", "devLastIP",
                     "devGroup", "devComments", "devLocation", "devStatus",
                     "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode"
                 ]

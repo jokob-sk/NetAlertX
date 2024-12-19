@@ -383,7 +383,7 @@ def importConfigs (db, all_plugins):
     db.commitDB()
 
     #  update only the settings datasource
-    update_api(db, all_plugins, False, ["settings"])  
+    update_api(db, all_plugins, ["settings"])  
     
     # run plugins that are modifying the config   
     run_plugin_scripts(db, all_plugins, 'before_config_save' )
