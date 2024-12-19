@@ -332,7 +332,7 @@ def importConfigs (db, all_plugins):
     
     # setup execution schedules AFTER OVERRIDE handling
 
-    mylog('verbose', [f"[Config] c_d {c_d}"])
+    # mylog('verbose', [f"[Config] c_d {c_d}"])
 
     for plugin in all_plugins:        
         # Setup schedules
@@ -383,7 +383,7 @@ def importConfigs (db, all_plugins):
     db.commitDB()
 
     #  update only the settings datasource
-    update_api(db, all_plugins, ["settings"])  
+    update_api(db, all_plugins, True, ["settings"])  
     
     # run plugins that are modifying the config   
     run_plugin_scripts(db, all_plugins, 'before_config_save' )

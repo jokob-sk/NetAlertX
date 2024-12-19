@@ -340,6 +340,34 @@
           "string": "Arguments to run nmap-scan with. Recommended and tested only with the setting: <br/> <code>sudo nmap -sn -PR -oX - </code>. <br/><br/> Note: The plugin attaches the interface and network mask, for example <code> -e eth1 192.168.1.0/24</code> and performs a separate scan for each interface specified in the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
         }
       ]
+    },
+    {
+      "function": "FAKE_MAC",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Fake MAC if empty"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When scanning remote networks, NMAP can only retrieve the IP address, not the MAC address. Enabling this setting generates a fake MAC address from the IP address to track devices, but it may cause inconsistencies if IPs change or devices are rediscovered. Static IPs are recommended. Device type and icon will not be detected correctly. When unchecked, devices with empty MAC addresses are skipped."
+        }
+      ]
     }
   ],
   "database_column_definitions": [

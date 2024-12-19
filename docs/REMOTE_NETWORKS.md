@@ -1,0 +1,45 @@
+# Scanning Remote or Inaccessible Networks
+
+By design, local network scanners such as `arp-scan` use ARP (Address Resolution Protocol) to map IP addresses to MAC addresses on the local network. Since ARP operates at Layer 2 (Data Link Layer), it typically works only within a single broadcast domain, usually limited to a single router or network segment.
+
+## Complex Use Cases
+
+The following network setups might make some devices undetectable. Check the specific setup to understand the cause and find potential workarounds to still report on these devices.
+
+### Wi-Fi Extenders
+
+Wi-Fi extenders typically create a separate network or subnet, which can prevent network scanning tools like `arp-scan` from detecting devices behind the extender.
+
+> **Possible workaround**: Scan the specific subnet that the extender uses, if it is separate from the main network.
+
+### VPNs
+
+ARP operates at Layer 2 (Data Link Layer) and works only within a local area network (LAN). VPNs, which operate at Layer 3 (Network Layer), route traffic between networks, preventing ARP requests from discovering devices outside the local network.
+
+VPNs use virtual interfaces (e.g., `tun0`, `tap0`) to encapsulate traffic, bypassing ARP-based discovery. Additionally, many VPNs use NAT, which masks individual devices behind a shared IP address.
+
+> **Possible workaround**: Configure the VPN to bridge networks instead of routing to enable ARP, though this depends on the VPN setup and security requirements.
+
+# Other Workarounds
+
+The following workarounds should work for most complex network setups.
+
+## Supplementing Plugins
+
+You can use supplementary plugins that employ alternate methods. Protocols used by the `SNMPDSC` or `DHCPLSS` plugins are widely supported on different routers and can be effective as workarounds. Check the [plugins list](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) to find a plugin that works with your router and network setup.
+
+## Multiple NetAlertX Instances
+
+If you have servers in different networks, you can set up separate NetAlertX instances on those subnets and synchronize the results into one instance using the [`SYNC` plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/sync).
+
+## Manual Entry
+
+If you don't need to discover new devices and only need to report on their status (`online`, `offline`, `down`), you can manually enter devices and check their status using the [`ICMP` plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/icmp_scan/), which uses the `ping` command internally.
+
+For more information on how to add devices manually (or dummy devices), refer to the [Device Management](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md) documentation.
+
+To create truly dummy devices, you can use a loopback IP address (e.g., `0.0.0.0` or `127.0.0.1`) so they appear online.
+
+## NMAP and Fake MAC Addresses
+
+Scanning remote networks with NMAP is possible, but since it cannot retrieve the MAC address, you need to enable the `NMAPDEV_FAKE_MAC` setting. This will generate a fake MAC address based on the IP address, allowing you to track devices. However, this can lead to inconsistencies, especially if the IP address changes or a previously logged device is rediscovered. If this setting is disabled, only the IP address will be discovered, and devices with missing MAC addresses will be skipped.

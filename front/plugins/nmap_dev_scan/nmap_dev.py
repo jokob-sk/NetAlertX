@@ -39,7 +39,6 @@ LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
 def main():
 
     mylog('verbose', [f'[{pluginName}] In script'])     
@@ -48,9 +47,10 @@ def main():
     db = DB()  # instance of class DB
     db.open()
 
-
     timeout = get_setting_value('NMAPDEV_RUN_TIMEOUT')
+    fakeMac = get_setting_value('NMAPDEV_FAKE_MAC')
     subnets = get_setting_value('SCAN_SUBNETS')
+    args    = get_setting_value('NMAPDEV_ARGS')
 
     mylog('verbose', [f'[{pluginName}] subnets: ', subnets])    
 
@@ -58,7 +58,7 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    unique_devices = execute_scan(subnets, timeout)
+    unique_devices = execute_scan(subnets, timeout, fakeMac, args)
 
     mylog('verbose', [f'[{pluginName}] Devices found: {len(unique_devices)}'])   
 
@@ -85,17 +85,17 @@ def main():
 #===============================================================================
 # Execute scan
 #===============================================================================
-def execute_scan(subnets_list, timeout):
+def execute_scan(subnets_list, timeout, fakeMac, args):
     devices_list = []
 
     for interface in subnets_list:
-        nmap_output = execute_scan_on_interface(interface, timeout)
+        nmap_output = execute_scan_on_interface(interface, timeout, args)
 
         # mylog('verbose', [f"[{pluginName}] nmap_output XML: ", nmap_output])
 
         if nmap_output:  # Proceed only if nmap output is not empty
             # Parse the XML output using python-nmap
-            devices = parse_nmap_xml(nmap_output, interface)
+            devices = parse_nmap_xml(nmap_output, interface, fakeMac)
 
             for device in devices:
                 # Append to devices_list only if both IP and MAC addresses are present
@@ -112,9 +112,9 @@ def execute_scan(subnets_list, timeout):
 
 
 
-def execute_scan_on_interface (interface, timeout):
+def execute_scan_on_interface (interface, timeout, args):
     # Prepare command arguments
-    scan_args = get_setting_value('NMAPDEV_ARGS').split() + interface.replace('--interface=','-e ').split()
+    scan_args = args.split() + interface.replace('--interface=','-e ').split()
 
     mylog('verbose', [f'[{pluginName}] scan_args: ', scan_args])   
     
@@ -128,7 +128,7 @@ def execute_scan_on_interface (interface, timeout):
     return result
 
 
-def parse_nmap_xml(xml_output, interface):
+def parse_nmap_xml(xml_output, interface, fakeMac):
     devices_list = []
 
     try:
@@ -161,7 +161,11 @@ def parse_nmap_xml(xml_output, interface):
             mylog('verbose', [f"[{pluginName}] Hostname: {hostname}, IP: {ip}, MAC: {mac}, Vendor: {vendor}"])
 
             # Only include devices with both IP and MAC addresses
-            if ip != '' and mac != '':
+            if (ip != '' and mac != '') or (ip != '' and fakeMac):
+
+                if mac == '' and fakeMac:
+                    mac = string_to_mac_hash(ip)
+
                 devices_list.append({
                     'name': hostname,
                     'ip': ip,
@@ -171,7 +175,7 @@ def parse_nmap_xml(xml_output, interface):
                 })
             else:
                 # MAC or IP missing
-                mylog('verbose', [f"[{pluginName}] Skipping: {hostname}, IP or MAC missing"])
+                mylog('verbose', [f"[{pluginName}] Skipping: {hostname}, IP or MAC missing, or NMAPDEV_GENERATE_MAC setting not enabled"])
 
 
     except Exception as e:
@@ -180,7 +184,14 @@ def parse_nmap_xml(xml_output, interface):
     return devices_list
           
     
+def string_to_mac_hash(input_string):
+    # Calculate a hash using SHA-256
+    sha256_hash = hashlib.sha256(input_string.encode()).hexdigest()
+
+    # Take the first 12 characters of the hash and format as a MAC address
+    mac_hash = ':'.join(sha256_hash[i:i+2] for i in range(0, 12, 2))
     
+    return mac_hash
 
 #===============================================================================
 # BEGIN

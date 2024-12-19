@@ -467,7 +467,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
 
         # update API endpoints
-        update_api(db, all_plugins, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
+        update_api(db, all_plugins, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
     
     return pluginsState
 
@@ -873,7 +873,7 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
             execution_log.finalize_event("run")               
         elif event == 'update_api':
             # async handling
-            update_api(db, all_plugins, param.split(','), True)
+            update_api(db, all_plugins, False, param.split(','), True)
             
         else:
             mylog('minimal', ['[check_and_run_user_event] WARNING: Unhandled event in execution queue: ', event, ' | ', param])

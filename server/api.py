@@ -24,7 +24,7 @@ stop_event = threading.Event()  # Event to signal thread termination
 #===============================================================================
 # API
 #===============================================================================
-def update_api(db, all_plugins, updateOnlyDataSources=[], is_ad_hoc_user_event=False):
+def update_api(db, all_plugins, forceUpdate, updateOnlyDataSources=[], is_ad_hoc_user_event=False):
     mylog('debug', ['[API] Update API starting'])
 
     # Start periodic write if not running
@@ -57,7 +57,7 @@ def update_api(db, all_plugins, updateOnlyDataSources=[], is_ad_hoc_user_event=F
     # Save selected database tables
     for dsSQL in dataSourcesSQLs:
         if not updateOnlyDataSources or dsSQL[0] in updateOnlyDataSources:
-            api_endpoint_class(db, dsSQL[1], folder + 'table_' + dsSQL[0] + '.json', is_ad_hoc_user_event)
+            api_endpoint_class(db, forceUpdate, dsSQL[1], folder + 'table_' + dsSQL[0] + '.json', is_ad_hoc_user_event)
             
     # Start the GraphQL server
     graphql_port_value = get_setting_value("GRAPHQL_PORT")
@@ -76,7 +76,7 @@ def update_api(db, all_plugins, updateOnlyDataSources=[], is_ad_hoc_user_event=F
 
 #-------------------------------------------------------------------------------
 class api_endpoint_class:
-    def __init__(self, db, query, path, is_ad_hoc_user_event=False):        
+    def __init__(self, db, forceUpdate, query, path, is_ad_hoc_user_event=False):        
         global apiEndpoints
 
         current_time = timeNowTZ()
@@ -125,17 +125,17 @@ class api_endpoint_class:
             apiEndpoints.append(self)
 
         # Needs to be called for initial updates
-        self.try_write()
+        self.try_write(forceUpdate)
 
     #----------------------------------------
-    def try_write(self):
+    def try_write(self, forceUpdate):
         current_time = timeNowTZ()
 
         # Debugging info to understand the issue 
         # mylog('debug', [f'[API] api_endpoint_class: {self.fileName} is_ad_hoc_user_event {self.is_ad_hoc_user_event} last_update_time={self.last_update_time}, debounce time={self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)}.'])
 
         # Only attempt to write if the debounce time has passed
-        if self.needsUpdate and (self.changeDetectedWhen is None or current_time > (self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval))):
+        if forceUpdate == True or (self.needsUpdate and (self.changeDetectedWhen is None or current_time > (self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)))):
 
             mylog('debug', [f'[API] api_endpoint_class: Writing {self.fileName} after debounce.'])
 

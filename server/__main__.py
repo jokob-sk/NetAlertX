@@ -105,7 +105,7 @@ def main ():
         pluginsState = check_and_run_user_event(db, all_plugins, pluginsState)
 
         # Update API endpoints              
-        update_api(db, all_plugins)
+        update_api(db, all_plugins, False)
 
         # proceed if 1 minute passed
         if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time :
