@@ -30,7 +30,7 @@ from notification import write_notification
 
 #-------------------------------------------------------------------------------
 # managing application settings, ensuring SQL safety for user input, and updating internal configuration lists
-def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False, overriddenByEnv=0):
+def ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False, overriddenByEnv=0, all_plugins=[]):
     if events is None:
         events = []
     if setJsonMetadata is None:
@@ -49,10 +49,21 @@ def ccd(key, default, config_dir, name, inputtype, options, group, events=None, 
     if inputtype == 'text':
         result = result.replace('\'', "{s-quote}")
 
-    # Add to config_dir if overridden by environment
+    # Add to config_dir and update plugin value if overridden by environment
     if overriddenByEnv == 1:
-        config_dir[key] = result       
+        config_dir[key] = result
+        for plugin in all_plugins:
+            pref = plugin["unique_prefix"]
 
+            for set in plugin["settings"]:
+                setFunction = set["function"]
+                # Setting code name / key  
+                plugKey = pref + "_" + setFunction 
+
+                if plugKey == key:
+                    set["value"] = result      
+
+    #  prepare SQL for DB update 
     # Create the tuples
     sql_safe_tuple = (key, name, desc, str(inputtype), options, str(result), group, str(events), overriddenByEnv)
     settings_tuple = (key, name, desc, inputtype, options, result, group, str(events), overriddenByEnv)
@@ -311,7 +322,7 @@ def importConfigs (db, all_plugins):
                     # Log the value being passed
                     # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
                     mylog('verbose', [f"[Config] Setting override {setting_name} with value: {value}"])
-                    ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True, 1)
+                    ccd(setting_name, value, c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True, 1, all_plugins)
 
             except json.JSONDecodeError:
                 mylog('none', [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"])
